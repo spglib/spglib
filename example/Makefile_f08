@@ -1,0 +1,17 @@
+
+fc = gfortran -g -fcheck=all -fbacktrace
+# fc = ifort -g -check all -traceback
+lib = ../src/.libs/libsymspg.a
+
+test: example
+	./example
+
+
+example: example_f08.f90 spglib_f08.o
+	$(fc) $^ $(lib) -o $@
+
+spglib_f08.o: spglib_f08.f90
+	$(fc) -c $^
+
+clean:
+	rm -f example{,.o} defs_basis.mod spglib_f08.{o,mod}
