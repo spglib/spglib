@@ -13,8 +13,9 @@ static PyObject * find_primitive(PyObject *self, PyObject *args);
 static PyObject * get_ir_kpoints(PyObject *self, PyObject *args);
 static PyObject * get_ir_reciprocal_mesh(PyObject *self, PyObject *args);
 static PyObject * get_stabilized_reciprocal_mesh(PyObject *self, PyObject *args);
+static PyObject * relocate_BZ_grid_address(PyObject *self, PyObject *args);
 static PyObject * get_triplets_reciprocal_mesh_at_q(PyObject *self, PyObject *args);
-static PyObject * get_grid_triplets_at_q(PyObject *self, PyObject *args);
+static PyObject * get_BZ_triplets_at_q(PyObject *self, PyObject *args);
 
 static PyMethodDef functions[] = {
   {"dataset", get_dataset, METH_VARARGS,
@@ -37,10 +38,12 @@ static PyMethodDef functions[] = {
    "Reciprocal mesh points with map"},
   {"stabilized_reciprocal_mesh", get_stabilized_reciprocal_mesh, METH_VARARGS,
    "Reciprocal mesh points with map"},
+  {"BZ_grid_address", relocate_BZ_grid_address, METH_VARARGS,
+   "Relocate grid addresses inside Brillouin zone"},
   {"triplets_reciprocal_mesh_at_q", get_triplets_reciprocal_mesh_at_q,
    METH_VARARGS, "Triplets on reciprocal mesh points at a specific q-point"},
-  {"grid_triplets_at_q", get_grid_triplets_at_q,
-   METH_VARARGS, "Grid point triplets on reciprocal mesh points at a specific q-point are set from output variables of triplets_reciprocal_mesh_at_q"},
+  {"BZ_triplets_at_q", get_BZ_triplets_at_q,
+   METH_VARARGS, "Triplets in reciprocal primitive lattice are transformed to those in BZ."},
   {NULL, NULL, 0, NULL}
 };
 
@@ -148,9 +151,8 @@ static PyObject * get_dataset(PyObject *self, PyObject *args)
 
 static PyObject * get_spacegroup(PyObject *self, PyObject *args)
 {
-  int i;
   double symprec, angle_tolerance;
-  char symbol_with_number[17], spg_symbol[11];
+  char symbol[26];
   PyArrayObject* lattice;
   PyArrayObject* position;
   PyArrayObject* atom_type;
@@ -168,21 +170,16 @@ static PyObject * get_spacegroup(PyObject *self, PyObject *args)
   const int num_atom = position->dimensions[0];
   const int* typat = (int*)atom_type->data;
 
-  const int num_spg = spgat_get_international(spg_symbol,
+  const int num_spg = spgat_get_international(symbol,
 					      lat,
 					      pos,
 					      typat,
 					      num_atom,
 					      symprec,
 					      angle_tolerance);
+  sprintf(symbol, "%s (%d)", symbol, num_spg);
 
-  for (i = 9; i > 0; i--) {
-    if (! isspace(spg_symbol[i])) { break; }
-  }
-  spg_symbol[i + 1] = 0;
-  sprintf(symbol_with_number, "%s (%d)", spg_symbol, num_spg);
-
-  return PyString_FromString(symbol_with_number);
+  return PyString_FromString(symbol);
 }
 
 static PyObject * get_pointgroup(PyObject *self, PyObject *args)
@@ -436,9 +433,8 @@ static PyObject * get_ir_kpoints(PyObject *self, PyObject *args)
 
 static PyObject * get_ir_reciprocal_mesh(PyObject *self, PyObject *args)
 {
-  int i, j;
   double symprec;
-  PyArrayObject* grid_point;
+  PyArrayObject* grid_address_py;
   PyArrayObject* map;
   PyArrayObject* mesh;
   PyArrayObject* is_shift;
@@ -447,7 +443,7 @@ static PyObject * get_ir_reciprocal_mesh(PyObject *self, PyObject *args)
   PyArrayObject* position;
   PyArrayObject* atom_type;
   if (!PyArg_ParseTuple(args, "OOOOiOOOd",
-			&grid_point,
+			&grid_address_py,
 			&map,
 			&mesh,
 			&is_shift,
@@ -460,22 +456,15 @@ static PyObject * get_ir_reciprocal_mesh(PyObject *self, PyObject *args)
 
   SPGCONST double (*lat)[3] = (double(*)[3])lattice->data;
   SPGCONST double (*pos)[3] = (double(*)[3])position->data;
-  const int num_grid = grid_point->dimensions[0];
   const int* types = (int*)atom_type->data;
   const int* mesh_int = (int*)mesh->data;
   const int* is_shift_int = (int*)is_shift->data;
   const int num_atom = position->dimensions[0];
-  int *grid_pint = (int*)grid_point->data;
-  int grid_int[num_grid][3];
-  int*map_int = (int*)map->data;
-
-  /* Check memory space */
-  if (mesh_int[0] * mesh_int[1] * mesh_int[2] > num_grid) {
-    return NULL;
-  }
+  int (*grid_address)[3] = (int(*)[3])grid_address_py->data;
+  int *map_int = (int*)map->data;
 
   /* num_sym has to be larger than num_sym_from_array_size. */
-  const int num_ir = spg_get_ir_reciprocal_mesh(grid_int,
+  const int num_ir = spg_get_ir_reciprocal_mesh(grid_address,
 						map_int,
 						mesh_int,
 						is_shift_int,
@@ -486,19 +475,13 @@ static PyObject * get_ir_reciprocal_mesh(PyObject *self, PyObject *args)
 						num_atom,
 						symprec);
   
-  for (i = 0; i < mesh_int[0] * mesh_int[1] * mesh_int[2]; i++) {
-    for (j = 0; j < 3; j++) {
-      grid_pint[i*3 + j] = (int) grid_int[i][j];
-    }
-  }
-  
   return PyInt_FromLong((long) num_ir);
 }
 
 static PyObject * get_stabilized_reciprocal_mesh(PyObject *self, PyObject *args)
 {
   int i, j, k;
-  PyArrayObject* grid_point;
+  PyArrayObject* grid_address_py;
   PyArrayObject* map;
   PyArrayObject* mesh;
   PyArrayObject* is_shift;
@@ -506,7 +489,7 @@ static PyObject * get_stabilized_reciprocal_mesh(PyObject *self, PyObject *args)
   PyArrayObject* rotations;
   PyArrayObject* qpoints;
   if (!PyArg_ParseTuple(args, "OOOOiOO",
-			&grid_point,
+			&grid_address_py,
 			&map,
 			&mesh,
 			&is_shift,
@@ -516,10 +499,7 @@ static PyObject * get_stabilized_reciprocal_mesh(PyObject *self, PyObject *args)
     return NULL;
   }
 
-  int *grid_pint = (int*)grid_point->data;
-  const int num_grid = grid_point->dimensions[0];
-  int grid_int[num_grid][3];
-
+  int (*grid_address)[3] = (int(*)[3])grid_address_py->data;
   int *map_int = (int*)map->data;
   const int* mesh_int = (int*)mesh->data;
   const int* is_shift_int = (int*)is_shift->data;
@@ -533,16 +513,10 @@ static PyObject * get_stabilized_reciprocal_mesh(PyObject *self, PyObject *args)
       }
     }
   }
-
   SPGCONST double (*q)[3] = (double(*)[3])qpoints->data;
   const int num_q = qpoints->dimensions[0];
 
-  /* Check memory space */
-  if (mesh_int[0] * mesh_int[1] * mesh_int[2] > num_grid) {
-    return NULL;
-  }
-
-  const int num_ir = spg_get_stabilized_reciprocal_mesh(grid_int,
+  const int num_ir = spg_get_stabilized_reciprocal_mesh(grid_address,
 							map_int,
 							mesh_int,
 							is_shift_int,
@@ -551,20 +525,51 @@ static PyObject * get_stabilized_reciprocal_mesh(PyObject *self, PyObject *args)
 							rot,
 							num_q,
 							q);
-
-  for (i = 0; i < mesh_int[0] * mesh_int[1] * mesh_int[2]; i++) {
-    for (j = 0; j < 3; j++) {
-      grid_pint[i*3 + j] = grid_int[i][j];
-    }
-  }
   
   return PyInt_FromLong((long) num_ir);
+}
+
+static PyObject * relocate_BZ_grid_address(PyObject *self, PyObject *args)
+{
+  PyArrayObject* bz_grid_address_py;
+  PyArrayObject* bz_map_py;
+  PyArrayObject* grid_address_py;
+  PyArrayObject* mesh_py;
+  PyArrayObject* is_shift_py;
+  PyArrayObject* reciprocal_lattice_py;
+  if (!PyArg_ParseTuple(args, "OOOOOO",
+			&bz_grid_address_py,
+			&bz_map_py,
+			&grid_address_py,
+			&mesh_py,
+			&reciprocal_lattice_py,
+			&is_shift_py)) {
+    return NULL;
+  }
+
+  int (*bz_grid_address)[3] = (int(*)[3])bz_grid_address_py->data;
+  int *bz_map = (int*)bz_map_py->data;
+  SPGCONST int (*grid_address)[3] = (int(*)[3])grid_address_py->data;
+  const int* mesh = (int*)mesh_py->data;
+  const int* is_shift = (int*)is_shift_py->data;
+  SPGCONST double (*reciprocal_lattice)[3]  =
+    (double(*)[3])reciprocal_lattice_py->data;
+  int num_ir_gp;
+  
+  num_ir_gp = spg_relocate_BZ_grid_address(bz_grid_address,
+					   bz_map,
+					   grid_address,
+					   mesh,
+					   reciprocal_lattice,
+					   is_shift);
+
+  return PyInt_FromLong((long) num_ir_gp);
 }
 
 static PyObject * get_triplets_reciprocal_mesh_at_q(PyObject *self, PyObject *args)
 {
   PyArrayObject* weights;
-  PyArrayObject* grid_points;
+  PyArrayObject* grid_address_py;
   PyArrayObject* third_q;
   int fixed_grid_number;
   PyArrayObject* mesh;
@@ -572,7 +577,7 @@ static PyObject * get_triplets_reciprocal_mesh_at_q(PyObject *self, PyObject *ar
   PyArrayObject* rotations;
   if (!PyArg_ParseTuple(args, "OOOiOiO",
 			&weights,
-			&grid_points,
+			&grid_address_py,
 			&third_q,
 			&fixed_grid_number,
 			&mesh,
@@ -583,9 +588,7 @@ static PyObject * get_triplets_reciprocal_mesh_at_q(PyObject *self, PyObject *ar
 
   int i, j, k;
 
-  const int num_grid = grid_points->dimensions[0];
-  int *grid_points_pint = (int*)grid_points->data;
-  int grid_points_int[num_grid][3];
+  int (*grid_address)[3] = (int(*)[3])grid_address_py->data;
   int *weights_int = (int*)weights->data;
   int *third_q_int = (int*)third_q->data;
 
@@ -603,7 +606,7 @@ static PyObject * get_triplets_reciprocal_mesh_at_q(PyObject *self, PyObject *ar
 
   const int num_ir = 
     spg_get_triplets_reciprocal_mesh_at_q(weights_int,
-					  grid_points_int,
+					  grid_address,
 					  third_q_int,
 					  fixed_grid_number,
 					  mesh_int,
@@ -611,65 +614,43 @@ static PyObject * get_triplets_reciprocal_mesh_at_q(PyObject *self, PyObject *ar
 					  num_rot,
 					  rot);
 
-  for (i = 0; i < num_grid; i++) {
-    for (j = 0; j < 3; j++) {
-      grid_points_pint[i*3 + j] = grid_points_int[i][j];
-    }
-  }
-  
   return PyInt_FromLong((long) num_ir);
 }
 
 
-static PyObject * get_grid_triplets_at_q(PyObject *self, PyObject *args)
+static PyObject * get_BZ_triplets_at_q(PyObject *self, PyObject *args)
 {
   PyArrayObject* triplets_py;
-  PyArrayObject* grid_points_py;
-  PyArrayObject* third_q_py;
+  PyArrayObject* bz_grid_address_py;
+  PyArrayObject* bz_map_py;
   PyArrayObject* weights_py;
   PyArrayObject* mesh_py;
-  int q_grid_point;
+  int grid_point;
   if (!PyArg_ParseTuple(args, "OiOOOO",
 			&triplets_py,
-			&q_grid_point,
-			&grid_points_py,
-			&third_q_py,
+			&grid_point,
+			&bz_grid_address_py,
+			&bz_map_py,
 			&weights_py,
 			&mesh_py)) {
     return NULL;
   }
 
-  int i, j;
-  
-  int *p_triplets = (int*)triplets_py->data;
-  const int num_ir_triplets = (int)triplets_py->dimensions[0];
-  const int *p_grid_points = (int*)grid_points_py->data;
-  const int num_grid_points = (int)grid_points_py->dimensions[0];
-  const int *third_q = (int*)third_q_py->data;
+  int (*triplets)[3] = (int(*)[3])triplets_py->data;
+  SPGCONST int (*bz_grid_address)[3] = (int(*)[3])bz_grid_address_py->data;
+  const int *bz_map = (int*)bz_map_py->data;
   const int *weights = (int*)weights_py->data;
   const int *mesh = (int*)mesh_py->data;
-  int triplets[num_ir_triplets][3];
-  int grid_points[num_grid_points][3];
-  for (i = 0; i < num_grid_points; i++) {
-    for (j = 0; j < 3; j++) {
-      grid_points[i][j] = p_grid_points[i * 3 + j];
-    }
-  }
+  int num_ir;
   
-  spg_set_grid_triplets_at_q(triplets,
-			     q_grid_point,
-			     grid_points,
-			     third_q,
-			     weights,
-			     mesh);
-  
-  for (i = 0; i < num_ir_triplets; i++) {
-    for (j = 0; j < 3; j++) {
-      p_triplets[i * 3 + j] = triplets[i][j];
-    }
-  }
+  num_ir = spg_get_BZ_triplets_at_q(triplets,
+				    grid_point,
+				    bz_grid_address,
+				    bz_map,
+				    weights,
+				    mesh);
 
-  Py_RETURN_NONE;
+  return PyInt_FromLong((long) num_ir);
 }
 
 

@@ -41,7 +41,7 @@ extension = Extension('pyspglib._spglib',
                       )
 
 setup (name = 'spglib',
-       version = '1.5.1',
+       version = '1.5.2',
        description = 'This is the spglib module.',
        author = 'Atsushi Togo',
        author_email = 'atz.togo@gmail.com',
