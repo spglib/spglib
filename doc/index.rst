@@ -526,6 +526,10 @@ in reduced coordinates. Number of the stabilizers are given by
 ``grid_point``. The number of the reduced k-points with stabilizers
 are returned as the return value.
 
+Mesh grid points without symmetrization can be obtained by setting
+``num_rot = 1``, ``rotations = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}}``,
+``num_q = 1``, and ``qpoints = {0, 0, 0}``.
+
 
 .. |sflogo| image:: http://sflogo.sourceforge.net/sflogo.php?group_id=161614&type=1
             :target: http://sourceforge.net
