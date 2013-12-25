@@ -499,8 +499,20 @@ returned as ``map`` as in the indices of ``grid_address``. The number of
 the irreducible k-points are returned as the return value.  The time
 reversal symmetry is imposed by setting ``is_time_reversal`` 1.
 
+Grid points are stored in the order that runs left most element
+first, e.g. (4x4x4 mesh).::
+
+   [[ 0  0  0]   
+    [ 1  0  0]   
+    [ 2  0  0]   
+    [-1  0  0]   
+    [ 0  1  0]   
+    [ 1  1  0]   
+    [ 2  1  0]   
+    [-1  1  0]   
+    ....      ]  
+
 k-qpoints are calculated by ``(grid_address + is_shift / 2) / mesh``.
-   
 
 ``spg_get_stabilized_reciprocal_mesh``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
