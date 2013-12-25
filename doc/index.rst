@@ -474,32 +474,33 @@ value.
 
 ::
 
-  int spg_get_ir_reciprocal_mesh(int grid_point[][3],
-                                 int map[],
-                                 const int mesh[3],
-				 const int is_shift[3],
-                                 const int is_time_reversal,
-                                 const double lattice[3][3],
-                                 const double position[][3],
-				 const int types[],
-                                 const int num_atom,
-				 const double symprec)
+   int spg_get_ir_reciprocal_mesh(int grid_address[][3],
+                                  int map[],
+                                  const int mesh[3],
+                                  const int is_shift[3],
+                                  const int is_time_reversal,
+                                  const double lattice[3][3],
+                                  const double position[][3],
+                                  const int types[],
+                                  const int num_atom,
+                                  const double symprec)
 
 Irreducible reciprocal grid points are searched from uniform mesh grid
 points specified by ``mesh`` and ``is_shift``.  ``mesh`` stores three
 integers. Reciprocal primitive vectors are divided by the number
-stored in ``mesh`` with (0,0,0) point centering. The centering can be
-shifted only half of one mesh by setting 1 for each ``is_shift``
-element. If 0 is set for ``is_shift``, it means there is no
-shift. This limitation of shifting enables the irreducible k-point
-search significantly faster when the mesh is very dense.
+stored in ``mesh`` with (0,0,0) point centering. The center of grid
+mesh is shifted +1/2 of a grid spacing along corresponding reciprocal
+axis by setting 1 to a ``is_shift`` element. No grid mesh shift is
+made if 0 is set for ``is_shift``.
 
 The reducible uniform grid points are returned in reduced coordinates
-as ``grid_point``. A map between reducible and irreducible points are
-returned as ``map`` as in the indices of ``grid_point``. The number of
+as ``grid_address``. A map between reducible and irreducible points are
+returned as ``map`` as in the indices of ``grid_address``. The number of
 the irreducible k-points are returned as the return value.  The time
 reversal symmetry is imposed by setting ``is_time_reversal`` 1.
 
+k-qpoints are calculated by ``(grid_address + is_shift / 2) / mesh``.
+   
 
 ``spg_get_stabilized_reciprocal_mesh``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -508,22 +509,22 @@ reversal symmetry is imposed by setting ``is_time_reversal`` 1.
 
 ::
 
-  int spg_get_stabilized_reciprocal_mesh(int grid_point[][3],
-                                         int map[],
-                                         const int mesh[3],
-                                         const int is_shift[3],
-                                         const int is_time_reversal,
-                                         const int num_rot,
-                                         const int rotations[][3][3],
-                                         const int num_q,
-                                         const double qpoints[][3])
+   int spg_get_stabilized_reciprocal_mesh(int grid_address[][3],
+                                          int map[],
+                                          const int mesh[3],
+                                          const int is_shift[3],
+                                          const int is_time_reversal,
+                                          const int num_rot,
+                                          const int rotations[][3][3],
+                                          const int num_q,
+                                          const double qpoints[][3])
 
 The irreducible k-points are searched from unique k-point mesh grids
 from real space lattice vectors and rotation matrices of symmetry
 operations in real space with stabilizers. The stabilizers are written
 in reduced coordinates. Number of the stabilizers are given by
 ``num_q``. Reduced k-points are stored in ``map`` as indices of
-``grid_point``. The number of the reduced k-points with stabilizers
+``grid_address``. The number of the reduced k-points with stabilizers
 are returned as the return value.
 
 Mesh grid points without symmetrization can be obtained by setting
