@@ -512,7 +512,15 @@ first, e.g. (4x4x4 mesh).::
     [-1  1  0]   
     ....      ]  
 
-k-qpoints are calculated by ``(grid_address + is_shift / 2) / mesh``.
+where the first index runs first.  k-qpoints are calculated by
+``(grid_address + is_shift / 2) / mesh``. A grid point index is
+recovered from ``grid_address`` by ``numpy.dot(grid_address % mesh,
+[1, mesh[0], mesh[0] * mesh[1]])`` in Python-numpy notation, where
+``%`` always returns non-negative integers. The order of
+``grid_address`` can be changed so that the last index runs first by
+setting the macro ``GRID_ORDER_XYZ`` in ``kpoint.c``. In this case the
+grid point index is recovered by ``numpy.dot(grid_address % mesh,
+[mesh[2] * mesh[1], mesh[2], 1])``.
 
 ``spg_get_stabilized_reciprocal_mesh``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
