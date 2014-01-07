@@ -516,12 +516,14 @@ static void test_spg_get_tetrahedra_relative_grid_address(void)
   int gp;
   int num_freqs = 201;
   double dos[num_freqs];
+  double integral_dos[num_freqs];
   double omegas[num_freqs];
   double iw;
 
 #pragma omp parallel for private(j, k, l, q, r, g_addr, gp, t_omegas, iw)
   for (i = 0; i < num_freqs; i++) {
     dos[i] = 0;
+    integral_dos[i] = 0;
     omegas[i] = min_f + (max_f - min_f) / (num_freqs - 1) * i;
     for (j = 0; j < num_ir;  j++) {
       for (k = 0; k < num_atom * 3; k++) {
@@ -535,14 +537,22 @@ static void test_spg_get_tetrahedra_relative_grid_address(void)
 	    t_omegas[l][q] = frequency[gp_ir_index[gp] * num_atom * 3 + k];
 	  }
 	}
-	iw = spg_get_tetrahedra_integration_weight(omegas[i], t_omegas);
+	iw = spg_get_tetrahedra_integration_weight(omegas[i], t_omegas, 'J');
 	dos[i] += iw * ir_weights[j];
+	iw = spg_get_tetrahedra_integration_weight(omegas[i], t_omegas, 'I');
+	integral_dos[i] += iw * ir_weights[j];
       }
     }
   }
 
   for (i = 0; i < num_freqs; i++) {
     printf("%f %f\n", omegas[i], dos[i] / m / m / m);
+  }
+
+  printf("\n\n");
+  
+  for (i = 0; i < num_freqs; i++) {
+    printf("%f %f\n", omegas[i], integral_dos[i] / m / m / m);
   }
     
 }
