@@ -4,17 +4,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "spglib.h"
-#include "refinement.h"
 #include "cell.h"
+#include "kpoint.h"
 #include "lattice.h"
 #include "mathfunc.h"
 #include "pointgroup.h"
+#include "spglib.h"
 #include "primitive.h"
+#include "refinement.h"
 #include "spacegroup.h"
-#include "symmetry.h"
-#include "kpoint.h"
 #include "spin.h"
+#include "symmetry.h"
+#include "tetrahedron_method.h"
 
 /*---------*/
 /* general */

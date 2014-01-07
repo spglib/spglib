@@ -30,7 +30,7 @@ static int main_diagonals[4][3] = {{ 1, 1, 1},  /* 0-7 */
 				   { 1,-1, 1},  /* 2-5 */
 				   { 1, 1,-1}}; /* 3-4 */
 
-static int relative_grid_address[4][24][4][3] = {
+static int db_relative_grid_address[4][24][4][3] = {
   {
     { { 0,  0,  0}, { 1,  0,  0}, { 1,  1,  0}, { 1,  1,  1}, },
     { { 0,  0,  0}, { 1,  0,  0}, { 1,  0,  1}, { 1,  1,  1}, },
@@ -138,6 +138,8 @@ static int relative_grid_address[4][24][4][3] = {
 };
 
 
+static int get_main_diagonal(SPGCONST double rec_lattice[3][3]);
+static int sort_omegas(double v[4]);
 static double _f(const int n,
 		 const int m,
 		 const double omega,
@@ -237,7 +239,7 @@ void thm_get_relative_grid_address(int relative_grid_address[24][4][3],
     for (j = 0; j < 4; j++) {
       for (k = 0; k < 3; k++) {
 	relative_grid_address[i][j][k] =
-	  relative_grid_address[main_diag_index][i][j][k];
+	  db_relative_grid_address[main_diag_index][i][j][k];
       }
     }
   }
@@ -256,20 +258,22 @@ double thm_get_integration_weight(const double omega,
     for (j = 0; j < 4; j++) {
       v[j] = tetrahedra_omegas[i][j];
     }
+    /* printf("%f %f %f %f: ", v[0], v[1], v[2], v[3], ci); */
     ci = sort_omegas(v);
+    /* printf("%f %f %f %f, %d\n", v[0], v[1], v[2], v[3], ci); */
     if (omega < v[0]) {
-      sum += _J(0, ci, omega, v);
+      sum += _I(0, ci, omega, v) * _g(0, omega, v);
     } else {
       if (omega < v[1]) {
-	sum += _J(1, ci, omega, v);
+	sum += _I(1, ci, omega, v) * _g(1, omega, v);
       } else {
 	if (omega < v[2]) {
-	  sum += _J(2, ci, omega, v);
+	  sum += _I(2, ci, omega, v) * _g(2, omega, v);
 	} else {
 	  if (omega < v[3]) {
-	    sum += _J(3, ci, omega, v);
+	    sum += _I(3, ci, omega, v) * _g(3, omega, v);
 	  } else {
-	    sum += _J(4, ci, omega, v);
+	    sum += _I(4, ci, omega, v) * _g(4, omega, v);
 	  }
 	}
       }
@@ -300,7 +304,7 @@ static int sort_omegas(double v[4])
     w[3] = v[2];
   } else {
     w[2] = v[2];
-    w[3] = w[3];
+    w[3] = v[3];
   }
 
   if (w[0] > w[2]) {
@@ -331,7 +335,7 @@ static int sort_omegas(double v[4])
   if (v[1] > v[2]) {
     w[1] = v[1];
     v[1] = v[2];
-    v[2] = v[1];
+    v[2] = w[1];
     if (i == 4) {
       i = 2;
     }
@@ -353,13 +357,13 @@ static int get_main_diagonal(SPGCONST double rec_lattice[3][3])
 {
   int i, shortest;
   double length, min_length;
-  doulbe main_diag[3];
+  double main_diag[3];
 
   shortest = 0;
-  mat_multiply_matrix_vector_di3(main_diag, rec_lattice, main_diag[0]);
+  mat_multiply_matrix_vector_di3(main_diag, rec_lattice, main_diagonals[0]);
   min_length = mat_norm_squared_d3(main_diag);
   for (i = 1; i < 4; i++) {
-    mat_multiply_matrix_vector_di3(main_diag, rec_lattice, main_diag[i]);
+    mat_multiply_matrix_vector_di3(main_diag, rec_lattice, main_diagonals[i]);
     length = mat_norm_squared_d3(main_diag);
     if (min_length > length) {
       min_length = length;
