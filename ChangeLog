@@ -1,3 +1,12 @@
+2014-01-07  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.6.0:
+
+	* src/tetrahedron_method.*:
+
+	Tetrahedron method is implemented. Example is found in the example
+	directory.
+
 2013-09-10  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.5.2:
