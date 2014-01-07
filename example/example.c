@@ -404,10 +404,11 @@ static void test_spg_get_ir_reciprocal_mesh(void)
   printf("100x100x100 Monkhorst-Pack mesh is %d.\n", num_ir);
 }
 
-/* frequency.dat is made to decompress frequency.dat.bz2. */
+/* frequency.dat is in the example directory. */
 /* The values in this file are the phonon frequencies of NaCl */
-/* with 80x80x80 mesh. Calculation was done with reducing */
-/* k-points to the irreducible k-points. */
+/* with 20x20x20 mesh. Calculation was done with reducing */
+/* k-points to the irreducible k-points using phonopy. */
+/* (http://phonopy.sf.net/) */
 static void test_spg_get_tetrahedra_relative_grid_address(void)
 {
   int i, j, k, l, q, r;
@@ -423,7 +424,7 @@ static void test_spg_get_tetrahedra_relative_grid_address(void)
      {0.5, 0.5, 0.5}};
   int types[] = {1, 2};
   int num_atom = 2;
-  int m = 80;
+  int m = 20;
   int mesh[] = {m, m, m};
   int is_shift[] = {0, 0, 0};
   int grid_address[m * m * m][3];
@@ -513,7 +514,7 @@ static void test_spg_get_tetrahedra_relative_grid_address(void)
   double t_omegas[24][4];
   int g_addr[3];
   int gp;
-  int num_freqs = 401;
+  int num_freqs = 201;
   double dos[num_freqs];
   double omegas[num_freqs];
   double iw;
@@ -521,7 +522,7 @@ static void test_spg_get_tetrahedra_relative_grid_address(void)
 #pragma omp parallel for private(j, k, l, q, r, g_addr, gp, t_omegas, iw)
   for (i = 0; i < num_freqs; i++) {
     dos[i] = 0;
-    omegas[i] = (max_f - min_f) / (num_freqs - 1) * i;
+    omegas[i] = min_f + (max_f - min_f) / (num_freqs - 1) * i;
     for (j = 0; j < num_ir;  j++) {
       for (k = 0; k < num_atom * 3; k++) {
 	for (l = 0; l < 24; l++) {
