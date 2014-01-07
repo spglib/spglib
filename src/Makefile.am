@@ -56,3 +56,4 @@ symmetry.h \
 tetrahedron_method.h
 
 # libsymspg_la_LDFLAGS = -version-info 0:1:0
+libsymspg_la_LIBADD = -lm
