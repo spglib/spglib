@@ -356,9 +356,8 @@ spg_get_tetrahedra_relative_grid_address(int relative_grid_address[24][4][3],
 
 double
 spg_get_tetrahedra_integration_weight(const double omega,
-				      SPGCONST double tetrahedra_omegas[24][4]);
-
-
+				      SPGCONST double tetrahedra_omegas[24][4],
+				      const char function);
 
 #endif
 

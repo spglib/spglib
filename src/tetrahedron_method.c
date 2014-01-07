@@ -137,7 +137,16 @@ static int db_relative_grid_address[4][24][4][3] = {
   },
 };
 
-
+static double
+get_integration_weight(const double omega,
+		       SPGCONST double tetrahedra_omegas[24][4],
+		       double (*gn)(const int,
+				    const double,
+				    const double[4]),
+		       double (*IJ)(const int,
+				    const int,
+				    const double,
+				    const double[4]));
 static int get_main_diagonal(SPGCONST double rec_lattice[3][3]);
 static int sort_omegas(double v[4]);
 static double _f(const int n,
@@ -246,7 +255,26 @@ void thm_get_relative_grid_address(int relative_grid_address[24][4][3],
 }
 
 double thm_get_integration_weight(const double omega,
-				  SPGCONST double tetrahedra_omegas[24][4])
+				  SPGCONST double tetrahedra_omegas[24][4],
+				  const char function)
+{
+  if (function == 'I') {
+    return get_integration_weight(omega, tetrahedra_omegas, _g, _I);
+  } else {
+    return get_integration_weight(omega, tetrahedra_omegas, _n, _J);
+  }
+}
+
+static double
+get_integration_weight(const double omega,
+		       SPGCONST double tetrahedra_omegas[24][4],
+		       double (*gn)(const int,
+				    const double,
+				    const double[4]),
+		       double (*IJ)(const int,
+				    const int,
+				    const double,
+				    const double[4]))
 {
   int i, j, k, ci;
   double v[4];
@@ -258,22 +286,20 @@ double thm_get_integration_weight(const double omega,
     for (j = 0; j < 4; j++) {
       v[j] = tetrahedra_omegas[i][j];
     }
-    /* printf("%f %f %f %f: ", v[0], v[1], v[2], v[3], ci); */
     ci = sort_omegas(v);
-    /* printf("%f %f %f %f, %d\n", v[0], v[1], v[2], v[3], ci); */
     if (omega < v[0]) {
-      sum += _I(0, ci, omega, v) * _g(0, omega, v);
+      sum += IJ(0, ci, omega, v) * gn(0, omega, v);
     } else {
       if (omega < v[1]) {
-	sum += _I(1, ci, omega, v) * _g(1, omega, v);
+	sum += IJ(1, ci, omega, v) * gn(1, omega, v);
       } else {
 	if (omega < v[2]) {
-	  sum += _I(2, ci, omega, v) * _g(2, omega, v);
+	  sum += IJ(2, ci, omega, v) * gn(2, omega, v);
 	} else {
 	  if (omega < v[3]) {
-	    sum += _I(3, ci, omega, v) * _g(3, omega, v);
+	    sum += IJ(3, ci, omega, v) * gn(3, omega, v);
 	  } else {
-	    sum += _I(4, ci, omega, v) * _g(4, omega, v);
+	    sum += IJ(4, ci, omega, v) * gn(4, omega, v);
 	  }
 	}
       }
