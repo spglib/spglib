@@ -1,18 +1,26 @@
 #include "spglib.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 
-void test_spg_get_symmetry();
-void test_spg_get_symmetry_with_collinear_spin();
-void test_spg_get_multiplicity();
-void test_spg_find_primitive();
-void test_spg_get_international();
-void test_spg_get_schoenflies();
-void test_spg_refine_cell();
-void test_spg_get_dataset();
-void test_spg_get_ir_reciprocal_mesh();
+static void test_spg_get_symmetry(void);
+static void test_spg_get_symmetry_with_collinear_spin(void);
+static void test_spg_get_multiplicity(void);
+static void test_spg_find_primitive(void);
+static void test_spg_get_international(void);
+static void test_spg_get_schoenflies(void);
+static void test_spg_refine_cell(void);
+static void test_spg_get_dataset(void);
+static void test_spg_get_ir_reciprocal_mesh(void);
+static void test_spg_get_tetrahedra_relative_grid_address(void);
+static int grid_address_to_index(int g[3], int mesh[3]);
+static void mat_copy_matrix_d3(double a[3][3], double b[3][3]);
+static double mat_get_determinant_d3(double a[3][3]);
+static int mat_inverse_matrix_d3(double m[3][3],
+				 double a[3][3],
+				 const double precision);
 
-int main()
+int main(void)
 {
   test_spg_find_primitive();
   test_spg_get_multiplicity();
@@ -23,11 +31,12 @@ int main()
   test_spg_refine_cell();
   test_spg_get_dataset();
   test_spg_get_ir_reciprocal_mesh();
+  /* test_spg_get_tetrahedra_relative_grid_address(); */
 
   return 0;
 }
 
-void test_spg_find_primitive()
+static void test_spg_find_primitive(void)
 {
   double lattice[3][3] = { {4, 0, 0}, {0, 4, 0}, {0, 0, 4} };
   double position[][3] = {
@@ -56,7 +65,7 @@ void test_spg_find_primitive()
   }
 }
 
-void test_spg_refine_cell()
+static void test_spg_refine_cell(void)
 {
   double lattice[3][3] = { {0, 2, 2}, {2, 0, 2}, {2, 2, 0} };
 
@@ -90,7 +99,7 @@ void test_spg_refine_cell()
   }
 }
 
-void test_spg_get_international()
+static void test_spg_get_international(void)
 {
   double lattice[3][3] = {{4,0,0},{0,4,0},{0,0,3}};
   double position[][3] =
@@ -115,7 +124,7 @@ void test_spg_get_international()
   }
 }
 
-void test_spg_get_schoenflies()
+static void test_spg_get_schoenflies(void)
 {
   double lattice[3][3] = {{4,0,0},{0,4,0},{0,0,3}};
   double position[][3] =
@@ -136,7 +145,7 @@ void test_spg_get_schoenflies()
   printf("Schoenflies: %s\n", symbol);
 }
 
-void test_spg_get_multiplicity()
+static void test_spg_get_multiplicity(void)
 {
   double lattice[3][3] = { {4, 0, 0}, {0, 4, 0}, {0, 0, 4} };
   double position[][3] = {
@@ -154,7 +163,7 @@ void test_spg_get_multiplicity()
 }
 
 
-void test_spg_get_symmetry()
+static void test_spg_get_symmetry(void)
 {
   double lattice[3][3] = {{4,0,0},{0,4,0},{0,0,3}};
   double position[][3] =
@@ -205,7 +214,7 @@ void test_spg_get_symmetry()
 
 }
 
-void test_spg_get_symmetry_with_collinear_spin() {
+static void test_spg_get_symmetry_with_collinear_spin(void) {
   double lattice[3][3] = {{4,0,0},{0,4,0},{0,0,4}};
   double position[][3] =
     {
@@ -282,7 +291,7 @@ void test_spg_get_symmetry_with_collinear_spin() {
 }
 
 
-void test_spg_get_dataset()
+static void test_spg_get_dataset(void)
 {
   SpglibDataset *dataset;
   double lattice[3][3] = {{4,0,0},{0,4,0},{0,0,3}};
@@ -358,7 +367,7 @@ void test_spg_get_dataset()
 
 }
 
-void test_spg_get_ir_reciprocal_mesh()
+static void test_spg_get_ir_reciprocal_mesh(void)
 {
   double lattice[3][3] = {{4,0,0},{0,4,0},{0,0,3}};
   double position[][3] =
@@ -373,26 +382,221 @@ void test_spg_get_ir_reciprocal_mesh()
   int types[] = {1,1,2,2,2,2};
   int num_atom = 6;
   int m = 100;
-  int mesh[] = { m, m, m };
-  int is_shift[] = { 1, 1, 1 };
-  int grid_point[m*m*m][3];
-  int map[m*m*m];
+  int mesh[] = {m, m, m};
+  int is_shift[] = {1, 1, 1};
+  int grid_address[m * m * m][3];
+  int grid_mapping_table[m * m * m];
 
   printf("*** Example of spg_get_ir_reciprocal_mesh of Rutile structure ***:\n");
 
-  int num_ir = 
-    spg_get_ir_reciprocal_mesh( grid_point,
-				map,
-				mesh,
-				is_shift,
-				1,
-				lattice,
-				position,
-				types,
-				num_atom,
-				1e-5 );
+  int num_ir = spg_get_ir_reciprocal_mesh(grid_address,
+					  grid_mapping_table,
+					  mesh,
+					  is_shift,
+					  1,
+					  lattice,
+					  position,
+					  types,
+					  num_atom,
+					  1e-5);
 
   printf("Number of irreducible k-points of Rutile with\n");
   printf("100x100x100 Monkhorst-Pack mesh is %d.\n", num_ir);
 }
 
+/* frequency.dat is made to decompress frequency.dat.bz2. */
+/* The values in this file are the phonon frequencies of NaCl */
+/* with 80x80x80 mesh. Calculation was done with reducing */
+/* k-points to the irreducible k-points. */
+static void test_spg_get_tetrahedra_relative_grid_address(void)
+{
+  int i, j, k, l, q, r;
+
+  /* NaCl 20x20x20 mesh */
+  double lattice[3][3] = {
+    {0.000000000000000, 2.845150738087836, 2.845150738087836},
+    {2.845150738087836, 0.000000000000000, 2.845150738087836},
+    {2.845150738087836, 2.845150738087836, 0.000000000000000}
+  };
+  double position[][3] =
+    {{0, 0, 0},
+     {0.5, 0.5, 0.5}};
+  int types[] = {1, 2};
+  int num_atom = 2;
+  int m = 80;
+  int mesh[] = {m, m, m};
+  int is_shift[] = {0, 0, 0};
+  int grid_address[m * m * m][3];
+  int grid_mapping_table[m * m * m];
+  int weights[m * m * m];
+  int num_ir = spg_get_ir_reciprocal_mesh(grid_address,
+					  grid_mapping_table,
+					  mesh,
+					  is_shift,
+					  1,
+					  lattice,
+					  position,
+					  types,
+					  num_atom,
+					  1e-5);
+  int ir_gp[num_ir];
+  int ir_weights[num_ir];
+  int gp_ir_index[m * m * m];
+  
+  for (i = 0; i < m * m * m; i++) {
+    weights[i] = 0;
+  }
+
+  for (i = 0; i < m * m * m; i++) {
+    weights[grid_mapping_table[i]]++;
+  }
+
+  j = 0;
+  for (i = 0; i < m * m * m; i++) {
+    if (weights[i] != 0) {
+      ir_gp[j] = i;
+      ir_weights[j] = weights[i];
+      gp_ir_index[i] = j;
+      j++;
+    } else {
+      gp_ir_index[i] = gp_ir_index[grid_mapping_table[i]];
+    }
+  }
+
+  int relative_grid_address[24][4][3];
+  double rec_lat[3][3];
+
+  printf("# Number of irreducible k-points: %d\n", num_ir);
+  
+  mat_inverse_matrix_d3(rec_lat, lattice, 1e-5);
+  spg_get_tetrahedra_relative_grid_address(relative_grid_address, rec_lat);
+					     
+  /* for (i = 0; i < 24; i++) { */
+  /*   for (j = 0; j < 4; j++) { */
+  /*     printf("[%2d %2d %2d] ", */
+  /* 	     relative_grid_address[i][j][0], */
+  /* 	     relative_grid_address[i][j][1], */
+  /* 	     relative_grid_address[i][j][2]); */
+  /*   } */
+  /*   printf("\n"); */
+  /* } */
+
+  FILE *fp;
+  fp = fopen("frequency.dat", "r");
+  char * line = NULL;
+  size_t len = 0;
+  ssize_t read;
+  double frequency[num_ir * num_atom * 3];
+
+  for (i = 0; i < num_ir * num_atom * 3; i++) {
+    read = getline(&line, &len, fp);
+    if (read == -1) {
+      break;
+    }
+    frequency[i] = strtod(line, NULL);
+  }
+
+  double max_f, min_f;
+  max_f = frequency[0];
+  min_f = frequency[0];
+  for (i = 0; i < num_ir * num_atom * 3; i++) {
+    if (max_f < frequency[i]) {
+      max_f = frequency[i];
+    }
+    if (min_f > frequency[i]) {
+      min_f = frequency[i];
+    }
+  }
+  
+  printf("# Number of frequencies: %d\n", i);
+  
+  double t_omegas[24][4];
+  int g_addr[3];
+  int gp;
+  int num_freqs = 401;
+  double dos[num_freqs];
+  double omegas[num_freqs];
+  double iw;
+
+#pragma omp parallel for private(j, k, l, q, r, g_addr, gp, t_omegas, iw)
+  for (i = 0; i < num_freqs; i++) {
+    dos[i] = 0;
+    omegas[i] = (max_f - min_f) / (num_freqs - 1) * i;
+    for (j = 0; j < num_ir;  j++) {
+      for (k = 0; k < num_atom * 3; k++) {
+	for (l = 0; l < 24; l++) {
+	  for (q = 0; q < 4; q++) {
+	    for (r = 0; r < 3; r++) {
+	      g_addr[r] = grid_address[ir_gp[j]][r] +
+		relative_grid_address[l][q][r];
+	    }
+	    gp = grid_address_to_index(g_addr, mesh);
+	    t_omegas[l][q] = frequency[gp_ir_index[gp] * num_atom * 3 + k];
+	  }
+	}
+	iw = spg_get_tetrahedra_integration_weight(omegas[i], t_omegas);
+	dos[i] += iw * ir_weights[j];
+      }
+    }
+  }
+
+  for (i = 0; i < num_freqs; i++) {
+    printf("%f %f\n", omegas[i], dos[i] / m / m / m);
+  }
+    
+}
+
+static int grid_address_to_index(int g[3], int mesh[3])
+{
+  int i;
+  int gm[3];
+
+  for (i = 0; i < 3; i++) {
+    gm[i] = g[i] % mesh[i];
+    if (gm[i] < 0) {
+      gm[i] += mesh[i];
+    }
+  }
+  return (gm[0] + gm[1] * mesh[0] + gm[2] * mesh[0] * mesh[1]);
+}
+
+static void mat_copy_matrix_d3(double a[3][3], double b[3][3])
+{
+  a[0][0] = b[0][0];
+  a[0][1] = b[0][1];
+  a[0][2] = b[0][2];
+  a[1][0] = b[1][0];
+  a[1][1] = b[1][1];
+  a[1][2] = b[1][2];
+  a[2][0] = b[2][0];
+  a[2][1] = b[2][1];
+  a[2][2] = b[2][2];
+}
+
+static double mat_get_determinant_d3(double a[3][3])
+{
+  return a[0][0] * (a[1][1] * a[2][2] - a[1][2] * a[2][1])
+    + a[0][1] * (a[1][2] * a[2][0] - a[1][0] * a[2][2])
+    + a[0][2] * (a[1][0] * a[2][1] - a[1][1] * a[2][0]);
+}
+
+static int mat_inverse_matrix_d3(double m[3][3],
+				 double a[3][3],
+				 const double precision)
+{
+  double det;
+  double c[3][3];
+  det = mat_get_determinant_d3(a);
+
+  c[0][0] = (a[1][1] * a[2][2] - a[1][2] * a[2][1]) / det;
+  c[1][0] = (a[1][2] * a[2][0] - a[1][0] * a[2][2]) / det;
+  c[2][0] = (a[1][0] * a[2][1] - a[1][1] * a[2][0]) / det;
+  c[0][1] = (a[2][1] * a[0][2] - a[2][2] * a[0][1]) / det;
+  c[1][1] = (a[2][2] * a[0][0] - a[2][0] * a[0][2]) / det;
+  c[2][1] = (a[2][0] * a[0][1] - a[2][1] * a[0][0]) / det;
+  c[0][2] = (a[0][1] * a[1][2] - a[0][2] * a[1][1]) / det;
+  c[1][2] = (a[0][2] * a[1][0] - a[0][0] * a[1][2]) / det;
+  c[2][2] = (a[0][0] * a[1][1] - a[0][1] * a[1][0]) / det;
+  mat_copy_matrix_d3(m, c);
+  return 1;
+}
