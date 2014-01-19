@@ -237,26 +237,6 @@ int spgat_refine_cell(double lattice[3][3],
 		      const double symprec,
 		      const double angle_tolerance);
 
-/* Irreducible k-points are searched from the input k-points */
-/* (``kpoints``).  The result is returned as a map of */
-/* numbers (``map``), where ``kpoints`` and ``map`` have to have */
-/* the same number of elements.  The array index of ``map`` */
-/* corresponds to the reducible k-point numbering.  After finding */
-/* irreducible k-points, the indices of the irreducible k-points */
-/* are mapped to the elements of ``map``, i.e., number of unique */
-/* values in ``map`` is the number of the irreducible k-points. */
-/* The number of the irreducible k-points is also returned as the */
-/* return value. */
-int spg_get_ir_kpoints(int map[],
-		       SPGCONST double kpoints[][3],
-		       const int num_kpoints,
-		       SPGCONST double lattice[3][3],
-		       SPGCONST double position[][3],
-		       const int types[],
-		       const int num_atom,
-		       const int is_time_reversal,
-		       const double symprec);
-
 /* Irreducible reciprocal grid points are searched from uniform */
 /* mesh grid points specified by ``mesh`` and ``is_shift``. */
 /* ``mesh`` stores three integers. Reciprocal primitive vectors */
