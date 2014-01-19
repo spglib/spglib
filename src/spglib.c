@@ -583,6 +583,24 @@ int spg_get_BZ_triplets_at_q(int triplets[][3],
 				  mesh);
 }
 
+void spg_get_triplets_tetrahedra_vertices
+(int vertices[][2][24][4],
+ const int num_triplets,
+ SPGCONST int relative_grid_address[24][4][3],
+ const int mesh[3],
+ SPGCONST int triplets[][3],
+ SPGCONST int bz_grid_address[][3],
+ const int bz_map[])
+{
+  kpt_get_triplets_tetrahedra_vertices(vertices,
+				       num_triplets,
+				       relative_grid_address,
+				       mesh,
+				       triplets,
+				       bz_grid_address,
+				       bz_map);
+}
+
 /*--------------------*/
 /* tetrahedron method */
 /*--------------------*/
@@ -598,9 +616,25 @@ spg_get_tetrahedra_integration_weight(const double omega,
 				      SPGCONST double tetrahedra_omegas[24][4],
 				      const char function)
 {
-  return thm_get_integration_weight(omega, tetrahedra_omegas, function);
+  return thm_get_integration_weight(omega,
+				    tetrahedra_omegas,
+				    function);
 }
 
+void
+spg_get_tetrahedra_integration_weight_at_omegas
+(double integration_weights[],
+ const int num_omegas,
+ const double omegas[],
+ SPGCONST double tetrahedra_omegas[24][4],
+ const char function)
+{
+  thm_get_integration_weight_at_omegas(integration_weights,
+				       num_omegas,
+				       omegas,
+				       tetrahedra_omegas,
+				       function);
+}
 
 
 /*=======*/

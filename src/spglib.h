@@ -6,7 +6,9 @@
 
 /* SPGCONST is used instead of 'const' so to avoid gcc warning. */
 /* However there should be better way than this way.... */
+#ifndef SPGCONST
 #define SPGCONST
+#endif
 
 /*
   ------------------------------------------------------------------
@@ -304,7 +306,7 @@ int spg_get_stabilized_reciprocal_mesh(int grid_address[][3],
 /* Number of ir-grid-points inside Brillouin zone is returned. */
 /* It is assumed that the following arrays have the shapes of */
 /*   bz_grid_address[prod(mesh + 1)][3] */
-/*   bz_map[prod(mesh * 2 - 1)] */
+/*   bz_map[prod(mesh * 2)] */
 /* where grid_address[prod(mesh)][3]. */
 /* Each element of grid_address is mapped to each element of */
 /* bz_grid_address with keeping element order. bz_grid_address has */
@@ -321,7 +323,7 @@ int spg_get_stabilized_reciprocal_mesh(int grid_address[][3],
 /* points stored in bz_grid_address is returned. */
 /* bz_map is used to recover grid point index expanded to include BZ */
 /* surface from grid address. The grid point indices are mapped to */
-/* (mesh[0] * 2 -1) x (mesh[1] * 2 -1) x (mesh[2] * 2 -1) space (bz_map). */
+/* (mesh[0] * 2) x (mesh[1] * 2) x (mesh[2] * 2) space (bz_map). */
 int spg_relocate_BZ_grid_address(int bz_grid_address[][3],
 				 int bz_map[],
 				 SPGCONST int grid_address[][3],
@@ -350,14 +352,29 @@ int spg_get_BZ_triplets_at_q(int triplets[][3],
 			     const int weights[],
 			     const int mesh[3]);
 
+/* Tetrahedra vertices of tetrahedron method for triplets */
+void spg_get_triplets_tetrahedra_vertices
+(int vertices[][2][24][4],
+ const int num_triplets,
+ SPGCONST int relative_grid_address[24][4][3],
+ const int mesh[3],
+ SPGCONST int triplets[][3],
+ SPGCONST int bz_grid_address[][3],
+ const int bz_map[]);
+
 void
 spg_get_tetrahedra_relative_grid_address(int relative_grid_address[24][4][3],
 					 SPGCONST double rec_lattice[3][3]);
-
 double
 spg_get_tetrahedra_integration_weight(const double omega,
 				      SPGCONST double tetrahedra_omegas[24][4],
 				      const char function);
-
+void
+spg_get_tetrahedra_integration_weight_at_omegas
+(double integration_weights[],
+ const int num_omegas,
+ const double omegas[],
+ SPGCONST double tetrahedra_omegas[24][4],
+ const char function);
 #endif
 
