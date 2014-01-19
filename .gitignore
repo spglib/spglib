@@ -71,4 +71,4 @@ src/.deps/
 src/.libs/
 src/Makefile
 src/libsymspg.la
-
+stamp-h1
