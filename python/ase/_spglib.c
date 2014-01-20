@@ -8,32 +8,35 @@ static PyObject * get_spacegroup(PyObject *self, PyObject *args);
 static PyObject * get_pointgroup(PyObject *self, PyObject *args);
 static PyObject * refine_cell(PyObject *self, PyObject *args);
 static PyObject * get_symmetry(PyObject *self, PyObject *args);
-static PyObject * get_symmetry_with_collinear_spin(PyObject *self, PyObject *args);
+static PyObject *
+get_symmetry_with_collinear_spin(PyObject *self, PyObject *args);
 static PyObject * find_primitive(PyObject *self, PyObject *args);
-static PyObject * get_ir_kpoints(PyObject *self, PyObject *args);
 static PyObject * get_ir_reciprocal_mesh(PyObject *self, PyObject *args);
 static PyObject * get_stabilized_reciprocal_mesh(PyObject *self, PyObject *args);
 static PyObject * relocate_BZ_grid_address(PyObject *self, PyObject *args);
-static PyObject * get_triplets_reciprocal_mesh_at_q(PyObject *self, PyObject *args);
+static PyObject *
+get_triplets_reciprocal_mesh_at_q(PyObject *self, PyObject *args);
 static PyObject * get_BZ_triplets_at_q(PyObject *self, PyObject *args);
+static PyObject *
+get_triplets_tetrahedra_vertices(PyObject *self, PyObject *args);
+static PyObject *
+get_tetrahedra_relative_grid_address(PyObject *self, PyObject *args);
+static PyObject *
+get_tetrahedra_integration_weight(PyObject *self, PyObject *args);
+static PyObject *
+get_tetrahedra_integration_weight_at_omegas(PyObject *self, PyObject *args);
 
 static PyMethodDef functions[] = {
-  {"dataset", get_dataset, METH_VARARGS,
-   "Dataset for crystal symmetry"},
-  {"spacegroup", get_spacegroup, METH_VARARGS,
-   "International symbol"},
+  {"dataset", get_dataset, METH_VARARGS, "Dataset for crystal symmetry"},
+  {"spacegroup", get_spacegroup, METH_VARARGS, "International symbol"},
   {"pointgroup", get_pointgroup, METH_VARARGS,
    "International symbol of pointgroup"},
-  {"refine_cell", refine_cell, METH_VARARGS,
-   "Refine cell"},
-  {"symmetry", get_symmetry, METH_VARARGS,
-   "Symmetry operations"},
+  {"refine_cell", refine_cell, METH_VARARGS, "Refine cell"},
+  {"symmetry", get_symmetry, METH_VARARGS, "Symmetry operations"},
   {"symmetry_with_collinear_spin", get_symmetry_with_collinear_spin,
    METH_VARARGS, "Symmetry operations with collinear spin magnetic moments"},
   {"primitive", find_primitive, METH_VARARGS,
    "Find primitive cell in the input cell"},
-  {"ir_kpoints", get_ir_kpoints, METH_VARARGS,
-   "Irreducible k-points"},
   {"ir_reciprocal_mesh", get_ir_reciprocal_mesh, METH_VARARGS,
    "Reciprocal mesh points with map"},
   {"stabilized_reciprocal_mesh", get_stabilized_reciprocal_mesh, METH_VARARGS,
@@ -44,6 +47,15 @@ static PyMethodDef functions[] = {
    METH_VARARGS, "Triplets on reciprocal mesh points at a specific q-point"},
   {"BZ_triplets_at_q", get_BZ_triplets_at_q,
    METH_VARARGS, "Triplets in reciprocal primitive lattice are transformed to those in BZ."},
+  {"triplets_tetrahedra_vertices", get_triplets_tetrahedra_vertices,
+   METH_VARARGS, "Tetrahedra vertices of tetrahedron method for triplets"},
+  {"tetrahedra_relative_grid_address", get_tetrahedra_relative_grid_address,
+   METH_VARARGS, "Relative grid addresses of vertices of 24 tetrahedra"},
+  {"tetrahedra_integration_weight", get_tetrahedra_integration_weight,
+   METH_VARARGS, "Integration weight for tetrahedron method"},
+  {"tetrahedra_integration_weight_at_omegas",
+   get_tetrahedra_integration_weight_at_omegas,
+   METH_VARARGS, "Integration weight for tetrahedron method at omegas"},
   {NULL, NULL, 0, NULL}
 };
 
@@ -189,23 +201,13 @@ static PyObject * get_pointgroup(PyObject *self, PyObject *args)
     return NULL;
   }
 
-  int *rot_int = (int*)rotations->data;
-
-  int i, j, k;
+  int i, j;
   int trans_mat[3][3];
   char symbol[6];
   PyObject* array, * mat, * vec;
-    
-  const int num_rot = rotations->dimensions[0];
-  int rot[num_rot][3][3];
-  for (i = 0; i < num_rot; i++) {
-    for (j = 0; j < 3; j++) {
-      for (k = 0; k < 3; k++) {
-	rot[i][j][k] = (int) rot_int[i*9 + j*3 + k];
-      }
-    }
-  }
 
+  SPGCONST int(*rot)[3][3] = (int(*)[3][3])rotations->data;
+  const int num_rot = rotations->dimensions[0];
   const int ptg_num = spg_get_pointgroup(symbol, trans_mat, rot, num_rot);
 
   /* Transformation matrix */
@@ -290,7 +292,6 @@ static PyObject * find_primitive(PyObject *self, PyObject *args)
 
 static PyObject * get_symmetry(PyObject *self, PyObject *args)
 {
-  int i, j, k;
   double symprec, angle_tolerance;
   PyArrayObject* lattice;
   PyArrayObject* position;
@@ -312,11 +313,9 @@ static PyObject * get_symmetry(PyObject *self, PyObject *args)
   SPGCONST double (*pos)[3] = (double(*)[3])position->data;
   const int* types = (int*)atom_type->data;
   const int num_atom = position->dimensions[0];
-  int *rot_int = (int*)rotation->data;
+  int (*rot)[3][3] = (int(*)[3][3])rotation->data;
   double (*trans)[3] = (double(*)[3])translation->data;
   const int num_sym_from_array_size = rotation->dimensions[0];
-
-  int rot[num_sym_from_array_size][3][3];
   
   /* num_sym has to be larger than num_sym_from_array_size. */
   const int num_sym = spgat_get_symmetry(rot,
@@ -328,21 +327,12 @@ static PyObject * get_symmetry(PyObject *self, PyObject *args)
 					 num_atom,
 					 symprec,
 					 angle_tolerance);
-  for (i = 0; i < num_sym; i++) {
-    for (j = 0; j < 3; j++) {
-      for (k = 0; k < 3; k++) {
-	rot_int[i*9 + j*3 + k] = (int)rot[i][j][k];
-      }
-    }
-  }
-
   return PyInt_FromLong((long) num_sym);
 }
 
 static PyObject * get_symmetry_with_collinear_spin(PyObject *self,
 						   PyObject *args)
 {
-  int i, j, k;
   double symprec, angle_tolerance;
   PyArrayObject* lattice;
   PyArrayObject* position;
@@ -367,12 +357,10 @@ static PyObject * get_symmetry_with_collinear_spin(PyObject *self,
   const double *spins = (double*) magmom->data;
   const int* types = (int*)atom_type->data;
   const int num_atom = position->dimensions[0];
-  int *rot_int = (int*)rotation->data;
+  int (*rot)[3][3] = (int(*)[3][3])rotation->data;
   double (*trans)[3] = (double(*)[3])translation->data;
   const int num_sym_from_array_size = rotation->dimensions[0];
 
-  int rot[num_sym_from_array_size][3][3];
-  
   /* num_sym has to be larger than num_sym_from_array_size. */
   const int num_sym = 
     spgat_get_symmetry_with_collinear_spin(rot,
@@ -385,50 +373,7 @@ static PyObject * get_symmetry_with_collinear_spin(PyObject *self,
 					   num_atom,
 					   symprec,
 					   angle_tolerance);
-  for (i = 0; i < num_sym; i++) {
-    for (j = 0; j < 3; j++) {
-      for (k = 0; k < 3; k++) {
-	rot_int[i*9 + j*3 + k] = (int)rot[i][j][k];
-      }
-    }
-  }
-
   return PyInt_FromLong((long) num_sym);
-}
-
-static PyObject * get_ir_kpoints(PyObject *self, PyObject *args)
-{
-  double symprec;
-  int is_time_reversal;
-  PyArrayObject* kpoint;
-  PyArrayObject* kpoint_map;
-  PyArrayObject* lattice;
-  PyArrayObject* position;
-  PyArrayObject* atom_type;
-  if (!PyArg_ParseTuple(args, "OOOOOid", &kpoint_map, &kpoint, &lattice, &position,
-			&atom_type, &is_time_reversal, &symprec))
-    return NULL;
-
-  SPGCONST double (*lat)[3] = (double(*)[3])lattice->data;
-  SPGCONST double (*pos)[3] = (double(*)[3])position->data;
-  SPGCONST double (*kpts)[3] = (double(*)[3])kpoint->data;
-  const int num_kpoint = kpoint->dimensions[0];
-  const int* types = (int*)atom_type->data;
-  const int num_atom = position->dimensions[0];
-  int *map = (int*)kpoint_map->data;
-
-  /* num_sym has to be larger than num_sym_from_array_size. */
-  const int num_ir_kpt = spg_get_ir_kpoints(map,
-					    kpts,
-					    num_kpoint,
-					    lat,
-					    pos,
-					    types,
-					    num_atom,
-					    is_time_reversal,
-					    symprec);
-
-  return PyInt_FromLong((long) num_ir_kpt);
 }
 
 static PyObject * get_ir_reciprocal_mesh(PyObject *self, PyObject *args)
@@ -480,7 +425,6 @@ static PyObject * get_ir_reciprocal_mesh(PyObject *self, PyObject *args)
 
 static PyObject * get_stabilized_reciprocal_mesh(PyObject *self, PyObject *args)
 {
-  int i, j, k;
   PyArrayObject* grid_address_py;
   PyArrayObject* map;
   PyArrayObject* mesh;
@@ -503,16 +447,8 @@ static PyObject * get_stabilized_reciprocal_mesh(PyObject *self, PyObject *args)
   int *map_int = (int*)map->data;
   const int* mesh_int = (int*)mesh->data;
   const int* is_shift_int = (int*)is_shift->data;
-  const int* rot_int = (int*)rotations->data;
+  SPGCONST int (*rot)[3][3] = (int(*)[3][3])rotations->data;
   const int num_rot = rotations->dimensions[0];
-  int rot[num_rot][3][3];
-  for (i = 0; i < num_rot; i++) {
-    for (j = 0; j < 3; j++) {
-      for (k = 0; k < 3; k++) {
-	rot[i][j][k] = rot_int[i*9 + j*3 + k];
-      }
-    }
-  }
   SPGCONST double (*q)[3] = (double(*)[3])qpoints->data;
   const int num_q = qpoints->dimensions[0];
 
@@ -586,24 +522,13 @@ static PyObject * get_triplets_reciprocal_mesh_at_q(PyObject *self, PyObject *ar
     return NULL;
   }
 
-  int i, j, k;
-
   int (*grid_address)[3] = (int(*)[3])grid_address_py->data;
   int *weights_int = (int*)weights->data;
   int *third_q_int = (int*)third_q->data;
 
   const int* mesh_int = (int*)mesh->data;
-  const int* rot_int = (int*)rotations->data;
+  SPGCONST int (*rot)[3][3] = (int(*)[3][3])rotations->data;
   const int num_rot = rotations->dimensions[0];
-  int rot[num_rot][3][3];
-  for (i = 0; i < num_rot; i++) {
-    for (j = 0; j < 3; j++) {
-      for (k = 0; k < 3; k++) {
-	rot[i][j][k] = rot_int[i*9 + j*3 + k];
-      }
-    }
-  }
-
   const int num_ir = 
     spg_get_triplets_reciprocal_mesh_at_q(weights_int,
 					  grid_address,
@@ -653,4 +578,115 @@ static PyObject * get_BZ_triplets_at_q(PyObject *self, PyObject *args)
   return PyInt_FromLong((long) num_ir);
 }
 
+static PyObject *
+get_triplets_tetrahedra_vertices(PyObject *self, PyObject *args)
+{
+  PyArrayObject* vertices_py;
+  PyArrayObject* relative_grid_address_py;
+  PyArrayObject* mesh_py;
+  PyArrayObject* triplets_py;
+  PyArrayObject* bz_grid_address_py;
+  PyArrayObject* bz_map_py;
+  if (!PyArg_ParseTuple(args, "OOOOOO",
+			&vertices_py,
+			&relative_grid_address_py,
+			&mesh_py,
+			&triplets_py,
+			&bz_grid_address_py,
+			&bz_map_py)) {
+    return NULL;
+  }
 
+  SPGCONST int (*vertices)[2][24][4] = (int(*)[2][24][4])vertices_py->data;
+  SPGCONST int (*relative_grid_address)[4][3] =
+    (int(*)[4][3])relative_grid_address_py->data;
+  const int *mesh = (int*)mesh_py->data;
+  SPGCONST int (*triplets)[3] = (int(*)[3])triplets_py->data;
+  const int num_triplets = (int)triplets_py->dimensions[0];
+  SPGCONST int (*bz_grid_address)[3] = (int(*)[3])bz_grid_address_py->data;
+  const int *bz_map = (int*)bz_map_py->data;
+  
+  spg_get_triplets_tetrahedra_vertices(vertices,
+				       num_triplets,
+				       relative_grid_address,
+				       mesh,
+				       triplets,
+				       bz_grid_address,
+				       bz_map);
+  Py_RETURN_NONE;
+}
+
+static PyObject *
+get_tetrahedra_relative_grid_address(PyObject *self, PyObject *args)
+{
+  PyArrayObject* relative_grid_address_py;
+  PyArrayObject* reciprocal_lattice_py;
+  if (!PyArg_ParseTuple(args, "OO",
+			&relative_grid_address_py,
+			&reciprocal_lattice_py)) {
+    return NULL;
+  }
+
+  int (*relative_grid_address)[4][3] =
+    (int(*)[4][3])relative_grid_address_py->data;
+  SPGCONST double (*reciprocal_lattice)[3] =
+    (double(*)[3])reciprocal_lattice_py->data;
+
+  spg_get_tetrahedra_relative_grid_address(relative_grid_address,
+					   reciprocal_lattice);
+
+  Py_RETURN_NONE;
+}
+
+static PyObject *
+get_tetrahedra_integration_weight(PyObject *self, PyObject *args)
+{
+  double omega;
+  PyArrayObject* tetrahedra_omegas_py;
+  char function;
+  if (!PyArg_ParseTuple(args, "dOc",
+			&omega,
+			&tetrahedra_omegas_py,
+			&function)) {
+    return NULL;
+  }
+
+  SPGCONST double (*tetrahedra_omegas)[4] =
+    (double(*)[4])tetrahedra_omegas_py->data;
+  
+  double iw = spg_get_tetrahedra_integration_weight(omega,
+						    tetrahedra_omegas,
+						    function);
+
+  return PyFloat_FromDouble(iw);
+}
+
+static PyObject *
+get_tetrahedra_integration_weight_at_omegas(PyObject *self, PyObject *args)
+{
+  PyArrayObject* integration_weights_py;
+  PyArrayObject* omegas_py;
+  PyArrayObject* tetrahedra_omegas_py;
+  char function;
+  if (!PyArg_ParseTuple(args, "OOOc",
+			&integration_weights_py,
+			&omegas_py,
+			&tetrahedra_omegas_py,
+			&function)) {
+    return NULL;
+  }
+
+  const double *omegas = (double*)omegas_py->data;
+  double *iw = (double*)integration_weights_py->data;
+  const int num_omegas = (int)omegas_py->dimensions[0];
+  SPGCONST double (*tetrahedra_omegas)[4] =
+    (double(*)[4])tetrahedra_omegas_py->data;
+  
+  spg_get_tetrahedra_integration_weight_at_omegas(iw,
+						  num_omegas,
+						  omegas,
+						  tetrahedra_omegas,
+						  function);
+
+  Py_RETURN_NONE;
+}

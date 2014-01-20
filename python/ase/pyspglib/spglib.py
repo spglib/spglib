@@ -202,23 +202,6 @@ def find_primitive(bulk, symprec=1e-5, angle_tolerance=-1.0):
     else:
         return None, None, None
   
-def get_ir_kpoints(kpoint,
-                   bulk,
-                   is_time_reversal=True,
-                   symprec=1e-5):
-    """
-    Retrun irreducible kpoints
-    """
-    mapping = np.zeros(kpoint.shape[0], dtype='intc')
-    spg.ir_kpoints(mapping,
-                   kpoint,
-                   bulk.get_cell().T.copy(),
-                   bulk.get_scaled_positions().copy(),
-                   np.array(bulk.get_atomic_numbers(), dtype='intc').copy(),
-                   is_time_reversal * 1,
-                   symprec)
-    return mapping
-  
 def get_ir_reciprocal_mesh(mesh,
                            bulk,
                            is_shift=np.zeros(3, dtype='intc'),
@@ -249,10 +232,35 @@ def relocate_BZ_grid_address(grid_address,
                              mesh,
                              reciprocal_lattice, # column vectors
                              is_shift=np.zeros(3, dtype='intc')):
+    """
+    Grid addresses are relocated inside Brillouin zone. 
+    Number of ir-grid-points inside Brillouin zone is returned. 
+    It is assumed that the following arrays have the shapes of 
+      bz_grid_address[prod(mesh + 1)][3] 
+      bz_map[prod(mesh * 2)] 
+    where grid_address[prod(mesh)][3]. 
+    Each element of grid_address is mapped to each element of 
+    bz_grid_address with keeping element order. bz_grid_address has 
+    larger memory space to represent BZ surface even if some points 
+    on a surface are translationally equivalent to the other points 
+    on the other surface. Those equivalent points are added successively 
+    as grid point numbers to bz_grid_address. Those added grid points 
+    are stored after the address of end point of grid_address, i.e. 
+                                                                          
+    |-----------------array size of bz_grid_address---------------------| 
+    |--grid addresses similar to grid_address--|--newly added ones--|xxx| 
+                                                                          
+    where xxx means the memory space that may not be used. Number of grid 
+    points stored in bz_grid_address is returned. 
+    bz_map is used to recover grid point index expanded to include BZ 
+    surface from grid address. The grid point indices are mapped to 
+    (mesh[0] * 2) x (mesh[1] * 2) x (mesh[2] * 2) space (bz_map).
+    """
+    
     bz_grid_address = np.zeros(
         ((mesh[0] + 1) * (mesh[1] + 1) * (mesh[2] + 1), 3), dtype='intc')
     bz_map = np.zeros(
-        (2 * mesh[0] - 1) * (2 * mesh[1] - 1) * (2 * mesh[2] - 1), dtype='intc')
+        (2 * mesh[0]) * (2 * mesh[1]) * (2 * mesh[2]), dtype='intc')
     num_bz_ir = spg.BZ_grid_address(
         bz_grid_address,
         bz_map,
@@ -328,4 +336,54 @@ def get_BZ_triplets_at_q(grid_point,
                                       weights,
                                       np.array(mesh, dtype='intc').copy())
     return triplets
-                           
+
+def get_triplets_tetrahedra_vertices(relative_grid_address,
+                                     mesh,
+                                     triplets,
+                                     bz_grid_address,
+                                     bz_map):
+    num_tripltes = len(triplets)
+    vertices = np.zeros((num_tripltes, 2, 24, 4), dtype='intc')
+    num_ir_ret = spg.triplets_tetrahedra_vertices(
+        vertices,
+        relative_grid_address,
+        np.array(mesh, dtype='intc').copy(),
+        triplets,
+        bz_grid_address,
+        bz_map)
+
+    return vertices
+
+def get_tetrahedra_relative_grid_address(reciprocal_lattice):
+    """
+    reciprocal_lattice:
+      column vectors of reciprocal lattice which can be obtained by
+      reciprocal_lattice = np.linalg.inv(bulk.get_cell())
+    """
+    
+    relative_grid_address = np.zeros((24, 4, 3), dtype='intc')
+    spg.tetrahedra_relative_grid_address(relative_grid_address,
+                                         np.array(reciprocal_lattice,
+                                                  dtype='double').copy())
+    return relative_grid_address
+
+    
+def get_tetrahedra_integration_weight(omegas,
+                                      tetrahedra_omegas,
+                                      function='I'):
+    if isinstance(omegas, float):
+        return spg.tetrahedra_integration_weight(
+            omegas,
+            np.array(tetrahedra_omegas, dtype='double').copy(),
+            function)
+    else:
+        integration_weights = np.zeros(len(omegas), dtype='double')
+        spg.tetrahedra_integration_weight_at_omegas(
+            integration_weights,
+            np.array(omegas, dtype='double'),
+            np.array(tetrahedra_omegas, dtype='double').copy(),
+            function)
+        return integration_weights
+
+                                      
+                                               

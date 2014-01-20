@@ -145,20 +145,3 @@ print "  9x9x8 Monkhorst-Pack mesh is ", num_ir_kpt, "(48)."
 print ""
 
 
-mesh = np.array([8,8,8])
-kpoints = []
-for i in range(mesh[0]):
-  for j in range(mesh[1]):
-    for k in range(mesh[2]):
-      kpoints.append([float(i)/mesh[0],
-                      float(j)/mesh[1],
-                      float(k)/mesh[2]])
-kpoints = np.array(kpoints) + 0.5/mesh
-kpoints = kpoints - 1 * ( kpoints > 0.5 ) 
-mapping = spglib.get_ir_kpoints( kpoints, rutile )
-num_ir_kpt = len( np.unique( mapping ) )
-print "[get_ir_kpoints]"
-print "  Number of irreducible k-points of Rutile with"
-print "  8x8x8 Monkhorst-Pack mesh is ", num_ir_kpt, "(40)."
-print ""
-
