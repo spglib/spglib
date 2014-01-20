@@ -12,7 +12,10 @@ static void test_spg_get_schoenflies(void);
 static void test_spg_refine_cell(void);
 static void test_spg_get_dataset(void);
 static void test_spg_get_ir_reciprocal_mesh(void);
+static void test_spg_get_stabilized_reciprocal_mesh(void);
 static void test_spg_get_tetrahedra_relative_grid_address(void);
+static void test_spg_relocate_BZ_grid_address(void);
+static void test_spg_triplets_reciprocal_mesh_at_q(void);
 static int grid_address_to_index(int g[3], int mesh[3]);
 static void mat_copy_matrix_d3(double a[3][3], double b[3][3]);
 static double mat_get_determinant_d3(double a[3][3]);
@@ -31,7 +34,10 @@ int main(void)
   test_spg_refine_cell();
   test_spg_get_dataset();
   test_spg_get_ir_reciprocal_mesh();
-  /* test_spg_get_tetrahedra_relative_grid_address(); */
+  test_spg_get_stabilized_reciprocal_mesh();
+  test_spg_relocate_BZ_grid_address();
+  test_spg_triplets_reciprocal_mesh_at_q();
+  test_spg_get_tetrahedra_relative_grid_address();
 
   return 0;
 }
@@ -323,11 +329,11 @@ static void test_spg_get_dataset(void)
   }
 
   printf("*** Example of spg_get_dataset (Rutile two unit cells) ***:\n");
-  dataset = spg_get_dataset( lattice,
-			     position,
-			     types,
-			     num_atom,
-			     1e-5 );
+  dataset = spg_get_dataset(lattice,
+			    position,
+			    types,
+			    num_atom,
+			    1e-5);
   
   printf("International: %s (%d)\n", dataset->international_symbol, dataset->spacegroup_number );
   printf("Hall symbol:   %s\n", dataset->hall_symbol );
@@ -344,14 +350,14 @@ static void test_spg_get_dataset(void)
   }
   printf("\n");
   printf("Equivalent atoms:\n");
-  for ( i = 0; i < dataset->n_atoms; i++ ) {
+  for (i = 0; i < dataset->n_atoms; i++) {
     printf("%d ", dataset->equivalent_atoms[i]);
   }
   printf("\n");
   
-  for ( i = 0; i < dataset->n_operations; i++ ) {
+  for (i = 0; i < dataset->n_operations; i++) {
     printf("--- %d ---\n", i + 1);
-    for ( j = 0; j < 3; j++ ) {
+    for (j = 0; j < 3; j++) {
       printf("%2d %2d %2d\n",
 	     dataset->rotations[i][j][0],
 	     dataset->rotations[i][j][1],
@@ -363,7 +369,7 @@ static void test_spg_get_dataset(void)
 	   dataset->translations[i][2]);
   }
 
-  spg_free_dataset( dataset );
+  spg_free_dataset(dataset);
 
 }
 
@@ -381,7 +387,7 @@ static void test_spg_get_ir_reciprocal_mesh(void)
     };
   int types[] = {1,1,2,2,2,2};
   int num_atom = 6;
-  int m = 100;
+  int m = 40;
   int mesh[] = {m, m, m};
   int is_shift[] = {1, 1, 1};
   int grid_address[m * m * m][3];
@@ -401,7 +407,178 @@ static void test_spg_get_ir_reciprocal_mesh(void)
 					  1e-5);
 
   printf("Number of irreducible k-points of Rutile with\n");
-  printf("100x100x100 Monkhorst-Pack mesh is %d.\n", num_ir);
+  printf("40x40x40 Monkhorst-Pack mesh is %d (4200).\n", num_ir);
+}
+
+static void test_spg_get_stabilized_reciprocal_mesh(void)
+{
+  SpglibDataset *dataset;
+  double lattice[3][3] = {{4,0,0},{0,4,0},{0,0,3}};
+  double position[][3] =
+    {
+      {0,0,0},
+      {0.5,0.5,0.5},
+      {0.3,0.3,0},
+      {0.7,0.7,0},
+      {0.2,0.8,0.5},
+      {0.8,0.2,0.5},
+    };
+  int types[] = {1,1,2,2,2,2};
+  int num_atom = 6;
+
+  dataset = spg_get_dataset(lattice,
+			    position,
+			    types,
+			    num_atom,
+			    1e-5);
+
+  
+  int m = 40;
+  int mesh[] = {m, m, m};
+  int is_shift[] = {1, 1, 1};
+  int grid_address[m * m * m][3];
+  int grid_mapping_table[m * m * m];
+  double q[] = {0, 0.5, 0.5};
+
+  printf("*** Example of spg_get_stabilized_reciprocal_mesh of Rutile structure ***:\n");
+
+  int num_ir = spg_get_stabilized_reciprocal_mesh(grid_address,
+						  grid_mapping_table,
+						  mesh,
+						  is_shift,
+						  1,
+						  dataset->n_operations,
+						  dataset->rotations,
+						  1,
+						  (double(*)[3])q);
+  spg_free_dataset(dataset);
+
+  printf("Number of irreducible k-points stabilized by q=(0, 1/2, 1/2) of Rutile with\n");
+  printf("40x40x40 Monkhorst-Pack mesh is %d (8000).\n", num_ir);
+}
+
+static void test_spg_relocate_BZ_grid_address(void)
+{
+  double rec_lattice[3][3] = {{-0.17573761,  0.17573761,  0.17573761},
+			      { 0.17573761, -0.17573761,  0.17573761},
+			      { 0.17573761,  0.17573761, -0.17573761}};
+  int rotations[][3][3] = {{{1, 0, 0},
+			    {0, 1, 0},
+			    {0, 0, 1}}};
+
+  
+  int m = 40;
+  int mesh[] = {m, m, m};
+  int is_shift[] = {0, 0, 0};
+  int bz_grid_address[(m + 1) * (m + 1) * (m + 1)][3];
+  int bz_map[m * m * m * 8];
+  int grid_address[m * m * m][3];
+  int grid_mapping_table[m * m * m];
+  double q[] = {0, 0, 0};
+
+  int num_ir = spg_get_stabilized_reciprocal_mesh(grid_address,
+						  grid_mapping_table,
+						  mesh,
+						  is_shift,
+						  1,
+						  1,
+						  rotations,
+						  1,
+						  (double(*)[3])q);
+  
+
+  printf("*** Example of spg_relocate_BZ_grid_address of NaCl structure ***:\n");
+
+  int num_q = spg_relocate_BZ_grid_address(bz_grid_address,
+					   bz_map,
+					   grid_address,
+					   mesh,
+					   rec_lattice,
+					   is_shift);
+
+  printf("Number of k-points of NaCl Brillouin zone\n");
+  printf("with Gamma-centered 40x40x40 Monkhorst-Pack mesh is %d (65861).\n", num_q);
+}
+
+static void test_spg_triplets_reciprocal_mesh_at_q(void)
+{
+  SpglibDataset *dataset;
+  double lattice[3][3] = {
+    {0.000000000000000, 2.845150738087836, 2.845150738087836},
+    {2.845150738087836, 0.000000000000000, 2.845150738087836},
+    {2.845150738087836, 2.845150738087836, 0.000000000000000}
+  };
+  double position[][3] =
+    {{0, 0, 0},
+     {0.5, 0.5, 0.5}};
+  int types[] = {1, 2};
+  int num_atom = 2;
+  dataset = spg_get_dataset(lattice,
+			    position,
+			    types,
+			    num_atom,
+			    1e-5);
+  
+  printf("*** Example of spg_triplets_reciprocal_mesh_at_q of NaCl structure ***:\n");
+
+  int grid_point = 10;
+  int m = 20;
+  int mesh[] = {m, m, m};
+  int is_shift[] = {1, 1, 1};
+  int grid_address[m * m * m][3];
+  int weights[m * m * m];
+  int third_q[m * m * m];
+  int num_ir_tp = spg_get_triplets_reciprocal_mesh_at_q(weights,
+							grid_address,
+							third_q,
+							grid_point,
+							mesh,
+							1,
+							dataset->n_operations,
+							dataset->rotations);
+  spg_free_dataset(dataset);
+
+  printf("Number of k-point triplets of NaCl at grid point 10 = (1/2, 0, 0)\n");
+  printf("with Gamma-centered 20x20x20 Monkhorst-Pack mesh is %d (396).\n", num_ir_tp);
+
+  printf("*** Example of spg_get_BZ_triplets_at_q of NaCl structure ***:\n");
+  int grid_mapping_table[m * m * m];
+  int triplets[num_ir_tp][3];
+  int bz_grid_address[(m + 1) * (m + 1) * (m + 1)][3];
+  int bz_map[m * m * m * 8];
+  int rotations[][3][3] = {{{1, 0, 0},
+			    {0, 1, 0},
+			    {0, 0, 1}}};
+  double rec_lattice[3][3] = {{-0.17573761,  0.17573761,  0.17573761},
+			      { 0.17573761, -0.17573761,  0.17573761},
+			      { 0.17573761,  0.17573761, -0.17573761}};
+  double q[] = {0, 0, 0};
+
+  int num_ir = spg_get_stabilized_reciprocal_mesh(grid_address,
+						  grid_mapping_table,
+						  mesh,
+						  is_shift,
+						  1,
+						  1,
+						  rotations,
+						  1,
+						  (double(*)[3])q);
+
+  int num_q_bz = spg_relocate_BZ_grid_address(bz_grid_address,
+					      bz_map,
+					      grid_address,
+					      mesh,
+					      rec_lattice,
+					      is_shift);
+  int num_ir_tp2 = spg_get_BZ_triplets_at_q(triplets,
+					    grid_point,
+					    bz_grid_address,
+					    bz_map,
+					    weights,
+					    mesh);
+  printf("Number of k-point triplets of NaCl at grid point 10 = (1/2, 0, 0)\n");
+  printf("with Gamma-centered 20x20x20 Monkhorst-Pack mesh is %d (396).\n", num_ir_tp2);
+  
 }
 
 /* frequency.dat is in the example directory. */
@@ -411,6 +588,9 @@ static void test_spg_get_ir_reciprocal_mesh(void)
 /* (http://phonopy.sf.net/) */
 static void test_spg_get_tetrahedra_relative_grid_address(void)
 {
+  printf("*** Example of tetrahedron method of NaCl to calculate DOS ***:\n");
+  printf("Read data from frequency.dat and write DOS to dos.dat.\n");
+
   int i, j, k, l, q, r;
 
   /* NaCl 20x20x20 mesh */
@@ -467,7 +647,7 @@ static void test_spg_get_tetrahedra_relative_grid_address(void)
   int relative_grid_address[24][4][3];
   double rec_lat[3][3];
 
-  printf("# Number of irreducible k-points: %d\n", num_ir);
+  printf("Number of irreducible k-points: %d\n", num_ir);
   
   mat_inverse_matrix_d3(rec_lat, lattice, 1e-5);
   spg_get_tetrahedra_relative_grid_address(relative_grid_address, rec_lat);
@@ -497,6 +677,8 @@ static void test_spg_get_tetrahedra_relative_grid_address(void)
     frequency[i] = strtod(line, NULL);
   }
 
+  fclose(fp);
+
   double max_f, min_f;
   max_f = frequency[0];
   min_f = frequency[0];
@@ -509,7 +691,7 @@ static void test_spg_get_tetrahedra_relative_grid_address(void)
     }
   }
   
-  printf("# Number of frequencies: %d\n", i);
+  printf("Number of frequencies: %d\n", i);
   
   double t_omegas[24][4];
   int g_addr[3];
@@ -545,16 +727,19 @@ static void test_spg_get_tetrahedra_relative_grid_address(void)
     }
   }
 
+  fp = fopen("dos.dat", "w");
+
   for (i = 0; i < num_freqs; i++) {
-    printf("%f %f\n", omegas[i], dos[i] / m / m / m);
+    fprintf(fp, "%f %f\n", omegas[i], dos[i] / m / m / m);
   }
 
-  printf("\n\n");
+  fprintf(fp, "\n\n");
   
   for (i = 0; i < num_freqs; i++) {
-    printf("%f %f\n", omegas[i], integral_dos[i] / m / m / m);
+    fprintf(fp, "%f %f\n", omegas[i], integral_dos[i] / m / m / m);
   }
     
+  fclose(fp);
 }
 
 static int grid_address_to_index(int g[3], int mesh[3])
