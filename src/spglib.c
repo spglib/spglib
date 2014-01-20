@@ -538,7 +538,7 @@ int spg_get_BZ_triplets_at_q(int triplets[][3],
 			     const int grid_point,
 			     SPGCONST int bz_grid_address[][3],
 			     const int bz_map[],
-			     const int weights[],
+			     const int triplet_weights[],
 			     const int mesh[3])
 
 {
@@ -546,7 +546,7 @@ int spg_get_BZ_triplets_at_q(int triplets[][3],
 				  grid_point,
 				  bz_grid_address,
 				  bz_map,
-				  weights,
+				  triplet_weights,
 				  mesh);
 }
 
