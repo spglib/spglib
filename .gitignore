@@ -72,3 +72,9 @@ src/.libs/
 src/Makefile
 src/libsymspg.la
 stamp-h1
+
+example/a.out
+example/defs_basis.mod
+example/example
+example/spglib_f08.mod
+
