@@ -9,6 +9,7 @@ static void test_spg_get_multiplicity(void);
 static void test_spg_find_primitive(void);
 static void test_spg_get_international(void);
 static void test_spg_get_schoenflies(void);
+static void test_spg_get_spacegroup_type(void);
 static void test_spg_refine_cell(void);
 static void test_spg_get_dataset(void);
 static void test_spg_get_ir_reciprocal_mesh(void);
@@ -36,6 +37,7 @@ int main(void)
   test_spg_get_symmetry_with_collinear_spin();
   test_spg_get_international();
   test_spg_get_schoenflies();
+  test_spg_get_spacegroup_type();
   test_spg_refine_cell();
   test_spg_get_dataset();
   test_spg_get_ir_reciprocal_mesh();
@@ -154,6 +156,21 @@ static void test_spg_get_schoenflies(void)
   spg_get_schoenflies(symbol, lattice, position, types, num_atom, 1e-5);
   printf("*** Example of spg_get_schoenflies ***:\n");
   printf("Schoenflies: %s\n", symbol);
+}
+
+static void test_spg_get_spacegroup_type(void)
+{
+  SpglibSpacegroupType spgtype;
+  spgtype = spg_get_spacegroup_type(446);
+
+  printf("*** Example of spg_get_spacegroup_type ***:\n");
+  printf("Number:        %d\n", spgtype.number);
+  printf("Schoenflies:   %s\n", spgtype.schoenflies);
+  printf("International: %s\n", spgtype.international);
+  printf("International: %s\n", spgtype.international_full);
+  printf("International: %s\n", spgtype.international_short);
+  printf("Hall symbol:   %s\n", spgtype.hall_symbol);
+  
 }
 
 static void test_spg_get_multiplicity(void)
