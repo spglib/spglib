@@ -228,55 +228,39 @@ int kpt_get_BZ_triplets_at_q(int triplets[][3],
 			      mesh);
 }
 
-void kpt_get_triplets_tetrahedra_vertices
-(int vertices[][2][24][4],
- const int num_triplets,
- SPGCONST int relative_grid_address[24][4][3],
- const int mesh[3],
- SPGCONST int triplets[][3],
- SPGCONST int bz_grid_address[][3],
- const int bz_map[])
+void kpt_get_neighboring_grid_points(int neighboring_grid_points[],
+				     const int grid_point,
+				     SPGCONST int relative_grid_address[][3],
+				     const int num_relative_grid_address,
+				     const int mesh[3],
+				     SPGCONST int bz_grid_address[][3],
+				     const int bz_map[])
 {
   int mesh_double[3], bzmesh[3], bzmesh_double[3],
     address_double[3], bz_address_double[3];
-  int i, j, k, l, m, gp, bz_gp;
+  int i, j, bz_gp;
 
   for (i = 0; i < 3; i++) {
     mesh_double[i] = mesh[i] * 2;
     bzmesh[i] = mesh[i] * 2;
     bzmesh_double[i] = bzmesh[i] * 2;
   }
-
-#pragma omp parallel for private(j, k, l, m, address_double, bz_address_double, gp, bz_gp)
-  for (i = 0; i < num_triplets; i++) {
-    for (j = 1; j < 3; j++) {
-      for (k = 0; k < 24; k++) {
-	for (l = 0; l < 4; l++) {
-	  for (m = 0; m < 3; m++) {
-	    address_double[m] = bz_grid_address[triplets[i][j]][m] * 2;
-	    if (j == 1) {
-	      address_double[m] += relative_grid_address[k][l][m] * 2;
-	    } else {
-	      address_double[m] -= relative_grid_address[k][l][m] * 2;
-	    }
-	    bz_address_double[m] = address_double[m];
-	  }
-	  get_vector_modulo(bz_address_double, bzmesh_double);
-	  bz_gp = bz_map[get_grid_point(bz_address_double, bzmesh)];
-	  if (bz_gp == -1) {
-	    get_vector_modulo(address_double, mesh_double);
-	    gp = get_grid_point(address_double, mesh);
-	    vertices[i][j - 1][k][l] = gp;
-	  } else {
-	    vertices[i][j - 1][k][l] = bz_gp;
-	  }
-	}
-      }
+  for (i = 0; i < num_relative_grid_address; i++) {
+    for (j = 0; j < 3; j++) {
+      address_double[j] = (bz_grid_address[grid_point][j] +
+			   relative_grid_address[i][j]) * 2;
+      bz_address_double[j] = address_double[j];
+    }
+    get_vector_modulo(bz_address_double, bzmesh_double);
+    bz_gp = bz_map[get_grid_point(bz_address_double, bzmesh)];
+    if (bz_gp == -1) {
+      get_vector_modulo(address_double, mesh_double);
+      neighboring_grid_points[i] = get_grid_point(address_double, mesh);
+    } else {
+      neighboring_grid_points[i] = bz_gp;
     }
   }
 }
-
-
 
 static MatINT *get_point_group_reciprocal(const MatINT * rotations,
 					  const int is_time_reversal)
