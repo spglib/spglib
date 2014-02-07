@@ -195,11 +195,7 @@ searched. The lattice is stored in ``smallest_lattice``.
   			   const double symprec);
 
 Return exact number of symmetry operations. This function may be used
-in advance to allocate memoery space for symmetry operations. Only
-upper bound is required, ``spg_get_max_multiplicity`` can be used
-instead of this function and ``spg_get_max_multiplicity`` is faster
-than this function.
-
+in advance to allocate memoery space for symmetry operations.
 
 ``spg_get_ir_reciprocal_mesh``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
