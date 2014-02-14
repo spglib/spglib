@@ -8527,7 +8527,7 @@ SpacegroupType spgdb_get_spacegroup_type( int index )
 
 static int remove_space(char symbol[],
 			const int num_char) {
-  int i, pos;
+  int i;
   for (i = num_char - 2; i > -1; i--) {
     if (symbol[i] == ' ') {
       symbol[i] = '\0';
@@ -8535,6 +8535,7 @@ static int remove_space(char symbol[],
       return i;
     }
   }
+  return i;
 }
 
 static void replace_equal_char(char symbol[],
