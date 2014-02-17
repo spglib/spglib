@@ -1,6 +1,12 @@
-2014-01-07  Atsushi Togo  <atz.togo@gmail.com>
+2014-02-17  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.6.0:
+
+	* src/spglib.c (spg_get_spacegroup_type):
+
+	A function is made for accessing space-group-type database.
+
+2014-01-07  Atsushi Togo  <atz.togo@gmail.com>
 
 	* src/tetrahedron_method.*:
 
