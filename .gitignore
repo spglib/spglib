@@ -6,6 +6,7 @@ MANIFEST
 *.so
 *.lo
 *.o
+python/ase/src
 
 # Packages
 *.egg
