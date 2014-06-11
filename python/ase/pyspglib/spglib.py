@@ -230,6 +230,46 @@ def get_ir_reciprocal_mesh(mesh,
   
     return mapping, mesh_points
 
+def get_grid_points_by_rotations(address_orig,
+                                 reciprocal_rotations,
+                                 mesh,
+                                 is_shift=np.zeros(3, dtype='intc')):
+    """
+    Rotation operations in reciprocal space ``reciprocal_rotations`` are applied
+    to a grid point ``grid_point`` and resulting grid points are returned.
+    """
+    
+    rot_grid_points = np.zeros(len(reciprocal_rotations), dtype='intc')
+    spg.grid_points_by_rotations(
+        rot_grid_points,
+        np.array(address_orig, dtype='intc'),
+        np.array(reciprocal_rotations, dtype='intc', order='C'),
+        np.array(mesh, dtype='intc'),
+        np.array(is_shift, dtype='intc'))
+    
+    return rot_grid_points
+
+def get_BZ_grid_points_by_rotations(address_orig,
+                                    reciprocal_rotations,
+                                    mesh,
+                                    bz_map,
+                                    is_shift=np.zeros(3, dtype='intc')):
+    """
+    Rotation operations in reciprocal space ``reciprocal_rotations`` are applied
+    to a grid point ``grid_point`` and resulting grid points are returned.
+    """
+    
+    rot_grid_points = np.zeros(len(reciprocal_rotations), dtype='intc')
+    spg.BZ_grid_points_by_rotations(
+        rot_grid_points,
+        np.array(address_orig, dtype='intc'),
+        np.array(reciprocal_rotations, dtype='intc', order='C'),
+        np.array(mesh, dtype='intc'),
+        np.array(is_shift, dtype='intc'),
+        bz_map)
+    
+    return rot_grid_points
+    
 def relocate_BZ_grid_address(grid_address,
                              mesh,
                              reciprocal_lattice, # column vectors
@@ -311,36 +351,40 @@ def get_triplets_reciprocal_mesh_at_q(fixed_grid_number,
                                       rotations,
                                       is_time_reversal=True):
 
-    weights = np.zeros(np.prod(mesh), dtype='intc')
-    third_q = np.zeros(np.prod(mesh), dtype='intc')
+    map_triplets = np.zeros(np.prod(mesh), dtype='intc')
+    map_q = np.zeros(np.prod(mesh), dtype='intc')
     mesh_points = np.zeros((np.prod(mesh), 3), dtype='intc')
 
     spg.triplets_reciprocal_mesh_at_q(
-        weights,
+        map_triplets,
+        map_q,
         mesh_points,
-        third_q,
         fixed_grid_number,
         np.array(mesh, dtype='intc'),
         is_time_reversal * 1,
         np.array(rotations, dtype='intc', order='C'))
 
-    return weights, third_q, mesh_points
+    return map_triplets, map_q, mesh_points
         
 def get_BZ_triplets_at_q(grid_point,
                          bz_grid_address,
                          bz_map,
-                         weights,
+                         map_triplets,
                          mesh):
     """grid_address is overwritten."""
-    num_ir_tripltes = (weights > 0).sum()
-    triplets = np.zeros((num_ir_tripltes, 3), dtype='intc')
+    weights = np.zeros_like(map_triplets)
+    for g in map_triplets:
+        weights[g] += 1
+    ir_weights = np.extract(weights > 0, weights)
+    triplets = np.zeros((len(ir_weights), 3), dtype='intc')
     num_ir_ret = spg.BZ_triplets_at_q(triplets,
                                       grid_point,
                                       bz_grid_address,
                                       bz_map,
-                                      weights,
+                                      map_triplets,
                                       np.array(mesh, dtype='intc'))
-    return triplets
+    
+    return triplets, ir_weights
 
 def get_neighboring_grid_points(grid_point,
                                 relative_grid_address,
@@ -392,6 +436,11 @@ def get_tetrahedra_relative_grid_address(microzone_lattice):
     
     return relative_grid_address
 
+def get_all_tetrahedra_relative_grid_address():
+    relative_grid_address = np.zeros((4, 24, 4, 3), dtype='intc')
+    spg.all_tetrahedra_relative_grid_address(relative_grid_address)
+    
+    return relative_grid_address
     
 def get_tetrahedra_integration_weight(omegas,
                                       tetrahedra_omegas,
