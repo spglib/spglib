@@ -72,6 +72,8 @@ src/.libs/
 src/Makefile
 src/libsymspg.la
 stamp-h1
+autoscan.log
+configure.scan
 
 example/a.out
 example/defs_basis.mod

@@ -15,6 +15,7 @@ AM_PROG_CC_C_O
 AM_PROG_LIBTOOL
 
 # Checks for libraries.
+AC_CHECK_FUNCS([sqrt])
 
 # Checks for header files.
 AC_HEADER_STDC
