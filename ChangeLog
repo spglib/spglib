@@ -1,5 +1,24 @@
 2014-02-17  Atsushi Togo  <atz.togo@gmail.com>
 
+	* Version 1.6.1:
+
+	* src/{refinement.*,primitive.*,spglib.c}
+
+	Fix symmetry finding bug for supercell that has lower point group
+	than the primitive cell.
+
+	* src/spglib.*
+
+	New functions of spg_get_spacegroup_type and
+	spg_get_grid_point. The former offers difrect access to space
+	group type database using hall symbol number. The later perfoms
+	converting grid address to grid point index on the reciprocal
+	mesh.
+
+	* pyspglib update.
+
+2014-02-17  Atsushi Togo  <atz.togo@gmail.com>
+
 	* Version 1.6.0:
 
 	* src/spglib.c (spg_get_spacegroup_type):
