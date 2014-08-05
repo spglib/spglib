@@ -30,8 +30,8 @@ Install
 
 2. Unzip, configure, and make::
 
-   % tar xvfz spglib-1.4.tar.gz
-   % cd spglib-1.4
+   % tar xvfz spglib-1.6.tar.gz
+   % cd spglib-1.6
    % ./configure
    % make
 
@@ -100,8 +100,10 @@ API & variables
 .. toctree::
    :maxdepth: 2
 
+   definition
    api
    variable
+   space_group_symbol
 
 Mailing list
 ^^^^^^^^^^^^^^^^^

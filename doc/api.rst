@@ -102,6 +102,8 @@ be prepared four times more than those required for the input
 structures. This is because, when the crystal has the face centering,
 four times more atoms than those in primitive cell are generated.
 
+.. _api_spg_get_dataset:
+
 ``spg_get_dataset``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -110,19 +112,20 @@ accessible through the C-structure as follows:
 
 ::
 
-  typedef struct {
-    int spacegroup_number;
-    char international_symbol[11];
-    char hall_symbol[17];
-    double transformation_matrix[3][3];
-    double origin_shift[3];
-    int n_operations;
-    int (*rotations)[3][3];
-    double (*translations)[3];
-    int n_atoms;
-    int *wyckoffs;
-    int *equivalent_atoms;
-  } SpglibDataset;
+   typedef struct {
+     int spacegroup_number;
+     int hall_number;
+     char international_symbol[11];
+     char hall_symbol[17];
+     double transformation_matrix[3][3];
+     double origin_shift[3];
+     int n_operations;
+     int (*rotations)[3][3];
+     double (*translations)[3];
+     int n_atoms;
+     int *wyckoffs;
+     int *equivalent_atoms;
+   } SpglibDataset;
 
 ``transformation_matrix`` (:math:`M`) is the matrix to transform the input lattice
 to a Bravais lattice given by
@@ -149,9 +152,9 @@ atoms of the input cell. ``wyckoffs`` gives Wyckoff letters that are
 assigned to atomic positions of the input cell. The numbers of 0, 1,
 2, :math:`\ldots`, correspond to the a, b, c, :math:`\ldots`,
 respectively. Number of elements in ``wyckoffs`` is same as
-``n_atoms``. The implementation of this Wyckoff position determination
-is now testing. Please send e-mail to atz.togo@gmail.com when you find
-problems.
+``n_atoms``. ``equivalent_atoms`` is a list of atomic indices that map
+to indices of symmetrically independent atoms, where the list index
+corresponds to atomic index of the input crystal structure.
 
 The function to obtain the dataset is as follow:
 
