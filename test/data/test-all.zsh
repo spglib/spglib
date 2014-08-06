@@ -1,4 +1,4 @@
-#!/usr/bin/zsh
+#!/bin/zsh
 
 echo "Triclinic"
 ./test-tricli.zsh $1
