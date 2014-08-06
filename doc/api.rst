@@ -174,6 +174,31 @@ Allocated memory is freed by calling ``spg_free_dataset``.
   void spg_free_dataset( SpglibDataset *dataset );
   
 
+``spg_get_spacegroup_type``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This function allows to directly access to the space-group-type
+database in spglib (spg_database.c).
+
+::
+
+   SpglibSpacegroupType spg_get_spacegroup_type(const int hall_number)
+
+``SpglibSpacegroupType`` structure is as follows:
+
+::
+   
+   typedef struct {
+     int number;
+     char schoenflies[7];
+     char hall_symbol[17];
+     char international[32];
+     char international_full[20];
+     char international_short[11];
+   } SpglibSpacegroupType;
+
+
+  
 ``spg_get_smallest_lattice``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
