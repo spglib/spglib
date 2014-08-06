@@ -127,21 +127,8 @@ accessible through the C-structure as follows:
      int *equivalent_atoms;
    } SpglibDataset;
 
-``transformation_matrix`` (:math:`M`) is the matrix to transform the input lattice
-to a Bravais lattice given by
-
-.. math::
-
-   ( \mathbf{a}_\mathrm{B} \; \mathbf{b}_\mathrm{B} \; \mathbf{c}_\mathrm{B} )
-   =  ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} ) M
-
-where :math:`\mathbf{a}_\mathrm{B}`, :math:`\mathbf{b}_\mathrm{B}`,
-and :math:`\mathbf{c}_\mathrm{B}` are the column vectors of a Bravais
-lattice, and :math:`\mathbf{a}`, :math:`\mathbf{b}`, and
-:math:`\mathbf{c}` are the column vectors of the input lattice. The
-``origin_shift`` is the origin shift in the Bravais lattice. The
-symmetry operations of the input cell are stored in ``rotations`` and
-``translations``. A space group operation :math:`(R|\tau)` is made
+The symmetry operations of the input cell are stored in ``rotations``
+and ``translations``. A space group operation :math:`(R|\tau)` is made
 from a set of rotation :math:`R` and translation :math:`\tau` with the
 same index. Number of space group operations is found in
 ``n_operations``. These ``rotations`` and ``translations`` are
@@ -155,6 +142,41 @@ respectively. Number of elements in ``wyckoffs`` is same as
 ``n_atoms``. ``equivalent_atoms`` is a list of atomic indices that map
 to indices of symmetrically independent atoms, where the list index
 corresponds to atomic index of the input crystal structure.
+
+``transformation_matrix`` and ``origin_shift`` are obtained as a
+result of space-group-type matching. In this matching, lattice and
+atomic positions have to be standardized to compare with the database
+of space-group operations. The lattice is transformed to a Bravais
+lattice. Atomic positions are shifted in order that symmetry
+operations have a standard origin.  ``transformation_matrix``
+(:math:`\mathrm{M}`) is the matrix to transform the input lattice to a
+Bravais lattice defined as
+
+.. math::
+
+   ( \mathbf{a}_\mathrm{B} \; \mathbf{b}_\mathrm{B} \; \mathbf{c}_\mathrm{B} )
+   =  ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} ) \mathrm{M}
+
+where :math:`\mathbf{a}_\mathrm{B}`, :math:`\mathbf{b}_\mathrm{B}`,
+and :math:`\mathbf{c}_\mathrm{B}` are the column vectors of a Bravais
+lattice, and :math:`\mathbf{a}`, :math:`\mathbf{b}`, and
+:math:`\mathbf{c}` are the column vectors of the input lattice. The
+``origin_shift`` (:math:`\mathbf{o}`) is the atomic position shift in
+terms of the Bravais lattice. The atomic position shift is measured
+from the standardized cell (conventional unit cell) to the original
+cell in terms of the Bravais lattice. An atomic position in the
+original cell :math:`\mathbf{x}` (input data) is mapped to that in
+Bravais lattice :math:`\mathbf{x}_\mathrm{B}` by
+
+.. math::
+
+   \mathbf{x}_\mathrm{B} = \mathrm{M}\mathbf{x} - \mathbf{o} \;\;(\mathrm{mod}\;
+   \mathbf{1}).
+
+The standardized cell with symmetry refined lattice and atomic
+positions is obtained using ``spg_refine_cell``, but the lattice
+parameters as the output of this function may be rotated in Cartesian
+coordinates.
 
 The function to obtain the dataset is as follow:
 
