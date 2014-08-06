@@ -8465,14 +8465,10 @@ static const int symmetry_operation_index[][2] = {
   {  96, 7293}, /* 530 */
 };
 
-static int remove_space(char symbol[],
-			const int num_char);
-static void replace_equal_char(char symbol[],
-			       const int position);
+static int remove_space(char symbol[], const int num_char);
+static void replace_equal_char(char symbol[], const int position);
 
-int spgdb_get_operation( int rot[3][3],
-			 double trans[3],
-			 const int index )
+int spgdb_get_operation(int rot[3][3], double trans[3], const int hall_number)
 {
   int i, j, r, t, degit;
 
@@ -8484,7 +8480,7 @@ int spgdb_get_operation( int rot[3][3],
   /* group operations. In principle, octal numerical system can be used */
   /* for translation, but duodecimal system is more convenient. */
 
-  r = symmetry_operations[index] % 19683; /* 19683 = 3**9 */
+  r = symmetry_operations[hall_number] % 19683; /* 19683 = 3**9 */
   degit = 6561; /* 6561 = 3**8 */
   for ( i = 0; i < 3; i++ ) {
     for ( j = 0; j < 3; j++ ) {
@@ -8493,7 +8489,7 @@ int spgdb_get_operation( int rot[3][3],
     }
   }
 
-  t = symmetry_operations[index] / 19683; /* 19683 = 3**9 */
+  t = symmetry_operations[hall_number] / 19683; /* 19683 = 3**9 */
   degit = 144;
   for ( i = 0; i < 3; i++ ) {
     trans[i] = ( (double) ( ( t % ( degit * 12 ) ) / degit ) ) / 12;
@@ -8503,18 +8499,18 @@ int spgdb_get_operation( int rot[3][3],
   return 1;
 }
 
-void spgdb_get_operation_index( int indices[2], const int hall_number )
+void spgdb_get_operation_index(int indices[2], const int hall_number)
 {
-  indices[0] = symmetry_operation_index[ hall_number ][0];
-  indices[1] = symmetry_operation_index[ hall_number ][1];
+  indices[0] = symmetry_operation_index[hall_number][0];
+  indices[1] = symmetry_operation_index[hall_number][1];
 }
 
-SpacegroupType spgdb_get_spacegroup_type( int index )
+SpacegroupType spgdb_get_spacegroup_type(const int hall_number)
 {
   int position; 
   SpacegroupType spgtype;
   
-  spgtype = spacegroup_types[index];
+  spgtype = spacegroup_types[hall_number];
   remove_space(spgtype.schoenflies, 7);
   position = remove_space(spgtype.hall_symbol, 17);
   replace_equal_char(spgtype.hall_symbol, position);
@@ -8525,8 +8521,7 @@ SpacegroupType spgdb_get_spacegroup_type( int index )
   return spgtype;
 }
 
-static int remove_space(char symbol[],
-			const int num_char) {
+static int remove_space(char symbol[], const int num_char) {
   int i;
   for (i = num_char - 2; i > -1; i--) {
     if (symbol[i] == ' ') {
@@ -8538,8 +8533,7 @@ static int remove_space(char symbol[],
   return i;
 }
 
-static void replace_equal_char(char symbol[],
-			       const int position) {
+static void replace_equal_char(char symbol[], const int position) {
   int i;
   for (i = position; i > -1; i--) {
     if (symbol[i] == '=') { symbol[i] = '\"'; }

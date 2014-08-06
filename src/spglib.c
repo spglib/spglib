@@ -421,7 +421,7 @@ int spg_get_pointgroup(char symbol[6],
   return ptg_num + 1;
 }
 
-SpglibSpacegroupType spg_get_spacegroup_type(int hall_number)
+SpglibSpacegroupType spg_get_spacegroup_type(const int hall_number)
 {
   SpglibSpacegroupType spglibtype;
   SpacegroupType spgtype;

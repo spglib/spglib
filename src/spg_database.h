@@ -17,10 +17,8 @@ typedef struct {
   Holohedry holohedry;
 } SpacegroupType;
 
-int spgdb_get_operation( int rot[3][3],
-			 double trans[3],
-			 const int index );
-void spgdb_get_operation_index( int indices[2], const int hall_number );
-SpacegroupType spgdb_get_spacegroup_type( int index );
+int spgdb_get_operation(int rot[3][3], double trans[3], const int hall_number);
+void spgdb_get_operation_index(int indices[2], const int hall_number);
+SpacegroupType spgdb_get_spacegroup_type(const int hall_number);
 
 #endif
