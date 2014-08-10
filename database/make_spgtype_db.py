@@ -25,6 +25,8 @@ def extract_essense( spg_db ):
         vals.append( x[8] )
         # HM short
         vals.append( x[7].split('=')[0].replace(' ','') )
+        # Setting
+        vals.append( x[2] )
         # Centering
         vals.append( get_centering( x[7][0] ) )
         essense.append( vals )
@@ -79,11 +81,11 @@ bravais = { 'triclinic': 'TRICLI',
             'cubic': 'CUBIC' }
 
 print "static const SpacegroupType spacegroup_types[] = {"
-print "  {%3d, \"%-6s\", \"%-16s\", \"%-31s\", \"%-19s\", \"%-10s\"}, /*%3d*/" % ( 0, "", "", "", "", "", 0 )
+print "  {%3d, \"%-6s\", \"%-16s\", \"%-31s\", \"%-19s\", \"%-10s\", \"%-5s\", %s }, /* %3d */" % ( 0, "", "", "", "", "", "", "NONE", 0 )
 
 for i, x in enumerate(extract_essense( read_spg_csv( sys.argv[1] ) )):
-    if len( x[5] ) > maxlen:
-        maxlen = len( x[5] )
+    if len( x[6] ) > maxlen:
+        maxlen = len( x[6] )
 
-    print "  {%3d, \"%-6s\", \"%-16s\", \"%-31s\", \"%-19s\", \"%-10s\", %s }, /*%3d*/" % ( x[0], x[1], x[2], x[3], x[4], x[5], bravais[ get_bravais( x[0], x[3][0] ) ], i+1 )
+    print "  {%3d, \"%-6s\", \"%-16s\", \"%-31s\", \"%-19s\", \"%-10s\", \"%-5s\", %s }, /* %3d */" % ( x[0], x[1], x[2], x[3], x[4], x[5], x[6], bravais[ get_bravais( x[0], x[3][0] ) ], i+1 )
 print "};"
