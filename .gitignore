@@ -80,3 +80,4 @@ example/defs_basis.mod
 example/example
 example/spglib_f08.mod
 
+test/getspg.bundle
