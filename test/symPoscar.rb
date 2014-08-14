@@ -70,7 +70,7 @@ if is_long_output
     refine_cell(types.size, lattice, position, types, symprec, angle_tolerance)
 end
 
-spgnum, spg, hallnum, hall_symbol, t_mat, o_shift,
+spgnum, spg, hallnum, hall_symbol, setting, t_mat, o_shift,
 rotations, translations, wyckoffs = get_dataset(lattice,
                                                 position,
                                                 types,
@@ -82,7 +82,7 @@ if spgnum > 0
   if nonewline
     print "#{spg.strip} (#{spgnum})"
   else
-    puts "#{spg.strip} (#{spgnum}) / #{ptg_symbol}/ #{hall_symbol.strip} (#{hallnum})"
+    puts "#{spg.strip} (#{spgnum}) / #{ptg_symbol}/ #{hall_symbol.strip} (#{hallnum}) / #{setting}"
 
     if is_long_output
       puts "----------- original -----------"
