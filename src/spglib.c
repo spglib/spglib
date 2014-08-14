@@ -713,6 +713,7 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
   dataset->spacegroup_number = 0;
   strcpy(dataset->international_symbol, "");
   strcpy(dataset->hall_symbol, "");
+  strcpy(dataset->setting, "");
   dataset->origin_shift[0] = 0;
   dataset->origin_shift[1] = 0;
   dataset->origin_shift[2] = 0;
@@ -780,6 +781,7 @@ static void set_dataset(SpglibDataset * dataset,
   dataset->hall_number = spacegroup->hall_number;
   strcpy(dataset->international_symbol, spacegroup->international_short);
   strcpy(dataset->hall_symbol, spacegroup->hall_symbol);
+  strcpy(dataset->setting, spacegroup->setting);
   mat_inverse_matrix_d3(inv_mat, cell->lattice, tolerance);
   mat_multiply_matrix_d3(dataset->transformation_matrix,
 			 inv_mat,

@@ -64,6 +64,7 @@ typedef struct {
   int hall_number;
   char international_symbol[11];
   char hall_symbol[17];
+  char setting[6];
   double transformation_matrix[3][3]; /* bravais_lattice = T * original_lattice */
   double origin_shift[3]; /* Origin shift in Bravais lattice */
   int n_operations; /* Symmetry operations from database */
