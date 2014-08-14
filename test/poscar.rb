@@ -1,4 +1,4 @@
-# Time-stamp: <2008-04-06 13:39:03 togo>
+# Time-stamp: <2014-08-14 14:39:54 togo>
 #
 #   Copyright (C) 2005 Atsushi Togo
 #   togo.atsushi@gmail.com
@@ -246,6 +246,10 @@ module Vasp
       else
         atomName = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(//)
       end
+      numAtoms.size.times.collect {|i| atomName[i]}
+    end
+
+    def nameAtoms(names)
       name = []
       numAtoms.size.times do |i|
         numAtoms[i].times {|j| name << "#{atomName[i]}"}
@@ -254,21 +258,22 @@ module Vasp
     end
 
     def numAtomsPoscar
-      num = @input.readline.strip.split(/\s+/)
-      num.size.times {|i| num[i] = num[i].to_i}
-      num
+      return @input.readline.strip.split(/\s+/)
     end
-
+    
     def parse(filename, potcarName)
       @input = open(filename, "r")
       @comment = @input.readline.chomp # line 1: comment (string)
       scale = scalePoscar(filename)    # line 2: universal scaling factor (float)
       @axis = axisPoscar(scale)        # line 3-5: axis (3x3: float)
-      numAtoms = numAtomsPoscar        # line 6: number of atoms ([] integer), atom name ([name, name, ...])  example [Sn, Sn, O, O]
-      if numAtoms[0] == 0
-        numAtoms = numAtomsPoscar
+      numAtomsAry = numAtomsPoscar     # line 6: number of atoms ([] integer), atom name ([name, name, ...])  example [Sn, Sn, O, O]
+      if numAtomsAry[0].to_i == 0
+        names = numAtomsAry
+        numAtoms = numAtomsPoscar.collect {|x| x.to_i}
+      else
+        numAtoms = numAtomsAry.collect {|x| x.to_i}
+        names = namePoscar(numAtoms, potcarName)
       end
-      name = namePoscar(numAtoms, potcarName)
       #
       # line 7-(8): 'Selective dynamics' or not (bool)
       #
@@ -285,15 +290,15 @@ module Vasp
         exit
       end
 
-      @atoms = positionPoscar(numAtoms, name)    # line 9(8): [Atom, ...]
+      @atoms = positionPoscar(numAtoms, names)    # line 9(8): [Atom, ...]
       # initial states of MD is ignored.
       @input.close
     end
 
-    def positionPoscar(numEachAtom, name)
+    def positionPoscar(numAtoms, names)
       atoms = []
-      numEachAtom.each do |num|
-        num.times do
+      numAtoms.size.times do |i|
+        numAtoms[i].times do
           lineArr = @input.gets.strip.split(/\s+/)
           position = lineArr[0..2].collect! {|x| x.to_f}
           if lineArr.size >= 5 then
@@ -301,7 +306,7 @@ module Vasp
           else
             movable = [false, false, false]
           end
-          atoms << Atom.new(position, name.shift, movable)
+          atoms << Atom.new(position, names[i], movable)
         end
       end
       atoms
