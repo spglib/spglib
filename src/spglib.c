@@ -430,32 +430,19 @@ int spg_get_pointgroup(char symbol[6],
   return ptg_num + 1;
 }
 
-int spg_get_symmetry_from_database(int rotations[][3][3],
-				   double translations[][3],
-				   const int max_size,
+int spg_get_symmetry_from_database(int rotations[192][3][3],
+				   double translations[192][3],
 				   const int hall_number)
 {
-  int i, num_sym;
+  int i;
   Symmetry *symmetry;
 
   symmetry = spgdb_get_spacegroup_operations(hall_number);
-  if (symmetry->size > max_size) {
-    fprintf(stderr,
-	    "spglib: Indicated max size(=%d) is less than number ", max_size);
-    fprintf(stderr,
-	    "spglib: of symmetry operations(=%d).\n", symmetry->size);
-    num_sym = 0;
-    goto ret;
-  }
-
   for (i = 0; i < symmetry->size; i++) {
     mat_copy_matrix_i3(rotations[i], symmetry->rot[i]);
     mat_copy_vector_d3(translations[i], symmetry->trans[i]);
   }
-  num_sym = symmetry->size;
-
- ret:
-  return num_sym;
+  return symmetry->size;
 }
 
 SpglibSpacegroupType spg_get_spacegroup_type(const int hall_number)

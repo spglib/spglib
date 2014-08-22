@@ -181,14 +181,11 @@ static void test_spg_get_symmetry_from_database(void)
   double translations[192][3];
   int max_size, i, j, size;
   
-  max_size = 192;
-
   size = spg_get_symmetry_from_database(rotations,
 					translations,
-					192,
 					460);
   
-  printf("*** Example of spg_get_from_database ***:\n");
+  printf("*** Example of spg_get_symmetry_from_database ***:\n");
   for (i = 0; i < size; i++) {
     printf("--- %d ---\n", i + 1);
     for (j = 0; j < 3; j++) {

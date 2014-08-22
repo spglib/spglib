@@ -232,7 +232,6 @@ int spg_get_pointgroup(char symbol[6],
 
 int spg_get_symmetry_from_database(int rotations[][3][3],
 				   double translations[][3],
-				   const int max_size,
 				   const int hall_number);
 
 /* Space-group type information is accessed by index of hall symbol. */
