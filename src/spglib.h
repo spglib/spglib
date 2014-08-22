@@ -230,6 +230,11 @@ int spg_get_pointgroup(char symbol[6],
 		       SPGCONST int rotations[][3][3],
 		       const int num_rotations);
 
+int spg_get_symmetry_from_database(int rotations[][3][3],
+				   double translations[][3],
+				   const int max_size,
+				   const int hall_number);
+
 /* Space-group type information is accessed by index of hall symbol. */
 /* The index is defined from 1 to 530. */
 SpglibSpacegroupType spg_get_spacegroup_type(const int hall_number);

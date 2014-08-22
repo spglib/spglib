@@ -31,7 +31,6 @@ static Cell * expand_positions(int * wyckoffs,
 			       const int * equiv_atoms_prim);
 static Cell * get_conventional_primitive(SPGCONST Spacegroup * spacegroup,
 					 SPGCONST Cell * primitive);
-static Symmetry * get_db_symmetry(const int hall_number);
 static int get_number_of_pure_translation(SPGCONST Symmetry * conv_sym);
 static int get_conventional_lattice(double lattice[3][3],
 				    const Holohedry holohedry,
@@ -226,7 +225,7 @@ static Cell * get_bravais_exact_positions_and_lattice(int * wyckoffs,
   /* Positions of primitive atoms are represented wrt Bravais lattice */
   conv_prim = get_conventional_primitive(spacegroup, primitive);
   /* Symmetries in database (wrt Bravais lattice) */
-  conv_sym = get_db_symmetry(spacegroup->hall_number);
+  conv_sym = spgdb_get_spacegroup_operations(spacegroup->hall_number);
   /* Lattice vectors are set. */
   get_conventional_lattice(conv_prim->lattice,
 			   spacegroup->holohedry,
@@ -345,27 +344,6 @@ static Cell * get_conventional_primitive(SPGCONST Spacegroup * spacegroup,
   }
 
   return conv_prim;
-}
-
-static Symmetry * get_db_symmetry(const int hall_number)
-{
-  int i;
-  int operation_index[2];
-  int rot[3][3];
-  double trans[3];
-  Symmetry *symmetry;
-
-  spgdb_get_operation_index(operation_index, hall_number);
-  symmetry = sym_alloc_symmetry(operation_index[0]);
-
-  for (i = 0; i < operation_index[0]; i++) {
-    /* rotation matrix matching and set difference of translations */
-    spgdb_get_operation(rot, trans, operation_index[1] + i);
-    mat_copy_matrix_i3(symmetry->rot[i], rot);
-    mat_copy_vector_d3(symmetry->trans[i], trans);
-  }
-
-  return symmetry;
 }
 
 static int get_conventional_lattice(double lattice[3][3],
@@ -542,7 +520,7 @@ get_refined_symmetry_operations(SPGCONST Cell * cell,
   Symmetry *conv_sym, *prim_sym, *symmetry;
 
   /* Primitive symmetry from database */
-  conv_sym = get_db_symmetry(spacegroup->hall_number);
+  conv_sym = spgdb_get_spacegroup_operations(spacegroup->hall_number);
   set_translation_with_origin_shift(conv_sym, spacegroup->origin_shift);
   mat_inverse_matrix_d3(inv_mat, primitive->lattice, symprec);
   mat_multiply_matrix_d3(t_mat, inv_mat, spacegroup->bravais_lattice);

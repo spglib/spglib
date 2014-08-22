@@ -10,6 +10,7 @@ static void test_spg_find_primitive(void);
 static void test_spg_get_international(void);
 static void test_spg_get_schoenflies(void);
 static void test_spg_get_spacegroup_type(void);
+static void test_spg_get_symmetry_from_database(void);
 static void test_spg_refine_cell(void);
 static void test_spg_get_dataset(void);
 static void test_spg_get_ir_reciprocal_mesh(void);
@@ -38,13 +39,14 @@ int main(void)
   test_spg_get_international();
   test_spg_get_schoenflies();
   test_spg_get_spacegroup_type();
+  test_spg_get_symmetry_from_database();
   test_spg_refine_cell();
   test_spg_get_dataset();
   test_spg_get_ir_reciprocal_mesh();
   test_spg_get_stabilized_reciprocal_mesh();
+  /* test_spg_get_tetrahedra_relative_grid_address(); */
   test_spg_relocate_BZ_grid_address();
   test_spg_triplets_reciprocal_mesh_at_q();
-  test_spg_get_tetrahedra_relative_grid_address();
 
   return 0;
 }
@@ -171,6 +173,31 @@ static void test_spg_get_spacegroup_type(void)
   printf("International: %s\n", spgtype.international_short);
   printf("Hall symbol:   %s\n", spgtype.hall_symbol);
   
+}
+
+static void test_spg_get_symmetry_from_database(void)
+{
+  int rotations[192][3][3];
+  double translations[192][3];
+  int max_size, i, j, size;
+  
+  max_size = 192;
+
+  size = spg_get_symmetry_from_database(rotations,
+					translations,
+					192,
+					460);
+  
+  printf("*** Example of spg_get_from_database ***:\n");
+  for (i = 0; i < size; i++) {
+    printf("--- %d ---\n", i + 1);
+    for (j = 0; j < 3; j++) {
+      printf("%2d %2d %2d\n",
+	     rotations[i][j][0], rotations[i][j][1], rotations[i][j][2]);
+    }
+    printf("%f %f %f\n",
+	   translations[i][0], translations[i][1], translations[i][2]);
+  }
 }
 
 static void test_spg_get_multiplicity(void)
@@ -514,11 +541,11 @@ static void test_spg_triplets_reciprocal_mesh_at_q(void)
   int mesh[] = {m, m, m};
   int is_shift[] = {1, 1, 1};
   int grid_address[m * m * m][3];
-  int weights[m * m * m];
-  int third_q[m * m * m];
-  int num_ir_tp = spg_get_triplets_reciprocal_mesh_at_q(weights,
+  int map_triplets[m * m * m];
+  int map_q[m * m * m];
+  int num_ir_tp = spg_get_triplets_reciprocal_mesh_at_q(map_triplets,
+							map_q,
 							grid_address,
-							third_q,
 							grid_point,
 							mesh,
 							1,
@@ -562,7 +589,8 @@ static void test_spg_triplets_reciprocal_mesh_at_q(void)
 					    grid_point,
 					    bz_grid_address,
 					    bz_map,
-					    weights,
+					    map_triplets,
+					    num_ir_tp,
 					    mesh);
   printf("Number of k-point triplets of NaCl at grid point 10 = (1/2, 0, 0)\n");
   printf("with Gamma-centered 20x20x20 Monkhorst-Pack mesh is %d (396).\n", num_ir_tp2);
@@ -639,7 +667,7 @@ static void test_spg_get_tetrahedra_relative_grid_address(void)
   
   mat_inverse_matrix_d3(rec_lat, lattice, 1e-5);
   spg_get_tetrahedra_relative_grid_address(relative_grid_address, rec_lat);
-					     
+
   /* for (i = 0; i < 24; i++) { */
   /*   for (j = 0; j < 4; j++) { */
   /*     printf("[%2d %2d %2d] ", */

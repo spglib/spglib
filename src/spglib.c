@@ -430,6 +430,34 @@ int spg_get_pointgroup(char symbol[6],
   return ptg_num + 1;
 }
 
+int spg_get_symmetry_from_database(int rotations[][3][3],
+				   double translations[][3],
+				   const int max_size,
+				   const int hall_number)
+{
+  int i, num_sym;
+  Symmetry *symmetry;
+
+  symmetry = spgdb_get_spacegroup_operations(hall_number);
+  if (symmetry->size > max_size) {
+    fprintf(stderr,
+	    "spglib: Indicated max size(=%d) is less than number ", max_size);
+    fprintf(stderr,
+	    "spglib: of symmetry operations(=%d).\n", symmetry->size);
+    num_sym = 0;
+    goto ret;
+  }
+
+  for (i = 0; i < symmetry->size; i++) {
+    mat_copy_matrix_i3(rotations[i], symmetry->rot[i]);
+    mat_copy_vector_d3(translations[i], symmetry->trans[i]);
+  }
+  num_sym = symmetry->size;
+
+ ret:
+  return num_sym;
+}
+
 SpglibSpacegroupType spg_get_spacegroup_type(const int hall_number)
 {
   SpglibSpacegroupType spglibtype;
@@ -827,7 +855,7 @@ static int get_symmetry(int rotation[][3][3],
 			const int num_atom,
 			const double symprec)
 {
-  int i, j, size;
+  int i, size;
   Symmetry *symmetry;
   Cell *cell;
 
@@ -844,9 +872,7 @@ static int get_symmetry(int rotation[][3][3],
 
   for (i = 0; i < symmetry->size; i++) {
     mat_copy_matrix_i3(rotation[i], symmetry->rot[i]);
-    for (j = 0; j < 3; j++) {
-      translation[i][j] = symmetry->trans[i][j];
-    }
+    mat_copy_vector_d3(translation[i], symmetry->trans[i]);
   }
 
   size = symmetry->size;
@@ -866,7 +892,7 @@ static int get_symmetry_from_dataset(int rotation[][3][3],
 				     const int num_atom,
 				     const double symprec)
 {
-  int i, j, k, num_sym;
+  int i, num_sym;
   SpglibDataset *dataset;
 
   dataset = get_dataset(lattice,
@@ -886,12 +912,8 @@ static int get_symmetry_from_dataset(int rotation[][3][3],
 
   num_sym = dataset->n_operations;
   for (i = 0; i < num_sym; i++) {
-    for (j = 0; j < 3; j++) {
-      translation[i][j] = dataset->translations[i][j];
-      for (k = 0; k < 3; k++) {
-	rotation[i][j][k] = dataset->rotations[i][j][k];
-      }
-    }	  
+    mat_copy_matrix_i3(rotation[i], dataset->rotations[i]);
+    mat_copy_vector_d3(translation[i], dataset->translations[i]);
   }
   
  ret:
@@ -909,7 +931,7 @@ static int get_symmetry_with_collinear_spin(int rotation[][3][3],
 					    const int num_atom,
 					    const double symprec)
 {
-  int i, j, size;
+  int i, size;
   Symmetry *symmetry;
   Cell *cell;
 
@@ -926,9 +948,7 @@ static int get_symmetry_with_collinear_spin(int rotation[][3][3],
 
   for (i = 0; i < symmetry->size; i++) {
     mat_copy_matrix_i3(rotation[i], symmetry->rot[i]);
-    for (j = 0; j < 3; j++) {
-      translation[i][j] = symmetry->trans[i][j];
-    }
+    mat_copy_vector_d3(translation[i], symmetry->trans[i]);
   }
 
   size = symmetry->size;
@@ -967,7 +987,7 @@ static int find_primitive(double lattice[3][3],
 			  const int num_atom,
 			  const double symprec)
 {
-  int i, j, num_prim_atom=0;
+  int i, num_prim_atom=0;
   Cell *cell, *primitive;
 
   cell = cel_alloc_cell(num_atom);
@@ -983,9 +1003,7 @@ static int find_primitive(double lattice[3][3],
       mat_copy_matrix_d3(lattice, primitive->lattice);
       for (i = 0; i < primitive->size; i++) {
 	types[i] = primitive->types[i];
-	for (j=0; j<3; j++) {
-	  position[i][j] = primitive->position[i][j];
-	}
+	mat_copy_vector_d3(position[i], primitive->position[i]);
       }
     }
   }
