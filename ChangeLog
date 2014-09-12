@@ -1,3 +1,22 @@
+2014-09-12  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.6.3
+
+	* src/primitive.c:
+
+	Atom type is checked in finding a primitive cell. This enables to
+	handle different types of atoms that locate at the same position.
+	for the case of an automatically generated crystal structure data
+	from a fractional occupancy, etc.
+
+	* Version 1.6.2
+
+	Minor bug fixes.
+
+	* src/spglib.c (spg_get_symmetry_from_database):
+
+	An API to access space group operations database is implemented.
+
 2014-08-04  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.6.1:
