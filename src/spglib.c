@@ -719,7 +719,7 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
 {
   int attempt;
   int *mapping_table;
-  double tolerance, tolerance_orig;
+  double tolerance, tolerance_from_prim;
   Spacegroup spacegroup;
   SpglibDataset *dataset;
   Cell *cell, *primitive;
@@ -744,30 +744,31 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
   cell = cel_alloc_cell(num_atom);
   cel_set_cell(cell, lattice, position, types);
 
-  tolerance_orig = symprec;
+  tolerance = symprec;
   for (attempt = 0; attempt < 100; attempt++) {
     primitive = prm_get_primitive_and_mapping_table(mapping_table,
 						    cell,
-						    tolerance_orig);
+						    tolerance);
     if (primitive->size > 0) {
-      tolerance = prm_get_current_tolerance();
-      spacegroup = spa_get_spacegroup_with_primitive(primitive, tolerance);
+      tolerance_from_prim = prm_get_current_tolerance();
+      spacegroup = spa_get_spacegroup_with_primitive(primitive,
+						     tolerance_from_prim);
       if (spacegroup.number > 0) {
 	set_dataset(dataset,
 		    cell,
 		    primitive,
 		    &spacegroup,
 		    mapping_table,
-		    tolerance);
+		    tolerance_from_prim);
 	cel_free_cell(primitive);
 	break;
       }
     }
     
-    tolerance_orig *= REDUCE_RATE;
+    tolerance *= REDUCE_RATE;
     cel_free_cell(primitive);
     
-    warning_print("  Attempt %d tolerance = %f failed.", attempt, tolerance_orig);
+    warning_print("  Attempt %d tolerance = %f failed.", attempt, tolerance);
     warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
   }
 

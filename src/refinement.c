@@ -168,44 +168,57 @@ Cell * ref_get_Wyckoff_positions(int * wyckoffs,
 static Cell * refine_cell(SPGCONST Cell * cell,
 			  const double symprec)
 {
+  int attempt, found;
   int *wyckoffs_bravais, *equiv_atoms_bravais;
-  double tolerance;
+  double tolerance, tolerance_from_prim;
   Cell *primitive, *bravais;
   Spacegroup spacegroup;
 
   debug_print("refine_cell:\n");
-  
-  primitive = prm_get_primitive(cell, symprec);
-  
-  if (primitive->size == 0) {
+
+  tolerance = symprec;
+  found = 0;
+  for (attempt = 0; attempt < 100; attempt++) {
+    primitive = prm_get_primitive(cell, tolerance);
+    if (primitive->size > 0) {  
+      tolerance_from_prim = prm_get_current_tolerance();
+      spacegroup = spa_get_spacegroup_with_primitive(primitive,
+						     tolerance_from_prim);
+      if (spacegroup.number > 0) {
+	wyckoffs_bravais = (int*)malloc(sizeof(int) * primitive->size * 4);
+	equiv_atoms_bravais = (int*)malloc(sizeof(int) * primitive->size * 4);
+	bravais = get_bravais_exact_positions_and_lattice(wyckoffs_bravais,
+							  equiv_atoms_bravais,
+							  &spacegroup,
+							  primitive,
+							  tolerance_from_prim);
+	free(equiv_atoms_bravais);
+	equiv_atoms_bravais = NULL;
+	free(wyckoffs_bravais);
+	wyckoffs_bravais = NULL;
+	cel_free_cell(primitive);
+	
+	debug_print("primitive cell in refine_cell:\n");
+	debug_print_matrix_d3(primitive->lattice);
+	debug_print("bravais lattice in refine_cell:\n");
+	debug_print_matrix_d3(bravais->lattice);
+
+	found = 1;
+	break;
+      }
+    }
+    tolerance *= REDUCE_RATE;
     cel_free_cell(primitive);
+
+    warning_print("  Attempt %d tolerance = %f failed.", attempt, tolerance);
+    warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
+  }
+  
+  /* Return bravais->size = 0, if the bravais could not be found. */
+  if (! found) {
     bravais = cel_alloc_cell(0);
-    goto ret;
   }
 
-  tolerance = prm_get_current_tolerance();
-  spacegroup = spa_get_spacegroup_with_primitive(primitive, tolerance);
-
-  wyckoffs_bravais = (int*)malloc(sizeof(int) * primitive->size * 4);
-  equiv_atoms_bravais = (int*)malloc(sizeof(int) * primitive->size * 4);
-  bravais = get_bravais_exact_positions_and_lattice(wyckoffs_bravais,
-						    equiv_atoms_bravais,
-						    &spacegroup,
-						    primitive,
-						    tolerance);
-  free(equiv_atoms_bravais);
-  equiv_atoms_bravais = NULL;
-  free(wyckoffs_bravais);
-  wyckoffs_bravais = NULL;
-
-  debug_print("primitive cell in refine_cell:\n");
-  debug_print_matrix_d3(primitive->lattice);
-  debug_print("bravais lattice in refine_cell:\n");
-  debug_print_matrix_d3(bravais->lattice);
-  
-  cel_free_cell(primitive);
-
- ret:  /* Return bravais->size = 0, if the bravais could not be found. */
   return bravais;
 }
 

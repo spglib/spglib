@@ -1,3 +1,11 @@
+2014-10-16  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.6.4
+
+	* src/refinement.c (refine_cell):
+
+	An iterative approach is implemented for refine_cell.
+
 2014-09-12  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.6.3
