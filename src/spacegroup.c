@@ -25,11 +25,6 @@ static int get_hall_number(double origin_shift[3],
 			   SPGCONST Cell * primitive,
 			   SPGCONST Symmetry * symmetry,
 			   const double symprec);
-static int get_hall_number_local_iteration(double origin_shift[3],
-					   double conv_lattice[3][3],
-					   SPGCONST Cell * primitive,
-					   SPGCONST Symmetry * symmetry,
-					   const double symprec);
 static int get_hall_number_local(double origin_shift[3],
 				 double conv_lattice[3][3],
 				 SPGCONST Cell * primitive,
@@ -155,66 +150,32 @@ static int get_hall_number(double origin_shift[3],
 			   SPGCONST Symmetry * symmetry,
 			   const double symprec)
 {
-  int pg_num, hall_number=0;
-
-  debug_print("get_hall_number:\n");
-  
-  pg_num = ptg_get_pointgroup_number(symmetry);
-  if (pg_num > -1) {
-    hall_number = get_hall_number_local(origin_shift,
-					conv_lattice,
-					primitive,
-					symmetry,
-					symprec);
-    if (hall_number > 0) { goto ret; }
-  }
-
-  /* Reduce tolerance and search hall symbol again when hall symbol */
-  /* could not be found by the given tolerance. */
-  /* The situation this happens is that symmetry operations found */
-  /* don't match any of hall symbol database due to tricky */
-  /* displacements of atoms from the exact points. */
-  hall_number = get_hall_number_local_iteration(origin_shift,
-						conv_lattice,
-						primitive,
-						symmetry,
-						symprec);
-
- ret:
-  return hall_number;
-}
-
-static int get_hall_number_local_iteration(double origin_shift[3],
-					   double conv_lattice[3][3],
-					   SPGCONST Cell * primitive,
-					   SPGCONST Symmetry * symmetry,
-					   const double symprec)
-{
-  int attempt, pg_num, hall_number=0;
+  int i, attempt, pg_num, hall_number=0;
   double tolerance;
   Symmetry * sym_reduced;
 
-  debug_print("get_hall_number_local_iteration:\n");
+  debug_print("get_hall_number:\n");
 
+  sym_reduced = sym_alloc_symmetry(symmetry->size);
+  for (i = 0; i < symmetry->size; i++) {
+    mat_copy_matrix_i3(sym_reduced->rot[i], symmetry->rot[i]);
+    mat_copy_vector_d3(sym_reduced->trans[i], symmetry->trans[i]);
+  }
+  
   tolerance = symprec;
   for (attempt = 0; attempt < 100; attempt++) {
-    tolerance *= REDUCE_RATE;
     debug_print("  Attempt %d tolerance = %f\n", attempt, tolerance);
-    sym_reduced = sym_reduce_operation(primitive, symmetry, tolerance);
-    pg_num = ptg_get_pointgroup_number(sym_reduced);
-
-    if (pg_num > -1) {
-      hall_number = get_hall_number_local(origin_shift,
-					  conv_lattice,
-					  primitive,
-					  sym_reduced,
-					  symprec);
-      if (hall_number > 0) {
-	sym_free_symmetry(sym_reduced);
-	break;
-      }
+    hall_number = get_hall_number_local(origin_shift,
+					conv_lattice,
+					primitive,
+					sym_reduced,
+					symprec);
+    if (hall_number > 0) {
+      break;
     }
     sym_free_symmetry(sym_reduced);
+    tolerance *= REDUCE_RATE;
+    sym_reduced = sym_reduce_operation(primitive, symmetry, tolerance);
   }
 
 #ifdef SPGWARNING
@@ -223,6 +184,8 @@ static int get_hall_number_local_iteration(double origin_shift[3],
   }
 #endif
 
+  sym_free_symmetry(sym_reduced);
+  
   return hall_number;
 }
 
@@ -234,21 +197,44 @@ static int get_hall_number_local(double origin_shift[3],
 				 const double symprec)
 {
   int hall_number;
+  int *possible_hall_numbers;
   Centering centering;
-  double trans_mat[3][3];
+  int tmp_transform_mat[3][3];
+  double correction_mat[3][3];
+  double transform_mat[3][3];
+  Pointgroup pointgroup;
   Symmetry * conv_symmetry;
 
   debug_print("get_hall_number_local:\n");
   
-  centering = ptg_get_transformation_matrix(trans_mat,
-					    symmetry->rot,
-					    symmetry->size);
+  pointgroup = ptg_get_transformation_matrix(tmp_transform_mat,
+					     symmetry->rot,
+					     symmetry->size);
 
+  if (pointgroup.number < 1) {
+    hall_number = 0;
+    goto ret;
+  }
+
+  /* Centering is not determined only from symmetry operations */
+  /* sometimes. Therefore centering and transformation matrix are */
+  /* related. */
+  centering = lat_get_centering(correction_mat,
+				tmp_transform_mat,
+				pointgroup.laue);
+
+  mat_multiply_matrix_id3(transform_mat,
+			  tmp_transform_mat,
+			  correction_mat);
+
+  debug_print("correction matrix:\n");
+  debug_print_matrix_d3(correction_mat);
+  
   mat_multiply_matrix_d3(conv_lattice,
 			 primitive->lattice,
-			 trans_mat);
+			 transform_mat);
 
-  conv_symmetry = get_conventional_symmetry(trans_mat,
+  conv_symmetry = get_conventional_symmetry(transform_mat,
 					    centering,
 					    symmetry);
 
@@ -261,6 +247,7 @@ static int get_hall_number_local(double origin_shift[3],
   
   sym_free_symmetry(conv_symmetry);
 
+ ret:
   return hall_number;
 }
 

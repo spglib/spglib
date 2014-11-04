@@ -399,7 +399,7 @@ static int get_conventional_lattice(double lattice[3][3],
   case CUBIC:
     set_cubic(lattice, metric);
     break;
-  case NONE:
+  case HOLOHEDRY_NONE:
     break;
   }
 

@@ -6,7 +6,7 @@
 
 /* In Hall symbols (3rd column), '=' is used instead of '"'. */
 static const SpacegroupType spacegroup_types[] = {
-  {  0, "      ", "                ", "                               ", "                   ", "          ", "     ", NONE }, /*   0 */
+  {  0, "      ", "                ", "                               ", "                   ", "          ", "     ", HOLOHEDRY_NONE }, /*   0 */
   {  1, "C1^1  ", "P 1             ", "P 1                            ", "P 1                ", "P1        ", "     ", TRICLI }, /*   1 */
   {  2, "Ci^1  ", "-P 1            ", "P -1                           ", "P -1               ", "P-1       ", "     ", TRICLI }, /*   2 */
   {  3, "C2^1  ", "P 2y            ", "P 2 = P 1 2 1                  ", "P 1 2 1            ", "P2        ", "b    ", MONOCLI }, /*   3 */
