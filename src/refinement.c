@@ -7,6 +7,7 @@
 #include "refinement.h"
 #include "cell.h"
 #include "mathfunc.h"
+#include "pointgroup.h"
 #include "primitive.h"
 #include "spg_database.h"
 #include "site_symmetry.h"
@@ -234,14 +235,16 @@ static Cell * get_bravais_exact_positions_and_lattice(int * wyckoffs,
   Symmetry *conv_sym;
   Cell *bravais, *conv_prim;
   VecDBL *exact_positions;
+  Pointgroup pointgroup;
 
   /* Positions of primitive atoms are represented wrt Bravais lattice */
   conv_prim = get_conventional_primitive(spacegroup, primitive);
   /* Symmetries in database (wrt Bravais lattice) */
   conv_sym = spgdb_get_spacegroup_operations(spacegroup->hall_number);
   /* Lattice vectors are set. */
+  pointgroup = ptg_get_pointgroup(spacegroup->pointgroup_number);
   get_conventional_lattice(conv_prim->lattice,
-			   spacegroup->holohedry,
+			   pointgroup.holohedry,
 			   spacegroup->bravais_lattice);
 
   /* Symmetrize atomic positions of conventional unit cell */

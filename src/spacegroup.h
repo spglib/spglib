@@ -7,19 +7,18 @@
 #include "cell.h"
 #include "lattice.h"
 #include "mathfunc.h"
-#include "pointgroup.h"
 #include "symmetry.h"
 
 typedef struct {
   int number;
   int hall_number;
+  int pointgroup_number;
   char schoenflies[7];
   char hall_symbol[17];
   char international[32];
   char international_long[20];
   char international_short[11];
   char setting[6];
-  Holohedry holohedry;
   double bravais_lattice[3][3];
   double origin_shift[3];
 } Spacegroup;

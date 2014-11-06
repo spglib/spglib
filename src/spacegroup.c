@@ -119,7 +119,7 @@ static Spacegroup get_spacegroup(SPGCONST Cell * primitive,
     mat_copy_vector_d3(spacegroup.origin_shift, origin_shift);
     spacegroup.number = spacegroup_type.number;
     spacegroup.hall_number = hall_number;
-    spacegroup.holohedry = spacegroup_type.holohedry;
+    spacegroup.pointgroup_number = spacegroup_type.pointgroup_number;
     strcpy(spacegroup.schoenflies,
 	   spacegroup_type.schoenflies);
     strcpy(spacegroup.hall_symbol,

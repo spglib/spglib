@@ -309,7 +309,6 @@ static int rot_axes[][3] = {
   { 3,-1,-1},
 };
 
-static Pointgroup get_pointgroup(const int pointgroup_number);
 static int get_pointgroup_number_by_rotations(SPGCONST int rotations[][3][3],
 					      const int num_rotations);
 static PointSymmetry get_pointsymmetry(SPGCONST int rotations[][3][3],
@@ -377,7 +376,7 @@ Pointgroup ptg_get_transformation_matrix(int transform_mat[3][3],
   pg_num = get_pointgroup_number_by_rotations(rotations, num_rotations);
   
   if (pg_num > 0) {
-    pointgroup = get_pointgroup(pg_num);
+    pointgroup = ptg_get_pointgroup(pg_num);
     pointsym = get_pointsymmetry(rotations, num_rotations);
     get_axes(axes, pointgroup.laue, &pointsym);
     set_transformation_matrix(transform_mat, axes);
@@ -389,7 +388,7 @@ Pointgroup ptg_get_transformation_matrix(int transform_mat[3][3],
   return pointgroup;
 }
 
-static Pointgroup get_pointgroup(const int pointgroup_number)
+Pointgroup ptg_get_pointgroup(const int pointgroup_number)
 {
   int i;
   Pointgroup pointgroup;

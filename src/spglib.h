@@ -75,7 +75,6 @@ typedef struct {
   int *equivalent_atoms;
 } SpglibDataset;
 
-/* This is a copy from spg_database.h except for holohedry. */
 typedef struct {
   int number;
   char schoenflies[7];
