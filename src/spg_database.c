@@ -2,7 +2,6 @@
 /* Copyright (C) 2010 Atsushi Togo */
 
 #include "spg_database.h"
-#include "pointgroup.h"
 
 /* In Hall symbols (3rd column), '=' is used instead of '"'. */
 static const SpacegroupType spacegroup_types[] = {

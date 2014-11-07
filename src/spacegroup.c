@@ -30,6 +30,12 @@ static int get_hall_number_local(double origin_shift[3],
 				 SPGCONST Cell * primitive,
 				 SPGCONST Symmetry * symmetry,
 				 const double symprec);
+static int match_hall_symbol_db(double origin_shift[3],
+				double conv_lattice[3][3],
+				const int pointgroup_number,
+				const Centering centering,
+				SPGCONST Symmetry *conv_symmetry,
+				const double symprec);
 static Symmetry * get_conventional_symmetry(SPGCONST double transform_mat[3][3],
 					    const Centering centering,
 					    const Symmetry *primitive_sym);
@@ -238,17 +244,44 @@ static int get_hall_number_local(double origin_shift[3],
 					    centering,
 					    symmetry);
 
-  hall_number = hal_get_hall_symbol(origin_shift,
-				    centering,
-				    conv_lattice,
-				    conv_symmetry,
-				    symprec);
+  hall_number = match_hall_symbol_db(origin_shift,
+				     conv_lattice,
+				     pointgroup.number,
+				     centering,
+				     conv_symmetry,
+				     symprec);
 
   
   sym_free_symmetry(conv_symmetry);
 
  ret:
   return hall_number;
+}
+
+static int match_hall_symbol_db(double origin_shift[3],
+				double conv_lattice[3][3],
+				const int pointgroup_number,
+				const Centering centering,
+				SPGCONST Symmetry *conv_symmetry,
+				const double symprec)
+{
+  int hall_number;
+  SpacegroupType spacegroup_type;
+  
+  for (hall_number = 1; hall_number < 531; hall_number++) {
+    spacegroup_type = spgdb_get_spacegroup_type(hall_number);
+    if (pointgroup_number == spacegroup_type.pointgroup_number) {
+      if (hal_match_hall_symbol_db(origin_shift,
+				   conv_lattice,
+				   hall_number,
+				   centering,
+				   conv_symmetry,
+				   symprec)) {
+	return hall_number;
+      }
+    }
+  }
+  return 0;
 }
 
 static Symmetry * get_conventional_symmetry(SPGCONST double transform_mat[3][3],
