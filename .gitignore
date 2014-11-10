@@ -82,3 +82,5 @@ example/spglib_f08.mod
 
 test/getspg.bundle
 test/mkmf.log
+
+findsym.log
