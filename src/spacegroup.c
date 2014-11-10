@@ -91,6 +91,8 @@ static Centering change_of_centering[18] = {C_FACE,
 					    BASE,
 					    BASE};
 
+/* hR */
+/* Should pR -> hR be implemented? */
 /* static int spacegroup_to_hall_number[230] = { */
 /*     1,   2,   3,   6,   9,  18,  21,  30,  39,  57, */
 /*    60,  63,  72,  81,  90, 108, 109, 112, 115, 116, */
@@ -117,6 +119,7 @@ static Centering change_of_centering[18] = {C_FACE,
 /*   517, 518, 520, 521, 523, 524, 525, 527, 529, 530 */
 /* }; */
 
+/* pR */
 static int spacegroup_to_hall_number[230] = {
     1,   2,   3,   6,   9,  18,  21,  30,  39,  57,
    60,  63,  72,  81,  90, 108, 109, 112, 115, 116,
