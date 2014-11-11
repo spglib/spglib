@@ -120,7 +120,8 @@ static Centering change_of_centering[18] = {C_FACE,
 /* }; */
 
 /* pR */
-static int spacegroup_to_hall_number[230] = {
+static int spacegroup_to_hall_number[231] = {
+    0,
     1,   2,   3,   6,   9,  18,  21,  30,  39,  57,
    60,  63,  72,  81,  90, 108, 109, 112, 115, 116,
   119, 122, 123, 124, 125, 128, 134, 137, 143, 149,
@@ -285,7 +286,7 @@ static int get_hall_number(double origin_shift[3],
 			   SPGCONST Symmetry * symmetry,
 			   const double symprec)
 {
-  int i, attempt, pg_num, hall_number=0;
+  int i, attempt, hall_number=0;
   double tolerance;
   Symmetry * sym_reduced;
 
@@ -332,7 +333,6 @@ static int get_hall_number_local(double origin_shift[3],
 				 const double symprec)
 {
   int spg_number, hall_number;
-  int *possible_hall_numbers;
   Centering centering;
   int tmp_transform_mat[3][3];
   double correction_mat[3][3];
@@ -382,9 +382,6 @@ static int get_hall_number_local(double origin_shift[3],
 			     centering,
 			     conv_symmetry,
 			     symprec)) {break;}
-  }
-
-  if (hall_number == 531) {
     hall_number = 0;
   }
   
@@ -404,17 +401,23 @@ static int match_hall_symbol_db(double origin_shift[3],
 {
   int i, num_settings, is_found;
   SpacegroupType spacegroup_type;
+  Centering changed_centering;
   Symmetry * changed_symmetry;
   double changed_lattice[3][3];
-  int transform_mat[3][3];
   
   spacegroup_type = spgdb_get_spacegroup_type(hall_number);
   if (pointgroup->number == spacegroup_type.pointgroup_number) {
-    if (pointgroup->holohedry == MONOCLI ||
-	pointgroup->holohedry == ORTHO) {
+    switch (pointgroup->holohedry) {
+    case MONOCLI:
+    case ORTHO:
       if (pointgroup->holohedry == MONOCLI) {num_settings = 18;}
       if (pointgroup->holohedry == ORTHO) {num_settings = 6;}
       for (i = 0; i < num_settings; i++) {
+	if (centering == C_FACE) {
+	  changed_centering = change_of_centering[i];
+	} else {
+	  changed_centering = centering;
+	}
 	mat_multiply_matrix_d3(changed_lattice,
 			       lattice,
 			       change_of_basis[i]);
@@ -422,28 +425,21 @@ static int match_hall_symbol_db(double origin_shift[3],
 	  get_conventional_symmetry(change_of_basis[i],
 				    NO_CENTER,
 				    symmetry);
-	if (centering == C_FACE) {
-	  is_found = hal_match_hall_symbol_db(origin_shift,
-					      changed_lattice,
-					      hall_number,
-					      change_of_centering[i],
-					      changed_symmetry,
-					      symprec);
-	} else {
-	  is_found = hal_match_hall_symbol_db(origin_shift,
-					      changed_lattice,
-					      hall_number,
-					      centering,
-					      changed_symmetry,
-					      symprec);
-	}
+	is_found = hal_match_hall_symbol_db(origin_shift,
+					    changed_lattice,
+					    hall_number,
+					    changed_centering,
+					    changed_symmetry,
+					    symprec);
 	sym_free_symmetry(changed_symmetry);
 	if (is_found) {
 	  mat_copy_matrix_d3(lattice, changed_lattice);
 	  return 1;
 	}
       }
-    } else {
+      break;
+      
+    default:
       if (hal_match_hall_symbol_db(origin_shift,
 				   lattice,
 				   hall_number,
@@ -452,6 +448,7 @@ static int match_hall_symbol_db(double origin_shift[3],
 				   symprec)) {
 	return 1;
       }
+      break;
     }
   }
   return 0;
@@ -470,15 +467,22 @@ static Symmetry * get_conventional_symmetry(SPGCONST double transform_mat[3][3],
 
   size = primitive_sym->size;
 
-  if (centering == FACE) {
+  switch (centering) {
+  case FACE:
     symmetry = sym_alloc_symmetry(size * 4);
-  }
-  else {
-    if (centering) {
-      symmetry = sym_alloc_symmetry(size * 2);
-    } else {
-      symmetry = sym_alloc_symmetry(size);
-    }
+    break;
+  case R_CENTER:
+    symmetry = sym_alloc_symmetry(size * 3);
+    break;
+  case BODY:
+  case A_FACE:
+  case B_FACE:
+  case C_FACE:
+    symmetry = sym_alloc_symmetry(size * 2);
+    break;
+  default:
+    symmetry = sym_alloc_symmetry(size);
+    break;
   }
 
   for (i = 0; i < size; i++) {

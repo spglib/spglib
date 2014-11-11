@@ -415,7 +415,6 @@ int spg_get_pointgroup(char symbol[6],
 		       SPGCONST int rotations[][3][3],
 		       const int num_rotations)
 {
-  int ptg_num;
   int tmp_transform_mat[3][3];
   double correction_mat[3][3], transform_mat_double[3][3];
   Centering centering;
@@ -432,7 +431,7 @@ int spg_get_pointgroup(char symbol[6],
 			  tmp_transform_mat,
 			  correction_mat);
   mat_cast_matrix_3d_to_3i(transform_mat, transform_mat_double);
-  return ptg_num + 1;
+  return pointgroup.number;
 }
 
 int spg_get_symmetry_from_database(int rotations[192][3][3],
