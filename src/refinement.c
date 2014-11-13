@@ -42,8 +42,6 @@ static void set_ortho(double lattice[3][3],
 		      SPGCONST double metric[3][3]);
 static void set_tetra(double lattice[3][3],
 		      SPGCONST double metric[3][3]);
-static void set_rhomb(double lattice[3][3],
-		      SPGCONST double metric[3][3]);
 static void set_trigo(double lattice[3][3],
 		      SPGCONST double metric[3][3]);
 static void set_cubic(double lattice[3][3],
@@ -390,9 +388,6 @@ static int get_conventional_lattice(double lattice[3][3],
   case TETRA:
     set_tetra(lattice, metric);
     break;
-  case RHOMB:
-    set_rhomb(lattice, metric);
-    break;
   case TRIGO:
     set_trigo(lattice, metric);
     break;
@@ -455,49 +450,49 @@ static void set_tetra(double lattice[3][3],
   lattice[2][2] = c;
 }
 
-static void set_rhomb(double lattice[3][3],
-		      SPGCONST double metric[3][3])
-{
-  double a, b, c, angle, ahex, chex;
+/* static void set_rhomb(double lattice[3][3], */
+/* 		      SPGCONST double metric[3][3]) */
+/* { */
+/*   double a, b, c, angle, ahex, chex; */
 
 
-  a = sqrt(metric[0][0]);
-  b = sqrt(metric[1][1]);
-  c = sqrt(metric[2][2]);
-  angle = acos((metric[0][1] / a / b +
-		metric[0][2] / a / c +
-		metric[1][2] / b / c) / 3);
+/*   a = sqrt(metric[0][0]); */
+/*   b = sqrt(metric[1][1]); */
+/*   c = sqrt(metric[2][2]); */
+/*   angle = acos((metric[0][1] / a / b + */
+/* 		metric[0][2] / a / c + */
+/* 		metric[1][2] / b / c) / 3); */
 
-  /* Reference, http://cst-www.nrl.navy.mil/lattice/struk/rgr.html */
-  ahex = 2 * (a+b+c)/3 * sin(angle / 2);
-  chex = (a+b+c)/3 * sqrt(3 * (1 + 2 * cos(angle))) ;
-  lattice[0][0] = ahex / 2;
-  lattice[1][0] = -ahex / (2 * sqrt(3));
-  lattice[2][0] = chex / 3;
-  lattice[1][1] = ahex / sqrt(3);
-  lattice[2][1] = chex / 3;
-  lattice[0][2] = -ahex / 2;
-  lattice[1][2] = -ahex / (2 * sqrt(3));
-  lattice[2][2] = chex / 3;
+/*   /\* Reference, http://cst-www.nrl.navy.mil/lattice/struk/rgr.html *\/ */
+/*   ahex = 2 * (a+b+c)/3 * sin(angle / 2); */
+/*   chex = (a+b+c)/3 * sqrt(3 * (1 + 2 * cos(angle))) ; */
+/*   lattice[0][0] = ahex / 2; */
+/*   lattice[1][0] = -ahex / (2 * sqrt(3)); */
+/*   lattice[2][0] = chex / 3; */
+/*   lattice[1][1] = ahex / sqrt(3); */
+/*   lattice[2][1] = chex / 3; */
+/*   lattice[0][2] = -ahex / 2; */
+/*   lattice[1][2] = -ahex / (2 * sqrt(3)); */
+/*   lattice[2][2] = chex / 3; */
 
 
-#ifdef DEBUG
-  debug_print("Rhombo lattice: %f %f %f %f %f %f\n", a, b, c,
-	      acos(metric[0][1] / a / b) / 3.14 * 180,
-	      acos(metric[0][2] / a / c) / 3.14 * 180,
-	      acos(metric[1][2] / b / c) / 3.14 * 180);
-  double dmetric[3][3];
-  mat_get_metric(dmetric, lattice);
-  a = sqrt(dmetric[0][0]);
-  b = sqrt(dmetric[1][1]);
-  c = sqrt(dmetric[2][2]);
-  debug_print("Rhombo lattice symmetrized: %f %f %f %f %f %f\n",
-	      a, b, c,
-	      acos(dmetric[0][1] / a / b) / 3.14 * 180,
-	      acos(dmetric[0][2] / a / c) / 3.14 * 180,
-	      acos(dmetric[1][2] / b / c) / 3.14 * 180);
-#endif
-}
+/* #ifdef DEBUG */
+/*   debug_print("Rhombo lattice: %f %f %f %f %f %f\n", a, b, c, */
+/* 	      acos(metric[0][1] / a / b) / 3.14 * 180, */
+/* 	      acos(metric[0][2] / a / c) / 3.14 * 180, */
+/* 	      acos(metric[1][2] / b / c) / 3.14 * 180); */
+/*   double dmetric[3][3]; */
+/*   mat_get_metric(dmetric, lattice); */
+/*   a = sqrt(dmetric[0][0]); */
+/*   b = sqrt(dmetric[1][1]); */
+/*   c = sqrt(dmetric[2][2]); */
+/*   debug_print("Rhombo lattice symmetrized: %f %f %f %f %f %f\n", */
+/* 	      a, b, c, */
+/* 	      acos(dmetric[0][1] / a / b) / 3.14 * 180, */
+/* 	      acos(dmetric[0][2] / a / c) / 3.14 * 180, */
+/* 	      acos(dmetric[1][2] / b / c) / 3.14 * 180); */
+/* #endif */
+/* } */
 
 static void set_trigo(double lattice[3][3],
 		      SPGCONST double metric[3][3])

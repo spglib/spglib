@@ -90,36 +90,11 @@ static Centering change_of_centering[18] = {C_FACE,
 					    BASE,
 					    BASE,
 					    BASE};
+static double pR_to_hR[3][3] = {{ 1, 0, 1 },
+				{-1, 1, 1 },
+				{ 0,-1, 1 }};
 
 /* hR */
-/* Should pR -> hR be implemented? */
-/* static int spacegroup_to_hall_number[230] = { */
-/*     1,   2,   3,   6,   9,  18,  21,  30,  39,  57, */
-/*    60,  63,  72,  81,  90, 108, 109, 112, 115, 116, */
-/*   119, 122, 123, 124, 125, 128, 134, 137, 143, 149, */
-/*   155, 161, 164, 170, 173, 176, 182, 185, 191, 197, */
-/*   203, 209, 212, 215, 218, 221, 227, 228, 230, 233, */
-/*   239, 245, 251, 257, 263, 266, 269, 275, 278, 284, */
-/*   290, 292, 298, 304, 310, 313, 316, 322, 334, 335, */
-/*   337, 338, 341, 343, 349, 350, 351, 352, 353, 354, */
-/*   355, 356, 357, 358, 359, 361, 363, 364, 366, 367, */
-/*   368, 369, 370, 371, 372, 373, 374, 375, 376, 377, */
-/*   378, 379, 380, 381, 382, 383, 384, 385, 386, 387, */
-/*   388, 389, 390, 391, 392, 393, 394, 395, 396, 397, */
-/*   398, 399, 400, 401, 402, 404, 406, 407, 408, 410, */
-/*   412, 413, 414, 416, 418, 419, 420, 422, 424, 425, */
-/*   426, 428, 430, 431, 432, 433, 435, 436, 438, 439, */
-/*   440, 441, 442, 443, 444, 446, 447, 448, 449, 450, */
-/*   452, 454, 455, 456, 457, 458, 460, 462, 463, 464, */
-/*   465, 466, 467, 468, 469, 470, 471, 472, 473, 474, */
-/*   475, 476, 477, 478, 479, 480, 481, 482, 483, 484, */
-/*   485, 486, 487, 488, 489, 490, 491, 492, 493, 494, */
-/*   495, 497, 498, 500, 501, 502, 503, 504, 505, 506, */
-/*   507, 508, 509, 510, 511, 512, 513, 514, 515, 516, */
-/*   517, 518, 520, 521, 523, 524, 525, 527, 529, 530 */
-/* }; */
-
-/* pR */
 static int spacegroup_to_hall_number[231] = {
     0,
     1,   2,   3,   6,   9,  18,  21,  30,  39,  57,
@@ -136,9 +111,9 @@ static int spacegroup_to_hall_number[231] = {
   388, 389, 390, 391, 392, 393, 394, 395, 396, 397,
   398, 399, 400, 401, 402, 404, 406, 407, 408, 410,
   412, 413, 414, 416, 418, 419, 420, 422, 424, 425,
-  426, 428, 430, 431, 432, 434, 435, 437, 438, 439,
-  440, 441, 442, 443, 445, 446, 447, 448, 449, 451,
-  453, 454, 455, 456, 457, 459, 461, 462, 463, 464,
+  426, 428, 430, 431, 432, 433, 435, 436, 438, 439,
+  440, 441, 442, 443, 444, 446, 447, 448, 449, 450,
+  452, 454, 455, 456, 457, 458, 460, 462, 463, 464,
   465, 466, 467, 468, 469, 470, 471, 472, 473, 474,
   475, 476, 477, 478, 479, 480, 481, 482, 483, 484,
   485, 486, 487, 488, 489, 490, 491, 492, 493, 494,
@@ -146,6 +121,34 @@ static int spacegroup_to_hall_number[231] = {
   507, 508, 509, 510, 511, 512, 513, 514, 515, 516,
   517, 518, 520, 521, 523, 524, 525, 527, 529, 530
 };
+
+/* pR */
+/* static int spacegroup_to_hall_number[231] = { */
+/*     0, */
+/*     1,   2,   3,   6,   9,  18,  21,  30,  39,  57, */
+/*    60,  63,  72,  81,  90, 108, 109, 112, 115, 116, */
+/*   119, 122, 123, 124, 125, 128, 134, 137, 143, 149, */
+/*   155, 161, 164, 170, 173, 176, 182, 185, 191, 197, */
+/*   203, 209, 212, 215, 218, 221, 227, 228, 230, 233, */
+/*   239, 245, 251, 257, 263, 266, 269, 275, 278, 284, */
+/*   290, 292, 298, 304, 310, 313, 316, 322, 334, 335, */
+/*   337, 338, 341, 343, 349, 350, 351, 352, 353, 354, */
+/*   355, 356, 357, 358, 359, 361, 363, 364, 366, 367, */
+/*   368, 369, 370, 371, 372, 373, 374, 375, 376, 377, */
+/*   378, 379, 380, 381, 382, 383, 384, 385, 386, 387, */
+/*   388, 389, 390, 391, 392, 393, 394, 395, 396, 397, */
+/*   398, 399, 400, 401, 402, 404, 406, 407, 408, 410, */
+/*   412, 413, 414, 416, 418, 419, 420, 422, 424, 425, */
+/*   426, 428, 430, 431, 432, 434, 435, 437, 438, 439, */
+/*   440, 441, 442, 443, 445, 446, 447, 448, 449, 451, */
+/*   453, 454, 455, 456, 457, 459, 461, 462, 463, 464, */
+/*   465, 466, 467, 468, 469, 470, 471, 472, 473, 474, */
+/*   475, 476, 477, 478, 479, 480, 481, 482, 483, 484, */
+/*   485, 486, 487, 488, 489, 490, 491, 492, 493, 494, */
+/*   495, 497, 498, 500, 501, 502, 503, 504, 505, 506, */
+/*   507, 508, 509, 510, 511, 512, 513, 514, 515, 516, */
+/*   517, 518, 520, 521, 523, 524, 525, 527, 529, 530 */
+/* }; */
 
 static Spacegroup get_spacegroup(SPGCONST Cell * primitive,
 				 const double symprec);
@@ -369,12 +372,20 @@ static int get_hall_number_local(double origin_shift[3],
 			 primitive->lattice,
 			 transform_mat);
 
-  conv_symmetry = get_conventional_symmetry(transform_mat,
-					    centering,
-					    symmetry);
+  if (centering == R_CENTER) {
+    /* hR is handled in match_hall_symbol_db. */
+    conv_symmetry = get_conventional_symmetry(transform_mat,
+					      NO_CENTER,
+					      symmetry);
+  } else {
+    conv_symmetry = get_conventional_symmetry(transform_mat,
+					      centering,
+					      symmetry);
+  }
 
   for (spg_number = 1; spg_number < 231; spg_number++) {
     hall_number = spacegroup_to_hall_number[spg_number];
+  /* for (hall_number = 1; hall_number < 531; hall_number++) { */
     if (match_hall_symbol_db(origin_shift,
 			     conv_lattice,
 			     hall_number,
@@ -438,7 +449,29 @@ static int match_hall_symbol_db(double origin_shift[3],
 	}
       }
       break;
-      
+
+    case TRIGO:
+      if (centering == R_CENTER) { /* hR */
+	mat_multiply_matrix_d3(changed_lattice,
+			       lattice,
+			       pR_to_hR);
+	changed_symmetry =
+	  get_conventional_symmetry(pR_to_hR,
+				    R_CENTER,
+				    symmetry);
+	is_found = hal_match_hall_symbol_db(origin_shift,
+					    changed_lattice,
+					    hall_number,
+					    centering,
+					    changed_symmetry,
+					    symprec);
+	sym_free_symmetry(changed_symmetry);
+	if (is_found) {
+	  mat_copy_matrix_d3(lattice, changed_lattice);
+	  return 1;
+	}
+      }
+      /* Do not break for other trigonal cases */
     default:
       if (hal_match_hall_symbol_db(origin_shift,
 				   lattice,
@@ -507,15 +540,24 @@ static Symmetry * get_conventional_symmetry(SPGCONST double transform_mat[3][3],
   multi = 1;
 
   if (centering) {
-    if (! (centering == FACE)) {
-      for (i = 0; i < 3; i++) {	shift[0][i] = 0.5; }
+    if (centering != FACE && centering != R_CENTER) {
+      for (i = 0; i < 3; i++) {	shift[0][i] = 0.5; } /* BASE */
       if (centering == A_FACE) { shift[0][0] = 0; }
       if (centering == B_FACE) { shift[0][1] = 0; }
       if (centering == C_FACE) { shift[0][2] = 0; }
-
       multi = 2;
     }
 
+    if (centering == R_CENTER) {
+      shift[0][0] = 2. / 3;
+      shift[0][1] = 1. / 3;
+      shift[0][2] = 1. / 3;
+      shift[1][0] = 1. / 3;
+      shift[1][1] = 2. / 3;
+      shift[1][2] = 2. / 3;
+      multi = 3;
+    }
+    
     if (centering == FACE) {
       shift[0][0] = 0;
       shift[0][1] = 0.5;
@@ -526,7 +568,6 @@ static Symmetry * get_conventional_symmetry(SPGCONST double transform_mat[3][3],
       shift[2][0] = 0.5;
       shift[2][1] = 0.5;
       shift[2][2] = 0;
-
       multi = 4;
     }
 

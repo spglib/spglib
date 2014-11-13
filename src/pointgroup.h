@@ -13,7 +13,6 @@ typedef enum {
   MONOCLI,
   ORTHO,
   TETRA,
-  RHOMB,
   TRIGO,
   HEXA,
   CUBIC,

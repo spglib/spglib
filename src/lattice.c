@@ -105,16 +105,15 @@ static Centering get_centering(double correction_mat[3][3],
     }
   }
   if (det == 3) {
-    centering = NO_CENTER;
-    mat_multiply_matrix_id3(trans_corr_mat,
-			    transform_mat, rhombo_obverse);
+    /* pR but not hR */
+    centering = R_CENTER;
+    mat_multiply_matrix_id3(trans_corr_mat, transform_mat, rhombo_obverse);
     if (mat_is_int_matrix(trans_corr_mat, INT_PREC)) {
       mat_copy_matrix_d3(correction_mat, rhombo_obverse);
       debug_print("R-center observe setting\n");
       debug_print_matrix_d3(trans_corr_mat);
     }
-    mat_multiply_matrix_id3(trans_corr_mat,
-			    transform_mat, rhomb_reverse);
+    mat_multiply_matrix_id3(trans_corr_mat, transform_mat, rhomb_reverse);
     if (mat_is_int_matrix(trans_corr_mat, INT_PREC)) {
       mat_copy_matrix_d3(correction_mat, rhomb_reverse);
       debug_print("R-center reverse setting\n");
