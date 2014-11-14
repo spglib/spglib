@@ -173,30 +173,8 @@ static Symmetry * get_conventional_symmetry(SPGCONST double transform_mat[3][3],
 					    const Centering centering,
 					    const Symmetry *primitive_sym);
 
-Spacegroup spa_get_spacegroup(SPGCONST Cell * cell,
+Spacegroup spa_get_spacegroup(SPGCONST Cell * primitive,
 			      const double symprec)
-{
-  double tolerance;
-  Cell *primitive;
-  Spacegroup spacegroup;
-
-  primitive = prm_get_primitive(cell, symprec);
-  tolerance = prm_get_current_tolerance();
-  
-  if (primitive->size > 0) {
-    spacegroup = get_spacegroup(primitive, tolerance);
-  } else {
-    spacegroup.number = 0;
-    warning_print("spglib: Space group could not be found ");
-    warning_print("(line %d, %s).\n", __LINE__, __FILE__);
-  }
-  cel_free_cell(primitive);
-
-  return spacegroup;
-}
-
-Spacegroup spa_get_spacegroup_with_primitive(SPGCONST Cell * primitive,
-					     const double symprec)
 {
   Spacegroup spacegroup;
 
@@ -385,7 +363,6 @@ static int get_hall_number_local(double origin_shift[3],
 
   for (spg_number = 1; spg_number < 231; spg_number++) {
     hall_number = spacegroup_to_hall_number[spg_number];
-  /* for (hall_number = 1; hall_number < 531; hall_number++) { */
     if (match_hall_symbol_db(origin_shift,
 			     conv_lattice,
 			     hall_number,

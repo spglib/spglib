@@ -81,6 +81,8 @@ static int get_schoenflies(char symbol[10],
 			   SPGCONST double position[][3],
 			   const int types[], const int num_atom,
 			   const double symprec);
+static Spacegroup get_spacegroup(SPGCONST Cell * cell,
+				 const double symprec);
 static int refine_cell(double lattice[3][3],
 		       double position[][3],
 		       int types[],
@@ -755,8 +757,7 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
 						    tolerance);
     if (primitive->size > 0) {
       tolerance_from_prim = prm_get_current_tolerance();
-      spacegroup = spa_get_spacegroup_with_primitive(primitive,
-						     tolerance_from_prim);
+      spacegroup = spa_get_spacegroup(primitive, tolerance_from_prim);
       if (spacegroup.number > 0) {
 	set_dataset(dataset,
 		    cell,
@@ -1018,7 +1019,7 @@ static int get_international(char symbol[11],
 
   cell = cel_alloc_cell(num_atom);
   cel_set_cell(cell, lattice, position, types);
-  spacegroup = spa_get_spacegroup(cell, symprec);
+  spacegroup = get_spacegroup(cell, symprec);
   if (spacegroup.number > 0) {
     strcpy(symbol, spacegroup.international_short);
   }
@@ -1041,7 +1042,7 @@ static int get_schoenflies(char symbol[10],
   cell = cel_alloc_cell(num_atom);
   cel_set_cell(cell, lattice, position, types);
 
-  spacegroup = spa_get_spacegroup(cell, symprec);
+  spacegroup = get_spacegroup(cell, symprec);
   if (spacegroup.number > 0) {
     strcpy(symbol, spacegroup.schoenflies);
   }
@@ -1081,6 +1082,22 @@ static int refine_cell(double lattice[3][3],
   
   return num_atom_bravais;
 }
+
+static Spacegroup get_spacegroup(SPGCONST Cell * cell,
+				 const double symprec)
+{
+  double tolerance;
+  Cell *primitive;
+  Spacegroup spacegroup;
+
+  primitive = prm_get_primitive(cell, symprec);
+  tolerance = prm_get_current_tolerance();
+  spacegroup = get_spacegroup(primitive, tolerance);
+  cel_free_cell(primitive);
+
+  return spacegroup;
+}
+
 
 /*---------*/
 /* kpoints */

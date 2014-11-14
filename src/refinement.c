@@ -181,8 +181,7 @@ static Cell * refine_cell(SPGCONST Cell * cell,
     primitive = prm_get_primitive(cell, tolerance);
     if (primitive->size > 0) {  
       tolerance_from_prim = prm_get_current_tolerance();
-      spacegroup = spa_get_spacegroup_with_primitive(primitive,
-						     tolerance_from_prim);
+      spacegroup = spa_get_spacegroup(primitive, tolerance_from_prim);
       if (spacegroup.number > 0) {
 	wyckoffs_bravais = (int*)malloc(sizeof(int) * primitive->size * 4);
 	equiv_atoms_bravais = (int*)malloc(sizeof(int) * primitive->size * 4);

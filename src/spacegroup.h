@@ -23,10 +23,8 @@ typedef struct {
   double origin_shift[3];
 } Spacegroup;
 
-Spacegroup spa_get_spacegroup(SPGCONST Cell * cell,
+Spacegroup spa_get_spacegroup(SPGCONST Cell * primitive,
 			      const double symprec);
-Spacegroup spa_get_spacegroup_with_primitive(SPGCONST Cell * primitive,
-					     const double symprec);
 Symmetry * spa_get_conventional_symmetry(SPGCONST double transform_mat[3][3],
 					 const Centering centering,
 					 const Symmetry *primitive_sym);
