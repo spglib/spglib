@@ -25,8 +25,5 @@ typedef struct {
 
 Spacegroup spa_get_spacegroup(SPGCONST Cell * primitive,
 			      const double symprec);
-Symmetry * spa_get_conventional_symmetry(SPGCONST double transform_mat[3][3],
-					 const Centering centering,
-					 const Symmetry *primitive_sym);
 
 #endif

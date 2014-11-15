@@ -2712,7 +2712,7 @@ static int tetra_generators[][3][9] =
 };
 
 static int find_hall_symbol(double origin_shift[3],
-			    double bravais_lattice[3][3],
+			    SPGCONST double bravais_lattice[3][3],
 			    const int hall_number,
 			    const Centering centering,
 			    SPGCONST Symmetry *symmetry,
@@ -2725,12 +2725,6 @@ static int is_hall_symbol(double shift[3],
 			  SPGCONST int generators[3][9],
 			  SPGCONST double VSpU[3][9],
 			  const double symprec);
-static int is_hall_symbol_No205(double shift[3],
-				double bravais_lattice[3][3],
-				const int hall_number,
-				SPGCONST Symmetry *symmetry,
-				const Centering centering,
-				const double symprec);
 static int is_hall_symbol_cubic(double shift[3],
 				const int hall_number,
 				SPGCONST double bravais_lattice[3][3],
@@ -2804,7 +2798,7 @@ static int is_match_database(const int hall_number,
 
 
 int hal_match_hall_symbol_db(double origin_shift[3],
-			     double bravais_lattice[3][3],
+			     SPGCONST double bravais_lattice[3][3],
 			     const int hall_number,
 			     const Centering centering,
 			     SPGCONST Symmetry *symmetry,
@@ -2819,7 +2813,7 @@ int hal_match_hall_symbol_db(double origin_shift[3],
 }
 
 static int find_hall_symbol(double origin_shift[3],
-			    double bravais_lattice[3][3],
+			    SPGCONST double bravais_lattice[3][3],
 			    const int hall_number,
 			    const Centering centering,
 			    SPGCONST Symmetry *symmetry,
@@ -2827,21 +2821,12 @@ static int find_hall_symbol(double origin_shift[3],
 {
   /* CUBIC IT: 195-230, Hall: 489-530 */
   if (489 <= hall_number && hall_number <= 530) {
-    if (hall_number == 501) {
-      if (is_hall_symbol_No205(origin_shift,
-			       bravais_lattice,
-			       hall_number,
-			       symmetry,
-			       centering,
-			       symprec)) {return 1;}
-    } else {
-      if (is_hall_symbol_cubic(origin_shift,
-			       hall_number,
-			       bravais_lattice,
-			       symmetry,
-			       centering,
-			       symprec)) {return 1;}
-    }
+    if (is_hall_symbol_cubic(origin_shift,
+			     hall_number,
+			     bravais_lattice,
+			     symmetry,
+			     centering,
+			     symprec)) {return 1;}
     return 0;
   }
 
@@ -2919,60 +2904,6 @@ static int find_hall_symbol(double origin_shift[3],
   return 0;
 }
 
-static int is_hall_symbol_No205(double shift[3],
-				double bravais_lattice[3][3],
-				const int hall_number,
-				SPGCONST Symmetry *symmetry,
-				const Centering centering,
-				const double symprec)
-{
-  int i;
-  Symmetry *conv_symmetry;
-  double trans_mat[3][3] = {{ 0, 0, 1},
-			    { 0,-1, 0},
-			    { 1, 0, 0}};
-  double lattice[3][3];
-
-  for (i = 0; i < 22; i++) {
-    if (is_hall_symbol(shift,
-		       501,
-		       bravais_lattice,
-		       symmetry,
-		       centering,
-		       cubic_generators[i],
-		       cubic_VSpU[i],
-		       symprec)) {
-      goto found;
-    }
-
-    /* Try another basis */
-    conv_symmetry = spa_get_conventional_symmetry(trans_mat,
-						  centering,
-						  symmetry);
-    mat_multiply_matrix_d3(lattice,
-			   bravais_lattice,
-			   trans_mat);
-    
-    if (is_hall_symbol(shift,
-		       501,
-		       lattice,
-		       conv_symmetry,
-		       centering,
-		       cubic_generators[i],
-		       cubic_VSpU[i],
-		       symprec)) {
-      /* Lattice is multiplied by transformation matrix. */
-      mat_copy_matrix_d3(bravais_lattice, lattice);
-      sym_free_symmetry(conv_symmetry);
-      goto found;
-    }
-  }
-  return 0;
-
- found:
-  return 1;
-}
-  
 static int is_hall_symbol_cubic(double shift[3],
 				const int hall_number,
 				SPGCONST double bravais_lattice[3][3],

@@ -93,6 +93,9 @@ static Centering change_of_centering[18] = {C_FACE,
 static double pR_to_hR[3][3] = {{ 1, 0, 1 },
 				{-1, 1, 1 },
 				{ 0,-1, 1 }};
+static double transform_mat_501[3][3] = {{ 0, 0, 1},
+					 { 0,-1, 0},
+					 { 1, 0, 0}};
 
 /* hR */
 static int spacegroup_to_hall_number[231] = {
@@ -186,15 +189,6 @@ Spacegroup spa_get_spacegroup(SPGCONST Cell * primitive,
     warning_print("(line %d, %s).\n", __LINE__, __FILE__);
   }
   return spacegroup;
-}
-
-Symmetry * spa_get_conventional_symmetry(SPGCONST double transform_mat[3][3],
-					 const Centering centering,
-					 const Symmetry *primitive_sym)
-{
-  return get_conventional_symmetry(transform_mat,
-				   centering,
-				   primitive_sym);
 }
 
 static Spacegroup get_spacegroup(SPGCONST Cell * primitive,
@@ -427,6 +421,38 @@ static int match_hall_symbol_db(double origin_shift[3],
       }
       break;
 
+    case CUBIC:
+      if (hal_match_hall_symbol_db(origin_shift,
+				   lattice,
+				   hall_number,
+				   centering,
+				   symmetry,
+				   symprec)) {
+	return 1;
+      }
+      
+      if (hall_number == 501) { /* Try another basis for No.205 */
+	mat_multiply_matrix_d3(changed_lattice,
+			       lattice,
+			       transform_mat_501);
+	changed_symmetry =
+	  get_conventional_symmetry(transform_mat_501,
+				    NO_CENTER,
+				    symmetry);
+	is_found = hal_match_hall_symbol_db(origin_shift,
+					    changed_lattice,
+					    hall_number,
+					    NO_CENTER,
+					    changed_symmetry,
+					    symprec);
+	sym_free_symmetry(changed_symmetry);
+	if (is_found) {
+	  mat_copy_matrix_d3(lattice, changed_lattice);
+	  return 1;
+	}
+      }
+      break;
+      
     case TRIGO:
       if (centering == R_CENTER) { /* hR */
 	mat_multiply_matrix_d3(changed_lattice,
@@ -449,7 +475,7 @@ static int match_hall_symbol_db(double origin_shift[3],
 	}
       }
       /* Do not break for other trigonal cases */
-    default:
+    default: /* HEXA, TETRA, TRICLI and rest of TRIGO */
       if (hal_match_hall_symbol_db(origin_shift,
 				   lattice,
 				   hall_number,
