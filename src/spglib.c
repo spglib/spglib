@@ -419,16 +419,15 @@ int spg_get_pointgroup(char symbol[6],
 {
   int tmp_transform_mat[3][3];
   double correction_mat[3][3], transform_mat_double[3][3];
-  Centering centering;
   Pointgroup pointgroup;
 
   pointgroup = ptg_get_transformation_matrix(tmp_transform_mat,
 					     rotations,
 					     num_rotations);
   strcpy(symbol, pointgroup.symbol);
-  centering = lat_get_centering(correction_mat,
-				tmp_transform_mat,
-				pointgroup.laue);
+  lat_get_centering(correction_mat,
+		    tmp_transform_mat,
+		    pointgroup.laue);
   mat_multiply_matrix_id3(transform_mat_double,
 			  tmp_transform_mat,
 			  correction_mat);
