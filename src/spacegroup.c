@@ -18,78 +18,106 @@
 
 #define REDUCE_RATE 0.95
 
-static double change_of_basis[18][3][3] = {{{ 1, 0, 0 },
-					    { 0, 1, 0 },
-					    { 0, 0, 1 }},
-					   {{ 0, 0, 1 },
-					    { 1, 0, 0 },
-					    { 0, 1, 0 }},
-					   {{ 0, 1, 0 },
-					    { 0, 0, 1 },
-					    { 1, 0, 0 }},
-					   {{ 0, 0, 1 },
-					    { 0,-1, 0 },
-					    { 1, 0, 0 }},
-					   {{ 1, 0, 0 },
-					    { 0, 0, 1 },
-					    { 0,-1, 0 }},
-					   {{ 0,-1, 0 },
-					    { 1, 0, 0 },
-					    { 0, 0, 1 }},
-					   {{-1, 0, 1 },
-					    { 0, 1, 0 },
-					    {-1, 0, 0 }},
-					   {{-1, 0, 0 },
-					    {-1, 0, 1 },
-					    { 0, 1, 0 }},
-					   {{ 0, 1, 0 },
-					    {-1, 0, 0 },
-					    {-1, 0, 1 }},
-					   {{-1, 0, 0 },
-					    { 0,-1, 0 },
-					    {-1, 0, 1 }},
-					   {{-1, 0, 1 },
-					    {-1, 0, 0 },
-					    { 0,-1, 0 }},
-					   {{ 0,-1, 0 },
-					    {-1, 0, 1 },
-					    {-1, 0, 0 }},
-					   {{ 0, 0,-1 },
-					    { 0, 1, 0 },
-					    { 1, 0,-1 }},
-					   {{ 1, 0,-1 },
-					    { 0, 0,-1 },
-					    { 0, 1, 0 }},
-					   {{ 0, 1, 0 },
-					    { 1, 0,-1 },
-					    { 0, 0,-1 }},
-					   {{ 1, 0,-1 },
-					    { 0,-1, 0 },
-					    { 0, 0,-1 }},
-					   {{ 0, 0,-1 },
-					    { 1, 0,-1 },
-					    { 0,-1, 0 }},
-					   {{ 0,-1, 0 },
-					    { 0, 0,-1 },
-					    { 1, 0,-1 }}};
-static Centering change_of_centering[18] = {C_FACE,
-					    B_FACE,
-					    A_FACE,
-					    A_FACE,
-					    C_FACE,
-					    B_FACE,
-					    BASE,
-					    BASE,
-					    BASE,
-					    BASE,
-					    BASE,
-					    BASE,
-					    A_FACE,
-					    C_FACE,
-					    B_FACE,
-					    C_FACE,
-					    B_FACE,
-					    A_FACE};
+static double change_of_basis_monocli[18][3][3] = {{{ 1, 0, 0 },
+						    { 0, 1, 0 },
+						    { 0, 0, 1 }},
+						   {{ 0, 0, 1 },
+						    { 0,-1, 0 },
+						    { 1, 0, 0 }},
+						   {{ 0, 0, 1 },
+						    { 1, 0, 0 },
+						    { 0, 1, 0 }},
+						   {{ 1, 0, 0 },
+						    { 0, 0, 1 },
+						    { 0,-1, 0 }},
+						   {{ 0, 1, 0 },
+						    { 0, 0, 1 },
+						    { 1, 0, 0 }},
+						   {{ 0,-1, 0 },
+						    { 1, 0, 0 },
+						    { 0, 0, 1 }},
+						   {{-1, 0, 1 },
+						    { 0, 1, 0 },
+						    {-1, 0, 0 }},
+						   {{ 1, 0,-1 },
+						    { 0,-1, 0 },
+						    { 0, 0,-1 }},
+						   {{ 0, 1,-1 },
+						    { 1, 0, 0 },
+						    { 0, 0,-1 }},
+						   {{-1,-1, 0 },
+						    { 0, 0, 1 },
+						    {-1, 0, 0 }},
+						   {{ 1,-1, 0 },
+						    { 0, 0, 1 },
+						    { 0,-1, 0 }},
+						   {{ 0, 1, 1 },
+						    { 1, 0, 0 },
+						    { 0, 1, 0 }},
+						   {{ 0, 0,-1 },
+						    { 0, 1, 0 },
+						    { 1, 0,-1 }},
+						   {{-1, 0, 0 },
+						    { 0,-1, 0 },
+						    {-1, 0, 1 }},
+						   {{ 0,-1, 0 },
+						    { 1, 0, 0 },
+						    { 0,-1, 1 }},
+						   {{ 0, 1, 0 },
+						    { 0, 0, 1 },
+						    { 1, 1, 0 }},
+						   {{-1, 0, 0 },
+						    { 0, 0, 1 },
+						    {-1, 1, 0 }},
+						   {{ 0, 0,-1 },
+						    { 1, 0, 0 },
+						    { 0,-1,-1 }}};
+
+static Centering change_of_centering_monocli[18] = {C_FACE,
+						    A_FACE,
+						    B_FACE,
+						    B_FACE,
+						    A_FACE,
+						    C_FACE,
+						    BASE,
+						    BASE,
+						    BASE,
+						    BASE,
+						    BASE,
+						    BASE,
+						    A_FACE,
+						    C_FACE,
+						    C_FACE,
+						    A_FACE,
+						    B_FACE,
+						    B_FACE};
+
+static double change_of_basis_ortho[6][3][3] = {{{ 1, 0, 0 },
+						 { 0, 1, 0 },
+						 { 0, 0, 1 }},
+						{{ 0, 0, 1 },
+						 { 1, 0, 0 },
+						 { 0, 1, 0 }},
+						{{ 0, 1, 0 },
+						 { 0, 0, 1 },
+						 { 1, 0, 0 }},
+						{{ 0, 1, 0 },
+						 { 1, 0, 0 },
+						 { 0, 0,-1 }},
+						{{ 1, 0, 0 },
+						 { 0, 0, 1 },
+						 { 0,-1, 0 }},
+						{{ 0, 0, 1 },
+						 { 0, 1, 0 },
+						 {-1, 0, 0 }}};
+
+static Centering change_of_centering_ortho[6] = {C_FACE,
+						 B_FACE,
+						 A_FACE,
+						 C_FACE,
+						 B_FACE,
+						 A_FACE};
+
 static double pR_to_hR[3][3] = {{ 1, 0, 1 },
 				{-1, 1, 1 },
 				{ 0,-1, 1 }};
@@ -463,7 +491,7 @@ static int match_hall_symbol_db(double origin_shift[3],
 				SPGCONST Symmetry *symmetry,
 				const double symprec)
 {
-  int i, num_settings, is_found;
+  int i, is_found;
   SpacegroupType spacegroup_type;
   Centering changed_centering;
   Symmetry * changed_symmetry;
@@ -473,20 +501,45 @@ static int match_hall_symbol_db(double origin_shift[3],
   if (pointgroup->number == spacegroup_type.pointgroup_number) {
     switch (pointgroup->holohedry) {
     case MONOCLI:
-    case ORTHO:
-      if (pointgroup->holohedry == MONOCLI) {num_settings = 18;}
-      if (pointgroup->holohedry == ORTHO) {num_settings = 6;}
-      for (i = 0; i < num_settings; i++) {
+      for (i = 0; i < 18; i++) {
 	if (centering == C_FACE) {
-	  changed_centering = change_of_centering[i];
+	  changed_centering = change_of_centering_monocli[i];
 	} else {
 	  changed_centering = centering;
 	}
 	mat_multiply_matrix_d3(changed_lattice,
 			       lattice,
-			       change_of_basis[i]);
+			       change_of_basis_monocli[i]);
 	changed_symmetry =
-	  get_conventional_symmetry(change_of_basis[i],
+	  get_conventional_symmetry(change_of_basis_monocli[i],
+				    NO_CENTER,
+				    symmetry);
+	is_found = hal_match_hall_symbol_db(origin_shift,
+					    changed_lattice,
+					    hall_number,
+					    changed_centering,
+					    changed_symmetry,
+					    symprec);
+	sym_free_symmetry(changed_symmetry);
+	if (is_found) {
+	  mat_copy_matrix_d3(lattice, changed_lattice);
+	  return 1;
+	}
+      }
+      break;
+      
+    case ORTHO:
+      for (i = 0; i < 6; i++) {
+	if (centering == C_FACE) {
+	  changed_centering = change_of_centering_ortho[i];
+	} else {
+	  changed_centering = centering;
+	}
+	mat_multiply_matrix_d3(changed_lattice,
+			       lattice,
+			       change_of_basis_ortho[i]);
+	changed_symmetry =
+	  get_conventional_symmetry(change_of_basis_ortho[i],
 				    NO_CENTER,
 				    symmetry);
 	is_found = hal_match_hall_symbol_db(origin_shift,
