@@ -4,11 +4,36 @@
 
 VALUE Getspg = Qnil;
 void Init_getspg(void);
-VALUE method_getspg(VALUE self, VALUE r_size, VALUE r_lattice, VALUE r_position, VALUE r_types, VALUE r_symprec, VALUE r_angle_symprec);
-VALUE method_getptg(VALUE self, VALUE r_rotations);
-VALUE method_refine_cell(VALUE self, VALUE r_size, VALUE r_lattice, VALUE r_position, VALUE r_types, VALUE r_symprec, VALUE r_angle_symprec);
-VALUE method_get_operations(VALUE self, VALUE r_size, VALUE r_lattice, VALUE r_position, VALUE r_types, VALUE r_symprec, VALUE r_angle_symprec);
-VALUE method_get_dataset(VALUE self, VALUE r_lattice, VALUE r_position, VALUE r_types, VALUE r_symprec, VALUE r_angle_symprec);
+VALUE method_getspg(VALUE self,
+		    VALUE r_size,
+		    VALUE r_lattice,
+		    VALUE r_position,
+		    VALUE r_types,
+		    VALUE r_symprec,
+		    VALUE r_angle_symprec);
+VALUE method_getptg(VALUE self,
+		    VALUE r_rotations);
+VALUE method_refine_cell(VALUE self,
+			 VALUE r_size,
+			 VALUE r_lattice,
+			 VALUE r_position,
+			 VALUE r_types,
+			 VALUE r_symprec,
+			 VALUE r_angle_symprec);
+VALUE method_get_operations(VALUE self,
+			    VALUE r_size,
+			    VALUE r_lattice,
+			    VALUE r_position,
+			    VALUE r_types,
+			    VALUE r_symprec,
+			    VALUE r_angle_symprec);
+VALUE method_get_dataset(VALUE self,
+			 VALUE r_lattice,
+			 VALUE r_position,
+			 VALUE r_types,
+			 VALUE r_hall_num,
+			 VALUE r_symprec,
+			 VALUE r_angle_symprec);
 
 void Init_getspg(void)
 {
@@ -17,10 +42,16 @@ void Init_getspg(void)
   rb_define_method(Getspg, "getptg", method_getptg, 1);
   rb_define_method(Getspg, "refine_cell", method_refine_cell, 6);
   rb_define_method(Getspg, "get_operations", method_get_operations, 6);
-  rb_define_method(Getspg, "get_dataset", method_get_dataset, 5);
+  rb_define_method(Getspg, "get_dataset", method_get_dataset, 6);
 }
 
-VALUE method_getspg(VALUE self, VALUE r_size, VALUE r_lattice, VALUE r_position, VALUE r_types, VALUE r_symprec, VALUE r_angle_symprec)
+VALUE method_getspg(VALUE self,
+		    VALUE r_size,
+		    VALUE r_lattice,
+		    VALUE r_position,
+		    VALUE r_types,
+		    VALUE r_symprec,
+		    VALUE r_angle_symprec)
 {
   int i, j, size, spgroup;
   double symprec, lattice[3][3];
@@ -99,7 +130,13 @@ VALUE method_getptg(VALUE self, VALUE r_rotations)
   return array;
 }
 
-VALUE method_refine_cell(VALUE self, VALUE r_size, VALUE r_lattice, VALUE r_position, VALUE r_types, VALUE r_symprec, VALUE r_angle_symprec)
+VALUE method_refine_cell(VALUE self,
+			 VALUE r_size,
+			 VALUE r_lattice,
+			 VALUE r_position,
+			 VALUE r_types,
+			 VALUE r_symprec,
+			 VALUE r_angle_symprec)
 {
   int i, j, size, spgroup, num_atom_bravais ;
   double symprec, angle_tolerance, lattice[3][3];
@@ -174,7 +211,13 @@ VALUE method_refine_cell(VALUE self, VALUE r_size, VALUE r_lattice, VALUE r_posi
   return array;
 }
 
-VALUE method_get_operations(VALUE self, VALUE r_size, VALUE r_lattice, VALUE r_position, VALUE r_types, VALUE r_symprec, VALUE r_angle_symprec)
+VALUE method_get_operations(VALUE self,
+			    VALUE r_size,
+			    VALUE r_lattice,
+			    VALUE r_position,
+			    VALUE r_types,
+			    VALUE r_symprec,
+			    VALUE r_angle_symprec)
 {
   int i, j, k, num_atom, num_sym;
   double symprec, lattice[3][3];
@@ -238,97 +281,104 @@ VALUE method_get_operations(VALUE self, VALUE r_size, VALUE r_lattice, VALUE r_p
   return array;
 }
 
-VALUE method_get_dataset(VALUE self, VALUE r_lattice, VALUE r_position, VALUE r_types, VALUE r_symprec, VALUE r_angle_symprec)
+VALUE method_get_dataset(VALUE self,
+			 VALUE r_lattice,
+			 VALUE r_position,
+			 VALUE r_types,
+			 VALUE r_hall_num,
+			 VALUE r_symprec,
+			 VALUE r_angle_symprec)
 {
   int i, j, k, num_atom;
   double symprec, lattice[3][3];
   SpglibDataset *dataset;
   VALUE mat, vec, row, array, r_tmat, r_oshift, r_rot, r_trans, r_wyckoffs;
 
-  num_atom = RARRAY_LEN( r_types );
+  num_atom = RARRAY_LEN(r_types);
 
   double position[num_atom][3];
   int types[num_atom];
 
   symprec = NUM2DBL(r_symprec);
 
-  for ( i = 0; i < num_atom; i++ ) {
-    for ( j = 0; j < 3; j++ ) {
+  for (i = 0; i < num_atom; i++) {
+    for (j = 0; j < 3; j++) {
       position[i][j] =
-	NUM2DBL( rb_ary_entry( rb_ary_entry( r_position, i ), j ) );
-      types[i] = NUM2DBL( rb_ary_entry( r_types, i ) );
+	NUM2DBL(rb_ary_entry(rb_ary_entry(r_position, i), j));
+      types[i] = NUM2DBL(rb_ary_entry(r_types, i));
     }
   }
 
-  for ( i = 0; i < 3; i++ ) {
-    for ( j = 0; j < 3; j++ ) {
+  for (i = 0; i < 3; i++) {
+    for (j = 0; j < 3; j++) {
       lattice[i][j] =
-	NUM2DBL( rb_ary_entry( rb_ary_entry( r_lattice, i), j ) );
+	NUM2DBL(rb_ary_entry(rb_ary_entry(r_lattice, i), j));
     }
   }
 
-  dataset = spgat_get_dataset(lattice,
-			      position,
-			      types,
-			      num_atom,
-			      symprec,
-			      NUM2DBL(r_angle_symprec));
+  dataset = spgat_get_dataset_with_hall_number(lattice,
+					       position,
+					       types,
+					       num_atom,
+					       NUM2INT(r_hall_num),
+					       symprec,
+					       NUM2DBL(r_angle_symprec));
 
   array = rb_ary_new();
 
-  rb_ary_push( array, INT2NUM( dataset->spacegroup_number ) );
-  rb_ary_push( array, rb_str_new2( dataset->international_symbol ) );
-  rb_ary_push( array, INT2NUM( dataset->hall_number ) );
-  rb_ary_push( array, rb_str_new2( dataset->hall_symbol ) );
-  rb_ary_push( array, rb_str_new2( dataset->setting ) );
+  rb_ary_push(array, INT2NUM( dataset->spacegroup_number));
+  rb_ary_push(array, rb_str_new2( dataset->international_symbol));
+  rb_ary_push(array, INT2NUM( dataset->hall_number));
+  rb_ary_push(array, rb_str_new2( dataset->hall_symbol));
+  rb_ary_push(array, rb_str_new2( dataset->setting));
   
   /* Transformation_matrix */
   r_tmat = rb_ary_new();
-  for ( i = 0; i < 3; i++ ) {
+  for (i = 0; i < 3; i++) {
     row = rb_ary_new();
-    for ( j = 0; j < 3; j++ ) {
-      rb_ary_push( row,
-		   rb_float_new( dataset->transformation_matrix[i][j] ) );
+    for (j = 0; j < 3; j++) {
+      rb_ary_push(row,
+		  rb_float_new(dataset->transformation_matrix[i][j]));
     }
-    rb_ary_push( r_tmat, row );
+    rb_ary_push(r_tmat, row);
   }
-  rb_ary_push( array, r_tmat );
+  rb_ary_push(array, r_tmat);
 
   /* Origin shift */
   r_oshift = rb_ary_new();
-  for ( i = 0; i < 3; i++ ) {
-    rb_ary_push( r_oshift, rb_float_new( dataset->origin_shift[i] ) );
+  for (i = 0; i < 3; i++) {
+    rb_ary_push(r_oshift, rb_float_new(dataset->origin_shift[i]));
   }
-  rb_ary_push( array, r_oshift );
+  rb_ary_push(array, r_oshift);
  
   /* Rotations, translations */
   r_rot = rb_ary_new();
   r_trans = rb_ary_new();
-  for ( i = 0; i < dataset->n_operations; i++ ) {
+  for (i = 0; i < dataset->n_operations; i++) {
     mat = rb_ary_new();
     vec = rb_ary_new();
-    for ( j = 0; j < 3; j++ ) {
-      rb_ary_push( vec, rb_float_new( dataset->translations[i][j] ) );
+    for (j = 0; j < 3; j++) {
+      rb_ary_push(vec, rb_float_new(dataset->translations[i][j]));
       row = rb_ary_new();
-      for ( k = 0; k < 3; k++ ) {
-	rb_ary_push( row, rb_float_new( dataset->rotations[i][j][k] ) );
+      for (k = 0; k < 3; k++) {
+	rb_ary_push(row, rb_float_new(dataset->rotations[i][j][k]));
       }
-      rb_ary_push( mat, row );
+      rb_ary_push(mat, row);
     }
-    rb_ary_push( r_trans, vec );
-    rb_ary_push( r_rot, mat );
+    rb_ary_push(r_trans, vec);
+    rb_ary_push(r_rot, mat);
   }
-  rb_ary_push( array, r_rot );
-  rb_ary_push( array, r_trans );
+  rb_ary_push(array, r_rot);
+  rb_ary_push(array, r_trans);
 
   /* Wyckoff letters */
   r_wyckoffs = rb_ary_new();
-  for ( i = 0; i < dataset->n_atoms; i++ ) {
-    r_wyckoffs = rb_ary_push( r_wyckoffs, INT2NUM( dataset->wyckoffs[i] ) );
+  for (i = 0; i < dataset->n_atoms; i++) {
+    r_wyckoffs = rb_ary_push(r_wyckoffs, INT2NUM(dataset->wyckoffs[i]));
   }
-  rb_ary_push( array, r_wyckoffs );
+  rb_ary_push(array, r_wyckoffs);
 
-  spg_free_dataset( dataset );
+  spg_free_dataset(dataset);
   
   return array;
 }

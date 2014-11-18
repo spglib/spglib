@@ -23,7 +23,6 @@ typedef struct {
   char symbol[6];
   Holohedry holohedry;
   Laue laue;
-  Centering centering;
 } Pointgroup;
 
 Pointgroup ptg_get_transformation_matrix(int transform_mat[3][3],

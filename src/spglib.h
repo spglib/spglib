@@ -97,6 +97,22 @@ SpglibDataset * spgat_get_dataset(SPGCONST double lattice[3][3],
 				  const double symprec,
 				  const double angle_tolerance);
 
+SpglibDataset * spg_get_dataset_with_hall_number(SPGCONST double lattice[3][3],
+						 SPGCONST double position[][3],
+						 const int types[],
+						 const int num_atom,
+						 const int hall_number,
+						 const double symprec);
+
+SpglibDataset *
+spgat_get_dataset_with_hall_number(SPGCONST double lattice[3][3],
+				   SPGCONST double position[][3],
+				   const int types[],
+				   const int num_atom,
+				   const int hall_number,
+				   const double symprec,
+				   const double angle_tolerance);
+
 void spg_free_dataset(SpglibDataset *dataset);
 
 /* Find symmetry operations. The operations are stored in */

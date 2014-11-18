@@ -18,88 +18,87 @@
 
 #define REDUCE_RATE 0.95
 
-static double change_of_basis[18][3][3] = { {{ 1, 0, 0 },
-					     { 0, 1, 0 },
-					     { 0, 0, 1 }},
-					    {{ 0, 0, 1 },
-					     { 1, 0, 0 },
-					     { 0, 1, 0 }},
-					    {{ 0, 1, 0 },
-					     { 0, 0, 1 },
-					     { 1, 0, 0 }},
-					    {{ 0, 0, 1 },
-					     { 0,-1, 0 },
-					     { 1, 0, 0 }},
-					    {{ 1, 0, 0 },
-					     { 0, 0, 1 },
-					     { 0,-1, 0 }},
-					    {{ 0,-1, 0 },
-					     { 1, 0, 0 },
-					     { 0, 0, 1 }},
-					    {{-1, 0, 1 },
-					     { 0, 1, 0 },
-					     {-1, 0, 0 }},
-					    {{-1, 0, 0 },
-					     {-1, 0, 1 },
-					     { 0, 1, 0 }},
-					    {{ 0, 1, 0 },
-					     {-1, 0, 0 },
-					     {-1, 0, 1 }},
-					    {{-1, 0, 0 },
-					     { 0,-1, 0 },
-					     {-1, 0, 1 }},
-					    {{-1, 0, 1 },
-					     {-1, 0, 0 },
-					     { 0,-1, 0 }},
-					    {{ 0,-1, 0 },
-					     {-1, 0, 1 },
-					     {-1, 0, 0 }},
-					    {{ 0, 0,-1 },
-					     { 0, 1, 0 },
-					     { 1, 0,-1 }},
-					    {{ 1, 0,-1 },
-					     { 0, 0,-1 },
-					     { 0, 1, 0 }},
-					    {{ 0, 1, 0 },
-					     { 1, 0,-1 },
-					     { 0, 0,-1 }},
-					    {{ 1, 0,-1 },
-					     { 0,-1, 0 },
-					     { 0, 0,-1 }},
-					    {{ 0, 0,-1 },
-					     { 1, 0,-1 },
-					     { 0,-1, 0 }},
-					    {{ 0,-1, 0 },
-					     { 0, 0,-1 },
-					     { 1, 0,-1 }}};
+static double change_of_basis[18][3][3] = {{{ 1, 0, 0 },
+					    { 0, 1, 0 },
+					    { 0, 0, 1 }},
+					   {{ 0, 0, 1 },
+					    { 1, 0, 0 },
+					    { 0, 1, 0 }},
+					   {{ 0, 1, 0 },
+					    { 0, 0, 1 },
+					    { 1, 0, 0 }},
+					   {{ 0, 0, 1 },
+					    { 0,-1, 0 },
+					    { 1, 0, 0 }},
+					   {{ 1, 0, 0 },
+					    { 0, 0, 1 },
+					    { 0,-1, 0 }},
+					   {{ 0,-1, 0 },
+					    { 1, 0, 0 },
+					    { 0, 0, 1 }},
+					   {{-1, 0, 1 },
+					    { 0, 1, 0 },
+					    {-1, 0, 0 }},
+					   {{-1, 0, 0 },
+					    {-1, 0, 1 },
+					    { 0, 1, 0 }},
+					   {{ 0, 1, 0 },
+					    {-1, 0, 0 },
+					    {-1, 0, 1 }},
+					   {{-1, 0, 0 },
+					    { 0,-1, 0 },
+					    {-1, 0, 1 }},
+					   {{-1, 0, 1 },
+					    {-1, 0, 0 },
+					    { 0,-1, 0 }},
+					   {{ 0,-1, 0 },
+					    {-1, 0, 1 },
+					    {-1, 0, 0 }},
+					   {{ 0, 0,-1 },
+					    { 0, 1, 0 },
+					    { 1, 0,-1 }},
+					   {{ 1, 0,-1 },
+					    { 0, 0,-1 },
+					    { 0, 1, 0 }},
+					   {{ 0, 1, 0 },
+					    { 1, 0,-1 },
+					    { 0, 0,-1 }},
+					   {{ 1, 0,-1 },
+					    { 0,-1, 0 },
+					    { 0, 0,-1 }},
+					   {{ 0, 0,-1 },
+					    { 1, 0,-1 },
+					    { 0,-1, 0 }},
+					   {{ 0,-1, 0 },
+					    { 0, 0,-1 },
+					    { 1, 0,-1 }}};
 static Centering change_of_centering[18] = {C_FACE,
 					    B_FACE,
 					    A_FACE,
 					    A_FACE,
 					    C_FACE,
 					    B_FACE,
+					    BASE,
+					    BASE,
+					    BASE,
+					    BASE,
+					    BASE,
+					    BASE,
 					    A_FACE,
 					    C_FACE,
 					    B_FACE,
 					    C_FACE,
 					    B_FACE,
-					    A_FACE,
-					    BASE,
-					    BASE,
-					    BASE,
-					    BASE,
-					    BASE,
-					    BASE};
+					    A_FACE};
 static double pR_to_hR[3][3] = {{ 1, 0, 1 },
 				{-1, 1, 1 },
 				{ 0,-1, 1 }};
-static double transform_mat_501[3][3] = {{ 0, 0, 1},
-					 { 0,-1, 0},
-					 { 1, 0, 0}};
+static double change_of_basis_501[3][3] = {{ 0, 0, 1},
+					   { 0,-1, 0},
+					   { 1, 0, 0}};
 
 /* hR */
-static int spacegroup_to_hall_number[231] = {
-    0,
+static int spacegroup_to_hall_number[230] = {
     1,   2,   3,   6,   9,  18,  21,  30,  39,  57,
    60,  63,  72,  81,  90, 108, 109, 112, 115, 116,
   119, 122, 123, 124, 125, 128, 134, 137, 143, 149,
@@ -122,12 +121,11 @@ static int spacegroup_to_hall_number[231] = {
   485, 486, 487, 488, 489, 490, 491, 492, 493, 494,
   495, 497, 498, 500, 501, 502, 503, 504, 505, 506,
   507, 508, 509, 510, 511, 512, 513, 514, 515, 516,
-  517, 518, 520, 521, 523, 524, 525, 527, 529, 530
+  517, 518, 520, 521, 523, 524, 525, 527, 529, 530,
 };
 
 /* pR */
-/* static int spacegroup_to_hall_number[231] = { */
-/*     0, */
+/* static int spacegroup_to_hall_number[230] = { */
 /*     1,   2,   3,   6,   9,  18,  21,  30,  39,  57, */
 /*    60,  63,  72,  81,  90, 108, 109, 112, 115, 116, */
 /*   119, 122, 123, 124, 125, 128, 134, 137, 143, 149, */
@@ -150,21 +148,35 @@ static int spacegroup_to_hall_number[231] = {
 /*   485, 486, 487, 488, 489, 490, 491, 492, 493, 494, */
 /*   495, 497, 498, 500, 501, 502, 503, 504, 505, 506, */
 /*   507, 508, 509, 510, 511, 512, 513, 514, 515, 516, */
-/*   517, 518, 520, 521, 523, 524, 525, 527, 529, 530 */
+/*   517, 518, 520, 521, 523, 524, 525, 527, 529, 530, */
 /* }; */
 
-static Spacegroup get_spacegroup(SPGCONST Cell * primitive,
-				 const double symprec);
-static int get_hall_number(double origin_shift[3],
-			   double conv_lattice[3][3],
-			   SPGCONST Cell * primitive,
-			   SPGCONST Symmetry * symmetry,
-			   const double symprec);
-static int get_hall_number_local(double origin_shift[3],
-				 double conv_lattice[3][3],
-				 SPGCONST Cell * primitive,
-				 SPGCONST Symmetry * symmetry,
-				 const double symprec);
+static Spacegroup search_spacegroup(SPGCONST Cell * primitive,
+				    const int candidates[],
+				    const int num_candidates,
+				    const double symprec);
+static Spacegroup get_spacegroup(const int hall_number,
+				 const double origin_shift[3],
+				 SPGCONST double conv_lattice[3][3]);
+static int iterative_search_hall_number(double origin_shift[3],
+					double conv_lattice[3][3],
+					const int candidates[],
+					const int num_candidates,
+					SPGCONST Cell * primitive,
+					SPGCONST Symmetry * symmetry,
+					const double symprec);
+static Symmetry * get_symmetry_settings(double conv_lattice[3][3],
+					Pointgroup *pointgroup,
+					Centering *centering,
+					SPGCONST double primitive_lattice[3][3],
+					SPGCONST Symmetry * symmetry);
+static int search_hall_number(double origin_shift[3],
+			      double conv_lattice[3][3],
+			      const int candidates[],
+			      const int num_candidates,
+			      SPGCONST double primitive_lattice[3][3],
+			      SPGCONST Symmetry * symmetry,
+			      const double symprec);
 static int match_hall_symbol_db(double origin_shift[3],
 				double lattice[3][3],
 				const int hall_number,
@@ -180,9 +192,12 @@ Spacegroup spa_get_spacegroup(SPGCONST Cell * primitive,
 			      const double symprec)
 {
   Spacegroup spacegroup;
-
+  
   if (primitive->size > 0) {
-    spacegroup = get_spacegroup(primitive, symprec);
+    spacegroup = search_spacegroup(primitive,
+				   spacegroup_to_hall_number,
+				   230,
+				   symprec);
   } else {
     spacegroup.number = 0;
     warning_print("spglib: Space group could not be found ");
@@ -191,30 +206,70 @@ Spacegroup spa_get_spacegroup(SPGCONST Cell * primitive,
   return spacegroup;
 }
 
-static Spacegroup get_spacegroup(SPGCONST Cell * primitive,
-				 const double symprec)
+Spacegroup spa_get_spacegroup_with_hall_number(SPGCONST Cell * primitive,
+					       const int hall_number,
+					       const double symprec)
+{
+  int num_candidates;
+  int candidate[1];
+  Spacegroup spacegroup;
+  
+  if (hall_number < 1 || hall_number > 530 || primitive->size < 1) {
+    goto err;
+  }
+    
+  num_candidates = 1;
+  candidate[0] = hall_number;
+  spacegroup = search_spacegroup(primitive,
+				 candidate,
+				 num_candidates,
+				 symprec);
+  if (spacegroup.number > 0) {
+    goto ret;
+  }
+
+ err:
+  spacegroup.number = 0;
+  warning_print("spglib: Space group with the input setting could not be found ");
+  warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+
+ ret:
+  return spacegroup;
+}
+
+static Spacegroup search_spacegroup(SPGCONST Cell * primitive,
+				    const int candidates[],
+				    const int num_candidates,
+				    const double symprec)
 {
   int hall_number;
   double conv_lattice[3][3];
   double origin_shift[3];
   Symmetry *symmetry;
+
+  hall_number = 0;
+  symmetry = sym_get_operation(primitive, symprec);
+  if (symmetry->size > 0) {
+    hall_number = iterative_search_hall_number(origin_shift,
+					       conv_lattice,
+					       candidates,
+					       num_candidates,
+					       primitive,
+					       symmetry,
+					       symprec);
+  }
+  sym_free_symmetry(symmetry);
+
+  return get_spacegroup(hall_number, origin_shift, conv_lattice);
+}
+
+static Spacegroup get_spacegroup(const int hall_number,
+				 const double origin_shift[3],
+				 SPGCONST double conv_lattice[3][3])
+{
   Spacegroup spacegroup;
   SpacegroupType spacegroup_type;
-
-  symmetry = sym_get_operation(primitive, symprec);
-  if (symmetry->size == 0) {
-    spacegroup.number = 0;
-    warning_print("spglib: Space group could not be found ");
-    warning_print("(line %d, %s).\n", __LINE__, __FILE__);
-    goto ret;
-  }
-
-  hall_number = get_hall_number(origin_shift,
-				conv_lattice,
-				primitive,
-				symmetry,
-				symprec);
-
+  
   if (hall_number == 0) {
     spacegroup.number = 0;
     warning_print("spglib: Find Hall symbol failed.\n");
@@ -251,21 +306,22 @@ static Spacegroup get_spacegroup(SPGCONST Cell * primitive,
 
  ret:
   /* spacegroup.number = 0 when space group was not found. */
-  sym_free_symmetry(symmetry);
   return spacegroup;
 }
 
-static int get_hall_number(double origin_shift[3],
-			   double conv_lattice[3][3],
-			   SPGCONST Cell * primitive,
-			   SPGCONST Symmetry * symmetry,
-			   const double symprec)
+static int iterative_search_hall_number(double origin_shift[3],
+					double conv_lattice[3][3],
+					const int candidates[],
+					const int num_candidates,
+					SPGCONST Cell * primitive,
+					SPGCONST Symmetry * symmetry,
+					const double symprec)
 {
   int i, attempt, hall_number=0;
   double tolerance;
   Symmetry * sym_reduced;
 
-  debug_print("get_hall_number:\n");
+  debug_print("iterative_search_hall_number:\n");
 
   sym_reduced = sym_alloc_symmetry(symmetry->size);
   for (i = 0; i < symmetry->size; i++) {
@@ -276,11 +332,13 @@ static int get_hall_number(double origin_shift[3],
   tolerance = symprec;
   for (attempt = 0; attempt < 100; attempt++) {
     debug_print("  Attempt %d tolerance = %f\n", attempt, tolerance);
-    hall_number = get_hall_number_local(origin_shift,
-					conv_lattice,
-					primitive,
-					sym_reduced,
-					symprec);
+    hall_number = search_hall_number(origin_shift,
+				     conv_lattice,
+				     candidates,
+				     num_candidates,
+				     primitive->lattice,
+				     sym_reduced,
+				     symprec);
     if (hall_number > 0) {
       break;
     }
@@ -300,38 +358,76 @@ static int get_hall_number(double origin_shift[3],
   return hall_number;
 }
 
-
-static int get_hall_number_local(double origin_shift[3],
-				 double conv_lattice[3][3],
-				 SPGCONST Cell * primitive,
-				 SPGCONST Symmetry * symmetry,
-				 const double symprec)
+static int search_hall_number(double origin_shift[3],
+			      double conv_lattice[3][3],
+			      const int candidates[],
+			      const int num_candidates,
+			      SPGCONST double primitive_lattice[3][3],
+			      SPGCONST Symmetry * symmetry,
+			      const double symprec)
 {
-  int spg_number, hall_number;
+  int i, hall_number;
   Centering centering;
-  int tmp_transform_mat[3][3];
-  double correction_mat[3][3];
-  double transform_mat[3][3];
   Pointgroup pointgroup;
   Symmetry * conv_symmetry;
 
-  debug_print("get_hall_number_local:\n");
-  
-  pointgroup = ptg_get_transformation_matrix(tmp_transform_mat,
-					     symmetry->rot,
-					     symmetry->size);
+  debug_print("get_hall_number:\n");
 
-  if (pointgroup.number < 1) {
-    spg_number = 0;
+  conv_symmetry = get_symmetry_settings(conv_lattice,
+					&pointgroup,
+					&centering,
+					primitive_lattice,
+					symmetry);
+  if (conv_symmetry->size == 0) {
+    hall_number = 0;
+    goto ret;
+  }
+
+  for (i = 0; i < num_candidates; i++) {
+    hall_number = candidates[i];
+    if (match_hall_symbol_db(origin_shift,
+			     conv_lattice,
+			     hall_number,
+			     &pointgroup,
+			     centering,
+			     conv_symmetry,
+			     symprec)) {goto ret;}
+  }
+  
+  hall_number = 0;
+
+ ret:
+  sym_free_symmetry(conv_symmetry);
+  return hall_number;
+}
+
+static Symmetry * get_symmetry_settings(double conv_lattice[3][3],
+					Pointgroup *pointgroup,
+					Centering *centering,
+					SPGCONST double primitive_lattice[3][3],
+					SPGCONST Symmetry * symmetry)
+{
+  int tmp_transform_mat[3][3];
+  double correction_mat[3][3];
+  double transform_mat[3][3];
+  Symmetry * conv_symmetry;
+  
+  *pointgroup = ptg_get_transformation_matrix(tmp_transform_mat,
+					      symmetry->rot,
+					      symmetry->size);
+
+  if (pointgroup->number < 1) {
+    conv_symmetry = sym_alloc_symmetry(0);
+    *centering = NO_CENTER;
     goto ret;
   }
 
   /* Centering is not determined only from symmetry operations */
   /* sometimes. Therefore centering and transformation matrix are */
   /* related. */
-  centering = lat_get_centering(correction_mat,
-				tmp_transform_mat,
-				pointgroup.laue);
+  *centering = lat_get_centering(correction_mat,
+				 tmp_transform_mat,
+				 pointgroup->laue);
 
   mat_multiply_matrix_id3(transform_mat,
 			  tmp_transform_mat,
@@ -341,36 +437,22 @@ static int get_hall_number_local(double origin_shift[3],
   debug_print_matrix_d3(correction_mat);
   
   mat_multiply_matrix_d3(conv_lattice,
-			 primitive->lattice,
+			 primitive_lattice,
 			 transform_mat);
 
-  if (centering == R_CENTER) {
+  if (*centering == R_CENTER) {
     /* hR is handled in match_hall_symbol_db. */
     conv_symmetry = get_conventional_symmetry(transform_mat,
 					      NO_CENTER,
 					      symmetry);
   } else {
     conv_symmetry = get_conventional_symmetry(transform_mat,
-					      centering,
+					      *centering,
 					      symmetry);
   }
 
-  for (spg_number = 1; spg_number < 231; spg_number++) {
-    hall_number = spacegroup_to_hall_number[spg_number];
-    if (match_hall_symbol_db(origin_shift,
-			     conv_lattice,
-			     hall_number,
-			     &pointgroup,
-			     centering,
-			     conv_symmetry,
-			     symprec)) {break;}
-    hall_number = 0;
-  }
-  
-  sym_free_symmetry(conv_symmetry);
-
  ret:
-  return hall_number;
+  return conv_symmetry;
 }
 
 static int match_hall_symbol_db(double origin_shift[3],
@@ -434,9 +516,9 @@ static int match_hall_symbol_db(double origin_shift[3],
       if (hall_number == 501) { /* Try another basis for No.205 */
 	mat_multiply_matrix_d3(changed_lattice,
 			       lattice,
-			       transform_mat_501);
+			       change_of_basis_501);
 	changed_symmetry =
-	  get_conventional_symmetry(transform_mat_501,
+	  get_conventional_symmetry(change_of_basis_501,
 				    NO_CENTER,
 				    symmetry);
 	is_found = hal_match_hall_symbol_db(origin_shift,
@@ -454,24 +536,33 @@ static int match_hall_symbol_db(double origin_shift[3],
       break;
       
     case TRIGO:
-      if (centering == R_CENTER) { /* hR */
-	mat_multiply_matrix_d3(changed_lattice,
-			       lattice,
-			       pR_to_hR);
-	changed_symmetry =
-	  get_conventional_symmetry(pR_to_hR,
-				    R_CENTER,
-				    symmetry);
-	is_found = hal_match_hall_symbol_db(origin_shift,
-					    changed_lattice,
-					    hall_number,
-					    centering,
-					    changed_symmetry,
-					    symprec);
-	sym_free_symmetry(changed_symmetry);
-	if (is_found) {
-	  mat_copy_matrix_d3(lattice, changed_lattice);
-	  return 1;
+      if (centering == R_CENTER) {
+	/* hR */
+	if (hall_number == 433 ||
+	    hall_number == 436 ||
+	    hall_number == 444 ||
+	    hall_number == 450 ||
+	    hall_number == 452 ||
+	    hall_number == 458 ||
+	    hall_number == 460) {
+	  mat_multiply_matrix_d3(changed_lattice,
+				 lattice,
+				 pR_to_hR);
+	  changed_symmetry =
+	    get_conventional_symmetry(pR_to_hR,
+				      R_CENTER,
+				      symmetry);
+	  is_found = hal_match_hall_symbol_db(origin_shift,
+					      changed_lattice,
+					      hall_number,
+					      centering,
+					      changed_symmetry,
+					      symprec);
+	  sym_free_symmetry(changed_symmetry);
+	  if (is_found) {
+	    mat_copy_matrix_d3(lattice, changed_lattice);
+	    return 1;
+	  }
 	}
       }
       /* Do not break for other trigonal cases */
@@ -542,7 +633,7 @@ static Symmetry * get_conventional_symmetry(SPGCONST double transform_mat[3][3],
 
   multi = 1;
 
-  if (centering) {
+  if (centering != NO_CENTER) {
     if (centering != FACE && centering != R_CENTER) {
       for (i = 0; i < 3; i++) {	shift[0][i] = 0.5; } /* BASE */
       if (centering == A_FACE) { shift[0][0] = 0; }

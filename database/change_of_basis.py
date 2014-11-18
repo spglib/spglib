@@ -12,8 +12,8 @@ invert_abc = [[ 0, 0, 1 ],
               [ 0,-1, 0 ],
               [ 1, 0, 0 ]]
 monocli_cell_choice = [[-1, 0, 1 ],
-					   [ 0, 1, 0 ],
-					   [-1, 0, 0 ]]
+                       [ 0, 1, 0 ],
+                       [-1, 0, 0 ]]
 
 def print_monocli():
     mat = identity
@@ -45,12 +45,10 @@ def print_monocli():
                 center = 'I'
         mat = np.dot(monocli_cell_choice, mat)
         if center == 'C':
-            center = 'A'
-        elif center == 'A':
             center = 'I'
         elif center == 'I':
-            center = 'C'
-        elif center == 'B':
+            center = 'A'
+        else:
             print "Something wrong"
     
     for mat in np.array(transform_mats):
@@ -110,5 +108,5 @@ def print_ortho():
             print "BASE,"
                                                  
 
-# print_monocli()
-print_ortho()
+print_monocli()
+# print_ortho()

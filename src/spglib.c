@@ -28,6 +28,7 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
 				   SPGCONST double position[][3],
 				   const int types[],
 				   const int num_atom,
+				   const int hall_number,
 				   const double symprec);
 static void set_dataset(SpglibDataset * dataset,
 			SPGCONST Cell * cell,
@@ -141,6 +142,7 @@ SpglibDataset * spg_get_dataset(SPGCONST double lattice[3][3],
 		     position,
 		     types,
 		     num_atom,
+		     0,
 		     symprec);
 }
 
@@ -157,6 +159,43 @@ SpglibDataset * spgat_get_dataset(SPGCONST double lattice[3][3],
 		     position,
 		     types,
 		     num_atom,
+		     0,
+		     symprec);
+}
+
+SpglibDataset * spg_get_dataset_with_hall_number(SPGCONST double lattice[3][3],
+						 SPGCONST double position[][3],
+						 const int types[],
+						 const int num_atom,
+						 const int hall_number,
+						 const double symprec)
+{
+  sym_set_angle_tolerance(-1.0);
+
+  return get_dataset(lattice,
+		     position,
+		     types,
+		     num_atom,
+		     hall_number,
+		     symprec);
+}
+
+SpglibDataset *
+spgat_get_dataset_with_hall_number(SPGCONST double lattice[3][3],
+				   SPGCONST double position[][3],
+				   const int types[],
+				   const int num_atom,
+				   const int hall_number,
+				   const double symprec,
+				   const double angle_tolerance)
+{
+  sym_set_angle_tolerance(angle_tolerance);
+
+  return get_dataset(lattice,
+		     position,
+		     types,
+		     num_atom,
+		     hall_number,
 		     symprec);
 }
 
@@ -720,12 +759,14 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
 				   SPGCONST double position[][3],
 				   const int types[],
 				   const int num_atom,
+				   const int hall_number,
 				   const double symprec)
 {
   int attempt;
   int *mapping_table;
   double tolerance, tolerance_from_prim;
   Spacegroup spacegroup;
+  SpacegroupType spacegroup_type;
   SpglibDataset *dataset;
   Cell *cell, *primitive;
 
@@ -758,13 +799,6 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
       tolerance_from_prim = prm_get_current_tolerance();
       spacegroup = spa_get_spacegroup(primitive, tolerance_from_prim);
       if (spacegroup.number > 0) {
-	set_dataset(dataset,
-		    cell,
-		    primitive,
-		    &spacegroup,
-		    mapping_table,
-		    tolerance_from_prim);
-	cel_free_cell(primitive);
 	break;
       }
     }
@@ -775,6 +809,29 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
     warning_print("  Attempt %d tolerance = %f failed.", attempt, tolerance);
     warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
   }
+
+  if (spacegroup.number > 0) {
+    if (hall_number > 0) {
+      spacegroup_type = spgdb_get_spacegroup_type(hall_number);
+      if (spacegroup.number == spacegroup_type.number) {
+	spacegroup = spa_get_spacegroup_with_hall_number(primitive,
+							 hall_number,
+							 tolerance_from_prim);
+      } else {
+	spacegroup.number = 0;
+      }
+    }
+    if (spacegroup.number > 0) {
+      set_dataset(dataset,
+		  cell,
+		  primitive,
+		  &spacegroup,
+		  mapping_table,
+		  tolerance_from_prim);
+    }
+    cel_free_cell(primitive);
+  }
+  
 
   free(mapping_table);
   mapping_table = NULL;
@@ -891,6 +948,7 @@ static int get_symmetry_from_dataset(int rotation[][3][3],
 			position,
 			types,
 			num_atom,
+			0,
 			symprec);
   
   if (dataset->n_operations > max_size) {
@@ -1091,7 +1149,7 @@ static Spacegroup get_spacegroup(SPGCONST Cell * cell,
 
   primitive = prm_get_primitive(cell, symprec);
   tolerance = prm_get_current_tolerance();
-  spacegroup = get_spacegroup(primitive, tolerance);
+  spacegroup = spa_get_spacegroup(primitive, tolerance);
   cel_free_cell(primitive);
 
   return spacegroup;
@@ -1120,6 +1178,7 @@ static int get_ir_reciprocal_mesh(int grid_address[][3],
 			position,
 			types,
 			num_atom,
+			0,
 			symprec);
   rotations = mat_alloc_MatINT(dataset->n_operations);
   for (i = 0; i < dataset->n_operations; i++) {

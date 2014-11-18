@@ -2973,7 +2973,6 @@ static int is_hall_symbol_hexa(double shift[3],
   return 0;
 }
 
-/* Trigonal and hR */
 static int is_hall_symbol_trigonal(double shift[3],
 				   const int hall_number,
 				   SPGCONST double bravais_lattice[3][3],
@@ -2996,7 +2995,6 @@ static int is_hall_symbol_trigonal(double shift[3],
   return 0;
 }
 
-/* pR */
 static int is_hall_symbol_rhombo(double shift[3],
 				 const int hall_number,
 				 SPGCONST double bravais_lattice[3][3],
@@ -3005,25 +3003,36 @@ static int is_hall_symbol_rhombo(double shift[3],
 {
   int i;
 
-  for (i = 0; i < 11; i++) {
+  if (hall_number == 433 ||
+      hall_number == 436 ||
+      hall_number == 444 ||
+      hall_number == 450 ||
+      hall_number == 452 ||
+      hall_number == 458 ||
+      hall_number == 460) {
     /* hR */
-    if (is_hall_symbol(shift,
-		       hall_number,
-		       bravais_lattice,
-		       symmetry,
-		       R_CENTER,
-		       rhombo_h_generators[i],
-		       rhombo_h_VSpU[i],
-		       symprec)) {return 1;}
+    for (i = 0; i < 11; i++) {
+      if (is_hall_symbol(shift,
+			 hall_number,
+			 bravais_lattice,
+			 symmetry,
+			 R_CENTER,
+			 rhombo_h_generators[i],
+			 rhombo_h_VSpU[i],
+			 symprec)) {return 1;}
+    }
+  } else {
     /* pR */
-    if (is_hall_symbol(shift,
-		       hall_number,
-		       bravais_lattice,
-		       symmetry,
-		       NO_CENTER,
-		       rhombo_p_generators[i],
-		       rhombo_p_VSpU[i],
-		       symprec)) {return 1;}
+    for (i = 0; i < 11; i++) {
+      if (is_hall_symbol(shift,
+			 hall_number,
+			 bravais_lattice,
+			 symmetry,
+			 NO_CENTER,
+			 rhombo_p_generators[i],
+			 rhombo_p_VSpU[i],
+			 symprec)) {return 1;}
+    }
   }
 
   return 0;

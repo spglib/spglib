@@ -27,6 +27,7 @@ require 'poscar'
 include Getspg
 
 symprec = 1e-5
+hall_number = 0
 angle_tolerance = -1.0
 nonewline = false
 pos_shift = [0,0,0]
@@ -42,6 +43,7 @@ opt.on('-n', '--nonewline', 'Do not output the trailing newline') {nonewline = t
 opt.on('-l', '--long', 'Long output') {is_long_output = true}
 opt.on('-o', '--operations', 'Symmetry operations') {is_operations = true}
 opt.on('-d', '--dataset', 'Dataset') {is_dataset = true}
+opt.on('--hall VALUE', 'Hall symbol by the numbering') {|tmp| hall_number = tmp.to_i}
 opt.parse!(ARGV)
 
 if shift_string
@@ -74,6 +76,7 @@ spgnum, spg, hallnum, hall_symbol, setting, t_mat, o_shift,
 rotations, translations, wyckoffs = get_dataset(lattice,
                                                 position,
                                                 types,
+                                                hall_number,
                                                 symprec,
                                                 angle_tolerance)
 ptg_symbol, ptg_num, trans_mat = getptg(rotations)
@@ -82,7 +85,7 @@ if spgnum > 0
   if nonewline
     print "#{spg.strip} (#{spgnum})"
   else
-    puts "#{spg.strip} (#{spgnum}) / #{ptg_symbol}/ #{hall_symbol.strip} (#{hallnum}) / #{setting}"
+    puts "#{spg.strip} (#{spgnum}) / #{ptg_symbol} / #{hall_symbol.strip} (#{hallnum}) / #{setting}"
 
     if is_long_output
       puts "----------- original -----------"

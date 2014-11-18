@@ -18,14 +18,6 @@ static double monocli_i2c[3][3] = {{ 1, 0, 0 },
 static double monocli_a2c[3][3] = {{ 0, 0, 1 },
 				   { 0,-1, 0 },
 				   { 1, 0, 0 }};
-#ifdef DEBUG
-static double tetra_f2i_c2p[3][3] = {{ 0.5,-0.5, 0.0 },
-				     { 0.5, 0.5, 0.0 },
-				     { 0.0, 0.0, 1.0 }};
-static double hexa_h2p[3][3] = {{ 2./3,-1./3, 0.0 },
-				{ 1./3, 1./3, 0.0 },
-				{  0.0,  0.0, 1.0 }};
-#endif
 static double rhombo_obverse[3][3] = {{ 2./3,-1./3,-1./3 },
 				      { 1./3, 1./3,-2./3 },
 				      { 1./3, 1./3, 1./3 }};
