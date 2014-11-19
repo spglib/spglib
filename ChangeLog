@@ -1,3 +1,29 @@
+2014-11-19  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.7
+
+	Space group operations for non-standard setting can be determined
+	using spg_get_dataset_with_hall_number. To achieve this, many
+	lines are added and changed. Due to the big change of the code,
+	there may be bugs, and maybe it's safer to wait for a while to use
+	this version for mission critical systems.
+
+	Two important changes are:
+
+	* src/spglib.c (spg_get_dataset_with_hall_number)
+
+	In space group type determination, Hall symbol serial number can
+	be specified.
+
+	* src/spglib.h (SpglibDataset)
+
+	Crystallographic setting information is stored in
+	'setting'. Symmetrized and standarized crsytal structure is stored
+	in 'n_brv_atoms', 'brv_lattice', 'brv_types', and 'brv_positions',
+	which are the same information obtained using 'spg_refine_cell',
+	except that non-standard setting can be specified in
+	'spg_get_dataset_with_hall_number'.
+
 2014-10-16  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.6.4
