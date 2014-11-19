@@ -206,18 +206,31 @@ void spg_free_dataset(SpglibDataset *dataset)
     dataset->rotations = NULL;
     free(dataset->translations);
     dataset->translations = NULL;
-  }
-  
-  if (! (dataset->wyckoffs == NULL)) {
-    free(dataset->wyckoffs);
-    dataset->wyckoffs = NULL;
-  }
-  
-  if (! (dataset->equivalent_atoms == NULL)) {
-    free(dataset->equivalent_atoms);
-    dataset->equivalent_atoms = NULL;
+    dataset->n_operations = 0;
   }
 
+  if (dataset->n_atoms > 0) {
+    free(dataset->wyckoffs);
+    dataset->wyckoffs = NULL;
+    free(dataset->equivalent_atoms);
+    dataset->equivalent_atoms = NULL;
+    dataset->n_atoms = 0;
+  }
+
+  if (dataset->n_brv_atoms > 0) {
+    free(dataset->brv_positions);
+    dataset->brv_positions = NULL;
+    free(dataset->brv_types);
+    dataset->brv_types = NULL;
+    dataset->n_brv_atoms = 0;
+  }
+
+  dataset->spacegroup_number = 0;
+  dataset->hall_number = 0;
+  strcpy(dataset->international_symbol, "");
+  strcpy(dataset->hall_symbol, "");
+  strcpy(dataset->setting, "");
+  
   free(dataset);
   dataset = NULL;
 }
@@ -784,6 +797,9 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
   dataset->n_operations = 0;
   dataset->rotations = NULL;
   dataset->translations = NULL;
+  dataset->n_brv_atoms = 0;
+  dataset->brv_positions = NULL;
+  dataset->brv_types = NULL;
 
   mapping_table = (int*) malloc(sizeof(int) * num_atom);
 
@@ -870,19 +886,19 @@ static void set_dataset(SpglibDataset * dataset,
 						 primitive,
 						 spacegroup,
 						 tolerance);
-  dataset->rotations =
-    (int (*)[3][3])malloc(sizeof(int[3][3]) * symmetry->size);
-  dataset->translations =
-    (double (*)[3])malloc(sizeof(double[3]) * symmetry->size);
   dataset->n_operations = symmetry->size;
+  dataset->rotations =
+    (int (*)[3][3])malloc(sizeof(int[3][3]) * dataset->n_operations);
+  dataset->translations =
+    (double (*)[3])malloc(sizeof(double[3]) * dataset->n_operations);
   for (i = 0; i < symmetry->size; i++) {
     mat_copy_matrix_i3(dataset->rotations[i], symmetry->rot[i]);
     mat_copy_vector_d3(dataset->translations[i], symmetry->trans[i]);
   }
 
   /* Wyckoff positions */
-  dataset->wyckoffs = (int*) malloc(sizeof(int) * cell->size); 
-  dataset->equivalent_atoms = (int*) malloc(sizeof(int) * cell->size);
+  dataset->wyckoffs = (int*) malloc(sizeof(int) * dataset->n_atoms); 
+  dataset->equivalent_atoms = (int*) malloc(sizeof(int) * dataset->n_atoms);
   bravais = ref_get_Wyckoff_positions(dataset->wyckoffs, 
 				      dataset->equivalent_atoms,
 				      primitive,
@@ -891,6 +907,17 @@ static void set_dataset(SpglibDataset * dataset,
 				      symmetry,
 				      mapping_table,
 				      tolerance);
+  dataset->n_brv_atoms = bravais->size;
+  mat_copy_matrix_d3(dataset->brv_lattice, bravais->lattice);
+  dataset->brv_positions =
+    (double (*)[3])malloc(sizeof(double[3]) * dataset->n_brv_atoms);
+  dataset->brv_types =
+    (int*)malloc(sizeof(int) * dataset->n_brv_atoms);
+  for (i = 0; i < dataset->n_brv_atoms; i++) {
+    mat_copy_vector_d3(dataset->brv_positions[i], bravais->position[i]);
+    dataset->brv_types[i] = bravais->types[i];
+  }
+  
   cel_free_cell(bravais);
   sym_free_symmetry(symmetry);
 }
@@ -1015,18 +1042,17 @@ static int get_multiplicity(SPGCONST double lattice[3][3],
 			    const int num_atom,
 			    const double symprec)
 {
-  Symmetry *symmetry;
-  Cell *cell;
   int size;
+  SpglibDataset *dataset;
 
-  cell = cel_alloc_cell(num_atom);
-  cel_set_cell(cell, lattice, position, types);
-  symmetry = sym_get_operation(cell, symprec);
-
-  size = symmetry->size;
-
-  cel_free_cell(cell);
-  sym_free_symmetry(symmetry);
+  dataset = get_dataset(lattice,
+			position,
+			types,
+			num_atom,
+			0,
+			symprec);
+  size = dataset->n_operations;
+  spg_free_dataset(dataset);
 
   return size;
 }
@@ -1115,29 +1141,28 @@ static int refine_cell(double lattice[3][3],
 		       const int num_atom,
 		       const double symprec)
 {
-  int i, num_atom_bravais;
-  Cell *cell, *bravais;
+  int i, n_brv_atoms;
+  SpglibDataset *dataset;
 
-  cell = cel_alloc_cell(num_atom);
-  cel_set_cell(cell, lattice, position, types);
+  dataset = get_dataset(lattice,
+			position,
+			types,
+			num_atom,
+			0,
+			symprec);
 
-  bravais = ref_refine_cell(cell, symprec);
-  cel_free_cell(cell);
-
-  if (bravais->size > 0) {
-    mat_copy_matrix_d3(lattice, bravais->lattice);
-    num_atom_bravais = bravais->size;
-    for (i = 0; i < bravais->size; i++) {
-      types[i] = bravais->types[i];
-      mat_copy_vector_d3(position[i], bravais->position[i]);
+  n_brv_atoms = dataset->n_brv_atoms;
+  if (dataset->n_brv_atoms > 0) {
+    mat_copy_matrix_d3(lattice, dataset->brv_lattice);
+    for (i = 0; i < dataset->n_brv_atoms; i++) {
+      types[i] = dataset->brv_types[i];
+      mat_copy_vector_d3(position[i], dataset->brv_positions[i]);
     }
-  } else {
-    num_atom_bravais = 0;
   }
 
-  cel_free_cell(bravais);
+  spg_free_dataset(dataset);
   
-  return num_atom_bravais;
+  return n_brv_atoms;
 }
 
 static Spacegroup get_spacegroup(SPGCONST Cell * cell,

@@ -17,8 +17,6 @@
 
 #define REDUCE_RATE 0.95
 
-static Cell * refine_cell(SPGCONST Cell * cell,
-			  const double symprec);
 static Cell * get_bravais_exact_positions_and_lattice(int * wyckoffs,
 						      int * equiv_atoms,
 						      SPGCONST Spacegroup * spacegroup,
@@ -34,8 +32,7 @@ static Cell * get_conventional_primitive(SPGCONST Spacegroup * spacegroup,
 					 SPGCONST Cell * primitive);
 static int get_number_of_pure_translation(SPGCONST Symmetry * conv_sym);
 static int get_conventional_lattice(double lattice[3][3],
-				    const Holohedry holohedry,
-				    SPGCONST double bravais_lattice[3][3]);
+				    SPGCONST Spacegroup *spacegroup);
 static void set_monocli(double lattice[3][3],
 			SPGCONST double metric[3][3]);
 static void set_ortho(double lattice[3][3],
@@ -43,6 +40,8 @@ static void set_ortho(double lattice[3][3],
 static void set_tetra(double lattice[3][3],
 		      SPGCONST double metric[3][3]);
 static void set_trigo(double lattice[3][3],
+		      SPGCONST double metric[3][3]);
+static void set_rhomb(double lattice[3][3],
 		      SPGCONST double metric[3][3]);
 static void set_cubic(double lattice[3][3],
 		      SPGCONST double metric[3][3]);
@@ -91,12 +90,6 @@ static SPGCONST int identity[3][3] = {
   { 0, 0, 1},
 };
 
-
-Cell * ref_refine_cell(SPGCONST Cell * cell,
-		       const double symprec)
-{
-  return refine_cell(cell, symprec);
-}
 
 /* symmetry->size = 0 is returned when it failed. */
 Symmetry *
@@ -164,62 +157,6 @@ Cell * ref_get_Wyckoff_positions(int * wyckoffs,
   return bravais;
 }
 
-static Cell * refine_cell(SPGCONST Cell * cell,
-			  const double symprec)
-{
-  int attempt, found;
-  int *wyckoffs_bravais, *equiv_atoms_bravais;
-  double tolerance, tolerance_from_prim;
-  Cell *primitive, *bravais;
-  Spacegroup spacegroup;
-
-  debug_print("refine_cell:\n");
-
-  tolerance = symprec;
-  found = 0;
-  for (attempt = 0; attempt < 100; attempt++) {
-    primitive = prm_get_primitive(cell, tolerance);
-    if (primitive->size > 0) {  
-      tolerance_from_prim = prm_get_current_tolerance();
-      spacegroup = spa_get_spacegroup(primitive, tolerance_from_prim);
-      if (spacegroup.number > 0) {
-	wyckoffs_bravais = (int*)malloc(sizeof(int) * primitive->size * 4);
-	equiv_atoms_bravais = (int*)malloc(sizeof(int) * primitive->size * 4);
-	bravais = get_bravais_exact_positions_and_lattice(wyckoffs_bravais,
-							  equiv_atoms_bravais,
-							  &spacegroup,
-							  primitive,
-							  tolerance_from_prim);
-	free(equiv_atoms_bravais);
-	equiv_atoms_bravais = NULL;
-	free(wyckoffs_bravais);
-	wyckoffs_bravais = NULL;
-	cel_free_cell(primitive);
-	
-	debug_print("primitive cell in refine_cell:\n");
-	debug_print_matrix_d3(primitive->lattice);
-	debug_print("bravais lattice in refine_cell:\n");
-	debug_print_matrix_d3(bravais->lattice);
-
-	found = 1;
-	break;
-      }
-    }
-    tolerance *= REDUCE_RATE;
-    cel_free_cell(primitive);
-
-    warning_print("  Attempt %d tolerance = %f failed.", attempt, tolerance);
-    warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
-  }
-  
-  /* Return bravais->size = 0, if the bravais could not be found. */
-  if (! found) {
-    bravais = cel_alloc_cell(0);
-  }
-
-  return bravais;
-}
-
 /* Only the atoms corresponding to those in primitive are returned. */
 static Cell * get_bravais_exact_positions_and_lattice(int * wyckoffs,
 						      int * equiv_atoms,
@@ -232,17 +169,13 @@ static Cell * get_bravais_exact_positions_and_lattice(int * wyckoffs,
   Symmetry *conv_sym;
   Cell *bravais, *conv_prim;
   VecDBL *exact_positions;
-  Pointgroup pointgroup;
 
   /* Positions of primitive atoms are represented wrt Bravais lattice */
   conv_prim = get_conventional_primitive(spacegroup, primitive);
   /* Symmetries in database (wrt Bravais lattice) */
   conv_sym = spgdb_get_spacegroup_operations(spacegroup->hall_number);
   /* Lattice vectors are set. */
-  pointgroup = ptg_get_pointgroup(spacegroup->pointgroup_number);
-  get_conventional_lattice(conv_prim->lattice,
-			   pointgroup.holohedry,
-			   spacegroup->bravais_lattice);
+  get_conventional_lattice(conv_prim->lattice, spacegroup);
 
   /* Symmetrize atomic positions of conventional unit cell */
   wyckoffs_prim = (int*)malloc(sizeof(int) * primitive->size);
@@ -360,23 +293,25 @@ static Cell * get_conventional_primitive(SPGCONST Spacegroup * spacegroup,
 }
 
 static int get_conventional_lattice(double lattice[3][3],
-				    const Holohedry holohedry,
-				    SPGCONST double bravais_lattice[3][3])
+				    SPGCONST Spacegroup *spacegroup)
 {
   int i, j;
   double metric[3][3];
+  Pointgroup pointgroup;
 
+  pointgroup = ptg_get_pointgroup(spacegroup->pointgroup_number);
+  
   for (i = 0; i < 3; i++) {
     for (j = 0; j < 3; j++) {
       lattice[i][j] = 0;
     }
   }
 
-  mat_get_metric(metric, bravais_lattice);
+  mat_get_metric(metric, spacegroup->bravais_lattice);
 
-  switch (holohedry) {
+  switch (pointgroup.holohedry) {
   case TRICLI:
-    mat_copy_matrix_d3(lattice, bravais_lattice);
+    mat_copy_matrix_d3(lattice, spacegroup->bravais_lattice);
     break;
   case MONOCLI: /* b-axis is the unique axis. */
     set_monocli(lattice, metric);
@@ -388,7 +323,11 @@ static int get_conventional_lattice(double lattice[3][3],
     set_tetra(lattice, metric);
     break;
   case TRIGO:
-    set_trigo(lattice, metric);
+    if (spacegroup->setting[0] == 'H') {
+      set_trigo(lattice, metric);
+    } else {
+      set_rhomb(lattice, metric);
+    }
     break;
   case HEXA:
     set_trigo(lattice, metric);
@@ -449,49 +388,49 @@ static void set_tetra(double lattice[3][3],
   lattice[2][2] = c;
 }
 
-/* static void set_rhomb(double lattice[3][3], */
-/* 		      SPGCONST double metric[3][3]) */
-/* { */
-/*   double a, b, c, angle, ahex, chex; */
+static void set_rhomb(double lattice[3][3],
+		      SPGCONST double metric[3][3])
+{
+  double a, b, c, angle, ahex, chex;
 
 
-/*   a = sqrt(metric[0][0]); */
-/*   b = sqrt(metric[1][1]); */
-/*   c = sqrt(metric[2][2]); */
-/*   angle = acos((metric[0][1] / a / b + */
-/* 		metric[0][2] / a / c + */
-/* 		metric[1][2] / b / c) / 3); */
+  a = sqrt(metric[0][0]);
+  b = sqrt(metric[1][1]);
+  c = sqrt(metric[2][2]);
+  angle = acos((metric[0][1] / a / b +
+		metric[0][2] / a / c +
+		metric[1][2] / b / c) / 3);
 
-/*   /\* Reference, http://cst-www.nrl.navy.mil/lattice/struk/rgr.html *\/ */
-/*   ahex = 2 * (a+b+c)/3 * sin(angle / 2); */
-/*   chex = (a+b+c)/3 * sqrt(3 * (1 + 2 * cos(angle))) ; */
-/*   lattice[0][0] = ahex / 2; */
-/*   lattice[1][0] = -ahex / (2 * sqrt(3)); */
-/*   lattice[2][0] = chex / 3; */
-/*   lattice[1][1] = ahex / sqrt(3); */
-/*   lattice[2][1] = chex / 3; */
-/*   lattice[0][2] = -ahex / 2; */
-/*   lattice[1][2] = -ahex / (2 * sqrt(3)); */
-/*   lattice[2][2] = chex / 3; */
+  /* Reference, http://cst-www.nrl.navy.mil/lattice/struk/rgr.html */
+  ahex = 2 * (a+b+c)/3 * sin(angle / 2);
+  chex = (a+b+c)/3 * sqrt(3 * (1 + 2 * cos(angle))) ;
+  lattice[0][0] = ahex / 2;
+  lattice[1][0] = -ahex / (2 * sqrt(3));
+  lattice[2][0] = chex / 3;
+  lattice[1][1] = ahex / sqrt(3);
+  lattice[2][1] = chex / 3;
+  lattice[0][2] = -ahex / 2;
+  lattice[1][2] = -ahex / (2 * sqrt(3));
+  lattice[2][2] = chex / 3;
 
 
-/* #ifdef DEBUG */
-/*   debug_print("Rhombo lattice: %f %f %f %f %f %f\n", a, b, c, */
-/* 	      acos(metric[0][1] / a / b) / 3.14 * 180, */
-/* 	      acos(metric[0][2] / a / c) / 3.14 * 180, */
-/* 	      acos(metric[1][2] / b / c) / 3.14 * 180); */
-/*   double dmetric[3][3]; */
-/*   mat_get_metric(dmetric, lattice); */
-/*   a = sqrt(dmetric[0][0]); */
-/*   b = sqrt(dmetric[1][1]); */
-/*   c = sqrt(dmetric[2][2]); */
-/*   debug_print("Rhombo lattice symmetrized: %f %f %f %f %f %f\n", */
-/* 	      a, b, c, */
-/* 	      acos(dmetric[0][1] / a / b) / 3.14 * 180, */
-/* 	      acos(dmetric[0][2] / a / c) / 3.14 * 180, */
-/* 	      acos(dmetric[1][2] / b / c) / 3.14 * 180); */
-/* #endif */
-/* } */
+#ifdef DEBUG
+  debug_print("Rhombo lattice: %f %f %f %f %f %f\n", a, b, c,
+	      acos(metric[0][1] / a / b) / 3.14 * 180,
+	      acos(metric[0][2] / a / c) / 3.14 * 180,
+	      acos(metric[1][2] / b / c) / 3.14 * 180);
+  double dmetric[3][3];
+  mat_get_metric(dmetric, lattice);
+  a = sqrt(dmetric[0][0]);
+  b = sqrt(dmetric[1][1]);
+  c = sqrt(dmetric[2][2]);
+  debug_print("Rhombo lattice symmetrized: %f %f %f %f %f %f\n",
+	      a, b, c,
+	      acos(dmetric[0][1] / a / b) / 3.14 * 180,
+	      acos(dmetric[0][2] / a / c) / 3.14 * 180,
+	      acos(dmetric[1][2] / b / c) / 3.14 * 180);
+#endif
+}
 
 static void set_trigo(double lattice[3][3],
 		      SPGCONST double metric[3][3])
