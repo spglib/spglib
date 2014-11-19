@@ -13,13 +13,6 @@ VALUE method_getspg(VALUE self,
 		    VALUE r_angle_symprec);
 VALUE method_getptg(VALUE self,
 		    VALUE r_rotations);
-VALUE method_refine_cell(VALUE self,
-			 VALUE r_size,
-			 VALUE r_lattice,
-			 VALUE r_position,
-			 VALUE r_types,
-			 VALUE r_symprec,
-			 VALUE r_angle_symprec);
 VALUE method_get_operations(VALUE self,
 			    VALUE r_size,
 			    VALUE r_lattice,
@@ -40,7 +33,6 @@ void Init_getspg(void)
   Getspg = rb_define_module("Getspg");
   rb_define_method(Getspg, "getspg", method_getspg, 6);
   rb_define_method(Getspg, "getptg", method_getptg, 1);
-  rb_define_method(Getspg, "refine_cell", method_refine_cell, 6);
   rb_define_method(Getspg, "get_operations", method_get_operations, 6);
   rb_define_method(Getspg, "get_dataset", method_get_dataset, 6);
 }
@@ -130,87 +122,6 @@ VALUE method_getptg(VALUE self, VALUE r_rotations)
   return array;
 }
 
-VALUE method_refine_cell(VALUE self,
-			 VALUE r_size,
-			 VALUE r_lattice,
-			 VALUE r_position,
-			 VALUE r_types,
-			 VALUE r_symprec,
-			 VALUE r_angle_symprec)
-{
-  int i, j, size, spgroup, num_atom_bravais ;
-  double symprec, angle_tolerance, lattice[3][3];
-  VALUE vector, array, r_brv_lattice, r_brv_positions, r_brv_types;
-     
-  size = NUM2INT(r_size);
-     
-  double position[size*4][3];
-  int types[size*4];
-  char symbol[21];
-  char output[21];
-
-  angle_tolerance = NUM2DBL(r_angle_symprec);
-  symprec = NUM2DBL(r_symprec);
-
-  for (i=0; i<size; i++)
-    for (j=0; j<3; j++) {
-      position[i][j] =
-	NUM2DBL(rb_ary_entry(rb_ary_entry(r_position, i), j));
-      types[i] = NUM2DBL(rb_ary_entry(r_types, i));
-    }
-
-  for (i=0; i<3; i++)
-    for (j=0; j<3; j++)
-      lattice[i][j] =
-	NUM2DBL(rb_ary_entry(rb_ary_entry(r_lattice, i), j));
-
-  /* Space group */
-  spgroup = spgat_get_international(symbol,
-				    lattice,
-				    position,
-				    types,
-				    size,
-				    symprec,
-				    angle_tolerance);
-  sprintf(output, "%s", symbol);
-
-  num_atom_bravais = spgat_refine_cell(lattice,
-				       position,
-				       types,
-				       size,
-				       symprec,
-				       angle_tolerance);
-
-  r_brv_lattice = rb_ary_new();
-  for (i=0; i<3; i++) {
-    vector = rb_ary_new();
-    for (j=0; j<3; j++) {
-      rb_ary_push(vector, rb_float_new(lattice[i][j]));
-    }
-    rb_ary_push(r_brv_lattice, vector);
-  }
-
-  r_brv_positions = rb_ary_new();
-  r_brv_types = rb_ary_new();
-  for (i=0; i<num_atom_bravais; i++) {
-    vector = rb_ary_new();
-    for (j=0; j<3; j++) {
-      rb_ary_push(vector, rb_float_new(position[i][j]));
-    }
-    rb_ary_push(r_brv_positions, vector);
-    rb_ary_push(r_brv_types, INT2NUM(types[i]));
-  }
-
-  array = rb_ary_new();
-  rb_ary_push(array, rb_str_new2(output));
-  rb_ary_push(array, r_brv_lattice);
-  rb_ary_push(array, r_brv_positions);
-  rb_ary_push(array, r_brv_types);
-  rb_ary_push(array, INT2NUM(spgroup));
-
-  return array;
-}
-
 VALUE method_get_operations(VALUE self,
 			    VALUE r_size,
 			    VALUE r_lattice,
@@ -292,7 +203,7 @@ VALUE method_get_dataset(VALUE self,
   int i, j, k, num_atom;
   double symprec, lattice[3][3];
   SpglibDataset *dataset;
-  VALUE mat, vec, row, array, r_tmat, r_oshift, r_rot, r_trans, r_wyckoffs;
+  VALUE mat, vec, row, array, r_tmat, r_oshift, r_rot, r_trans, r_wyckoffs, r_brv_lattice, r_brv_positions, r_brv_types;
 
   num_atom = RARRAY_LEN(r_types);
 
@@ -326,11 +237,11 @@ VALUE method_get_dataset(VALUE self,
 
   array = rb_ary_new();
 
-  rb_ary_push(array, INT2NUM( dataset->spacegroup_number));
-  rb_ary_push(array, rb_str_new2( dataset->international_symbol));
-  rb_ary_push(array, INT2NUM( dataset->hall_number));
-  rb_ary_push(array, rb_str_new2( dataset->hall_symbol));
-  rb_ary_push(array, rb_str_new2( dataset->setting));
+  rb_ary_push(array, INT2NUM(dataset->spacegroup_number));
+  rb_ary_push(array, rb_str_new2(dataset->international_symbol));
+  rb_ary_push(array, INT2NUM(dataset->hall_number));
+  rb_ary_push(array, rb_str_new2(dataset->hall_symbol));
+  rb_ary_push(array, rb_str_new2(dataset->setting));
   
   /* Transformation_matrix */
   r_tmat = rb_ary_new();
@@ -378,6 +289,30 @@ VALUE method_get_dataset(VALUE self,
   }
   rb_ary_push(array, r_wyckoffs);
 
+  /* Bravais lattice */
+  r_brv_lattice = rb_ary_new();
+  for (i = 0; i < 3; i++) {
+    vec = rb_ary_new();
+    for (j = 0; j < 3; j++) {
+      rb_ary_push(vec, rb_float_new(dataset->brv_lattice[i][j]));
+    }
+    rb_ary_push(r_brv_lattice, vec);
+  }
+  rb_ary_push(array, r_brv_lattice);
+  
+  r_brv_positions = rb_ary_new();
+  r_brv_types = rb_ary_new();
+  for (i = 0; i < dataset->n_brv_atoms; i++) {
+    vec = rb_ary_new();
+    for (j = 0; j < 3; j++) {
+      rb_ary_push(vec, rb_float_new(dataset->brv_positions[i][j]));
+    }
+    rb_ary_push(r_brv_positions, vec);
+    rb_ary_push(r_brv_types, INT2NUM(dataset->brv_types[i]));
+  }
+  rb_ary_push(array, r_brv_types);
+  rb_ary_push(array, r_brv_positions);
+  
   spg_free_dataset(dataset);
   
   return array;

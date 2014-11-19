@@ -95,18 +95,14 @@ names.each_with_index do |name, i|
   end
 end
 
-if is_long_output
-  spg, brv_lattice, brv_positions, brv_types, spgnum = 
-    refine_cell(types.size, lattice, position, types, symprec, angle_tolerance)
-end
-
 spgnum, spg, hallnum, hall_symbol, setting, t_mat, o_shift,
-rotations, translations, wyckoffs = get_dataset(lattice,
-                                                position,
-                                                types,
-                                                hall_number,
-                                                symprec,
-                                                angle_tolerance)
+rotations, translations, wyckoffs,
+brv_lattice, brv_types, brv_positions = get_dataset(lattice,
+                                                    position,
+                                                    types,
+                                                    hall_number,
+                                                    symprec,
+                                                    angle_tolerance)
 ptg_symbol, ptg_num, trans_mat = getptg(rotations)
 
 if spgnum > 0 and not is_check_settings
