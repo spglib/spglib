@@ -323,10 +323,10 @@ static int get_conventional_lattice(double lattice[3][3],
     set_tetra(lattice, metric);
     break;
   case TRIGO:
-    if (spacegroup->setting[0] == 'H') {
-      set_trigo(lattice, metric);
-    } else {
+    if (spacegroup->setting[0] == 'R') {
       set_rhomb(lattice, metric);
+    } else {
+      set_trigo(lattice, metric);
     }
     break;
   case HEXA:
