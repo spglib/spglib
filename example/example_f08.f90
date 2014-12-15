@@ -163,6 +163,7 @@ program spglib_test
   positions(1:3, 5) = (/ 0.2, 0.8, 0.5 /)
   positions(1:3, 6) = (/ 0.8, 0.2, 0.5 /)
   atom_types(1:6) = (/ 1, 1, 2, 2, 2, 2 /)
+  is_shift = [0,0,0]
 
   call write_syminfo( max_num_sym, num_atom, &
        lattice, symprec, atom_types, positions, &
@@ -177,6 +178,7 @@ program spglib_test
   lattice(3,:) = (/ 2.0, 2.0, 0.0 /)
   positions(1:3, 1) = (/ 0.0, 0.0, 0.0 /)
   atom_types(1) = 1
+  is_shift = [0,0,0]
 
   call write_syminfo( max_num_sym, num_atom, &
        lattice, symprec, atom_types, positions, &
