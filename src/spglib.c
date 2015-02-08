@@ -36,14 +36,6 @@ static void set_dataset(SpglibDataset * dataset,
 			SPGCONST Spacegroup * spacegroup,
 			const int * mapping_table,
 			const double tolerance);
-static int get_symmetry(int rotation[][3][3],
-			double translation[][3],
-			const int max_size,
-			SPGCONST double lattice[3][3],
-			SPGCONST double position[][3],
-			const int types[],
-			const int num_atom,
-			const double symprec);
 static int get_symmetry_from_dataset(int rotation[][3][3],
 				     double translation[][3],
 				     const int max_size,
@@ -920,43 +912,6 @@ static void set_dataset(SpglibDataset * dataset,
   
   cel_free_cell(bravais);
   sym_free_symmetry(symmetry);
-}
-
-static int get_symmetry(int rotation[][3][3],
-			double translation[][3],
-			const int max_size,
-			SPGCONST double lattice[3][3],
-			SPGCONST double position[][3],
-			const int types[],
-			const int num_atom,
-			const double symprec)
-{
-  int i, size;
-  Symmetry *symmetry;
-  Cell *cell;
-
-  cell = cel_alloc_cell(num_atom);
-  cel_set_cell(cell, lattice, position, types);
-  symmetry = sym_get_operation(cell, symprec);
-
-  if (symmetry->size > max_size) {
-    fprintf(stderr, "spglib: Indicated max size(=%d) is less than number ", max_size);
-    fprintf(stderr, "spglib: of symmetry operations(=%d).\n", symmetry->size);
-    sym_free_symmetry(symmetry);
-    return 0;
-  }
-
-  for (i = 0; i < symmetry->size; i++) {
-    mat_copy_matrix_i3(rotation[i], symmetry->rot[i]);
-    mat_copy_vector_d3(translation[i], symmetry->trans[i]);
-  }
-
-  size = symmetry->size;
-
-  cel_free_cell(cell);
-  sym_free_symmetry(symmetry);
-
-  return size;
 }
 
 static int get_symmetry_from_dataset(int rotation[][3][3],
