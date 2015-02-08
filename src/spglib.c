@@ -74,8 +74,10 @@ static int get_schoenflies(char symbol[10],
 			   SPGCONST double position[][3],
 			   const int types[], const int num_atom,
 			   const double symprec);
-static Spacegroup get_spacegroup(SPGCONST Cell * cell,
-				 const double symprec);
+static Spacegroup get_spacegroup(Cell ** primitive,
+				 int * mapping_table,
+				 double * tolerance,
+				 SPGCONST Cell * cell);
 static int refine_cell(double lattice[3][3],
 		       double position[][3],
 		       int types[],
@@ -767,9 +769,8 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
 				   const int hall_number,
 				   const double symprec)
 {
-  int attempt;
   int *mapping_table;
-  double tolerance, tolerance_from_prim;
+  double tolerance;
   Spacegroup spacegroup;
   SpacegroupType spacegroup_type;
   SpglibDataset *dataset;
@@ -799,24 +800,10 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
   cel_set_cell(cell, lattice, position, types);
 
   tolerance = symprec;
-  for (attempt = 0; attempt < 100; attempt++) {
-    primitive = prm_get_primitive_and_mapping_table(mapping_table,
-						    cell,
-						    tolerance);
-    if (primitive->size > 0) {
-      tolerance_from_prim = prm_get_current_tolerance();
-      spacegroup = spa_get_spacegroup(primitive, tolerance_from_prim);
-      if (spacegroup.number > 0) {
-	break;
-      }
-    }
-    
-    tolerance *= REDUCE_RATE;
-    cel_free_cell(primitive);
-    
-    warning_print("  Attempt %d tolerance = %f failed.", attempt, tolerance);
-    warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
-  }
+  spacegroup = get_spacegroup(&primitive,
+			      mapping_table,
+			      &tolerance,
+			      cell);
 
   if (spacegroup.number > 0) {
     if (hall_number > 0) {
@@ -824,7 +811,7 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
       if (spacegroup.number == spacegroup_type.number) {
 	spacegroup = spa_get_spacegroup_with_hall_number(primitive,
 							 hall_number,
-							 tolerance_from_prim);
+							 tolerance);
       } else {
 	spacegroup.number = 0;
       }
@@ -835,7 +822,7 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
 		  primitive,
 		  &spacegroup,
 		  mapping_table,
-		  tolerance_from_prim);
+		  tolerance);
     }
     cel_free_cell(primitive);
   }
@@ -1052,17 +1039,25 @@ static int get_international(char symbol[11],
 			     const int num_atom,
 			     const double symprec)
 {
-  Cell *cell;
+  double tolerance;
+  Cell *cell, *primitive;
   Spacegroup spacegroup;
+  int *mapping_table;
 
+  mapping_table = (int*) malloc(sizeof(int) * num_atom);
   cell = cel_alloc_cell(num_atom);
   cel_set_cell(cell, lattice, position, types);
-  spacegroup = get_spacegroup(cell, symprec);
+  tolerance = symprec;
+
+  spacegroup = get_spacegroup(&primitive, mapping_table, &tolerance, cell);
   if (spacegroup.number > 0) {
     strcpy(symbol, spacegroup.international_short);
+    cel_free_cell(primitive);
   }
 
   cel_free_cell(cell);
+  free(mapping_table);
+  mapping_table = NULL;
   
   return spacegroup.number;
 }
@@ -1074,18 +1069,26 @@ static int get_schoenflies(char symbol[10],
 			   const int num_atom,
 			   const double symprec)
 {
-  Cell *cell;
+  double tolerance;
+  Cell *cell, *primitive;
   Spacegroup spacegroup;
+  int *mapping_table;
+
+  mapping_table = (int*) malloc(sizeof(int) * num_atom);
 
   cell = cel_alloc_cell(num_atom);
   cel_set_cell(cell, lattice, position, types);
 
-  spacegroup = get_spacegroup(cell, symprec);
+  tolerance = symprec;
+  spacegroup = get_spacegroup(&primitive, mapping_table, &tolerance, cell);
   if (spacegroup.number > 0) {
     strcpy(symbol, spacegroup.schoenflies);
+    cel_free_cell(primitive);
   }
 
   cel_free_cell(cell);
+  free(mapping_table);
+  mapping_table = NULL;
 
   return spacegroup.number;
 }
@@ -1120,17 +1123,34 @@ static int refine_cell(double lattice[3][3],
   return n_brv_atoms;
 }
 
-static Spacegroup get_spacegroup(SPGCONST Cell * cell,
-				 const double symprec)
+static Spacegroup get_spacegroup(Cell ** primitive,
+				 int * mapping_table,
+				 double * tolerance,
+				 SPGCONST Cell * cell)
 {
-  double tolerance;
-  Cell *primitive;
+  int attempt;
+  double tolerance_from_prim;
   Spacegroup spacegroup;
 
-  primitive = prm_get_primitive(cell, symprec);
-  tolerance = prm_get_current_tolerance();
-  spacegroup = spa_get_spacegroup(primitive, tolerance);
-  cel_free_cell(primitive);
+  for (attempt = 0; attempt < 100; attempt++) {
+    *primitive = prm_get_primitive_and_mapping_table(mapping_table,
+						     cell,
+						     *tolerance);
+    if ((*primitive)->size > 0) {
+      tolerance_from_prim = prm_get_current_tolerance();
+      spacegroup = spa_get_spacegroup(*primitive, tolerance_from_prim);
+      if (spacegroup.number > 0) {
+	*tolerance = tolerance_from_prim;
+	break;
+      }
+    }
+    
+    (*tolerance) *= REDUCE_RATE;
+    cel_free_cell(*primitive);
+    
+    warning_print("  Attempt %d tolerance = %f failed.", attempt, *tolerance);
+    warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
+  }
 
   return spacegroup;
 }
