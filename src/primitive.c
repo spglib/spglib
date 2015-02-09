@@ -13,8 +13,6 @@
 
 #define INCREASE_RATE 2.0
 #define REDUCE_RATE 0.95
-static double current_tolerance;
-
 
 static Primitive * get_primitive(SPGCONST Cell * cell, const double symprec);
 static int set_primitive_positions(Cell * primitive_cell,
@@ -52,7 +50,6 @@ static int get_primitive_lattice_vectors(double prim_lattice[3][3],
 					 SPGCONST Cell * cell,
 					 const double symprec);
 static VecDBL * get_translation_candidates(const VecDBL * pure_trans);
-static void set_current_tolerance(const double tolerance);
 
 Primitive * prm_alloc_primitive(const int size)
 {
@@ -105,12 +102,6 @@ Primitive * prm_get_primitive(SPGCONST Cell * cell, const double symprec)
   return get_primitive(cell, symprec);
 }
 
-double prm_get_current_tolerance(void)
-{
-  debug_print("prm_get_current_tolerance %f\n", current_tolerance);
-  return current_tolerance;
-}
-
 /* If primitive could not be found, primitive->size = 0 is returned. */
 static Primitive * get_primitive(SPGCONST Cell * cell, const double symprec)
 {
@@ -154,7 +145,6 @@ static Primitive * get_primitive(SPGCONST Cell * cell, const double symprec)
   }
 
   if (is_found) {
-    set_current_tolerance(tolerance);
     primitive->tolerance = tolerance;
   } else {
     primitive->cell = cel_alloc_cell(0);
@@ -162,11 +152,6 @@ static Primitive * get_primitive(SPGCONST Cell * cell, const double symprec)
   }
 
   return primitive;
-}
-
-static void set_current_tolerance(const double tolerance)
-{
-  current_tolerance = tolerance;
 }
 
 static Cell * get_cell_with_smallest_lattice(SPGCONST Cell * cell,
