@@ -74,9 +74,6 @@ static int get_schoenflies(char symbol[10],
 			   SPGCONST double position[][3],
 			   const int types[], const int num_atom,
 			   const double symprec);
-static Primitive * get_spacegroup(Spacegroup * spacegroup,
-				  SPGCONST Cell * cell,
-				  const double symprec);
 static int refine_cell(double lattice[3][3],
 		       double position[][3],
 		       int types[],
@@ -795,7 +792,7 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
   cell = cel_alloc_cell(num_atom);
   cel_set_cell(cell, lattice, position, types);
 
-  primitive = get_spacegroup(&spacegroup, cell, symprec);
+  primitive = spa_get_spacegroup(&spacegroup, cell, symprec);
 
   if (spacegroup.number > 0) {
     if (hall_number > 0) {
@@ -1036,7 +1033,7 @@ static int get_international(char symbol[11],
   cell = cel_alloc_cell(num_atom);
   cel_set_cell(cell, lattice, position, types);
 
-  primitive = get_spacegroup(&spacegroup, cell, symprec);
+  primitive = spa_get_spacegroup(&spacegroup, cell, symprec);
   prm_free_primitive(primitive);
   if (spacegroup.number > 0) {
     strcpy(symbol, spacegroup.international_short);
@@ -1061,7 +1058,7 @@ static int get_schoenflies(char symbol[10],
   cell = cel_alloc_cell(num_atom);
   cel_set_cell(cell, lattice, position, types);
 
-  primitive = get_spacegroup(&spacegroup, cell, symprec);
+  primitive = spa_get_spacegroup(&spacegroup, cell, symprec);
   prm_free_primitive(primitive);
   if (spacegroup.number > 0) {
     strcpy(symbol, spacegroup.schoenflies);
@@ -1100,41 +1097,6 @@ static int refine_cell(double lattice[3][3],
   spg_free_dataset(dataset);
   
   return n_brv_atoms;
-}
-
-static Primitive * get_spacegroup(Spacegroup * spacegroup,
-				  SPGCONST Cell * cell,
-				  const double symprec)
-{
-  int attempt;
-  double tolerance;
-  Primitive *primitive;
-
-  tolerance = symprec;
-
-  for (attempt = 0; attempt < 100; attempt++) {
-    primitive = prm_get_primitive(cell, tolerance);
-    if (primitive->size > 0) {
-      *spacegroup = spa_get_spacegroup(primitive->cell, primitive->tolerance);
-      if (spacegroup->number > 0) {
-	break;
-      }
-    }
-    
-    tolerance *= REDUCE_RATE;
-    prm_free_primitive(primitive);
-    
-    warning_print("  Attempt %d tolerance = %f failed.", attempt, tolerance);
-    warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
-  }
-
-  if (primitive->size == 0) {
-    primitive = prm_alloc_primitive(0);
-    primitive->cell = cel_alloc_cell(0);
-    primitive->pure_trans = mat_alloc_VecDBL(0);
-  }
-
-  return primitive;
 }
 
 
