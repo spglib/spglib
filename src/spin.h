@@ -8,7 +8,9 @@
 #include "symmetry.h"
 #include "cell.h"
 
-Symmetry * spn_get_collinear_operation(SPGCONST Cell *cell,
+Symmetry * spn_get_collinear_operation(int equiva_atoms[],
+				       SPGCONST Symmetry *sym_nonspin,
+				       SPGCONST Cell *cell,
 				       const double spins[],
 				       const double symprec);
 

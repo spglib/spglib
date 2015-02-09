@@ -46,6 +46,7 @@ static int get_symmetry_from_dataset(int rotation[][3][3],
 				     const double symprec);
 static int get_symmetry_with_collinear_spin(int rotation[][3][3],
 					    double translation[][3],
+					    int equivalent_atoms[],
 					    const int max_size,
 					    SPGCONST double lattice[3][3],
 					    SPGCONST double position[][3],
@@ -270,6 +271,7 @@ int spgat_get_symmetry(int rotation[][3][3],
 
 int spg_get_symmetry_with_collinear_spin(int rotation[][3][3],
 					 double translation[][3],
+					 int equivalent_atoms[],
 					 const int max_size,
 					 SPGCONST double lattice[3][3],
 					 SPGCONST double position[][3],
@@ -282,6 +284,7 @@ int spg_get_symmetry_with_collinear_spin(int rotation[][3][3],
 
   return get_symmetry_with_collinear_spin(rotation,
 					  translation,
+					  equivalent_atoms,
 					  max_size,
 					  lattice,
 					  position,
@@ -293,6 +296,7 @@ int spg_get_symmetry_with_collinear_spin(int rotation[][3][3],
 
 int spgat_get_symmetry_with_collinear_spin(int rotation[][3][3],
 					   double translation[][3],
+					   int equivalent_atoms[],
 					   const int max_size,
 					   SPGCONST double lattice[3][3],
 					   SPGCONST double position[][3],
@@ -306,6 +310,7 @@ int spgat_get_symmetry_with_collinear_spin(int rotation[][3][3],
 
   return get_symmetry_with_collinear_spin(rotation,
 					  translation,
+					  equivalent_atoms,
 					  max_size,
 					  lattice,
 					  position,
@@ -929,6 +934,7 @@ static int get_symmetry_from_dataset(int rotation[][3][3],
 
 static int get_symmetry_with_collinear_spin(int rotation[][3][3],
 					    double translation[][3],
+					    int equivalent_atoms[],
 					    const int max_size,
 					    SPGCONST double lattice[3][3],
 					    SPGCONST double position[][3],
@@ -938,15 +944,37 @@ static int get_symmetry_with_collinear_spin(int rotation[][3][3],
 					    const double symprec)
 {
   int i, size;
-  Symmetry *symmetry;
+  Symmetry *symmetry, *sym_nonspin;
   Cell *cell;
+  SpglibDataset *dataset;
 
   cell = cel_alloc_cell(num_atom);
   cel_set_cell(cell, lattice, position, types);
-  symmetry = spn_get_collinear_operation(cell, spins, symprec);
+
+  dataset = get_dataset(lattice,
+			position,
+			types,
+			num_atom,
+			0,
+			symprec);
+
+  sym_nonspin = sym_alloc_symmetry(dataset->n_operations);
+  for (i = 0; i < dataset->n_operations; i++) {
+    mat_copy_matrix_i3(sym_nonspin->rot[i], dataset->rotations[i]);
+    mat_copy_vector_d3(sym_nonspin->trans[i], dataset->translations[i]);
+  }
+  spg_free_dataset(dataset);
+
+  symmetry = spn_get_collinear_operation(equivalent_atoms,
+					 sym_nonspin,
+					 cell,
+					 spins,
+					 symprec);
+  sym_free_symmetry(sym_nonspin);
   
   if (symmetry->size > max_size) {
-    fprintf(stderr, "spglib: Indicated max size(=%d) is less than number ", max_size);
+    fprintf(stderr, "spglib: Indicated max size(=%d) is less than number ",
+	    max_size);
     fprintf(stderr, "spglib: of symmetry operations(=%d).\n", symmetry->size);
     sym_free_symmetry(symmetry);
     return 0;

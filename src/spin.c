@@ -6,32 +6,12 @@
 #include "symmetry.h"
 #include "cell.h"
 
-static Symmetry  * 
-get_collinear_operation_with_symmetry(SPGCONST Symmetry *sym_nonspin,
-				      SPGCONST Cell *cell,
-				      const double spins[],
-				      const double symprec);
-
-Symmetry * spn_get_collinear_operation(SPGCONST Cell *cell,
+Symmetry * spn_get_collinear_operation(int equiv_atoms[],
+				       SPGCONST Symmetry *sym_nonspin,
+				       SPGCONST Cell *cell,
 				       const double spins[],
-				       const double symprec) {
-  Symmetry *sym_nonspin, *symmetry;
-
-  sym_nonspin = sym_get_operation(cell, symprec);
-  symmetry = get_collinear_operation_with_symmetry(sym_nonspin,
-						   cell,
-						   spins,
-						   symprec);
-  sym_free_symmetry(sym_nonspin);
-  
-  return symmetry;
-}
-
-static Symmetry * 
-get_collinear_operation_with_symmetry(SPGCONST Symmetry *sym_nonspin,
-				      SPGCONST Cell *cell,
-				      const double spins[],
-				      const double symprec) {
+				       const double symprec)
+{
   Symmetry *symmetry;
   int i, j, k, sign, is_found, num_sym;
   double pos[3];
