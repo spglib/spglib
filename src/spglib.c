@@ -965,11 +965,11 @@ static int get_symmetry_with_collinear_spin(int rotation[][3][3],
   }
   spg_free_dataset(dataset);
 
-  symmetry = spn_get_collinear_operation(equivalent_atoms,
-					 sym_nonspin,
-					 cell,
-					 spins,
-					 symprec);
+  symmetry = spn_get_collinear_operations(equivalent_atoms,
+					  sym_nonspin,
+					  cell,
+					  spins,
+					  symprec);
   sym_free_symmetry(sym_nonspin);
   
   if (symmetry->size > max_size) {
