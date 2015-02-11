@@ -1,3 +1,28 @@
+2015-02-11  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.7.1
+
+	There are minor changes to make functions robust and code clean.
+
+	* src/spglib.c
+
+	spg(at)_get_symmetry_with_collinear_spin is changed to return
+	equivalent atoms.
+	spg_get_international and spg_get_schoenflies call iterative
+	routine to determine space group type.
+
+	* src/primitive.h:
+
+	Primitive structure is defined. This is expected to make routines
+	related to primitive cell comprehensive. Memory for a pointer of
+	the Primitive variable may be allocated using prm_alloc_primitive
+	and freed by prm_free_primitive.
+
+	* src/spacegroup.c:
+
+	spa_get_spacegroup was replaced by iterative routine and now
+	returns a Primitive structure.
+
 2014-11-19  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.7
