@@ -479,7 +479,7 @@ static void get_Delaunay_shortest_vectors_2D(double basis[3][3],
   }
   
   for (i = 0; i < 3; i++) {
-    b[4][i] = basis[0][i] + basis[1][i];
+    b[3][i] = basis[0][i] + basis[1][i];
   }
   
   /* Bubble sort */
