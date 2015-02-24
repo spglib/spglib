@@ -1,3 +1,19 @@
+2015-02-24  Atsushi Togo  <atz.togo@gmail.com>
+
+	* src/spacegroup.c (get_symmetry_settings):
+
+	Monoclinic lattice vectors are chosen as |a| < |c| with b as the
+	unique axis. This is achieved by get_Delaunay_reduction_2D.
+
+	* src/lattice.c (get_Delaunay_reduction_2D):
+
+	2D Delaunay reduction is implemented based on that of 3D.
+
+	* src/lattice.c (lat_smallest_lattice_vector_2D):
+
+	Create an interface to access 2D Delaunay reduction.
+
+
 2015-02-11  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.7.1
