@@ -514,7 +514,7 @@ static int match_hall_symbol_db(double origin_shift[3],
   SpacegroupType spacegroup_type;
   Centering changed_centering;
   Symmetry * changed_symmetry;
-  double changed_lattice[3][3];
+  double changed_lattice[3][3], inv_lattice[3][3], transform_mat[3][3];
   
   spacegroup_type = spgdb_get_spacegroup_type(hall_number);
   num_hall_types = (spacegroup_to_hall_number[spacegroup_type.number] -
@@ -540,23 +540,46 @@ static int match_hall_symbol_db(double origin_shift[3],
 	  spacegroup_type.number == 70) { /* uncount origin shift */
 	num_hall_types /= 2;
       }
-
-      if (num_hall_types == 3) {
-	if (! match_hall_symbol_db_ortho
-	    (origin_shift,
-	     lattice,
-	     spacegroup_to_hall_number[spacegroup_type.number - 1],
-	     centering,
-	     symmetry,
-	     0,
-	     symprec)) {break;}
+      
+      if (num_hall_types == 1 || num_hall_types == 2) {
 	if (match_hall_symbol_db_ortho(origin_shift,
 				       lattice,
 				       hall_number,
 				       centering,
 				       symmetry,
-				       2,
+				       3,
 				       symprec)) {return 1;}
+	break;
+      }
+
+      if (num_hall_types == 3) {
+	mat_copy_matrix_d3(changed_lattice, lattice);
+	if (! match_hall_symbol_db_ortho
+	    (origin_shift,
+	     changed_lattice,
+	     spacegroup_to_hall_number[spacegroup_type.number - 1],
+	     centering,
+	     symmetry,
+	     0,
+	     symprec)) {break;}
+	mat_inverse_matrix_d3(inv_lattice, lattice, 0);
+	mat_multiply_matrix_d3(transform_mat, inv_lattice, changed_lattice);
+	changed_symmetry = get_conventional_symmetry(transform_mat,
+						     NO_CENTER,
+						     symmetry);
+	is_found = match_hall_symbol_db_ortho(origin_shift,
+					      changed_lattice,
+					      hall_number,
+					      centering,
+					      changed_symmetry,
+					      2,
+					      symprec);
+	sym_free_symmetry(changed_symmetry);	
+	if (is_found) {
+	  mat_copy_matrix_d3(lattice, changed_lattice);
+	  return 1;
+	}
+	break;
       }
 
       if (num_hall_types == 6) {
@@ -567,16 +590,7 @@ static int match_hall_symbol_db(double origin_shift[3],
 				       symmetry,
 				       1,
 				       symprec)) {return 1;}
-      }
-
-      if (num_hall_types == 1 || num_hall_types == 2) {
-	if (match_hall_symbol_db_ortho(origin_shift,
-				       lattice,
-				       hall_number,
-				       centering,
-				       symmetry,
-				       3,
-				       symprec)) {return 1;}
+	break;
       }
 
       break;
@@ -732,6 +746,7 @@ static int match_hall_symbol_db_ortho(double origin_shift[3],
     } else {
       changed_centering = centering;
     }
+    
     mat_multiply_matrix_d3(changed_lattice,
 			   lattice,
 			   change_of_basis_ortho[i]);
@@ -755,10 +770,9 @@ static int match_hall_symbol_db_ortho(double origin_shift[3],
       if (norms[0] > norms[1] || norms[1] > norms[2]) {continue;}
     }
 
-    changed_symmetry =
-      get_conventional_symmetry(change_of_basis_ortho[i],
-				NO_CENTER,
-				symmetry);
+    changed_symmetry = get_conventional_symmetry(change_of_basis_ortho[i],
+						 NO_CENTER,
+						 symmetry);
     is_found = hal_match_hall_symbol_db(origin_shift,
 					changed_lattice,
 					hall_number,
@@ -767,13 +781,6 @@ static int match_hall_symbol_db_ortho(double origin_shift[3],
 					symprec);
     sym_free_symmetry(changed_symmetry);
     if (is_found) {
-      printf("%d: %f, %f\n", num_free_axes, norms[0], norms[1]);
-      for (j = 0; j < 3; j ++) {
-	printf("%f %f %f\n",
-	       changed_lattice[0][j], 
-	       changed_lattice[1][j], 
-	       changed_lattice[2][j]);
-      }
       mat_copy_matrix_d3(lattice, changed_lattice);
       return 1;
     }
