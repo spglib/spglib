@@ -3274,6 +3274,7 @@ static int is_hall_symbol(double shift[3],
   unpack_generators(rot, generators);
 
   spgdb_get_operation_index(operation_index, hall_number);
+
   if (! (operation_index[0] == symmetry->size)) {
     goto not_found;
   }
@@ -3536,18 +3537,20 @@ static int set_dw(double dw[3],
 {
   int i, j;
   int rot_db[3][3];
-  double trans_db[3], tmp_dw[3];
+  double trans_db[3], tmp_dw[3], trans_prim[3], trans_db_prim[3];
 
+  transform_translation(trans_prim, centering, trans);
   for (i = 0; i < operation_index[0]; i++) {
-    /* rotation matrix matching and set difference of translations */
     spgdb_get_operation(rot_db, trans_db, operation_index[1] + i);
-
+    transform_translation(trans_db_prim, centering, trans_db);
     if (mat_check_identity_matrix_i3(rot_db, rot)) {
       for (j = 0; j < 3; j++) {
-	tmp_dw[j] = trans_db[j] - trans[j];
+	dw[j] = trans_db_prim[j] - trans_prim[j];
+	dw[j] -= mat_Nint(dw[j]);
+	if (dw[j] < 0) {
+	  dw[j] += 1.0;
+	}
       }
-      /* Transform dw to that of primitive cell if there is centering. */
-      transform_translation(dw, centering, tmp_dw);
       goto found;
     }
   }
@@ -3573,20 +3576,18 @@ static int is_match_database(const int hall_number,
 
   spgdb_get_operation_index(operation_index, hall_number);
 
-  for (i = 0; i < symmetry->size; i++) { found_list[i] = 0; }
-
+  for (i = 0; i < symmetry->size; i++) {found_list[i] = 0;}
   for (i = 0; i < symmetry->size; i++) {
     is_found = 0;
     for (j = 0; j < operation_index[0]; j++) {
       /* rotation matrix matching and set difference of translations */
-      spgdb_get_operation(rot_db, trans_db, operation_index[1]+j);
+      spgdb_get_operation(rot_db, trans_db, operation_index[1] + j);
 
       if (mat_check_identity_matrix_i3(symmetry->rot[i], rot_db)) {
 	mat_multiply_matrix_vector_id3(tmp_vec, rot_db, origin_shift);
 	for (k = 0; k < 3; k++) {
 	  conv_trans[k] = tmp_vec[k] + symmetry->trans[i][k] - origin_shift[k];
 	}
-	
 	if (cel_is_overlap(conv_trans,
 			   trans_db,
 			   bravais_lattice,

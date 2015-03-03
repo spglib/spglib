@@ -773,6 +773,7 @@ static int match_hall_symbol_db_ortho(double origin_shift[3],
     changed_symmetry = get_conventional_symmetry(change_of_basis_ortho[i],
 						 NO_CENTER,
 						 symmetry);
+
     is_found = hal_match_hall_symbol_db(origin_shift,
 					changed_lattice,
 					hall_number,
