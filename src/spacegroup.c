@@ -475,15 +475,18 @@ static Symmetry * get_symmetry_settings(double conv_lattice[3][3],
   if (pointgroup->laue == LAUE1) {
     for (i = 0; i < 3; i++) {
       for (j = 0; j < 3; j++) {
-	niggli_cell[i * 3 + j] = conv_lattice[i][j];
+  	niggli_cell[i * 3 + j] = conv_lattice[i][j];
       }
     }
     niggli_reduce(niggli_cell, symprec * symprec);
     for (i = 0; i < 3; i++) {
       for (j = 0; j < 3; j++) {
-	smallest_lattice[i][j] = niggli_cell[i * 3 + j];
+  	smallest_lattice[i][j] = niggli_cell[i * 3 + j];
       }
     }
+    mat_inverse_matrix_d3(inv_lattice, primitive_lattice, 0);
+    mat_multiply_matrix_d3(transform_mat, inv_lattice, smallest_lattice);
+    mat_cast_matrix_3d_to_3i(int_transform_mat, transform_mat);
   }
 
   /* Monoclinic: choose shortest a, c lattice vectors (|a| < |c|) */
@@ -492,14 +495,10 @@ static Symmetry * get_symmetry_settings(double conv_lattice[3][3],
 				       conv_lattice,
 				       1, /* unique axis of b */
 				       symprec)) {
-      ;
+      mat_inverse_matrix_d3(inv_lattice, primitive_lattice, 0);
+      mat_multiply_matrix_d3(transform_mat, inv_lattice, smallest_lattice);
+      mat_cast_matrix_3d_to_3i(int_transform_mat, transform_mat);
     }
-  }
-
-  if (pointgroup->laue == LAUE1 || pointgroup->laue == LAUE2M) {
-    mat_inverse_matrix_d3(inv_lattice, primitive_lattice, 0);
-    mat_multiply_matrix_d3(transform_mat, inv_lattice, smallest_lattice);
-    mat_cast_matrix_3d_to_3i(int_transform_mat, transform_mat);
   }
 
   *centering = lat_get_centering(correction_mat,
