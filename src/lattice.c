@@ -198,7 +198,7 @@ static int get_Delaunay_reduction(double red_lattice[3][3],
 				  const double symprec)
 {
   int i, j;
-  double volume, sum, red_sum;
+  double volume, sum;
   double basis[4][3];
 
   get_exteneded_basis(basis, lattice);
@@ -447,7 +447,6 @@ static void get_Delaunay_shortest_vectors_2D(double basis[3][3],
 					     const double symprec)
 {
   int i, j;
-  double dot_product;
   double b[4][3], tmpvec[3];
   
   /* Search in the set {b1, b2, b3, b1+b2} */

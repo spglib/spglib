@@ -8,6 +8,7 @@
 #include "hall_symbol.h"
 #include "lattice.h"
 #include "mathfunc.h"
+#include "niggli.h"
 #include "pointgroup.h"
 #include "primitive.h"
 #include "spacegroup.h"
@@ -450,8 +451,10 @@ static Symmetry * get_symmetry_settings(double conv_lattice[3][3],
 					SPGCONST Symmetry * symmetry,
 					const double symprec)
 {
+  int i, j;
   int int_transform_mat[3][3];
   double correction_mat[3][3], transform_mat[3][3], inv_lattice[3][3], smallest_lattice[3][3];
+  double niggli_cell[9];
   Symmetry * conv_symmetry;
   
   *pointgroup = ptg_get_transformation_matrix(int_transform_mat,
@@ -468,16 +471,35 @@ static Symmetry * get_symmetry_settings(double conv_lattice[3][3],
 			  primitive_lattice,
 			  int_transform_mat);
 
+  /* Triclinic: Niggli cell reduction */
+  if (pointgroup->laue == LAUE1) {
+    for (i = 0; i < 3; i++) {
+      for (j = 0; j < 3; j++) {
+	niggli_cell[i * 3 + j] = conv_lattice[i][j];
+      }
+    }
+    niggli_reduce(niggli_cell, symprec * symprec);
+    for (i = 0; i < 3; i++) {
+      for (j = 0; j < 3; j++) {
+	smallest_lattice[i][j] = niggli_cell[i * 3 + j];
+      }
+    }
+  }
+
   /* Monoclinic: choose shortest a, c lattice vectors (|a| < |c|) */
   if (pointgroup->laue == LAUE2M) {
     if (lat_smallest_lattice_vector_2D(smallest_lattice,
 				       conv_lattice,
 				       1, /* unique axis of b */
 				       symprec)) {
-      mat_inverse_matrix_d3(inv_lattice, primitive_lattice, 0);
-      mat_multiply_matrix_d3(transform_mat, inv_lattice, smallest_lattice);
-      mat_cast_matrix_3d_to_3i(int_transform_mat, transform_mat);
+      ;
     }
+  }
+
+  if (pointgroup->laue == LAUE1 || pointgroup->laue == LAUE2M) {
+    mat_inverse_matrix_d3(inv_lattice, primitive_lattice, 0);
+    mat_multiply_matrix_d3(transform_mat, inv_lattice, smallest_lattice);
+    mat_cast_matrix_3d_to_3i(int_transform_mat, transform_mat);
   }
 
   *centering = lat_get_centering(correction_mat,
@@ -512,7 +534,6 @@ static int match_hall_symbol_db(double origin_shift[3],
 {
   int is_found, num_hall_types;
   SpacegroupType spacegroup_type;
-  Centering changed_centering;
   Symmetry * changed_symmetry;
   double changed_lattice[3][3], inv_lattice[3][3], transform_mat[3][3];
   
