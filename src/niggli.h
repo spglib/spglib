@@ -2,7 +2,6 @@
 #ifndef __NIGGLI_H__
 #define __NIGGLI_H__
 
-void
-reduce(double *lattice, const double eps);
+void niggli_reduce(double *lattice_, const double eps_);
 
 #endif

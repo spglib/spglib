@@ -47,7 +47,7 @@ static void debug_show(void)
 #define debug_show(...)
 #endif
 
-void reduce(double *lattice_, const double eps_)
+void niggli_reduce(double *lattice_, const double eps_)
 {
   int i;
 

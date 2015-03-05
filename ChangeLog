@@ -1,5 +1,12 @@
 2015-02-24  Atsushi Togo  <atz.togo@gmail.com>
 
+	* src/niggli.*:
+
+	Routine of Niggli cell reduction is imported from
+	https://github.com/atztogo/niggli.
+
+2015-02-24  Atsushi Togo  <atz.togo@gmail.com>
+
 	* src/spacegroup.c (get_symmetry_settings):
 
 	Monoclinic lattice vectors are chosen as |a| < |c| with b as the
