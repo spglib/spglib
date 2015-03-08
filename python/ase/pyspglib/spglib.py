@@ -85,7 +85,10 @@ def get_symmetry_dataset(bulk, symprec=1e-5, angle_tolerance=-1.0):
             'rotations',
             'translations',
             'wyckoffs',
-            'equivalent_atoms')
+            'equivalent_atoms',
+            'brv_lattice',
+            'brv_types',
+            'brv_positions')
     dataset = {}
     for key, data in zip(keys, spg.dataset(lattice,
                                            positions,
@@ -107,6 +110,11 @@ def get_symmetry_dataset(bulk, symprec=1e-5, angle_tolerance=-1.0):
     dataset['wyckoffs'] = [letters[x] for x in dataset['wyckoffs']]
     dataset['equivalent_atoms'] = np.array(dataset['equivalent_atoms'],
                                            dtype='intc')
+    dataset['brv_lattice'] = np.array(np.transpose(dataset['brv_lattice']),
+                                      dtype='double', order='C')
+    dataset['brv_types'] = np.array(dataset['brv_types'], dtype='intc')
+    dataset['brv_positions'] = np.array(dataset['brv_positions'],
+                                        dtype='double', order='C')
 
     return dataset
 

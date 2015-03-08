@@ -484,6 +484,13 @@ static Symmetry * get_symmetry_settings(double conv_lattice[3][3],
   	smallest_lattice[i][j] = niggli_cell[i * 3 + j];
       }
     }
+    if (mat_get_determinant_d3(smallest_lattice) < 0) {
+      for (i = 0; i < 3; i++) {
+	for (j = 0; j < 3; j++) {
+	  smallest_lattice[i][j] = -smallest_lattice[i][j];
+	}
+      }
+    }
     mat_inverse_matrix_d3(inv_lattice, primitive_lattice, 0);
     mat_multiply_matrix_d3(transform_mat, inv_lattice, smallest_lattice);
     mat_cast_matrix_3d_to_3i(int_transform_mat, transform_mat);

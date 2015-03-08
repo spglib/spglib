@@ -356,11 +356,11 @@ static int get_Delaunay_reduction_2D(double red_lattice[3][3],
 
   k = 0;
   for (i = 0; i < 3; i++) {
-    if (i == unique_axis) {
-      for (j = 0; j < 3; j++) {
-	unique_vec[j] = lattice[j][i];
-      }
-    } else {
+    unique_vec[i] = lattice[i][unique_axis];
+  }
+
+  for (i = 0; i < 3; i++) {
+    if (i != unique_axis) {
       for (j = 0; j < 3; j++) {
 	lattice_2D[j][k] = lattice[j][i];
       }

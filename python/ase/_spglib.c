@@ -150,7 +150,8 @@ static PyObject * get_dataset(PyObject *self, PyObject *args)
   PyArrayObject* lattice;
   PyArrayObject* position;
   PyArrayObject* atom_type;
-  PyObject* array, *vec, *mat, *rot, *trans, *wyckoffs, *equiv_atoms;
+  PyObject *array, *vec, *mat, *rot, *trans, *wyckoffs, *equiv_atoms;
+  PyObject *brv_lattice, *brv_types, *brv_positions;
 
   if (!PyArg_ParseTuple(args, "OOOdd",
 			&lattice,
@@ -173,7 +174,7 @@ static PyObject * get_dataset(PyObject *self, PyObject *args)
 			      symprec,
 			      angle_tolerance);
 
-  array = PyList_New(9);
+  array = PyList_New(12);
 
   /* Space group number, international symbol, hall symbol */
   PyList_SetItem(array, 0, PyLong_FromLong((long) dataset->spacegroup_number));
@@ -233,6 +234,30 @@ static PyObject * get_dataset(PyObject *self, PyObject *args)
   }
   PyList_SetItem(array, 7, wyckoffs);
   PyList_SetItem(array, 8, equiv_atoms);
+
+  brv_lattice = PyList_New(3);
+  for (i = 0; i < 3; i++) {
+    vec = PyList_New(3);
+    for (j = 0; j < 3; j++) {
+      PyList_SetItem(vec, j, PyFloat_FromDouble(dataset->brv_lattice[i][j]));
+    }
+    PyList_SetItem(brv_lattice, i, vec);
+  }
+  PyList_SetItem(array, 9, brv_lattice);
+
+  brv_types = PyList_New(dataset->n_brv_atoms);
+  brv_positions = PyList_New(dataset->n_brv_atoms);
+  for (i = 0; i < dataset->n_brv_atoms; i++) {
+    vec = PyList_New(3);
+    for (j = 0; j < 3; j++) {
+      PyList_SetItem(vec, j, PyFloat_FromDouble(dataset->brv_positions[i][j]));
+    }
+    PyList_SetItem(brv_types, i, PyInt_FromLong((long) dataset->brv_types[i]));
+    PyList_SetItem(brv_positions, i, vec);
+  }
+  PyList_SetItem(array, 10, brv_types);
+  PyList_SetItem(array, 11, brv_positions);
+
   spg_free_dataset(dataset);
 
   return array;
