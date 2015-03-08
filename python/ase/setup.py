@@ -11,6 +11,7 @@ sources = [
 	'../../src/kpoint.c',
 	'../../src/lattice.c',
 	'../../src/mathfunc.c',
+	'../../src/niggli.c',
 	'../../src/pointgroup.c',
 	'../../src/primitive.c',
 	'../../src/refinement.c',
@@ -41,7 +42,7 @@ extension = Extension('pyspglib._spglib',
                       )
 
 setup (name = 'spglib',
-       version = '1.6.0',
+       version = '1.7.2',
        description = 'This is the spglib module.',
        author = 'Atsushi Togo',
        author_email = 'atz.togo@gmail.com',
