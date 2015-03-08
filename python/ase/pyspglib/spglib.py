@@ -78,6 +78,7 @@ def get_symmetry_dataset(bulk, symprec=1e-5, angle_tolerance=-1.0):
     numbers = np.array(bulk.get_atomic_numbers(), dtype='intc')
     
     keys = ('number',
+            'hall_number',
             'international',
             'hall',
             'transformation_matrix',
@@ -118,18 +119,21 @@ def get_symmetry_dataset(bulk, symprec=1e-5, angle_tolerance=-1.0):
 
     return dataset
 
-def get_spacegroup(bulk, symprec=1e-5, angle_tolerance=-1.0):
+def get_spacegroup(bulk, symprec=1e-5, angle_tolerance=-1.0, symbol_type=0):
     """
     Return space group in international table symbol and number
     as a string.
     """
-    # Atomic positions have to be specified by scaled positions for spglib.
-    return spg.spacegroup(
-        np.array(bulk.get_cell().T, dtype='double', order='C'),
-        np.array(bulk.get_scaled_positions(), dtype='double', order='C'),
-        np.array(bulk.get_atomic_numbers(), dtype='intc'),
-        symprec,
-        angle_tolerance)
+
+    dataset = get_symmetry_dataset(bulk,
+                                   symprec=symprec,
+                                   angle_tolerance=angle_tolerance)
+    symbols = spg.spacegroup_type(dataset['hall_number'])
+
+    if symbol_type == 1:
+        return "%s (%d)" % (symbols[0], dataset['number'])
+    else:
+        return "%s (%d)" % (symbols[4], dataset['number'])
 
 def get_pointgroup(rotations):
     """
