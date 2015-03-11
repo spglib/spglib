@@ -495,6 +495,7 @@ int spg_get_symmetry_from_database(int rotations[192][3][3],
     mat_copy_vector_d3(translations[i], symmetry->trans[i]);
   }
   size = symmetry->size;
+
   sym_free_symmetry(symmetry);
 
   return size;
