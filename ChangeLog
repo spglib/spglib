@@ -1,4 +1,15 @@
-2015-02-24  Atsushi Togo  <atz.togo@gmail.com>
+2015-03-20  Atsushi Togo  <atz.togo@gmail.com>
+
+	* src/hall_symbol.c (find_hall_symbol): 
+
+	A critical bug was found in version 1.7.2, where origin shift was
+	given for the primitive cell but not for the Bravais lattice. This
+	was fixed. The version 1.7.2 was removed from the download site
+	and temporary 1.7.3-pre is put on the download site.
+
+2015-03-08  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.7.2
 
 	* src/niggli.*:
 
