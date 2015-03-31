@@ -230,11 +230,11 @@ Primitive * spa_get_spacegroup(Spacegroup * spacegroup,
       }
     }
     
+    warning_print("spglib: Attempt %d tolerance = %f failed.", attempt, tolerance);
+    warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
+
     tolerance *= REDUCE_RATE;
     prm_free_primitive(primitive);
-    
-    warning_print("  Attempt %d tolerance = %f failed.", attempt, tolerance);
-    warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
   }
 
   if (primitive->size == 0) {
@@ -373,7 +373,6 @@ static int iterative_search_hall_number(double origin_shift[3],
   
   tolerance = symprec;
   for (attempt = 0; attempt < 100; attempt++) {
-    debug_print("  Attempt %d tolerance = %f\n", attempt, tolerance);
     hall_number = search_hall_number(origin_shift,
 				     conv_lattice,
 				     candidates,
@@ -384,6 +383,10 @@ static int iterative_search_hall_number(double origin_shift[3],
     if (hall_number > 0) {
       break;
     }
+
+    warning_print("spglib: Attempt %d tolerance = %f failed", attempt, tolerance);
+    warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+
     sym_free_symmetry(sym_reduced);
     tolerance *= REDUCE_RATE;
     sym_reduced = sym_reduce_operation(primitive, symmetry, tolerance);
