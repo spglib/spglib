@@ -1,3 +1,14 @@
+2015-03-31  Atsushi Togo  <atz.togo@gmail.com>
+
+	* src/spacegroup.c (match_hall_symbol_db_ortho): 
+
+	Fix choice of lengths of basis vectors in orthorhombic Pbca. There
+	are two choices for Pbca. The basis vectors can be chosen so as to
+	a < b < c or b < a < c, which correspond to these two choices,
+	respectively. The correspondance can be flipped, i.e., in a case,
+	a < b < c for hall number 290 and b < a < c for 291, but in some
+	other case, a < b < c for hall number 291 and b < a < c for 290.
+
 2015-03-20  Atsushi Togo  <atz.togo@gmail.com>
 
 	* src/hall_symbol.c (find_hall_symbol): 
