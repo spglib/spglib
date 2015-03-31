@@ -571,7 +571,18 @@ static int match_hall_symbol_db(double origin_shift[3],
 	num_hall_types /= 2;
       }
       
-      if (num_hall_types == 1 || num_hall_types == 2) {
+      if (num_hall_types == 1) {
+	if (match_hall_symbol_db_ortho(origin_shift,
+				       lattice,
+				       hall_number,
+				       centering,
+				       symmetry,
+				       6,
+				       symprec)) {return 1;}
+	break;
+      }
+
+      if (num_hall_types == 2) {
 	if (match_hall_symbol_db_ortho(origin_shift,
 				       lattice,
 				       hall_number,
@@ -797,9 +808,17 @@ static int match_hall_symbol_db_ortho(double origin_shift[3],
     	for (k = 0; k < 3; k++) {vec[k] = changed_lattice[k][j];}
     	norms[j] = mat_norm_squared_d3(vec);
       }
-      if (norms[0] > norms[1] || norms[1] > norms[2]) {continue;}
+      if (norms[2] < norms[0] || norms[2] < norms[1]) {continue;}
     }
 
+    if (num_free_axes == 6) {
+      for (j = 0; j < 3; j++) {
+    	for (k = 0; k < 3; k++) {vec[k] = changed_lattice[k][j];}
+    	norms[j] = mat_norm_squared_d3(vec);
+      }
+      if (norms[0] > norms[1] || norms[1] > norms[2]) {continue;}
+    }
+    
     changed_symmetry = get_conventional_symmetry(change_of_basis_ortho[i],
 						 NO_CENTER,
 						 symmetry);
