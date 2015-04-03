@@ -1,3 +1,13 @@
+2015-04-03  Atsushi Togo  <atz.togo@gmail.com>
+
+	* src/spacegroup.c (match_hall_symbol_db_ortho): 
+
+	Change the convention of lengths of basis vector preference to:
+	a < b < c for hall number 290 and a < c < b for 291 or
+	a < b < c for hall number 291 and a < c < b for 290,
+	to preserve a < b convention found in Parthe et al, Journal of
+	Alloys and Compounds, 197 (1993) 291-301.
+
 2015-03-31  Atsushi Togo  <atz.togo@gmail.com>
 
 	* src/spacegroup.c (match_hall_symbol_db_ortho): 
