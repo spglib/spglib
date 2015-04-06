@@ -274,6 +274,7 @@ static void test_spg_get_symmetry_with_collinear_spin(void) {
       {0.5,0.5,0.5}
     };	
   int types[] = { 1, 1 };
+  int equivalent_atoms[2];
   double spins[2];
   int num_atom = 2;
   int max_size = 300;
@@ -284,15 +285,16 @@ static void test_spg_get_symmetry_with_collinear_spin(void) {
   printf("*** Example of spg_get_symmetry_with_spin (BCC ferro) ***:\n");
   spins[0] = 1;
   spins[1] = 1;
-  size = spg_get_symmetry_with_collinear_spin( rotation,
-					       translation,
-					       max_size,
-					       lattice,
-					       position,
-					       types,
-					       spins,
-					       num_atom,
-					       1e-5 );
+  size = spg_get_symmetry_with_collinear_spin(rotation,
+					      translation,
+					      equivalent_atoms,
+					      max_size,
+					      lattice,
+					      position,
+					      types,
+					      spins,
+					      num_atom,
+					      1e-5);
   for (i = 0; i < size; i++) {
     printf("--- %d ---\n", i + 1);
     for (j = 0; j < 3; j++)
@@ -304,15 +306,16 @@ static void test_spg_get_symmetry_with_collinear_spin(void) {
   printf("*** Example of spg_get_symmetry_with_spin (BCC antiferro) ***:\n");
   spins[0] = 1;
   spins[1] = -1;
-  size = spg_get_symmetry_with_collinear_spin( rotation,
-					       translation,
-					       max_size,
-					       lattice,
-					       position,
-					       types,
-					       spins,
-					       num_atom,
-					       1e-5 );
+  size = spg_get_symmetry_with_collinear_spin(rotation,
+					      translation,
+					      equivalent_atoms,
+					      max_size,
+					      lattice,
+					      position,
+					      types,
+					      spins,
+					      num_atom,
+					      1e-5);
   for (i = 0; i < size; i++) {
     printf("--- %d ---\n", i + 1);
     for (j = 0; j < 3; j++)
@@ -324,15 +327,16 @@ static void test_spg_get_symmetry_with_collinear_spin(void) {
   printf("*** Example of spg_get_symmetry_with_spin (BCC broken spin) ***:\n");
   spins[0] = 1;
   spins[1] = 2;
-  size = spg_get_symmetry_with_collinear_spin( rotation,
-					       translation,
-					       max_size,
-					       lattice,
-					       position,
-					       types,
-					       spins,
-					       num_atom,
-					       1e-5 );
+  size = spg_get_symmetry_with_collinear_spin(rotation,
+					      translation,
+					      equivalent_atoms,
+					      max_size,
+					      lattice,
+					      position,
+					      types,
+					      spins,
+					      num_atom,
+					      1e-5);
   for (i = 0; i < size; i++) {
     printf("--- %d ---\n", i + 1);
     for (j = 0; j < 3; j++)
@@ -536,7 +540,7 @@ static void test_spg_triplets_reciprocal_mesh_at_q(void)
   int grid_point = 10;
   int m = 20;
   int mesh[] = {m, m, m};
-  int is_shift[] = {1, 1, 1};
+  int is_shift[] = {0, 0, 0};
   int grid_address[m * m * m][3];
   int map_triplets[m * m * m];
   int map_q[m * m * m];
@@ -551,6 +555,11 @@ static void test_spg_triplets_reciprocal_mesh_at_q(void)
   spg_free_dataset(dataset);
 
   printf("Number of k-point triplets of NaCl at grid point 10 = (1/2, 0, 0)\n");
+  printf("grid point %d = (%d/20, %d/20, %d/20)\n",
+	 grid_point,
+	 grid_address[grid_point][0],
+	 grid_address[grid_point][1],
+	 grid_address[grid_point][2]);
   printf("with Gamma-centered 20x20x20 Monkhorst-Pack mesh is %d (396).\n", num_ir_tp);
 
   printf("*** Example of spg_get_BZ_triplets_at_q of NaCl structure ***:\n");
@@ -587,7 +596,7 @@ static void test_spg_triplets_reciprocal_mesh_at_q(void)
 					    bz_grid_address,
 					    bz_map,
 					    map_triplets,
-					    num_ir_tp,
+					    m * m * m,
 					    mesh);
   printf("Number of k-point triplets of NaCl at grid point 10 = (1/2, 0, 0)\n");
   printf("with Gamma-centered 20x20x20 Monkhorst-Pack mesh is %d (396).\n", num_ir_tp2);

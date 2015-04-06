@@ -22,7 +22,8 @@ sources = [
 	'../../src/spg_database.c',
 	'../../src/spglib.c',
 	'../../src/symmetry.c',
-    '../../src/tetrahedron_method.c']
+    '../../src/tetrahedron_method.c',
+    '../../src/triplet_kpoint.c']
 
 # Hmm, bdist_rpm requires that all sources are within root directory.
 # Therefore add a symlink to src directory under systems that support it...
@@ -42,7 +43,7 @@ extension = Extension('pyspglib._spglib',
                       )
 
 setup (name = 'spglib',
-       version = '1.7.2',
+       version = '1.7.3',
        description = 'This is the spglib module.',
        author = 'Atsushi Togo',
        author_email = 'atz.togo@gmail.com',

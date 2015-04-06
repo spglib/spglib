@@ -19,6 +19,7 @@ spglib_f.c \
 spin.c \
 symmetry.c \
 tetrahedron_method.c \
+triplet_kpoint.c \
 cell.h \
 debug.h \
 hall_symbol.h \
@@ -36,7 +37,8 @@ spg_database.h \
 spglib.h \
 spin.h \
 symmetry.h \
-tetrahedron_method.h
+tetrahedron_method.h \
+triplet_kpoint.h
 
 pkginclude_HEADERS = \
 cell.h \
@@ -56,7 +58,8 @@ spg_database.h \
 spglib.h \
 spin.h \
 symmetry.h \
-tetrahedron_method.h
+tetrahedron_method.h \
+triplet_kpoint.h
 
 # libsymspg_la_LDFLAGS = -version-info 0:1:0
 libsymspg_la_LIBADD = -lm

@@ -1,3 +1,20 @@
+2015-04-05  Atsushi Togo  <atz.togo@gmail.com>
+
+	* src/triplet_kpoint.{c,h}:
+
+	Code to handle triplets of kpoints was separated from
+	kpoint.c. Detail of functions was revisited and modified, e.g.,
+	taking modulo of grid address is now included in
+	get_grid_point_double_mesh in most cases. This is probably safe
+	change, but may induce some tricky bug, which has to be
+	remembered. kpt_get_grid_point should be moved to spglib.c with
+	calling kpt_get_grid_point_double_mesh someday soon. It is noted
+	here for not forgetting that get_third_q_of_triplets_at_q in
+	triplet_kpoint.c might be written better around the point using
+	mat_modulo_i3. In triplet_kpoint.c, mat_modulo_i3 is used only
+	here, so eliminating this can move mat_modulo_i3 to kpoint.c as a
+	local function as before.
+
 2015-04-03  Atsushi Togo  <atz.togo@gmail.com>
 
 	* src/spacegroup.c (match_hall_symbol_db_ortho): 
