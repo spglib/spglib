@@ -56,7 +56,11 @@ static VecDBL * get_exact_positions(int * wyckoffs,
 
   debug_print("get_symmetrized_positions\n");
 
-  indep_atoms = (int*) malloc(sizeof(int) * bravais->size);
+  if ((indep_atoms = (int*) malloc(sizeof(int) * bravais->size)) == NULL) {
+    warning_print("spglib: Memory could not be allocated ");
+    return NULL;
+  }
+
   positions = mat_alloc_VecDBL(bravais->size);
   num_indep_atoms = 0;
 

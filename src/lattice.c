@@ -61,7 +61,8 @@ int lat_smallest_lattice_vector(double min_lattice[3][3],
 				SPGCONST double lattice[3][3],
 				const double symprec)
 {
-  debug_print("lat_smallest_lattice_vector:\n");
+  debug_print("lat_smallest_lattice_vector (tolerance = %f):\n", symprec);
+
   return get_Delaunay_reduction(min_lattice, lattice, symprec);
 }
 

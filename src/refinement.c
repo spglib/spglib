@@ -69,11 +69,11 @@ static Symmetry * reduce_symmetry_in_frame(const int frame[3],
 static VecDBL * reduce_lattice_points(SPGCONST double lattice[3][3],
 				      const VecDBL *lattice_trans,
 				      const double symprec);
-static void set_equivalent_atoms(int * equiv_atoms_cell,
-				 SPGCONST Cell * primitive,
-				 SPGCONST Cell * cell,
-				 const int * equiv_atoms_prim,
-				 const int * mapping_table);
+static int set_equivalent_atoms(int * equiv_atoms_cell,
+				SPGCONST Cell * primitive,
+				SPGCONST Cell * cell,
+				const int * equiv_atoms_prim,
+				const int * mapping_table);
 static void set_equivalent_atoms_broken_symmetry(int * equiv_atoms_cell,
 						 SPGCONST Cell * cell,
 						 const Symmetry *symmetry,
@@ -118,8 +118,19 @@ Cell * ref_get_Wyckoff_positions(int * wyckoffs,
   int *wyckoffs_bravais, *equiv_atoms_bravais;
   int operation_index[2];
 
-  wyckoffs_bravais = (int*)malloc(sizeof(int) * primitive->size * 4);
-  equiv_atoms_bravais = (int*)malloc(sizeof(int) * primitive->size * 4);
+  if ((wyckoffs_bravais = (int*)malloc(sizeof(int) * primitive->size * 4))
+      == NULL) {
+    warning_print("spglib: Memory could not be allocated ");
+    return NULL;
+  }
+
+  if ((equiv_atoms_bravais = (int*)malloc(sizeof(int) * primitive->size * 4))
+      == NULL) {
+    warning_print("spglib: Memory could not be allocated ");
+    free(wyckoffs_bravais);
+    wyckoffs_bravais = NULL;
+    return NULL;
+  }
   
   bravais = get_bravais_exact_positions_and_lattice(wyckoffs_bravais,
 						    equiv_atoms_bravais,
@@ -178,8 +189,18 @@ static Cell * get_bravais_exact_positions_and_lattice(int * wyckoffs,
   get_conventional_lattice(conv_prim->lattice, spacegroup);
 
   /* Symmetrize atomic positions of conventional unit cell */
-  wyckoffs_prim = (int*)malloc(sizeof(int) * primitive->size);
-  equiv_atoms_prim = (int*)malloc(sizeof(int) * primitive->size);
+  if ((wyckoffs_prim = (int*)malloc(sizeof(int) * primitive->size)) == NULL) {
+    warning_print("spglib: Memory could not be allocated ");
+    return NULL;
+  }
+
+  if ((equiv_atoms_prim = (int*)malloc(sizeof(int) * primitive->size)) == NULL) {
+    warning_print("spglib: Memory could not be allocated ");
+    free(wyckoffs_prim);
+    wyckoffs_prim = NULL;
+    return NULL;
+  }
+
   exact_positions = ssm_get_exact_positions(wyckoffs_prim,
 					    equiv_atoms_prim,
 					    conv_prim,
@@ -492,16 +513,20 @@ get_refined_symmetry_operations(SPGCONST Cell * cell,
   return symmetry;
 }
 
-static void set_equivalent_atoms(int * equiv_atoms_cell,
-				 SPGCONST Cell * primitive,
-				 SPGCONST Cell * cell,
-				 const int * equiv_atoms_prim,
-				 const int * mapping_table)
+static int set_equivalent_atoms(int * equiv_atoms_cell,
+				SPGCONST Cell * primitive,
+				SPGCONST Cell * cell,
+				const int * equiv_atoms_prim,
+				const int * mapping_table)
 {
   int i, j;
   int *equiv_atoms;
 
-  equiv_atoms = (int*) malloc(sizeof(int) * primitive->size);
+  if ((equiv_atoms = (int*) malloc(sizeof(int) * primitive->size)) == NULL) {
+    warning_print("spglib: Memory could not be allocated ");
+    return 0;
+  }
+
   for (i = 0; i < primitive->size; i++) {
     for (j = 0; j < cell->size; j++) {
       if (mapping_table[j] == equiv_atoms_prim[i]) {
@@ -515,6 +540,8 @@ static void set_equivalent_atoms(int * equiv_atoms_cell,
   }
   free(equiv_atoms);
   equiv_atoms = NULL;
+
+  return 1;
 }
 
 static void set_equivalent_atoms_broken_symmetry(int * equiv_atoms_cell,

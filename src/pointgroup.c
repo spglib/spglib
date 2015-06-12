@@ -416,9 +416,6 @@ Pointgroup ptg_get_transformation_matrix(int transform_mat[3][3],
     set_transformation_matrix(transform_mat, axes);
   }
 
-  debug_print("transformation matrix:\n");
-  debug_print_matrix_i3(tmp_transform_mat);
-
   return pointgroup;
 }
 

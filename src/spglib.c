@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "cell.h"
+#include "debug.h"
 #include "kpoint.h"
 #include "lattice.h"
 #include "mathfunc.h"
@@ -30,12 +31,12 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
 				   const int num_atom,
 				   const int hall_number,
 				   const double symprec);
-static void set_dataset(SpglibDataset * dataset,
-			SPGCONST Cell * cell,
-			SPGCONST Cell * primitive,
-			SPGCONST Spacegroup * spacegroup,
-			const int * mapping_table,
-			const double tolerance);
+static int set_dataset(SpglibDataset * dataset,
+		       SPGCONST Cell * cell,
+		       SPGCONST Cell * primitive,
+		       SPGCONST Spacegroup * spacegroup,
+		       const int * mapping_table,
+		       const double tolerance);
 static int get_symmetry_from_dataset(int rotation[][3][3],
 				     double translation[][3],
 				     const int max_size,
@@ -787,7 +788,16 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
   Cell *cell;
   Primitive *primitive;
 
-  dataset = (SpglibDataset*) malloc(sizeof(SpglibDataset));
+  spacegroup.number = 0;
+  dataset = NULL;
+  cell = NULL;
+  primitive = NULL;
+
+  if ((dataset = (SpglibDataset*) malloc(sizeof(SpglibDataset))) == NULL) {
+    warning_print("spglib: Memory could not be allocated ");
+    return NULL;
+  }
+
   dataset->spacegroup_number = 0;
   strcpy(dataset->international_symbol, "");
   strcpy(dataset->hall_symbol, "");
@@ -805,12 +815,15 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
   dataset->brv_positions = NULL;
   dataset->brv_types = NULL;
 
-  cell = cel_alloc_cell(num_atom);
+  if ((cell = cel_alloc_cell(num_atom)) == NULL) {
+    goto err;
+  }
+
   cel_set_cell(cell, lattice, position, types);
 
   primitive = spa_get_spacegroup(&spacegroup, cell, symprec);
 
-  if (spacegroup.number > 0) {
+  if ((spacegroup.number > 0) && (primitive != NULL)) {
     if (hall_number > 0) {
       spacegroup_type = spgdb_get_spacegroup_type(hall_number);
       if (spacegroup.number == spacegroup_type.number) {
@@ -829,26 +842,40 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
 		  primitive->mapping_table,
 		  primitive->tolerance);
     }
+    prm_free_primitive(primitive);
   }
   
-  prm_free_primitive(primitive);
   cel_free_cell(cell);
 
-
   return dataset;
+
+ err:
+  if (primitive != NULL) {
+    prm_free_primitive(primitive);
+  }
+  if (cell != NULL) {
+    cel_free_cell(cell);
+  }
+  if (dataset != NULL) {
+    free(dataset);
+  }
+  return NULL;
 }
 
-static void set_dataset(SpglibDataset * dataset,
-			SPGCONST Cell * cell,
-			SPGCONST Cell * primitive,
-			SPGCONST Spacegroup * spacegroup,
-			const int * mapping_table,
-			const double tolerance)
+static int set_dataset(SpglibDataset * dataset,
+		       SPGCONST Cell * cell,
+		       SPGCONST Cell * primitive,
+		       SPGCONST Spacegroup * spacegroup,
+		       const int * mapping_table,
+		       const double tolerance)
 {
   int i;
   double inv_mat[3][3];
   Cell *bravais;
   Symmetry *symmetry;
+
+  bravais = NULL;
+  symmetry = NULL;
 
   /* Spacegroup type, transformation matrix, origin shift */
   dataset->n_atoms = cell->size;
@@ -869,18 +896,36 @@ static void set_dataset(SpglibDataset * dataset,
 						 spacegroup,
 						 tolerance);
   dataset->n_operations = symmetry->size;
-  dataset->rotations =
-    (int (*)[3][3])malloc(sizeof(int[3][3]) * dataset->n_operations);
-  dataset->translations =
-    (double (*)[3])malloc(sizeof(double[3]) * dataset->n_operations);
+
+  if ((dataset->rotations =
+       (int (*)[3][3]) malloc(sizeof(int[3][3]) * dataset->n_operations))
+      == NULL) {
+    goto malloc_err;
+  }
+
+  if ((dataset->translations =
+       (double (*)[3]) malloc(sizeof(double[3]) * dataset->n_operations))
+      == NULL) {
+    goto malloc_err;
+  }
+
   for (i = 0; i < symmetry->size; i++) {
     mat_copy_matrix_i3(dataset->rotations[i], symmetry->rot[i]);
     mat_copy_vector_d3(dataset->translations[i], symmetry->trans[i]);
   }
 
   /* Wyckoff positions */
-  dataset->wyckoffs = (int*) malloc(sizeof(int) * dataset->n_atoms); 
-  dataset->equivalent_atoms = (int*) malloc(sizeof(int) * dataset->n_atoms);
+  if ((dataset->wyckoffs = (int*) malloc(sizeof(int) * dataset->n_atoms))
+      == NULL) {
+    goto malloc_err;
+  }
+
+  if ((dataset->equivalent_atoms =
+       (int*) malloc(sizeof(int) * dataset->n_atoms))
+      == NULL) {
+    goto malloc_err;
+  }
+
   bravais = ref_get_Wyckoff_positions(dataset->wyckoffs, 
 				      dataset->equivalent_atoms,
 				      primitive,
@@ -891,10 +936,18 @@ static void set_dataset(SpglibDataset * dataset,
 				      tolerance);
   dataset->n_brv_atoms = bravais->size;
   mat_copy_matrix_d3(dataset->brv_lattice, bravais->lattice);
-  dataset->brv_positions =
-    (double (*)[3])malloc(sizeof(double[3]) * dataset->n_brv_atoms);
-  dataset->brv_types =
-    (int*)malloc(sizeof(int) * dataset->n_brv_atoms);
+
+  if ((dataset->brv_positions =
+       (double (*)[3]) malloc(sizeof(double[3]) * dataset->n_brv_atoms))
+      == NULL) {
+    goto malloc_err;
+  }
+
+  if ((dataset->brv_types = (int*) malloc(sizeof(int) * dataset->n_brv_atoms))
+      == NULL) {
+    goto malloc_err;
+  }
+
   for (i = 0; i < dataset->n_brv_atoms; i++) {
     mat_copy_vector_d3(dataset->brv_positions[i], bravais->position[i]);
     dataset->brv_types[i] = bravais->types[i];
@@ -902,6 +955,38 @@ static void set_dataset(SpglibDataset * dataset,
   
   cel_free_cell(bravais);
   sym_free_symmetry(symmetry);
+
+  return 1;
+
+ malloc_err:
+  warning_print("spglib: Memory could not be allocated ");
+  if (dataset->brv_positions != NULL) {
+    free(dataset->brv_positions);
+    dataset->brv_positions = NULL;
+  }
+  if (bravais != NULL) {
+    cel_free_cell(bravais);
+  }
+  if (dataset->equivalent_atoms != NULL) {
+    free(dataset->equivalent_atoms);
+    dataset->equivalent_atoms = NULL;
+  }
+  if (dataset->wyckoffs != NULL) {
+    free(dataset->wyckoffs);
+    dataset->wyckoffs = NULL;
+  }
+  if (dataset->translations != NULL) {
+    free(dataset->translations);
+    dataset->translations = NULL;
+  }
+  if (dataset->rotations != NULL) {
+    free(dataset->rotations);
+    dataset->rotations = NULL;
+  }
+  if (symmetry != NULL) {
+    sym_free_symmetry(symmetry);
+  }
+  return 0;
 }
 
 static int get_symmetry_from_dataset(int rotation[][3][3],
@@ -1072,10 +1157,12 @@ static int get_international(char symbol[11],
   cell = cel_alloc_cell(num_atom);
   cel_set_cell(cell, lattice, position, types);
 
-  primitive = spa_get_spacegroup(&spacegroup, cell, symprec);
-  prm_free_primitive(primitive);
-  if (spacegroup.number > 0) {
-    strcpy(symbol, spacegroup.international_short);
+  spacegroup.number = 0;
+  if ((primitive = spa_get_spacegroup(&spacegroup, cell, symprec)) != NULL) {
+    prm_free_primitive(primitive);
+    if (spacegroup.number > 0) {
+      strcpy(symbol, spacegroup.international_short);
+    }
   }
 
   cel_free_cell(cell);
@@ -1097,10 +1184,12 @@ static int get_schoenflies(char symbol[10],
   cell = cel_alloc_cell(num_atom);
   cel_set_cell(cell, lattice, position, types);
 
-  primitive = spa_get_spacegroup(&spacegroup, cell, symprec);
-  prm_free_primitive(primitive);
-  if (spacegroup.number > 0) {
-    strcpy(symbol, spacegroup.schoenflies);
+  spacegroup.number = 0;
+  if ((primitive = spa_get_spacegroup(&spacegroup, cell, symprec)) != NULL) {
+    prm_free_primitive(primitive);
+    if (spacegroup.number > 0) {
+      strcpy(symbol, spacegroup.schoenflies);
+    }
   }
 
   cel_free_cell(cell);

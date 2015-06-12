@@ -208,6 +208,7 @@ static Symmetry * get_conventional_symmetry(SPGCONST double transform_mat[3][3],
 					    const Centering centering,
 					    const Symmetry *primitive_sym);
 
+/* NULL is returned if failed */
 Primitive * spa_get_spacegroup(Spacegroup * spacegroup,
 			       SPGCONST Cell * cell,
 			       const double symprec)
@@ -216,17 +217,22 @@ Primitive * spa_get_spacegroup(Spacegroup * spacegroup,
   double tolerance;
   Primitive *primitive;
 
+  debug_print("spa_get_spacegroup (tolerance = %f):\n", symprec);
+
+  primitive = NULL;
+
   tolerance = symprec;
 
   for (attempt = 0; attempt < 100; attempt++) {
-    primitive = prm_get_primitive(cell, tolerance);
-    if (primitive->size > 0) {
+    if ((primitive = prm_get_primitive(cell, tolerance)) != NULL) {
       *spacegroup = search_spacegroup(primitive->cell,
 				      spacegroup_to_hall_number,
 				      230,
 				      primitive->tolerance);
       if (spacegroup->number > 0) {
 	break;
+      } else {
+	prm_free_primitive(primitive);
       }
     }
     
@@ -234,15 +240,11 @@ Primitive * spa_get_spacegroup(Spacegroup * spacegroup,
     warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
 
     tolerance *= REDUCE_RATE;
-    prm_free_primitive(primitive);
   }
 
-  if (primitive->size == 0) {
+  if (primitive == NULL) {
     warning_print("spglib: Space group could not be found ");
     warning_print("(line %d, %s).\n", __LINE__, __FILE__);
-    primitive = prm_alloc_primitive(0);
-    primitive->cell = cel_alloc_cell(0);
-    primitive->pure_trans = mat_alloc_VecDBL(0);
   }
 
   return primitive;
@@ -289,9 +291,12 @@ static Spacegroup search_spacegroup(SPGCONST Cell * primitive,
   double origin_shift[3];
   Symmetry *symmetry;
 
+  debug_print("search_spacegroup (tolerance = %f):\n", symprec);
+
+  symmetry = NULL;
   hall_number = 0;
-  symmetry = sym_get_operation(primitive, symprec);
-  if (symmetry->size > 0) {
+
+  if ((symmetry = sym_get_operation(primitive, symprec)) != NULL) {
     hall_number = iterative_search_hall_number(origin_shift,
 					       conv_lattice,
 					       candidates,
@@ -299,8 +304,11 @@ static Spacegroup search_spacegroup(SPGCONST Cell * primitive,
 					       primitive,
 					       symmetry,
 					       symprec);
+    sym_free_symmetry(symmetry);
+  } else {
+    warning_print("spglib: symmetry could not be found (tolerance = %f) ", symprec);
+    warning_print("(line %d, %s).\n", __LINE__, __FILE__);
   }
-  sym_free_symmetry(symmetry);
 
   return get_spacegroup(hall_number, origin_shift, conv_lattice);
 }
@@ -459,6 +467,8 @@ static Symmetry * get_symmetry_settings(double conv_lattice[3][3],
   double correction_mat[3][3], transform_mat[3][3], inv_lattice[3][3], smallest_lattice[3][3];
   double niggli_cell[9];
   Symmetry * conv_symmetry;
+
+  debug_print("get_symmetry_settings (tolerance = %f):\n", symprec);
   
   *pointgroup = ptg_get_transformation_matrix(int_transform_mat,
 					      symmetry->rot,
