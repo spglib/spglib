@@ -835,12 +835,14 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
       }
     }
     if (spacegroup.number > 0) {
-      set_dataset(dataset,
-		  cell,
-		  primitive->cell,
-		  &spacegroup,
-		  primitive->mapping_table,
-		  primitive->tolerance);
+      if ((set_dataset(dataset,
+		       cell,
+		       primitive->cell,
+		       &spacegroup,
+		       primitive->mapping_table,
+		       primitive->tolerance)) == 0) {
+	goto err;
+      }
     }
     prm_free_primitive(primitive);
   }
@@ -891,22 +893,27 @@ static int set_dataset(SpglibDataset * dataset,
   mat_copy_vector_d3(dataset->origin_shift, spacegroup->origin_shift);
 
   /* Symmetry operations */
-  symmetry = ref_get_refined_symmetry_operations(cell,
-						 primitive,
-						 spacegroup,
-						 tolerance);
+  if ((symmetry = ref_get_refined_symmetry_operations(cell,
+						      primitive,
+						      spacegroup,
+						      tolerance)) == NULL) {
+    return 0;
+  }
+
   dataset->n_operations = symmetry->size;
 
   if ((dataset->rotations =
        (int (*)[3][3]) malloc(sizeof(int[3][3]) * dataset->n_operations))
       == NULL) {
-    goto malloc_err;
+    warning_print("spglib: Memory could not be allocated ");
+    goto err;
   }
 
   if ((dataset->translations =
        (double (*)[3]) malloc(sizeof(double[3]) * dataset->n_operations))
       == NULL) {
-    goto malloc_err;
+    warning_print("spglib: Memory could not be allocated ");
+    goto err;
   }
 
   for (i = 0; i < symmetry->size; i++) {
@@ -917,35 +924,42 @@ static int set_dataset(SpglibDataset * dataset,
   /* Wyckoff positions */
   if ((dataset->wyckoffs = (int*) malloc(sizeof(int) * dataset->n_atoms))
       == NULL) {
-    goto malloc_err;
+    warning_print("spglib: Memory could not be allocated ");
+    goto err;
   }
 
   if ((dataset->equivalent_atoms =
        (int*) malloc(sizeof(int) * dataset->n_atoms))
       == NULL) {
-    goto malloc_err;
+    warning_print("spglib: Memory could not be allocated ");
+    goto err;
   }
 
-  bravais = ref_get_Wyckoff_positions(dataset->wyckoffs, 
-				      dataset->equivalent_atoms,
-				      primitive,
-				      cell,
-				      spacegroup,
-				      symmetry,
-				      mapping_table,
-				      tolerance);
+  if ((bravais = ref_get_Wyckoff_positions(dataset->wyckoffs, 
+					   dataset->equivalent_atoms,
+					   primitive,
+					   cell,
+					   spacegroup,
+					   symmetry,
+					   mapping_table,
+					   tolerance)) == NULL) {
+    goto err;
+  }
+
   dataset->n_brv_atoms = bravais->size;
   mat_copy_matrix_d3(dataset->brv_lattice, bravais->lattice);
 
   if ((dataset->brv_positions =
        (double (*)[3]) malloc(sizeof(double[3]) * dataset->n_brv_atoms))
       == NULL) {
-    goto malloc_err;
+    warning_print("spglib: Memory could not be allocated ");
+    goto err;
   }
 
   if ((dataset->brv_types = (int*) malloc(sizeof(int) * dataset->n_brv_atoms))
       == NULL) {
-    goto malloc_err;
+    warning_print("spglib: Memory could not be allocated ");
+    goto err;
   }
 
   for (i = 0; i < dataset->n_brv_atoms; i++) {
@@ -958,8 +972,7 @@ static int set_dataset(SpglibDataset * dataset,
 
   return 1;
 
- malloc_err:
-  warning_print("spglib: Memory could not be allocated ");
+ err:
   if (dataset->brv_positions != NULL) {
     free(dataset->brv_positions);
     dataset->brv_positions = NULL;
