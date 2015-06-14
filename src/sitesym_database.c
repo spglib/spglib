@@ -755,7 +755,6 @@ static const int coordinates_first[] =
     316067062, 328642312,  27383062,     45562,     63923,
     158056444,    610537,     64201, 472984312, 158056312,
     164343937,     45562, };
-
 static const int num_sitesym[] =
   {   0,
       1,   2,   1,   1,   1,   1,   1,   1,   1,   1,
@@ -1106,6 +1105,7 @@ static const int num_sitesym[] =
      32,  16,  96,  48,  48,  48,  24,  24,  16,  12,
      12,   8,   6,   2,  96,  48,  48,  32,  24,  24,
      16,  16, };
+
 
 int ssmdb_get_coordinate(int rot[3][3],
 			 double trans[3],
