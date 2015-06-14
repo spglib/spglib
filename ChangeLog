@@ -1,3 +1,12 @@
+2015-06-14  Atsushi Togo  <atz.togo@gmail.com>
+
+	* src/sitesym_database.c
+
+	Bug in database of hP of rhombohedral was fixed. This bug was
+	affected after version 1.7.3. 'make_Wyckoff_db.py' is fixed and
+	then the database in 'sitesym_database.c' is recreated by
+	make_Wyckoff_db.py.
+
 2015-04-06  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.7.3

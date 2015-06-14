@@ -358,7 +358,7 @@ static int get_orthogonal_axis(int ortho_axes[],
 static int laue2m(int axes[3],
 		  SPGCONST PointSymmetry * pointsym);
 
-#ifdef DEBUG
+#ifdef SPGDEBUG
 static int lauemmm(int axes[3],
 		   SPGCONST PointSymmetry * pointsym);
 static int laue4m(int axes[3],
@@ -702,7 +702,7 @@ static int laue2m(int axes[3],
   return 0;
 }
 
-#ifdef DEBUG
+#ifdef SPGDEBUG
 static int lauemmm(int axes[3],
 		   SPGCONST PointSymmetry * pointsym)
 {
@@ -1160,7 +1160,7 @@ static int get_rotation_axis(SPGCONST int proper_rot[3][3])
   }
   
  end:
-#ifdef DEBUG
+#ifdef SPGDEBUG
   if (axis == -1) {
     printf("rotation axis cound not found.\n");
   }

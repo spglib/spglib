@@ -1,6 +1,7 @@
 /* spg_database.c */
 /* Copyright (C) 2010 Atsushi Togo */
 
+#include <stdlib.h>
 #include "spg_database.h"
 
 /* In Hall symbols (3rd column), '=' is used instead of '"'. */
@@ -8512,8 +8513,13 @@ Symmetry * spgdb_get_spacegroup_operations(const int hall_number)
   double trans[3];
   Symmetry *symmetry;
 
+  symmetry = NULL;
+
   spgdb_get_operation_index(operation_index, hall_number);
-  symmetry = sym_alloc_symmetry(operation_index[0]);
+
+  if ((symmetry = sym_alloc_symmetry(operation_index[0])) == NULL) {
+    return NULL;
+  }
 
   for (i = 0; i < operation_index[0]; i++) {
     /* rotation matrix matching and set difference of translations */
