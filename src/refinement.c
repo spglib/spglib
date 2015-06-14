@@ -113,6 +113,7 @@ ref_get_refined_symmetry_operations(SPGCONST Cell * cell,
 					 symprec);
 }
 
+/* Return NULL if failed */
 Cell * ref_get_Wyckoff_positions(int * wyckoffs,
 				 int * equiv_atoms,
 				 SPGCONST Cell * primitive,
@@ -190,11 +191,14 @@ Cell * get_Wyckoff_positions(int * wyckoffs,
 					 mapping_table,
 					 symprec);
   } else {
-    set_equivalent_atoms(equiv_atoms,
-			 primitive,
-			 cell,
-			 equiv_atoms_bravais,
-			 mapping_table);
+    if (set_equivalent_atoms(equiv_atoms,
+			     primitive,
+			     cell,
+			     equiv_atoms_bravais,
+			     mapping_table) == 0) {
+      cel_free_cell(bravais);
+      bravais = NULL;
+    }
   }
 
  ret:  
@@ -562,6 +566,10 @@ get_refined_symmetry_operations(SPGCONST Cell * cell,
   int frame[3];
   double inv_mat[3][3], t_mat[3][3];
   Symmetry *conv_sym, *prim_sym, *symmetry;
+
+  conv_sym = NULL;
+  prim_sym = NULL;
+  symmetry = NULL;
 
   /* Primitive symmetry from database */
   conv_sym = spgdb_get_spacegroup_operations(spacegroup->hall_number);
