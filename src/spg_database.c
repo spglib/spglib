@@ -8535,8 +8535,15 @@ SpacegroupType spgdb_get_spacegroup_type(const int hall_number)
 {
   int position; 
   SpacegroupType spgtype;
+
+  spgtype.number = 0;
   
-  spgtype = spacegroup_types[hall_number];
+  if (0 < hall_number || hall_number < 531) {
+    spgtype = spacegroup_types[hall_number];
+  } else {
+    spgtype = spacegroup_types[0];
+  }
+
   remove_space(spgtype.schoenflies, 7);
   position = remove_space(spgtype.hall_symbol, 17);
   replace_equal_char(spgtype.hall_symbol, position);
