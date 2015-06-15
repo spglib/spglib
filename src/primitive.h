@@ -4,7 +4,6 @@
 #ifndef __primitive_H__
 #define __primitive_H__
 
-#include "symmetry.h"
 #include "cell.h"
 #include "mathfunc.h"
 

@@ -156,10 +156,9 @@ static int spacegroup_to_hall_number[230] = {
   517, 518, 520, 521, 523, 524, 525, 527, 529, 530,
 };
 
-static Spacegroup search_spacegroup(SPGCONST Cell * primitive,
+static Spacegroup search_spacegroup(SPGCONST Primitive * primitive,
 				    const int candidates[],
-				    const int num_candidates,
-				    const double symprec);
+				    const int num_candidates);
 static Spacegroup get_spacegroup(const int hall_number,
 				 const double origin_shift[3],
 				 SPGCONST double conv_lattice[3][3]);
@@ -208,6 +207,7 @@ static Symmetry * get_conventional_symmetry(SPGCONST double transform_mat[3][3],
 					    const Centering centering,
 					    const Symmetry *primitive_sym);
 
+/* NULL is returned if failed */
 Primitive * spa_get_spacegroup(Spacegroup * spacegroup,
 			       SPGCONST Cell * cell,
 			       const double symprec)
@@ -216,41 +216,44 @@ Primitive * spa_get_spacegroup(Spacegroup * spacegroup,
   double tolerance;
   Primitive *primitive;
 
+  debug_print("spa_get_spacegroup (tolerance = %f):\n", symprec);
+
+  primitive = NULL;
+
   tolerance = symprec;
 
   for (attempt = 0; attempt < 100; attempt++) {
-    primitive = prm_get_primitive(cell, tolerance);
-    if (primitive->size > 0) {
-      *spacegroup = search_spacegroup(primitive->cell,
-				      spacegroup_to_hall_number,
-				      230,
-				      primitive->tolerance);
-      if (spacegroup->number > 0) {
-	break;
-      }
+    if ((primitive = prm_get_primitive(cell, tolerance)) == NULL) {
+      goto cont;
     }
-    
-    warning_print("spglib: Attempt %d tolerance = %f failed.", attempt, tolerance);
+
+    *spacegroup = search_spacegroup(primitive,
+				    spacegroup_to_hall_number,
+				    230);
+    if (spacegroup->number > 0) {
+      break;
+    }
+
+    prm_free_primitive(primitive);
+
+  cont:    
+    warning_print("spglib: Attempt %d tolerance = %f failed.",
+		  attempt, tolerance);
     warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
 
     tolerance *= REDUCE_RATE;
-    prm_free_primitive(primitive);
   }
 
-  if (primitive->size == 0) {
+  if (primitive == NULL) {
     warning_print("spglib: Space group could not be found ");
     warning_print("(line %d, %s).\n", __LINE__, __FILE__);
-    primitive = prm_alloc_primitive(0);
-    primitive->cell = cel_alloc_cell(0);
-    primitive->pure_trans = mat_alloc_VecDBL(0);
   }
 
   return primitive;
 }
 
-Spacegroup spa_get_spacegroup_with_hall_number(SPGCONST Cell * primitive,
-					       const int hall_number,
-					       const double symprec)
+Spacegroup spa_get_spacegroup_with_hall_number(SPGCONST Primitive * primitive,
+					       const int hall_number)
 {
   int num_candidates;
   int candidate[1];
@@ -264,8 +267,7 @@ Spacegroup spa_get_spacegroup_with_hall_number(SPGCONST Cell * primitive,
   candidate[0] = hall_number;
   spacegroup = search_spacegroup(primitive,
 				 candidate,
-				 num_candidates,
-				 symprec);
+				 num_candidates);
   if (spacegroup.number > 0) {
     goto ret;
   }
@@ -279,32 +281,41 @@ Spacegroup spa_get_spacegroup_with_hall_number(SPGCONST Cell * primitive,
   return spacegroup;
 }
 
-static Spacegroup search_spacegroup(SPGCONST Cell * primitive,
+static Spacegroup search_spacegroup(SPGCONST Primitive * primitive,
 				    const int candidates[],
-				    const int num_candidates,
-				    const double symprec)
+				    const int num_candidates)
 {
   int hall_number;
   double conv_lattice[3][3];
   double origin_shift[3];
+  Spacegroup spacegroup;
   Symmetry *symmetry;
 
-  hall_number = 0;
-  symmetry = sym_get_operation(primitive, symprec);
-  if (symmetry->size > 0) {
-    hall_number = iterative_search_hall_number(origin_shift,
-					       conv_lattice,
-					       candidates,
-					       num_candidates,
-					       primitive,
-					       symmetry,
-					       symprec);
-  }
-  sym_free_symmetry(symmetry);
+  debug_print("search_spacegroup (tolerance = %f):\n", primitive->tolerance);
 
-  return get_spacegroup(hall_number, origin_shift, conv_lattice);
+  symmetry = NULL;
+  hall_number = 0;
+  spacegroup.number = 0;
+
+  if ((symmetry = sym_get_operation(primitive)) == NULL) {
+    goto ret;
+  }
+
+  hall_number = iterative_search_hall_number(origin_shift,
+					     conv_lattice,
+					     candidates,
+					     num_candidates,
+					     primitive->cell,
+					     symmetry,
+					     primitive->tolerance);
+  sym_free_symmetry(symmetry);
+  spacegroup = get_spacegroup(hall_number, origin_shift, conv_lattice);
+
+ ret:
+  return spacegroup;
 }
 
+/* Return spacegroup.number = 0 if failed */
 static Spacegroup get_spacegroup(const int hall_number,
 				 const double origin_shift[3],
 				 SPGCONST double conv_lattice[3][3])
@@ -312,14 +323,7 @@ static Spacegroup get_spacegroup(const int hall_number,
   Spacegroup spacegroup;
   SpacegroupType spacegroup_type;
   
-  if (hall_number == 0) {
-    spacegroup.number = 0;
-    warning_print("spglib: Find Hall symbol failed.\n");
-    warning_print("spglib: Space group could not be found ");
-    warning_print("(line %d, %s).\n", __LINE__, __FILE__);
-    goto ret;
-  }
-
+  spacegroup.number = 0;
   spacegroup_type = spgdb_get_spacegroup_type(hall_number);
 
   if (spacegroup_type.number > 0) {
@@ -340,17 +344,12 @@ static Spacegroup get_spacegroup(const int hall_number,
 	   spacegroup_type.international_short);
     strcpy(spacegroup.setting,
 	   spacegroup_type.setting);
-  } else {
-    spacegroup.number = 0;
-    warning_print("spglib: Space group could not be found ");
-    warning_print("(line %d, %s).\n", __LINE__, __FILE__);
   }
 
- ret:
-  /* spacegroup.number = 0 when space group was not found. */
   return spacegroup;
 }
 
+/* Return 0 if failed */
 static int iterative_search_hall_number(double origin_shift[3],
 					double conv_lattice[3][3],
 					const int candidates[],
@@ -359,20 +358,36 @@ static int iterative_search_hall_number(double origin_shift[3],
 					SPGCONST Symmetry * symmetry,
 					const double symprec)
 {
-  int i, attempt, hall_number=0;
+  int attempt, hall_number;
   double tolerance;
   Symmetry * sym_reduced;
 
   debug_print("iterative_search_hall_number:\n");
 
-  sym_reduced = sym_alloc_symmetry(symmetry->size);
-  for (i = 0; i < symmetry->size; i++) {
-    mat_copy_matrix_i3(sym_reduced->rot[i], symmetry->rot[i]);
-    mat_copy_vector_d3(sym_reduced->trans[i], symmetry->trans[i]);
+  hall_number = 0;
+  sym_reduced = NULL;
+
+  hall_number = search_hall_number(origin_shift,
+				   conv_lattice,
+				   candidates,
+				   num_candidates,
+				   primitive->lattice,
+				   symmetry,
+				   symprec);
+
+  if (hall_number > 0) {
+    goto ret;
   }
   
   tolerance = symprec;
   for (attempt = 0; attempt < 100; attempt++) {
+
+    warning_print("spglib: Attempt %d tolerance = %f failed",
+		  attempt, tolerance);
+    warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+
+    tolerance *= REDUCE_RATE;
+    sym_reduced = sym_reduce_operation(primitive, symmetry, tolerance);
     hall_number = search_hall_number(origin_shift,
 				     conv_lattice,
 				     candidates,
@@ -380,26 +395,13 @@ static int iterative_search_hall_number(double origin_shift[3],
 				     primitive->lattice,
 				     sym_reduced,
 				     symprec);
+    sym_free_symmetry(sym_reduced);
     if (hall_number > 0) {
       break;
     }
-
-    warning_print("spglib: Attempt %d tolerance = %f failed", attempt, tolerance);
-    warning_print("(line %d, %s).\n", __LINE__, __FILE__);
-
-    sym_free_symmetry(sym_reduced);
-    tolerance *= REDUCE_RATE;
-    sym_reduced = sym_reduce_operation(primitive, symmetry, tolerance);
   }
 
-#ifdef SPGWARNING
-  if (hall_number == 0) {
-    warning_print("spglib: Iterative attempt with sym_reduce_operation to find Hall symbol failed.\n");
-  }
-#endif
-
-  sym_free_symmetry(sym_reduced);
-  
+ ret:
   return hall_number;
 }
 
@@ -459,6 +461,8 @@ static Symmetry * get_symmetry_settings(double conv_lattice[3][3],
   double correction_mat[3][3], transform_mat[3][3], inv_lattice[3][3], smallest_lattice[3][3];
   double niggli_cell[9];
   Symmetry * conv_symmetry;
+
+  debug_print("get_symmetry_settings (tolerance = %f):\n", symprec);
   
   *pointgroup = ptg_get_transformation_matrix(int_transform_mat,
 					      symmetry->rot,
