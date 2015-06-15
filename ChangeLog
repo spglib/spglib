@@ -1,3 +1,11 @@
+2015-06-15  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.7.4
+
+	Wyckoff position database for rhombohedral cell was
+	wrong. Probably this bug was hidden by the previous default choice
+	of basis vectors but from version 1.7.3 it became revealed.
+
 2015-04-06  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.7.3
