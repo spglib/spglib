@@ -58,12 +58,12 @@ static VecDBL * get_translation(SPGCONST int rot[3][3],
 				SPGCONST Cell *cell,
 				const double symprec,
 				const int is_identity);
-static Symmetry * get_operations(SPGCONST Cell * cell,
+static Symmetry * get_operations(SPGCONST Cell *primitive,
 				 const double symprec);
-static Symmetry * fit_operation_to_primitive(SPGCONST Primitive * primitive,
+static Symmetry * fit_operation_to_primitive(SPGCONST Cell * primitive,
 					     SPGCONST Symmetry * symmetry,
 					     const double symprec);
-static Symmetry * reduce_operation(SPGCONST Cell * cell,
+static Symmetry * reduce_operation(SPGCONST Cell * primitive,
 				   SPGCONST Symmetry * symmetry,
 				   const double symprec);
 static int search_translation_part(int lat_point_atoms[],
@@ -86,13 +86,9 @@ static Symmetry *
 get_space_group_operations(SPGCONST PointSymmetry *lattice_sym,
 			   SPGCONST Cell *primitive,
 			   const double symprec);
-static Symmetry * recover_operations_original(SPGCONST Symmetry *symmetry,
-					      const VecDBL * pure_trans,
-					      SPGCONST Cell *cell,
-					      SPGCONST Cell *primitive);
 static void set_axes(int axes[3][3],
 		     const int a1, const int a2, const int a3);
-static PointSymmetry get_lattice_symmetry(SPGCONST Cell *cell,
+static PointSymmetry get_lattice_symmetry(SPGCONST double cell_lattice[3][3],
 					  const double symprec);
 static int is_identity_metric(SPGCONST double metric_rotated[3][3],
 			      SPGCONST double metric_orig[3][3],
@@ -156,38 +152,21 @@ void sym_free_symmetry(Symmetry *symmetry)
 }
 
 /* Return NULL if failed */
-Symmetry * sym_get_operation(SPGCONST Cell *cell,
-			     const double symprec) {
+Symmetry * sym_get_operation(SPGCONST Primitive * primitive)
+{
 
   debug_print("sym_get_operations:\n");
 
-  return get_operations(cell, symprec);
+  return get_operations(primitive->cell,
+			primitive->tolerance);
 }
 
 /* Number of operations may be reduced with smaller symprec. */
-Symmetry * sym_reduce_operation(SPGCONST Cell * cell,
+Symmetry * sym_reduce_operation(SPGCONST Cell * primitive,
 				SPGCONST Symmetry * symmetry,
 				const double symprec)
 {
-  return reduce_operation(cell, symmetry, symprec);
-}
-
-int sym_get_multiplicity(SPGCONST Cell *cell,
-			 const double symprec)
-{
-  int multi;
-  VecDBL * trans;
-
-  multi = 0;
-  trans = NULL;
-
-  if ((trans = get_translation(identity, cell, symprec, 1)) == NULL) {
-    multi = 0;
-  } else {
-    multi = trans->size;
-    mat_free_VecDBL(trans);
-  }
-  return multi;
+  return reduce_operation(primitive, symmetry, symprec);
 }
 
 /* Return NULL if failed */
@@ -218,6 +197,7 @@ VecDBL * sym_get_pure_translation(SPGCONST Cell *cell,
   return pure_trans;
 }
 
+/* Return NULL if failed */
 VecDBL * sym_reduce_pure_translation(SPGCONST Cell * cell,
 				     const VecDBL * pure_trans,
 				     const double symprec)
@@ -225,19 +205,34 @@ VecDBL * sym_reduce_pure_translation(SPGCONST Cell * cell,
   int i, multi;
   Symmetry *symmetry, *symmetry_reduced;
   VecDBL * pure_trans_reduced;
+
+  symmetry = NULL;
+  symmetry_reduced = NULL;
+  pure_trans_reduced = NULL;
   
   multi = pure_trans->size;
-  symmetry = sym_alloc_symmetry(multi);
+
+  if ((symmetry = sym_alloc_symmetry(multi)) == NULL) {
+    return NULL;
+  }
+
   for (i = 0; i < multi; i++) {
     mat_copy_matrix_i3(symmetry->rot[i], identity);
     mat_copy_vector_d3(symmetry->trans[i], pure_trans->vec[i]);
   }
 
-  symmetry_reduced = reduce_operation(cell, symmetry, symprec);
-  sym_free_symmetry(symmetry);
+  if ((symmetry_reduced = reduce_operation(cell, symmetry, symprec)) == NULL) {
+    sym_free_symmetry(symmetry);
+    return NULL;
+  }
 
+  sym_free_symmetry(symmetry);
   multi = symmetry_reduced->size;
-  pure_trans_reduced = mat_alloc_VecDBL(multi);
+
+  if ((pure_trans_reduced = mat_alloc_VecDBL(multi)) == NULL) {
+    sym_free_symmetry(symmetry_reduced);
+    return NULL;
+  }
   
   for (i = 0; i < multi; i++) {
     mat_copy_vector_d3(pure_trans_reduced->vec[i], symmetry_reduced->trans[i]);
@@ -258,52 +253,36 @@ double sym_get_angle_tolerance(void)
 }
 
 
-/* 1) A primitive cell of the input cell is searched. */
-/* 2) Pointgroup operations of the primitive cell are obtained. */
+/* 1) Pointgroup operations of the primitive cell are obtained. */
 /*    These are constrained by the input cell lattice pointgroup, */
 /*    i.e., even if the lattice of the primitive cell has higher */
 /*    symmetry than that of the input cell, it is not considered. */
-/* 3) Spacegroup operations are searched for the primitive cell */
+/* 2) Spacegroup operations are searched for the primitive cell */
 /*    using the constrained point group operations. */
-/* 4) The spacegroup operations for the primitive cell are */
+/* 3) The spacegroup operations for the primitive cell are */
 /*    transformed to those of original input cells, if the input cell */
 /*    was not a primitive cell. */
-static Symmetry * get_operations(SPGCONST Cell *cell,
+static Symmetry * get_operations(SPGCONST Cell *primitive,
 				 const double symprec)
 {
-  int i, j;
   PointSymmetry lattice_sym;
-  Symmetry *symmetry, *symmetry_orig, *symmetry_reduced;
-  Primitive *primitive;
+  Symmetry *symmetry, *symmetry_reduced;
 
   debug_print("get_operations:\n");
 
   symmetry = NULL;
-  symmetry_orig = NULL;
   symmetry_reduced = NULL;
-  primitive = NULL;
 
-  lattice_sym = get_lattice_symmetry(cell, symprec);
+  lattice_sym = get_lattice_symmetry(primitive->lattice, symprec);
   if (lattice_sym.size == 0) {
     debug_print("get_lattice_symmetry failed.\n");
     goto end;
   }
 
-  if ((primitive = prm_get_primitive(cell, symprec)) == NULL) {
-    goto end;
-  }
-
-  lattice_sym = transform_pointsymmetry(&lattice_sym,
-					primitive->cell->lattice,
-					cell->lattice);
-  if (lattice_sym.size == 0) {
-    goto deallocate_and_end;
-  }
-  
   if ((symmetry = get_space_group_operations(&lattice_sym,
-					     primitive->cell,
+					     primitive,
 					     symprec)) == NULL) {
-    goto deallocate_and_end;
+    goto end;
   }
 
   if (symmetry->size > 48) {
@@ -313,35 +292,18 @@ static Symmetry * get_operations(SPGCONST Cell *cell,
     sym_free_symmetry(symmetry);
 
     if (symmetry_reduced == NULL) {
-      goto deallocate_and_end;
+      goto end;
     }
 
     symmetry = symmetry_reduced;
   }      
     
-  symmetry_orig = recover_operations_original(symmetry,
-					      primitive->pure_trans,
-					      cell,
-					      primitive->cell);
-  sym_free_symmetry(symmetry);
-
-  if (symmetry_orig != NULL) {
-    for (i = 0; i < symmetry_orig->size; i++) {
-      for (j = 0; j < 3; j++) {
-	symmetry_orig->trans[i][j] -= mat_Nint(symmetry_orig->trans[i][j]);
-      }
-    }
-  }
-
- deallocate_and_end:
-  prm_free_primitive(primitive);
-
  end:
-  return symmetry_orig;
+  return symmetry;
 }
 
 /* Return NULL if failed */
-static Symmetry * fit_operation_to_primitive(SPGCONST Primitive * primitive,
+static Symmetry * fit_operation_to_primitive(SPGCONST Cell * primitive,
 					     SPGCONST Symmetry * symmetry,
 					     const double symprec)
 {
@@ -359,7 +321,7 @@ static Symmetry * fit_operation_to_primitive(SPGCONST Primitive * primitive,
   warning_print("spglib: number of symmetry operations for primitive cell > 48 was found. (line %d, %s).\n", __LINE__, __FILE__);
   warning_print("tolerance is reduced to %f\n", tolerance);
 
-  if ((symmetry_reduced = reduce_operation(primitive->cell,
+  if ((symmetry_reduced = reduce_operation(primitive,
 					   symmetry,
 					   tolerance)) != NULL) {
     goto ret;
@@ -371,7 +333,7 @@ static Symmetry * fit_operation_to_primitive(SPGCONST Primitive * primitive,
     tolerance *= REDUCE_RATE;
     warning_print("tolerance is reduced to %f\n", tolerance);
 
-    if ((symmetry_reduced = reduce_operation(primitive->cell,
+    if ((symmetry_reduced = reduce_operation(primitive,
 					     tmp_symmetry,
 					     tolerance)) == NULL) {
       continue;
@@ -396,7 +358,7 @@ static Symmetry * fit_operation_to_primitive(SPGCONST Primitive * primitive,
 }
 
 /* Return NULL if failed */
-static Symmetry * reduce_operation(SPGCONST Cell * cell,
+static Symmetry * reduce_operation(SPGCONST Cell * primitive,
 				   SPGCONST Symmetry * symmetry,
 				   const double symprec)
 {
@@ -412,7 +374,7 @@ static Symmetry * reduce_operation(SPGCONST Cell * cell,
   rot = NULL;
   trans = NULL;
 
-  point_symmetry = get_lattice_symmetry(cell, symprec);
+  point_symmetry = get_lattice_symmetry(primitive->lattice, symprec);
 
   if ((rot = mat_alloc_MatINT(symmetry->size)) == NULL) {
     return NULL;
@@ -422,7 +384,7 @@ static Symmetry * reduce_operation(SPGCONST Cell * cell,
     mat_free_MatINT(rot);
     return NULL;
   }
-
+  
   num_sym = 0;
   for (i = 0; i < point_symmetry.size; i++) {
     for (j = 0; j < symmetry->size; j++) {
@@ -430,7 +392,7 @@ static Symmetry * reduce_operation(SPGCONST Cell * cell,
 				       symmetry->rot[j])) {
 	if (is_overlap_all_atoms(symmetry->trans[j],
 				 symmetry->rot[j],
-				 cell,
+				 primitive,
 				 symprec,
 				 0)) {
 	  mat_copy_matrix_i3(rot->mat[num_sym], symmetry->rot[j]);
@@ -446,7 +408,6 @@ static Symmetry * reduce_operation(SPGCONST Cell * cell,
       mat_copy_matrix_i3(sym_reduced->rot[i], rot->mat[i]);
       mat_copy_vector_d3(sym_reduced->trans[i], trans->vec[i]);
     }
-    debug_print("  num_sym %d -> %d\n", symmetry->size, num_sym);
   }
 
   mat_free_MatINT(rot);
@@ -714,7 +675,7 @@ static int get_index_with_least_atoms(const Cell *cell)
 /* Return NULL if failed */
 static Symmetry *
 get_space_group_operations(SPGCONST PointSymmetry *lattice_sym,
-			   SPGCONST Cell *cell,
+			   SPGCONST Cell *primitive,
 			   const double symprec)
 {
   int i, j, num_sym, total_num_sym;
@@ -739,7 +700,7 @@ get_space_group_operations(SPGCONST PointSymmetry *lattice_sym,
   total_num_sym = 0;
   for (i = 0; i < lattice_sym->size; i++) {
 
-    if ((trans[i] = get_translation(lattice_sym->rot[i], cell, symprec, 0))
+    if ((trans[i] = get_translation(lattice_sym->rot[i], primitive, symprec, 0))
 	!= NULL) {
 
       debug_print("  match translation %d/%d; tolerance = %f\n",
@@ -777,68 +738,7 @@ get_space_group_operations(SPGCONST PointSymmetry *lattice_sym,
   return symmetry;
 }
 
-/* Return NULL if failed */
-static Symmetry * recover_operations_original(SPGCONST Symmetry *symmetry,
-					      const VecDBL * pure_trans,
-					      SPGCONST Cell *cell,
-					      SPGCONST Cell *primitive)
-{
-  int i, j, k, multi;
-  double inv_prim_lat[3][3], drot[3][3], trans_mat[3][3], trans_mat_inv[3][3];
-  Symmetry *symmetry_orig, *tmp_symmetry;
-
-  debug_print("recover_operations_original:\n");
-
-  symmetry_orig = NULL;
-  tmp_symmetry = NULL;
-
-  multi = pure_trans->size;
-
-  if ((tmp_symmetry = sym_alloc_symmetry(symmetry->size)) == NULL) {
-    return NULL;
-  }
-
-  if ((symmetry_orig = sym_alloc_symmetry(symmetry->size * multi)) == NULL) {
-    sym_free_symmetry(tmp_symmetry);
-    return NULL;
-  }
-
-  mat_inverse_matrix_d3(inv_prim_lat, primitive->lattice, 0);
-  mat_multiply_matrix_d3(trans_mat, inv_prim_lat, cell->lattice);
-  mat_inverse_matrix_d3(trans_mat_inv, trans_mat, 0);
-
-  for(i = 0; i < symmetry->size; i++) {
-    mat_copy_matrix_i3(tmp_symmetry->rot[i], symmetry->rot[i]);
-    mat_copy_vector_d3(tmp_symmetry->trans[i], symmetry->trans[i]);
-  }
-
-  for(i = 0; i < symmetry->size; i++) {
-    mat_cast_matrix_3i_to_3d(drot, tmp_symmetry->rot[i]);
-    mat_get_similar_matrix_d3(drot, drot, trans_mat, 0);
-    mat_cast_matrix_3d_to_3i(tmp_symmetry->rot[i], drot);
-
-    mat_multiply_matrix_vector_d3(tmp_symmetry->trans[i],
-				  trans_mat_inv,
-				  tmp_symmetry->trans[i]);
-  }
-
-  for(i = 0; i < symmetry->size; i++) {
-    for(j = 0; j < multi; j++) {
-      mat_copy_matrix_i3(symmetry_orig->rot[i * multi + j],
-			 tmp_symmetry->rot[i]);
-      for (k = 0; k < 3; k++) {
-	symmetry_orig->trans[i * multi + j][k] =
-	  tmp_symmetry->trans[i][k] + pure_trans->vec[j][k];
-      }
-    }
-  }
-
-  sym_free_symmetry(tmp_symmetry);
-
-  return symmetry_orig;
-}
-
-static PointSymmetry get_lattice_symmetry(SPGCONST Cell *cell,
+static PointSymmetry get_lattice_symmetry(SPGCONST double cell_lattice[3][3],
 					  const double symprec)
 {
   int i, j, k, num_sym;
@@ -850,7 +750,7 @@ static PointSymmetry get_lattice_symmetry(SPGCONST Cell *cell,
   debug_print("get_lattice_symmetry:\n");
 
   if (! lat_smallest_lattice_vector(min_lattice,
-				    cell->lattice,
+				    cell_lattice,
 				    symprec)) {
     goto err;
   }
@@ -886,7 +786,7 @@ static PointSymmetry get_lattice_symmetry(SPGCONST Cell *cell,
 
   lattice_sym.size = num_sym;
   return transform_pointsymmetry(&lattice_sym,
-				 cell->lattice,
+				 cell_lattice,
 				 min_lattice);
   
  err:
