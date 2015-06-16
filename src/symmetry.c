@@ -158,7 +158,7 @@ Symmetry * sym_get_operation(SPGCONST Primitive * primitive)
 			primitive->tolerance);
 }
 
-/* Number of operations may be reduced with smaller symprec. */
+/* Return NULL if failed */
 Symmetry * sym_reduce_operation(SPGCONST Cell * primitive,
 				SPGCONST Symmetry * symmetry,
 				const double symprec)
