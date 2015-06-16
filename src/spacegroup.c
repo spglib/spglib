@@ -252,6 +252,7 @@ Primitive * spa_get_spacegroup(Spacegroup * spacegroup,
   return primitive;
 }
 
+/* Return spacegroup.number = 0 if failed */
 Spacegroup spa_get_spacegroup_with_hall_number(SPGCONST Primitive * primitive,
 					       const int hall_number)
 {
@@ -259,10 +260,12 @@ Spacegroup spa_get_spacegroup_with_hall_number(SPGCONST Primitive * primitive,
   int candidate[1];
   Spacegroup spacegroup;
   
-  if (hall_number < 1 || hall_number > 530 || primitive->size < 1) {
+  spacegroup.number = 0;
+
+  if (hall_number < 1 || hall_number > 530) {
     goto err;
   }
-    
+  
   num_candidates = 1;
   candidate[0] = hall_number;
   spacegroup = search_spacegroup(primitive,
@@ -273,7 +276,6 @@ Spacegroup spa_get_spacegroup_with_hall_number(SPGCONST Primitive * primitive,
   }
 
  err:
-  spacegroup.number = 0;
   warning_print("spglib: Space group with the input setting could not be found ");
   warning_print("(line %d, %s).\n", __LINE__, __FILE__);
 
@@ -281,6 +283,7 @@ Spacegroup spa_get_spacegroup_with_hall_number(SPGCONST Primitive * primitive,
   return spacegroup;
 }
 
+/* Return spacegroup.number = 0 if failed */
 static Spacegroup search_spacegroup(SPGCONST Primitive * primitive,
 				    const int candidates[],
 				    const int num_candidates)

@@ -855,13 +855,18 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
 
   if ((spacegroup.number > 0) && (primitive != NULL)) {
 
+    /* With hall_number > 0, specific choice is searched. */
     if (hall_number > 0) {
       spacegroup_type = spgdb_get_spacegroup_type(hall_number);
       if (spacegroup.number == spacegroup_type.number) {
 	spacegroup = spa_get_spacegroup_with_hall_number(primitive,
 							 hall_number);
       } else {
-	goto ret;
+	goto err;
+      }
+
+      if (spacegroup.number == 0) {
+	goto err;
       }
     }
 
@@ -872,18 +877,22 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
 		       &spacegroup,
 		       primitive->mapping_table,
 		       primitive->tolerance)) == 0) {
-	free(dataset);
-	dataset = NULL;
-	goto ret;
+	goto err;
       }
     }
   }
 
- ret:
   cel_free_cell(cell);
   prm_free_primitive(primitive);
 
   return dataset;
+
+ err:
+  cel_free_cell(cell);
+  prm_free_primitive(primitive);
+  free(dataset);
+  dataset = NULL;
+  return NULL;
 }
 
 /* Return 0 if failed */
