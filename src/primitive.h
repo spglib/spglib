@@ -9,7 +9,6 @@
 
 typedef struct {
   Cell *cell;
-  VecDBL *pure_trans;
   int * mapping_table;
   int size;
   double tolerance;

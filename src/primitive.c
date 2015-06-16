@@ -64,7 +64,6 @@ Primitive * prm_alloc_primitive(const int size)
   }
 
   primitive->cell = NULL;
-  primitive->pure_trans = NULL;
   primitive->mapping_table = NULL;
   primitive->size = size;
   primitive->tolerance = 0;
@@ -88,10 +87,6 @@ void prm_free_primitive(Primitive * primitive)
     if (primitive->mapping_table != NULL) {
       free(primitive->mapping_table);
       primitive->mapping_table = NULL;
-    }
-
-    if (primitive->pure_trans != NULL) {
-      mat_free_VecDBL(primitive->pure_trans);
     }
 
     if (primitive->cell != NULL) {
@@ -134,10 +129,12 @@ static Primitive * get_primitive(SPGCONST Cell * cell, const double symprec)
   int i, attempt, is_found = 0;
   double tolerance;
   Primitive *primitive;
+  VecDBL * pure_trans;
 
   debug_print("get_primitive (tolerance = %f):\n", symprec);
 
   primitive = NULL;
+  pure_trans = NULL;
 
   if ((primitive = prm_alloc_primitive(cell->size)) == NULL) {
     return NULL;
@@ -145,41 +142,40 @@ static Primitive * get_primitive(SPGCONST Cell * cell, const double symprec)
 
   tolerance = symprec;
   for (attempt = 0; attempt < 100; attempt++) {
-    if ((primitive->pure_trans = sym_get_pure_translation(cell, tolerance))
-	== NULL) {
-      goto reduce_tolerance;
+    if ((pure_trans = sym_get_pure_translation(cell, tolerance)) == NULL) {
+      goto cont;
     }
 
-    if (primitive->pure_trans->size == 1) {
+    if (pure_trans->size == 1) {
       if ((primitive->cell = get_cell_with_smallest_lattice(cell, tolerance))
 	  == NULL) {
-	mat_free_VecDBL(primitive->pure_trans);
-	goto reduce_tolerance;
+	mat_free_VecDBL(pure_trans);
+	goto cont;
       }
 
       for (i = 0; i < cell->size; i++) {
 	primitive->mapping_table[i] = i;
       }
-      is_found = 1;
-      break;
     } else {
       if ((primitive->cell = get_primitive_cell(primitive->mapping_table,
 						cell,
-						primitive->pure_trans,
+						pure_trans,
 						tolerance)) == NULL) {
-	mat_free_VecDBL(primitive->pure_trans);
-	goto reduce_tolerance;
+	mat_free_VecDBL(pure_trans);
+	goto cont;
       }
     }
 
     is_found = 1;
     break;
 
-  reduce_tolerance:
+  cont:
     tolerance *= REDUCE_RATE;
     warning_print("spglib: Reduce tolerance to %f ", tolerance);
     warning_print("(line %d, %s).\n", __LINE__, __FILE__);
   }
+
+  mat_free_VecDBL(pure_trans);
 
   if (is_found) {
     primitive->tolerance = tolerance;
@@ -231,7 +227,7 @@ static Cell * get_cell_with_smallest_lattice(SPGCONST Cell * cell,
   return NULL;
 }
 
-/* Return NUL if failed */
+/* Return NULL if failed */
 static Cell * get_primitive_cell(int * mapping_table,
 				 SPGCONST Cell * cell,
 				 const VecDBL * pure_trans,
