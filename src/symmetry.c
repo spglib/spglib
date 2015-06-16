@@ -268,7 +268,6 @@ static Symmetry * get_operations(SPGCONST Cell *primitive,
   debug_print("get_operations:\n");
 
   symmetry = NULL;
-  symmetry_reduced = NULL;
 
   lattice_sym = get_lattice_symmetry(primitive->lattice, symprec);
   if (lattice_sym.size == 0) {
