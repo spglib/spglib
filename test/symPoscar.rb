@@ -114,6 +114,49 @@ def show_dataset(dataset, nonewline, is_long_output, is_dataset, is_operations)
   end
 end
 
+def transform_to_c(lattice, position, types, symprec, filename='findspg.c')
+  w = open(filename, "w")
+  w.print <<HERE
+#include <stdio.h>
+#include "spglib.h"
+
+static void get_international(void);
+
+int main(void)
+{
+  get_international();
+  return 0;
+}
+
+static void get_international(void)
+{
+  double lattice[3][3] = {{#{lattice[0][0]}, #{lattice[0][1]}, #{lattice[0][2]}},
+                          {#{lattice[1][0]}, #{lattice[1][1]}, #{lattice[1][2]}},
+                          {#{lattice[2][0]}, #{lattice[2][1]}, #{lattice[2][2]}}};
+  double position[][3] =
+    {
+HERE
+
+  position.each do |vec|
+    w.puts "      {#{vec[0]}, #{vec[1]}, #{vec[2]}},"
+  end
+  w.puts "    };"
+  w.print "  int types[] = {"
+  types.each {|t| w.print "#{t}, "}
+  w.puts "};"
+  w.print <<HERE
+  int num_spg, num_atom = #{types.size};
+  char symbol[21];
+  
+  num_spg = spg_get_international(symbol, lattice, position, types, num_atom, #{symprec});
+  if (num_spg > 0) {
+    printf("%s (%d)\\n", symbol, num_spg);
+  }
+}
+HERE
+  w.close()
+end
+
 def parse_cell(cell, shift_string, pos_shift)
   if shift_string
     pos_shift = []
@@ -153,6 +196,7 @@ options.is_long_output = false
 options.is_operations = false
 options.is_dataset = false
 options.is_check_settings = false
+options.to_c = false
 
 OptionParser.new do |opts|
   opts.on('-s', '--symprec VALUE', 'Symmetry check precision') do |v|
@@ -187,6 +231,10 @@ OptionParser.new do |opts|
     options.is_check_settings = true
   end
 
+  opts.on('--to_c', 'Convert to C code') do
+    options.to_c = true
+  end
+
   opts.on('--hall VALUE', 'Hall symbol by the numbering') do |v|
     options.hall_number = v.to_i
   end
@@ -196,6 +244,10 @@ cell = Vasp::Poscar.new(ARGV.shift).cell
 lattice, position, types = parse_cell(cell,
                                       options.shift_string,
                                       options.pos_shift)
+if options.to_c
+  transform_to_c(lattice, position, types, options.symprec)
+end
+
 dataset = get_dataset(lattice,
                       position,
                       types,
