@@ -22,6 +22,7 @@
 # OPTION: -s, --symprec= : Symmetry check precision
 
 require 'optparse'
+require 'ostruct'
 require 'getspg.so'
 require 'poscar'
 include Getspg
@@ -52,61 +53,12 @@ spg2hall = [0,
             517, 518, 520, 521, 523, 524, 525, 527, 529, 530,
             531]
 
-symprec = 1e-5
-hall_number = 0
-angle_tolerance = -1.0
-nonewline = false
-pos_shift = [0,0,0]
-shift_string = false
-is_long_output = false
-is_operations = false
-is_dataset = false
-is_check_settings = false
-opt = OptionParser.new
-opt.on('-s', '--symprec VALUE', 'Symmetry check precision') {|tmp| symprec = tmp.to_f}
-opt.on('-a', '--angle_tolerance VALUE', 'Symmetry check precision for angle between lattice vectors in degrees') {|tmp| angle_tolerance = tmp.to_f}
-opt.on('--shift VALUE', 'uniform shift of internal atomic positions') {|tmp| shift_string = tmp}
-opt.on('-n', '--nonewline', 'Do not output the trailing newline') {nonewline = true}
-opt.on('-l', '--long', 'Long output') {is_long_output = true}
-opt.on('-o', '--operations', 'Symmetry operations') {is_operations = true}
-opt.on('-d', '--dataset', 'Dataset') {is_dataset = true}
-opt.on('--settings', 'Check all settings') {is_check_settings = true}
-opt.on('--hall VALUE', 'Hall symbol by the numbering') {|tmp| hall_number = tmp.to_i}
-opt.parse!(ARGV)
+def show_dataset(dataset, nonewline, is_long_output, is_dataset, is_operations)
+  spgnum, spg, hallnum, hall_symbol, setting, t_mat, o_shift,
+  rotations, translations, wyckoffs,
+  brv_lattice, brv_types, brv_positions = dataset
+  ptg_symbol, ptg_num, trans_mat = getptg(rotations)
 
-if shift_string
-  pos_shift = []
-  shift_string.split.each {|val| pos_shift << val.to_f }
-end
-cell = Vasp::Poscar.new(ARGV.shift).cell
-lattice = cell.axis.transpose
-names = (cell.atoms.collect {|atom| atom.name}).uniq
-position = []
-types = []
-names.each_with_index do |name, i|
-  cell.atoms.each do |atom|
-    if atom.name == name
-      apos = atom.position
-      position << [ apos[0]+pos_shift[0],
-                    apos[1]+pos_shift[1],
-                    apos[2]+pos_shift[2] ]
-      types << i+1
-    end
-  end
-end
-
-dataset = get_dataset(lattice,
-                      position,
-                      types,
-                      hall_number,
-                      symprec,
-                      angle_tolerance)
-spgnum, spg, hallnum, hall_symbol, setting, t_mat, o_shift,
-rotations, translations, wyckoffs,
-brv_lattice, brv_types, brv_positions = dataset
-ptg_symbol, ptg_num, trans_mat = getptg(rotations)
-
-if spgnum > 0 and not is_check_settings
   if nonewline
     print "#{spg.strip} (#{spgnum})"
   else
@@ -149,33 +101,130 @@ if spgnum > 0 and not is_check_settings
                i+1, cell.atoms[i].name, wl[w,1], pos[0], pos[1], pos[2])
       end
     end
-
   end
-end
 
-if is_operations or is_dataset
-  rotations.size.times do |i|
-    print "----", i+1, "----\n"
-    rotations[i].each do |row|
-      printf("%2d %2d %2d\n", row[0], row[1], row[2])
+  if is_operations or is_dataset
+    rotations.size.times do |i|
+      print "----", i+1, "----\n"
+      rotations[i].each do |row|
+        printf("%2d %2d %2d\n", row[0], row[1], row[2])
+      end
+      printf("%f %f %f\n", translations[i][0], translations[i][1], translations[i][2])
     end
-    printf("%f %f %f\n", translations[i][0], translations[i][1], translations[i][2])
   end
 end
 
-if is_check_settings
-  num_settings = spg2hall[spgnum + 1] - spg2hall[spgnum]
-  puts
-  puts "There are #{num_settings} settings."
-  num_settings.times {|i|
-    spgnum, spg, hallnum, hall_symbol, setting, t_mat, o_shift,
-    rotations, translations, wyckoffs = get_dataset(lattice,
-                                                    position,
-                                                    types,
-                                                    spg2hall[spgnum] + i,
-                                                    symprec,
-                                                    angle_tolerance)
-    puts "#{i + 1}: #{spg.strip} (#{spgnum}) / #{ptg_symbol} / #{hall_symbol.strip} (#{hallnum}) / #{setting}"
-  }
+def parse_cell(cell, shift_string, pos_shift)
+  if shift_string
+    pos_shift = []
+    shift_string.split.each do |val|
+      pos_shift << val.to_f
+    end
+  end
+
+  lattice = cell.axis.transpose
+  names = (cell.atoms.collect {|atom| atom.name}).uniq
+  position = []
+  types = []
+  names.each_with_index do |name, i|
+    cell.atoms.each do |atom|
+      if atom.name == name
+        apos = atom.position
+        position << [apos[0] + pos_shift[0],
+                     apos[1] + pos_shift[1],
+                     apos[2] + pos_shift[2]]
+        types << i + 1
+      end
+    end
+  end
+
+  return lattice, position, types
 end
 
+
+options = OpenStruct.new
+options.symprec = 1e-5
+options.hall_number = 0
+options.angle_tolerance = -1.0
+options.nonewline = false
+options.pos_shift = [0,0,0]
+options.shift_string = false
+options.is_long_output = false
+options.is_operations = false
+options.is_dataset = false
+options.is_check_settings = false
+
+OptionParser.new do |opts|
+  opts.on('-s', '--symprec VALUE', 'Symmetry check precision') do |v|
+    options.symprec = v.to_f
+  end
+
+  opts.on('-a', '--angle_tolerance VALUE', 'Symmetry check precision for angle between lattice vectors in degrees') do |v|
+    options.angle_tolerance = v.to_f
+  end
+
+  opts.on('--shift VALUE', 'uniform shift of internal atomic positions') do |v|
+    options.shift_string = v
+  end
+
+  opts.on('-n', '--nonewline', 'Do not output the trailing newline') do 
+    options.nonewline = true
+  end
+
+  opts.on('-l', '--long', 'Long output') do
+    options.is_long_output = true
+  end
+
+  opts.on('-o', '--operations', 'Symmetry operations') do
+    options.is_operations = true
+  end
+
+  opts.on('-d', '--dataset', 'Dataset') do
+    options.is_dataset = true
+  end
+
+  opts.on('--settings', 'Check all settings') do
+    options.is_check_settings = true
+  end
+
+  opts.on('--hall VALUE', 'Hall symbol by the numbering') do |v|
+    options.hall_number = v.to_i
+  end
+end.parse!
+
+cell = Vasp::Poscar.new(ARGV.shift).cell
+lattice, position, types = parse_cell(cell,
+                                      options.shift_string,
+                                      options.pos_shift)
+dataset = get_dataset(lattice,
+                      position,
+                      types,
+                      options.hall_number,
+                      options.symprec,
+                      options.angle_tolerance)
+
+if not dataset.empty?
+  if not options.is_check_settings
+    show_dataset(dataset,
+                 options.nonewline,
+                 options.is_long_output,
+                 options.is_dataset,
+                 options.is_operations)
+  else
+    spgnum_orig = dataset[0]
+    num_settings = spg2hall[spgnum_orig + 1] - spg2hall[spgnum_orig]
+    puts "There are #{num_settings} settings:"
+    num_settings.times {|i|
+      dataset_with_hall = get_dataset(lattice,
+                                      position,
+                                      types,
+                                      spg2hall[spgnum_orig] + i,
+                                      options.symprec,
+                                      options.angle_tolerance)
+      spgnum, spg, hallnum, hall_symbol, setting, t_mat, o_shift,
+      rotations, translations, wyckoffs = dataset_with_hall
+      ptg_symbol, ptg_num, trans_mat = getptg(rotations)
+      puts "#{i + 1}: #{spg.strip} (#{spgnum}) / #{ptg_symbol} / #{hall_symbol.strip} (#{hallnum}) / #{setting}"
+    }
+  end
+end
