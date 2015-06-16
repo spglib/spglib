@@ -60,9 +60,6 @@ static VecDBL * get_translation(SPGCONST int rot[3][3],
 				const int is_identity);
 static Symmetry * get_operations(SPGCONST Cell *primitive,
 				 const double symprec);
-static Symmetry * fit_operation_to_primitive(SPGCONST Cell * primitive,
-					     SPGCONST Symmetry * symmetry,
-					     const double symprec);
 static Symmetry * reduce_operation(SPGCONST Cell * primitive,
 				   SPGCONST Symmetry * symmetry,
 				   const double symprec);
@@ -266,7 +263,7 @@ static Symmetry * get_operations(SPGCONST Cell *primitive,
 				 const double symprec)
 {
   PointSymmetry lattice_sym;
-  Symmetry *symmetry, *symmetry_reduced;
+  Symmetry *symmetry;
 
   debug_print("get_operations:\n");
 
@@ -285,76 +282,8 @@ static Symmetry * get_operations(SPGCONST Cell *primitive,
     goto end;
   }
 
-  if (symmetry->size > 48) {
-    symmetry_reduced = fit_operation_to_primitive(primitive,
-						  symmetry,
-						  symprec);
-    sym_free_symmetry(symmetry);
-
-    if (symmetry_reduced == NULL) {
-      goto end;
-    }
-
-    symmetry = symmetry_reduced;
-  }      
-    
  end:
   return symmetry;
-}
-
-/* Return NULL if failed */
-static Symmetry * fit_operation_to_primitive(SPGCONST Cell * primitive,
-					     SPGCONST Symmetry * symmetry,
-					     const double symprec)
-{
-  double tolerance;
-  int attempt;
-  Symmetry *tmp_symmetry, *symmetry_reduced;
-
-  debug_print("fit_operation_to_primitive:\n");
-
-  symmetry_reduced = NULL;
-  tmp_symmetry = NULL;
-
-  tolerance = symprec * REDUCE_RATE;
-
-  warning_print("spglib: number of symmetry operations for primitive cell > 48 was found. (line %d, %s).\n", __LINE__, __FILE__);
-  warning_print("tolerance is reduced to %f\n", tolerance);
-
-  if ((symmetry_reduced = reduce_operation(primitive,
-					   symmetry,
-					   tolerance)) != NULL) {
-    goto ret;
-  }
-
-  tmp_symmetry = symmetry_reduced;
-
-  for (attempt = 0; attempt < 100; attempt++) {
-    tolerance *= REDUCE_RATE;
-    warning_print("tolerance is reduced to %f\n", tolerance);
-
-    if ((symmetry_reduced = reduce_operation(primitive,
-					     tmp_symmetry,
-					     tolerance)) == NULL) {
-      continue;
-    }
-
-    sym_free_symmetry(tmp_symmetry);
-    tmp_symmetry = NULL;
-
-    if (symmetry_reduced->size > 48) {
-      tmp_symmetry = symmetry_reduced;
-    } else {
-      goto ret;
-    }
-  }
-
-  /* symmetry_reduced == NULL */
-  sym_free_symmetry(tmp_symmetry);
-  tmp_symmetry = NULL;
-
- ret:
-  return symmetry_reduced;
 }
 
 /* Return NULL if failed */
