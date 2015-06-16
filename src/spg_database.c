@@ -8505,6 +8505,7 @@ void spgdb_get_operation_index(int indices[2], const int hall_number)
   indices[1] = symmetry_operation_index[hall_number][1];
 }
 
+/* Return NULL if failed */
 Symmetry * spgdb_get_spacegroup_operations(const int hall_number)
 {
   int i;
@@ -8514,6 +8515,10 @@ Symmetry * spgdb_get_spacegroup_operations(const int hall_number)
   Symmetry *symmetry;
 
   symmetry = NULL;
+
+  if (hall_number < 1 || 530 < hall_number) {
+    return NULL;
+  }
 
   spgdb_get_operation_index(operation_index, hall_number);
 
@@ -8531,6 +8536,7 @@ Symmetry * spgdb_get_spacegroup_operations(const int hall_number)
   return symmetry;
 }
 
+/* Return spgtype.number = 0 if hall_number is out of range. */
 SpacegroupType spgdb_get_spacegroup_type(const int hall_number)
 {
   int position; 
@@ -8556,6 +8562,7 @@ SpacegroupType spgdb_get_spacegroup_type(const int hall_number)
 
 static int remove_space(char symbol[], const int num_char) {
   int i;
+
   for (i = num_char - 2; i > -1; i--) {
     if (symbol[i] == ' ') {
       symbol[i] = '\0';
@@ -8568,6 +8575,7 @@ static int remove_space(char symbol[], const int num_char) {
 
 static void replace_equal_char(char symbol[], const int position) {
   int i;
+
   for (i = position; i > -1; i--) {
     if (symbol[i] == '=') { symbol[i] = '\"'; }
   }

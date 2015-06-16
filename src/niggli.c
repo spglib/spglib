@@ -152,6 +152,8 @@ static void finalize(double *lattice_)
 static void reset(void)
 {
   double *lat_tmp;
+
+  lat_tmp = NULL;
   
   lat_tmp = multiply_matrices(lattice, tmat);
 
@@ -308,6 +310,8 @@ static void set_parameters(void)
 {
   double *G;
 
+  G = NULL;
+
   G = get_metric(lattice);
 
   A = G[0];
@@ -326,6 +330,8 @@ static double * get_transpose(const double *M)
   int i, j;
   double *M_T;
 
+  M_T = NULL;
+
   if ((M_T = (double*)malloc(sizeof(double) * 9)) == NULL) {
     warning_print("niggli: Memory could not be allocated.");
     return NULL;
@@ -343,6 +349,9 @@ static double * get_metric(const double *M)
 {
   double *G, *M_T;
 
+  G = NULL;
+  M_T = NULL;
+
   M_T = get_transpose(M);
 
   G = multiply_matrices(M_T, M);
@@ -356,6 +365,8 @@ static double * multiply_matrices(const double *L, const double *R)
 {
   int i, j, k;
   double *M;
+
+  M = NULL;
 
   if ((M = (double*)malloc(sizeof(double) * 9)) == NULL) {
     warning_print("niggli: Memory could not be allocated.");

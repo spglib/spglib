@@ -378,7 +378,7 @@ static int iterative_search_hall_number(double origin_shift[3],
   if (hall_number > 0) {
     goto ret;
   }
-  
+
   tolerance = symprec;
   for (attempt = 0; attempt < 100; attempt++) {
 
@@ -405,6 +405,7 @@ static int iterative_search_hall_number(double origin_shift[3],
   return hall_number;
 }
 
+/* Return 0 if failed */
 static int search_hall_number(double origin_shift[3],
 			      double conv_lattice[3][3],
 			      const int candidates[],
@@ -418,37 +419,42 @@ static int search_hall_number(double origin_shift[3],
   Pointgroup pointgroup;
   Symmetry * conv_symmetry;
 
-  debug_print("get_hall_number:\n");
+  debug_print("search_hall_number:\n");
 
-  conv_symmetry = get_symmetry_settings(conv_lattice,
-					&pointgroup,
-					&centering,
-					primitive_lattice,
-					symmetry,
-					symprec);
-  if (conv_symmetry->size == 0) {
-    hall_number = 0;
-    goto ret;
+  hall_number = 0;
+  conv_symmetry = NULL;
+
+  if ((conv_symmetry = get_symmetry_settings(conv_lattice,
+					     &pointgroup,
+					     &centering,
+					     primitive_lattice,
+					     symmetry,
+					     symprec)) == NULL) {
+    goto err;
   }
 
   for (i = 0; i < num_candidates; i++) {
-    hall_number = candidates[i];
     if (match_hall_symbol_db(origin_shift,
 			     conv_lattice,
-			     hall_number,
+			     candidates[i],
 			     &pointgroup,
 			     centering,
 			     conv_symmetry,
-			     symprec)) {goto ret;}
+			     symprec)) {
+      hall_number = candidates[i];
+      break;
+    }
   }
-  
-  hall_number = 0;
 
- ret:
   sym_free_symmetry(conv_symmetry);
+
   return hall_number;
+
+ err:
+  return 0;
 }
 
+/* Return NULL if failed */
 static Symmetry * get_symmetry_settings(double conv_lattice[3][3],
 					Pointgroup *pointgroup,
 					Centering *centering,
@@ -463,13 +469,14 @@ static Symmetry * get_symmetry_settings(double conv_lattice[3][3],
   Symmetry * conv_symmetry;
 
   debug_print("get_symmetry_settings (tolerance = %f):\n", symprec);
+
+  conv_symmetry = NULL;
   
   *pointgroup = ptg_get_transformation_matrix(int_transform_mat,
 					      symmetry->rot,
 					      symmetry->size);
 
   if (pointgroup->number < 1) {
-    conv_symmetry = sym_alloc_symmetry(0);
     *centering = NO_CENTER;
     goto ret;
   }
@@ -537,6 +544,7 @@ static Symmetry * get_symmetry_settings(double conv_lattice[3][3],
   return conv_symmetry;
 }
 
+/* Return 0 if failed */
 static int match_hall_symbol_db(double origin_shift[3],
 				double lattice[3][3],
 				const int hall_number,
@@ -550,116 +558,159 @@ static int match_hall_symbol_db(double origin_shift[3],
   Symmetry * changed_symmetry;
   double changed_lattice[3][3], inv_lattice[3][3], transform_mat[3][3];
   
+  changed_symmetry = NULL;
+
   spacegroup_type = spgdb_get_spacegroup_type(hall_number);
   num_hall_types = (spacegroup_to_hall_number[spacegroup_type.number] -
 		    spacegroup_to_hall_number[spacegroup_type.number - 1]);
 
-  if (pointgroup->number == spacegroup_type.pointgroup_number) {
-    switch (pointgroup->holohedry) {
-    case MONOCLI:
-      if (match_hall_symbol_db_monocli(origin_shift,
-				       lattice,
-				       hall_number,
-				       num_hall_types,
-				       centering,
-				       symmetry,
-				       symprec)) {return 1;}
+  if (pointgroup->number != spacegroup_type.pointgroup_number) {
+    goto err;
+  }
+
+  switch (pointgroup->holohedry) {
+  case MONOCLI:
+    if (match_hall_symbol_db_monocli(origin_shift,
+				     lattice,
+				     hall_number,
+				     num_hall_types,
+				     centering,
+				     symmetry,
+				     symprec)) {return 1;}
+    break;
+      
+  case ORTHO:
+    if (spacegroup_type.number == 48 ||
+	spacegroup_type.number == 50 ||
+	spacegroup_type.number == 59 ||
+	spacegroup_type.number == 68 ||
+	spacegroup_type.number == 70) { /* uncount origin shift */
+      num_hall_types /= 2;
+    }
+      
+    if (num_hall_types == 1) {
+      if (match_hall_symbol_db_ortho(origin_shift,
+				     lattice,
+				     hall_number,
+				     centering,
+				     symmetry,
+				     6,
+				     symprec)) {return 1;}
       break;
-      
-    case ORTHO:
-      if (spacegroup_type.number == 48 ||
-	  spacegroup_type.number == 50 ||
-	  spacegroup_type.number == 59 ||
-	  spacegroup_type.number == 68 ||
-	  spacegroup_type.number == 70) { /* uncount origin shift */
-	num_hall_types /= 2;
-      }
-      
-      if (num_hall_types == 1) {
-	if (match_hall_symbol_db_ortho(origin_shift,
-				       lattice,
-				       hall_number,
-				       centering,
-				       symmetry,
-				       6,
-				       symprec)) {return 1;}
-	break;
-      }
+    }
 
-      if (num_hall_types == 2) {
-	if (match_hall_symbol_db_ortho(origin_shift,
-				       lattice,
-				       hall_number,
-				       centering,
-				       symmetry,
-				       3,
-				       symprec)) {return 1;}
-	break;
-      }
-
-      if (num_hall_types == 3) {
-	mat_copy_matrix_d3(changed_lattice, lattice);
-	if (! match_hall_symbol_db_ortho
-	    (origin_shift,
-	     changed_lattice,
-	     spacegroup_to_hall_number[spacegroup_type.number - 1],
-	     centering,
-	     symmetry,
-	     0,
-	     symprec)) {break;}
-	mat_inverse_matrix_d3(inv_lattice, lattice, 0);
-	mat_multiply_matrix_d3(transform_mat, inv_lattice, changed_lattice);
-	changed_symmetry = get_conventional_symmetry(transform_mat,
-						     NO_CENTER,
-						     symmetry);
-	is_found = match_hall_symbol_db_ortho(origin_shift,
-					      changed_lattice,
-					      hall_number,
-					      centering,
-					      changed_symmetry,
-					      2,
-					      symprec);
-	sym_free_symmetry(changed_symmetry);	
-	if (is_found) {
-	  mat_copy_matrix_d3(lattice, changed_lattice);
-	  return 1;
-	}
-	break;
-      }
-
-      if (num_hall_types == 6) {
-	if (match_hall_symbol_db_ortho(origin_shift,
-				       lattice,
-				       hall_number,
-				       centering,
-				       symmetry,
-				       1,
-				       symprec)) {return 1;}
-	break;
-      }
-
+    if (num_hall_types == 2) {
+      if (match_hall_symbol_db_ortho(origin_shift,
+				     lattice,
+				     hall_number,
+				     centering,
+				     symmetry,
+				     3,
+				     symprec)) {return 1;}
       break;
+    }
 
-    case CUBIC:
-      if (hal_match_hall_symbol_db(origin_shift,
-				   lattice,
-				   hall_number,
-				   centering,
-				   symmetry,
-				   symprec)) {return 1;}
+    if (num_hall_types == 3) {
+      mat_copy_matrix_d3(changed_lattice, lattice);
+      if (! match_hall_symbol_db_ortho
+	  (origin_shift,
+	   changed_lattice,
+	   spacegroup_to_hall_number[spacegroup_type.number - 1],
+	   centering,
+	   symmetry,
+	   0,
+	   symprec)) {break;}
+      mat_inverse_matrix_d3(inv_lattice, lattice, 0);
+      mat_multiply_matrix_d3(transform_mat, inv_lattice, changed_lattice);
+
+      if ((changed_symmetry = get_conventional_symmetry(transform_mat,
+							NO_CENTER,
+							symmetry)) == NULL) {
+	goto err;
+      }
+
+      is_found = match_hall_symbol_db_ortho(origin_shift,
+					    changed_lattice,
+					    hall_number,
+					    centering,
+					    changed_symmetry,
+					    2,
+					    symprec);
+      sym_free_symmetry(changed_symmetry);	
+      if (is_found) {
+	mat_copy_matrix_d3(lattice, changed_lattice);
+	return 1;
+      }
+      break;
+    }
+
+    if (num_hall_types == 6) {
+      if (match_hall_symbol_db_ortho(origin_shift,
+				     lattice,
+				     hall_number,
+				     centering,
+				     symmetry,
+				     1,
+				     symprec)) {return 1;}
+      break;
+    }
+
+    break;
+
+  case CUBIC:
+    if (hal_match_hall_symbol_db(origin_shift,
+				 lattice,
+				 hall_number,
+				 centering,
+				 symmetry,
+				 symprec)) {return 1;}
       
-      if (hall_number == 501) { /* Try another basis for No.205 */
+    if (hall_number == 501) { /* Try another basis for No.205 */
+      mat_multiply_matrix_d3(changed_lattice,
+			     lattice,
+			     change_of_basis_501);
+      if ((changed_symmetry = get_conventional_symmetry(change_of_basis_501,
+							NO_CENTER,
+							symmetry)) == NULL) {
+	goto err;
+      }
+
+      is_found = hal_match_hall_symbol_db(origin_shift,
+					  changed_lattice,
+					  hall_number,
+					  NO_CENTER,
+					  changed_symmetry,
+					  symprec);
+      sym_free_symmetry(changed_symmetry);
+      if (is_found) {
+	mat_copy_matrix_d3(lattice, changed_lattice);
+	return 1;
+      }
+    }
+    break;
+      
+  case TRIGO:
+    if (centering == R_CENTER) {
+      if (hall_number == 433 ||
+	  hall_number == 436 ||
+	  hall_number == 444 ||
+	  hall_number == 450 ||
+	  hall_number == 452 ||
+	  hall_number == 458 ||
+	  hall_number == 460) {
 	mat_multiply_matrix_d3(changed_lattice,
 			       lattice,
-			       change_of_basis_501);
-	changed_symmetry =
-	  get_conventional_symmetry(change_of_basis_501,
-				    NO_CENTER,
-				    symmetry);
+			       hR_to_hP);
+	if ((changed_symmetry = get_conventional_symmetry(hR_to_hP,
+							  R_CENTER,
+							  symmetry)) == NULL) {
+	  goto err;
+	}
+
 	is_found = hal_match_hall_symbol_db(origin_shift,
 					    changed_lattice,
 					    hall_number,
-					    NO_CENTER,
+					    centering,
 					    changed_symmetry,
 					    symprec);
 	sym_free_symmetry(changed_symmetry);
@@ -668,53 +719,25 @@ static int match_hall_symbol_db(double origin_shift[3],
 	  return 1;
 	}
       }
-      break;
-      
-    case TRIGO:
-      if (centering == R_CENTER) {
-	if (hall_number == 433 ||
-	    hall_number == 436 ||
-	    hall_number == 444 ||
-	    hall_number == 450 ||
-	    hall_number == 452 ||
-	    hall_number == 458 ||
-	    hall_number == 460) {
-	  mat_multiply_matrix_d3(changed_lattice,
-				 lattice,
-				 hR_to_hP);
-	  changed_symmetry =
-	    get_conventional_symmetry(hR_to_hP,
-				      R_CENTER,
-				      symmetry);
-	  is_found = hal_match_hall_symbol_db(origin_shift,
-					      changed_lattice,
-					      hall_number,
-					      centering,
-					      changed_symmetry,
-					      symprec);
-	  sym_free_symmetry(changed_symmetry);
-	  if (is_found) {
-	    mat_copy_matrix_d3(lattice, changed_lattice);
-	    return 1;
-	  }
-	}
-      }
-      /* Do not break for other trigonal cases */
-    default: /* HEXA, TETRA, TRICLI and rest of TRIGO */
-      if (hal_match_hall_symbol_db(origin_shift,
-				   lattice,
-				   hall_number,
-				   centering,
-				   symmetry,
-				   symprec)) {
-	return 1;
-      }
-      break;
     }
+    /* Do not break for other trigonal cases */
+  default: /* HEXA, TETRA, TRICLI and rest of TRIGO */
+    if (hal_match_hall_symbol_db(origin_shift,
+				 lattice,
+				 hall_number,
+				 centering,
+				 symmetry,
+				 symprec)) {
+      return 1;
+    }
+    break;
   }
+
+ err:
   return 0;
 }
 
+/* Return 0 if failed */
 static int match_hall_symbol_db_monocli(double origin_shift[3],
 					double lattice[3][3],
 					const int hall_number,
@@ -728,6 +751,8 @@ static int match_hall_symbol_db_monocli(double origin_shift[3],
   Centering changed_centering;
   Symmetry * changed_symmetry;
   double changed_lattice[3][3];
+
+  changed_symmetry = NULL;
   
   for (i = 0; i < 18; i++) {
     if (centering == C_FACE) {
@@ -752,10 +777,13 @@ static int match_hall_symbol_db_monocli(double origin_shift[3],
       if (norms[0] > norms[1]) {continue;}
     }
 
-    changed_symmetry =
-      get_conventional_symmetry(change_of_basis_monocli[i],
-				NO_CENTER,
-				symmetry);
+    if ((changed_symmetry =
+	 get_conventional_symmetry(change_of_basis_monocli[i],
+				   NO_CENTER,
+				   symmetry)) == NULL) {
+      goto err;
+    }
+
     is_found = hal_match_hall_symbol_db(origin_shift,
 					changed_lattice,
 					hall_number,
@@ -768,9 +796,12 @@ static int match_hall_symbol_db_monocli(double origin_shift[3],
       return 1;
     }
   }
+
+ err:
   return 0;
 }
 
+/* Return 0 if failed */
 static int match_hall_symbol_db_ortho(double origin_shift[3],
 				      double lattice[3][3],
 				      const int hall_number,
@@ -784,6 +815,8 @@ static int match_hall_symbol_db_ortho(double origin_shift[3],
   Centering changed_centering;
   Symmetry * changed_symmetry;
   double changed_lattice[3][3];
+
+  changed_symmetry = NULL;
   
   for (i = 0; i < 6; i++) {
     if (centering == C_FACE) {
@@ -823,9 +856,11 @@ static int match_hall_symbol_db_ortho(double origin_shift[3],
       if (norms[0] > norms[1] || norms[1] > norms[2]) {continue;}
     }
     
-    changed_symmetry = get_conventional_symmetry(change_of_basis_ortho[i],
-						 NO_CENTER,
-						 symmetry);
+    if ((changed_symmetry = get_conventional_symmetry(change_of_basis_ortho[i],
+						      NO_CENTER,
+						      symmetry)) == NULL) {
+      goto err;
+    }
 
     is_found = hal_match_hall_symbol_db(origin_shift,
 					changed_lattice,
@@ -839,9 +874,12 @@ static int match_hall_symbol_db_ortho(double origin_shift[3],
       return 1;
     }
   }
+
+ err:
   return 0;
 }
 
+/* Return NULL if failed */
 static Symmetry * get_conventional_symmetry(SPGCONST double transform_mat[3][3],
 					    const Centering centering,
 					    const Symmetry *primitive_sym)
@@ -852,23 +890,33 @@ static Symmetry * get_conventional_symmetry(SPGCONST double transform_mat[3][3],
   double symmetry_rot_d3[3][3], primitive_sym_rot_d3[3][3];
   Symmetry *symmetry;
 
+  symmetry = NULL;
+
   size = primitive_sym->size;
 
   switch (centering) {
   case FACE:
-    symmetry = sym_alloc_symmetry(size * 4);
+    if ((symmetry = sym_alloc_symmetry(size * 4)) == NULL) {
+      return NULL;
+    }
     break;
   case R_CENTER:
-    symmetry = sym_alloc_symmetry(size * 3);
+    if ((symmetry = sym_alloc_symmetry(size * 3)) == NULL) {
+      return NULL;
+    }
     break;
   case BODY:
   case A_FACE:
   case B_FACE:
   case C_FACE:
-    symmetry = sym_alloc_symmetry(size * 2);
+    if ((symmetry = sym_alloc_symmetry(size * 2)) == NULL) {
+      return NULL;
+    }
     break;
   default:
-    symmetry = sym_alloc_symmetry(size);
+    if ((symmetry = sym_alloc_symmetry(size)) == NULL) {
+      return NULL;
+    }
     break;
   }
 

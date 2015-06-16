@@ -122,6 +122,7 @@ static int get_triplets_reciprocal_mesh_at_q(int map_triplets[],
 /*---------*/
 /* general */
 /*---------*/
+/* Return NULL if failed */
 SpglibDataset * spg_get_dataset(SPGCONST double lattice[3][3],
 				SPGCONST double position[][3],
 				const int types[],
@@ -138,6 +139,7 @@ SpglibDataset * spg_get_dataset(SPGCONST double lattice[3][3],
 		     symprec);
 }
 
+/* Return NULL if failed */
 SpglibDataset * spgat_get_dataset(SPGCONST double lattice[3][3],
 				  SPGCONST double position[][3],
 				  const int types[],
@@ -155,6 +157,7 @@ SpglibDataset * spgat_get_dataset(SPGCONST double lattice[3][3],
 		     symprec);
 }
 
+/* Return NULL if failed */
 SpglibDataset * spg_get_dataset_with_hall_number(SPGCONST double lattice[3][3],
 						 SPGCONST double position[][3],
 						 const int types[],
@@ -172,6 +175,7 @@ SpglibDataset * spg_get_dataset_with_hall_number(SPGCONST double lattice[3][3],
 		     symprec);
 }
 
+/* Return NULL if failed */
 SpglibDataset *
 spgat_get_dataset_with_hall_number(SPGCONST double lattice[3][3],
 				   SPGCONST double position[][3],
@@ -227,6 +231,7 @@ void spg_free_dataset(SpglibDataset *dataset)
   dataset = NULL;
 }
 
+/* Return 0 if failed */
 int spg_get_symmetry(int rotation[][3][3],
 		     double translation[][3],
 		     const int max_size,
@@ -248,6 +253,7 @@ int spg_get_symmetry(int rotation[][3][3],
 				   symprec);
 }
 
+/* Return 0 if failed */
 int spgat_get_symmetry(int rotation[][3][3],
 		       double translation[][3],
 		       const int max_size,
@@ -270,6 +276,7 @@ int spgat_get_symmetry(int rotation[][3][3],
 				   symprec);
 }
 
+/* Return 0 if failed */
 int spg_get_symmetry_with_collinear_spin(int rotation[][3][3],
 					 double translation[][3],
 					 int equivalent_atoms[],
@@ -295,6 +302,7 @@ int spg_get_symmetry_with_collinear_spin(int rotation[][3][3],
 					  symprec);
 }
 
+/* Return 0 if failed */
 int spgat_get_symmetry_with_collinear_spin(int rotation[][3][3],
 					   double translation[][3],
 					   int equivalent_atoms[],
@@ -321,6 +329,7 @@ int spgat_get_symmetry_with_collinear_spin(int rotation[][3][3],
 					  symprec);
 }
 
+/* Return 0 if failed */
 int spg_get_multiplicity(SPGCONST double lattice[3][3],
 			 SPGCONST double position[][3],
 			 const int types[],
@@ -336,6 +345,7 @@ int spg_get_multiplicity(SPGCONST double lattice[3][3],
 			  symprec);
 }
 
+/* Return 0 if failed */
 int spgat_get_multiplicity(SPGCONST double lattice[3][3],
 			   SPGCONST double position[][3],
 			   const int types[],
@@ -352,6 +362,7 @@ int spgat_get_multiplicity(SPGCONST double lattice[3][3],
 			  symprec);
 }
 
+/* Return 0 if failed */
 int spg_get_smallest_lattice(double smallest_lattice[3][3],
 			     SPGCONST double lattice[3][3],
 			     const double symprec)
@@ -359,6 +370,7 @@ int spg_get_smallest_lattice(double smallest_lattice[3][3],
   return lat_smallest_lattice_vector(smallest_lattice, lattice, symprec);
 }
 
+/* Return 0 if failed */
 int spg_find_primitive(double lattice[3][3],
 		       double position[][3],
 		       int types[],
@@ -374,6 +386,7 @@ int spg_find_primitive(double lattice[3][3],
 			symprec);
 }
 
+/* Return 0 if failed */
 int spgat_find_primitive(double lattice[3][3],
 			 double position[][3],
 			 int types[],
@@ -809,7 +822,7 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
   primitive = NULL;
 
   if ((dataset = (SpglibDataset*) malloc(sizeof(SpglibDataset))) == NULL) {
-    warning_print("spglib: Memory could not be allocated ");
+    warning_print("spglib: Memory could not be allocated.");
     return NULL;
   }
 
@@ -915,14 +928,14 @@ static int set_dataset(SpglibDataset * dataset,
   if ((dataset->rotations =
        (int (*)[3][3]) malloc(sizeof(int[3][3]) * dataset->n_operations))
       == NULL) {
-    warning_print("spglib: Memory could not be allocated ");
+    warning_print("spglib: Memory could not be allocated.");
     goto err;
   }
 
   if ((dataset->translations =
        (double (*)[3]) malloc(sizeof(double[3]) * dataset->n_operations))
       == NULL) {
-    warning_print("spglib: Memory could not be allocated ");
+    warning_print("spglib: Memory could not be allocated.");
     goto err;
   }
 
@@ -934,14 +947,14 @@ static int set_dataset(SpglibDataset * dataset,
   /* Wyckoff positions */
   if ((dataset->wyckoffs = (int*) malloc(sizeof(int) * dataset->n_atoms))
       == NULL) {
-    warning_print("spglib: Memory could not be allocated ");
+    warning_print("spglib: Memory could not be allocated.");
     goto err;
   }
 
   if ((dataset->equivalent_atoms =
        (int*) malloc(sizeof(int) * dataset->n_atoms))
       == NULL) {
-    warning_print("spglib: Memory could not be allocated ");
+    warning_print("spglib: Memory could not be allocated.");
     goto err;
   }
 
@@ -962,13 +975,13 @@ static int set_dataset(SpglibDataset * dataset,
   if ((dataset->brv_positions =
        (double (*)[3]) malloc(sizeof(double[3]) * dataset->n_brv_atoms))
       == NULL) {
-    warning_print("spglib: Memory could not be allocated ");
+    warning_print("spglib: Memory could not be allocated.");
     goto err;
   }
 
   if ((dataset->brv_types = (int*) malloc(sizeof(int) * dataset->n_brv_atoms))
       == NULL) {
-    warning_print("spglib: Memory could not be allocated ");
+    warning_print("spglib: Memory could not be allocated.");
     goto err;
   }
 
@@ -1012,6 +1025,7 @@ static int set_dataset(SpglibDataset * dataset,
   return 0;
 }
 
+/* Return 0 if failed */
 static int get_symmetry_from_dataset(int rotation[][3][3],
 				     double translation[][3],
 				     const int max_size,
@@ -1024,19 +1038,23 @@ static int get_symmetry_from_dataset(int rotation[][3][3],
   int i, num_sym;
   SpglibDataset *dataset;
 
-  dataset = get_dataset(lattice,
-			position,
-			types,
-			num_atom,
-			0,
-			symprec);
+  num_sym = 0;
+  dataset = NULL;
+
+  if ((dataset = get_dataset(lattice,
+			     position,
+			     types,
+			     num_atom,
+			     0,
+			     symprec)) == NULL) {
+    return 0;
+  }
   
   if (dataset->n_operations > max_size) {
     fprintf(stderr,
 	    "spglib: Indicated max size(=%d) is less than number ", max_size);
     fprintf(stderr,
 	    "spglib: of symmetry operations(=%d).\n", dataset->n_operations);
-    num_sym = 0;
     goto ret;
   }
 
@@ -1051,6 +1069,7 @@ static int get_symmetry_from_dataset(int rotation[][3][3],
   return num_sym;
 }
 
+/* Return 0 if failed */
 static int get_symmetry_with_collinear_spin(int rotation[][3][3],
 					    double translation[][3],
 					    int equivalent_atoms[],
@@ -1067,28 +1086,50 @@ static int get_symmetry_with_collinear_spin(int rotation[][3][3],
   Cell *cell;
   SpglibDataset *dataset;
 
-  cell = cel_alloc_cell(num_atom);
+  size = 0;
+  symmetry = NULL;
+  sym_nonspin = NULL;
+  cell = NULL;
+  dataset = NULL;
+
+  if ((cell = cel_alloc_cell(num_atom)) == NULL) {
+    goto err;
+  }
+
   cel_set_cell(cell, lattice, position, types);
 
-  dataset = get_dataset(lattice,
-			position,
-			types,
-			num_atom,
-			0,
-			symprec);
+  if ((dataset = get_dataset(lattice,
+			     position,
+			     types,
+			     num_atom,
+			     0,
+			     symprec)) == NULL) {
+    cel_free_cell(cell);
+    goto err;
+  }
 
-  sym_nonspin = sym_alloc_symmetry(dataset->n_operations);
+  if ((sym_nonspin = sym_alloc_symmetry(dataset->n_operations)) == NULL) {
+    spg_free_dataset(dataset);
+    cel_free_cell(cell);
+    goto err;
+  }
+
   for (i = 0; i < dataset->n_operations; i++) {
     mat_copy_matrix_i3(sym_nonspin->rot[i], dataset->rotations[i]);
     mat_copy_vector_d3(sym_nonspin->trans[i], dataset->translations[i]);
   }
   spg_free_dataset(dataset);
 
-  symmetry = spn_get_collinear_operations(equivalent_atoms,
-					  sym_nonspin,
-					  cell,
-					  spins,
-					  symprec);
+  if ((symmetry = spn_get_collinear_operations(equivalent_atoms,
+					       sym_nonspin,
+					       cell,
+					       spins,
+					       symprec)) == NULL) {
+    sym_free_symmetry(sym_nonspin);
+    cel_free_cell(cell);
+    goto err;
+  }
+
   sym_free_symmetry(sym_nonspin);
   
   if (symmetry->size > max_size) {
@@ -1096,7 +1137,7 @@ static int get_symmetry_with_collinear_spin(int rotation[][3][3],
 	    max_size);
     fprintf(stderr, "spglib: of symmetry operations(=%d).\n", symmetry->size);
     sym_free_symmetry(symmetry);
-    return 0;
+    goto err;
   }
 
   for (i = 0; i < symmetry->size; i++) {
@@ -1110,8 +1151,12 @@ static int get_symmetry_with_collinear_spin(int rotation[][3][3],
   sym_free_symmetry(symmetry);
 
   return size;
+
+ err:
+  return 0;
 }
 
+/* Return 0 if failed */
 static int get_multiplicity(SPGCONST double lattice[3][3],
 			    SPGCONST double position[][3],
 			    const int types[],
@@ -1121,12 +1166,18 @@ static int get_multiplicity(SPGCONST double lattice[3][3],
   int size;
   SpglibDataset *dataset;
 
-  dataset = get_dataset(lattice,
-			position,
-			types,
-			num_atom,
-			0,
-			symprec);
+  size = 0;
+  dataset = NULL;
+
+  if ((dataset = get_dataset(lattice,
+			     position,
+			     types,
+			     num_atom,
+			     0,
+			     symprec)) == NULL) {
+    return 0;
+  }
+
   size = dataset->n_operations;
   spg_free_dataset(dataset);
 
@@ -1244,6 +1295,7 @@ static int refine_cell(double lattice[3][3],
   int i, n_brv_atoms;
   SpglibDataset *dataset;
 
+  n_brv_atoms = 0;
   dataset = NULL;
 
   if ((dataset = get_dataset(lattice,

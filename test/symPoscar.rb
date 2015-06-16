@@ -95,14 +95,15 @@ names.each_with_index do |name, i|
   end
 end
 
+dataset = get_dataset(lattice,
+                      position,
+                      types,
+                      hall_number,
+                      symprec,
+                      angle_tolerance)
 spgnum, spg, hallnum, hall_symbol, setting, t_mat, o_shift,
 rotations, translations, wyckoffs,
-brv_lattice, brv_types, brv_positions = get_dataset(lattice,
-                                                    position,
-                                                    types,
-                                                    hall_number,
-                                                    symprec,
-                                                    angle_tolerance)
+brv_lattice, brv_types, brv_positions = dataset
 ptg_symbol, ptg_num, trans_mat = getptg(rotations)
 
 if spgnum > 0 and not is_check_settings

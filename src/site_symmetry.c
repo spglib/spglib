@@ -260,4 +260,3 @@ static int get_Wyckoff_notation(double position[3],
   mat_free_VecDBL(pos_rot);
   return wyckoff_letter;
 }
-

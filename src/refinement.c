@@ -100,7 +100,6 @@ static SPGCONST int identity[3][3] = {
 };
 
 
-/* symmetry->size = 0 is returned when it failed. */
 /* Return NULL if failed */
 Symmetry *
 ref_get_refined_symmetry_operations(SPGCONST Cell * cell,
@@ -318,6 +317,8 @@ static Cell * expand_positions(int * wyckoffs,
   int num_atom;
   Cell * bravais;
 
+  bravais = NULL;
+
   num_pure_trans = get_number_of_pure_translation(conv_sym);
   bravais = cel_alloc_cell(conv_prim->size * num_pure_trans);
 
@@ -493,7 +494,6 @@ static void set_rhomb(double lattice[3][3],
 {
   double a, b, c, angle, ahex, chex;
 
-
   a = sqrt(metric[0][0]);
   b = sqrt(metric[1][1]);
   c = sqrt(metric[2][2]);
@@ -536,6 +536,7 @@ static void set_trigo(double lattice[3][3],
 		      SPGCONST double metric[3][3])
 {
   double a, b, c;
+
   a = sqrt(metric[0][0]);
   b = sqrt(metric[1][1]);
   c = sqrt(metric[2][2]);
@@ -549,6 +550,7 @@ static void set_cubic(double lattice[3][3],
 		      SPGCONST double metric[3][3])
 {
   double a, b, c;
+
   a = sqrt(metric[0][0]);
   b = sqrt(metric[1][1]);
   c = sqrt(metric[2][2]);
@@ -557,6 +559,7 @@ static void set_cubic(double lattice[3][3],
   lattice[2][2] = (a + b + c) / 3;
 }
 
+/* Return NULL if failed */
 static Symmetry *
 get_refined_symmetry_operations(SPGCONST Cell * cell,
 				SPGCONST Cell * primitive,
@@ -615,6 +618,8 @@ static int set_equivalent_atoms(int * equiv_atoms_cell,
 {
   int i, j;
   int *equiv_atoms;
+
+  equiv_atoms = NULL;
 
   if ((equiv_atoms = (int*) malloc(sizeof(int) * primitive->size)) == NULL) {
     warning_print("spglib: Memory could not be allocated ");

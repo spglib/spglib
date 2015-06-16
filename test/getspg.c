@@ -237,6 +237,10 @@ VALUE method_get_dataset(VALUE self,
 
   array = rb_ary_new();
 
+  if (dataset == NULL) {
+    goto err;
+  }
+
   rb_ary_push(array, INT2NUM(dataset->spacegroup_number));
   rb_ary_push(array, rb_str_new2(dataset->international_symbol));
   rb_ary_push(array, INT2NUM(dataset->hall_number));
@@ -315,5 +319,7 @@ VALUE method_get_dataset(VALUE self,
   
   spg_free_dataset(dataset);
   
+ err:
+
   return array;
 }
