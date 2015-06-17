@@ -18,7 +18,6 @@
 #include "spin.h"
 #include "symmetry.h"
 #include "tetrahedron_method.h"
-#include "triplet_kpoint.h"
 
 #define REDUCE_RATE 0.95
 
@@ -105,15 +104,6 @@ static int get_stabilized_reciprocal_mesh(int grid_address[][3],
 					  SPGCONST int rotations[][3][3],
 					  const int num_q,
 					  SPGCONST double qpoints[][3]);
-static int get_triplets_reciprocal_mesh_at_q(int map_triplets[],
-					     int map_q[],
-					     int grid_address[][3],
-					     const int grid_point,
-					     const int mesh[3],
-					     const int is_time_reversal,
-					     const int num_rot,
-					     SPGCONST int rotations[][3][3]);
-
 
 /*========*/
 /* global */
@@ -697,42 +687,6 @@ int spg_relocate_BZ_grid_address(int bz_grid_address[][3],
 				      mesh,
 				      rec_lattice,
 				      is_shift);
-}
-
-int spg_get_triplets_reciprocal_mesh_at_q(int map_triplets[],
-					  int map_q[],
-					  int grid_address[][3],
-					  const int grid_point,
-					  const int mesh[3],
-					  const int is_time_reversal,
-					  const int num_rot,
-					  SPGCONST int rotations[][3][3])
-{
-  return get_triplets_reciprocal_mesh_at_q(map_triplets,
-					   map_q,
-					   grid_address,
-					   grid_point,
-					   mesh,
-					   is_time_reversal,
-					   num_rot,
-					   rotations);
-}
-
-int spg_get_BZ_triplets_at_q(int triplets[][3],
-			     const int grid_point,
-			     SPGCONST int bz_grid_address[][3],
-			     const int bz_map[],
-			     const int map_triplets[],
-			     const int num_map_triplets,
-			     const int mesh[3])
-{
-  return tpk_get_BZ_triplets_at_q(triplets,
-				  grid_point,
-				  bz_grid_address,
-				  bz_map,
-				  map_triplets,
-				  num_map_triplets,
-				  mesh);
 }
 
 void spg_get_neighboring_grid_points(int relative_grid_points[],
@@ -1396,36 +1350,6 @@ static int get_stabilized_reciprocal_mesh(int grid_address[][3],
 					      rot_real,
 					      num_q,
 					      qpoints);
-
-  mat_free_MatINT(rot_real);
-
-  return num_ir;
-}
-
-static int get_triplets_reciprocal_mesh_at_q(int map_triplets[],
-					     int map_q[],
-					     int grid_address[][3],
-					     const int grid_point,
-					     const int mesh[3],
-					     const int is_time_reversal,
-					     const int num_rot,
-					     SPGCONST int rotations[][3][3])
-{
-  MatINT *rot_real;
-  int i, num_ir;
-  
-  rot_real = mat_alloc_MatINT(num_rot);
-  for (i = 0; i < num_rot; i++) {
-    mat_copy_matrix_i3(rot_real->mat[i], rotations[i]);
-  }
-
-  num_ir = tpk_get_ir_triplets_at_q(map_triplets,
-				    map_q,
-				    grid_address,
-				    grid_point,
-				    mesh,
-				    is_time_reversal,
-				    rot_real);
 
   mat_free_MatINT(rot_real);
 
