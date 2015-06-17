@@ -6,7 +6,6 @@
 
 #include "cell.h"
 #include "mathfunc.h"
-#include "primitive.h"
 
 typedef struct {
   int size;
@@ -21,7 +20,8 @@ typedef struct {
 
 Symmetry * sym_alloc_symmetry(const int size);
 void sym_free_symmetry(Symmetry * symmetry);
-Symmetry * sym_get_operation(SPGCONST Primitive * primitive);
+Symmetry * sym_get_operation(SPGCONST Cell * primitive,
+			     const double symprec);
 Symmetry * sym_reduce_operation(SPGCONST Cell * primitive,
 				SPGCONST Symmetry * symmetry,
 				const double symprec);

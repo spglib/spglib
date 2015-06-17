@@ -7,8 +7,6 @@
 #include "cell.h"
 #include "lattice.h"
 #include "mathfunc.h"
-#include "pointgroup.h"
-#include "primitive.h"
 #include "symmetry.h"
 
 #include "debug.h"
@@ -149,13 +147,13 @@ void sym_free_symmetry(Symmetry *symmetry)
 }
 
 /* Return NULL if failed */
-Symmetry * sym_get_operation(SPGCONST Primitive * primitive)
+Symmetry * sym_get_operation(SPGCONST Cell * primitive,
+			     const double symprec)
 {
 
   debug_print("sym_get_operations:\n");
 
-  return get_operations(primitive->cell,
-			primitive->tolerance);
+  return get_operations(primitive, symprec);
 }
 
 /* Return NULL if failed */

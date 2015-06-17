@@ -300,7 +300,8 @@ static Spacegroup search_spacegroup(SPGCONST Primitive * primitive,
   hall_number = 0;
   spacegroup.number = 0;
 
-  if ((symmetry = sym_get_operation(primitive)) == NULL) {
+  if ((symmetry = sym_get_operation(primitive->cell,
+				    primitive->tolerance)) == NULL) {
     goto ret;
   }
 
