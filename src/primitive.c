@@ -97,26 +97,6 @@ void prm_free_primitive(Primitive * primitive)
   }
 }
 
-/* return NULL if failed */
-Cell * prm_get_primitive_cell(SPGCONST Cell * cell, const double symprec)
-{
-  Cell *primitive_cell;
-  Primitive *primitive;
-
-  primitive_cell = NULL;
-  primitive = NULL;
-
-  if ((primitive = get_primitive(cell, symprec)) == NULL) {
-    return NULL;
-  }
-
-  primitive_cell = cel_copy_cell(primitive->cell);
-
-  prm_free_primitive(primitive);
-
-  return primitive_cell;
-}
-
 /* Return NULL if failed */
 Primitive * prm_get_primitive(SPGCONST Cell * cell, const double symprec)
 {
@@ -143,6 +123,7 @@ static Primitive * get_primitive(SPGCONST Cell * cell, const double symprec)
   tolerance = symprec;
   for (attempt = 0; attempt < 100; attempt++) {
     if ((pure_trans = sym_get_pure_translation(cell, tolerance)) == NULL) {
+      printf("***** hoge ******\n");
       goto cont;
     }
 

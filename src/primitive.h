@@ -16,6 +16,5 @@ typedef struct {
 
 Primitive * prm_alloc_primitive(const int size);
 void prm_free_primitive(Primitive * primitive);
-Cell * prm_get_primitive_cell(SPGCONST Cell * cell, const double symprec);
 Primitive * prm_get_primitive(SPGCONST Cell * cell, const double symprec);
 #endif
