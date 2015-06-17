@@ -9,8 +9,8 @@ if [ x$findsym = "xfindsym" ]; then
 	export ISODATA=~/tools/isotropy/
 fi
 
-for i in `/bin/ls */POSCAR-*`;do
-	spg=`ruby ../../symPoscar.rb -n --shift="0.1 0.2 0.3" $i`
+for i in `/bin/ls */CONTCAR*`;do
+	spg=`ruby ../../symPoscar.rb -s 0.1 -n --shift="0.1 0.2 0.3" $i`
 	numspg=`echo $spg|awk -F"(" '{print $2}'|sed s/\)//`
 	numposcar=`echo $i|awk -F"/" '{print $2}'|cut -c 8-10|awk '{print $1*1}'`
 
@@ -25,7 +25,9 @@ for i in `/bin/ls */POSCAR-*`;do
 			echo " ..." $spg ' fail (' $numfindsym ')'
 		fi
 	else
-		echo $spg 
+		echo $i $spg 
 	fi
 done
+
+cat spg/README
 
