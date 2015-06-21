@@ -3,8 +3,20 @@ Spglib
 
 Spglib is a C library for finding and handling crystal symmetries.
 
-**Version 1.7.3 has Wyckoff position bug for rhombohedral cell** (See `ChangeLog
-<https://github.com/atztogo/spglib/blob/master/ChangeLog>`_.)
+`Spglib-1.7.4
+<https://sourceforge.net/projects/spglib/files/spglib/spglib-1.7/>`_. is
+the stable release.
+
+`Spglib-1.8
+<https://sourceforge.net/projects/spglib/files/spglib/spglib-1.8/>`_
+is the latest release. This version is expected to be slightly faster
+and compact, and the code is cleaner to be the base of future
+development.
+
+version on history in `ChangeLog
+<https://github.com/atztogo/spglib/blob/master/ChangeLog>`_.
+
+
 
 Features
 ^^^^^^^^
@@ -15,7 +27,7 @@ Features
 * Refine crystal structure
 * Find a primitive cell
 * Search irreducible k-points
-* Liner tetrahedron method
+* Liner tetrahedron method (the document is to be prepared.)
 
 Algorithms
 ^^^^^^^^^^^
