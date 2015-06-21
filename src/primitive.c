@@ -11,6 +11,8 @@
 
 #include "debug.h"
 
+#include <assert.h>
+
 #define INCREASE_RATE 2.0
 #define REDUCE_RATE 0.95
 
@@ -19,19 +21,14 @@ static void set_primitive_positions(Cell * primitive_cell,
 				    const VecDBL * position,
 				    const Cell * cell,
 				    const int * mapping_table,
-				    int * const * overlap_table);
+				    const int * overlap_table);
 static VecDBL *
 translate_atoms_in_primitive_lattice(SPGCONST Cell * cell,
 				     SPGCONST double prim_lat[3][3]);
-static int ** get_overlap_table(SPGCONST Cell *primitive_cell,
-				const VecDBL * position,
-				const int *types,
-				const double symprec);
-static int check_overlap_table(SPGCONST int **overlap_table,
-			       const int cell_size,
-			       const int ratio);
-static void free_overlap_table(int ** table, const int size);
-static int ** allocate_overlap_table(const int size);
+static int * get_overlap_table(SPGCONST Cell *primitive_cell,
+			       const VecDBL * position,
+			       const int *types,
+			       const double symprec);
 static Cell * get_cell_with_smallest_lattice(SPGCONST Cell * cell,
 					     const double symprec);
 static Cell * get_primitive_cell(int * mapping_table,
@@ -269,7 +266,7 @@ static int trim_cell(Cell * primitive_cell,
 {
   int i, index_prim_atom;
   VecDBL * position;
-  int **overlap_table;
+  int *overlap_table;
 
   position = NULL;
   overlap_table = NULL;
@@ -288,14 +285,15 @@ static int trim_cell(Cell * primitive_cell,
     goto err;
   }
 
+
   index_prim_atom = 0;
   for (i = 0; i < cell->size; i++) {
-    if (overlap_table[i][0] == i) {
+    if (overlap_table[i] == i) {
       mapping_table[i] = index_prim_atom;
       primitive_cell->types[index_prim_atom] = cell->types[i];
       index_prim_atom++;
     } else {
-      mapping_table[i] = mapping_table[overlap_table[i][0]];
+      mapping_table[i] = mapping_table[overlap_table[i]];
     }
   }
 
@@ -306,7 +304,8 @@ static int trim_cell(Cell * primitive_cell,
 			  overlap_table);
 
   mat_free_VecDBL(position);
-  free_overlap_table(overlap_table, cell->size);
+  /* free_overlap_table(overlap_table, cell->size); */
+  free(overlap_table);
   return 1;
 
  err:
@@ -317,7 +316,7 @@ static void set_primitive_positions(Cell * primitive_cell,
 				    const VecDBL * position,
 				    const Cell * cell,
 				    const int * mapping_table,
-				    int * const * overlap_table)
+				    const int * overlap_table)
 {
   int i, j, k, l, multi;
 
@@ -330,7 +329,7 @@ static void set_primitive_positions(Cell * primitive_cell,
   /* Positions of overlapped atoms are averaged. */
   for (i = 0; i < cell->size; i++) {
     j = mapping_table[i];
-    k = overlap_table[i][0];
+    k = overlap_table[i];
     for (l = 0; l < 3; l++) {
       /* boundary treatment */
       /* One is at right and one is at left or vice versa. */
@@ -391,32 +390,26 @@ translate_atoms_in_primitive_lattice(SPGCONST Cell * cell,
 /* If overlap_table is correctly obtained, */
 /* shape of overlap_table will be (cell->size, cell->size / primitive->size). */
 /* Return NULL if failed */
-static int ** get_overlap_table(SPGCONST Cell *primitive_cell,
-				const VecDBL * position,
-				const int *types,
-				const double symprec)
+static int * get_overlap_table(SPGCONST Cell *primitive_cell,
+			       const VecDBL * position,
+			       const int *types,
+			       const double symprec)
 {
-  int i, j, attempt, num_overlap, ratio, cell_size;
+  int i, j, attempt, num_overlap, ratio, cell_size, count;
   double trim_tolerance;
-  int **overlap_table;
+  int *overlap_table;
 
   cell_size = position->size;
   ratio = cell_size / primitive_cell->size;
   trim_tolerance = symprec;
 
-  if ((overlap_table = allocate_overlap_table(cell_size)) == NULL) {
+  if ((overlap_table = (int*)malloc(sizeof(int) * cell_size)) == NULL) {
     return NULL;
   }
   
   for (attempt = 0; attempt < 100; attempt++) {
-    /* Each value of -1 has to be overwritten by 0 or positive numbers. */
     for (i = 0; i < cell_size; i++) {
-      for (j = 0; j < cell_size; j++) {
-        overlap_table[i][j] = -1;
-      }
-    }
-
-    for (i = 0; i < cell_size; i++) {
+      overlap_table[i] = -1;
       num_overlap = 0;
       for (j = 0; j < cell_size; j++) {
 	if (types[i] == types[j]) {
@@ -424,8 +417,11 @@ static int ** get_overlap_table(SPGCONST Cell *primitive_cell,
 			     position->vec[j],
 			     primitive_cell->lattice,
 			     trim_tolerance)) {
-	    overlap_table[i][num_overlap] = j;
 	    num_overlap++;
+	    if (overlap_table[i] == -1) {
+	      overlap_table[i] = j;
+	      assert(j <= i);
+	    }
 	  }
 	}
       }
@@ -447,9 +443,20 @@ static int ** get_overlap_table(SPGCONST Cell *primitive_cell,
       }
     }
 
-    if (check_overlap_table(overlap_table, cell_size, ratio)) {
-      goto found;
+    for (i = 0; i < cell_size; i++) {
+      if (overlap_table[i] != i) {
+	continue;
+      }
+      count = 0;
+      for (j = 0; j < cell_size; j++) {
+	if (i == overlap_table[j]) {
+	  count++;
+	}
+      }
+      assert(count == ratio);
     }
+
+    goto found;
 
   cont:
     ;
@@ -461,78 +468,6 @@ static int ** get_overlap_table(SPGCONST Cell *primitive_cell,
 
 found:
   return overlap_table;
-}
-
-/* Retrun 0 if failed */
-static int check_overlap_table(SPGCONST int **overlap_table,
-			       const int cell_size,
-			       const int ratio) {
-  int i, j, index_compared, all_ok;
-
-  all_ok = 1;
-  for (i = 0; i < cell_size; i++) {
-    index_compared = overlap_table[i][0];
-    for (j = 0; j < cell_size; j++) {
-      if (! (overlap_table[i][j] == overlap_table[index_compared][j])) {
-	all_ok = 0;
-	break;
-      }
-      if (j < ratio) {
-	if (overlap_table[i][j] == -1) {
-	  all_ok = 0;
-	  break;
-	}
-      } else {
-	if (overlap_table[i][j] > -1) {
-	  all_ok = 0;
-	  break;
-	}
-      }
-    }
-    if (! all_ok) {
-      break;
-    }
-  }
-  return all_ok;
-}
-
-static void free_overlap_table(int **table, const int size)
-{
-  int i;
-
-  for (i = 0; i < size; i++) {
-    free(table[i]);
-    table[i] = NULL;
-  }
-  free(table);
-  table = NULL;
-}
-
-static int ** allocate_overlap_table(const int size)
-{
-  int i, j;
-  int **table;
-
-  table = NULL;
-
-  if ((table = (int**)malloc(size * sizeof(int*))) == NULL) {
-    warning_print("spglib: Memory could not be allocated ");
-    return NULL;
-  }
-
-  for (i = 0; i < size; i++) {
-    if ((table[i] = (int*)malloc(size * sizeof(int))) == NULL) {
-      warning_print("spglib: Memory could not be allocated ");
-      for (j = 0; j < i; j++) {
-	free(table[j]);
-	table[j] = NULL;
-      }
-      free(table);
-      table = NULL;
-      return NULL;
-    }
-  }
-  return table;
 }
 
 /* Return 0 if failed */
