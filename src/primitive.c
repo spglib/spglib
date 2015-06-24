@@ -16,6 +16,22 @@
 #define INCREASE_RATE 2.0
 #define REDUCE_RATE 0.95
 
+static double A_mat[3][3] = {{    1,    0,    0},
+			     {    0, 1./2,-1./2},
+			     {    0, 1./2, 1./2}};
+static double C_mat[3][3] = {{ 1./2, 1./2,    0},
+			     {-1./2, 1./2,    0},
+			     {    0,    0,    1}};
+static double R_mat[3][3] = {{ 2./3,-1./3,-1./3 },
+			     { 1./3, 1./3,-2./3 },
+			     { 1./3, 1./3, 1./3 }};
+static double I_mat[3][3] = {{-1./2, 1./2, 1./2 },
+			     { 1./2,-1./2, 1./2 },
+			     { 1./2, 1./2,-1./2 }};
+static double F_mat[3][3] = {{    0, 1./2, 1./2 },
+			     { 1./2,    0, 1./2 },
+			     { 1./2, 1./2,    0 }};
+
 static Primitive * get_primitive(SPGCONST Cell * cell, const double symprec);
 static void set_primitive_positions(Cell * primitive_cell,
 				    const VecDBL * position,
@@ -102,9 +118,65 @@ Primitive * prm_get_primitive(SPGCONST Cell * cell, const double symprec)
 }
 
 /* Return NULL if failed */
+Primitive * prm_transform_to_primitive(SPGCONST Cell * cell,
+				       SPGCONST double trans_mat_Bravais[3][3],
+				       const Centering centering,
+				       const double symprec)
+{
+  int multi;
+  double tmat[3][3];
+  Primitive * primitive;
+
+  if ((primitive = prm_alloc_primitive(cell->size)) == NULL) {
+    return NULL;
+  }
+
+  multi = mat_Nint(1.0 / mat_get_determinant_d3(trans_mat_Bravais));
+
+  if ((primitive->cell = cel_alloc_cell(cell->size / multi)) == NULL) {
+    goto err;
+  }
+
+  switch (centering) {
+  case NO_CENTER:
+    mat_copy_matrix_d3(tmat, trans_mat_Bravais);
+    break;
+  case A_FACE:
+    mat_multiply_matrix_d3(tmat, A_mat,  trans_mat_Bravais);
+    break;
+  case C_FACE:
+    mat_multiply_matrix_d3(tmat, C_mat,  trans_mat_Bravais);
+    break;
+  case FACE:
+    mat_multiply_matrix_d3(tmat, F_mat,  trans_mat_Bravais);
+    break;
+  case BODY:
+    mat_multiply_matrix_d3(tmat, I_mat,  trans_mat_Bravais);
+    break;
+  case R_CENTER:
+    mat_multiply_matrix_d3(tmat, R_mat,  trans_mat_Bravais);
+    break;
+  default:
+    goto err;
+  }
+
+  if (trim_cell(primitive->cell,
+		primitive->mapping_table,
+		cell,
+		symprec)) {
+    return primitive;
+  }
+
+ err:
+  prm_free_primitive(primitive);
+  primitive = NULL;
+  return NULL;
+}
+
+/* Return NULL if failed */
 static Primitive * get_primitive(SPGCONST Cell * cell, const double symprec)
 {
-  int i, attempt, is_found = 0;
+  int i, attempt;
   double tolerance;
   Primitive *primitive;
   VecDBL * pure_trans;
@@ -126,26 +198,22 @@ static Primitive * get_primitive(SPGCONST Cell * cell, const double symprec)
 
     if (pure_trans->size == 1) {
       if ((primitive->cell = get_cell_with_smallest_lattice(cell, tolerance))
-	  == NULL) {
-	mat_free_VecDBL(pure_trans);
-	goto cont;
-      }
-
-      for (i = 0; i < cell->size; i++) {
-	primitive->mapping_table[i] = i;
+	  != NULL) {
+	for (i = 0; i < cell->size; i++) {
+	  primitive->mapping_table[i] = i;
+	}
+	goto found;
       }
     } else {
       if ((primitive->cell = get_primitive_cell(primitive->mapping_table,
 						cell,
 						pure_trans,
-						tolerance)) == NULL) {
-	mat_free_VecDBL(pure_trans);
-	goto cont;
+						tolerance)) != NULL) {
+	goto found;
       }
     }
 
-    is_found = 1;
-    break;
+    mat_free_VecDBL(pure_trans);
 
   cont:
     tolerance *= REDUCE_RATE;
@@ -153,14 +221,12 @@ static Primitive * get_primitive(SPGCONST Cell * cell, const double symprec)
     warning_print("(line %d, %s).\n", __LINE__, __FILE__);
   }
 
+  prm_free_primitive(primitive);
+  return NULL;
+
+ found:
+  primitive->tolerance = tolerance;
   mat_free_VecDBL(pure_trans);
-
-  if (is_found) {
-    primitive->tolerance = tolerance;
-  } else {
-    prm_free_primitive(primitive);
-  }
-
   return primitive;
 }
 
