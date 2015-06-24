@@ -9,9 +9,8 @@ lattice_symbols = {
     'B': [ [ 0, 0, 0 ], [ 12, 0, 12 ] ],
     'C': [ [ 0, 0, 0 ], [ 12, 12, 0 ] ],
     'I': [ [ 0, 0, 0 ], [ 12, 12, 12 ] ],
-    # 'R': [ [ 0, 0, 0 ], [ 16, 8, 8 ], [ 8, 16, 16 ] ],
     'R': [ [ 0, 0, 0 ] ],
-    'H': [ [ 0, 0, 0 ], [ 16, 8, 0 ], [ 8, 16, 0 ] ],
+    'H': [ [ 0, 0, 0 ], [ 16, 8, 8 ], [ 8, 16, 16 ] ],
     'F': [ [ 0, 0, 0 ], [ 0, 12, 12 ], [ 12, 0, 12 ], [ 12, 12, 0 ] ]
     }
 
@@ -95,6 +94,7 @@ def run_test( len_wyckoffs, len_site, o_flat ):
     return sum_elem
 
 def damp_array_wyckoffs( len_wyckoff ):
+    print "static const int position_wyckoff[] ="
     print "  { %4d," % 0,
     for i, x in enumerate( len_wyckoffs[1:] ):
         if i%10 == 0:
@@ -123,6 +123,7 @@ def damp_array_positions( orbits ):
 
 def damp_array_positions_short( orbits, len_site ):
     count = 0
+    print "static const int coordinates_first[] ="
     print "  { %9d," % 0,
     for i, x in enumerate( len_site[1:-1] ):
         if count%5 == 0:
@@ -133,6 +134,7 @@ def damp_array_positions_short( orbits, len_site ):
     print "};"
 
     count = 0
+    print "static const int num_sitesym[] ="
     print "  { %3d," % 0,
     for i, x in enumerate( len_site[1:-1] ):
         if count%10 == 0:
@@ -146,6 +148,7 @@ def read_wyckoff_csv( filename ):
     wyckoff_file = open( filename )
     rowdata = []
     points = []
+    hP_nums = [433, 436, 444, 450, 452, 458, 460]
     for i, line in enumerate( wyckoff_file ):
         if line.strip() == 'end of data':
             break
@@ -158,7 +161,11 @@ def read_wyckoff_csv( filename ):
 
     wyckoff = []
     for i in range( len( points ) - 1 ):
-        wyckoff.append( dict( {'symbol': rowdata[ points[i] ][1] } ) )
+        symbol = rowdata[points[i]][1]
+        if i + 1 in hP_nums:
+            symbol = symbol.replace('R', 'H', 1)
+
+        wyckoff.append(dict({'symbol': symbol}))
     
     # When the number of positions is larger than 4,
     # the positions are written in the next line.

@@ -1,4 +1,4 @@
-#!/usr/local/sage-4.5.3/sage
+#!/usr/bin/sage
 
 import sys
 import numpy as np
@@ -17,41 +17,108 @@ def get_VSpU( M ):
 
     return V*Sp*U
 
-def get_VSpU_sets( g1s, g2s ):
+def get_VSpU_sets(g1s, g2s):
     VSpU_sets = []
     generator_sets = []
-    for g1 in g1s:
-        for g2 in g2s:
-            if (not g1) and (not g2):
-                continue
-            for g3 in ( False, inv ):
-                if g1:
-                    M = Matrix(3, 3, g1)
-                    for g in ( g2, g3 ):
-                        if g:
-                            M = M.stack( Matrix(3, 3, g) )
+    
+    for g3 in ( False, True ): # for inversion
+        for g1 in g1s:
+            for g2 in g2s:
+                if g2 is not False:
+                    if np.equal(g1, g2).all():
+                        continue
+                    if np.equal(g1, np.dot(inv, g2)).all():
+                        continue
+                    genes = [g1, g2]
                 else:
-                    M = Matrix(3, 3, g2)
-                    if g3:
-                        M = M.stack( Matrix(3, 3, g3) )
-                VSpU_sets.append( get_VSpU( M ) )
+                    genes = [g1,]
+
+                if g3:
+                    genes_new = []
+                    for g in genes:
+                        if np.linalg.det(g) < 0:
+                            genes_new.append(np.dot(inv, g))
+                        else:
+                            genes_new.append(g)
+                    genes_new.append(inv)
+
+                    if np.linalg.det(g1) < 0:
+                        is_found = False
+                        for g1_comp in g1s:
+                            if np.equal(genes_new[0], g1_comp).all():
+                                is_found = True
+                                break
+                        if is_found:
+                            continue
+
+                    if g2 is not False:
+                        if np.linalg.det(g2) < 0:
+                            is_found = False
+                            for g2_comp in g2s:
+                                if np.equal(genes_new[1], g2_comp).all():
+                                    is_found = True
+                                    break
+                            if is_found:
+                                continue
+
+                else:
+                    genes_new = genes
+
+                M = Matrix(3, 3, genes_new[0])
+                if len(genes_new) > 1:
+                    for g in genes_new[1:]:
+                        M = M.stack(Matrix(3, 3, g))
+                VSpU_sets.append(get_VSpU(M))
                 generator_sets.append( M )
     return VSpU_sets, generator_sets
 
 def get_rotation_primitive( g1s, g2s, T ):
-    if not T==None:
+    if T is not None:
         g1s_new = []
         g2s_new = []
+        g1s_old = []
+        g2s_old = []
         for g in g1s:
-            g1s_new.append(Matrix(ZZ,T*Matrix(QQ, g)*T.inverse()).list())
+            # print g, "-->"
+            try:
+                M = Matrix(ZZ,T*Matrix(QQ, g)*T.inverse())
+                # print M
+                g1s_new.append(np.array(M))
+                g1s_old.append(g)
+            except TypeError:
+                print "Not integer matrix, pass this matrix"
         for g in g2s:
             if g:
-                g2s_new.append(Matrix(ZZ, T*Matrix(QQ, g)*T.inverse()).list())
+                # print g, "-->"
+                try:
+                    M = Matrix(ZZ, T*Matrix(QQ, g)*T.inverse())
+                    # print M
+                    g2s_new.append(np.array(M))
+                    g2s_old.append(g)
+                except TypeError:
+                    print "Not integer matrix, pass this matrix"
             else:
-                g2s_new.append( False )
-    return g1s_new, g2s_new
+                g2s_new.append(False)
+                g2s_old.append(False)
+    return g1s_new, g2s_new, g1s_old, g2s_old
+
+def write_generators(generator_sets):
+    print "{"
+    for count, M in enumerate( generator_sets ):
+        print "  { /* %d */" % (count+1)
+        for i in range( 3 ):
+            print "    { ",
+            for j in range( 3 ):
+                for k in range( 3 ):
+                    if M.nrows() // 3 > i:
+                        print "%d," % M[i*3+j,k],
+                    else:
+                        print " 0,",
+            print "},"
+        print "  },"
+    print "};"
       
-def write_VSpU_for_c( VSpU_sets, generator_sets ):
+def write_VSpU(VSpU_sets):
     print "{"
     for count, VSpU in enumerate( VSpU_sets ):
         print "  { /* %d */" % (count+1)
@@ -71,24 +138,10 @@ def write_VSpU_for_c( VSpU_sets, generator_sets ):
         print "  },"
     print "};"
 
-    print "{"
-    for count, M in enumerate( generator_sets ):
-        print "  { /* %d */" % (count+1)
-        for i in range( 3 ):
-            print "    { ",
-            for j in range( 3 ):
-                for k in range( 3 ):
-                    if M.nrows() // 3 > i:
-                        print "%d," % M[i*3+j,k],
-                    else:
-                        print " 0,",
-            print "},"
-        print "  },"
-    print "};"
 
-I = [[ 1, 0, 0],
-     [ 0, 1, 0],
-     [ 0, 0, 1]]
+identity = [[ 1, 0, 0],
+            [ 0, 1, 0],
+            [ 0, 0, 1]]
 
 inv = [[-1, 0, 0],
        [ 0,-1, 0],
@@ -167,23 +220,28 @@ BC = Matrix(QQ, [[ 1, 0, 1],
 AC = Matrix(QQ, [[ 1, 0, 0],
                  [ 0, 1, 1],
                  [ 0,-1, 1]])
+RC = Matrix(QQ, [[ 1, 0, 1],
+                 [-1, 1, 1],
+                 [ 0,-1, 1]])
+
 
 # Parse options
 from optparse import OptionParser
 parser = OptionParser()
-parser.set_defaults( is_tricli=False,
-                     is_monocli=False,
-                     is_ortho=False,
-                     is_tetra=False,
-                     is_rhombo=False,
-                     is_trigo=False,
-                     is_hexa=False,
-                     is_cubic=False,
-                     is_bcc=False,
-                     is_fcc=False,
-                     is_ac=False,
-                     is_bc=False,
-                     is_cc=False )
+parser.set_defaults(is_tricli=False,
+                    is_monocli=False,
+                    is_ortho=False,
+                    is_tetra=False,
+                    is_rhombo=False,
+                    is_trigo=False,
+                    is_hexa=False,
+                    is_cubic=False,
+                    is_bcc=False,
+                    is_fcc=False,
+                    is_ac=False,
+                    is_bc=False,
+                    is_cc=False,
+                    is_rc=False)
 parser.add_option("--tricli", dest="is_tricli",
                   action="store_true")
 parser.add_option("--monocli", dest="is_monocli",
@@ -210,69 +268,144 @@ parser.add_option("--bc", dest="is_bc",
                   action="store_true")
 parser.add_option("--cc", dest="is_cc",
                   action="store_true")
+parser.add_option("--rc", dest="is_rc",
+                  action="store_true")
+parser.add_option("-g", dest="is_generator",
+                  action="store_true")
 (options, args) = parser.parse_args()
 
-g1s=None
-g2s=None
+g1s = None
+g2s = None
+g1s_old = None
+g2s_old = None
 
 if options.is_tricli:
-    g1s = ( I, )
+    g1s = ( identity, )
     g2s = ( False, )
 
 if options.is_monocli:
-    g1s = ( rot2x, rot2y, rot2z, rot2xi, rot2yi, rot2yi )
+    g1s = ( rot2x, rot2y, rot2z, rot2xi, rot2yi, rot2zi )
     g2s = ( False, )
     if options.is_bcc:
-        g1s, g2s = get_rotation_primitive( g1s, g2s, BCC )
+        g1s, g2s, g1s_old, g2s_old = get_rotation_primitive( g1s, g2s, BCC )
     if options.is_ac:
-        g1s, g2s = get_rotation_primitive( g1s, g2s, AC )
+        g1s, g2s, g1s_old, g2s_old = get_rotation_primitive( g1s, g2s, AC )
     if options.is_bc:
-        g1s, g2s = get_rotation_primitive( g1s, g2s, BC )
+        g1s, g2s, g1s_old, g2s_old = get_rotation_primitive( g1s, g2s, BC )
     if options.is_cc:
-        g1s, g2s = get_rotation_primitive( g1s, g2s, CC )
+        g1s, g2s, g1s_old, g2s_old = get_rotation_primitive( g1s, g2s, CC )
 
 if options.is_ortho:
     g1s = ( rot2z, rot2zi )
-    g2s = ( False, rot2x, rot2xi )
+    g2s = ( rot2x, rot2xi )
     if options.is_bcc:
-        g1s, g2s = get_rotation_primitive( g1s, g2s, BCC )
+        g1s, g2s, g1s_old, g2s_old = get_rotation_primitive( g1s, g2s, BCC )
     if options.is_fcc:
-        g1s, g2s = get_rotation_primitive( g1s, g2s, FCC )
+        g1s, g2s, g1s_old, g2s_old = get_rotation_primitive( g1s, g2s, FCC )
     if options.is_ac:
-        g1s, g2s = get_rotation_primitive( g1s, g2s, AC )
+        g1s, g2s, g1s_old, g2s_old = get_rotation_primitive( g1s, g2s, AC )
     if options.is_bc:
-        g1s, g2s = get_rotation_primitive( g1s, g2s, BC )
+        g1s, g2s, g1s_old, g2s_old = get_rotation_primitive( g1s, g2s, BC )
     if options.is_cc:
-        g1s, g2s = get_rotation_primitive( g1s, g2s, CC )
+        g1s, g2s, g1s_old, g2s_old = get_rotation_primitive( g1s, g2s, CC )
 
 if options.is_tetra:
     g1s = ( rot4z, rot4zi )
     g2s = ( False, rot2x, rot2xi )
     if options.is_bcc:
-        g1s, g2s = get_rotation_primitive( g1s, g2s, BCC )
+        g1s, g2s, g1s_old, g2s_old = get_rotation_primitive( g1s, g2s, BCC )
 
-if options.is_rhombo:
-    g1s = ( rot3xyz, rot3xyzi )
-    g2s = ( False, hexa2_ab, hexa2_abi, trigo2ab, trigo2ab )
+# if options.is_rhombo:
+#     g1s = ( rot3xyz, rot3xyzi )
+#     g2s = ( False, hexa2_ab, trigo2ab )
 
 if options.is_trigo:
     g1s = ( rot3z, rot3zi )
-    g2s = ( False, hexa2_ab, hexa2_abi, trigo2ab, trigo2ab )
+    g2s = ( False, hexa2_ab, trigo2ab, hexa2_abi, trigo2abi )
+    if options.is_rc: # hP
+        g1s, g2s, g1s_old, g2s_old = get_rotation_primitive( g1s, g2s, RC )
 
+if options.is_rhombo: # hR
+    g1s = ( rot3z, rot3zi )
+    g2s = ( False, hexa2_ab, trigo2ab, hexa2_abi, trigo2abi )
+    g1s, g2s, g1s_old, g2s_old = get_rotation_primitive( g1s, g2s, RC )
+    g1s_old = None
+    g2s_old = None
+        
 if options.is_hexa:
     g1s = ( rot6z, rot6zi )
     g2s = ( False, hexa2_ab, hexa2_abi )
 
 if options.is_cubic:
     g1s = ( rot4z, rot2z, rot4zi, rot2zi )
-    g2s = ( False, rot3xyz, rot3xyzi )
+    g2s = ( rot3xyz, rot3xyzi )
     if options.is_bcc:
-        g1s, g2s = get_rotation_primitive( g1s, g2s, BCC )
+        g1s, g2s, g1s_old, g2s_old = get_rotation_primitive( g1s, g2s, BCC )
     if options.is_fcc:
-        g1s, g2s = get_rotation_primitive( g1s, g2s, FCC )
+        g1s, g2s, g1s_old, g2s_old = get_rotation_primitive( g1s, g2s, FCC )
 
-if g1s==None:
+if g1s is None:
     print "Option is needed. See \'make_VSpU.py -h\'"
 else:
-    VSpU_sets, generator_sets = get_VSpU_sets( g1s, g2s )
-    write_VSpU_for_c( VSpU_sets, generator_sets )
+    if g1s_old is None:
+        VSpU_sets, generator_sets = get_VSpU_sets( g1s, g2s )
+    else:
+        VSpU_sets = get_VSpU_sets( g1s, g2s )[0]
+        generator_sets = get_VSpU_sets( g1s_old, g2s_old )[1]
+
+    centering = ""
+    if options.is_fcc:
+        centering = "_F"
+    if options.is_bcc:
+        centering = "_I"
+    if options.is_ac:
+        centering = "_A"
+    if options.is_bc:
+        centering = "_B"
+    if options.is_cc:
+        centering = "_C"
+
+    if options.is_generator:
+        if options.is_tricli:
+            print "static int tricli_generators[][3][9] ="
+        if options.is_monocli:
+            print "static int monocli_generators[][3][9] ="
+        if options.is_ortho:
+            print "static int ortho_generators[][3][9] ="
+        if options.is_tetra:
+            print "static int tetra_generators[][3][9] ="
+        if options.is_trigo:
+            if options.is_rc:
+                print "static int rhombo_h_generators[][3][9] ="
+            else:
+                print "static int trigo_generators[][3][9] ="
+        if options.is_rhombo:
+            print "static int rhombo_p_generators[][3][9] ="
+        if options.is_hexa:
+            print "static int hexa_generators[][3][9] ="
+        if options.is_cubic:
+            print "static int cubic_generators[][3][9] ="
+        write_generators(generator_sets)
+        print
+    else:
+        if options.is_tricli:
+            print "static double tricli_VSpU[][3][9] ="
+        if options.is_monocli:
+            print "static double monocli%s_VSpU[][3][9] =" % centering
+        if options.is_ortho:
+            print "static double ortho%s_VSpU[][3][9] =" % centering
+        if options.is_tetra:
+            print "static double tetra%s_VSpU[][3][9] =" % centering
+        if options.is_trigo:
+            if options.is_rc:
+                print "static double rhombo_h_VSpU[][3][9] ="
+            else:
+                print "static double trigo_VSpU[][3][9] ="
+        if options.is_rhombo:
+                print "static double rhombo_p_VSpU[][3][9] ="
+        if options.is_hexa:
+                print "static double hexa_VSpU[][3][9] ="
+        if options.is_cubic:
+                print "static double cubic%s_VSpU[][3][9] ="
+        write_VSpU(VSpU_sets)
+        print

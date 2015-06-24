@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.61)
-AC_INIT([spglib], 1.6.0, [atz.togo@gmail.com])
+AC_INIT([spglib], 1.8, [atz.togo@gmail.com])
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([src/spglib.c])
 AC_CONFIG_HEADER([config.h])
@@ -15,6 +15,7 @@ AM_PROG_CC_C_O
 AM_PROG_LIBTOOL
 
 # Checks for libraries.
+AC_CHECK_FUNCS([sqrt])
 
 # Checks for header files.
 AC_HEADER_STDC

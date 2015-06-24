@@ -11,6 +11,7 @@ sources = [
 	'../../src/kpoint.c',
 	'../../src/lattice.c',
 	'../../src/mathfunc.c',
+	'../../src/niggli.c',
 	'../../src/pointgroup.c',
 	'../../src/primitive.c',
 	'../../src/refinement.c',
@@ -21,7 +22,8 @@ sources = [
 	'../../src/spg_database.c',
 	'../../src/spglib.c',
 	'../../src/symmetry.c',
-    '../../src/tetrahedron_method.c']
+    '../../src/tetrahedron_method.c',
+    '../../src/triplet_kpoint.c']
 
 # Hmm, bdist_rpm requires that all sources are within root directory.
 # Therefore add a symlink to src directory under systems that support it...
@@ -40,8 +42,8 @@ extension = Extension('pyspglib._spglib',
                       extra_link_args=['-lgomp'],
                       )
 
-setup (name = 'pyspglib',
-       version = '1.6.0',
+setup (name = 'spglib',
+       version = '1.7.3',
        description = 'This is the spglib module.',
        author = 'Atsushi Togo',
        author_email = 'atz.togo@gmail.com',

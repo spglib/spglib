@@ -28,14 +28,21 @@ def get_symmetry(bulk, use_magmoms=False, symprec=1e-5, angle_tolerance=-1.0):
     # Get symmetry operations
     if use_magmoms:
         magmoms = bulk.get_magnetic_moments()
+        equivalent_atoms = np.zeros(len(magmoms), dtype='intc')
         num_sym = spg.symmetry_with_collinear_spin(rotation,
                                                    translation,
+                                                   equivalent_atoms,
                                                    lattice,
                                                    positions,
                                                    numbers,
                                                    magmoms,
                                                    symprec,
                                                    angle_tolerance)
+        return ({'rotations': np.array(rotation[:num_sym],
+                                       dtype='intc', order='C'),
+                 'translations': np.array(translation[:num_sym],
+                                          dtype='double', order='C')},
+                equivalent_atoms)
     else:
         num_sym = spg.symmetry(rotation,
                                translation,
@@ -45,9 +52,10 @@ def get_symmetry(bulk, use_magmoms=False, symprec=1e-5, angle_tolerance=-1.0):
                                symprec,
                                angle_tolerance)
 
-    return {'rotations': np.array(rotation[:num_sym], dtype='intc', order='C'),
-            'translations': np.array(translation[:num_sym],
-                                     dtype='double', order='C')}
+        return {'rotations': np.array(rotation[:num_sym],
+                                      dtype='intc', order='C'),
+                'translations': np.array(translation[:num_sym],
+                                         dtype='double', order='C')}
 
 def get_symmetry_dataset(bulk, symprec=1e-5, angle_tolerance=-1.0):
     """
@@ -70,6 +78,7 @@ def get_symmetry_dataset(bulk, symprec=1e-5, angle_tolerance=-1.0):
     numbers = np.array(bulk.get_atomic_numbers(), dtype='intc')
     
     keys = ('number',
+            'hall_number',
             'international',
             'hall',
             'transformation_matrix',
@@ -77,7 +86,10 @@ def get_symmetry_dataset(bulk, symprec=1e-5, angle_tolerance=-1.0):
             'rotations',
             'translations',
             'wyckoffs',
-            'equivalent_atoms')
+            'equivalent_atoms',
+            'brv_lattice',
+            'brv_types',
+            'brv_positions')
     dataset = {}
     for key, data in zip(keys, spg.dataset(lattice,
                                            positions,
@@ -99,21 +111,29 @@ def get_symmetry_dataset(bulk, symprec=1e-5, angle_tolerance=-1.0):
     dataset['wyckoffs'] = [letters[x] for x in dataset['wyckoffs']]
     dataset['equivalent_atoms'] = np.array(dataset['equivalent_atoms'],
                                            dtype='intc')
+    dataset['brv_lattice'] = np.array(np.transpose(dataset['brv_lattice']),
+                                      dtype='double', order='C')
+    dataset['brv_types'] = np.array(dataset['brv_types'], dtype='intc')
+    dataset['brv_positions'] = np.array(dataset['brv_positions'],
+                                        dtype='double', order='C')
 
     return dataset
 
-def get_spacegroup(bulk, symprec=1e-5, angle_tolerance=-1.0):
+def get_spacegroup(bulk, symprec=1e-5, angle_tolerance=-1.0, symbol_type=0):
     """
     Return space group in international table symbol and number
     as a string.
     """
-    # Atomic positions have to be specified by scaled positions for spglib.
-    return spg.spacegroup(
-        np.array(bulk.get_cell().T, dtype='double', order='C'),
-        np.array(bulk.get_scaled_positions(), dtype='double', order='C'),
-        np.array(bulk.get_atomic_numbers(), dtype='intc'),
-        symprec,
-        angle_tolerance)
+
+    dataset = get_symmetry_dataset(bulk,
+                                   symprec=symprec,
+                                   angle_tolerance=angle_tolerance)
+    symbols = spg.spacegroup_type(dataset['hall_number'])
+
+    if symbol_type == 1:
+        return "%s (%d)" % (symbols[0], dataset['number'])
+    else:
+        return "%s (%d)" % (symbols[4], dataset['number'])
 
 def get_pointgroup(rotations):
     """
@@ -203,7 +223,24 @@ def find_primitive(bulk, symprec=1e-5, angle_tolerance=-1.0):
                 np.array(numbers[:num_atom_prim], dtype='intc'))
     else:
         return None, None, None
-  
+
+
+        
+############
+# k-points #
+############
+def get_grid_point_from_address(grid_address,
+                                mesh,
+                                is_shift=np.zeros(3, dtype='intc')):
+    """
+    Return grid point index by tranlating grid address
+    """
+
+    return spg.grid_point_from_address(np.array(grid_address, dtype='intc'),
+                                       np.array(mesh, dtype='intc'),
+                                       np.array(is_shift, dtype='inct'))
+    
+
 def get_ir_reciprocal_mesh(mesh,
                            bulk,
                            is_shift=np.zeros(3, dtype='intc'),
@@ -230,6 +267,46 @@ def get_ir_reciprocal_mesh(mesh,
   
     return mapping, mesh_points
 
+def get_grid_points_by_rotations(address_orig,
+                                 reciprocal_rotations,
+                                 mesh,
+                                 is_shift=np.zeros(3, dtype='intc')):
+    """
+    Rotation operations in reciprocal space ``reciprocal_rotations`` are applied
+    to a grid point ``grid_point`` and resulting grid points are returned.
+    """
+    
+    rot_grid_points = np.zeros(len(reciprocal_rotations), dtype='intc')
+    spg.grid_points_by_rotations(
+        rot_grid_points,
+        np.array(address_orig, dtype='intc'),
+        np.array(reciprocal_rotations, dtype='intc', order='C'),
+        np.array(mesh, dtype='intc'),
+        np.array(is_shift, dtype='intc'))
+    
+    return rot_grid_points
+
+def get_BZ_grid_points_by_rotations(address_orig,
+                                    reciprocal_rotations,
+                                    mesh,
+                                    bz_map,
+                                    is_shift=np.zeros(3, dtype='intc')):
+    """
+    Rotation operations in reciprocal space ``reciprocal_rotations`` are applied
+    to a grid point ``grid_point`` and resulting grid points are returned.
+    """
+    
+    rot_grid_points = np.zeros(len(reciprocal_rotations), dtype='intc')
+    spg.BZ_grid_points_by_rotations(
+        rot_grid_points,
+        np.array(address_orig, dtype='intc'),
+        np.array(reciprocal_rotations, dtype='intc', order='C'),
+        np.array(mesh, dtype='intc'),
+        np.array(is_shift, dtype='intc'),
+        bz_map)
+    
+    return rot_grid_points
+    
 def relocate_BZ_grid_address(grid_address,
                              mesh,
                              reciprocal_lattice, # column vectors
@@ -306,42 +383,6 @@ def get_stabilized_reciprocal_mesh(mesh,
     
     return mapping, mesh_points
 
-def get_triplets_reciprocal_mesh_at_q(fixed_grid_number,
-                                      mesh,
-                                      rotations,
-                                      is_time_reversal=True):
-
-    weights = np.zeros(np.prod(mesh), dtype='intc')
-    third_q = np.zeros(np.prod(mesh), dtype='intc')
-    mesh_points = np.zeros((np.prod(mesh), 3), dtype='intc')
-
-    spg.triplets_reciprocal_mesh_at_q(
-        weights,
-        mesh_points,
-        third_q,
-        fixed_grid_number,
-        np.array(mesh, dtype='intc'),
-        is_time_reversal * 1,
-        np.array(rotations, dtype='intc', order='C'))
-
-    return weights, third_q, mesh_points
-        
-def get_BZ_triplets_at_q(grid_point,
-                         bz_grid_address,
-                         bz_map,
-                         weights,
-                         mesh):
-    """grid_address is overwritten."""
-    num_ir_tripltes = (weights > 0).sum()
-    triplets = np.zeros((num_ir_tripltes, 3), dtype='intc')
-    num_ir_ret = spg.BZ_triplets_at_q(triplets,
-                                      grid_point,
-                                      bz_grid_address,
-                                      bz_map,
-                                      weights,
-                                      np.array(mesh, dtype='intc'))
-    return triplets
-
 def get_neighboring_grid_points(grid_point,
                                 relative_grid_address,
                                 mesh,
@@ -357,26 +398,10 @@ def get_neighboring_grid_points(grid_point,
     return relative_grid_points
     
 
-def get_triplets_tetrahedra_vertices(relative_grid_address,
-                                     mesh,
-                                     triplets,
-                                     bz_grid_address,
-                                     bz_map):
-    num_tripltes = len(triplets)
-    vertices = np.zeros((num_tripltes, 2, 24, 4), dtype='intc')
-    for i, tp in enumerate(triplets):
-        vertices_at_tp = np.zeros((2, 24, 4), dtype='intc')
-        spg.triplet_tetrahedra_vertices(
-            vertices_at_tp,
-            relative_grid_address,
-            np.array(mesh, dtype='intc'),
-            tp,
-            bz_grid_address,
-            bz_map)
-        vertices[i] = vertices_at_tp
-
-    return vertices
-
+    
+######################
+# Tetrahedron method #
+######################
 def get_tetrahedra_relative_grid_address(microzone_lattice):
     """
     reciprocal_lattice:
@@ -392,6 +417,11 @@ def get_tetrahedra_relative_grid_address(microzone_lattice):
     
     return relative_grid_address
 
+def get_all_tetrahedra_relative_grid_address():
+    relative_grid_address = np.zeros((4, 24, 4, 3), dtype='intc')
+    spg.all_tetrahedra_relative_grid_address(relative_grid_address)
+    
+    return relative_grid_address
     
 def get_tetrahedra_integration_weight(omegas,
                                       tetrahedra_omegas,

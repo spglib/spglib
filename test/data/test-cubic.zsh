@@ -10,7 +10,7 @@ if [ x$findsym = "xfindsym" ]; then
 fi
 
 for i in `/bin/ls cubic/POSCAR-*`;do
-	spg=`ruby ../symPoscar.rb -n $i`
+	spg=`ruby ../symPoscar.rb --shift="0.1 0.2 0.3" -n $i`
 	numspg=`echo $spg|awk -F"(" '{print $2}'|sed s/\)//`
 	numposcar=`echo $i|awk -F"/" '{print $2}'|cut -c 8-10|awk '{print $1*1}'`
 

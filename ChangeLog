@@ -1,3 +1,193 @@
+2015-06-15  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.7.4
+
+	Wyckoff position database for rhombohedral cell was
+	wrong. Probably this bug was hidden by the previous default choice
+	of basis vectors but from version 1.7.3 it became revealed.
+
+2015-06-14  Atsushi Togo  <atz.togo@gmail.com>
+
+	* src/sitesym_database.c
+
+	Bug in database of hP of rhombohedral was fixed. This bug was
+	affected after version 1.7.3. 'make_Wyckoff_db.py' is fixed and
+	then the database in 'sitesym_database.c' is recreated by
+	make_Wyckoff_db.py.
+
+2015-04-06  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.7.3
+
+2015-04-05  Atsushi Togo  <atz.togo@gmail.com>
+
+	* src/triplet_kpoint.{c,h}:
+
+	Code to handle triplets of kpoints was separated from
+	kpoint.c. Detail of functions was revisited and modified, e.g.,
+	taking modulo of grid address is now included in
+	get_grid_point_double_mesh in most cases. This is probably safe
+	change, but may induce some tricky bug, which has to be
+	remembered. kpt_get_grid_point should be moved to spglib.c with
+	calling kpt_get_grid_point_double_mesh someday soon. It is noted
+	here for not forgetting that get_third_q_of_triplets_at_q in
+	triplet_kpoint.c might be written better around the point using
+	mat_modulo_i3. In triplet_kpoint.c, mat_modulo_i3 is used only
+	here, so eliminating this can move mat_modulo_i3 to kpoint.c as a
+	local function as before.
+
+2015-04-03  Atsushi Togo  <atz.togo@gmail.com>
+
+	* src/spacegroup.c (match_hall_symbol_db_ortho): 
+
+	Change the convention of lengths of basis vector preference to:
+	a < b < c for hall number 290 and a < c < b for 291 or
+	a < b < c for hall number 291 and a < c < b for 290,
+	to preserve a < b convention found in Parthe et al, Journal of
+	Alloys and Compounds, 197 (1993) 291-301.
+
+2015-03-31  Atsushi Togo  <atz.togo@gmail.com>
+
+	* src/spacegroup.c (match_hall_symbol_db_ortho): 
+
+	Fix choice of lengths of basis vectors in orthorhombic Pbca. There
+	are two choices for Pbca. The basis vectors can be chosen so as to
+	a < b < c or b < a < c, which correspond to these two choices,
+	respectively. The correspondance can be flipped, i.e., in a case,
+	a < b < c for hall number 290 and b < a < c for 291, but in some
+	other case, a < b < c for hall number 291 and b < a < c for 290.
+
+2015-03-20  Atsushi Togo  <atz.togo@gmail.com>
+
+	* src/hall_symbol.c (find_hall_symbol): 
+
+	A critical bug was found in version 1.7.2, where origin shift was
+	given for the primitive cell but not for the Bravais lattice. This
+	was fixed. The version 1.7.2 was removed from the download site
+	and temporary 1.7.3-pre is put on the download site.
+
+2015-03-08  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.7.2
+
+	* src/niggli.*:
+
+	Routine of Niggli cell reduction is imported from
+	https://github.com/atztogo/niggli.
+
+2015-02-24  Atsushi Togo  <atz.togo@gmail.com>
+
+	* src/spacegroup.c (get_symmetry_settings):
+
+	Monoclinic lattice vectors are chosen as |a| < |c| with b as the
+	unique axis. This is achieved by get_Delaunay_reduction_2D.
+
+	* src/lattice.c (get_Delaunay_reduction_2D):
+
+	2D Delaunay reduction is implemented based on that of 3D.
+
+	* src/lattice.c (lat_smallest_lattice_vector_2D):
+
+	Create an interface to access 2D Delaunay reduction.
+
+
+2015-02-11  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.7.1
+
+	There are minor changes to make functions robust and code clean.
+
+	* src/spglib.c
+
+	spg(at)_get_symmetry_with_collinear_spin is changed to return
+	equivalent atoms.
+	spg_get_international and spg_get_schoenflies call iterative
+	routine to determine space group type.
+
+	* src/primitive.h:
+
+	Primitive structure is defined. This is expected to make routines
+	related to primitive cell comprehensive. Memory for a pointer of
+	the Primitive variable may be allocated using prm_alloc_primitive
+	and freed by prm_free_primitive.
+
+	* src/spacegroup.c:
+
+	spa_get_spacegroup was replaced by iterative routine and now
+	returns a Primitive structure.
+
+2014-11-19  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.7
+
+	Space group operations for non-standard setting can be determined
+	using spg_get_dataset_with_hall_number. To achieve this, many
+	lines are added and changed. Due to the big change of the code,
+	there may be bugs, and maybe it's safer to wait for a while to use
+	this version for mission critical systems.
+
+	Two important changes are:
+
+	* src/spglib.c (spg_get_dataset_with_hall_number)
+
+	In space group type determination, Hall symbol serial number can
+	be specified.
+
+	* src/spglib.h (SpglibDataset)
+
+	Crystallographic setting information is stored in
+	'setting'. Symmetrized and standarized crsytal structure is stored
+	in 'n_brv_atoms', 'brv_lattice', 'brv_types', and 'brv_positions',
+	which are the same information obtained using 'spg_refine_cell',
+	except that non-standard setting can be specified in
+	'spg_get_dataset_with_hall_number'.
+
+2014-10-16  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.6.4
+
+	* src/refinement.c (refine_cell):
+
+	An iterative approach is implemented for refine_cell.
+
+2014-09-12  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.6.3
+
+	* src/primitive.c:
+
+	Atom type is checked in finding a primitive cell. This enables to
+	handle different types of atoms that locate at the same position.
+	for the case of an automatically generated crystal structure data
+	from a fractional occupancy, etc.
+
+	* Version 1.6.2
+
+	Minor bug fixes.
+
+	* src/spglib.c (spg_get_symmetry_from_database):
+
+	An API to access space group operations database is implemented.
+
+2014-08-04  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.6.1:
+
+	* src/{refinement.*,primitive.*,spglib.c}
+
+	Fix symmetry finding bug for supercell that has lower point group
+	than the primitive cell.
+
+	* src/spglib.*
+
+	New functions of spg_get_spacegroup_type and
+	spg_get_grid_point. The former offers difrect access to space
+	group type database using hall symbol number. The later perfoms
+	converting grid address to grid point index on the reciprocal
+	mesh.
+
+	* pyspglib update.
+
 2014-02-17  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.6.0:

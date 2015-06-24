@@ -1,5 +1,5 @@
 API
----
+====
 
 ``spg_get_symmetry``
 ^^^^^^^^^^^^^^^^^^^^
@@ -20,25 +20,6 @@ and ``translation``. The number of operations is return as the return
 value. Rotations and translations are given in fractional coordinates,
 and ``rotation[i]`` and ``translation[i]`` with same index give a
 symmetry oprations, i.e., these have to be used togather.
-
-``spg_get_symmetry_with_collinear_spin``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-::
-
-  int spg_get_symmetry_with_collinear_spin(int rotation[][3][3],
-                                           double translation[][3],
-                                           const int max_size,
-                                           SPGCONST double lattice[3][3],
-                                           SPGCONST double position[][3],
-                                           const int types[],
-                                           const double spins[],
-                                           const int num_atom,
-                                           const double symprec);
-
-Find symmetry operations with collinear spins on atoms. Except for the
-argument of ``const double spins[]``, the usage is same as
-``spg_get_symmetry``.
 
 ``spg_get_international``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -87,6 +68,11 @@ is returned as return value.
 ``spg_refine_cell``
 ^^^^^^^^^^^^^^^^^^^^^
 
+Symmetrized and standarized crystal structure is obtained from a
+non-standard crystal structure which may be slightly distorted within
+a symmetry recognition tolerance, or whose primitive vectors are differently
+chosen, etc.
+
 ::
 
   int spg_refine_cell(double lattice[3][3],
@@ -100,77 +86,224 @@ overwritten. The number of atoms in the Bravais lattice is returned as
 the return value. The memory space for ``position`` and ``types`` must
 be prepared four times more than those required for the input
 structures. This is because, when the crystal has the face centering,
-four times more atoms than those in primitive cell are generated.
+four times more atoms than those in the primitive cell are
+generated. To do the same for the non-standard choices of origin,
+axis, or cell, it is necessary to use
+``spg_get_dataset_with_hall_number`` to extract the crystal structure.
 
-``spg_get_dataset``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. _api_spg_get_dataset:
 
-Crystallographic information is wrapped in a dataset. The dataset is
-accessible through the C-structure as follows:
+``spg_get_dataset``, ``spg_get_dataset_with_hall_number``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+For an input crystal structure, the space group operations of crystal
+are searched. Then they are compared with the crsytallographic
+database and the space group type is determined. The result is
+returned as the ``SpglibDataset`` structure as a dataset.
+
+Usage
+------
+
+Dataset corresponding to the space group type in the **standard
+setting** is obtained by ``spg_get_dataset``. If this symmetry search
+fails, ``spacegroup_number`` in the ``SpglibDataset`` structure is
+set 0. In this function, the other crystallographic setting is not
+obtained.
 
 ::
 
-  typedef struct {
-    int spacegroup_number;
-    char international_symbol[11];
-    char hall_symbol[17];
-    double transformation_matrix[3][3];
-    double origin_shift[3];
-    int n_operations;
-    int (*rotations)[3][3];
-    double (*translations)[3];
-    int n_atoms;
-    int *wyckoffs;
-    int *equivalent_atoms;
-  } SpglibDataset;
+   SpglibDataset * spg_get_dataset(const double lattice[3][3],
+                                   const double position[][3],
+                                   const int types[],
+                                   const int num_atom,
+                                   const double symprec);
 
-``transformation_matrix`` (:math:`M`) is the matrix to transform the input lattice
-to a Bravais lattice given by
+To specify the other crystallographic setting (origin, axis, or cell
+choice), ``spg_get_dataset_with_hall_number`` is used. 
+				   
+:: 
+				  
+   SpglibDataset * spg_get_dataset_with_hall_number(SPGCONST double lattice[3][3],
+						    SPGCONST double position[][3],
+						    const int types[],
+						    const int num_atom,
+						    const int hall_number,
+						    const double symprec)
+
+where ``hall_number`` is used to specify the setting. The possible
+choices and those serial numbers are found at `list of space groups
+(Seto's web site)
+<http://pmsl.planet.sci.kobe-u.ac.jp/~seto/?page_id=37&lang=en>`_.
+The crystal structure has to possess the space-group type of the Hall
+symbol. If the symmetry search fails or the specified ``hall_number``
+is not in the list of Hall symbols for the space group type of the
+crystal structure, ``spacegroup_number`` in the ``SpglibDataset``
+structure is set 0.
+
+Finally, its allocated memory space must be freed by calling ``spg_free_dataset``.
+
+
+Dataset
+--------
+				  
+The dataset is
+accessible through the C-structure given by
+
+::
+
+   typedef struct {
+     int spacegroup_number;
+     int hall_number;
+     char international_symbol[11];
+     char hall_symbol[17];
+     char setting[6];
+     double transformation_matrix[3][3];
+     double origin_shift[3];
+     int n_operations;
+     int (*rotations)[3][3];
+     double (*translations)[3];
+     int n_atoms;
+     int *wyckoffs;
+     int *equivalent_atoms;
+     double brv_lattice[3][3];
+     int *brv_types;
+     double (*brv_positions)[3];
+   } SpglibDataset;
+
+.. _api_spg_get_dataset_spacegroup_type:
+
+Space group type
+"""""""""""""""""
+
+``spacegroup_number`` is the space group type number defined in
+International Tables for Crystallography (ITA). ``hall_number`` is the
+serial number between 1 and 530 which are found at `list of space
+groups (Seto's web site)
+<http://pmsl.planet.sci.kobe-u.ac.jp/~seto/?page_id=37&lang=en>`_.
+The (full) Hermann–Mauguin notation of space group type is given by
+``international_symbol``. The Hall symbol is stored in
+``hall_symbol``. The information on unique axis,
+setting or cell choices is found in ``setting``.
+   
+Space group operations
+"""""""""""""""""""""""
+   
+The symmetry operations of the input cell are stored in ``rotations``
+and ``translations``. A space group operation :math:`(R|\tau)` is made
+from a set of rotation :math:`R` and translation :math:`\tau` with the
+same index. Number of space group operations is found in
+``n_operations``. 
+
+Site symmetry
+""""""""""""""
+
+``n_atoms`` is the number of
+atoms of the input cell. ``wyckoffs`` gives Wyckoff letters that are
+assigned to atomic positions of the input cell. The numbers of 0, 1,
+2, :math:`\ldots`, correspond to the a, b, c, :math:`\ldots`,
+respectively. Number of elements in ``wyckoffs`` is same as
+``n_atoms``. ``equivalent_atoms`` is a list of atomic indices that map
+to indices of symmetrically independent atoms, where the list index
+corresponds to atomic index of the input crystal structure.
+
+Origin shift and lattice transformation
+""""""""""""""""""""""""""""""""""""""""
+
+``transformation_matrix`` and ``origin_shift`` are obtained as a
+result of space-group-type matching under a set of unique axis,
+setting and cell choices. In this matching, lattice and atomic
+positions have to be standardized to compare with the database of
+space-group operations. The lattice is transformed to a Bravais
+lattice. Atomic positions are shifted in order that symmetry
+operations have a standard origin.  ``transformation_matrix``
+(:math:`\mathrm{M}`) is the matrix to transform the input lattice to a
+Bravais lattice with unique axis, setting and cell choices defined as
 
 .. math::
 
    ( \mathbf{a}_\mathrm{B} \; \mathbf{b}_\mathrm{B} \; \mathbf{c}_\mathrm{B} )
-   =  ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} ) M
+   =  ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} ) \mathrm{M}
 
 where :math:`\mathbf{a}_\mathrm{B}`, :math:`\mathbf{b}_\mathrm{B}`,
 and :math:`\mathbf{c}_\mathrm{B}` are the column vectors of a Bravais
 lattice, and :math:`\mathbf{a}`, :math:`\mathbf{b}`, and
 :math:`\mathbf{c}` are the column vectors of the input lattice. The
-``origin_shift`` is the origin shift in the Bravais lattice. The
-symmetry operations of the input cell are stored in ``rotations`` and
-``translations``. A space group operation :math:`(R|\tau)` is made
-from a set of rotation :math:`R` and translation :math:`\tau` with the
-same index. Number of space group operations is found in
-``n_operations``. These ``rotations`` and ``translations`` are
-generated from database for each hall symbol and can be different from
-those obtained by ``spg_get_symmetry`` that doesn't consider if it is
-crystallographically correct or not. ``n_atoms`` is the number of
-atoms of the input cell. ``wyckoffs`` gives Wyckoff letters that are
-assigned to atomic positions of the input cell. The numbers of 0, 1,
-2, :math:`\ldots`, correspond to the a, b, c, :math:`\ldots`,
-respectively. Number of elements in ``wyckoffs`` is same as
-``n_atoms``. The implementation of this Wyckoff position determination
-is now testing. Please send e-mail to atz.togo@gmail.com when you find
-problems.
+``origin_shift`` (:math:`\mathbf{o}`) is the atomic position shift in
+terms of the Bravais lattice. The atomic position shift is measured
+from the standardized cell (conventional unit cell) to the original
+cell in terms of the Bravais lattice. An atomic position in the
+original cell :math:`\mathbf{x}` (input data) is mapped to that in
+Bravais lattice :math:`\mathbf{x}_\mathrm{B}` by
 
-The function to obtain the dataset is as follow:
+.. math::
 
-::
+   \mathbf{x}_\mathrm{B} = \mathrm{M}\mathbf{x} - \mathbf{o} \;\;(\mathrm{mod}\;
+   \mathbf{1}).
 
-  SpglibDataset * spg_get_dataset(const double lattice[3][3],
-                                  const double position[][3],
-                                  const int types[],
-                                  const int num_atom,
-                                  const double symprec);
+Standardized crystal structure
+"""""""""""""""""""""""""""""""
+   
+The standardized crystal structure corresponding to a Hall symbol is
+stored in ``n_brv_atoms``, ``brv_lattice``, ``brv_types``, and ``brv_positions``.
 
 
-Allocated memory is freed by calling ``spg_free_dataset``.
+``spg_free_dataset``
+^^^^^^^^^^^^^^^^^^^^^
+
+Allocated memoery space of the C-structure of ``SpglibDataset`` is
+freed by calling ``spg_free_dataset``.
 
 :: 
 
-  void spg_free_dataset( SpglibDataset *dataset );
+  void spg_free_dataset(SpglibDataset *dataset);
   
 
+``spg_get_spacegroup_type``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This function allows to directly access to the space-group-type
+database in spglib (spg_database.c). To specify the space group type
+with a specific setting, ``hall_number`` is used. The definition of
+``hall_number`` is found at
+:ref:`api_spg_get_dataset_spacegroup_type`.
+
+
+::
+
+   SpglibSpacegroupType spg_get_spacegroup_type(const int hall_number)
+
+``SpglibSpacegroupType`` structure is as follows:
+
+::
+   
+   typedef struct {
+     int number;
+     char schoenflies[7];
+     char hall_symbol[17];
+     char international[32];
+     char international_full[20];
+     char international_short[11];
+   } SpglibSpacegroupType;
+
+
+``spg_get_symmetry_from_database``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This function allows to directly access to the space group operations
+in the spglib database (spg_database.c). To specify the space group
+type with a specific setting, ``hall_number`` is used. The definition
+of ``hall_number`` is found at
+:ref:`api_spg_get_dataset_spacegroup_type`.
+
+::
+
+   int spg_get_symmetry_from_database(int rotations[192][3][3],
+				      double translations[192][3],
+				      const int hall_number);
+
+The returned value is the number of space group operations. The space
+group operations are stored in ``rotations`` and ``translations``.
+  
 ``spg_get_smallest_lattice``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -196,6 +329,25 @@ searched. The lattice is stored in ``smallest_lattice``.
 
 Return exact number of symmetry operations. This function may be used
 in advance to allocate memoery space for symmetry operations.
+
+``spg_get_symmetry_with_collinear_spin``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+::
+
+  int spg_get_symmetry_with_collinear_spin(int rotation[][3][3],
+                                           double translation[][3],
+                                           const int max_size,
+                                           SPGCONST double lattice[3][3],
+                                           SPGCONST double position[][3],
+                                           const int types[],
+                                           const double spins[],
+                                           const int num_atom,
+                                           const double symprec);
+
+Find symmetry operations with collinear spins on atoms. Except for the
+argument of ``const double spins[]``, the usage is same as
+``spg_get_symmetry``.
 
 ``spg_get_ir_reciprocal_mesh``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

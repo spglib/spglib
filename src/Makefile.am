@@ -6,6 +6,7 @@ hall_symbol.c \
 kpoint.c \
 lattice.c \
 mathfunc.c \
+niggli.c \
 pointgroup.c \
 primitive.c \
 refinement.c \
@@ -24,6 +25,7 @@ hall_symbol.h \
 kpoint.h \
 lattice.h \
 mathfunc.h \
+niggli.h \
 pointgroup.h \
 primitive.h \
 refinement.h \
@@ -43,6 +45,7 @@ hall_symbol.h \
 kpoint.h \
 lattice.h \
 mathfunc.h \
+niggli.h \
 pointgroup.h \
 primitive.h \
 refinement.h \

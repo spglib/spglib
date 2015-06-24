@@ -12,6 +12,7 @@
       integer :: hall_number
       character(len=11) :: international_symbol
       character(len=17) :: hall_symbol
+      character(len=6) :: setting
       real(c_double)  :: transformation_matrix(3,3)
       real(c_double)  :: origin_shift(3)
       integer :: n_operations
@@ -20,6 +21,10 @@
       integer :: n_atoms
       integer, allocatable :: wyckoffs(:)
       integer, allocatable :: equivalent_atoms(:) !Beware mapping refers to positions starting at 0
+      integer :: n_brv_atoms
+      real(c_double) :: brv_lattice(3,3)
+      integer, allocatable :: brv_types(:)
+      real(c_double), allocatable :: brv_positions(:,:)
    end type 
   
    
@@ -330,6 +335,7 @@
          integer(c_int) :: hall_number
          character(kind=c_char) :: international_symbol(11)
          character(kind=c_char) :: hall_symbol(17)
+         character(kind=c_char) :: setting(6)
          real(c_double)      :: transformation_matrix(3,3)
          real(c_double) :: origin_shift(3)
          integer(c_int) :: n_operations
@@ -342,6 +348,10 @@
          type(c_ptr) :: wyckoffs
    !       integer(c_int), pointer :: equivalent_atoms(:)
          type(c_ptr) :: equivalent_atoms
+         integer(c_int) :: n_brv_atoms
+         real(c_double) :: brv_lattice(3,3)
+         type(c_ptr) :: brv_types
+         type(c_ptr) :: brv_positions
       end type 
       
       
@@ -363,10 +373,10 @@
       end interface
    
       type(SpglibDataset_c), pointer :: dset_c
-      integer :: n_operations, n_atoms, i
+      integer :: n_operations, n_atoms, n_brv_atoms, i
       
       real(c_double), pointer :: translations(:,:)
-      integer(c_int), pointer :: rotations(:,:,:), wyckoffs(:), equivalent_atoms(:)
+      integer(c_int), pointer :: rotations(:,:,:), wyckoffs(:), equivalent_atoms(:), brv_types(:), brv_positions(:,:)
       
       call c_f_pointer( spg_get_dataset_c(lattice, position, types, num_atom, symprec), dset_c)
       
@@ -376,6 +386,8 @@
       dset % origin_shift          = dset_c % origin_shift         
       dset % n_operations          = dset_c % n_operations         
       dset % n_atoms               = dset_c % n_atoms              
+      dset % n_brv_atoms           = dset_c % n_brv_atoms
+      dset % brv_lattice           = dset_c % brv_lattice
       
       do i = 1, size(dset_c % international_symbol)
          dset % international_symbol(i:i) = dset_c % international_symbol(i)
@@ -384,24 +396,35 @@
       do i = 1, size(dset_c % hall_symbol)
          dset % hall_symbol(i:i) = dset_c % hall_symbol(i)
       end do
+
+      do i = 1, size(dset_c % setting)
+         dset % setting(i:i) = dset_c % setting(i)
+      end do
       
       n_operations = dset_c % n_operations
       n_atoms      = dset_c % n_atoms
+      n_brv_atoms  = dset_c % n_brv_atoms
       
       call c_f_pointer (dset_c % rotations       , rotations       , shape = [3, 3, n_operations])
       call c_f_pointer (dset_c % translations    , translations    , shape = [3,    n_operations])
       call c_f_pointer (dset_c % wyckoffs        , wyckoffs        , shape = [n_atoms])
       call c_f_pointer (dset_c % equivalent_atoms, equivalent_atoms, shape = [n_atoms])
+      call c_f_pointer (dset_c % brv_types       , brv_types       , shape = [n_brv_atoms])
+      call c_f_pointer (dset_c % brv_positions   , brv_positions   , shape = [3, n_brv_atoms])
       
       allocate( dset % rotations       (3, 3, n_operations))
       allocate( dset % translations    (3,    n_operations))
       allocate( dset % wyckoffs        (n_atoms))
       allocate( dset % equivalent_atoms(n_atoms))
+      allocate( dset % brv_types       (n_brv_atoms))
+      allocate( dset % brv_positions   (3, n_brv_atoms))
       
       dset % rotations        = rotations       
       dset % translations     = translations    
       dset % wyckoffs         = wyckoffs        
       dset % equivalent_atoms = equivalent_atoms
+      dset % brv_types        = brv_types
+      dset % brv_positions    = brv_positions
       
       call spg_free_dataset_c(dset_c)
       

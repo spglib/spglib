@@ -3,6 +3,7 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "lattice.h"
 #include "pointgroup.h"
 #include "symmetry.h"
@@ -15,200 +16,240 @@
 typedef struct {
   int table[10];
   char symbol[6];
+  char schoenflies[4];
   Holohedry holohedry;
   Laue laue;
 } PointgroupType;
 
-static PointgroupType pointgroup_data[32] = {
-  {
+static PointgroupType pointgroup_data[33] = {
+  { /* 0 */
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    "     ",
+    "   ",
+    HOLOHEDRY_NONE,
+    LAUE_NONE,
+  },
+  { /* 1 */
     {0, 0, 0, 0, 0, 1, 0, 0, 0, 0},
     "1    ",
+    "C1 ",
     TRICLI,
     LAUE1,
   },
-  {
+  { /* 2 */
     {0, 0, 0, 0, 1, 1, 0, 0, 0, 0},
     "-1   ",
+    "Ci ",
     TRICLI,
     LAUE1,
   },
-  {
+  { /* 3 */
     {0, 0, 0, 0, 0, 1, 1, 0, 0, 0},
     "2    ",
+    "C2 ",
     MONOCLI,
     LAUE2M,
   },
-  {
+  { /* 4 */
     {0, 0, 0, 1, 0, 1, 0, 0, 0, 0},
     "m    ",
+    "Cs ",
     MONOCLI,
     LAUE2M,
   },
-  {
+  { /* 5 */
     {0, 0, 0, 1, 1, 1, 1, 0, 0, 0},
     "2/m  ",
+    "C2h",
     MONOCLI,
     LAUE2M,
   },
-  {
+  { /* 6 */
     {0, 0, 0, 0, 0, 1, 3, 0, 0, 0},
     "222  ",
+    "D2 ",
     ORTHO,
     LAUEMMM,
   },
-  {
+  { /* 7 */
     {0, 0, 0, 2, 0, 1, 1, 0, 0, 0},
     "mm2  ",
+    "C2v",
     ORTHO,
     LAUEMMM,
   },
-  {
+  { /* 8 */
     {0, 0, 0, 3, 1, 1, 3, 0, 0, 0},
     "mmm  ",
+    "D2h",
     ORTHO,
     LAUEMMM,
   },
-  {
+  { /* 9 */
     {0, 0, 0, 0, 0, 1, 1, 0, 2, 0},
     "4    ",
+    "C4 ",
     TETRA,
     LAUE4M,
   },
-  {
+  { /* 10 */
     {0, 2, 0, 0, 0, 1, 1, 0, 0, 0},
     "-4   ",
+    "S4 ",
     TETRA,
     LAUE4M,
   },
-  {
+  { /* 11 */
     {0, 2, 0, 1, 1, 1, 1, 0, 2, 0},
     "4/m  ",
+    "C4h",
     TETRA,
     LAUE4M,
   },
-  {
+  { /* 12 */
     {0, 0, 0, 0, 0, 1, 5, 0, 2, 0},
     "422  ",
+    "D4 ",
     TETRA,
     LAUE4MMM,
   },
-  {
+  { /* 13 */
     {0, 0, 0, 4, 0, 1, 1, 0, 2, 0},
     "4mm  ",
+    "C4v",
     TETRA,
     LAUE4MMM,
   },
-  {
+  { /* 14 */
     {0, 2, 0, 2, 0, 1, 3, 0, 0, 0},
     "-42m ",
+    "D2d",
     TETRA,
     LAUE4MMM,
   },
-  {
+  { /* 15 */
     {0, 2, 0, 5, 1, 1, 5, 0, 2, 0},
     "4/mmm",
+    "D4h",
     TETRA,
     LAUE4MMM,
   },
-  {
+  { /* 16 */
     {0, 0, 0, 0, 0, 1, 0, 2, 0, 0},
     "3    ",
+    "C3 ",
     TRIGO,
     LAUE3,
   },
-  {
+  { /* 17 */
     {0, 0, 2, 0, 1, 1, 0, 2, 0, 0},
     "-3   ",
+    "C3i",
     TRIGO,
     LAUE3,
   },
-  {
+  { /* 18 */
     {0, 0, 0, 0, 0, 1, 3, 2, 0, 0},
     "32   ",
+    "D3 ",
     TRIGO,
     LAUE3M,
   },
-  {
+  { /* 19 */
     {0, 0, 0, 3, 0, 1, 0, 2, 0, 0},
     "3m   ",
+    "C3v",
     TRIGO,
     LAUE3M,
   },
-  {
+  { /* 20 */
     {0, 0, 2, 3, 1, 1, 3, 2, 0, 0},
     "-3m  ",
+    "D3d",
     TRIGO,
     LAUE3M,
   },
-  {
+  { /* 21 */
     {0, 0, 0, 0, 0, 1, 1, 2, 0, 2},
     "6    ",
+    "C6 ",
     HEXA,
     LAUE6M,
   },
-  {
+  { /* 22 */
     {2, 0, 0, 1, 0, 1, 0, 2, 0, 0},
     "-6   ",
+    "C3h",
     HEXA,
     LAUE6M,
   },
-  {
+  { /* 23 */
     {2, 0, 2, 1, 1, 1, 1, 2, 0, 2},
     "6/m  ",
+    "C6h",
     HEXA,
     LAUE6M,
   },
-  {
+  { /* 24 */
     {0, 0, 0, 0, 0, 1, 7, 2, 0, 2},
     "622  ",
+    "D6 ",
     HEXA,
     LAUE6MMM,
   },
-  {
+  { /* 25 */
     {0, 0, 0, 6, 0, 1, 1, 2, 0, 2},
     "6mm  ",
+    "C6v",
     HEXA,
     LAUE6MMM,
   },
-  {
+  { /* 26 */
     {2, 0, 0, 4, 0, 1, 3, 2, 0, 0},
     "-6m2 ",
+    "D3h",
     HEXA,
     LAUE6MMM,
   },
-  {
+  { /* 27 */
     {2, 0, 2, 7, 1, 1, 7, 2, 0, 2},
     "6/mmm",
+    "D6h",
     HEXA,
     LAUE6MMM,
   },
-  {
+  { /* 28 */
     {0, 0, 0, 0, 0, 1, 3, 8, 0, 0},
     "23   ",
+    "T  ",
     CUBIC,
     LAUEM3,
   },
-  {
+  { /* 29 */
     {0, 0, 8, 3, 1, 1, 3, 8, 0, 0},
     "m-3  ",
+    "Th ",
     CUBIC,
     LAUEM3,
   },
-  {
+  { /* 30 */
     {0, 0, 0, 0, 0, 1, 9, 8, 6, 0},
     "432  ",
+    "O  ",
     CUBIC,
     LAUEM3M,
   },
-  {
+  { /* 31 */
     {0, 6, 0, 6, 0, 1, 3, 8, 0, 0},
     "-43m ",
+    "Td ",
     CUBIC,
     LAUEM3M,
   },
-  {
+  { /* 32 */
     {0, 6, 8, 9, 1, 1, 9, 8, 6, 0},
     "m-3m ",
+    "Oh ",
     CUBIC,
     LAUEM3M,
   }
@@ -302,9 +343,8 @@ static int rot_axes[][3] = {
   { 3,-1,-1},
 };
 
-static void set_transformation_matrix(Pointgroup * pointgroup,
-				      SPGCONST int rotations[][3][3],
-				      const int num_rotations);
+static int get_pointgroup_number_by_rotations(SPGCONST int rotations[][3][3],
+					      const int num_rotations);
 static PointSymmetry get_pointsymmetry(SPGCONST int rotations[][3][3],
 				       const int num_rotations);
 static int get_pointgroup_number(SPGCONST PointSymmetry * pointsym);
@@ -318,7 +358,7 @@ static int get_orthogonal_axis(int ortho_axes[],
 static int laue2m(int axes[3],
 		  SPGCONST PointSymmetry * pointsym);
 
-#ifdef DEBUG
+#ifdef SPGDEBUG
 static int lauemmm(int axes[3],
 		   SPGCONST PointSymmetry * pointsym);
 static int laue4m(int axes[3],
@@ -344,28 +384,41 @@ static int get_axes(int axes[3],
 		    SPGCONST PointSymmetry * pointsym);
 static void get_proper_rotation(int prop_rot[3][3],
 				SPGCONST int rot[3][3]);
-static void get_transformation_matrix(int tmat[3][3],
+static void set_transformation_matrix(int tmat[3][3],
 				      const int axes[3]);
 static int is_exist_axis(const int axis_vec[3], const int axis_index);
 static void sort_axes(int axes[3]);
 
 
-int ptg_get_pointgroup_number(const Symmetry * symmetry)
+Pointgroup ptg_get_transformation_matrix(int transform_mat[3][3],
+					 SPGCONST int rotations[][3][3],
+					 const int num_rotations)
 {
+  int i, j, pg_num;
+  int axes[3];
   PointSymmetry pointsym;
+  Pointgroup pointgroup;
 
-  pointsym = get_pointsymmetry(symmetry->rot,
-			       symmetry->size);
-  return get_pointgroup_number(&pointsym);
-}
+  debug_print("ptg_get_transformation_matrix:\n");
 
-int ptg_get_pointgroup_number_by_rotations(SPGCONST int rotations[][3][3],
-					   const int num_rotations)
-{
-  PointSymmetry pointsym;
+  for (i = 0; i < 3; i++) {
+    for (j = 0; j < 3; j++) {
+      transform_mat[i][j] = 0;
+    }
+  }
+  
+  pg_num = get_pointgroup_number_by_rotations(rotations, num_rotations);
+  
+  if (pg_num > 0) {
+    pointgroup = ptg_get_pointgroup(pg_num);
+    pointsym = get_pointsymmetry(rotations, num_rotations);
+    get_axes(axes, pointgroup.laue, &pointsym);
+    set_transformation_matrix(transform_mat, axes);
+  } else {
+    pointgroup = ptg_get_pointgroup(0);
+  }    
 
-  pointsym = get_pointsymmetry(rotations, num_rotations);
-  return get_pointgroup_number(&pointsym);
+  return pointgroup;
 }
 
 Pointgroup ptg_get_pointgroup(const int pointgroup_number)
@@ -373,8 +426,9 @@ Pointgroup ptg_get_pointgroup(const int pointgroup_number)
   int i;
   Pointgroup pointgroup;
   PointgroupType pointgroup_type;
-  
-  pointgroup_type = pointgroup_data[ pointgroup_number ];
+
+  pointgroup.number = pointgroup_number;
+  pointgroup_type = pointgroup_data[pointgroup_number];
   strcpy(pointgroup.symbol, pointgroup_type.symbol);
   for (i = 0; i < 5; i++) {
     if (pointgroup.symbol[i] == ' ') {pointgroup.symbol[i] = '\0';}
@@ -387,55 +441,13 @@ Pointgroup ptg_get_pointgroup(const int pointgroup_number)
   return pointgroup;
 }
 
-Centering ptg_get_transformation_matrix(double trans_mat[3][3],
-					SPGCONST int rotations[][3][3],
-					const int num_rotations)
+static int get_pointgroup_number_by_rotations(SPGCONST int rotations[][3][3],
+					      const int num_rotations)
 {
-  int pg_num;
-  double correction_mat[3][3];
-  Centering centering;
-  Pointgroup pointgroup;
-
-  debug_print("ptg_get_transformation_matrix:\n");
-
-  pg_num = ptg_get_pointgroup_number_by_rotations(rotations,
-						  num_rotations);
-  pointgroup = ptg_get_pointgroup(pg_num);
-  set_transformation_matrix(&pointgroup, rotations, num_rotations);
-
-  debug_print("transformation matrix:\n");
-  debug_print_matrix_i3(pointgroup.transform_mat);
-
-  /* Centering is not determined only from symmetry operations */
-  /* sometimes. Therefore centering and transformation matrix are */
-  /* related. */
-  centering = lat_get_centering(correction_mat,
-				pointgroup.transform_mat,
-				pointgroup.laue);
-
-  mat_multiply_matrix_id3(trans_mat,
-			  pointgroup.transform_mat,
-			  correction_mat);
-
-  debug_print("correction matrix:\n");
-  debug_print_matrix_d3(correction_mat);
-
-  return centering;
-}
-
-/* pointgroup is modified. */
-static void set_transformation_matrix(Pointgroup * pointgroup,
-				      SPGCONST int rotations[][3][3],
-				      const int num_rotations)
-{
-  int axes[3];
-  int transform_mat[3][3];
   PointSymmetry pointsym;
 
   pointsym = get_pointsymmetry(rotations, num_rotations);
-  get_axes(axes, pointgroup->laue, &pointsym);
-  get_transformation_matrix(transform_mat, axes);
-  mat_copy_matrix_i3(pointgroup->transform_mat, transform_mat);
+  return get_pointgroup_number(&pointsym);
 }
 
 static PointSymmetry get_pointsymmetry(SPGCONST int rotations[][3][3],
@@ -467,19 +479,20 @@ static int get_pointgroup_number(SPGCONST PointSymmetry * pointsym)
   PointgroupType pointgroup_type;
 
   debug_print("get_pointgroup_number:");
+
+
+  pg_num = 0;
   
   /* Get list of point symmetry operations */
   if (! get_pointgroup_class_table(table, pointsym)) {
-    pg_num = -1;
     goto end;
   }
 
-  pg_num = -1;
-  for (i = 0; i < 32; i++) {
+  for (i = 1; i < 33; i++) {
     counter = 0;
-    pointgroup_type = pointgroup_data[ i ];
+    pointgroup_type = pointgroup_data[i];
     for (j = 0; j < 10; j++) {
-      if (pointgroup_type.table[j] == table[j]) { counter++; }
+      if (pointgroup_type.table[j] == table[j]) {counter++;}
     }
     if (counter == 10) {
       pg_num = i;
@@ -678,7 +691,7 @@ static int laue2m(int axes[3],
   }
   if (! is_found) { goto err; }
 
-  get_transformation_matrix(t_mat, axes);
+  set_transformation_matrix(t_mat, axes);
   if (mat_get_determinant_i3(t_mat) < 0) {
     tmpval = axes[0];
     axes[0] = axes[2];
@@ -691,7 +704,7 @@ static int laue2m(int axes[3],
   return 0;
 }
 
-#ifdef DEBUG
+#ifdef SPGDEBUG
 static int lauemmm(int axes[3],
 		   SPGCONST PointSymmetry * pointsym)
 {
@@ -770,7 +783,7 @@ static int laue4m(int axes[3],
   }
   if (! is_found) { goto err; }
 
-  get_transformation_matrix(t_mat, axes);
+  set_transformation_matrix(t_mat, axes);
   if (mat_get_determinant_i3(t_mat) < 0) {
     tmpval = axes[0];
     axes[0] = axes[1];
@@ -833,7 +846,7 @@ static int laue4mmm(int axes[3],
   }
   if (! is_found) { goto err; }
 
-  get_transformation_matrix(t_mat, axes);
+  set_transformation_matrix(t_mat, axes);
   if (mat_get_determinant_i3(t_mat) < 0) {
     tmpval = axes[0];
     axes[0] = axes[1];
@@ -896,7 +909,7 @@ static int laue3(int axes[3],
   }
   if (! is_found) { goto err; }
 
-  get_transformation_matrix(t_mat, axes);
+  set_transformation_matrix(t_mat, axes);
   if (mat_get_determinant_i3(t_mat) < 0) {
     tmpval = axes[0];
     axes[0] = axes[1];
@@ -964,7 +977,7 @@ static int laue3m(int axes[3],
   }
   if (! is_found) { goto err; }
 
-  get_transformation_matrix(t_mat, axes);
+  set_transformation_matrix(t_mat, axes);
   if (mat_get_determinant_i3(t_mat) < 0) {
     tmpval = axes[0];
     axes[0] = axes[1];
@@ -1012,7 +1025,7 @@ static int laue_one_axis(int axes[3],
 			 SPGCONST PointSymmetry * pointsym,
 			 const int rot_order)
 {
-  int i, j, num_ortho_axis, det, min_det, is_found, tmpval;
+  int i, j, num_ortho_axis, det, is_found, tmpval;
   int axis_vec[3], tmp_axes[3];
   int prop_rot[3][3], t_mat[3][3];
   int ortho_axes[NUM_ROT_AXES];
@@ -1045,10 +1058,10 @@ static int laue_one_axis(int axes[3],
   num_ortho_axis = get_orthogonal_axis(ortho_axes, prop_rot, rot_order);
   if (! num_ortho_axis) { goto err; }
 
+  tmp_axes[1] = -1;
   tmp_axes[2] = axes[2];
-  min_det = 4;
-  is_found = 0;
   for (i = 0; i < num_ortho_axis; i++) {
+    is_found = 0;
     tmp_axes[0] = ortho_axes[i];
     mat_multiply_matrix_vector_i3(axis_vec,
 				  prop_rot,
@@ -1065,23 +1078,24 @@ static int laue_one_axis(int axes[3],
       }
     }
 
-    get_transformation_matrix(t_mat, tmp_axes);
-    det = mat_get_determinant_i3(t_mat);
-    if (det < 0) { det = -det; }
-    if (det < min_det) {
-      min_det = det;
+    if (!is_found) { continue; }
+    
+    set_transformation_matrix(t_mat, tmp_axes);
+    det = abs(mat_get_determinant_i3(t_mat));
+    if (det < 4) { /* to avoid F-center choice det=4 */
       axes[0] = tmp_axes[0];
       axes[1] = tmp_axes[1];
+      goto end;
     }
-
-    if (is_found) { goto end; }
   }
 
  err: /* axes are not correctly found. */
+  warning_print("spglib: Secondary axis is not found.");
+  warning_print("(line %d, %s).\n", __LINE__, __FILE__);
   return 0;
 
  end:
-  get_transformation_matrix(t_mat, axes);
+  set_transformation_matrix(t_mat, axes);
   if (mat_get_determinant_i3(t_mat) < 0) {
     tmpval = axes[0];
     axes[0] = axes[1];
@@ -1148,7 +1162,7 @@ static int get_rotation_axis(SPGCONST int proper_rot[3][3])
   }
   
  end:
-#ifdef DEBUG
+#ifdef SPGDEBUG
   if (axis == -1) {
     printf("rotation axis cound not found.\n");
   }
@@ -1197,7 +1211,7 @@ static void get_proper_rotation(int prop_rot[3][3],
   }
 }
 
-static void get_transformation_matrix(int tmat[3][3],
+static void set_transformation_matrix(int tmat[3][3],
 				      const int axes[3])
 {
   int i, j, s[3];
@@ -1250,7 +1264,7 @@ static void sort_axes(int axes[3])
     axes[2] = axis;
   }
 
-  get_transformation_matrix(t_mat, axes);
+  set_transformation_matrix(t_mat, axes);
   if (mat_get_determinant_i3(t_mat) < 0) {
     axis = axes[1];
     axes[1] = axes[2];
