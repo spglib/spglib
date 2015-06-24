@@ -136,19 +136,19 @@ Primitive * prm_transform_to_primitive(SPGCONST Cell * cell,
     mat_copy_matrix_d3(tmat, trans_mat_Bravais);
     break;
   case A_FACE:
-    mat_multiply_matrix_d3(tmat, A_mat,  trans_mat_Bravais);
+    mat_multiply_matrix_d3(tmat, trans_mat_Bravais, A_mat);
     break;
   case C_FACE:
-    mat_multiply_matrix_d3(tmat, C_mat,  trans_mat_Bravais);
+    mat_multiply_matrix_d3(tmat, trans_mat_Bravais, C_mat);
     break;
   case FACE:
-    mat_multiply_matrix_d3(tmat, F_mat,  trans_mat_Bravais);
+    mat_multiply_matrix_d3(tmat, trans_mat_Bravais, F_mat);
     break;
   case BODY:
-    mat_multiply_matrix_d3(tmat, I_mat,  trans_mat_Bravais);
+    mat_multiply_matrix_d3(tmat, trans_mat_Bravais, I_mat);
     break;
   case R_CENTER:
-    mat_multiply_matrix_d3(tmat, R_mat,  trans_mat_Bravais);
+    mat_multiply_matrix_d3(tmat, trans_mat_Bravais, R_mat);
     break;
   default:
     goto err;
@@ -160,8 +160,8 @@ Primitive * prm_transform_to_primitive(SPGCONST Cell * cell,
   }
 
   mat_multiply_matrix_d3(primitive->cell->lattice,
-			 tmat,
-			 cell->lattice);
+			 cell->lattice,
+			 tmat);
 
   if (trim_cell(primitive->cell,
 		primitive->mapping_table,
