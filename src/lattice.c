@@ -121,7 +121,7 @@ static Centering get_centering(double correction_mat[3][3],
     }
   }
   if (det == 3) {
-    /* hR (a=b) but not hP (a=b=c) */
+    /* hP (a=b) but not hR (a=b=c) */
     centering = R_CENTER;
     mat_multiply_matrix_id3(trans_corr_mat, transform_mat, rhombo_obverse);
     if (mat_is_int_matrix(trans_corr_mat, INT_PREC)) {

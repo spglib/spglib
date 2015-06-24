@@ -209,6 +209,19 @@ int spgat_find_primitive(double lattice[3][3],
 			 const double symprec,
 			 const double angle_tolerance);
 
+int spg_find_standardized_primitive(double lattice[3][3],
+				    double position[][3],
+				    int types[],
+				    const int num_atom,
+				    const double symprec);
+
+int spgat_find_standardized_primitive(double lattice[3][3],
+				      double position[][3],
+				      int types[],
+				      const int num_atom,
+				      const double symprec,
+				      const double angle_tolerance);
+
 /* Space group is found in international table symbol (``symbol``) and */
 /* number (return value). 0 is returned when it fails. */
 int spg_get_international(char symbol[11],

@@ -64,11 +64,11 @@ static int find_primitive(double lattice[3][3],
 			  int types[],
 			  const int num_atom,
 			  const double symprec);
-static int find_primitive_from_db(double lattice[3][3],
-				  double position[][3],
-				  int types[],
-				  const int num_atom,
-				  const double symprec);
+static int find_standardized_primitive(double lattice[3][3],
+				       double position[][3],
+				       int types[],
+				       const int num_atom,
+				       const double symprec);
 static void set_primitive(double lattice[3][3],
 			  double position[][3],
 			  int types[],
@@ -400,6 +400,39 @@ int spgat_find_primitive(double lattice[3][3],
 			types,
 			num_atom,
 			symprec);
+}
+
+/* Return 0 if failed */
+int spg_find_standardized_primitive(double lattice[3][3],
+				    double position[][3],
+				    int types[],
+				    const int num_atom,
+				    const double symprec)
+{
+  sym_set_angle_tolerance(-1.0);
+
+  return find_standardized_primitive(lattice,
+				     position,
+				     types,
+				     num_atom,
+				     symprec);
+}
+
+/* Return 0 if failed */
+int spgat_find_standardized_primitive(double lattice[3][3],
+				      double position[][3],
+				      int types[],
+				      const int num_atom,
+				      const double symprec,
+				      const double angle_tolerance)
+{
+  sym_set_angle_tolerance(angle_tolerance);
+
+  return find_standardized_primitive(lattice,
+				     position,
+				     types,
+				     num_atom,
+				     symprec);
 }
 
 /* Return 0 if failed */
@@ -1208,11 +1241,11 @@ static int find_primitive(double lattice[3][3],
   return num_prim_atom;
 }
 
-static int find_primitive_from_db(double lattice[3][3],
-				  double position[][3],
-				  int types[],
-				  const int num_atom,
-				  const double symprec)
+static int find_standardized_primitive(double lattice[3][3],
+				       double position[][3],
+				       int types[],
+				       const int num_atom,
+				       const double symprec)
 {
   int num_prim_atom;
   Centering centering;

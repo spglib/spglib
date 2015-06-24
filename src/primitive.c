@@ -131,12 +131,6 @@ Primitive * prm_transform_to_primitive(SPGCONST Cell * cell,
     return NULL;
   }
 
-  multi = mat_Nint(1.0 / mat_get_determinant_d3(trans_mat_Bravais));
-
-  if ((primitive->cell = cel_alloc_cell(cell->size / multi)) == NULL) {
-    goto err;
-  }
-
   switch (centering) {
   case NO_CENTER:
     mat_copy_matrix_d3(tmat, trans_mat_Bravais);
@@ -159,6 +153,15 @@ Primitive * prm_transform_to_primitive(SPGCONST Cell * cell,
   default:
     goto err;
   }
+
+  multi = mat_Nint(1.0 / mat_get_determinant_d3(tmat));
+  if ((primitive->cell = cel_alloc_cell(cell->size / multi)) == NULL) {
+    goto err;
+  }
+
+  mat_multiply_matrix_d3(primitive->cell->lattice,
+			 tmat,
+			 cell->lattice);
 
   if (trim_cell(primitive->cell,
 		primitive->mapping_table,
