@@ -13,8 +13,7 @@ VALUE method_getspg(VALUE self,
 		    VALUE r_angle_symprec);
 VALUE method_getptg(VALUE self,
 		    VALUE r_rotations);
-VALUE method_get_operations(VALUE self,
-			    VALUE r_size,
+VALUE method_find_primitive(VALUE self,
 			    VALUE r_lattice,
 			    VALUE r_position,
 			    VALUE r_types,
@@ -31,60 +30,9 @@ VALUE method_get_dataset(VALUE self,
 void Init_getspg(void)
 {
   Getspg = rb_define_module("Getspg");
-  rb_define_method(Getspg, "getspg", method_getspg, 6);
   rb_define_method(Getspg, "getptg", method_getptg, 1);
-  rb_define_method(Getspg, "get_operations", method_get_operations, 6);
+  rb_define_method(Getspg, "find_primitive", method_find_primitive, 5);
   rb_define_method(Getspg, "get_dataset", method_get_dataset, 6);
-}
-
-VALUE method_getspg(VALUE self,
-		    VALUE r_size,
-		    VALUE r_lattice,
-		    VALUE r_position,
-		    VALUE r_types,
-		    VALUE r_symprec,
-		    VALUE r_angle_symprec)
-{
-  int i, j, size, spgroup;
-  double symprec, lattice[3][3];
-  VALUE array;
-     
-  size = NUM2INT(r_size);
-     
-  double position[size*4][3];
-  int types[size*4];
-  char symbol[21];
-  char output[21];
-
-  symprec = NUM2DBL(r_symprec);
-
-  for (i=0; i<size; i++)
-    for (j=0; j<3; j++) {
-      position[i][j] =
-	NUM2DBL(rb_ary_entry(rb_ary_entry(r_position, i), j));
-      types[i] = NUM2DBL(rb_ary_entry(r_types, i));
-    }
-
-  for (i=0; i<3; i++)
-    for (j=0; j<3; j++)
-      lattice[i][j] =
-	NUM2DBL(rb_ary_entry(rb_ary_entry(r_lattice, i), j));
-
-  /* Space group */
-  spgroup = spgat_get_international(symbol,
-				    lattice,
-				    position,
-				    types,
-				    size,
-				    symprec,
-				    NUM2DBL(r_angle_symprec));
-  sprintf(output, "%s", symbol);
-
-  array = rb_ary_new();
-  rb_ary_push(array, rb_str_new2(output));
-  rb_ary_push(array, INT2NUM(spgroup));
-
-  return array;
 }
 
 VALUE method_getptg(VALUE self, VALUE r_rotations)
@@ -122,72 +70,68 @@ VALUE method_getptg(VALUE self, VALUE r_rotations)
   return array;
 }
 
-VALUE method_get_operations(VALUE self,
-			    VALUE r_size,
+VALUE method_find_primitive(VALUE self,
 			    VALUE r_lattice,
 			    VALUE r_position,
 			    VALUE r_types,
 			    VALUE r_symprec,
 			    VALUE r_angle_symprec)
 {
-  int i, j, k, num_atom, num_sym;
+  int i, j, k, num_atom, num_prim_atom;
   double symprec, lattice[3][3];
-  VALUE matrix, matrix_row, vector, array, r_rotation, r_translation;
+  VALUE array, vector, lat_ary, pos_ary, typ_ary;
      
-  num_atom = NUM2INT(r_size);
+  num_atom = RARRAY_LEN(r_types);
      
   double position[num_atom][3];
   int types[num_atom];
-  int rotation[num_atom*48][3][3];
-  double translation[num_atom*48][3];
 
   symprec = NUM2DBL(r_symprec);
 
-  for (i=0; i<num_atom; i++) {
-    for (j=0; j<3; j++) {
-      position[i][j] =
-	NUM2DBL(rb_ary_entry(rb_ary_entry(r_position, i), j));
+  for (i = 0; i < num_atom; i++) {
+    for (j = 0; j < 3; j++) {
+      position[i][j] = NUM2DBL(rb_ary_entry(rb_ary_entry(r_position, i), j));
       types[i] = NUM2DBL(rb_ary_entry(r_types, i));
     }
   }
 
-  for (i=0; i<3; i++) 
-    for (j=0; j<3; j++)
-      lattice[i][j] =
-	NUM2DBL(rb_ary_entry(rb_ary_entry(r_lattice, i), j));
-
-  num_sym = spgat_get_symmetry(rotation,
-			       translation,
-			       num_atom*192,
-			       lattice,
-			       position,
-			       types,
-			       num_atom,
-			       symprec,
-			       NUM2DBL(r_angle_symprec));
-
-  
-  r_rotation = rb_ary_new();
-  r_translation = rb_ary_new();
-
-  for ( i = 0; i < num_sym; i++ ) {
-    vector = rb_ary_new();
-    matrix = rb_ary_new();
-    for ( j = 0; j < 3 ; j++ ) {
-      rb_ary_push( vector, rb_float_new( translation[i][j] ) );
-      matrix_row = rb_ary_new();
-      for ( k = 0; k < 3; k++ ) {
-	rb_ary_push( matrix_row, INT2NUM( rotation[i][j][k] ) );
-      }
-      rb_ary_push( matrix, matrix_row );
+  for (i = 0; i < 3; i++) {
+    for (j = 0; j < 3; j++) {
+      lattice[i][j] = NUM2DBL(rb_ary_entry(rb_ary_entry(r_lattice, i), j));
     }
-    rb_ary_push( r_rotation, matrix );
-    rb_ary_push( r_translation, vector );
   }
 
+  num_prim_atom = spgat_find_standardized_primitive(lattice,
+						    position,
+						    types,
+						    num_atom,
+						    symprec,
+						    NUM2DBL(r_angle_symprec));
+  
   array = rb_ary_new();
-  rb_ary_push(array, r_rotation);
-  rb_ary_push(array, r_translation);
+  lat_ary = rb_ary_new();
+  for (i = 0; i < 3 ; i++) {
+    vector = rb_ary_new();
+    for (j = 0; j < 3; j++) {
+      rb_ary_push(vector, rb_float_new(lattice[i][j]));
+    }
+    rb_ary_push(lat_ary, vector);
+  }
+  rb_ary_push(array, lat_ary);
+
+  pos_ary = rb_ary_new();
+  typ_ary = rb_ary_new();
+  for (i = 0; i < num_prim_atom; i++) {
+    vector = rb_ary_new();
+    rb_ary_push(typ_ary, INT2NUM(types[i]));
+    for (j = 0; j < 3 ; j++) {
+      rb_ary_push(vector, rb_float_new(position[i][j]));
+    }
+    rb_ary_push(pos_ary, vector);
+  }
+
+  rb_ary_push(array, pos_ary);
+  rb_ary_push(array, typ_ary);
 
   return array;
 }
@@ -214,16 +158,14 @@ VALUE method_get_dataset(VALUE self,
 
   for (i = 0; i < num_atom; i++) {
     for (j = 0; j < 3; j++) {
-      position[i][j] =
-	NUM2DBL(rb_ary_entry(rb_ary_entry(r_position, i), j));
+      position[i][j] = NUM2DBL(rb_ary_entry(rb_ary_entry(r_position, i), j));
       types[i] = NUM2DBL(rb_ary_entry(r_types, i));
     }
   }
 
   for (i = 0; i < 3; i++) {
     for (j = 0; j < 3; j++) {
-      lattice[i][j] =
-	NUM2DBL(rb_ary_entry(rb_ary_entry(r_lattice, i), j));
+      lattice[i][j] = NUM2DBL(rb_ary_entry(rb_ary_entry(r_lattice, i), j));
     }
   }
 
