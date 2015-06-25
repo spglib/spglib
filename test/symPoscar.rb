@@ -53,7 +53,7 @@ spg2hall = [0,
             517, 518, 520, 521, 523, 524, 525, 527, 529, 530,
             531]
 
-def show_dataset(dataset, nonewline, is_long_output, is_dataset, is_operations)
+def show_dataset(dataset, lattice, nonewline, is_long_output, is_dataset, is_operations)
   spgnum, spg, hallnum, hall_symbol, setting, t_mat, o_shift,
   rotations, translations, wyckoffs,
   brv_lattice, brv_types, brv_positions = dataset
@@ -192,6 +192,7 @@ options.angle_tolerance = -1.0
 options.nonewline = false
 options.pos_shift = [0,0,0]
 options.shift_string = false
+options.show_primitive = false
 options.is_long_output = false
 options.is_operations = false
 options.is_dataset = false
@@ -231,6 +232,10 @@ OptionParser.new do |opts|
     options.is_check_settings = true
   end
 
+  opts.on('--primitive', 'Show primitive cell') do
+    options.show_primitive = true
+  end
+
   opts.on('--to_c', 'Convert to C code') do
     options.to_c = true
   end
@@ -258,6 +263,7 @@ dataset = get_dataset(lattice,
 if not dataset.empty?
   if not options.is_check_settings
     show_dataset(dataset,
+                 lattice,
                  options.nonewline,
                  options.is_long_output,
                  options.is_dataset,
@@ -279,4 +285,25 @@ if not dataset.empty?
       puts "#{i + 1}: #{spg.strip} (#{spgnum}) / #{ptg_symbol} / #{hall_symbol.strip} (#{hallnum}) / #{setting}"
     }
   end
+end
+
+if options.show_primitive
+  lat_ary, pos_ary, typ_ary = find_primitive(lattice,
+                                             position,
+                                             types,
+                                             options.symprec,
+                                             options.angle_tolerance)
+
+  atoms = []
+  atomName = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(//)
+  typ_ary.size.times do |i|
+    atoms.push(Vasp::Atom.new(pos_ary[i], name=atomName[typ_ary[i]]))
+  end
+
+  axis = [[lat_ary[0][0], lat_ary[1][0], lat_ary[2][0]],
+          [lat_ary[0][1], lat_ary[1][1], lat_ary[2][1]],
+          [lat_ary[0][2], lat_ary[1][2], lat_ary[2][2]]]
+  cell = Crystal::Cell.new(axis, atoms, comment="")
+  
+  Vasp::CellToPoscar.new(cell).print
 end

@@ -1,3 +1,20 @@
+2015-06-25  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.8
+
+	Relatively large code refactoring was made. Especially
+	'primitive.c' was changed a lot.
+
+	Write license statement (New BSD) in the source codes.
+
+	* src/spglib.c:
+
+	A new function 'spg_find_standardized_primitive' is
+	implemented. This function allows to create a primitive cell from
+	the obtained standardized conventional unit cell with
+	transformation using pre-determined choice of centring basis
+	vectors.
+
 2015-06-15  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.7.4

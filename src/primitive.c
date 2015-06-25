@@ -1,5 +1,36 @@
-/* primitive.c */
 /* Copyright (C) 2008 Atsushi Togo */
+/* All rights reserved. */
+
+/* This file is part of spglib. */
+
+/* Redistribution and use in source and binary forms, with or without */
+/* modification, are permitted provided that the following conditions */
+/* are met: */
+
+/* * Redistributions of source code must retain the above copyright */
+/*   notice, this list of conditions and the following disclaimer. */
+
+/* * Redistributions in binary form must reproduce the above copyright */
+/*   notice, this list of conditions and the following disclaimer in */
+/*   the documentation and/or other materials provided with the */
+/*   distribution. */
+
+/* * Neither the name of the phonopy project nor the names of its */
+/*   contributors may be used to endorse or promote products derived */
+/*   from this software without specific prior written permission. */
+
+/* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS */
+/* "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT */
+/* LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS */
+/* FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE */
+/* COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, */
+/* INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, */
+/* BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; */
+/* LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER */
+/* CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT */
+/* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN */
+/* ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE */
+/* POSSIBILITY OF SUCH DAMAGE. */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,6 +46,22 @@
 
 #define INCREASE_RATE 2.0
 #define REDUCE_RATE 0.95
+
+static double A_mat[3][3] = {{    1,    0,    0},
+			     {    0, 1./2,-1./2},
+			     {    0, 1./2, 1./2}};
+static double C_mat[3][3] = {{ 1./2, 1./2,    0},
+			     {-1./2, 1./2,    0},
+			     {    0,    0,    1}};
+static double R_mat[3][3] = {{ 2./3,-1./3,-1./3 },
+			     { 1./3, 1./3,-2./3 },
+			     { 1./3, 1./3, 1./3 }};
+static double I_mat[3][3] = {{-1./2, 1./2, 1./2 },
+			     { 1./2,-1./2, 1./2 },
+			     { 1./2, 1./2,-1./2 }};
+static double F_mat[3][3] = {{    0, 1./2, 1./2 },
+			     { 1./2,    0, 1./2 },
+			     { 1./2, 1./2,    0 }};
 
 static Primitive * get_primitive(SPGCONST Cell * cell, const double symprec);
 static void set_primitive_positions(Cell * primitive_cell,
@@ -102,9 +149,68 @@ Primitive * prm_get_primitive(SPGCONST Cell * cell, const double symprec)
 }
 
 /* Return NULL if failed */
+Primitive * prm_transform_to_primitive(SPGCONST Cell * cell,
+				       SPGCONST double trans_mat_Bravais[3][3],
+				       const Centering centering,
+				       const double symprec)
+{
+  int multi;
+  double tmat[3][3];
+  Primitive * primitive;
+
+  if ((primitive = prm_alloc_primitive(cell->size)) == NULL) {
+    return NULL;
+  }
+
+  switch (centering) {
+  case NO_CENTER:
+    mat_copy_matrix_d3(tmat, trans_mat_Bravais);
+    break;
+  case A_FACE:
+    mat_multiply_matrix_d3(tmat, trans_mat_Bravais, A_mat);
+    break;
+  case C_FACE:
+    mat_multiply_matrix_d3(tmat, trans_mat_Bravais, C_mat);
+    break;
+  case FACE:
+    mat_multiply_matrix_d3(tmat, trans_mat_Bravais, F_mat);
+    break;
+  case BODY:
+    mat_multiply_matrix_d3(tmat, trans_mat_Bravais, I_mat);
+    break;
+  case R_CENTER:
+    mat_multiply_matrix_d3(tmat, trans_mat_Bravais, R_mat);
+    break;
+  default:
+    goto err;
+  }
+
+  multi = mat_Nint(1.0 / mat_get_determinant_d3(tmat));
+  if ((primitive->cell = cel_alloc_cell(cell->size / multi)) == NULL) {
+    goto err;
+  }
+
+  mat_multiply_matrix_d3(primitive->cell->lattice,
+			 cell->lattice,
+			 tmat);
+
+  if (trim_cell(primitive->cell,
+		primitive->mapping_table,
+		cell,
+		symprec)) {
+    return primitive;
+  }
+
+ err:
+  prm_free_primitive(primitive);
+  primitive = NULL;
+  return NULL;
+}
+
+/* Return NULL if failed */
 static Primitive * get_primitive(SPGCONST Cell * cell, const double symprec)
 {
-  int i, attempt, is_found = 0;
+  int i, attempt;
   double tolerance;
   Primitive *primitive;
   VecDBL * pure_trans;
@@ -126,26 +232,22 @@ static Primitive * get_primitive(SPGCONST Cell * cell, const double symprec)
 
     if (pure_trans->size == 1) {
       if ((primitive->cell = get_cell_with_smallest_lattice(cell, tolerance))
-	  == NULL) {
-	mat_free_VecDBL(pure_trans);
-	goto cont;
-      }
-
-      for (i = 0; i < cell->size; i++) {
-	primitive->mapping_table[i] = i;
+	  != NULL) {
+	for (i = 0; i < cell->size; i++) {
+	  primitive->mapping_table[i] = i;
+	}
+	goto found;
       }
     } else {
       if ((primitive->cell = get_primitive_cell(primitive->mapping_table,
 						cell,
 						pure_trans,
-						tolerance)) == NULL) {
-	mat_free_VecDBL(pure_trans);
-	goto cont;
+						tolerance)) != NULL) {
+	goto found;
       }
     }
 
-    is_found = 1;
-    break;
+    mat_free_VecDBL(pure_trans);
 
   cont:
     tolerance *= REDUCE_RATE;
@@ -153,14 +255,12 @@ static Primitive * get_primitive(SPGCONST Cell * cell, const double symprec)
     warning_print("(line %d, %s).\n", __LINE__, __FILE__);
   }
 
+  prm_free_primitive(primitive);
+  return NULL;
+
+ found:
+  primitive->tolerance = tolerance;
   mat_free_VecDBL(pure_trans);
-
-  if (is_found) {
-    primitive->tolerance = tolerance;
-  } else {
-    prm_free_primitive(primitive);
-  }
-
   return primitive;
 }
 

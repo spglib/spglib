@@ -17,7 +17,6 @@ static void test_spg_get_ir_reciprocal_mesh(void);
 static void test_spg_get_stabilized_reciprocal_mesh(void);
 static void test_spg_get_tetrahedra_relative_grid_address(void);
 static void test_spg_relocate_BZ_grid_address(void);
-static void test_spg_triplets_reciprocal_mesh_at_q(void);
 static void show_spg_dataset(double lattice[3][3],
 			     const double origin_shift[3],
 			     double position[][3],
@@ -46,7 +45,6 @@ int main(void)
   test_spg_get_stabilized_reciprocal_mesh();
   /* test_spg_get_tetrahedra_relative_grid_address(); */
   test_spg_relocate_BZ_grid_address();
-  test_spg_triplets_reciprocal_mesh_at_q();
 
   return 0;
 }
@@ -514,93 +512,6 @@ static void test_spg_relocate_BZ_grid_address(void)
 
   printf("Number of k-points of NaCl Brillouin zone\n");
   printf("with Gamma-centered 40x40x40 Monkhorst-Pack mesh is %d (65861).\n", num_q);
-}
-
-static void test_spg_triplets_reciprocal_mesh_at_q(void)
-{
-  SpglibDataset *dataset;
-  double lattice[3][3] = {
-    {0.000000000000000, 2.845150738087836, 2.845150738087836},
-    {2.845150738087836, 0.000000000000000, 2.845150738087836},
-    {2.845150738087836, 2.845150738087836, 0.000000000000000}
-  };
-  double position[][3] =
-    {{0, 0, 0},
-     {0.5, 0.5, 0.5}};
-  int types[] = {1, 2};
-  int num_atom = 2;
-  dataset = spg_get_dataset(lattice,
-			    position,
-			    types,
-			    num_atom,
-			    1e-5);
-  
-  printf("*** Example of spg_triplets_reciprocal_mesh_at_q of NaCl structure ***:\n");
-
-  int grid_point = 10;
-  int m = 20;
-  int mesh[] = {m, m, m};
-  int is_shift[] = {0, 0, 0};
-  int grid_address[m * m * m][3];
-  int map_triplets[m * m * m];
-  int map_q[m * m * m];
-  int num_ir_tp = spg_get_triplets_reciprocal_mesh_at_q(map_triplets,
-							map_q,
-							grid_address,
-							grid_point,
-							mesh,
-							1,
-							dataset->n_operations,
-							dataset->rotations);
-  spg_free_dataset(dataset);
-
-  printf("Number of k-point triplets of NaCl at grid point 10 = (1/2, 0, 0)\n");
-  printf("grid point %d = (%d/20, %d/20, %d/20)\n",
-	 grid_point,
-	 grid_address[grid_point][0],
-	 grid_address[grid_point][1],
-	 grid_address[grid_point][2]);
-  printf("with Gamma-centered 20x20x20 Monkhorst-Pack mesh is %d (396).\n", num_ir_tp);
-
-  printf("*** Example of spg_get_BZ_triplets_at_q of NaCl structure ***:\n");
-  int grid_mapping_table[m * m * m];
-  int triplets[num_ir_tp][3];
-  int bz_grid_address[(m + 1) * (m + 1) * (m + 1)][3];
-  int bz_map[m * m * m * 8];
-  int rotations[][3][3] = {{{1, 0, 0},
-			    {0, 1, 0},
-			    {0, 0, 1}}};
-  double rec_lattice[3][3] = {{-0.17573761,  0.17573761,  0.17573761},
-			      { 0.17573761, -0.17573761,  0.17573761},
-			      { 0.17573761,  0.17573761, -0.17573761}};
-  double q[] = {0, 0, 0};
-
-  int num_ir = spg_get_stabilized_reciprocal_mesh(grid_address,
-						  grid_mapping_table,
-						  mesh,
-						  is_shift,
-						  1,
-						  1,
-						  rotations,
-						  1,
-						  (double(*)[3])q);
-
-  int num_q_bz = spg_relocate_BZ_grid_address(bz_grid_address,
-					      bz_map,
-					      grid_address,
-					      mesh,
-					      rec_lattice,
-					      is_shift);
-  int num_ir_tp2 = spg_get_BZ_triplets_at_q(triplets,
-					    grid_point,
-					    bz_grid_address,
-					    bz_map,
-					    map_triplets,
-					    m * m * m,
-					    mesh);
-  printf("Number of k-point triplets of NaCl at grid point 10 = (1/2, 0, 0)\n");
-  printf("with Gamma-centered 20x20x20 Monkhorst-Pack mesh is %d (396).\n", num_ir_tp2);
-  
 }
 
 /* frequency.dat is in the example directory. */
