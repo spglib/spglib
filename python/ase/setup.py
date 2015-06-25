@@ -22,8 +22,7 @@ sources = [
 	'../../src/spg_database.c',
 	'../../src/spglib.c',
 	'../../src/symmetry.c',
-    '../../src/tetrahedron_method.c',
-    '../../src/triplet_kpoint.c']
+    '../../src/tetrahedron_method.c']
 
 # Hmm, bdist_rpm requires that all sources are within root directory.
 # Therefore add a symlink to src directory under systems that support it...
