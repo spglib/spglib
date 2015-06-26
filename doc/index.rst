@@ -13,7 +13,7 @@ is the latest release. This version is expected to be slightly faster
 and compact, and the code is cleaner to be the base of future
 development.
 
-version on history in `ChangeLog
+Version history is summarized in `ChangeLog
 <https://github.com/atztogo/spglib/blob/master/ChangeLog>`_.
 
 
@@ -73,13 +73,14 @@ Usage
 
 1. Include ``spglib.h``
 2. Link ``libsymspg.a`` or ``libsymspg.so``
-3. Examples are shown in ``example.c``.
+3. A compilation example is shown in  `example/README
+   <https://github.com/atztogo/spglib/blob/master/example/README>`_.
 
 Example
 ^^^^^^^
 
-A few examples are stored in ``example`` directory. The fortran
-interface 
+A few examples are found in `example
+<https://github.com/atztogo/spglib/tree/master/example>_` directory.
 
 Testing
 ^^^^^^^
@@ -95,20 +96,32 @@ operations of the input structure.
    ruby symPoscar.rb POSCAR -s 0.1 -o -l
 
 
-How to compile is found in the README file.
+Some more options are shown with ``--help`` option::
+
+   ruby symPoscar.rb --help
+
+The way to compile the ruby module is explained in 
+`test/README <https://github.com/atztogo/spglib/blob/master/test/README>`_.
+
 
 Python extension
 ^^^^^^^^^^^^^^^^
 
-Python extension for ASE is prepared in the ``python/ase`` directory.
-See http://spglib.sourceforge.net/pyspglibForASE/
+Python extension for ASE is prepared in the `python/ase
+<https://github.com/atztogo/spglib/tree/master/python/ase>`_
+directory.  See http://spglib.sourceforge.net/pyspglibForASE/
 
 Fortran interface
 ^^^^^^^^^^^^^^^^^
 
-Fortran interface ``spglib_f08.f90`` is found in ``example``
+Fortran interface `spglib_f08.f90
+<https://github.com/atztogo/spglib/blob/master/example/example_f08.f90>`_
+is found in `example
+<https://github.com/atztogo/spglib/tree/master/example>`_
 directory. This fortran interface is the contribution from Dimitar
-Pashov. ``spglib_f.c`` is obsolete and is not recommended to use.
+Pashov. `spglib_f.c
+<https://github.com/atztogo/spglib/blob/master/src/spglib_f.c>`_ is
+obsolete and is not recommended to use.
 
 API & variables
 ^^^^^^^^^^^^^^^^
@@ -132,9 +145,8 @@ https://lists.sourceforge.net/lists/listinfo/spglib-users
 For more information
 ^^^^^^^^^^^^^^^^^^^^
 
-* Development: https://github.com/atztogo/spglib 
-* License: New BSD after version 1.0.beta-1. The older versions are
-  under GPLv2
+* Repository: https://github.com/atztogo/spglib 
+* License: New BSD after version 1.0.beta-1. The older versions are under GPLv2.
 * Contact: atz.togo@gmail.com
 * Authour: Atsushi Togo
 
