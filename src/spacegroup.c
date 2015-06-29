@@ -200,12 +200,18 @@ static int iterative_search_hall_number(double origin_shift[3],
 					SPGCONST Cell * primitive,
 					SPGCONST Symmetry * symmetry,
 					const double symprec);
-static Symmetry * get_symmetry_settings(double conv_lattice[3][3],
-					Pointgroup *pointgroup,
-					Centering *centering,
-					SPGCONST double primitive_lattice[3][3],
-					SPGCONST Symmetry * symmetry,
-					const double symprec);
+static int change_basis_tricli(int int_transform_mat[3][3],
+			       SPGCONST double conv_lattice[3][3],
+			       SPGCONST double primitive_lattice[3][3],
+			       const double symprec);
+static int change_basis_monocli(int int_transform_mat[3][3],
+				SPGCONST double conv_lattice[3][3],
+				SPGCONST double primitive_lattice[3][3],
+				const double symprec);
+static Symmetry *
+get_initial_conventional_symmetry(const Centering centering,
+				  SPGCONST double transform_mat[3][3],
+				  SPGCONST Symmetry * symmetry);
 static int search_hall_number(double origin_shift[3],
 			      double conv_lattice[3][3],
 			      const int candidates[],
@@ -216,7 +222,8 @@ static int search_hall_number(double origin_shift[3],
 static int match_hall_symbol_db(double origin_shift[3],
 				double lattice[3][3],
 				const int hall_number,
-				const Pointgroup *pointgroup,
+				const int pointgroup_number,
+				const Holohedry holohedry,
 				const Centering centering,
 				SPGCONST Symmetry *symmetry,
 				const double symprec);
@@ -453,26 +460,61 @@ static int search_hall_number(double origin_shift[3],
   Centering centering;
   Pointgroup pointgroup;
   Symmetry * conv_symmetry;
+  int int_transform_mat[3][3];
+  double correction_mat[3][3], transform_mat[3][3];
 
   debug_print("search_hall_number:\n");
 
   hall_number = 0;
   conv_symmetry = NULL;
 
-  if ((conv_symmetry = get_symmetry_settings(conv_lattice,
-					     &pointgroup,
-					     &centering,
-					     primitive_lattice,
-					     symmetry,
-					     symprec)) == NULL) {
+  pointgroup = ptg_get_transformation_matrix(int_transform_mat,
+					     symmetry->rot,
+					     symmetry->size);
+  if (pointgroup.number == 0) {
+    goto err;
+  }
+
+  mat_multiply_matrix_di3(conv_lattice,
+			  primitive_lattice,
+			  int_transform_mat);
+
+  if (pointgroup.laue == LAUE1) {
+    if (! change_basis_tricli(int_transform_mat,
+			      conv_lattice,
+			      primitive_lattice,
+			      symprec)) {
+      goto err;
+    }
+  }
+
+  if (pointgroup.laue == LAUE2M) {
+    if (! change_basis_monocli(int_transform_mat,
+			       conv_lattice,
+			       primitive_lattice,
+			       symprec)) {
+      goto err;
+    }
+  }
+
+  centering = lat_get_centering(correction_mat,
+				int_transform_mat,
+				pointgroup.laue);
+  mat_multiply_matrix_id3(transform_mat, int_transform_mat, correction_mat);
+  mat_multiply_matrix_d3(conv_lattice, primitive_lattice, transform_mat);
+
+  if ((conv_symmetry = get_initial_conventional_symmetry(centering,
+							 transform_mat,
+							 symmetry)) == NULL) {
     goto err;
   }
 
   for (i = 0; i < num_candidates; i++) {
     if (match_hall_symbol_db(origin_shift,
-			     conv_lattice,
+			     conv_lattice, /* <-- modified only matched */
 			     candidates[i],
-			     &pointgroup,
+			     pointgroup.number,
+			     pointgroup.holohedry,
 			     centering,
 			     conv_symmetry,
 			     symprec)) {
@@ -489,93 +531,91 @@ static int search_hall_number(double origin_shift[3],
   return 0;
 }
 
-/* Return NULL if failed */
-static Symmetry * get_symmetry_settings(double conv_lattice[3][3],
-					Pointgroup *pointgroup,
-					Centering *centering,
-					SPGCONST double primitive_lattice[3][3],
-					SPGCONST Symmetry * symmetry,
-					const double symprec)
+/* Triclinic: Niggli cell reduction */
+/* Return 0 if failed */
+static int change_basis_tricli(int int_transform_mat[3][3],
+			       SPGCONST double conv_lattice[3][3],
+			       SPGCONST double primitive_lattice[3][3],
+			       const double symprec)
 {
   int i, j;
-  int int_transform_mat[3][3];
-  double correction_mat[3][3], transform_mat[3][3], inv_lattice[3][3], smallest_lattice[3][3];
   double niggli_cell[9];
+  double smallest_lattice[3][3], inv_lattice[3][3], transform_mat[3][3];
+
+  for (i = 0; i < 3; i++) {
+    for (j = 0; j < 3; j++) {
+      niggli_cell[i * 3 + j] = conv_lattice[i][j];
+    }
+  }
+
+  if (! niggli_reduce(niggli_cell, symprec * symprec)) {
+    return 0;
+  }
+
+  for (i = 0; i < 3; i++) {
+    for (j = 0; j < 3; j++) {
+      smallest_lattice[i][j] = niggli_cell[i * 3 + j];
+    }
+  }
+  if (mat_get_determinant_d3(smallest_lattice) < 0) {
+    for (i = 0; i < 3; i++) {
+      for (j = 0; j < 3; j++) {
+	smallest_lattice[i][j] = -smallest_lattice[i][j];
+      }
+    }
+  }
+  mat_inverse_matrix_d3(inv_lattice, primitive_lattice, 0);
+  mat_multiply_matrix_d3(transform_mat, inv_lattice, smallest_lattice);
+  mat_cast_matrix_3d_to_3i(int_transform_mat, transform_mat);
+
+  return 1;
+}
+
+/* Monoclinic: choose shortest a, c lattice vectors (|a| < |c|) */
+/* Return 0 if failed */
+static int change_basis_monocli(int int_transform_mat[3][3],
+				SPGCONST double conv_lattice[3][3],
+				SPGCONST double primitive_lattice[3][3],
+				const double symprec)
+{
+  double smallest_lattice[3][3], inv_lattice[3][3], transform_mat[3][3];
+
+  if (! lat_smallest_lattice_vector_2D(smallest_lattice,
+				     conv_lattice,
+				     1, /* unique axis of b */
+				     symprec)) {
+    return 0;
+  }
+
+  mat_inverse_matrix_d3(inv_lattice, primitive_lattice, 0);
+  mat_multiply_matrix_d3(transform_mat, inv_lattice, smallest_lattice);
+  mat_cast_matrix_3d_to_3i(int_transform_mat, transform_mat);
+  return 1;
+}
+
+/* Return NULL if failed */
+static Symmetry *
+get_initial_conventional_symmetry(const Centering centering,
+				  SPGCONST double transform_mat[3][3],
+				  SPGCONST Symmetry * symmetry)
+{
   Symmetry * conv_symmetry;
 
-  debug_print("get_symmetry_settings (tolerance = %f):\n", symprec);
+  debug_print("get_initial_conventional_symmetry\n");
 
   conv_symmetry = NULL;
   
-  *pointgroup = ptg_get_transformation_matrix(int_transform_mat,
-					      symmetry->rot,
-					      symmetry->size);
-
-  if (pointgroup->number < 1) {
-    *centering = NO_CENTER;
-    goto ret;
-  }
-
-  mat_multiply_matrix_di3(conv_lattice,
-			  primitive_lattice,
-			  int_transform_mat);
-
-  /* Triclinic: Niggli cell reduction */
-  if (pointgroup->laue == LAUE1) {
-    for (i = 0; i < 3; i++) {
-      for (j = 0; j < 3; j++) {
-  	niggli_cell[i * 3 + j] = conv_lattice[i][j];
-      }
-    }
-    niggli_reduce(niggli_cell, symprec * symprec);
-    for (i = 0; i < 3; i++) {
-      for (j = 0; j < 3; j++) {
-  	smallest_lattice[i][j] = niggli_cell[i * 3 + j];
-      }
-    }
-    if (mat_get_determinant_d3(smallest_lattice) < 0) {
-      for (i = 0; i < 3; i++) {
-	for (j = 0; j < 3; j++) {
-	  smallest_lattice[i][j] = -smallest_lattice[i][j];
-	}
-      }
-    }
-    mat_inverse_matrix_d3(inv_lattice, primitive_lattice, 0);
-    mat_multiply_matrix_d3(transform_mat, inv_lattice, smallest_lattice);
-    mat_cast_matrix_3d_to_3i(int_transform_mat, transform_mat);
-  }
-
-  /* Monoclinic: choose shortest a, c lattice vectors (|a| < |c|) */
-  if (pointgroup->laue == LAUE2M) {
-    if (lat_smallest_lattice_vector_2D(smallest_lattice,
-				       conv_lattice,
-				       1, /* unique axis of b */
-				       symprec)) {
-      mat_inverse_matrix_d3(inv_lattice, primitive_lattice, 0);
-      mat_multiply_matrix_d3(transform_mat, inv_lattice, smallest_lattice);
-      mat_cast_matrix_3d_to_3i(int_transform_mat, transform_mat);
-    }
-  }
-
-  *centering = lat_get_centering(correction_mat,
-				 int_transform_mat,
-				 pointgroup->laue);
-  
-  mat_multiply_matrix_id3(transform_mat, int_transform_mat, correction_mat);
-  mat_multiply_matrix_d3(conv_lattice, primitive_lattice, transform_mat);
-
-  if (*centering == R_CENTER) {
+  if (centering == R_CENTER) {
     /* hP for rhombohedral */
     conv_symmetry = get_conventional_symmetry(transform_mat,
 					      NO_CENTER,
 					      symmetry);
   } else {
     conv_symmetry = get_conventional_symmetry(transform_mat,
-					      *centering,
+					      centering,
 					      symmetry);
   }
 
- ret:
   return conv_symmetry;
 }
 
@@ -583,7 +623,8 @@ static Symmetry * get_symmetry_settings(double conv_lattice[3][3],
 static int match_hall_symbol_db(double origin_shift[3],
 				double lattice[3][3],
 				const int hall_number,
-				const Pointgroup *pointgroup,
+				const int pointgroup_number,
+				const Holohedry holohedry,
 				const Centering centering,
 				SPGCONST Symmetry *symmetry,
 				const double symprec)
@@ -599,11 +640,11 @@ static int match_hall_symbol_db(double origin_shift[3],
   num_hall_types = (spacegroup_to_hall_number[spacegroup_type.number] -
 		    spacegroup_to_hall_number[spacegroup_type.number - 1]);
 
-  if (pointgroup->number != spacegroup_type.pointgroup_number) {
+  if (pointgroup_number != spacegroup_type.pointgroup_number) {
     goto err;
   }
 
-  switch (pointgroup->holohedry) {
+  switch (holohedry) {
   case MONOCLI:
     if (match_hall_symbol_db_monocli(origin_shift,
 				     lattice,

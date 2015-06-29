@@ -129,7 +129,9 @@ static Centering get_centering(double correction_mat[3][3],
   debug_print("laue class: %d\n", laue);
   debug_print("multiplicity: %d\n", det);
 
-  if (det == 1) {centering = NO_CENTER;}
+  if (det == 1) {
+    centering = NO_CENTER;
+  }
   if (det == 2) {
     centering = get_base_center(transform_mat);
     if (centering == A_FACE) {
@@ -167,7 +169,9 @@ static Centering get_centering(double correction_mat[3][3],
       debug_print_matrix_d3(trans_corr_mat);
     }
   }
-  if (det == 4) { centering = FACE; }
+  if (det == 4) {
+    centering = FACE;
+  }
 
   return centering;
 }

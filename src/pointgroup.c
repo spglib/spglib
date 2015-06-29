@@ -420,7 +420,7 @@ static void set_transformation_matrix(int tmat[3][3],
 static int is_exist_axis(const int axis_vec[3], const int axis_index);
 static void sort_axes(int axes[3]);
 
-
+/* Retrun pointgroup.number = 0 if failed */
 Pointgroup ptg_get_transformation_matrix(int transform_mat[3][3],
 					 SPGCONST int rotations[][3][3],
 					 const int num_rotations)
