@@ -38,7 +38,8 @@
 #include "mathfunc.h"
 
 typedef enum {
-  NO_CENTER,
+  CENTERING_ERROR,
+  PRIMITIVE,
   BODY,
   FACE,
   A_FACE,

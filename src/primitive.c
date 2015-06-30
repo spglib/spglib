@@ -163,7 +163,7 @@ Primitive * prm_transform_to_primitive(SPGCONST Cell * cell,
   }
 
   switch (centering) {
-  case NO_CENTER:
+  case PRIMITIVE:
     mat_copy_matrix_d3(tmat, trans_mat_Bravais);
     break;
   case A_FACE:

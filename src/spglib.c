@@ -1310,7 +1310,7 @@ static int find_standardized_primitive(double lattice[3][3],
 
   switch (spgtype.international_full[0]) {
   case 'P':
-    centering = NO_CENTER;
+    centering = PRIMITIVE;
     break;
   case 'A':
     centering = A_FACE;
@@ -1328,7 +1328,7 @@ static int find_standardized_primitive(double lattice[3][3],
     if (spgtype.setting[0] == 'H') {
       centering = R_CENTER;
     } else {
-      centering = NO_CENTER;
+      centering = PRIMITIVE;
     }
     break;
   default:

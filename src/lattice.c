@@ -116,6 +116,7 @@ Centering lat_get_centering(double correction_mat[3][3],
 		       laue);
 }
 
+/* Return CENTERING_ERROR if failed */
 static Centering get_centering(double correction_mat[3][3],
 			       SPGCONST int transform_mat[3][3],
 			       const Laue laue)
@@ -129,10 +130,13 @@ static Centering get_centering(double correction_mat[3][3],
   debug_print("laue class: %d\n", laue);
   debug_print("multiplicity: %d\n", det);
 
-  if (det == 1) {
-    centering = NO_CENTER;
-  }
-  if (det == 2) {
+  switch (det) {
+
+  case 1:
+    centering = PRIMITIVE;
+    break;
+
+  case 2:
     centering = get_base_center(transform_mat);
     if (centering == A_FACE) {
       if (laue == LAUE2M) {
@@ -152,8 +156,9 @@ static Centering get_centering(double correction_mat[3][3],
       mat_copy_matrix_d3(correction_mat, monocli_i2c);
       centering = C_FACE;
     }
-  }
-  if (det == 3) {
+    break;
+
+  case 3:
     /* hP (a=b) but not hR (a=b=c) */
     centering = R_CENTER;
     mat_multiply_matrix_id3(trans_corr_mat, transform_mat, rhombo_obverse);
@@ -168,9 +173,15 @@ static Centering get_centering(double correction_mat[3][3],
       debug_print("R-center reverse setting\n");
       debug_print_matrix_d3(trans_corr_mat);
     }
-  }
-  if (det == 4) {
+    break;
+
+  case 4:
     centering = FACE;
+    break;
+
+  default:
+    centering = CENTERING_ERROR;
+    break;
   }
 
   return centering;
@@ -179,7 +190,7 @@ static Centering get_centering(double correction_mat[3][3],
 static Centering get_base_center(SPGCONST int transform_mat[3][3])
 {
   int i;
-  Centering centering = NO_CENTER;
+  Centering centering = PRIMITIVE;
 
   debug_print("lat_get_base_center\n");
 
@@ -223,10 +234,9 @@ static Centering get_base_center(SPGCONST int transform_mat[3][3])
 
   /* This should not happen. */
   warning_print("spglib: No centring was found (line %d, %s).\n", __LINE__, __FILE__);
-  return NO_CENTER;
+  return PRIMITIVE;
 
  end:
-  debug_print("centering: %d\n", centering);
   return centering;
 }
 

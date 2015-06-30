@@ -497,9 +497,12 @@ static int search_hall_number(double origin_shift[3],
     }
   }
 
-  centering = lat_get_centering(correction_mat,
-				int_transform_mat,
-				pointgroup.laue);
+  if ((centering = lat_get_centering(correction_mat,
+				     int_transform_mat,
+				     pointgroup.laue)) == CENTERING_ERROR) {
+    goto err;
+  }
+
   mat_multiply_matrix_id3(transform_mat, int_transform_mat, correction_mat);
   mat_multiply_matrix_d3(conv_lattice, primitive_lattice, transform_mat);
 
@@ -608,7 +611,7 @@ get_initial_conventional_symmetry(const Centering centering,
   if (centering == R_CENTER) {
     /* hP for rhombohedral */
     conv_symmetry = get_conventional_symmetry(transform_mat,
-					      NO_CENTER,
+					      PRIMITIVE,
 					      symmetry);
   } else {
     conv_symmetry = get_conventional_symmetry(transform_mat,
@@ -700,7 +703,7 @@ static int match_hall_symbol_db(double origin_shift[3],
       mat_multiply_matrix_d3(transform_mat, inv_lattice, changed_lattice);
 
       if ((changed_symmetry = get_conventional_symmetry(transform_mat,
-							NO_CENTER,
+							PRIMITIVE,
 							symmetry)) == NULL) {
 	goto err;
       }
@@ -746,7 +749,7 @@ static int match_hall_symbol_db(double origin_shift[3],
 			     lattice,
 			     change_of_basis_501);
       if ((changed_symmetry = get_conventional_symmetry(change_of_basis_501,
-							NO_CENTER,
+							PRIMITIVE,
 							symmetry)) == NULL) {
 	goto err;
       }
@@ -754,7 +757,7 @@ static int match_hall_symbol_db(double origin_shift[3],
       is_found = hal_match_hall_symbol_db(origin_shift,
 					  changed_lattice,
 					  hall_number,
-					  NO_CENTER,
+					  PRIMITIVE,
 					  changed_symmetry,
 					  symprec);
       sym_free_symmetry(changed_symmetry);
@@ -833,7 +836,7 @@ static int match_hall_symbol_db_monocli(double origin_shift[3],
   for (i = 0; i < 18; i++) {
     if (centering == C_FACE) {
       changed_centering = change_of_centering_monocli[i];
-    } else { /* suppose NO_CENTER */
+    } else { /* suppose PRIMITIVE */
       changed_centering = centering;
     }
 
@@ -855,7 +858,7 @@ static int match_hall_symbol_db_monocli(double origin_shift[3],
 
     if ((changed_symmetry =
 	 get_conventional_symmetry(change_of_basis_monocli[i],
-				   NO_CENTER,
+				   PRIMITIVE,
 				   symmetry)) == NULL) {
       goto err;
     }
@@ -933,7 +936,7 @@ static int match_hall_symbol_db_ortho(double origin_shift[3],
     }
     
     if ((changed_symmetry = get_conventional_symmetry(change_of_basis_ortho[i],
-						      NO_CENTER,
+						      PRIMITIVE,
 						      symmetry)) == NULL) {
       goto err;
     }
@@ -1017,7 +1020,7 @@ static Symmetry * get_conventional_symmetry(SPGCONST double transform_mat[3][3],
 
   multi = 1;
 
-  if (centering != NO_CENTER) {
+  if (centering != PRIMITIVE) {
     if (centering != FACE && centering != R_CENTER) {
       for (i = 0; i < 3; i++) {	shift[0][i] = 0.5; } /* BASE */
       if (centering == A_FACE) { shift[0][0] = 0; }
