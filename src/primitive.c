@@ -66,7 +66,6 @@ static double F_mat[3][3] = {{    0, 1./2, 1./2 },
 static Primitive * get_primitive(SPGCONST Cell * cell, const double symprec);
 static void set_primitive_positions(Cell * primitive_cell,
 				    const VecDBL * position,
-				    const Cell * cell,
 				    const int * mapping_table,
 				    const int * overlap_table);
 static VecDBL *
@@ -149,18 +148,20 @@ Primitive * prm_get_primitive(SPGCONST Cell * cell, const double symprec)
 }
 
 /* Return NULL if failed */
-Primitive * prm_transform_to_primitive(SPGCONST Cell * cell,
-				       SPGCONST double trans_mat_Bravais[3][3],
-				       const Centering centering,
-				       const double symprec)
+Cell * prm_transform_to_primitive(SPGCONST Cell * cell,
+				  SPGCONST double trans_mat_Bravais[3][3],
+				  const Centering centering,
+				  const double symprec)
 {
-  int multi;
+  int multi, trimed, i;
+  int * mapping_table;
   double tmat[3][3];
-  Primitive * primitive;
+  Cell * primitive;
+  VecDBL * position;
 
-  if ((primitive = prm_alloc_primitive(cell->size)) == NULL) {
-    return NULL;
-  }
+  mapping_table = NULL;
+  primitive = NULL;
+  position = NULL;
 
   switch (centering) {
   case PRIMITIVE:
@@ -186,24 +187,47 @@ Primitive * prm_transform_to_primitive(SPGCONST Cell * cell,
   }
 
   multi = mat_Nint(1.0 / mat_get_determinant_d3(tmat));
-  if ((primitive->cell = cel_alloc_cell(cell->size / multi)) == NULL) {
-    goto err;
+  if ((primitive = cel_alloc_cell(cell->size / multi)) == NULL) {
+    return NULL;
   }
 
-  mat_multiply_matrix_d3(primitive->cell->lattice,
-			 cell->lattice,
-			 tmat);
+  mat_multiply_matrix_d3(primitive->lattice, cell->lattice, tmat);
 
-  if (trim_cell(primitive->cell,
-		primitive->mapping_table,
-		cell,
-		symprec)) {
+  if (multi == 1) {
+    if ((position =
+	 translate_atoms_in_primitive_lattice(cell, primitive->lattice))
+	== NULL) {
+      goto err;
+    }
+    for (i = 0; i <  position->size; i++) {
+      mat_copy_vector_d3(primitive->position[i], position->vec[i]);
+      primitive->types[i] = cell->types[i];
+    }
+    mat_free_VecDBL(position);
     return primitive;
+  } else {
+
+    if ((mapping_table = (int*) malloc(sizeof(int) * cell->size)) == NULL) {
+      warning_print("spglib: Memory could not be allocated ");
+      goto err;
+    }
+    
+    trimed = trim_cell(primitive,
+		       mapping_table,
+		       cell,
+		       symprec);
+    free(mapping_table);
+    mapping_table = NULL;
+
+    if (! trimed) {
+      goto err;
+    }
   }
+
+  return primitive;
 
  err:
-  prm_free_primitive(primitive);
-  primitive = NULL;
+  cel_free_cell(primitive);
   return NULL;
 }
 
@@ -399,7 +423,6 @@ static int trim_cell(Cell * primitive_cell,
 
   set_primitive_positions(primitive_cell,
 			  position,
-			  cell,
 			  mapping_table,
 			  overlap_table);
 
@@ -414,7 +437,6 @@ static int trim_cell(Cell * primitive_cell,
 
 static void set_primitive_positions(Cell * primitive_cell,
 				    const VecDBL * position,
-				    const Cell * cell,
 				    const int * mapping_table,
 				    const int * overlap_table)
 {
@@ -427,7 +449,7 @@ static void set_primitive_positions(Cell * primitive_cell,
   }
 
   /* Positions of overlapped atoms are averaged. */
-  for (i = 0; i < cell->size; i++) {
+  for (i = 0; i < position->size; i++) {
     j = mapping_table[i];
     k = overlap_table[i];
     for (l = 0; l < 3; l++) {
@@ -446,7 +468,7 @@ static void set_primitive_positions(Cell * primitive_cell,
 	
   }
 
-  multi = cell->size / primitive_cell->size;
+  multi = position->size / primitive_cell->size;
   for (i = 0; i < primitive_cell->size; i++) {
     for (j = 0; j < 3; j++) {
       primitive_cell->position[i][j] /= multi;

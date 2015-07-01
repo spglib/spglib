@@ -103,7 +103,7 @@ static int find_standardized_primitive(double lattice[3][3],
 static void set_primitive(double lattice[3][3],
 			  double position[][3],
 			  int types[],
-			  Primitive * primitive);
+			  Cell * primitive);
 static int get_international(char symbol[11],
 			     SPGCONST double lattice[3][3],
 			     SPGCONST double position[][3],
@@ -1263,7 +1263,7 @@ static int find_primitive(double lattice[3][3],
 
   num_prim_atom = primitive->cell->size;
   if (num_prim_atom < num_atom) {
-    set_primitive(lattice, position, types, primitive);
+    set_primitive(lattice, position, types, primitive->cell);
   }
 
   prm_free_primitive(primitive);
@@ -1282,13 +1282,13 @@ static int find_standardized_primitive(double lattice[3][3],
   Centering centering;
   SpglibDataset *dataset;
   SpacegroupType spgtype;
-  Primitive *primitive;
-  Cell *cell;
+  Cell *cell, *primitive, *bravais;
 
   num_prim_atom = 0;
   dataset = NULL;
   primitive = NULL;
   cell = NULL;
+  bravais = NULL;
 
   if ((cell = cel_alloc_cell(num_atom)) == NULL) {
     return 0;
@@ -1296,15 +1296,26 @@ static int find_standardized_primitive(double lattice[3][3],
 
   cel_set_cell(cell, lattice, position, types);
 
-  if ((dataset = get_dataset(lattice,
-			     position,
-			     types,
-			     num_atom,
-			     0,
-			     symprec)) == NULL) {
-    cel_free_cell(cell);
+  dataset = get_dataset(lattice,
+			position,
+			types,
+			num_atom,
+			0,
+			symprec);
+  cel_free_cell(cell);
+
+  if (dataset == NULL) {
     return 0;
   }
+
+  if ((bravais = cel_alloc_cell(dataset->n_brv_atoms)) == NULL) {
+    return 0;
+  }
+
+  cel_set_cell(bravais,
+	       dataset->brv_lattice,
+	       dataset->brv_positions,
+	       dataset->brv_types);
 
   spgtype = spgdb_get_spacegroup_type(dataset->hall_number);
 
@@ -1337,21 +1348,21 @@ static int find_standardized_primitive(double lattice[3][3],
     return 0;
   }
 
-  if ((primitive = prm_transform_to_primitive(cell,
+  if ((primitive = prm_transform_to_primitive(bravais,
 					      dataset->transformation_matrix,
 					      centering,
 					      symprec)) == NULL) {
     spg_free_dataset(dataset);
-    cel_free_cell(cell);
+    cel_free_cell(bravais);
     return 0;
   }
 
   set_primitive(lattice, position, types, primitive);
-  num_prim_atom = primitive->cell->size;
+  num_prim_atom = primitive->size;
 
-  prm_free_primitive(primitive);
+  cel_free_cell(primitive);
   spg_free_dataset(dataset);
-  cel_free_cell(cell);
+  cel_free_cell(bravais);
 
   return num_prim_atom;
 }
@@ -1359,14 +1370,14 @@ static int find_standardized_primitive(double lattice[3][3],
 static void set_primitive(double lattice[3][3],
 			  double position[][3],
 			  int types[],
-			  Primitive * primitive)
+			  Cell * primitive)
 {
   int i;
 
-  mat_copy_matrix_d3(lattice, primitive->cell->lattice);
-  for (i = 0; i < primitive->cell->size; i++) {
-    types[i] = primitive->cell->types[i];
-    mat_copy_vector_d3(position[i], primitive->cell->position[i]);
+  mat_copy_matrix_d3(lattice, primitive->lattice);
+  for (i = 0; i < primitive->size; i++) {
+    types[i] = primitive->types[i];
+    mat_copy_vector_d3(position[i], primitive->position[i]);
   }
 }
 

@@ -296,12 +296,7 @@ get_bravais_exact_positions_and_lattice(int * wyckoffs,
   /* Symmetries in database (wrt Bravais lattice) */
   if ((conv_sym = spgdb_get_spacegroup_operations(spacegroup->hall_number))
       == NULL) {
-    free(wyckoffs_prim);
-    wyckoffs_prim = NULL;
-    free(equiv_atoms_prim);
-    equiv_atoms_prim = NULL;
-    cel_free_cell(conv_prim);
-    return NULL;
+    goto err;
   }
 
   /* Lattice vectors are set. */
@@ -313,7 +308,8 @@ get_bravais_exact_positions_and_lattice(int * wyckoffs,
 						 conv_sym,
 						 spacegroup->hall_number,
 						 symprec)) == NULL) {
-    goto ret;
+    sym_free_symmetry(conv_sym);
+    goto err;
   }
 
   for (i = 0; i < conv_prim->size; i++) {
@@ -327,17 +323,19 @@ get_bravais_exact_positions_and_lattice(int * wyckoffs,
 			     wyckoffs_prim,
 			     equiv_atoms_prim);
 
- ret:
+  mat_free_VecDBL(exact_positions);
+  sym_free_symmetry(conv_sym);
+ err:
   free(wyckoffs_prim);
   wyckoffs_prim = NULL;
   free(equiv_atoms_prim);
   equiv_atoms_prim = NULL;
-  mat_free_VecDBL(exact_positions);
   cel_free_cell(conv_prim);
-  sym_free_symmetry(conv_sym);
+
   return bravais;
 }
 
+/* Return NULL if failed */
 static Cell * expand_positions(int * wyckoffs,
 			       int * equiv_atoms,
 			       SPGCONST Cell * conv_prim,
@@ -352,7 +350,10 @@ static Cell * expand_positions(int * wyckoffs,
   bravais = NULL;
 
   num_pure_trans = get_number_of_pure_translation(conv_sym);
-  bravais = cel_alloc_cell(conv_prim->size * num_pure_trans);
+
+  if ((bravais = cel_alloc_cell(conv_prim->size * num_pure_trans)) == NULL) {
+    return NULL;
+  }
 
   num_atom = 0;
   for (i = 0; i < conv_sym->size; i++) {
