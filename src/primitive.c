@@ -319,7 +319,7 @@ static Cell * get_cell_with_smallest_lattice(SPGCONST Cell * cell,
     mat_multiply_matrix_vector_d3(smallest_cell->position[i],
 				  trans_mat, cell->position[i]);
     for (j = 0; j < 3; j++) {
-      cell->position[i][j] -= mat_Nint(cell->position[i][j]);
+      cell->position[i][j] = mat_Dmod1(cell->position[i][j]);
     }
   }
 
@@ -456,7 +456,7 @@ static void set_primitive_positions(Cell * primitive_cell,
       /* boundary treatment */
       /* One is at right and one is at left or vice versa. */
       if (mat_Dabs(position->vec[k][l] - position->vec[i][l]) > 0.5) {
-	if (position->vec[i][l] < 0) {
+	if (position->vec[i][l] < position->vec[k][l]) {
 	  primitive_cell->position[j][l] += position->vec[i][l] + 1;
 	} else {
 	  primitive_cell->position[j][l] += position->vec[i][l] - 1;
@@ -472,7 +472,7 @@ static void set_primitive_positions(Cell * primitive_cell,
   for (i = 0; i < primitive_cell->size; i++) {
     for (j = 0; j < 3; j++) {
       primitive_cell->position[i][j] /= multi;
-      primitive_cell->position[i][j] -=	mat_Nint(primitive_cell->position[i][j]);
+      primitive_cell->position[i][j] = mat_Dmod1(primitive_cell->position[i][j]);
     }
   }
 }
@@ -501,7 +501,7 @@ translate_atoms_in_primitive_lattice(SPGCONST Cell * cell,
 				  axis_inv,
 				  cell->position[i]);
     for (j = 0; j < 3; j++) {
-      position->vec[i][j] -= mat_Nint(position->vec[i][j]);
+      position->vec[i][j] = mat_Dmod1(position->vec[i][j]);
     }
   }
 
@@ -509,8 +509,6 @@ translate_atoms_in_primitive_lattice(SPGCONST Cell * cell,
 }
 
 
-/* If overlap_table is correctly obtained, */
-/* shape of overlap_table will be (cell->size, cell->size / primitive->size). */
 /* Return NULL if failed */
 static int * get_overlap_table(SPGCONST Cell *primitive_cell,
 			       const VecDBL * position,

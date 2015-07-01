@@ -964,7 +964,6 @@ static Symmetry * get_conventional_symmetry(SPGCONST double transform_mat[3][3],
 					    const Symmetry *primitive_sym)
 {
   int i, j, k, multi, size;
-  double tmp_trans;
   double tmp_matrix_d3[3][3], shift[4][3];
   double symmetry_rot_d3[3][3], primitive_sym_rot_d3[3][3];
   Symmetry *symmetry;
@@ -1057,24 +1056,18 @@ static Symmetry * get_conventional_symmetry(SPGCONST double transform_mat[3][3],
 	mat_copy_matrix_i3(symmetry->rot[(i+1) * size + j],
 			   symmetry->rot[j]);
 	for (k = 0; k < 3; k++) {
-	  tmp_trans = symmetry->trans[j][k] + shift[i][k];
-	  symmetry->trans[(i+1) * size + j][k] = tmp_trans;
+	  symmetry->trans[(i+1) * size + j][k] =
+	    symmetry->trans[j][k] + shift[i][k];
 	}
       }
     }
   }
 
-
-  /* Reduce translations into -0 < trans < 1.0 */
   for (i = 0; i < multi; i++) {
     for (j = 0; j < size; j++) {
       for (k = 0; k < 3; k++) {
-  	tmp_trans = symmetry->trans[i * size + j][k];
-  	tmp_trans -= mat_Nint(tmp_trans);
-  	if (tmp_trans < 0) {
-  	  tmp_trans += 1.0;
-  	}
-  	symmetry->trans[i * size + j][k] = tmp_trans;
+  	symmetry->trans[i * size + j][k] =
+	  mat_Dmod1(symmetry->trans[i * size + j][k]);
       }
     }
   }

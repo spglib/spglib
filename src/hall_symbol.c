@@ -2109,7 +2109,7 @@ static void transform_translation(double trans_reduced[3],
   }
 
   for (i = 0; i < 3; i++) {
-    trans_reduced[i] -= mat_Nint(trans_reduced[i]);
+    trans_reduced[i] = mat_Dmod1(trans_reduced[i]);
   }
 }
 

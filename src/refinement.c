@@ -417,7 +417,7 @@ static Cell * get_conventional_primitive(SPGCONST Spacegroup * spacegroup,
 				  primitive->position[i]);
     for (j = 0; j < 3; j++) {
       conv_prim->position[i][j] -= spacegroup->origin_shift[j];
-      conv_prim->position[i][j] -= mat_Nint(conv_prim->position[i][j]);
+      conv_prim->position[i][j] = mat_Dmod1(conv_prim->position[i][j]);
     }
   }
 
@@ -803,7 +803,7 @@ static Symmetry * get_primitive_db_symmetry(SPGCONST double t_mat[3][3],
   for (i = 0; i < num_op; i++) {
     mat_copy_matrix_i3(prim_sym->rot[i], r_prim->mat[i]);
     for (j = 0; j < 3; j++) {
-      prim_sym->trans[i][j] = t_prim->vec[i][j] - mat_Nint(t_prim->vec[i][j]);
+      prim_sym->trans[i][j] = mat_Dmod1(t_prim->vec[i][j]);
     }
   }
 
@@ -963,8 +963,7 @@ static Symmetry * reduce_symmetry_in_frame(const int frame[3],
 
   for (i = 0; i < pure_trans->size; i++) {
     for (j = 0; j < size_sym_orig; j++) {
-      mat_copy_matrix_i3(symmetry->rot[size_sym_orig * i + j],
-			 t_sym->rot[j]);
+      mat_copy_matrix_i3(symmetry->rot[size_sym_orig * i + j], t_sym->rot[j]);
       mat_copy_vector_d3(symmetry->trans[size_sym_orig * i + j],
 			 t_sym->trans[j]);
       for (k = 0; k < 3; k++) {
