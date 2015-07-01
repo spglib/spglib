@@ -153,15 +153,13 @@ Cell * prm_transform_to_primitive(SPGCONST Cell * cell,
 				  const Centering centering,
 				  const double symprec)
 {
-  int multi, trimed, i;
+  int multi, trimed;
   int * mapping_table;
   double tmat[3][3];
   Cell * primitive;
-  VecDBL * position;
 
   mapping_table = NULL;
   primitive = NULL;
-  position = NULL;
 
   switch (centering) {
   case PRIMITIVE:
@@ -193,35 +191,18 @@ Cell * prm_transform_to_primitive(SPGCONST Cell * cell,
 
   mat_multiply_matrix_d3(primitive->lattice, cell->lattice, tmat);
 
-  if (multi == 1) {
-    if ((position =
-	 translate_atoms_in_primitive_lattice(cell, primitive->lattice))
-	== NULL) {
-      goto err;
-    }
-    for (i = 0; i <  position->size; i++) {
-      mat_copy_vector_d3(primitive->position[i], position->vec[i]);
-      primitive->types[i] = cell->types[i];
-    }
-    mat_free_VecDBL(position);
-    return primitive;
-  } else {
-
-    if ((mapping_table = (int*) malloc(sizeof(int) * cell->size)) == NULL) {
-      warning_print("spglib: Memory could not be allocated ");
-      goto err;
-    }
+  if ((mapping_table = (int*) malloc(sizeof(int) * cell->size)) == NULL) {
+    warning_print("spglib: Memory could not be allocated ");
+    goto err;
+  }
     
-    trimed = trim_cell(primitive,
-		       mapping_table,
-		       cell,
-		       symprec);
-    free(mapping_table);
-    mapping_table = NULL;
+  trimed = trim_cell(primitive, mapping_table, cell, symprec);
 
-    if (! trimed) {
-      goto err;
-    }
+  free(mapping_table);
+  mapping_table = NULL;
+
+  if (! trimed) {
+    goto err;
   }
 
   return primitive;

@@ -1282,29 +1282,23 @@ static int find_standardized_primitive(double lattice[3][3],
   Centering centering;
   SpglibDataset *dataset;
   SpacegroupType spgtype;
-  Cell *cell, *primitive, *bravais;
+  Cell *primitive, *bravais;
+
+  double identity[3][3] = {{ 1, 0, 0 },
+			   { 0, 1, 0 },
+			   { 0, 0, 1 }};
 
   num_prim_atom = 0;
   dataset = NULL;
   primitive = NULL;
-  cell = NULL;
   bravais = NULL;
 
-  if ((cell = cel_alloc_cell(num_atom)) == NULL) {
-    return 0;
-  }
-
-  cel_set_cell(cell, lattice, position, types);
-
-  dataset = get_dataset(lattice,
-			position,
-			types,
-			num_atom,
-			0,
-			symprec);
-  cel_free_cell(cell);
-
-  if (dataset == NULL) {
+  if ((dataset = get_dataset(lattice,
+			     position,
+			     types,
+			     num_atom,
+			     0,
+			     symprec)) == NULL) {
     return 0;
   }
 
@@ -1344,12 +1338,12 @@ static int find_standardized_primitive(double lattice[3][3],
     break;
   default:
     spg_free_dataset(dataset);
-    cel_free_cell(cell);
+    cel_free_cell(bravais);
     return 0;
   }
 
   if ((primitive = prm_transform_to_primitive(bravais,
-					      dataset->transformation_matrix,
+					      identity,
 					      centering,
 					      symprec)) == NULL) {
     spg_free_dataset(dataset);
