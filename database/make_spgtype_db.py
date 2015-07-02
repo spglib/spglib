@@ -28,23 +28,9 @@ def extract_essense(spg_db):
         # Setting
         vals.append(x[2])
         # Centering
-        vals.append(get_centering(x[7][0]))
+        vals.append(get_centering(x[8][0], ("%-9s" % x[2])[0]))
         essense.append(vals)
     return essense
-
-def get_centering(s):
-    if s=='I':
-        return 'BODY'
-    if s=='F':
-        return 'FACE'
-    if s=='A':
-        return 'A_FACE'
-    if s=='B':
-        return 'B_FACE'
-    if s=='C':
-        return 'C_FACE'
-    if s=='P' or s=='R':
-        return 'NO_CENTER'
 
 def get_bravais(n, s):
     if 1 <= n and n <= 2:
@@ -77,6 +63,23 @@ def get_pointgroup_number(spg_num):
             
     return pt_num
 
+def get_centering(centering, setting):
+    if centering == 'I':
+        return "BODY"
+    elif centering == 'F':
+        return "FACE"
+    elif centering == 'A':
+        return "A_FACE"
+    elif centering == 'C':
+        return "C_FACE"
+    elif centering == 'R':
+        if setting == 'H':
+            return "PRIMITIVE"
+        else:
+            return "R_CENTER"
+    else:
+        return "PRIMITIVE"
+
 def is_rhombo( s ):
     if s=='R':
         return True
@@ -94,7 +97,7 @@ bravais = {'triclinic': 'TRICLI',
 
 print "static const SpacegroupType spacegroup_types[] = {"
 
-print "  {%3d, \"%-6s\", \"%-16s\", \"%-31s\", \"%-19s\", \"%-10s\", \"%-5s\", %d }, /* %3d */" % (0, "", "", "", "", "", "", 0, 0)
+print "  {%3d, \"%-6s\", \"%-16s\", \"%-31s\", \"%-19s\", \"%-10s\", \"%-5s\", %15s, %2d }, /* %3d */" % (0, "", "", "", "", "", "", "CENTERING_ERROR", 0, 0)
 
 for i, x in enumerate(extract_essense(read_spg_csv(sys.argv[1]))):
     if len(x[6]) > maxlen:
@@ -102,5 +105,5 @@ for i, x in enumerate(extract_essense(read_spg_csv(sys.argv[1]))):
 
     pt_num = get_pointgroup_number(x[0])
 
-    print "  {%3d, \"%-6s\", \"%-16s\", \"%-31s\", \"%-19s\", \"%-10s\", \"%-5s\", %d }, /* %3d */" % (x[0], x[1], x[2], x[3], x[4], x[5], x[6], pt_num, i + 1)
+    print "  {%3d, \"%-6s\", \"%-16s\", \"%-31s\", \"%-19s\", \"%-10s\", \"%-5s\", %15s, %2d }, /* %3d */" % (x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], pt_num, i + 1)
 print "};"
