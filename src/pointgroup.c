@@ -1148,7 +1148,10 @@ static int lauennn(int axes[3],
   int i, count, axis;
   int prop_rot[3][3];
 
-  for (i = 0; i < 3; i++) { axes[i] = -1; }
+  for (i = 0; i < 3; i++) {
+    axes[i] = -1;
+  }
+
   count = 0;
   for (i = 0; i < pointsym->size; i++) {
     get_proper_rotation(prop_rot, pointsym->rot[i]);

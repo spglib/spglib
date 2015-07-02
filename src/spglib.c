@@ -100,6 +100,7 @@ static int find_standardized_primitive(double lattice[3][3],
 				       int types[],
 				       const int num_atom,
 				       const double symprec);
+static Centering get_centering(int hall_number);
 static void set_primitive(double lattice[3][3],
 			  double position[][3],
 			  int types[],
@@ -1242,34 +1243,54 @@ static int find_primitive(double lattice[3][3],
 			  const double symprec)
 {
   int num_prim_atom;
-  Cell *cell;
-  Primitive *primitive;
+  Centering centering;
+  SpglibDataset *dataset;
+  Cell *primitive, *cell;
 
-  cell = NULL;
-  primitive = NULL;
   num_prim_atom = 0;
+  dataset = NULL;
+  primitive = NULL;
+  cell = NULL;
+
+  if ((dataset = get_dataset(lattice,
+			     position,
+			     types,
+			     num_atom,
+			     0,
+			     symprec)) == NULL) {
+    goto err;
+  }
+
+  if ((centering = get_centering(dataset->hall_number)) == CENTERING_ERROR) {
+    goto err;
+  }
 
   if ((cell = cel_alloc_cell(num_atom)) == NULL) {
-    return 0;
+    spg_free_dataset(dataset);
+    goto err;
   }
-
+  
   cel_set_cell(cell, lattice, position, types);
-
-  /* find primitive cell */
-  if ((primitive = prm_get_primitive(cell, symprec)) == NULL) {
-    cel_free_cell(cell);
-    return 0;
-  }
-
-  num_prim_atom = primitive->cell->size;
-  if (num_prim_atom < num_atom) {
-    set_primitive(lattice, position, types, primitive->cell);
-  }
-
-  prm_free_primitive(primitive);
+  primitive = prm_transform_to_primitive(cell,
+					 dataset->transformation_matrix,
+					 centering,
+					 symprec);
+  spg_free_dataset(dataset);
   cel_free_cell(cell);
-    
+
+  if (primitive == NULL) {
+    goto err;
+  }
+
+  set_primitive(lattice, position, types, primitive);
+  num_prim_atom = primitive->size;
+
+  cel_free_cell(primitive);
+
   return num_prim_atom;
+
+ err:
+  return 0;
 }
 
 static int find_standardized_primitive(double lattice[3][3],
@@ -1281,7 +1302,6 @@ static int find_standardized_primitive(double lattice[3][3],
   int num_prim_atom;
   Centering centering;
   SpglibDataset *dataset;
-  SpacegroupType spgtype;
   Cell *primitive, *bravais;
 
   double identity[3][3] = {{ 1, 0, 0 },
@@ -1302,7 +1322,12 @@ static int find_standardized_primitive(double lattice[3][3],
     return 0;
   }
 
+  if ((centering = get_centering(dataset->hall_number)) == CENTERING_ERROR) {
+    goto err;
+  }
+
   if ((bravais = cel_alloc_cell(dataset->n_brv_atoms)) == NULL) {
+    spg_free_dataset(dataset);
     return 0;
   }
 
@@ -1311,54 +1336,36 @@ static int find_standardized_primitive(double lattice[3][3],
 	       dataset->brv_positions,
 	       dataset->brv_types);
 
-  spgtype = spgdb_get_spacegroup_type(dataset->hall_number);
+  spg_free_dataset(dataset);
 
-  switch (spgtype.international_full[0]) {
-  case 'P':
-    centering = PRIMITIVE;
-    break;
-  case 'A':
-    centering = A_FACE;
-    break;
-  case 'C':
-    centering = C_FACE;
-    break;
-  case 'F':
-    centering = FACE;
-    break;
-  case 'I':
-    centering = BODY;
-    break;
-  case 'R':
-    if (spgtype.setting[0] == 'H') {
-      centering = R_CENTER;
-    } else {
-      centering = PRIMITIVE;
-    }
-    break;
-  default:
-    spg_free_dataset(dataset);
-    cel_free_cell(bravais);
-    return 0;
-  }
+  primitive = prm_transform_to_primitive(bravais,
+					 identity,
+					 centering,
+					 symprec);
+  cel_free_cell(bravais);
 
-  if ((primitive = prm_transform_to_primitive(bravais,
-					      identity,
-					      centering,
-					      symprec)) == NULL) {
-    spg_free_dataset(dataset);
-    cel_free_cell(bravais);
-    return 0;
+  if (primitive == NULL) {
+    goto err;
   }
 
   set_primitive(lattice, position, types, primitive);
   num_prim_atom = primitive->size;
 
   cel_free_cell(primitive);
-  spg_free_dataset(dataset);
-  cel_free_cell(bravais);
 
   return num_prim_atom;
+
+ err:
+  return 0;
+}
+
+static Centering get_centering(int hall_number)
+{
+  SpacegroupType spgtype;
+
+  spgtype = spgdb_get_spacegroup_type(hall_number);
+
+  return spgtype.centering;
 }
 
 static void set_primitive(double lattice[3][3],
