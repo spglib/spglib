@@ -307,6 +307,24 @@ int spg_get_symmetry_from_database(int rotations[192][3][3],
 /* The index is defined as number from 1 to 530. */
 SpglibSpacegroupType spg_get_spacegroup_type(const int hall_number);
 
+
+int spg_standardize_cell(double lattice[3][3],
+			 double position[][3],
+			 int types[],
+			 const int num_atom,
+			 const int to_primitive,
+			 const int leave_distortion,
+			 const double symprec);
+
+int spgat_standardize_cell(double lattice[3][3],
+			   double position[][3],
+			   int types[],
+			   const int num_atom,
+			   const int to_primitive,
+			   const int leave_distortion,
+			   const double symprec,
+			   const double angle_tolerance);
+
 /* Bravais lattice with internal atomic points are returned. */
 /* The arrays are require to have 4 times larger memory space */
 /* those of input cell. */
