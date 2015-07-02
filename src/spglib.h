@@ -225,36 +225,6 @@ int spg_get_smallest_lattice(double smallest_lattice[3][3],
 			     SPGCONST double lattice[3][3],
 			     const double symprec);
 
-/* A primitive cell is found from an input cell. Be careful that  */
-/* ``lattice``, ``position``, and ``types`` are overwritten. */
-/* ``num_atom`` is returned as return value. */
-/* When any primitive cell is not found, 0 is returned. */
-int spg_find_primitive(double lattice[3][3],
-		       double position[][3],
-		       int types[],
-		       const int num_atom,
-		       const double symprec);
-
-int spgat_find_primitive(double lattice[3][3],
-			 double position[][3],
-			 int types[],
-			 const int num_atom,
-			 const double symprec,
-			 const double angle_tolerance);
-
-int spg_find_standardized_primitive(double lattice[3][3],
-				    double position[][3],
-				    int types[],
-				    const int num_atom,
-				    const double symprec);
-
-int spgat_find_standardized_primitive(double lattice[3][3],
-				      double position[][3],
-				      int types[],
-				      const int num_atom,
-				      const double symprec,
-				      const double angle_tolerance);
-
 /* Space group is found in international table symbol (``symbol``) and */
 /* number (return value). 0 is returned when it fails. */
 int spg_get_international(char symbol[11],
@@ -325,6 +295,29 @@ int spgat_standardize_cell(double lattice[3][3],
 			   const double symprec,
 			   const double angle_tolerance);
 
+/************/
+/* Obsolete */
+/************/
+/* A primitive cell is found from an input cell. Be careful that  */
+/* ``lattice``, ``position``, and ``types`` are overwritten. */
+/* ``num_atom`` is returned as return value. */
+/* When any primitive cell is not found, 0 is returned. */
+int spg_find_primitive(double lattice[3][3],
+		       double position[][3],
+		       int types[],
+		       const int num_atom,
+		       const double symprec);
+
+int spgat_find_primitive(double lattice[3][3],
+			 double position[][3],
+			 int types[],
+			 const int num_atom,
+			 const double symprec,
+			 const double angle_tolerance);
+
+/************/
+/* Obsolete */
+/************/
 /* Bravais lattice with internal atomic points are returned. */
 /* The arrays are require to have 4 times larger memory space */
 /* those of input cell. */

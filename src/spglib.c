@@ -90,26 +90,27 @@ static int get_multiplicity(SPGCONST double lattice[3][3],
 			    const int types[],
 			    const int num_atom,
 			    const double symprec);
-static int find_primitive(double lattice[3][3],
-			  double position[][3],
-			  int types[],
-			  const int num_atom,
-			  const double symprec);
-static int find_standardized_primitive(double lattice[3][3],
-				       double position[][3],
-				       int types[],
-				       const int num_atom,
-				       const double symprec);
-static int find_primitive_backward_comaptibility(double lattice[3][3],
-						 double position[][3],
-						 int types[],
-						 const int num_atom,
-						 const double symprec);
+static int standardize_primitive(double lattice[3][3],
+				 double position[][3],
+				 int types[],
+				 const int num_atom,
+				 const double symprec);
+static int standardize_cell(double lattice[3][3],
+			    double position[][3],
+			    int types[],
+			    const int num_atom,
+			    const double symprec);
+static int get_standardized_cell(double lattice[3][3],
+				 double position[][3],
+				 int types[],
+				 const int num_atom,
+				 const int to_primitive,
+				 const double symprec);
 static Centering get_centering(int hall_number);
-static void set_primitive(double lattice[3][3],
-			  double position[][3],
-			  int types[],
-			  Cell * primitive);
+static void set_cell(double lattice[3][3],
+		     double position[][3],
+		     int types[],
+		     Cell * cell);
 static int get_international(char symbol[11],
 			     SPGCONST double lattice[3][3],
 			     SPGCONST double position[][3],
@@ -121,11 +122,11 @@ static int get_schoenflies(char symbol[10],
 			   SPGCONST double position[][3],
 			   const int types[], const int num_atom,
 			   const double symprec);
-static int standardize_cell(double lattice[3][3],
-			    double position[][3],
-			    int types[],
-			    const int num_atom,
-			    const double symprec);
+static int find_primitive_backward_comaptibility(double lattice[3][3],
+						 double position[][3],
+						 int types[],
+						 const int num_atom,
+						 const double symprec);
 
 /*---------*/
 /* kpoints */
@@ -407,72 +408,6 @@ int spg_get_smallest_lattice(double smallest_lattice[3][3],
 }
 
 /* Return 0 if failed */
-int spg_find_primitive(double lattice[3][3],
-		       double position[][3],
-		       int types[],
-		       const int num_atom,
-		       const double symprec)
-{
-  sym_set_angle_tolerance(-1.0);
-
-  return find_primitive_backward_comaptibility(lattice,
-					       position,
-					       types,
-					       num_atom,
-					       symprec);
-}
-
-/* Return 0 if failed */
-int spgat_find_primitive(double lattice[3][3],
-			 double position[][3],
-			 int types[],
-			 const int num_atom,
-			 const double symprec,
-			 const double angle_tolerance)
-{
-  sym_set_angle_tolerance(angle_tolerance);
-
-  return find_primitive_backward_comaptibility(lattice,
-					       position,
-					       types,
-					       num_atom,
-					       symprec);
-}
-
-/* Return 0 if failed */
-int spg_find_standardized_primitive(double lattice[3][3],
-				    double position[][3],
-				    int types[],
-				    const int num_atom,
-				    const double symprec)
-{
-  sym_set_angle_tolerance(-1.0);
-
-  return find_standardized_primitive(lattice,
-				     position,
-				     types,
-				     num_atom,
-				     symprec);
-}
-
-/* Return 0 if failed */
-int spgat_find_standardized_primitive(double lattice[3][3],
-				      double position[][3],
-				      int types[],
-				      const int num_atom,
-				      const double symprec,
-				      const double angle_tolerance)
-{
-  sym_set_angle_tolerance(angle_tolerance);
-
-  return find_standardized_primitive(lattice,
-				     position,
-				     types,
-				     num_atom,
-				     symprec);
-}
-
-/* Return 0 if failed */
 int spg_get_international(char symbol[11],
 			  SPGCONST double lattice[3][3],
 			  SPGCONST double position[][3],
@@ -616,18 +551,19 @@ SpglibSpacegroupType spg_get_spacegroup_type(const int hall_number)
 int spg_standardize_cell(double lattice[3][3],
 			 double position[][3],
 			 int types[],
+			 const int num_atom,
 			 const int to_primitive,
 			 const int leave_distortion,
-			 const int num_atom,
 			 const double symprec)
 {
-  sym_set_angle_tolerance(-1.0);
-
-  return standardize_cell(lattice,
-			  position,
-			  types,
-			  num_atom,
-			  symprec);
+  return spgat_standardize_cell(lattice,
+				position,
+				types,
+				num_atom,
+				to_primitive,
+				leave_distortion,
+				symprec,
+				-1.0);
 }
 
 /* Return 0 if failed */
@@ -642,14 +578,75 @@ int spgat_standardize_cell(double lattice[3][3],
 {
   sym_set_angle_tolerance(angle_tolerance);
 
-  return standardize_cell(lattice,
-			  position,
-			  types,
-			  num_atom,
-			  symprec);
+  if (to_primitive) {
+    if (leave_distortion) {
+      return get_standardized_cell(lattice,
+				   position,
+				   types,
+				   num_atom,
+				   1,
+				   symprec);
+    } else {
+      return standardize_primitive(lattice,
+				   position,
+				   types,
+				   num_atom,
+				   symprec);
+    }
+  } else {
+    if (leave_distortion) {
+      return get_standardized_cell(lattice,
+				   position,
+				   types,
+				   num_atom,
+				   0,
+				   symprec);
+    } else {
+      return standardize_cell(lattice,
+			      position,
+			      types,
+			      num_atom,
+			      symprec);
+    }
+  }
 }
 
+/* Obsolete */
+/* Return 0 if failed */
+int spg_find_primitive(double lattice[3][3],
+		       double position[][3],
+		       int types[],
+		       const int num_atom,
+		       const double symprec)
+{
+  sym_set_angle_tolerance(-1.0);
 
+  return find_primitive_backward_comaptibility(lattice,
+					       position,
+					       types,
+					       num_atom,
+					       symprec);
+}
+
+/* Obsolete */
+/* Return 0 if failed */
+int spgat_find_primitive(double lattice[3][3],
+			 double position[][3],
+			 int types[],
+			 const int num_atom,
+			 const double symprec,
+			 const double angle_tolerance)
+{
+  sym_set_angle_tolerance(angle_tolerance);
+
+  return find_primitive_backward_comaptibility(lattice,
+					       position,
+					       types,
+					       num_atom,
+					       symprec);
+}
+
+/* Obsolete */
 /* Return 0 if failed */
 int spg_refine_cell(double lattice[3][3],
 		    double position[][3],
@@ -666,6 +663,7 @@ int spg_refine_cell(double lattice[3][3],
 			  symprec);
 }
 
+/* Obsolete */
 /* Return 0 if failed */
 int spgat_refine_cell(double lattice[3][3],
 		      double position[][3],
@@ -1278,69 +1276,11 @@ static int get_multiplicity(SPGCONST double lattice[3][3],
   return size;
 }
 
-/* Return 0 if failed */
-static int find_primitive(double lattice[3][3],
-			  double position[][3],
-			  int types[],
-			  const int num_atom,
-			  const double symprec)
-{
-  int num_prim_atom;
-  Centering centering;
-  SpglibDataset *dataset;
-  Cell *primitive, *cell;
-
-  num_prim_atom = 0;
-  dataset = NULL;
-  primitive = NULL;
-  cell = NULL;
-
-  if ((dataset = get_dataset(lattice,
-			     position,
-			     types,
-			     num_atom,
-			     0,
-			     symprec)) == NULL) {
-    goto err;
-  }
-
-  if ((centering = get_centering(dataset->hall_number)) == CENTERING_ERROR) {
-    goto err;
-  }
-
-  if ((cell = cel_alloc_cell(num_atom)) == NULL) {
-    spg_free_dataset(dataset);
-    goto err;
-  }
-  
-  cel_set_cell(cell, lattice, position, types);
-  primitive = prm_transform_to_primitive(cell,
-					 dataset->transformation_matrix,
-					 centering,
-					 symprec);
-  spg_free_dataset(dataset);
-  cel_free_cell(cell);
-
-  if (primitive == NULL) {
-    goto err;
-  }
-
-  set_primitive(lattice, position, types, primitive);
-  num_prim_atom = primitive->size;
-
-  cel_free_cell(primitive);
-
-  return num_prim_atom;
-
- err:
-  return 0;
-}
-
-static int find_standardized_primitive(double lattice[3][3],
-				       double position[][3],
-				       int types[],
-				       const int num_atom,
-				       const double symprec)
+static int standardize_primitive(double lattice[3][3],
+				 double position[][3],
+				 int types[],
+				 const int num_atom,
+				 const double symprec)
 {
   int num_prim_atom;
   Centering centering;
@@ -1391,7 +1331,7 @@ static int find_standardized_primitive(double lattice[3][3],
     goto err;
   }
 
-  set_primitive(lattice, position, types, primitive);
+  set_cell(lattice, position, types, primitive);
   num_prim_atom = primitive->size;
 
   cel_free_cell(primitive);
@@ -1400,44 +1340,6 @@ static int find_standardized_primitive(double lattice[3][3],
 
  err:
   return 0;
-}
-
-/* Return 0 if failed */
-static int find_primitive_backward_comaptibility(double lattice[3][3],
-						 double position[][3],
-						 int types[],
-						 const int num_atom,
-						 const double symprec)
-{
-  int num_prim_atom;
-  Cell *cell;
-  Primitive *primitive;
-
-  cell = NULL;
-  primitive = NULL;
-  num_prim_atom = 0;
-
-  if ((cell = cel_alloc_cell(num_atom)) == NULL) {
-    return 0;
-  }
-
-  cel_set_cell(cell, lattice, position, types);
-
-  /* find primitive cell */
-  if ((primitive = prm_get_primitive(cell, symprec)) == NULL) {
-    cel_free_cell(cell);
-    return 0;
-  }
-
-  num_prim_atom = primitive->cell->size;
-  if (num_prim_atom < num_atom) {
-    set_primitive(lattice, position, types, primitive->cell);
-  }
-
-  prm_free_primitive(primitive);
-  cel_free_cell(cell);
-    
-  return num_prim_atom;
 }
 
 static Centering get_centering(int hall_number)
@@ -1449,17 +1351,113 @@ static Centering get_centering(int hall_number)
   return spgtype.centering;
 }
 
-static void set_primitive(double lattice[3][3],
-			  double position[][3],
-			  int types[],
-			  Cell * primitive)
+static int standardize_cell(double lattice[3][3],
+			    double position[][3],
+			    int types[],
+			    const int num_atom,
+			    const double symprec)
+{
+  int i, n_brv_atoms;
+  SpglibDataset *dataset;
+
+  n_brv_atoms = 0;
+  dataset = NULL;
+
+  if ((dataset = get_dataset(lattice,
+			     position,
+			     types,
+			     num_atom,
+			     0,
+			     symprec)) == NULL) {
+    return 0;
+  }
+
+  n_brv_atoms = dataset->n_brv_atoms;
+
+  mat_copy_matrix_d3(lattice, dataset->brv_lattice);
+  for (i = 0; i < dataset->n_brv_atoms; i++) {
+    types[i] = dataset->brv_types[i];
+    mat_copy_vector_d3(position[i], dataset->brv_positions[i]);
+  }
+
+  spg_free_dataset(dataset);
+  
+  return n_brv_atoms;
+}
+
+static int get_standardized_cell(double lattice[3][3],
+				 double position[][3],
+				 int types[],
+				 const int num_atom,
+				 const int to_primitive,
+				 const double symprec)
+{
+  int num_std_atom;
+  SpglibDataset *dataset;
+  Cell *std_cell, *cell;
+  Centering centering;
+
+  num_std_atom = 0;
+  dataset = NULL;
+  std_cell = NULL;
+  cell = NULL;
+
+  if ((dataset = get_dataset(lattice,
+			     position,
+			     types,
+			     num_atom,
+			     0,
+			     symprec)) == NULL) {
+    goto err;
+  }
+
+  if (to_primitive) {
+    if ((centering = get_centering(dataset->hall_number)) == CENTERING_ERROR) {
+      goto err;
+    }
+  } else {
+    centering = PRIMITIVE;
+  }
+
+  if ((cell = cel_alloc_cell(num_atom)) == NULL) {
+    spg_free_dataset(dataset);
+    goto err;
+  }
+  
+  cel_set_cell(cell, lattice, position, types);
+  std_cell = prm_transform_to_primitive(cell,
+					dataset->transformation_matrix,
+					centering,
+					symprec);
+  spg_free_dataset(dataset);
+  cel_free_cell(cell);
+
+  if (std_cell == NULL) {
+    goto err;
+  }
+
+  set_cell(lattice, position, types, std_cell);
+  num_std_atom = std_cell->size;
+
+  cel_free_cell(std_cell);
+
+  return num_std_atom;
+
+ err:
+  return 0;
+}
+
+static void set_cell(double lattice[3][3],
+		     double position[][3],
+		     int types[],
+		     Cell * cell)
 {
   int i;
 
-  mat_copy_matrix_d3(lattice, primitive->lattice);
-  for (i = 0; i < primitive->size; i++) {
-    types[i] = primitive->types[i];
-    mat_copy_vector_d3(position[i], primitive->position[i]);
+  mat_copy_matrix_d3(lattice, cell->lattice);
+  for (i = 0; i < cell->size; i++) {
+    types[i] = cell->types[i];
+    mat_copy_vector_d3(position[i], cell->position[i]);
   }
 }
 
@@ -1529,38 +1527,44 @@ static int get_schoenflies(char symbol[10],
   return spacegroup.number;
 }
 
-static int standardize_cell(double lattice[3][3],
-			    double position[][3],
-			    int types[],
-			    const int num_atom,
-			    const double symprec)
+/* Return 0 if failed */
+static int find_primitive_backward_comaptibility(double lattice[3][3],
+						 double position[][3],
+						 int types[],
+						 const int num_atom,
+						 const double symprec)
 {
-  int i, n_brv_atoms;
-  SpglibDataset *dataset;
+  int num_prim_atom;
+  Cell *cell;
+  Primitive *primitive;
 
-  n_brv_atoms = 0;
-  dataset = NULL;
+  cell = NULL;
+  primitive = NULL;
+  num_prim_atom = 0;
 
-  if ((dataset = get_dataset(lattice,
-			     position,
-			     types,
-			     num_atom,
-			     0,
-			     symprec)) == NULL) {
+  if ((cell = cel_alloc_cell(num_atom)) == NULL) {
     return 0;
   }
 
-  n_brv_atoms = dataset->n_brv_atoms;
-  mat_copy_matrix_d3(lattice, dataset->brv_lattice);
-  for (i = 0; i < dataset->n_brv_atoms; i++) {
-    types[i] = dataset->brv_types[i];
-    mat_copy_vector_d3(position[i], dataset->brv_positions[i]);
+  cel_set_cell(cell, lattice, position, types);
+
+  /* find primitive cell */
+  if ((primitive = prm_get_primitive(cell, symprec)) == NULL) {
+    cel_free_cell(cell);
+    return 0;
   }
 
-  spg_free_dataset(dataset);
-  
-  return n_brv_atoms;
+  num_prim_atom = primitive->cell->size;
+  if (num_prim_atom < num_atom) {
+    set_cell(lattice, position, types, primitive->cell);
+  }
+
+  prm_free_primitive(primitive);
+  cel_free_cell(cell);
+    
+  return num_prim_atom;
 }
+
 
 
 /*---------*/
