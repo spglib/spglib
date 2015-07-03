@@ -1338,15 +1338,6 @@ static int standardize_primitive(double lattice[3][3],
   return 0;
 }
 
-static Centering get_centering(int hall_number)
-{
-  SpacegroupType spgtype;
-
-  spgtype = spgdb_get_spacegroup_type(hall_number);
-
-  return spgtype.centering;
-}
-
 static int standardize_cell(double lattice[3][3],
 			    double position[][3],
 			    int types[],
@@ -1455,6 +1446,15 @@ static void set_cell(double lattice[3][3],
     types[i] = cell->types[i];
     mat_copy_vector_d3(position[i], cell->position[i]);
   }
+}
+
+static Centering get_centering(int hall_number)
+{
+  SpacegroupType spgtype;
+
+  spgtype = spgdb_get_spacegroup_type(hall_number);
+
+  return spgtype.centering;
 }
 
 static int get_international(char symbol[11],
