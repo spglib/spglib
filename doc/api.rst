@@ -1,6 +1,8 @@
 API
 ====
 
+.. _api_spg_get_symmetry:
+
 ``spg_get_symmetry``
 ^^^^^^^^^^^^^^^^^^^^
 
@@ -15,11 +17,25 @@ API
   		       const int num_atom,
 		       const double symprec);
 
-Find symmetry operations. The operations are stored in ``rotatiion``
-and ``translation``. The number of operations is return as the return
-value. Rotations and translations are given in fractional coordinates,
-and ``rotation[i]`` and ``translation[i]`` with same index give a
-symmetry oprations, i.e., these have to be used togather.
+This function finds a set of representative symmetry operations for
+primitive cells or its extension with lattice translations for
+supercells. 
+
+The operations are stored in ``rotation`` and ``translation``. The
+number of operations is return as the return value. Rotations and
+translations are given in fractional coordinates, and ``rotation[i]``
+and ``translation[i]`` with same index give a symmetry operations,
+i.e., these have to be used together.
+
+As an exceptional case, if a supercell has the basis vectors of the
+lattice that break crsytallographic point group, the crystallographic
+symmetry operations are searched with this broken symmetry, i.e., at
+most the crystallographic point group found in this case is the point
+group of the lattice. For example, this happens for the :math:`2\times
+1\times 1` supercell of a conventional cubic unit cell. This may not
+be understandable in crystallographic sense, but is practically useful
+treatment for research in computational materials science.
+
 
 ``spg_get_international``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -68,7 +84,7 @@ is returned as return value.
 ``spg_refine_cell``
 ^^^^^^^^^^^^^^^^^^^^^
 
-Symmetrized and standarized crystal structure is obtained from a
+Symmetrized and standardized crystal structure is obtained from a
 non-standard crystal structure which may be slightly distorted within
 a symmetry recognition tolerance, or whose primitive vectors are differently
 chosen, etc.
@@ -96,10 +112,12 @@ axis, or cell, it is necessary to use
 ``spg_get_dataset``, ``spg_get_dataset_with_hall_number``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-For an input crystal structure, the space group operations of crystal
-are searched. Then they are compared with the crsytallographic
-database and the space group type is determined. The result is
-returned as the ``SpglibDataset`` structure as a dataset.
+For an input crystal structure, symmetry operations of the crystal are
+searched. Then they are compared with the crsytallographic database
+and the space group type is determined. The result is returned as the
+``SpglibDataset`` structure as a dataset. The default choice of
+setting of basis vectors in spglib is explained in the manuscript
+found at http://arxiv.org/abs/1506.01455.
 
 Usage
 ------
@@ -168,6 +186,8 @@ accessible through the C-structure given by
      double brv_lattice[3][3];
      int *brv_types;
      double (*brv_positions)[3];
+     int pointgroup_number;
+     char pointgroup_symbol[6];
    } SpglibDataset;
 
 .. _api_spg_get_dataset_spacegroup_type:
@@ -185,14 +205,16 @@ The (full) Hermann–Mauguin notation of space group type is given by
 ``hall_symbol``. The information on unique axis,
 setting or cell choices is found in ``setting``.
    
-Space group operations
+Symmetry operations
 """""""""""""""""""""""
    
 The symmetry operations of the input cell are stored in ``rotations``
 and ``translations``. A space group operation :math:`(R|\tau)` is made
 from a set of rotation :math:`R` and translation :math:`\tau` with the
 same index. Number of space group operations is found in
-``n_operations``. 
+``n_operations``. The detailed explanation of values is found at
+:ref:`api_spg_get_symmetry`.
+
 
 Site symmetry
 """"""""""""""
@@ -246,6 +268,15 @@ Standardized crystal structure
 The standardized crystal structure corresponding to a Hall symbol is
 stored in ``n_brv_atoms``, ``brv_lattice``, ``brv_types``, and ``brv_positions``.
 
+Crystallographic point group
+"""""""""""""""""""""""""""""
+
+``pointgroup_number`` is the serial number of the crystallographic
+point group, which refers `list of space
+groups (Seto's web site)
+<http://pmsl.planet.sci.kobe-u.ac.jp/~seto/?page_id=37&lang=en>`_.
+``pointgroup_symbol`` is the symbol of the crystallographic point
+group in the Hermann–Mauguin notation.
 
 ``spg_free_dataset``
 ^^^^^^^^^^^^^^^^^^^^^

@@ -132,7 +132,6 @@ API & variables
    definition
    api
    variable
-   space_group_symbol
 
 Mailing list
 ^^^^^^^^^^^^^^^^^
