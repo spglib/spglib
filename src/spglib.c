@@ -122,11 +122,11 @@ static int get_schoenflies(char symbol[10],
 			   SPGCONST double position[][3],
 			   const int types[], const int num_atom,
 			   const double symprec);
-static int find_primitive_backward_comaptibility(double lattice[3][3],
-						 double position[][3],
-						 int types[],
-						 const int num_atom,
-						 const double symprec);
+static int find_primitive(double lattice[3][3],
+			  double position[][3],
+			  int types[],
+			  const int num_atom,
+			  const double symprec);
 
 /*---------*/
 /* kpoints */
@@ -553,7 +553,7 @@ int spg_standardize_cell(double lattice[3][3],
 			 int types[],
 			 const int num_atom,
 			 const int to_primitive,
-			 const int leave_distortion,
+			 const int leave_distorted,
 			 const double symprec)
 {
   return spgat_standardize_cell(lattice,
@@ -561,7 +561,7 @@ int spg_standardize_cell(double lattice[3][3],
 				types,
 				num_atom,
 				to_primitive,
-				leave_distortion,
+				leave_distorted,
 				symprec,
 				-1.0);
 }
@@ -572,14 +572,14 @@ int spgat_standardize_cell(double lattice[3][3],
 			   int types[],
 			   const int num_atom,
 			   const int to_primitive,
-			   const int leave_distortion,
+			   const int leave_distorted,
 			   const double symprec,
 			   const double angle_tolerance)
 {
   sym_set_angle_tolerance(angle_tolerance);
 
   if (to_primitive) {
-    if (leave_distortion) {
+    if (leave_distorted) {
       return get_standardized_cell(lattice,
 				   position,
 				   types,
@@ -594,7 +594,7 @@ int spgat_standardize_cell(double lattice[3][3],
 				   symprec);
     }
   } else {
-    if (leave_distortion) {
+    if (leave_distorted) {
       return get_standardized_cell(lattice,
 				   position,
 				   types,
@@ -611,7 +611,6 @@ int spgat_standardize_cell(double lattice[3][3],
   }
 }
 
-/* Obsolete */
 /* Return 0 if failed */
 int spg_find_primitive(double lattice[3][3],
 		       double position[][3],
@@ -621,14 +620,13 @@ int spg_find_primitive(double lattice[3][3],
 {
   sym_set_angle_tolerance(-1.0);
 
-  return find_primitive_backward_comaptibility(lattice,
-					       position,
-					       types,
-					       num_atom,
-					       symprec);
+  return find_primitive(lattice,
+			position,
+			types,
+			num_atom,
+			symprec);
 }
 
-/* Obsolete */
 /* Return 0 if failed */
 int spgat_find_primitive(double lattice[3][3],
 			 double position[][3],
@@ -639,14 +637,13 @@ int spgat_find_primitive(double lattice[3][3],
 {
   sym_set_angle_tolerance(angle_tolerance);
 
-  return find_primitive_backward_comaptibility(lattice,
-					       position,
-					       types,
-					       num_atom,
-					       symprec);
+  return find_primitive(lattice,
+			position,
+			types,
+			num_atom,
+			symprec);
 }
 
-/* Obsolete */
 /* Return 0 if failed */
 int spg_refine_cell(double lattice[3][3],
 		    double position[][3],
@@ -663,7 +660,6 @@ int spg_refine_cell(double lattice[3][3],
 			  symprec);
 }
 
-/* Obsolete */
 /* Return 0 if failed */
 int spgat_refine_cell(double lattice[3][3],
 		      double position[][3],
@@ -1528,11 +1524,11 @@ static int get_schoenflies(char symbol[10],
 }
 
 /* Return 0 if failed */
-static int find_primitive_backward_comaptibility(double lattice[3][3],
-						 double position[][3],
-						 int types[],
-						 const int num_atom,
-						 const double symprec)
+static int find_primitive(double lattice[3][3],
+			  double position[][3],
+			  int types[],
+			  const int num_atom,
+			  const double symprec)
 {
   int num_prim_atom;
   Cell *cell;

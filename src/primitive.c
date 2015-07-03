@@ -42,9 +42,6 @@
 
 #include "debug.h"
 
-#include <assert.h>
-
-#define INCREASE_RATE 2.0
 #define REDUCE_RATE 0.95
 
 static double A_mat[3][3] = {{    1,    0,    0},
@@ -64,27 +61,12 @@ static double F_mat[3][3] = {{    0, 1./2, 1./2 },
 			     { 1./2, 1./2,    0 }};
 
 static Primitive * get_primitive(SPGCONST Cell * cell, const double symprec);
-static void set_primitive_positions(Cell * primitive_cell,
-				    const VecDBL * position,
-				    const int * mapping_table,
-				    const int * overlap_table);
-static VecDBL *
-translate_atoms_in_primitive_lattice(SPGCONST Cell * cell,
-				     SPGCONST double prim_lat[3][3]);
-static int * get_overlap_table(SPGCONST Cell *primitive_cell,
-			       const VecDBL * position,
-			       const int *types,
-			       const double symprec);
 static Cell * get_cell_with_smallest_lattice(SPGCONST Cell * cell,
 					     const double symprec);
 static Cell * get_primitive_cell(int * mapping_table,
 				 SPGCONST Cell * cell,
 				 const VecDBL * pure_trans,
 				 const double symprec);
-static int trim_cell(Cell * primitive_cell,
-		     int * mapping_table,
-		     SPGCONST Cell * cell,
-		     const double symprec);
 static int get_primitive_lattice_vectors_iterative(double prim_lattice[3][3],
 						   SPGCONST Cell * cell,
 						   const VecDBL * pure_trans,
@@ -153,9 +135,8 @@ Cell * prm_transform_to_primitive(SPGCONST Cell * cell,
 				  const Centering centering,
 				  const double symprec)
 {
-  int multi, trimed;
   int * mapping_table;
-  double tmat[3][3];
+  double tmat[3][3], prim_lat[3][3];
   Cell * primitive;
 
   mapping_table = NULL;
@@ -184,31 +165,20 @@ Cell * prm_transform_to_primitive(SPGCONST Cell * cell,
     goto err;
   }
 
-  multi = mat_Nint(1.0 / mat_get_determinant_d3(tmat));
-  if ((primitive = cel_alloc_cell(cell->size / multi)) == NULL) {
-    return NULL;
-  }
-
-  mat_multiply_matrix_d3(primitive->lattice, cell->lattice, tmat);
-
   if ((mapping_table = (int*) malloc(sizeof(int) * cell->size)) == NULL) {
     warning_print("spglib: Memory could not be allocated ");
     goto err;
   }
-    
-  trimed = trim_cell(primitive, mapping_table, cell, symprec);
+
+  mat_multiply_matrix_d3(prim_lat, tmat, cell->lattice);
+  primitive = cel_trim_cell(mapping_table, prim_lat, cell, symprec);
 
   free(mapping_table);
   mapping_table = NULL;
 
-  if (! trimed) {
-    goto err;
-  }
-
   return primitive;
 
  err:
-  cel_free_cell(primitive);
   return NULL;
 }
 
@@ -317,7 +287,7 @@ static Cell * get_primitive_cell(int * mapping_table,
 				 const double symprec)
 {
   int multi;
-  double prim_lattice[3][3];
+  double prim_lat[3][3], smallest_lat[3][3];
   Cell * primitive_cell;
 
   debug_print("get_primitive:\n");
@@ -327,7 +297,7 @@ static Cell * get_primitive_cell(int * mapping_table,
   /* Primitive lattice vectors are searched. */
   /* To be consistent, sometimes tolerance is decreased iteratively. */
   /* The descreased tolerance is stored in 'static double tolerance'. */
-  multi = get_primitive_lattice_vectors_iterative(prim_lattice,
+  multi = get_primitive_lattice_vectors_iterative(prim_lat,
 						  cell,
 						  pure_trans,
 						  symprec);
@@ -335,22 +305,17 @@ static Cell * get_primitive_cell(int * mapping_table,
     goto not_found;
   }
 
-  if ((primitive_cell = cel_alloc_cell(cell->size / multi)) == NULL) {
-    goto not_found;
-  }
-
-  if (! lat_smallest_lattice_vector(primitive_cell->lattice,
-				    prim_lattice,
+  if (! lat_smallest_lattice_vector(smallest_lat,
+				    prim_lat,
 				    symprec)) {
-    cel_free_cell(primitive_cell);
-    primitive_cell = NULL;
     goto not_found;
   }
 
   /* Fit atoms into new primitive cell */
-  if (! trim_cell(primitive_cell, mapping_table, cell, symprec)) {
-    cel_free_cell(primitive_cell);
-    primitive_cell = NULL;
+  if ((primitive_cell = cel_trim_cell(mapping_table,
+				      smallest_lat,
+				      cell,
+				      symprec)) == NULL) {
     goto not_found;
   }
 
@@ -363,213 +328,6 @@ static Cell * get_primitive_cell(int * mapping_table,
   return NULL;
 }
 
-/* Return 0 if failed */
-static int trim_cell(Cell * primitive_cell,
-		     int * mapping_table,
-		     SPGCONST Cell * cell,
-		     const double symprec)
-{
-  int i, index_prim_atom;
-  VecDBL * position;
-  int *overlap_table;
-
-  position = NULL;
-  overlap_table = NULL;
-
-  if ((position =
-       translate_atoms_in_primitive_lattice(cell, primitive_cell->lattice))
-      == NULL) {
-    goto err;
-  }
-
-  if ((overlap_table = get_overlap_table(primitive_cell,
-					 position,
-					 cell->types,
-					 symprec)) == NULL) {
-    mat_free_VecDBL(position);
-    goto err;
-  }
-
-
-  index_prim_atom = 0;
-  for (i = 0; i < cell->size; i++) {
-    if (overlap_table[i] == i) {
-      mapping_table[i] = index_prim_atom;
-      primitive_cell->types[index_prim_atom] = cell->types[i];
-      index_prim_atom++;
-    } else {
-      mapping_table[i] = mapping_table[overlap_table[i]];
-    }
-  }
-
-  set_primitive_positions(primitive_cell,
-			  position,
-			  mapping_table,
-			  overlap_table);
-
-  mat_free_VecDBL(position);
-  /* free_overlap_table(overlap_table, cell->size); */
-  free(overlap_table);
-  return 1;
-
- err:
-  return 0;
-}
-
-static void set_primitive_positions(Cell * primitive_cell,
-				    const VecDBL * position,
-				    const int * mapping_table,
-				    const int * overlap_table)
-{
-  int i, j, k, l, multi;
-
-  for (i = 0; i < primitive_cell->size; i++) {
-    for (j = 0; j < 3; j++) {
-      primitive_cell->position[i][j] = 0;
-    }
-  }
-
-  /* Positions of overlapped atoms are averaged. */
-  for (i = 0; i < position->size; i++) {
-    j = mapping_table[i];
-    k = overlap_table[i];
-    for (l = 0; l < 3; l++) {
-      /* boundary treatment */
-      /* One is at right and one is at left or vice versa. */
-      if (mat_Dabs(position->vec[k][l] - position->vec[i][l]) > 0.5) {
-	if (position->vec[i][l] < position->vec[k][l]) {
-	  primitive_cell->position[j][l] += position->vec[i][l] + 1;
-	} else {
-	  primitive_cell->position[j][l] += position->vec[i][l] - 1;
-	}
-      } else {
-	primitive_cell->position[j][l] += position->vec[i][l];
-      }
-    }
-	
-  }
-
-  multi = position->size / primitive_cell->size;
-  for (i = 0; i < primitive_cell->size; i++) {
-    for (j = 0; j < 3; j++) {
-      primitive_cell->position[i][j] /= multi;
-      primitive_cell->position[i][j] = mat_Dmod1(primitive_cell->position[i][j]);
-    }
-  }
-}
-
-/* Return NULL if failed */
-static VecDBL *
-translate_atoms_in_primitive_lattice(SPGCONST Cell * cell,
-				     SPGCONST double prim_lat[3][3])
-{
-  int i, j;
-  double tmp_matrix[3][3], axis_inv[3][3];
-  VecDBL * position;
-
-  position = NULL;
-
-  if ((position = mat_alloc_VecDBL(cell->size)) == NULL) {
-    return NULL;
-  }
-
-  mat_inverse_matrix_d3(tmp_matrix, prim_lat, 0);
-  mat_multiply_matrix_d3(axis_inv, tmp_matrix, cell->lattice);
-
-  /* Send atoms into the primitive cell */
-  for (i = 0; i < cell->size; i++) {
-    mat_multiply_matrix_vector_d3(position->vec[i],
-				  axis_inv,
-				  cell->position[i]);
-    for (j = 0; j < 3; j++) {
-      position->vec[i][j] = mat_Dmod1(position->vec[i][j]);
-    }
-  }
-
-  return position;
-}
-
-
-/* Return NULL if failed */
-static int * get_overlap_table(SPGCONST Cell *primitive_cell,
-			       const VecDBL * position,
-			       const int *types,
-			       const double symprec)
-{
-  int i, j, attempt, num_overlap, ratio, cell_size, count;
-  double trim_tolerance;
-  int *overlap_table;
-
-  cell_size = position->size;
-  ratio = cell_size / primitive_cell->size;
-  trim_tolerance = symprec;
-
-  if ((overlap_table = (int*)malloc(sizeof(int) * cell_size)) == NULL) {
-    return NULL;
-  }
-  
-  for (attempt = 0; attempt < 100; attempt++) {
-    for (i = 0; i < cell_size; i++) {
-      overlap_table[i] = -1;
-      num_overlap = 0;
-      for (j = 0; j < cell_size; j++) {
-	if (types[i] == types[j]) {
-	  if (cel_is_overlap(position->vec[i],
-			     position->vec[j],
-			     primitive_cell->lattice,
-			     trim_tolerance)) {
-	    num_overlap++;
-	    if (overlap_table[i] == -1) {
-	      overlap_table[i] = j;
-	      assert(j <= i);
-	    }
-	  }
-	}
-      }
-
-      if (num_overlap == ratio)	{
-	continue;
-      }
-      if (num_overlap < ratio) {
-	trim_tolerance *= INCREASE_RATE;
-	warning_print("spglib: Increase tolerance to %f ", trim_tolerance);
-	warning_print("(line %d, %s).\n", __LINE__, __FILE__);
-	goto cont;
-      }
-      if (num_overlap > ratio) {
-	trim_tolerance *= REDUCE_RATE;
-	warning_print("spglib: Reduce tolerance to %f ", trim_tolerance);
-	warning_print("(line %d, %s).\n", __LINE__, __FILE__);
-	goto cont;
-      }
-    }
-
-    for (i = 0; i < cell_size; i++) {
-      if (overlap_table[i] != i) {
-	continue;
-      }
-      count = 0;
-      for (j = 0; j < cell_size; j++) {
-	if (i == overlap_table[j]) {
-	  count++;
-	}
-      }
-      assert(count == ratio);
-    }
-
-    goto found;
-
-  cont:
-    ;
-  }
-
-  warning_print("spglib: Could not trim cell into primitive ");
-  warning_print("(line %d, %s).\n", __LINE__, __FILE__);
-  return NULL;
-
-found:
-  return overlap_table;
-}
 
 /* Return 0 if failed */
 static int get_primitive_lattice_vectors_iterative(double prim_lattice[3][3],
