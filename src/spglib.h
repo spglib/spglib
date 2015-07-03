@@ -100,16 +100,18 @@ typedef struct {
   char setting[6];
   double transformation_matrix[3][3]; /* bravais_lattice = T * original_lattice */
   double origin_shift[3]; /* Origin shift in Bravais lattice */
-  int n_operations; /* Symmetry operations from database */
+  int n_operations;
   int (*rotations)[3][3];
   double (*translations)[3];
   int n_atoms;
-  int *wyckoffs; /* Wyckoff letters */
+  int *wyckoffs;
   int *equivalent_atoms;
   int n_brv_atoms;
   double brv_lattice[3][3];
   int *brv_types;
   double (*brv_positions)[3];
+  int pointgroup_number;
+  char pointgroup_symbol[6];
 } SpglibDataset;
 
 typedef struct {
@@ -119,6 +121,7 @@ typedef struct {
   char international[32];
   char international_full[20];
   char international_short[11];
+  int pointgroup_number;
 } SpglibSpacegroupType;
 
 SpglibDataset * spg_get_dataset(SPGCONST double lattice[3][3],

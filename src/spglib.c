@@ -494,14 +494,24 @@ int spg_get_pointgroup(char symbol[6],
   pointgroup = ptg_get_transformation_matrix(tmp_transform_mat,
 					     rotations,
 					     num_rotations);
+
+  if (pointgroup.number == 0) {
+    return 0;
+  }
+
+  if (lat_get_centering(correction_mat,
+			tmp_transform_mat,
+			pointgroup.laue) == CENTERING_ERROR) {
+    return 0;
+  }
+
   strcpy(symbol, pointgroup.symbol);
-  lat_get_centering(correction_mat,
-		    tmp_transform_mat,
-		    pointgroup.laue);
+
   mat_multiply_matrix_id3(transform_mat_double,
 			  tmp_transform_mat,
 			  correction_mat);
   mat_cast_matrix_3d_to_3i(transform_mat, transform_mat_double);
+
   return pointgroup.number;
 }
 
@@ -921,6 +931,8 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
   dataset->n_brv_atoms = 0;
   dataset->brv_positions = NULL;
   dataset->brv_types = NULL;
+  dataset->pointgroup_number = 0;
+  strcpy(dataset->pointgroup_symbol, "");
 
   if ((cell = cel_alloc_cell(num_atom)) == NULL) {
     free(dataset);
@@ -986,6 +998,7 @@ static int set_dataset(SpglibDataset * dataset,
   double inv_mat[3][3];
   Cell *bravais;
   Symmetry *symmetry;
+  Pointgroup pointgroup;
 
   bravais = NULL;
   symmetry = NULL;
@@ -1080,6 +1093,10 @@ static int set_dataset(SpglibDataset * dataset,
   
   cel_free_cell(bravais);
   sym_free_symmetry(symmetry);
+
+  dataset->pointgroup_number = spacegroup->pointgroup_number;
+  pointgroup = ptg_get_pointgroup(spacegroup->pointgroup_number);
+  strcpy(dataset->pointgroup_symbol, pointgroup.symbol);
 
   return 1;
 
