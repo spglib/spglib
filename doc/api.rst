@@ -209,64 +209,67 @@ Symmetry operations
 """""""""""""""""""""""
    
 The symmetry operations of the input cell are stored in ``rotations``
-and ``translations``. A space group operation :math:`(R|\tau)` is made
-from a set of rotation :math:`R` and translation :math:`\tau` with the
-same index. Number of space group operations is found in
-``n_operations``. The detailed explanation of values is found at
+and ``translations``. A crystallographic symmetry operation
+:math:`(\boldsymbol{W}|\boldsymbol{w})` is made from a pair of
+rotation :math:`\boldsymbol{W}` and translation :math:`\boldsymbol{w}`
+parts with the same index. Number of symmetry operations is given as
+``n_operations``. The detailed explanation of the values is found at
 :ref:`api_spg_get_symmetry`.
 
 
 Site symmetry
 """"""""""""""
 
-``n_atoms`` is the number of
-atoms of the input cell. ``wyckoffs`` gives Wyckoff letters that are
-assigned to atomic positions of the input cell. The numbers of 0, 1,
-2, :math:`\ldots`, correspond to the a, b, c, :math:`\ldots`,
-respectively. Number of elements in ``wyckoffs`` is same as
-``n_atoms``. ``equivalent_atoms`` is a list of atomic indices that map
-to indices of symmetrically independent atoms, where the list index
-corresponds to atomic index of the input crystal structure.
+``n_atoms`` is the number of atoms of the input cell. ``wyckoffs``
+gives Wyckoff letters that are assigned to atomic positions of the
+input cell. The numbers of 0, 1, 2, :math:`\ldots`, correspond to the
+a, b, c, :math:`\ldots`, respectively. Number of elements in
+``wyckoffs`` is same as ``n_atoms``. ``equivalent_atoms`` is a list of
+atomic indices that map to indices of symmetrically independent atoms,
+where the list index corresponds to atomic index of the input crystal
+structure.
 
 Origin shift and lattice transformation
 """"""""""""""""""""""""""""""""""""""""
 
 ``transformation_matrix`` and ``origin_shift`` are obtained as a
 result of space-group-type matching under a set of unique axis,
-setting and cell choices. In this matching, lattice and atomic
-positions have to be standardized to compare with the database of
-space-group operations. The lattice is transformed to a Bravais
-lattice. Atomic positions are shifted in order that symmetry
-operations have a standard origin.  ``transformation_matrix``
-(:math:`\mathrm{M}`) is the matrix to transform the input lattice to a
-Bravais lattice with unique axis, setting and cell choices defined as
+setting and cell choices. In this matching, basis vectors and atomic
+point coordinates have to be standardized to compare with the database
+of symmetry operations. The basis vectors are transformed to those of
+a standardized cell. Atomic point coordinates are shifted so that
+symmetry operations have the standard
+origin. ``transformation_matrix`` (:math:`\mathrm{M}`) is the matrix
+to transform the input basis vectors to the standardized basis
+vectors, wihch is represented as 
 
 .. math::
 
-   ( \mathbf{a}_\mathrm{B} \; \mathbf{b}_\mathrm{B} \; \mathbf{c}_\mathrm{B} )
+   ( \mathbf{a}_\mathrm{S} \; \mathbf{b}_\mathrm{S} \; \mathbf{c}_\mathrm{S} )
    =  ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} ) \mathrm{M}
 
-where :math:`\mathbf{a}_\mathrm{B}`, :math:`\mathbf{b}_\mathrm{B}`,
-and :math:`\mathbf{c}_\mathrm{B}` are the column vectors of a Bravais
-lattice, and :math:`\mathbf{a}`, :math:`\mathbf{b}`, and
-:math:`\mathbf{c}` are the column vectors of the input lattice. The
-``origin_shift`` (:math:`\mathbf{o}`) is the atomic position shift in
-terms of the Bravais lattice. The atomic position shift is measured
-from the standardized cell (conventional unit cell) to the original
-cell in terms of the Bravais lattice. An atomic position in the
-original cell :math:`\mathbf{x}` (input data) is mapped to that in
-Bravais lattice :math:`\mathbf{x}_\mathrm{B}` by
+where :math:`\mathbf{a}_\mathrm{S}`, :math:`\mathbf{b}_\mathrm{S}`,
+and :math:`\mathbf{c}_\mathrm{S}` are the standardized basis vectors,
+and :math:`\mathbf{a}`, :math:`\mathbf{b}`, and :math:`\mathbf{c}` are
+the input (original) basis vectors. The ``origin_shift``
+(:math:`\boldsymbol{p}`) is the vector from the origin of the
+standardized coordinate system to the origin of the input (original)
+coordinate system measured in the standardized coordinate system. The
+atomic position shift is measured from the standardized cell
+(conventional unit cell) to the original cell in terms of the Bravais
+lattice. An atomic position in the original cell
+:math:`\boldsymbol{x}` (input data) is mapped to that in Bravais
+lattice :math:`\boldsymbol{x}_\mathrm{S}` by
 
 .. math::
 
-   \mathbf{x}_\mathrm{B} = \mathrm{M}\mathbf{x} - \mathbf{o} \;\;(\mathrm{mod}\;
-   \mathbf{1}).
+   \boldsymbol{x}_\mathrm{S} = \mathrm{M}^{-1}\boldsymbol{x} + \boldsymbol{p} \;\;(\mathrm{mod}\; \mathbf{1}).
 
 Standardized crystal structure
 """""""""""""""""""""""""""""""
    
 The standardized crystal structure corresponding to a Hall symbol is
-stored in ``n_brv_atoms``, ``brv_lattice``, ``brv_types``, and ``brv_positions``.
+stored in ``n_std_atoms``, ``std_lattice``, ``std_types``, and ``std_positions``.
 
 Crystallographic point group
 """""""""""""""""""""""""""""
