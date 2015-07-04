@@ -53,7 +53,7 @@ spg2hall = [0,
             517, 518, 520, 521, 523, 524, 525, 527, 529, 530,
             531]
 
-def show_dataset(dataset, lattice, nonewline, is_long_output, is_dataset, is_operations)
+def show_dataset(dataset, lattice, position, cell, nonewline, is_long_output, is_dataset, is_operations)
   spgnum, spg, hallnum, hall_symbol, setting, t_mat, o_shift,
   rotations, translations, wyckoffs,
   brv_lattice, brv_types, brv_positions = dataset
@@ -95,7 +95,7 @@ def show_dataset(dataset, lattice, nonewline, is_long_output, is_dataset, is_ope
       wyckoffs.each_with_index do |w, i|
         pos = []
         3.times do |j|
-          pos.push( position[i][j] - position[i][j].floor )
+          pos.push(position[i][j] - position[i][j].floor)
         end
         printf("%4d %2s  %s %8.5f %8.5f %8.5f\n",
                i+1, cell.atoms[i].name, wl[w,1], pos[0], pos[1], pos[2])
@@ -104,13 +104,17 @@ def show_dataset(dataset, lattice, nonewline, is_long_output, is_dataset, is_ope
   end
 
   if is_operations or is_dataset
-    rotations.size.times do |i|
-      print "----", i+1, "----\n"
-      rotations[i].each do |row|
-        printf("%2d %2d %2d\n", row[0], row[1], row[2])
-      end
-      printf("%f %f %f\n", translations[i][0], translations[i][1], translations[i][2])
+    show_operations(rotations, translations)
+  end
+end
+
+def show_operations(rotations, translations)
+  rotations.size.times do |i|
+    print "----", i+1, "----\n"
+    rotations[i].each do |row|
+      printf("%2d %2d %2d\n", row[0], row[1], row[2])
     end
+    printf("%f %f %f\n", translations[i][0], translations[i][1], translations[i][2])
   end
 end
 
@@ -195,6 +199,7 @@ options.shift_string = false
 options.show_primitive = false
 options.is_long_output = false
 options.is_operations = false
+options.is_numerical_operations = false
 options.is_dataset = false
 options.is_check_settings = false
 options.to_c = false
@@ -222,6 +227,10 @@ OptionParser.new do |opts|
 
   opts.on('-o', '--operations', 'Symmetry operations') do
     options.is_operations = true
+  end
+
+  opts.on('--numerical_operations', 'Numerical symmetry operations') do
+    options.is_numerical_operations = true
   end
 
   opts.on('-d', '--dataset', 'Dataset') do
@@ -264,6 +273,8 @@ if not dataset.empty?
   if not options.is_check_settings
     show_dataset(dataset,
                  lattice,
+                 position,
+                 cell,
                  options.nonewline,
                  options.is_long_output,
                  options.is_dataset,
@@ -306,4 +317,12 @@ if options.show_primitive
   cell = Crystal::Cell.new(axis, atoms, comment="")
   
   Vasp::CellToPoscar.new(cell).print
+end
+
+if options.is_numerical_operations
+  rotations, translations = get_symmetry(lattice,
+                                         position,
+                                         types,
+                                         options.symprec)
+  show_operations(rotations, translations)
 end

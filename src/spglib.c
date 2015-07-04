@@ -291,6 +291,47 @@ int spg_get_symmetry(int rotation[][3][3],
 }
 
 /* Return 0 if failed */
+int spg_get_symmetry_numerical(int rotation[][3][3],
+			       double translation[][3],
+			       const int max_size,
+			       SPGCONST double lattice[3][3],
+			       SPGCONST double position[][3],
+			       const int types[],
+			       const int num_atom,
+			       const double symprec)
+{
+  int i, size;
+  Cell *cell;
+  Symmetry *symmetry;
+
+  cell = NULL;
+  symmetry = NULL;
+
+  sym_set_angle_tolerance(-1.0);
+
+  if ((cell = cel_alloc_cell(num_atom)) == NULL) {
+    return 0;
+  }
+
+  cel_set_cell(cell, lattice, position, types);
+
+  if ((symmetry = sym_get_operation(cell, symprec)) == NULL) {
+    cel_free_cell(cell);
+    return 0;
+  }
+
+  for (i = 0; i < symmetry->size; i++) {
+    mat_copy_matrix_i3(rotation[i], symmetry->rot[i]);
+    mat_copy_vector_d3(translation[i], symmetry->trans[i]);
+  }
+  size = symmetry->size;
+
+  sym_free_symmetry(symmetry);
+
+  return size;
+}
+
+/* Return 0 if failed */
 int spgat_get_symmetry(int rotation[][3][3],
 		       double translation[][3],
 		       const int max_size,

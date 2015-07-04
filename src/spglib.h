@@ -182,6 +182,17 @@ int spgat_get_symmetry(int rotation[][3][3],
 		       const double symprec,
 		       const double angle_tolerance);
 
+/* This is only used to check consistensy with spg_get_symmetry. */
+int spg_get_symmetry_numerical(int rotation[][3][3],
+			       double translation[][3],
+			       const int max_size,
+			       SPGCONST double lattice[3][3],
+			       SPGCONST double position[][3],
+			       const int types[],
+			       const int num_atom,
+			       const double symprec);
+
+
 /* Find symmetry operations with collinear spins on atoms. */
 int spg_get_symmetry_with_collinear_spin(int rotation[][3][3],
 					 double translation[][3],
