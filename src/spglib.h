@@ -98,8 +98,8 @@ typedef struct {
   char international_symbol[11];
   char hall_symbol[17];
   char setting[6];
-  double transformation_matrix[3][3]; /* bravais_lattice = T * original_lattice */
-  double origin_shift[3]; /* Origin shift in Bravais lattice */
+  double transformation_matrix[3][3];
+  double origin_shift[3];
   int n_operations;
   int (*rotations)[3][3];
   double (*translations)[3];
