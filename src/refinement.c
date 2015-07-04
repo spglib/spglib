@@ -429,7 +429,7 @@ static Cell * get_conventional_primitive(SPGCONST Spacegroup * spacegroup,
 				  trans_mat,
 				  primitive->position[i]);
     for (j = 0; j < 3; j++) {
-      conv_prim->position[i][j] -= spacegroup->origin_shift[j];
+      conv_prim->position[i][j] += spacegroup->origin_shift[j];
       conv_prim->position[i][j] = mat_Dmod1(conv_prim->position[i][j]);
     }
   }
@@ -756,7 +756,7 @@ static void set_translation_with_origin_shift(Symmetry *conv_sym,
     tmp_mat[2][2]--;
     mat_multiply_matrix_vector_id3(tmp_vec, tmp_mat, origin_shift);
     for (j = 0; j < 3; j++) {
-      conv_sym->trans[i][j] -= tmp_vec[j];
+      conv_sym->trans[i][j] += tmp_vec[j];
     }
   }
 }

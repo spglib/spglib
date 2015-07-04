@@ -2181,7 +2181,7 @@ static int get_origin_shift(double shift[3],
     for (j = 0; j < 9; j++) {
       shift[i] += VSpU[i][j] * dw[j];
     }
-    shift[i] -= mat_Nint(shift[i]);
+    shift[i] = mat_Dmod1(shift[i]);
   }
 
   return 1;
@@ -2206,7 +2206,7 @@ static int set_dw(double dw[3],
     transform_translation(trans_db_prim, centering, trans_db);
     if (mat_check_identity_matrix_i3(rot_db, rot)) {
       for (j = 0; j < 3; j++) {
-	dw[j] = trans_db_prim[j] - trans_prim[j];
+	dw[j] = trans_prim[j] - trans_db_prim[j];
 	dw[j] = mat_Dmod1(dw[j]);
       }
       goto found;
@@ -2246,7 +2246,7 @@ static int is_match_database(const int hall_number,
 	transform_translation(trans_prim, centering, symmetry->trans[i]);
 	transform_rotation(rot_prim, centering, rot_db);
 	for (k = 0; k < 3; k++) {
-	  diff[k] = trans_db_prim[k] - trans_prim[k] + origin_shift[k];
+	  diff[k] = trans_prim[k] - trans_db_prim[k] + origin_shift[k];
 	}
 	mat_multiply_matrix_vector_d3(shift_rot, rot_prim, origin_shift);
 	if (cel_is_overlap(diff, shift_rot, primitive_lattice, symprec)) {
