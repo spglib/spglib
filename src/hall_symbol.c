@@ -2207,7 +2207,7 @@ static int set_dw(double dw[3],
     if (mat_check_identity_matrix_i3(rot_db, rot)) {
       for (j = 0; j < 3; j++) {
 	dw[j] = trans_db_prim[j] - trans_prim[j];
-	dw[j] -= mat_Nint(dw[j]);
+	dw[j] = mat_Dmod1(dw[j]);
       }
       goto found;
     }
