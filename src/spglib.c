@@ -250,12 +250,12 @@ void spg_free_dataset(SpglibDataset *dataset)
     dataset->n_atoms = 0;
   }
 
-  if (dataset->n_brv_atoms > 0) {
-    free(dataset->brv_positions);
-    dataset->brv_positions = NULL;
-    free(dataset->brv_types);
-    dataset->brv_types = NULL;
-    dataset->n_brv_atoms = 0;
+  if (dataset->n_std_atoms > 0) {
+    free(dataset->std_positions);
+    dataset->std_positions = NULL;
+    free(dataset->std_types);
+    dataset->std_types = NULL;
+    dataset->n_std_atoms = 0;
   }
 
   dataset->spacegroup_number = 0;
@@ -969,9 +969,9 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
   dataset->n_operations = 0;
   dataset->rotations = NULL;
   dataset->translations = NULL;
-  dataset->n_brv_atoms = 0;
-  dataset->brv_positions = NULL;
-  dataset->brv_types = NULL;
+  dataset->n_std_atoms = 0;
+  dataset->std_positions = NULL;
+  dataset->std_types = NULL;
   dataset->pointgroup_number = 0;
   strcpy(dataset->pointgroup_symbol, "");
 
@@ -1111,25 +1111,25 @@ static int set_dataset(SpglibDataset * dataset,
     goto err;
   }
 
-  dataset->n_brv_atoms = bravais->size;
-  mat_copy_matrix_d3(dataset->brv_lattice, bravais->lattice);
+  dataset->n_std_atoms = bravais->size;
+  mat_copy_matrix_d3(dataset->std_lattice, bravais->lattice);
 
-  if ((dataset->brv_positions =
-       (double (*)[3]) malloc(sizeof(double[3]) * dataset->n_brv_atoms))
+  if ((dataset->std_positions =
+       (double (*)[3]) malloc(sizeof(double[3]) * dataset->n_std_atoms))
       == NULL) {
     warning_print("spglib: Memory could not be allocated.");
     goto err;
   }
 
-  if ((dataset->brv_types = (int*) malloc(sizeof(int) * dataset->n_brv_atoms))
+  if ((dataset->std_types = (int*) malloc(sizeof(int) * dataset->n_std_atoms))
       == NULL) {
     warning_print("spglib: Memory could not be allocated.");
     goto err;
   }
 
-  for (i = 0; i < dataset->n_brv_atoms; i++) {
-    mat_copy_vector_d3(dataset->brv_positions[i], bravais->position[i]);
-    dataset->brv_types[i] = bravais->types[i];
+  for (i = 0; i < dataset->n_std_atoms; i++) {
+    mat_copy_vector_d3(dataset->std_positions[i], bravais->position[i]);
+    dataset->std_types[i] = bravais->types[i];
   }
   
   cel_free_cell(bravais);
@@ -1142,9 +1142,9 @@ static int set_dataset(SpglibDataset * dataset,
   return 1;
 
  err:
-  if (dataset->brv_positions != NULL) {
-    free(dataset->brv_positions);
-    dataset->brv_positions = NULL;
+  if (dataset->std_positions != NULL) {
+    free(dataset->std_positions);
+    dataset->std_positions = NULL;
   }
   if (bravais != NULL) {
     cel_free_cell(bravais);
@@ -1363,15 +1363,15 @@ static int standardize_primitive(double lattice[3][3],
     goto err;
   }
 
-  if ((bravais = cel_alloc_cell(dataset->n_brv_atoms)) == NULL) {
+  if ((bravais = cel_alloc_cell(dataset->n_std_atoms)) == NULL) {
     spg_free_dataset(dataset);
     return 0;
   }
 
   cel_set_cell(bravais,
-	       dataset->brv_lattice,
-	       dataset->brv_positions,
-	       dataset->brv_types);
+	       dataset->std_lattice,
+	       dataset->std_positions,
+	       dataset->std_types);
 
   spg_free_dataset(dataset);
 
@@ -1402,10 +1402,10 @@ static int standardize_cell(double lattice[3][3],
 			    const int num_atom,
 			    const double symprec)
 {
-  int i, n_brv_atoms;
+  int i, n_std_atoms;
   SpglibDataset *dataset;
 
-  n_brv_atoms = 0;
+  n_std_atoms = 0;
   dataset = NULL;
 
   if ((dataset = get_dataset(lattice,
@@ -1417,17 +1417,17 @@ static int standardize_cell(double lattice[3][3],
     return 0;
   }
 
-  n_brv_atoms = dataset->n_brv_atoms;
+  n_std_atoms = dataset->n_std_atoms;
 
-  mat_copy_matrix_d3(lattice, dataset->brv_lattice);
-  for (i = 0; i < dataset->n_brv_atoms; i++) {
-    types[i] = dataset->brv_types[i];
-    mat_copy_vector_d3(position[i], dataset->brv_positions[i]);
+  mat_copy_matrix_d3(lattice, dataset->std_lattice);
+  for (i = 0; i < dataset->n_std_atoms; i++) {
+    types[i] = dataset->std_types[i];
+    mat_copy_vector_d3(position[i], dataset->std_positions[i]);
   }
 
   spg_free_dataset(dataset);
   
-  return n_brv_atoms;
+  return n_std_atoms;
 }
 
 static int get_standardized_cell(double lattice[3][3],

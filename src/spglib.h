@@ -106,10 +106,10 @@ typedef struct {
   int n_atoms;
   int *wyckoffs;
   int *equivalent_atoms;
-  int n_brv_atoms;
-  double brv_lattice[3][3];
-  int *brv_types;
-  double (*brv_positions)[3];
+  int n_std_atoms;
+  double std_lattice[3][3];
+  int *std_types;
+  double (*std_positions)[3];
   int pointgroup_number;
   char pointgroup_symbol[6];
 } SpglibDataset;
