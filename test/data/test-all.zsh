@@ -20,3 +20,15 @@ echo "Hexagonal"
 
 echo "Cubic"
 ./test-cubic.zsh $1
+
+echo "Virtual"
+cd virtual_structure
+./test-virtual.zsh|tee log
+diff log spg_reference.txt
+rm log
+cd ..
+
+echo "Other"
+cd others
+./test-others.zsh
+cd ..
