@@ -183,12 +183,20 @@ accessible through the C-structure given by
      int n_atoms;
      int *wyckoffs;
      int *equivalent_atoms;
-     double brv_lattice[3][3];
-     int *brv_types;
-     double (*brv_positions)[3];
+     int n_std_atoms;             /* n_brv_atoms before version 1.8.1 */
+     double std_lattice[3][3];    /* brv_lattice before version 1.8.1 */
+     int *std_types;              /* brv_types before version 1.8.1 */
+     double (*std_positions)[3];  /* brv_positions before version 1.8.1 */
      int pointgroup_number;
      char pointgroup_symbol[6];
    } SpglibDataset;
+
+In **versions before 1.8.1**, the member names of ``n_std_atoms``,
+``std_lattice``, ``std_types``, and ``std_positions`` were
+``n_brv_atoms``, ``brv_lattice``, ``brv_types``, and
+``brv_positions``, respectively.
+
+|
 
 .. _api_spg_get_dataset_spacegroup_type:
 
@@ -204,6 +212,8 @@ The (full) Hermann–Mauguin notation of space group type is given by
 ``international_symbol``. The Hall symbol is stored in
 ``hall_symbol``. The information on unique axis,
 setting or cell choices is found in ``setting``.
+
+|
    
 Symmetry operations
 """""""""""""""""""""""
@@ -215,6 +225,8 @@ rotation :math:`\boldsymbol{W}` and translation :math:`\boldsymbol{w}`
 parts with the same index. Number of symmetry operations is given as
 ``n_operations``. The detailed explanation of the values is found at
 :ref:`api_spg_get_symmetry`.
+
+|
 
 
 Site symmetry
@@ -229,8 +241,12 @@ atomic indices that map to indices of symmetrically independent atoms,
 where the list index corresponds to atomic index of the input crystal
 structure.
 
+|
+
 Origin shift and lattice transformation
 """"""""""""""""""""""""""""""""""""""""
+
+**Changed in version 1.8.1**
 
 ``transformation_matrix`` and ``origin_shift`` are obtained as a
 result of space-group-type matching under a set of unique axis,
@@ -239,37 +255,62 @@ point coordinates have to be standardized to compare with the database
 of symmetry operations. The basis vectors are transformed to those of
 a standardized cell. Atomic point coordinates are shifted so that
 symmetry operations have the standard
-origin. ``transformation_matrix`` (:math:`\mathrm{M}`) is the matrix
+origin. ``transformation_matrix`` (:math:`\boldsymbol{P}`) is the matrix
 to transform the input basis vectors to the standardized basis
 vectors, wihch is represented as 
 
 .. math::
 
-   ( \mathbf{a}_\mathrm{S} \; \mathbf{b}_\mathrm{S} \; \mathbf{c}_\mathrm{S} )
-   =  ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} ) \mathrm{M}
+   ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
+   = ( \mathbf{a}_\mathrm{S} \; \mathbf{b}_\mathrm{S} \; \mathbf{c}_\mathrm{S} )  \boldsymbol{P}
 
-where :math:`\mathbf{a}_\mathrm{S}`, :math:`\mathbf{b}_\mathrm{S}`,
-and :math:`\mathbf{c}_\mathrm{S}` are the standardized basis vectors,
-and :math:`\mathbf{a}`, :math:`\mathbf{b}`, and :math:`\mathbf{c}` are
-the input (original) basis vectors. The ``origin_shift``
-(:math:`\boldsymbol{p}`) is the vector from the origin of the
-standardized coordinate system to the origin of the input (original)
-coordinate system measured in the standardized coordinate system. The
-atomic position shift is measured from the standardized cell
-(conventional unit cell) to the original cell in terms of the Bravais
-lattice. An atomic position in the original cell
+where :math:`\mathbf{a}`, :math:`\mathbf{b}`, and :math:`\mathbf{c}`
+are the input (original) basis vectors, and
+:math:`\mathbf{a}_\mathrm{S}`, :math:`\mathbf{b}_\mathrm{S}`, and
+:math:`\mathbf{c}_\mathrm{S}` are the standardized basis vectors. The
+``origin_shift`` (:math:`\boldsymbol{p}`) is the vector from the
+origin of the standardized coordinate system to the origin of the
+input (original) coordinate system measured in the standardized
+coordinate system. The atomic position shift is measured from the
+standardized cell (conventional unit cell) to the original cell in
+terms of the Bravais lattice. An atomic position in the original cell
 :math:`\boldsymbol{x}` (input data) is mapped to that in Bravais
 lattice :math:`\boldsymbol{x}_\mathrm{S}` by
 
 .. math::
 
-   \boldsymbol{x}_\mathrm{S} = \mathrm{M}^{-1}\boldsymbol{x} + \boldsymbol{p} \;\;(\mathrm{mod}\; \mathbf{1}).
+   \boldsymbol{x}_\mathrm{S} = \boldsymbol{P}\boldsymbol{x} +
+   \boldsymbol{p} \;\;(\mathrm{mod}\; \mathbf{1}).
+
+In **versions 1.7.x and 1.8 or before**, ``transformation_matrix`` and
+``origin_shift`` are defined, respectively, as follows:
+
+.. math::
+
+   ( \mathbf{a}_\mathrm{S} \; \mathbf{b}_\mathrm{S} \; \mathbf{c}_\mathrm{S} )
+   =  ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} ) \boldsymbol{P}
+
+.. math::
+
+   \boldsymbol{x}_\mathrm{S} = \boldsymbol{P}^{-1}\boldsymbol{x} -
+   \boldsymbol{p} \;\;(\mathrm{mod}\; \mathbf{1}).
+
+|
 
 Standardized crystal structure
 """""""""""""""""""""""""""""""
-   
+
+**Changed in version 1.8.1**
+
 The standardized crystal structure corresponding to a Hall symbol is
-stored in ``n_std_atoms``, ``std_lattice``, ``std_types``, and ``std_positions``.
+stored in ``n_std_atoms``, ``std_lattice``, ``std_types``, and
+``std_positions``.
+
+In **versions 1.7.x and 1.8 or before**, the variable names of the
+members corresponding to those above are ``n_brv_atoms``,
+``brv_lattice``, ``brv_types``, and ``brv_positions``, respectively.
+
+|
 
 Crystallographic point group
 """""""""""""""""""""""""""""
@@ -280,6 +321,7 @@ groups (Seto's web site)
 <http://pmsl.planet.sci.kobe-u.ac.jp/~seto/?page_id=37&lang=en>`_.
 ``pointgroup_symbol`` is the symbol of the crystallographic point
 group in the Hermann–Mauguin notation.
+
 
 ``spg_free_dataset``
 ^^^^^^^^^^^^^^^^^^^^^
