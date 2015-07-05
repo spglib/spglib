@@ -146,22 +146,22 @@ Cell * prm_transform_to_primitive(SPGCONST Cell * cell,
 
   switch (centering) {
   case PRIMITIVE:
-    mat_copy_matrix_d3(tmat, trans_mat);
+    mat_copy_matrix_d3(tmat, tmat_inv);
     break;
   case A_FACE:
-    mat_multiply_matrix_d3(tmat, trans_mat, A_mat);
+    mat_multiply_matrix_d3(tmat, tmat_inv, A_mat);
     break;
   case C_FACE:
-    mat_multiply_matrix_d3(tmat, trans_mat, C_mat);
+    mat_multiply_matrix_d3(tmat, tmat_inv, C_mat);
     break;
   case FACE:
-    mat_multiply_matrix_d3(tmat, trans_mat, F_mat);
+    mat_multiply_matrix_d3(tmat, tmat_inv, F_mat);
     break;
   case BODY:
-    mat_multiply_matrix_d3(tmat, trans_mat, I_mat);
+    mat_multiply_matrix_d3(tmat, tmat_inv, I_mat);
     break;
   case R_CENTER:
-    mat_multiply_matrix_d3(tmat, trans_mat, R_mat);
+    mat_multiply_matrix_d3(tmat, tmat_inv, R_mat);
     break;
   default:
     goto err;
