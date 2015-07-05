@@ -33,7 +33,6 @@
 /* POSSIBILITY OF SUCH DAMAGE. */
 
 #include <stdio.h>
-#include "lattice.h"
 #include "hall_symbol.h"
 #include "spg_database.h"
 #include "spacegroup.h"

@@ -44,22 +44,6 @@
 
 #define REDUCE_RATE 0.95
 
-static double A_mat[3][3] = {{    1,    0,    0},
-			     {    0, 1./2,-1./2},
-			     {    0, 1./2, 1./2}};
-static double C_mat[3][3] = {{ 1./2, 1./2,    0},
-			     {-1./2, 1./2,    0},
-			     {    0,    0,    1}};
-static double R_mat[3][3] = {{ 2./3,-1./3,-1./3 },
-			     { 1./3, 1./3,-2./3 },
-			     { 1./3, 1./3, 1./3 }};
-static double I_mat[3][3] = {{-1./2, 1./2, 1./2 },
-			     { 1./2,-1./2, 1./2 },
-			     { 1./2, 1./2,-1./2 }};
-static double F_mat[3][3] = {{    0, 1./2, 1./2 },
-			     { 1./2,    0, 1./2 },
-			     { 1./2, 1./2,    0 }};
-
 static Primitive * get_primitive(SPGCONST Cell * cell, const double symprec);
 static Cell * get_cell_with_smallest_lattice(SPGCONST Cell * cell,
 					     const double symprec);
@@ -127,61 +111,6 @@ void prm_free_primitive(Primitive * primitive)
 Primitive * prm_get_primitive(SPGCONST Cell * cell, const double symprec)
 {
   return get_primitive(cell, symprec);
-}
-
-/* Return NULL if failed */
-Cell * prm_transform_to_primitive(SPGCONST Cell * cell,
-				  SPGCONST double trans_mat[3][3],
-				  const Centering centering,
-				  const double symprec)
-{
-  int * mapping_table;
-  double tmat[3][3], tmat_inv[3][3], prim_lat[3][3];
-  Cell * primitive;
-
-  mapping_table = NULL;
-  primitive = NULL;
-
-  mat_inverse_matrix_d3(tmat_inv, trans_mat, 0);
-
-  switch (centering) {
-  case PRIMITIVE:
-    mat_copy_matrix_d3(tmat, tmat_inv);
-    break;
-  case A_FACE:
-    mat_multiply_matrix_d3(tmat, tmat_inv, A_mat);
-    break;
-  case C_FACE:
-    mat_multiply_matrix_d3(tmat, tmat_inv, C_mat);
-    break;
-  case FACE:
-    mat_multiply_matrix_d3(tmat, tmat_inv, F_mat);
-    break;
-  case BODY:
-    mat_multiply_matrix_d3(tmat, tmat_inv, I_mat);
-    break;
-  case R_CENTER:
-    mat_multiply_matrix_d3(tmat, tmat_inv, R_mat);
-    break;
-  default:
-    goto err;
-  }
-
-  if ((mapping_table = (int*) malloc(sizeof(int) * cell->size)) == NULL) {
-    warning_print("spglib: Memory could not be allocated ");
-    goto err;
-  }
-
-  mat_multiply_matrix_d3(prim_lat, tmat, cell->lattice);
-  primitive = cel_trim_cell(mapping_table, prim_lat, cell, symprec);
-
-  free(mapping_table);
-  mapping_table = NULL;
-
-  return primitive;
-
- err:
-  return NULL;
 }
 
 /* Return NULL if failed */

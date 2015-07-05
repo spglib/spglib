@@ -30,7 +30,16 @@ VALUE method_get_symmetry(VALUE self,
 			  VALUE r_lattice,
 			  VALUE r_position,
 			  VALUE r_types,
-			  VALUE r_symprec);
+			  VALUE r_symprec,
+			  VALUE r_angle_symprec);
+VALUE method_standardize_cell(VALUE self,
+			      VALUE r_lattice,
+			      VALUE r_position,
+			      VALUE r_types,
+			      VALUE r_to_primitive,
+			      VALUE r_leave_distrtion,
+			      VALUE r_symprec,
+			      VALUE r_angle_symprec);
 
 void Init_getspg(void)
 {
@@ -38,7 +47,7 @@ void Init_getspg(void)
   rb_define_method(Getspg, "getptg", method_getptg, 1);
   rb_define_method(Getspg, "find_primitive", method_find_primitive, 5);
   rb_define_method(Getspg, "get_dataset", method_get_dataset, 6);
-  rb_define_method(Getspg, "get_symmetry", method_get_symmetry, 4);
+  rb_define_method(Getspg, "get_symmetry", method_get_symmetry, 5);
 }
 
 VALUE method_getptg(VALUE self, VALUE r_rotations)
@@ -278,7 +287,8 @@ VALUE method_get_symmetry(VALUE self,
 			  VALUE r_lattice,
 			  VALUE r_position,
 			  VALUE r_types,
-			  VALUE r_symprec)
+			  VALUE r_symprec,
+			  VALUE r_angle_symprec)
 {
   int i, j, k, num_atom, num_sym;
   double symprec, lattice[3][3];
@@ -308,14 +318,15 @@ VALUE method_get_symmetry(VALUE self,
     }
   }
 
-  num_sym = spg_get_symmetry_numerical(rotations,
-				       translations,
-				       max_num_sym,
-				       lattice,
-				       position,
-				       types,
-				       num_atom,
-				       symprec);
+  num_sym = spgat_get_symmetry_numerical(rotations,
+					 translations,
+					 max_num_sym,
+					 lattice,
+					 position,
+					 types,
+					 num_atom,
+					 symprec,
+					 NUM2DBL(r_angle_symprec));
 
   array = rb_ary_new();
 
@@ -342,4 +353,15 @@ VALUE method_get_symmetry(VALUE self,
  err:
 
   return array;
+}
+
+VALUE method_standardize_cell(VALUE self,
+			      VALUE r_lattice,
+			      VALUE r_position,
+			      VALUE r_types,
+			      VALUE r_to_primitive,
+			      VALUE r_leave_distrtion,
+			      VALUE r_symprec,
+			      VALUE r_angle_symprec)
+{
 }
