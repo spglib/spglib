@@ -614,7 +614,7 @@ get_refined_symmetry_operations(SPGCONST Cell * cell,
 {
   int t_mat_int[3][3];
   int frame[3];
-  double inv_mat[3][3], t_mat[3][3];
+  double inv_prim_lat[3][3], t_mat[3][3];
   Symmetry *conv_sym, *prim_sym, *symmetry;
 
   conv_sym = NULL;
@@ -627,9 +627,10 @@ get_refined_symmetry_operations(SPGCONST Cell * cell,
     return NULL;
   }
 
+  mat_inverse_matrix_d3(inv_prim_lat, primitive->lattice, 0);
+  mat_multiply_matrix_d3(t_mat, inv_prim_lat, spacegroup->bravais_lattice);
+
   set_translation_with_origin_shift(conv_sym, spacegroup->origin_shift);
-  mat_inverse_matrix_d3(inv_mat, primitive->lattice, symprec);
-  mat_multiply_matrix_d3(t_mat, inv_mat, spacegroup->bravais_lattice);
 
   if ((prim_sym = get_primitive_db_symmetry(t_mat, conv_sym, symprec)) == NULL) {
     sym_free_symmetry(conv_sym);
@@ -639,8 +640,7 @@ get_refined_symmetry_operations(SPGCONST Cell * cell,
   sym_free_symmetry(conv_sym);
 
   /* Input cell symmetry from primitive symmetry */
-  mat_inverse_matrix_d3(inv_mat, primitive->lattice, symprec);
-  mat_multiply_matrix_d3(t_mat, inv_mat, cell->lattice);
+  mat_multiply_matrix_d3(t_mat, inv_prim_lat, cell->lattice);
   mat_cast_matrix_3d_to_3i(t_mat_int, t_mat);
   get_surrounding_frame(frame, t_mat_int);
 
@@ -784,7 +784,7 @@ static Symmetry * get_primitive_db_symmetry(SPGCONST double t_mat[3][3],
     return NULL;
   }
 
-  mat_inverse_matrix_d3(inv_mat, t_mat, symprec);
+  mat_inverse_matrix_d3(inv_mat, t_mat, 0);
 
   num_op = 0;
   for (i = 0; i < conv_sym->size; i++) {
@@ -897,7 +897,7 @@ static Symmetry * reduce_symmetry_in_frame(const int frame[3],
   lattice_trans = NULL;
 
   mat_cast_matrix_3i_to_3d(tmp_mat, t_mat);
-  mat_inverse_matrix_d3(inv_tmat, tmp_mat, symprec);
+  mat_inverse_matrix_d3(inv_tmat, tmp_mat, 0);
 
   if ((lattice_trans = get_lattice_translations(frame, inv_tmat)) == NULL) {
     return NULL;

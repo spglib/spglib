@@ -131,35 +131,37 @@ Primitive * prm_get_primitive(SPGCONST Cell * cell, const double symprec)
 
 /* Return NULL if failed */
 Cell * prm_transform_to_primitive(SPGCONST Cell * cell,
-				  SPGCONST double trans_mat_Bravais[3][3],
+				  SPGCONST double trans_mat[3][3],
 				  const Centering centering,
 				  const double symprec)
 {
   int * mapping_table;
-  double tmat[3][3], prim_lat[3][3];
+  double tmat[3][3], tmat_inv[3][3], prim_lat[3][3];
   Cell * primitive;
 
   mapping_table = NULL;
   primitive = NULL;
 
+  mat_inverse_matrix_d3(tmat_inv, trans_mat, 0);
+
   switch (centering) {
   case PRIMITIVE:
-    mat_copy_matrix_d3(tmat, trans_mat_Bravais);
+    mat_copy_matrix_d3(tmat, trans_mat);
     break;
   case A_FACE:
-    mat_multiply_matrix_d3(tmat, trans_mat_Bravais, A_mat);
+    mat_multiply_matrix_d3(tmat, trans_mat, A_mat);
     break;
   case C_FACE:
-    mat_multiply_matrix_d3(tmat, trans_mat_Bravais, C_mat);
+    mat_multiply_matrix_d3(tmat, trans_mat, C_mat);
     break;
   case FACE:
-    mat_multiply_matrix_d3(tmat, trans_mat_Bravais, F_mat);
+    mat_multiply_matrix_d3(tmat, trans_mat, F_mat);
     break;
   case BODY:
-    mat_multiply_matrix_d3(tmat, trans_mat_Bravais, I_mat);
+    mat_multiply_matrix_d3(tmat, trans_mat, I_mat);
     break;
   case R_CENTER:
-    mat_multiply_matrix_d3(tmat, trans_mat_Bravais, R_mat);
+    mat_multiply_matrix_d3(tmat, trans_mat, R_mat);
     break;
   default:
     goto err;

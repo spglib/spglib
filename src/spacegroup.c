@@ -49,6 +49,7 @@
 #include "debug.h"
 
 #define REDUCE_RATE 0.95
+#define INT_PREC 0.1
 
 static double change_of_basis_monocli[18][3][3] = {{{ 1, 0, 0 },
 						    { 0, 1, 0 },
@@ -187,6 +188,28 @@ static int spacegroup_to_hall_number[230] = {
   517, 518, 520, 521, 523, 524, 525, 527, 529, 530,
 };
 
+static double identity[3][3] = {{ 1, 0, 0 },
+				{ 0, 1, 0 },
+				{ 0, 0, 1 }};
+static double monocli_i2c[3][3] = {{ 1, 0,-1 },
+				   { 0, 1, 0 },
+				   { 1, 0, 0 }};
+static double monocli_a2c[3][3] = {{ 0, 0, 1 },
+				   { 0,-1, 0 },
+				   { 1, 0, 0 }};
+static double rhombo_obverse[3][3] = {{ 2./3,-1./3,-1./3 },
+				      { 1./3, 1./3,-2./3 },
+				      { 1./3, 1./3, 1./3 }};
+static double rhomb_reverse[3][3] = {{ 1./3,-2./3, 1./3 },
+				     { 2./3,-1./3,-1./3 },
+				     { 1./3, 1./3, 1./3 }};
+static double a2c[3][3] = {{ 0, 0, 1 },
+			   { 1, 0, 0 },
+			   { 0, 1, 0 }};
+static double b2c[3][3] = {{ 0, 1, 0 },
+			   { 0, 0, 1 },
+			   { 1, 0, 0 }};
+
 static Spacegroup search_spacegroup(SPGCONST Primitive * primitive,
 				    const int candidates[],
 				    const int num_candidates);
@@ -244,6 +267,11 @@ static int match_hall_symbol_db_ortho(double origin_shift[3],
 static Symmetry * get_conventional_symmetry(SPGCONST double transform_mat[3][3],
 					    const Centering centering,
 					    const Symmetry *primitive_sym);
+static Centering get_centering(double correction_mat[3][3],
+			       SPGCONST int transform_mat[3][3],
+			       const Laue laue);
+static Centering get_base_center(SPGCONST int transform_mat[3][3]);
+
 
 /* NULL is returned if failed */
 Primitive * spa_get_spacegroup(Spacegroup * spacegroup,
@@ -475,9 +503,7 @@ static int search_hall_number(double origin_shift[3],
     goto err;
   }
 
-  mat_multiply_matrix_di3(conv_lattice,
-			  primitive_lattice,
-			  int_transform_mat);
+  mat_multiply_matrix_di3(conv_lattice, primitive_lattice, int_transform_mat);
 
   if (pointgroup.laue == LAUE1) {
     if (! change_basis_tricli(int_transform_mat,
@@ -497,9 +523,9 @@ static int search_hall_number(double origin_shift[3],
     }
   }
 
-  if ((centering = lat_get_centering(correction_mat,
-				     int_transform_mat,
-				     pointgroup.laue)) == CENTERING_ERROR) {
+  if ((centering = get_centering(correction_mat,
+				 int_transform_mat,
+				 pointgroup.laue)) == CENTERING_ERROR) {
     goto err;
   }
 
@@ -964,7 +990,7 @@ static Symmetry * get_conventional_symmetry(SPGCONST double transform_mat[3][3],
 					    const Symmetry *primitive_sym)
 {
   int i, j, k, multi, size;
-  double tmp_matrix_d3[3][3], shift[4][3];
+  double inv_tmat[3][3], shift[4][3];
   double symmetry_rot_d3[3][3], primitive_sym_rot_d3[3][3];
   Symmetry *symmetry;
 
@@ -1009,11 +1035,9 @@ static Symmetry * get_conventional_symmetry(SPGCONST double transform_mat[3][3],
     mat_cast_matrix_3d_to_3i(symmetry->rot[i], symmetry_rot_d3);
 
     /* translation in conventional cell: C = B^-1*P */
-    mat_inverse_matrix_d3(tmp_matrix_d3,
-			  transform_mat,
-			  0);
+    mat_inverse_matrix_d3(inv_tmat, transform_mat, 0);
     mat_multiply_matrix_vector_d3(symmetry->trans[i],
-				  tmp_matrix_d3,
+				  inv_tmat,
 				  primitive_sym->trans[i]);
   }
 
@@ -1075,3 +1099,126 @@ static Symmetry * get_conventional_symmetry(SPGCONST double transform_mat[3][3],
   return symmetry;
 }
 
+/* Return CENTERING_ERROR if failed */
+static Centering get_centering(double correction_mat[3][3],
+			       SPGCONST int transform_mat[3][3],
+			       const Laue laue)
+{
+  int det;
+  double trans_corr_mat[3][3];
+  Centering centering;
+
+  mat_copy_matrix_d3(correction_mat, identity);
+  det = abs(mat_get_determinant_i3(transform_mat));
+  debug_print("laue class: %d\n", laue);
+  debug_print("multiplicity: %d\n", det);
+
+  switch (det) {
+
+  case 1:
+    centering = PRIMITIVE;
+    break;
+
+  case 2:
+    centering = get_base_center(transform_mat);
+    if (centering == A_FACE) {
+      if (laue == LAUE2M) {
+	debug_print("Monocli A to C\n");
+	mat_copy_matrix_d3(correction_mat, monocli_a2c);
+      } else {
+	mat_copy_matrix_d3(correction_mat, a2c);
+      }
+      centering = C_FACE;
+    }
+    if (centering == B_FACE) {
+      mat_copy_matrix_d3(correction_mat, b2c);
+      centering = C_FACE;
+    }
+    if (laue == LAUE2M && centering == BODY) {
+      debug_print("Monocli I to C\n");
+      mat_copy_matrix_d3(correction_mat, monocli_i2c);
+      centering = C_FACE;
+    }
+    break;
+
+  case 3:
+    /* hP (a=b) but not hR (a=b=c) */
+    centering = R_CENTER;
+    mat_multiply_matrix_id3(trans_corr_mat, transform_mat, rhombo_obverse);
+    if (mat_is_int_matrix(trans_corr_mat, INT_PREC)) {
+      mat_copy_matrix_d3(correction_mat, rhombo_obverse);
+      debug_print("R-center observe setting\n");
+      debug_print_matrix_d3(trans_corr_mat);
+    }
+    mat_multiply_matrix_id3(trans_corr_mat, transform_mat, rhomb_reverse);
+    if (mat_is_int_matrix(trans_corr_mat, INT_PREC)) {
+      mat_copy_matrix_d3(correction_mat, rhomb_reverse);
+      debug_print("R-center reverse setting\n");
+      debug_print_matrix_d3(trans_corr_mat);
+    }
+    break;
+
+  case 4:
+    centering = FACE;
+    break;
+
+  default:
+    centering = CENTERING_ERROR;
+    break;
+  }
+
+  return centering;
+}
+
+static Centering get_base_center(SPGCONST int transform_mat[3][3])
+{
+  int i;
+  Centering centering = PRIMITIVE;
+
+  debug_print("lat_get_base_center\n");
+
+  /* C center */
+  for (i = 0; i < 3; i++) {
+    if (transform_mat[i][0] == 0 &&
+	transform_mat[i][1] == 0 &&
+	abs(transform_mat[i][2]) == 1) {
+      centering = C_FACE;
+      goto end;
+    }
+  }
+
+  /* A center */
+  for (i = 0; i < 3; i++) {
+    if (abs(transform_mat[i][0]) == 1 && 
+	transform_mat[i][1] == 0 &&
+	transform_mat[i][2] == 0) {
+      centering = A_FACE;
+      goto end;
+    }
+  }
+
+  /* B center */
+  for (i = 0; i < 3; i++) {
+    if (transform_mat[i][0] == 0 &&
+	abs(transform_mat[i][1]) == 1 && 
+	transform_mat[i][2] == 0) {
+      centering = B_FACE;
+      goto end;
+    }
+  }
+
+  /* body center */
+  if (abs(transform_mat[0][0]) +
+      abs(transform_mat[0][1]) + 
+      abs(transform_mat[0][2]) == 2) {
+    centering = BODY;
+    goto end;
+  }
+
+  /* This should not happen. */
+  warning_print("spglib: No centring was found (line %d, %s).\n", __LINE__, __FILE__);
+  return PRIMITIVE;
+
+ end:
+  return centering;
+}

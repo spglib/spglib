@@ -528,11 +528,9 @@ int spg_get_pointgroup(char symbol[6],
 		       SPGCONST int rotations[][3][3],
 		       const int num_rotations)
 {
-  int tmp_transform_mat[3][3];
-  double correction_mat[3][3], transform_mat_double[3][3];
   Pointgroup pointgroup;
 
-  pointgroup = ptg_get_transformation_matrix(tmp_transform_mat,
+  pointgroup = ptg_get_transformation_matrix(transform_mat,
 					     rotations,
 					     num_rotations);
 
@@ -540,18 +538,7 @@ int spg_get_pointgroup(char symbol[6],
     return 0;
   }
 
-  if (lat_get_centering(correction_mat,
-			tmp_transform_mat,
-			pointgroup.laue) == CENTERING_ERROR) {
-    return 0;
-  }
-
   strcpy(symbol, pointgroup.symbol);
-
-  mat_multiply_matrix_id3(transform_mat_double,
-			  tmp_transform_mat,
-			  correction_mat);
-  mat_cast_matrix_3d_to_3i(transform_mat, transform_mat_double);
 
   return pointgroup.number;
 }
@@ -1036,7 +1023,7 @@ static int set_dataset(SpglibDataset * dataset,
 		       const double tolerance)
 {
   int i;
-  double inv_mat[3][3];
+  double inv_lat[3][3];
   Cell *bravais;
   Symmetry *symmetry;
   Pointgroup pointgroup;
@@ -1051,10 +1038,10 @@ static int set_dataset(SpglibDataset * dataset,
   strcpy(dataset->international_symbol, spacegroup->international_short);
   strcpy(dataset->hall_symbol, spacegroup->hall_symbol);
   strcpy(dataset->setting, spacegroup->setting);
-  mat_inverse_matrix_d3(inv_mat, cell->lattice, tolerance);
+  mat_inverse_matrix_d3(inv_lat, spacegroup->bravais_lattice, 0);
   mat_multiply_matrix_d3(dataset->transformation_matrix,
-			 inv_mat,
-			 spacegroup->bravais_lattice);
+			 inv_lat,
+			 cell->lattice);
   mat_copy_vector_d3(dataset->origin_shift, spacegroup->origin_shift);
 
   /* Symmetry operations */

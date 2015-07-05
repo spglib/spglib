@@ -71,8 +71,5 @@ int lat_smallest_lattice_vector_2D(double min_lattice[3][3],
 				   SPGCONST double lattice[3][3],
 				   const int unique_axis,
 				   const double symprec);
-Centering lat_get_centering(double correction_mat[3][3],
-			    SPGCONST int transform_mat[3][3],
-			    const Laue laue);
 
 #endif
