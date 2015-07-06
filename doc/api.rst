@@ -36,6 +36,7 @@ group of the lattice. For example, this happens for the :math:`2\times
 be understandable in crystallographic sense, but is practically useful
 treatment for research in computational materials science.
 
+|
 
 ``spg_get_international``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -52,6 +53,8 @@ treatment for research in computational materials science.
 Space group is found in international table symbol (``symbol``) and
 as number (return value). 0 is returned when it fails.
 
+|
+
 ``spg_get_schoenflies``
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -65,6 +68,7 @@ as number (return value). 0 is returned when it fails.
 Space group is found in schoenflies (``symbol``) and as number (return
 value).  0 is returned when it fails.
 
+|
 
 ``spg_find_primitive``
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -80,6 +84,8 @@ value).  0 is returned when it fails.
 A primitive cell is found from an input cell. Be careful that 
 ``lattice``, ``position``, and ``types`` are overwritten. ``num_atom``
 is returned as return value.
+
+|
 
 ``spg_refine_cell``
 ^^^^^^^^^^^^^^^^^^^^^
@@ -107,10 +113,14 @@ generated. To do the same for the non-standard choices of origin,
 axis, or cell, it is necessary to use
 ``spg_get_dataset_with_hall_number`` to extract the crystal structure.
 
+|
+
 .. _api_spg_get_dataset:
 
 ``spg_get_dataset``, ``spg_get_dataset_with_hall_number``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+**Changed in version 1.8.1**
 
 For an input crystal structure, symmetry operations of the crystal are
 searched. Then they are compared with the crsytallographic database
@@ -122,11 +132,11 @@ found at http://arxiv.org/abs/1506.01455.
 Usage
 ------
 
-Dataset corresponding to the space group type in the **standard
-setting** is obtained by ``spg_get_dataset``. If this symmetry search
-fails, ``spacegroup_number`` in the ``SpglibDataset`` structure is
-set 0. In this function, the other crystallographic setting is not
-obtained.
+Dataset corresponding to the space group type in the standard setting
+is obtained by ``spg_get_dataset``. If this symmetry search fails,
+``NULL`` is returned in version 1.8.1 or later (spacegroup_number = 0
+is returned in the previous versions). In this function, the other
+crystallographic setting is not obtained.
 
 ::
 
@@ -283,17 +293,17 @@ lattice :math:`\boldsymbol{x}_\mathrm{S}` by
    \boldsymbol{p} \;\;(\mathrm{mod}\; \mathbf{1}).
 
 In **versions 1.7.x and 1.8 or before**, ``transformation_matrix`` and
-``origin_shift`` are defined, respectively, as follows:
+``origin_shift`` are defined as follows:
 
 .. math::
 
-   ( \mathbf{a}_\mathrm{S} \; \mathbf{b}_\mathrm{S} \; \mathbf{c}_\mathrm{S} )
-   =  ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} ) \boldsymbol{P}
+   ( \mathbf{a}_\mathrm{S} \; \mathbf{b}_\mathrm{S} \;
+   \mathbf{c}_\mathrm{S} ) = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c}
+   ) \boldsymbol{P} \;\; \text{and} \;\; \boldsymbol{x}_\mathrm{S} =
+   \boldsymbol{P}^{-1}\boldsymbol{x} - \boldsymbol{p}
+   \;\;(\mathrm{mod}\; \mathbf{1}),
 
-.. math::
-
-   \boldsymbol{x}_\mathrm{S} = \boldsymbol{P}^{-1}\boldsymbol{x} -
-   \boldsymbol{p} \;\;(\mathrm{mod}\; \mathbf{1}).
+respectively.
 
 |
 
@@ -315,6 +325,8 @@ members corresponding to those above are ``n_brv_atoms``,
 Crystallographic point group
 """""""""""""""""""""""""""""
 
+**New in version 1.8.1**
+
 ``pointgroup_number`` is the serial number of the crystallographic
 point group, which refers `list of space
 groups (Seto's web site)
@@ -322,6 +334,7 @@ groups (Seto's web site)
 ``pointgroup_symbol`` is the symbol of the crystallographic point
 group in the Hermann–Mauguin notation.
 
+|
 
 ``spg_free_dataset``
 ^^^^^^^^^^^^^^^^^^^^^
@@ -332,7 +345,8 @@ freed by calling ``spg_free_dataset``.
 :: 
 
   void spg_free_dataset(SpglibDataset *dataset);
-  
+ 
+| 
 
 ``spg_get_spacegroup_type``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -361,6 +375,7 @@ with a specific setting, ``hall_number`` is used. The definition of
      char international_short[11];
    } SpglibSpacegroupType;
 
+|
 
 ``spg_get_symmetry_from_database``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -379,6 +394,8 @@ of ``hall_number`` is found at
 
 The returned value is the number of space group operations. The space
 group operations are stored in ``rotations`` and ``translations``.
+
+|
   
 ``spg_get_smallest_lattice``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -391,6 +408,8 @@ group operations are stored in ``rotations`` and ``translations``.
 
 Considering periodicity of crystal, one of the possible smallest lattice is
 searched. The lattice is stored in ``smallest_lattice``.
+
+|
 
 ``spg_get_multiplicity``
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -405,6 +424,8 @@ searched. The lattice is stored in ``smallest_lattice``.
 
 Return exact number of symmetry operations. This function may be used
 in advance to allocate memoery space for symmetry operations.
+
+|
 
 ``spg_get_symmetry_with_collinear_spin``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -424,6 +445,8 @@ in advance to allocate memoery space for symmetry operations.
 Find symmetry operations with collinear spins on atoms. Except for the
 argument of ``const double spins[]``, the usage is same as
 ``spg_get_symmetry``.
+
+|
 
 ``spg_get_ir_reciprocal_mesh``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -477,6 +500,8 @@ recovered from ``grid_address`` by ``numpy.dot(grid_address % mesh,
 setting the macro ``GRID_ORDER_XYZ`` in ``kpoint.c``. In this case the
 grid point index is recovered by ``numpy.dot(grid_address % mesh,
 [mesh[2] * mesh[1], mesh[2], 1])``.
+
+|
 
 ``spg_get_stabilized_reciprocal_mesh``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

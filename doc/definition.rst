@@ -23,24 +23,27 @@ corresponding to :math:`\mathbf{a}`, :math:`\mathbf{b}`, and
 
    \mathbf{x} = (\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{x}.
 
-Symmetry operation :math:`(\boldsymbol{W}|\boldsymbol{w})`
+Symmetry operation :math:`(\boldsymbol{W}, \boldsymbol{w})`
 -----------------------------------------------------------
 
 A symmetry operation consists of a pair of the rotation part
 :math:`\boldsymbol{W}` and translation part :math:`\boldsymbol{w}`,
-and is represented as :math:`(\boldsymbol{W}|\boldsymbol{w})` (Seitz
-notation). :math:`\boldsymbol{x}` is transferred
-to :math:`\tilde{\boldsymbol{x}}` by the symmetry operation as follows:
+and is represented as :math:`(\boldsymbol{W}, \boldsymbol{w})` in the
+spglib document. The symmetry operation transfers :math:`\boldsymbol{x}` to
+:math:`\tilde{\boldsymbol{x}}` as follows:
 
 .. math::
 
   \tilde{\boldsymbol{x}} = \boldsymbol{W}\cdot\boldsymbol{x} + \boldsymbol{w}.
 
-Change of basis matrix :math:`\boldsymbol{C}` 
----------------------------------------------------------------------------------------
+Transformation matrix :math:`\boldsymbol{P}` and origin shift :math:`\boldsymbol{p}`
+-------------------------------------------------------------------------------------
 
-Origin shift :math:`\boldsymbol{p}`
-------------------------------------
+.. |cob| image:: change-of-basis.png
+         :width: 25%
+
+|cob|
+
 
 The origin shift is a vector of rigid shift, :math:`\boldsymbol{p}`,
 between the origin :math:`\boldsymbol{o}` of a reference point in the
