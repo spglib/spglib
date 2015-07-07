@@ -88,8 +88,8 @@ where :math:`( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )` and :math:`(
 \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
 \mathbf{c}_\mathrm{s} )` are the basis vectors of an arbitrary system
 and for a starndardized system, respectively. Transformation matrix
-**doesn't** rotate a crystal in Cartesian coordinates, but leaves the
-crystal fixed and just changes the choices of basis vectors.
+**doesn't** rotate a crystal in Cartesian coordinates, but just
+changes the choices of basis vectors.
 
 The origin shift :math:`\boldsymbol{p}` gives the vector from the
 origin of the standardized system :math:`\boldsymbol{O}_\mathrm{s}` to
@@ -100,8 +100,7 @@ the origin of the arbitrary system :math:`\boldsymbol{O}`,
    \boldsymbol{p} = \boldsymbol{O} - \boldsymbol{O}_\mathrm{s}.
 
 Origin shift **doesn't** move a crystal in Cartesian coordinates, but
-leaves the crystal fixed and just changes the origin to measure the
-coordinates of atomic points.
+just changes the origin to measure the coordinates of atomic points.
 
    
 A change of basis is described by the combination of the
@@ -167,38 +166,153 @@ Idealization of unit cell structure
 
 Spglib allows tolerance parameters to match a slightly distorted unit
 cell structure to a space group type with some higher symmetry. Using
-obtained symmetry operations, the distortion is removed. The
-coordinates of atomic points are idealized using respective
-site-symmetries (Grosse-Kunstleve *et al*. (2002)). The basis vectors
-are idealized to cast into the corresponding Bravais lattice. This is
-explained in more detail as follows.
+obtained symmetry operations, the distortion is removed to idealize
+the unit cell structure. The coordinates of atomic points are
+idealized using respective site-symmetries (Grosse-Kunstleve *et
+al*. (2002)). The basis vectors are idealized by forceing them into
+respective lattice shapes as follows. In this treatment, except for
+triclinic crystals, crystals can be rotated in Cartesian coordinates,
+which is the different type of transformation from that of the
+change-of-basis transformation explained above.
 
-Orientation in Cartesian coordinates
+Triclinic
+""""""""""
+
+- No special treatment is applied.
+
+Monoclinic
+"""""""""""
+
+- :math:`b` axis is taken as the unique axis.
+- :math:`\alpha = 90^\circ` and :math:`\gamma = 90^\circ`
+- :math:`90^\circ < \beta < 120^\circ`.
+
+- :math:`\mathbf{a}` is set along :math:`+x` direction of Cartesian coordinates.
+- :math:`\mathbf{b}` is set along :math:`+y` direction of Cartesian coordinates.
+- :math:`\mathbf{c}` is set in :math:`x\text{-}z` plane of Cartesian coordinates.
+
+Orthorhombic
+"""""""""""""
+
+- :math:`\alpha = \beta = \gamma = 90^\circ`.
+
+- :math:`\mathbf{a}` is set along :math:`+x` direction of Cartesian coordinates.
+- :math:`\mathbf{b}` is set along :math:`+y` direction of Cartesian coordinates.
+- :math:`\mathbf{c}` is set along :math:`+z` direction of Cartesian coordinates.
+
+Tetragonal
+"""""""""""
+
+- :math:`\alpha = \beta = \gamma = 90^\circ`.
+- :math:`a=b`.
+
+- :math:`\mathbf{a}` is set along :math:`+x` direction of Cartesian coordinates.
+- :math:`\mathbf{b}` is set along :math:`+y` direction of Cartesian coordinates.
+- :math:`\mathbf{c}` is set along :math:`+z` direction of Cartesian coordinates.
+
+Rhombohedral
+"""""""""""""
+
+- :math:`\alpha = \beta = \gamma`.
+- :math:`a=b=c`.
+
+- Let :math:`\mathbf{a}`, :math:`\mathbf{b}`, and :math:`\mathbf{c}`
+  projected on :math:`x\text{-}y` plane in Cartesian coordinates be
+  :math:`\mathbf{a}_{xy}`, :math:`\mathbf{b}_{xy}`, and
+  :math:`\mathbf{c}_{xy}`, respectively, and their angles be
+  :math:`\alpha_{xy}`, :math:`\beta_{xy}`,
+  :math:`\gamma_{xy}`, respectively.
+- Let :math:`\mathbf{a}`, :math:`\mathbf{b}`, and :math:`\mathbf{c}`
+  projected along :math:`z`-axis in Cartesian coordinates be
+  :math:`\mathbf{a}_{z}`, :math:`\mathbf{b}_{z}`, and
+  :math:`\mathbf{c}_{z}`, respectively.
+
+- :math:`\mathbf{a}_{xy}` is set along :math:`+x` direction of Cartesian
+  coordinates, and :math:`\mathbf{b}_{xy}` and :math:`\mathbf{c}_{xy}`
+  are placed by angles :math:`120^\circ` and :math:`240^\circ` from
+  :math:`\mathbf{a}_{xy}` counter-clockwise, respectively.
+- :math:`\alpha_{xy} = \beta_{xy} = \gamma_{xy} = 120^\circ`.
+- :math:`a_{xy} = b_{xy} = c_{xy}`.
+- :math:`a_{z} = b_{z} = c_{z}`.
+
+
+Hexagonal
+""""""""""
+
+- :math:`\alpha = \beta = 90^\circ`.
+- :math:`\gamma = 120^\circ`.
+- :math:`a=b`.
+
+- :math:`\mathbf{a}` is set along :math:`+x` direction of Cartesian coordinates.
+- :math:`\mathbf{b}` is set in :math:`x\text{-}y` plane of Cartesian coordinates.
+- :math:`\mathbf{c}` is set along :math:`+z` direction of Cartesian coordinates.
+
+Cubic
+""""""
+
+- :math:`\alpha = \beta = \gamma = 90^\circ`.
+- :math:`a=b=c`.
+
+- :math:`\mathbf{a}` is set along :math:`+x` direction of Cartesian coordinates.
+- :math:`\mathbf{b}` is set along :math:`+y` direction of Cartesian coordinates.
+- :math:`\mathbf{c}` is set along :math:`+z` direction of Cartesian coordinates.
 
 
 Transformation to the primitive cell
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-::
+In the standardized unit cells, there are five different centring
+types available, base centrings of A and C, rhombohedral (R), body centred
+(I), and face centred (F). The transformation is applied to the
+standardized unit cell by
 
-   static double A_mat[3][3] = {{    1,    0,    0},
-   			     {    0, 1./2,-1./2},
-   			     {    0, 1./2, 1./2}};
-   static double C_mat[3][3] = {{ 1./2, 1./2,    0},
-   			     {-1./2, 1./2,    0},
-   			     {    0,    0,    1}};
-   static double R_mat[3][3] = {{ 2./3,-1./3,-1./3 },
-   			     { 1./3, 1./3,-2./3 },
-   			     { 1./3, 1./3, 1./3 }};
-   static double I_mat[3][3] = {{-1./2, 1./2, 1./2 },
-   			     { 1./2,-1./2, 1./2 },
-   			     { 1./2, 1./2,-1./2 }};
-   static double F_mat[3][3] = {{    0, 1./2, 1./2 },
-   			     { 1./2,    0, 1./2 },
-   			     { 1./2, 1./2,    0 }};
+.. math::
 
+   ( \mathbf{a}_\mathrm{p} \; \mathbf{b}_\mathrm{p} \; \mathbf{c}_\mathrm{p} )
+   = ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
+   \mathbf{c}_\mathrm{s} )  \boldsymbol{P}_\mathrm{c},
 
+where :math:`\mathbf{a}_\mathrm{p}`, :math:`\mathbf{b}_\mathrm{p}`,
+and :math:`\mathbf{c}_\mathrm{p}` are the basis vectors of the
+primitive cell and :math:`\boldsymbol{P}_\mathrm{c}` is the
+transformation matrix from the standardized unit cell to the primitive
+cell. :math:`\boldsymbol{P}_\mathrm{c}` for centring types are given
+as follows:
 
+.. math::
+
+   \renewcommand*{\arraystretch}{1.4}
+   \boldsymbol{P}_\mathrm{A} = 
+   \begin{pmatrix}
+   1 & 0 & 0 \\
+   0 & \frac{1}{2} & \frac{\bar{1}}{2} \\
+   0 & \frac{1}{2} & \frac{{1}}{2}
+   \end{pmatrix},
+   \renewcommand*{\arraystretch}{1.4}
+   \boldsymbol{P}_\mathrm{C} = 
+   \begin{pmatrix}
+   \frac{1}{2} & \frac{{1}}{2} & 0 \\
+   \frac{\bar{1}}{2} & \frac{1}{2} & 0\\
+   0 & 0 & 1
+   \end{pmatrix},
+   \boldsymbol{P}_\mathrm{R} = 
+   \begin{pmatrix}
+   \frac{2}{3} & \frac{\bar{1}}{3} & \frac{\bar{1}}{3} \\
+   \frac{1}{3} & \frac{{1}}{3} & \frac{\bar{2}}{3} \\
+   \frac{1}{3} & \frac{{1}}{3} & \frac{{1}}{3}
+   \end{pmatrix},
+   \boldsymbol{P}_\mathrm{I} = 
+   \begin{pmatrix}
+   \frac{\bar{1}}{2} & \frac{{1}}{2} & \frac{{1}}{2} \\
+   \frac{{1}}{2} & \frac{\bar{1}}{2} & \frac{{1}}{2} \\
+   \frac{{1}}{2} & \frac{{1}}{2} & \frac{\bar{1}}{2}
+   \end{pmatrix},
+   \boldsymbol{P}_\mathrm{F} = 
+   \begin{pmatrix}
+   0 & \frac{{1}}{2} & \frac{{1}}{2} \\
+   \frac{{1}}{2} & 0 & \frac{{1}}{2} \\
+   \frac{{1}}{2} & \frac{{1}}{2} & 0
+   \end{pmatrix}.
 
 
 .. |sflogo| image:: http://sflogo.sourceforge.net/sflogo.php?group_id=161614&type=1
