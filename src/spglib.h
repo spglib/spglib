@@ -1,4 +1,4 @@
-/* version 1.8 */
+/* version 1.8.1 */
 
 /* Copyright (C) 2008 Atsushi Togo */
 /* All rights reserved. */
