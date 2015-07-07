@@ -113,6 +113,7 @@ html_theme_options = {
     #     ],
     'navbar_links': [
         ("API", "api"),
+        ("Definitions", "definition"),
         ("Variables", "variable"),
         ],
         

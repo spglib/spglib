@@ -1,8 +1,8 @@
 Important variables
---------------------
+====================
 
-lattice
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+``lattice``
+-------------
 
 Basis vectors (in Cartesian)
 
@@ -24,10 +24,10 @@ where :math:`\mathrm{L}` is the basis vectors defined above and is
 coordinates given below.
 
 
-position
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+``position``
+--------------
 
-Atomic positions (in fractional coordinates)
+Atomic points (in fractional coordinates with respect to basis vectors)
 
 ::
 
@@ -36,17 +36,21 @@ Atomic positions (in fractional coordinates)
     [ x3_a, x3_b, x3_c ], 
     ...                   ]
 
-types
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Atom types, i.e., species are differenciated by integer numbers.
+``types``
+----------
+
+Atomic species are differenciated by integers. The nubmers are just
+used to distinguishes atoms, and is not releated to atomic numbers.
 
 ::
 
   [ type_1, type_2, type_3, ... ]
 
-rotation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The number of elements is same as the number of atoms.
+
+``rotation``
+--------------
 
 Rotation matricies (ingeger) of symmetry operations.
 
@@ -56,8 +60,8 @@ Rotation matricies (ingeger) of symmetry operations.
       [ r_ba, r_bb, r_bc ],
       [ r_ca, r_cb, r_cc ] ]
 
-translation
-^^^^^^^^^^^^
+``translation``
+-----------------
 
 Translation vectors corresponding to symmetry operations in fractional
 coordinates.
@@ -66,8 +70,8 @@ coordinates.
 
     [ t_a, t_b, t_c ]
 
-symprec
-^^^^^^^
+``symprec``
+------------
 
 Tolerance of distance between atomic positions and between lengths of
 lattice vectors to be tolerated in the symmetry finding. The angle
@@ -75,8 +79,8 @@ distortion between lattice vectors is converted to a length and
 compared with this distance tolerance. If the explicit angle tolerance
 is expected, see ``angle_tolerance``.
 
-angle_tolerance
-^^^^^^^^^^^^^^^^
+``angle_tolerance``
+--------------------
 
 **Experimental**
 

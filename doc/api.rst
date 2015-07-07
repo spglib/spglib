@@ -4,7 +4,7 @@ API
 .. _api_spg_get_symmetry:
 
 ``spg_get_symmetry``
-^^^^^^^^^^^^^^^^^^^^
+---------------------
 
 ::
 
@@ -39,7 +39,7 @@ treatment for research in computational materials science.
 |
 
 ``spg_get_international``
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+--------------------------
 
 ::
 
@@ -50,28 +50,52 @@ treatment for research in computational materials science.
 			    const int num_atom,
                             const double symprec);
 
-Space group is found in international table symbol (``symbol``) and
-as number (return value). 0 is returned when it fails.
+Space group type is found and returned in international table symbol
+to ``symbol`` and also as a number (return value). 0 is returned when
+it fails.
 
 |
 
 ``spg_get_schoenflies``
-^^^^^^^^^^^^^^^^^^^^^^^^
+-------------------------
 
 ::
 
-  int spg_get_schoenflies(char symbol[10], const double lattice[3][3],
+  int spg_get_schoenflies(char symbol[10],
+                          const double lattice[3][3],
                           const double position[][3],
-                          const int types[], const int num_atom,
+                          const int types[],
+                          const int num_atom,
                           const double symprec);
 
-Space group is found in schoenflies (``symbol``) and as number (return
-value).  0 is returned when it fails.
+Space group type is found and returned in schoenflies to ``symbol``
+and also as a number (return value). 0 is returned when it fails.
+
+
+|
+
+``spg_standardize_cell``
+-------------------------
+
+::
+
+   int spg_standardize_cell(double lattice[3][3],
+                            double position[][3],
+                            int types[],
+                            const int num_atom,
+                            const int to_primitive,
+                            const int no_idealize,
+                            const double symprec);
+
 
 |
 
 ``spg_find_primitive``
-^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------
+
+**This function exists for backward compatibility. Recommended to use** ``spg_standardize_cell`` **instead of this function.**
+
+A primitive cell is found from an input unit cell.
 
 ::
   
@@ -81,16 +105,20 @@ value).  0 is returned when it fails.
 			 const int num_atom,
 			 const double symprec);
 
-A primitive cell is found from an input cell. Be careful that 
 ``lattice``, ``position``, and ``types`` are overwritten. ``num_atom``
-is returned as return value.
+is returned as the return value. A primitive cell found by this
+function is not standardized. Since internally no information on symmetry
+operations is used except for pure translations, the lattice shape of
+the primitive cell can be nonintuitive one.
 
 |
 
 ``spg_refine_cell``
-^^^^^^^^^^^^^^^^^^^^^
+--------------------
 
-Symmetrized and standardized crystal structure is obtained from a
+**This function exists for backward compatibility since it is same as** ``spg_standardize_cell`` **with** ``to_primitive=0`` **and** ``leave_distorted=0``.
+
+The standardized crystal structure is obtained from a
 non-standard crystal structure which may be slightly distorted within
 a symmetry recognition tolerance, or whose primitive vectors are differently
 chosen, etc.
@@ -103,22 +131,22 @@ chosen, etc.
 		      const int num_atom,
  		      const double symprec);
 
-Returned Bravais lattice and symmetrized atomic positions are
-overwritten. The number of atoms in the Bravais lattice is returned as
-the return value. The memory space for ``position`` and ``types`` must
-be prepared four times more than those required for the input
-structures. This is because, when the crystal has the face centering,
-four times more atoms than those in the primitive cell are
-generated. To do the same for the non-standard choices of origin,
-axis, or cell, it is necessary to use
-``spg_get_dataset_with_hall_number`` to extract the crystal structure.
+The calculated standardized lattice and atomic positions overwrites
+``lattice``, ``position``, and ``types``. The number of atoms in the
+standardized unit cell is returned as the return value. When the input
+unit cell is a primitive cell and is the face centring symmetry, the
+number of the atoms returned becomes four times large. Since this
+function does not have any means of checking the array size (memory
+space) of these variables, the array size (memory space) for
+``position`` and ``types`` should be prepared **four times more** than
+those required for the input unit cell in general.
 
 |
 
 .. _api_spg_get_dataset:
 
-``spg_get_dataset``, ``spg_get_dataset_with_hall_number``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+``spg_get_dataset`` and ``spg_get_dataset_with_hall_number``
+--------------------------------------------------------------
 
 **Changed in version 1.8.1**
 
@@ -130,7 +158,7 @@ setting of basis vectors in spglib is explained in the manuscript
 found at http://arxiv.org/abs/1506.01455.
 
 Usage
-------
+^^^^^^
 
 Dataset corresponding to the space group type in the standard setting
 is obtained by ``spg_get_dataset``. If this symmetry search fails,
@@ -172,7 +200,7 @@ Finally, its allocated memory space must be freed by calling ``spg_free_dataset`
 
 
 Dataset
---------
+^^^^^^^^
 				  
 The dataset is
 accessible through the C-structure given by
@@ -228,13 +256,13 @@ setting or cell choices is found in ``setting``.
 Symmetry operations
 """""""""""""""""""""""
    
-The symmetry operations of the input cell are stored in ``rotations``
-and ``translations``. A crystallographic symmetry operation
-:math:`(\boldsymbol{W}|\boldsymbol{w})` is made from a pair of
-rotation :math:`\boldsymbol{W}` and translation :math:`\boldsymbol{w}`
-parts with the same index. Number of symmetry operations is given as
-``n_operations``. The detailed explanation of the values is found at
-:ref:`api_spg_get_symmetry`.
+The symmetry operations of the input unit cell are stored in
+``rotations`` and ``translations``. A crystallographic symmetry
+operation :math:`(\boldsymbol{W}, \boldsymbol{w})` is made from a pair
+of rotation :math:`\boldsymbol{W}` and translation
+:math:`\boldsymbol{w}` parts with the same index. Number of symmetry
+operations is given as ``n_operations``. The detailed explanation of
+the values is found at :ref:`api_spg_get_symmetry`.
 
 |
 
@@ -242,14 +270,14 @@ parts with the same index. Number of symmetry operations is given as
 Site symmetry
 """"""""""""""
 
-``n_atoms`` is the number of atoms of the input cell. ``wyckoffs``
-gives Wyckoff letters that are assigned to atomic positions of the
-input cell. The numbers of 0, 1, 2, :math:`\ldots`, correspond to the
-a, b, c, :math:`\ldots`, respectively. Number of elements in
-``wyckoffs`` is same as ``n_atoms``. ``equivalent_atoms`` is a list of
-atomic indices that map to indices of symmetrically independent atoms,
-where the list index corresponds to atomic index of the input crystal
-structure.
+``n_atoms`` is the number of atoms of the input unit
+cell. ``wyckoffs`` gives Wyckoff letters that are assigned to atomic
+positions of the input unit cell. The numbers of 0, 1, 2,
+:math:`\ldots`, correspond to the a, b, c, :math:`\ldots`,
+respectively. Number of elements in ``wyckoffs`` is same as
+``n_atoms``. ``equivalent_atoms`` is a list of atomic indices that map
+to indices of symmetrically independent atoms, where the list index
+corresponds to atomic index of the input crystal structure.
 
 |
 
@@ -263,33 +291,34 @@ result of space-group-type matching under a set of unique axis,
 setting and cell choices. In this matching, basis vectors and atomic
 point coordinates have to be standardized to compare with the database
 of symmetry operations. The basis vectors are transformed to those of
-a standardized cell. Atomic point coordinates are shifted so that
+a standardized unit cell. Atomic point coordinates are shifted so that
 symmetry operations have the standard
-origin. ``transformation_matrix`` (:math:`\boldsymbol{P}`) is the matrix
-to transform the input basis vectors to the standardized basis
-vectors, wihch is represented as 
+origin. ``transformation_matrix`` (:math:`\boldsymbol{P}`) is the
+matrix to transform the input basis vectors to the standardized basis
+vectors, wihch is represented as
 
 .. math::
 
    ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
-   = ( \mathbf{a}_\mathrm{S} \; \mathbf{b}_\mathrm{S} \; \mathbf{c}_\mathrm{S} )  \boldsymbol{P}
+   = ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )  \boldsymbol{P}
 
 where :math:`\mathbf{a}`, :math:`\mathbf{b}`, and :math:`\mathbf{c}`
 are the input (original) basis vectors, and
-:math:`\mathbf{a}_\mathrm{S}`, :math:`\mathbf{b}_\mathrm{S}`, and
-:math:`\mathbf{c}_\mathrm{S}` are the standardized basis vectors. The
+:math:`\mathbf{a}_\mathrm{s}`, :math:`\mathbf{b}_\mathrm{s}`, and
+:math:`\mathbf{c}_\mathrm{s}` are the standardized basis vectors. The
 ``origin_shift`` (:math:`\boldsymbol{p}`) is the vector from the
 origin of the standardized coordinate system to the origin of the
 input (original) coordinate system measured in the standardized
-coordinate system. The atomic position shift is measured from the
-standardized cell (conventional unit cell) to the original cell in
-terms of the Bravais lattice. An atomic position in the original cell
-:math:`\boldsymbol{x}` (input data) is mapped to that in Bravais
-lattice :math:`\boldsymbol{x}_\mathrm{S}` by
+coordinate system. The atomic point shift is measured from the
+standardized unit cell (conventional unit cell) to the original unit
+cell measured in the coordinates of the standardized unit cell. An
+atomic point in the original unit cell :math:`\boldsymbol{x}` (input
+data) is mapped to that in the standardized unit cell
+:math:`\boldsymbol{x}_\mathrm{s}` by
 
 .. math::
 
-   \boldsymbol{x}_\mathrm{S} = \boldsymbol{P}\boldsymbol{x} +
+   \boldsymbol{x}_\mathrm{s} = \boldsymbol{P}\boldsymbol{x} +
    \boldsymbol{p} \;\;(\mathrm{mod}\; \mathbf{1}).
 
 In **versions 1.7.x and 1.8 or before**, ``transformation_matrix`` and
@@ -297,9 +326,9 @@ In **versions 1.7.x and 1.8 or before**, ``transformation_matrix`` and
 
 .. math::
 
-   ( \mathbf{a}_\mathrm{S} \; \mathbf{b}_\mathrm{S} \;
-   \mathbf{c}_\mathrm{S} ) = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c}
-   ) \boldsymbol{P} \;\; \text{and} \;\; \boldsymbol{x}_\mathrm{S} =
+   ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
+   \mathbf{c}_\mathrm{s} ) = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c}
+   ) \boldsymbol{P} \;\; \text{and} \;\; \boldsymbol{x}_\mathrm{s} =
    \boldsymbol{P}^{-1}\boldsymbol{x} - \boldsymbol{p}
    \;\;(\mathrm{mod}\; \mathbf{1}),
 
@@ -337,7 +366,7 @@ group in the Hermann–Mauguin notation.
 |
 
 ``spg_free_dataset``
-^^^^^^^^^^^^^^^^^^^^^
+---------------------
 
 Allocated memoery space of the C-structure of ``SpglibDataset`` is
 freed by calling ``spg_free_dataset``.
@@ -349,7 +378,7 @@ freed by calling ``spg_free_dataset``.
 | 
 
 ``spg_get_spacegroup_type``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------
 
 This function allows to directly access to the space-group-type
 database in spglib (spg_database.c). To specify the space group type
@@ -378,7 +407,7 @@ with a specific setting, ``hall_number`` is used. The definition of
 |
 
 ``spg_get_symmetry_from_database``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
 This function allows to directly access to the space group operations
 in the spglib database (spg_database.c). To specify the space group
@@ -398,7 +427,7 @@ group operations are stored in ``rotations`` and ``translations``.
 |
   
 ``spg_get_smallest_lattice``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------
 
 ::
 
@@ -412,7 +441,7 @@ searched. The lattice is stored in ``smallest_lattice``.
 |
 
 ``spg_get_multiplicity``
-^^^^^^^^^^^^^^^^^^^^^^^^^
+-------------------------
   
 ::
 
@@ -428,7 +457,7 @@ in advance to allocate memoery space for symmetry operations.
 |
 
 ``spg_get_symmetry_with_collinear_spin``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------------
 
 ::
 
@@ -449,7 +478,7 @@ argument of ``const double spins[]``, the usage is same as
 |
 
 ``spg_get_ir_reciprocal_mesh``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-------------------------------
 
 ::
 
@@ -504,7 +533,7 @@ grid point index is recovered by ``numpy.dot(grid_address % mesh,
 |
 
 ``spg_get_stabilized_reciprocal_mesh``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+---------------------------------------
 
 **Change in version 1.4**
 
