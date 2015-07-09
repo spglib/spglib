@@ -670,11 +670,11 @@ int spg_find_primitive(double lattice[3][3],
 {
   sym_set_angle_tolerance(-1.0);
 
-  return find_primitive(lattice,
-			position,
-			types,
-			num_atom,
-			symprec);
+  return standardize_primitive(lattice,
+			       position,
+			       types,
+			       num_atom,
+			       symprec);
 }
 
 /* Return 0 if failed */
@@ -687,11 +687,11 @@ int spgat_find_primitive(double lattice[3][3],
 {
   sym_set_angle_tolerance(angle_tolerance);
 
-  return find_primitive(lattice,
-			position,
-			types,
-			num_atom,
-			symprec);
+  return standardize_primitive(lattice,
+			       position,
+			       types,
+			       num_atom,
+			       symprec);
 }
 
 /* Return 0 if failed */
