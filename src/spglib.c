@@ -122,11 +122,6 @@ static int get_schoenflies(char symbol[10],
 			   SPGCONST double position[][3],
 			   const int types[], const int num_atom,
 			   const double symprec);
-static int find_primitive(double lattice[3][3],
-			  double position[][3],
-			  int types[],
-			  const int num_atom,
-			  const double symprec);
 static int get_symmetry_numerical(int rotation[][3][3],
 				  double translation[][3],
 				  const int max_size,
@@ -1281,8 +1276,7 @@ static int get_symmetry_with_collinear_spin(int rotation[][3][3],
     fprintf(stderr, "spglib: Indicated max size(=%d) is less than number ",
 	    max_size);
     fprintf(stderr, "spglib: of symmetry operations(=%d).\n", symmetry->size);
-    sym_free_symmetry(symmetry);
-    goto err;
+    goto ret;
   }
 
   for (i = 0; i < symmetry->size; i++) {
@@ -1292,8 +1286,9 @@ static int get_symmetry_with_collinear_spin(int rotation[][3][3],
 
   size = symmetry->size;
 
-  cel_free_cell(cell);
+ ret:
   sym_free_symmetry(symmetry);
+  cel_free_cell(cell);
 
   return size;
 
@@ -1581,44 +1576,6 @@ static int get_schoenflies(char symbol[10],
 }
 
 /* Return 0 if failed */
-static int find_primitive(double lattice[3][3],
-			  double position[][3],
-			  int types[],
-			  const int num_atom,
-			  const double symprec)
-{
-  int num_prim_atom;
-  Cell *cell;
-  Primitive *primitive;
-
-  cell = NULL;
-  primitive = NULL;
-  num_prim_atom = 0;
-
-  if ((cell = cel_alloc_cell(num_atom)) == NULL) {
-    return 0;
-  }
-
-  cel_set_cell(cell, lattice, position, types);
-
-  /* find primitive cell */
-  if ((primitive = prm_get_primitive(cell, symprec)) == NULL) {
-    cel_free_cell(cell);
-    return 0;
-  }
-
-  num_prim_atom = primitive->cell->size;
-  if (num_prim_atom < num_atom) {
-    set_cell(lattice, position, types, primitive->cell);
-  }
-
-  prm_free_primitive(primitive);
-  cel_free_cell(cell);
-    
-  return num_prim_atom;
-}
-
-/* Return 0 if failed */
 static int get_symmetry_numerical(int rotation[][3][3],
 				  double translation[][3],
 				  const int max_size,
@@ -1632,6 +1589,7 @@ static int get_symmetry_numerical(int rotation[][3][3],
   Cell *cell;
   Symmetry *symmetry;
 
+  size = 0;
   cell = NULL;
   symmetry = NULL;
 
@@ -1646,13 +1604,22 @@ static int get_symmetry_numerical(int rotation[][3][3],
     return 0;
   }
 
+  if (symmetry->size > max_size) {
+    fprintf(stderr, "spglib: Indicated max size(=%d) is less than number ",
+	    max_size);
+    fprintf(stderr, "spglib: of symmetry operations(=%d).\n", symmetry->size);
+    goto ret;
+  }
+
   for (i = 0; i < symmetry->size; i++) {
     mat_copy_matrix_i3(rotation[i], symmetry->rot[i]);
     mat_copy_vector_d3(translation[i], symmetry->trans[i]);
   }
   size = symmetry->size;
 
+ ret:
   sym_free_symmetry(symmetry);
+  cel_free_cell(cell);
 
   return size;
 }
