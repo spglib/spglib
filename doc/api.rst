@@ -6,6 +6,10 @@ API
 ``spg_get_symmetry``
 ---------------------
 
+This function finds a set of representative symmetry operations for
+primitive cells or its extension with lattice translations for
+supercells. 
+
 ::
 
   int spg_get_symmetry(int rotation[][3][3],
@@ -16,10 +20,6 @@ API
 		       const int types[],
   		       const int num_atom,
 		       const double symprec);
-
-This function finds a set of representative symmetry operations for
-primitive cells or its extension with lattice translations for
-supercells. 
 
 The operations are stored in ``rotation`` and ``translation``. The
 number of operations is return as the return value. Rotations and
@@ -41,6 +41,10 @@ treatment for research in computational materials science.
 ``spg_get_international``
 --------------------------
 
+Space group type is found and returned in international table symbol
+to ``symbol`` and also as a number (return value). 0 is returned when
+it fails.
+
 ::
 
   int spg_get_international(char symbol[11],
@@ -50,14 +54,14 @@ treatment for research in computational materials science.
 			    const int num_atom,
                             const double symprec);
 
-Space group type is found and returned in international table symbol
-to ``symbol`` and also as a number (return value). 0 is returned when
-it fails.
 
 |
 
 ``spg_get_schoenflies``
 -------------------------
+
+Space group type is found and returned in schoenflies to ``symbol``
+and also as a number (return value). 0 is returned when it fails.
 
 ::
 
@@ -68,8 +72,6 @@ it fails.
                           const int num_atom,
                           const double symprec);
 
-Space group type is found and returned in schoenflies to ``symbol``
-and also as a number (return value). 0 is returned when it fails.
 
 
 |
@@ -77,6 +79,11 @@ and also as a number (return value). 0 is returned when it fails.
 ``spg_standardize_cell``
 -------------------------
 
+The standardized unit cell (see :ref:`def_standardized_unit_cell`) is
+generated from an input unit cell structure and its space group type
+determined about a symmetry search tolerance. Usually
+``to_primitive=0`` and ``no_idealize=0`` are recommended.
+  
 ::
 
    int spg_standardize_cell(double lattice[3][3],
@@ -87,6 +94,14 @@ and also as a number (return value). 0 is returned when it fails.
                             const int no_idealize,
                             const double symprec);
 
+``to_primitive=1`` is used to create the standardized
+primitive cell with the transformation matricies shown at
+:ref:`def_standardized_primitive_cell`. ``no_idealize=1`` disables to
+idealize lengths and angles of basis vectors and positions of atoms
+according to crystal symmetry. The detail of the idealization
+(``no_idealize=0``) is written at
+:ref:`def_idealize_cell`. ``no_idealize=1`` is used when we want to
+leave basis vectors and atomic positions in Cartesianl coordinates fixed.
 
 |
 
@@ -150,12 +165,12 @@ those required for the input unit cell in general.
 
 **Changed in version 1.8.1**
 
-For an input crystal structure, symmetry operations of the crystal are
-searched. Then they are compared with the crsytallographic database
-and the space group type is determined. The result is returned as the
-``SpglibDataset`` structure as a dataset. The default choice of
-setting of basis vectors in spglib is explained in the manuscript
-found at http://arxiv.org/abs/1506.01455.
+For an input unit cell structure, symmetry operations of the crystal
+are searched. Then they are compared with the crsytallographic
+database and the space group type is determined. The result is
+returned as the ``SpglibDataset`` structure as a dataset. The default
+choice of setting of basis vectors in spglib is explained in the
+manuscript found at http://arxiv.org/abs/1506.01455.
 
 Usage
 ^^^^^^
@@ -442,6 +457,8 @@ searched. The lattice is stored in ``smallest_lattice``.
 
 ``spg_get_multiplicity``
 -------------------------
+
+This function returns exact number of symmetry operations.
   
 ::
 
@@ -451,13 +468,17 @@ searched. The lattice is stored in ``smallest_lattice``.
 			   const int num_atom,
   			   const double symprec);
 
-Return exact number of symmetry operations. This function may be used
-in advance to allocate memoery space for symmetry operations.
+This function may be used in advance to allocate memoery space for
+symmetry operations.
 
 |
 
 ``spg_get_symmetry_with_collinear_spin``
 -----------------------------------------
+
+This function finds symmetry operations with collinear spins on
+atoms. Except for the argument of ``const double spins[]``, the usage
+is same as ``spg_get_symmetry``.
 
 ::
 
@@ -471,14 +492,14 @@ in advance to allocate memoery space for symmetry operations.
                                            const int num_atom,
                                            const double symprec);
 
-Find symmetry operations with collinear spins on atoms. Except for the
-argument of ``const double spins[]``, the usage is same as
-``spg_get_symmetry``.
 
 |
 
 ``spg_get_ir_reciprocal_mesh``
 -------------------------------
+
+Irreducible reciprocal grid points are searched from uniform mesh grid
+points specified by ``mesh`` and ``is_shift``.
 
 ::
 
@@ -493,15 +514,13 @@ argument of ``const double spins[]``, the usage is same as
                                   const int num_atom,
                                   const double symprec)
 
-Irreducible reciprocal grid points are searched from uniform mesh grid
-points specified by ``mesh`` and ``is_shift``.  ``mesh`` stores three
-integers. Reciprocal primitive vectors are divided by the number
-stored in ``mesh`` with (0,0,0) point centering. The center of grid
-mesh is shifted +1/2 of a grid spacing along corresponding reciprocal
-axis by setting 1 to a ``is_shift`` element. No grid mesh shift is
-made if 0 is set for ``is_shift``.
+``mesh`` stores three integers. Reciprocal primitive vectors are
+divided by the number stored in ``mesh`` with (0,0,0) point
+centering. The center of grid mesh is shifted +1/2 of a grid spacing
+along corresponding reciprocal axis by setting 1 to a ``is_shift``
+element. No grid mesh shift is made if 0 is set for ``is_shift``.
 
-The reducible uniform grid points are returned in reduced coordinates
+The reducible uniform grid points are returned in fractional coordinates
 as ``grid_address``. A map between reducible and irreducible points are
 returned as ``map`` as in the indices of ``grid_address``. The number of
 the irreducible k-points are returned as the return value.  The time
@@ -535,7 +554,10 @@ grid point index is recovered by ``numpy.dot(grid_address % mesh,
 ``spg_get_stabilized_reciprocal_mesh``
 ---------------------------------------
 
-**Change in version 1.4**
+The irreducible k-points are searched from unique k-point mesh grids
+from direct (real space) basis vectors and a set of rotation parts of
+symmetry operations in direct space with one or multiple
+stabilizers.
 
 ::
 
@@ -549,15 +571,13 @@ grid point index is recovered by ``numpy.dot(grid_address % mesh,
                                           const int num_q,
                                           const double qpoints[][3])
 
-The irreducible k-points are searched from unique k-point mesh grids
-from real space lattice vectors and rotation matrices of symmetry
-operations in real space with stabilizers. The stabilizers are written
-in reduced coordinates. Number of the stabilizers are given by
-``num_q``. Reduced k-points are stored in ``map`` as indices of
-``grid_address``. The number of the reduced k-points with stabilizers
+The stabilizers are written in fractional coordinates. Number of the
+stabilizers are given by ``num_q``. Symmetrically equivalent k-points
+(stars) in fractional coordinates are stored in ``map`` as indices of
+``grid_address``. The number of reduced k-points with the stabilizers
 are returned as the return value.
 
-Mesh grid points without symmetrization can be obtained by setting
+This function can be used to obtain all mesh grid points by setting
 ``num_rot = 1``, ``rotations = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}}``,
 ``num_q = 1``, and ``qpoints = {0, 0, 0}``.
 

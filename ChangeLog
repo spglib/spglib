@@ -1,3 +1,19 @@
+2015-07-09  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.8.1
+
+	In SpglibDataset, definitions of transformation matrix and origin
+	shift are changed, and member names of '*brv_*' are changed to
+	'*std_*'.
+
+	New function 'spg_standardize_cell' is implemented. This can also
+	give 'standardized primitive cell' with 'to_primitive =
+	1'.
+
+	Due to change of internal implementation, the order of symmetry
+	operations obtained can be different from the recently released
+	versions, but the set is the same.
+
 2015-06-25  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.8

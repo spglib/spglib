@@ -142,6 +142,8 @@ A graphical example is shown below.
    \end{pmatrix}
 
 
+.. _def_standardized_unit_cell:
+
 Conventions of standardized unit cell
 --------------------------------------
 
@@ -160,6 +162,66 @@ choose the order of :math:`(\mathbf{a}, \mathbf{b}, \mathbf{c})` if
 the order can not be determined only by the symmetrical conventions. The
 details of these conventions are summarized in the article found at
 http://arxiv.org/abs/1506.01455.
+
+.. _def_standardized_primitive_cell:
+
+Transformation to the primitive cell
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+In the standardized unit cells, there are five different centring
+types available, base centrings of A and C, rhombohedral (R), body centred
+(I), and face centred (F). The transformation is applied to the
+standardized unit cell by
+
+.. math::
+
+   ( \mathbf{a}_\mathrm{p} \; \mathbf{b}_\mathrm{p} \; \mathbf{c}_\mathrm{p} )
+   = ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
+   \mathbf{c}_\mathrm{s} )  \boldsymbol{P}_\mathrm{c},
+
+where :math:`\mathbf{a}_\mathrm{p}`, :math:`\mathbf{b}_\mathrm{p}`,
+and :math:`\mathbf{c}_\mathrm{p}` are the basis vectors of the
+primitive cell and :math:`\boldsymbol{P}_\mathrm{c}` is the
+transformation matrix from the standardized unit cell to the primitive
+cell. :math:`\boldsymbol{P}_\mathrm{c}` for centring types are given
+as follows:
+
+.. math::
+
+   \renewcommand*{\arraystretch}{1.4}
+   \boldsymbol{P}_\mathrm{A} = 
+   \begin{pmatrix}
+   1 & 0 & 0 \\
+   0 & \frac{1}{2} & \frac{\bar{1}}{2} \\
+   0 & \frac{1}{2} & \frac{{1}}{2}
+   \end{pmatrix},
+   \renewcommand*{\arraystretch}{1.4}
+   \boldsymbol{P}_\mathrm{C} = 
+   \begin{pmatrix}
+   \frac{1}{2} & \frac{{1}}{2} & 0 \\
+   \frac{\bar{1}}{2} & \frac{1}{2} & 0\\
+   0 & 0 & 1
+   \end{pmatrix},
+   \boldsymbol{P}_\mathrm{R} = 
+   \begin{pmatrix}
+   \frac{2}{3} & \frac{\bar{1}}{3} & \frac{\bar{1}}{3} \\
+   \frac{1}{3} & \frac{{1}}{3} & \frac{\bar{2}}{3} \\
+   \frac{1}{3} & \frac{{1}}{3} & \frac{{1}}{3}
+   \end{pmatrix},
+   \boldsymbol{P}_\mathrm{I} = 
+   \begin{pmatrix}
+   \frac{\bar{1}}{2} & \frac{{1}}{2} & \frac{{1}}{2} \\
+   \frac{{1}}{2} & \frac{\bar{1}}{2} & \frac{{1}}{2} \\
+   \frac{{1}}{2} & \frac{{1}}{2} & \frac{\bar{1}}{2}
+   \end{pmatrix},
+   \boldsymbol{P}_\mathrm{F} = 
+   \begin{pmatrix}
+   0 & \frac{{1}}{2} & \frac{{1}}{2} \\
+   \frac{{1}}{2} & 0 & \frac{{1}}{2} \\
+   \frac{{1}}{2} & \frac{{1}}{2} & 0
+   \end{pmatrix}.
+
+.. _def_idealize_cell:
 
 Idealization of unit cell structure
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -257,62 +319,6 @@ Cubic
 - :math:`\mathbf{b}` is set along :math:`+y` direction of Cartesian coordinates.
 - :math:`\mathbf{c}` is set along :math:`+z` direction of Cartesian coordinates.
 
-
-Transformation to the primitive cell
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-In the standardized unit cells, there are five different centring
-types available, base centrings of A and C, rhombohedral (R), body centred
-(I), and face centred (F). The transformation is applied to the
-standardized unit cell by
-
-.. math::
-
-   ( \mathbf{a}_\mathrm{p} \; \mathbf{b}_\mathrm{p} \; \mathbf{c}_\mathrm{p} )
-   = ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
-   \mathbf{c}_\mathrm{s} )  \boldsymbol{P}_\mathrm{c},
-
-where :math:`\mathbf{a}_\mathrm{p}`, :math:`\mathbf{b}_\mathrm{p}`,
-and :math:`\mathbf{c}_\mathrm{p}` are the basis vectors of the
-primitive cell and :math:`\boldsymbol{P}_\mathrm{c}` is the
-transformation matrix from the standardized unit cell to the primitive
-cell. :math:`\boldsymbol{P}_\mathrm{c}` for centring types are given
-as follows:
-
-.. math::
-
-   \renewcommand*{\arraystretch}{1.4}
-   \boldsymbol{P}_\mathrm{A} = 
-   \begin{pmatrix}
-   1 & 0 & 0 \\
-   0 & \frac{1}{2} & \frac{\bar{1}}{2} \\
-   0 & \frac{1}{2} & \frac{{1}}{2}
-   \end{pmatrix},
-   \renewcommand*{\arraystretch}{1.4}
-   \boldsymbol{P}_\mathrm{C} = 
-   \begin{pmatrix}
-   \frac{1}{2} & \frac{{1}}{2} & 0 \\
-   \frac{\bar{1}}{2} & \frac{1}{2} & 0\\
-   0 & 0 & 1
-   \end{pmatrix},
-   \boldsymbol{P}_\mathrm{R} = 
-   \begin{pmatrix}
-   \frac{2}{3} & \frac{\bar{1}}{3} & \frac{\bar{1}}{3} \\
-   \frac{1}{3} & \frac{{1}}{3} & \frac{\bar{2}}{3} \\
-   \frac{1}{3} & \frac{{1}}{3} & \frac{{1}}{3}
-   \end{pmatrix},
-   \boldsymbol{P}_\mathrm{I} = 
-   \begin{pmatrix}
-   \frac{\bar{1}}{2} & \frac{{1}}{2} & \frac{{1}}{2} \\
-   \frac{{1}}{2} & \frac{\bar{1}}{2} & \frac{{1}}{2} \\
-   \frac{{1}}{2} & \frac{{1}}{2} & \frac{\bar{1}}{2}
-   \end{pmatrix},
-   \boldsymbol{P}_\mathrm{F} = 
-   \begin{pmatrix}
-   0 & \frac{{1}}{2} & \frac{{1}}{2} \\
-   \frac{{1}}{2} & 0 & \frac{{1}}{2} \\
-   \frac{{1}}{2} & \frac{{1}}{2} & 0
-   \end{pmatrix}.
 
 
 .. |sflogo| image:: http://sflogo.sourceforge.net/sflogo.php?group_id=161614&type=1
