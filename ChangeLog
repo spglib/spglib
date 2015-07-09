@@ -3,8 +3,9 @@
 	* Version 1.8.1
 
 	In SpglibDataset, definitions of transformation matrix and origin
-	shift are changed, and member names of '*brv_*' are changed to
-	'*std_*'.
+	shift are changed, member names of '*brv_*' are changed to
+	'*std_*', and the members, pointgroup_number and
+	pointgroup_symbol, are added.
 
 	New function 'spg_standardize_cell' is implemented. This can also
 	give 'standardized primitive cell' with 'to_primitive =
