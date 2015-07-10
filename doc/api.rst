@@ -82,8 +82,9 @@ and also as a number (return value). 0 is returned when it fails.
 The standardized unit cell (see :ref:`def_standardized_unit_cell`) is
 generated from an input unit cell structure and its space group type
 determined about a symmetry search tolerance. Usually
-``to_primitive=0`` and ``no_idealize=0`` are recommended.
-  
+``to_primitive=0`` and ``no_idealize=0`` are recommended to set and
+this setting results in the same behavior as ``spg_refine_cell``.
+
 ::
 
    int spg_standardize_cell(double lattice[3][3],
@@ -94,21 +95,35 @@ determined about a symmetry search tolerance. Usually
                             const int no_idealize,
                             const double symprec);
 
-``to_primitive=1`` is used to create the standardized
-primitive cell with the transformation matricies shown at
-:ref:`def_standardized_primitive_cell`. ``no_idealize=1`` disables to
-idealize lengths and angles of basis vectors and positions of atoms
-according to crystal symmetry. The detail of the idealization
-(``no_idealize=0``) is written at
-:ref:`def_idealize_cell`. ``no_idealize=1`` is used when we want to
-leave basis vectors and atomic positions in Cartesianl coordinates fixed.
+Number of atoms in the found standardized unit (primitive) cell is
+returned.
+
+``to_primitive=1`` is used to create the standardized primitive cell
+with the transformation matricies shown at
+:ref:`def_standardized_primitive_cell`, otherwise ``to_primitive=0``
+must be specified. The found basis vectors and
+atomic point coordinates and types are overwritten in ``lattice``,
+``position``, and ``types``, respectively. Therefore with
+``to_primitive=0``, at a maximum four times larger array size for
+``position`` and ``types`` than the those size of the input unit cell
+is required to store a standardized unit cell with face centring found
+in the case that the input unit cell is a primitive cell.
+
+``no_idealize=1`` disables to idealize lengths and angles of basis
+vectors and positions of atoms according to crystal symmetry. The
+detail of the idealization (``no_idealize=0``) is written at
+:ref:`def_idealize_cell`. ``no_idealize=1`` may be used when we want to
+leave basis vectors and atomic positions in Cartesianl coordinates
+fixed.
 
 |
 
 ``spg_find_primitive``
 -----------------------
 
-**This function exists for backward compatibility. Recommended to use** ``spg_standardize_cell`` **instead of this function.**
+**Behavior is changed. This function is now a shortcut of**
+``spg_standardize_cell`` **with**
+``to_primitive=1`` **and** ``no_idealize=0``.
 
 A primitive cell is found from an input unit cell.
 
@@ -120,11 +135,8 @@ A primitive cell is found from an input unit cell.
 			 const int num_atom,
 			 const double symprec);
 
-``lattice``, ``position``, and ``types`` are overwritten. ``num_atom``
-is returned as the return value. A primitive cell found by this
-function is not standardized. Since internally no information on symmetry
-operations is used except for pure translations, the lattice shape of
-the primitive cell can be nonintuitive one.
+``lattice``, ``position``, and ``types`` are overwritten. Number of
+atoms in the found primitive cell is returned.
 
 |
 
