@@ -87,7 +87,7 @@ basis vectors as follows
 where :math:`( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )` and :math:`(
 \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
 \mathbf{c}_\mathrm{s} )` are the basis vectors of an arbitrary system
-and for a starndardized system, respectively. Transformation matrix
+and of a starndardized system, respectively. Transformation matrix
 **doesn't** rotate a crystal in Cartesian coordinates, but just
 changes the choices of basis vectors.
 
@@ -132,14 +132,16 @@ A graphical example is shown below.
 
 (click the figure to enlarge)
 
+In this example,
+
 .. math::
 
    \renewcommand*{\arraystretch}{1.4}
-   \boldsymbol{P}_\mathrm{s} = \begin{pmatrix}
+   \boldsymbol{P} = \begin{pmatrix}
    \frac{1}{2} & \frac{1}{2} & 0 \\
    \frac{\bar{1}}{2} & \frac{1}{2} & 0 \\
    0 & 0 & 1 
-   \end{pmatrix}
+   \end{pmatrix}.
 
 
 .. _def_standardized_unit_cell:
