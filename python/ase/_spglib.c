@@ -67,6 +67,7 @@ static PyObject *
 get_tetrahedra_integration_weight(PyObject *self, PyObject *args);
 static PyObject *
 get_tetrahedra_integration_weight_at_omegas(PyObject *self, PyObject *args);
+static PyObject * get_symmetry_from_database(PyObject *self, PyObject *args);
 
 struct module_state {
   PyObject *error;
@@ -90,6 +91,8 @@ static PyMethodDef _spglib_methods[] = {
   {"error_out", (PyCFunction)error_out, METH_NOARGS, NULL},
   {"dataset", get_dataset, METH_VARARGS, "Dataset for crystal symmetry"},
   {"spacegroup_type", get_spacegroup_type, METH_VARARGS, "Space-group type symbols"},
+  {"symmetry_from_database", get_symmetry_from_database, METH_VARARGS,
+   "Get symmetry operations from database"},
   {"pointgroup", get_pointgroup, METH_VARARGS,
    "International symbol of pointgroup"},
   {"standardize_cell", standardize_cell, METH_VARARGS, "Standardize cell"},
@@ -327,6 +330,26 @@ static PyObject * get_dataset(PyObject *self, PyObject *args)
   spg_free_dataset(dataset);
 
   return array;
+}
+
+static PyObject * get_symmetry_from_database(PyObject *self, PyObject *args)
+{
+  int hall_number;
+  PyArrayObject* rotation;
+  PyArrayObject* translation;
+  if (!PyArg_ParseTuple(args, "iOO",
+      &hall_number,
+      &rotation,
+      &translation)) {
+    return NULL;
+  }
+
+  int (*rot)[3][3] = (int(*)[3][3])PyArray_DATA(rotation);
+  double (*trans)[3] = (double(*)[3])PyArray_DATA(translation);
+
+  const int num_sym = spg_get_symmetry_from_database(rot, trans, hall_number);
+
+  return PyLong_FromLong((long) num_sym);
 }
 
 static PyObject * get_spacegroup_type(PyObject *self, PyObject *args)
