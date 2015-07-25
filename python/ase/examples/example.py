@@ -4,12 +4,28 @@ import sys
 from pyspglib import spglib
 import numpy as np
 
-try:
-    from atoms import Atoms
-except ImportError:
-    print "Atoms class is necessary."
-    print "You can use atoms.py in the test/ directory."
-    sys.exit(1)
+#######################################
+# Uncomment to use Atoms class in ASE #
+#######################################
+# from ase import Atoms
+
+##################################################################
+# Using the local Atoms class (BSE license) where a small set of #
+# ASE Atoms features is comaptible but enough for this example.  #
+##################################################################
+from atoms import Atoms
+
+def show_symmetry(symmetry):
+    for i in range(symmetry['rotations'].shape[0]):
+        print "  --------------- %4d ---------------" % (i+1)
+        rot = symmetry['rotations'][i]
+        trans = symmetry['translations'][i]
+        print "  rotation:"
+        for x in rot:
+            print "     [%2d %2d %2d]" % (x[0], x[1], x[2])
+        print "  translation:"
+        print "     (%8.5f %8.5f %8.5f)" % (trans[0], trans[1], trans[2])
+
 
 def show_cell(lattice, positions, numbers):
     print "Basis vectors:"
@@ -109,15 +125,8 @@ print "[get_symmetry]"
 print "  Symmetry operations of Rutile unitcell are:"
 print
 symmetry = spglib.get_symmetry( rutile )
-for i in range(symmetry['rotations'].shape[0]):
-    print "  --------------- %4d ---------------" % (i+1)
-    rot = symmetry['rotations'][i]
-    trans = symmetry['translations'][i]
-    print "  rotation:"
-    for x in rot:
-        print "     [%2d %2d %2d]" % (x[0], x[1], x[2])
-    print "  translation:"
-    print "     (%8.5f %8.5f %8.5f)" % (trans[0], trans[1], trans[2])
+show_symmetry(symmetry)
+
 print
 print "[get_pointgroup]"
 print "  Pointgroup of Rutile is", spglib.get_pointgroup(symmetry['rotations'])[0]
@@ -204,9 +213,19 @@ print
 
 symmetry = spglib.get_symmetry(silicon)
 print "[get_symmetry]"
-print "  Number of symmetry operations of silicon convensional"
+print "  Number of symmetry operations of silicon conventional"
 print "  unit cell is ", len( symmetry['rotations'] ), "(192)."
+show_symmetry(symmetry)
 print
+
+symmetry = spglib.get_symmetry_from_database(525)
+print "[get_symmetry_from_database]"
+print "  Number of symmetry operations of silicon conventional"
+print "  unit cell is ", len( symmetry['rotations'] ), "(192)."
+show_symmetry(symmetry)
+print
+
+
 
 mapping, grid = spglib.get_ir_reciprocal_mesh( [ 11, 11, 11 ],
                                                silicon_prim,
@@ -234,4 +253,3 @@ print "[get_ir_reciprocal_mesh]"
 print "  Number of irreducible k-points of MgB2 with"
 print "  9x9x8 Monkhorst-Pack mesh is ", num_ir_kpt, "(48)."
 print
-

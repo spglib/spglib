@@ -337,15 +337,20 @@ static PyObject * get_symmetry_from_database(PyObject *self, PyObject *args)
   int hall_number;
   PyArrayObject* rotation;
   PyArrayObject* translation;
-  if (!PyArg_ParseTuple(args, "iOO",
-      &hall_number,
-      &rotation,
-      &translation)) {
+  if (!PyArg_ParseTuple(args, "OOi",
+			&rotation,
+			&translation,
+			&hall_number)) {
     return NULL;
+  }
+
+  if (PyArray_DIMS(rotation)[0] < 192 || PyArray_DIMS(translation)[0] < 192) {
+    Py_RETURN_NONE;
   }
 
   int (*rot)[3][3] = (int(*)[3][3])PyArray_DATA(rotation);
   double (*trans)[3] = (double(*)[3])PyArray_DATA(translation);
+
 
   const int num_sym = spg_get_symmetry_from_database(rot, trans, hall_number);
 

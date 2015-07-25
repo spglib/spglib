@@ -259,7 +259,17 @@ def find_primitive(bulk, symprec=1e-5, angle_tolerance=-1.0):
     else:
         return None, None, None
 
-
+def get_symmetry_from_database(hall_number):
+    rotations = np.zeros((192, 3, 3), dtype='intc')
+    translations = np.zeros((192, 3), dtype='double')
+    num_sym = spg.symmetry_from_database(rotations, translations, hall_number)
+    if num_sym is None:
+        return None
+    else:
+        return {'rotations':
+                np.array(rotations[:num_sym], dtype='intc', order='C'),
+                'translations':
+                np.array(translations[:num_sym], dtype='double', order='C')}
         
 ############
 # k-points #
