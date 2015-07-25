@@ -236,9 +236,7 @@ static Cell * get_primitive_cell(int * mapping_table,
     goto not_found;
   }
 
-  if (! lat_smallest_lattice_vector(smallest_lat,
-				    prim_lat,
-				    symprec)) {
+  if (! lat_smallest_lattice_vector(smallest_lat, prim_lat, symprec)) {
     goto not_found;
   }
 
