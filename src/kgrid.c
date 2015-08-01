@@ -45,8 +45,8 @@ int kgd_get_grid_point_double_mesh(const int address_double[3],
 }
 
 void kgd_reduce_grid_address(int reduced_address[3],
-				     const int address[3],
-				     const int mesh[3])
+			     const int address[3],
+			     const int mesh[3])
 {
   int i;
 
