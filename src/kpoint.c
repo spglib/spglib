@@ -197,19 +197,6 @@ static int relocate_BZ_grid_address(int bz_grid_address[][3],
 				    const int is_shift[3]);
 static double get_tolerance_for_BZ_reduction(SPGCONST double rec_lattice[3][3],
 					     const int mesh[3]);
-static int get_grid_point_double_mesh(const int address_double[3],
-				      const int mesh[3]);
-static int get_grid_point_single_mesh(const int address[3],
-				      const int mesh[3]);
-static void reduce_grid_address(int address[3],
-				const int address_double[3],
-				const int mesh[3]);
-
-int kpt_get_grid_point_double_mesh(const int address_double[3],
-				   const int mesh[3])
-{
-  return get_grid_point_double_mesh(address_double, mesh);
-}
 
 /* grid_address (e.g. 4x4x4 mesh, unless GRID_ORDER_XYZ is defined) */
 /*    [[ 0  0  0]                                                   */
@@ -305,7 +292,7 @@ void kpt_get_grid_points_by_rotations(int rot_grid_points[],
     mat_multiply_matrix_vector_i3(address_double,
 				  rot_reciprocal->mat[i],
 				  address_double_orig);
-    rot_grid_points[i] = get_grid_point_double_mesh(address_double, mesh);
+    rot_grid_points[i] = kgd_get_grid_point_double_mesh(address_double, mesh);
   }
 }
 
@@ -328,7 +315,7 @@ void kpt_get_BZ_grid_points_by_rotations(int rot_grid_points[],
 				  rot_reciprocal->mat[i],
 				  address_double_orig);
     rot_grid_points[i] =
-      bz_map[get_grid_point_double_mesh(address_double, bzmesh)];
+      bz_map[kgd_get_grid_point_double_mesh(address_double, bzmesh)];
   }
 }
 
@@ -548,14 +535,14 @@ static int get_ir_reciprocal_mesh(int grid_address[][3],
 	for (l = 0; l < 3; l++) {
 	  address_double[l] = address[l] * 2 + is_shift[l];
 	}
-	grid_point = get_grid_point_double_mesh(address_double, mesh);
-	reduce_grid_address(grid_address[grid_point], address, mesh);
+	grid_point = kgd_get_grid_point_double_mesh(address_double, mesh);
+	kgd_reduce_grid_address(grid_address[grid_point], address, mesh);
 
 	for (l = 0; l < rot_reciprocal->size; l++) {
 	  mat_multiply_matrix_vector_i3(address_double_rot,
 					rot_reciprocal->mat[l],
 					address_double);
-	  grid_point_rot = get_grid_point_double_mesh(address_double_rot, mesh);
+	  grid_point_rot = kgd_get_grid_point_double_mesh(address_double_rot, mesh);
 
 	  if (grid_point_rot > -1) { /* Invalid if even --> odd or odd --> even */
 	    if (map[grid_point_rot] > -1) {
@@ -603,15 +590,15 @@ get_ir_reciprocal_mesh_openmp(int grid_address[][3],
       address_double[j] = address[j] * 2 + is_shift[j];
     }
 
-    grid_point = get_grid_point_double_mesh(address_double, mesh);
+    grid_point = kgd_get_grid_point_double_mesh(address_double, mesh);
+    kgd_reduce_grid_address(grid_address[grid_point], address, mesh);
     map[grid_point] = grid_point;
-    reduce_grid_address(grid_address[grid_point], address, mesh);
 
     for (j = 0; j < rot_reciprocal->size; j++) {
       mat_multiply_matrix_vector_i3(address_double_rot,
 				    rot_reciprocal->mat[j],
 				    address_double);
-      grid_point_rot = get_grid_point_double_mesh(address_double_rot, mesh);
+      grid_point_rot = kgd_get_grid_point_double_mesh(address_double_rot, mesh);
 
       if (grid_point_rot > -1) { /* Invalid if even --> odd or odd --> even */
 	if (grid_point_rot < map[grid_point]) {
@@ -690,7 +677,7 @@ static int relocate_BZ_grid_address(int bz_grid_address[][3],
 	    grid_address[i][k] + kpt_bz_search_space[j][k] * mesh[k];
 	  bz_address_double[k] = bz_grid_address[gp][k] * 2 + is_shift[k];
 	}
-	bzgp = get_grid_point_double_mesh(bz_address_double, bzmesh);
+	bzgp = kgd_get_grid_point_double_mesh(bz_address_double, bzmesh);
 	bz_map[bzgp] = gp;
 	if (j != min_index) {
 	  boundary_num_gp++;
@@ -725,45 +712,4 @@ static double get_tolerance_for_BZ_reduction(SPGCONST double rec_lattice[3][3],
   tolerance *= 0.01;
   
   return tolerance;
-}
- 
-static int get_grid_point_double_mesh(const int address_double[3],
-				      const int mesh[3])
-{
-  int i, address[3];
-
-  for (i = 0; i < 3; i++) {
-    if (address_double[i] % 2 == 0) {
-      address[i] = address_double[i] / 2;
-    } else {
-      address[i] = (address_double[i] - 1) / 2;
-    }
-  }
-  mat_modulo_i3(address, mesh);
-  return get_grid_point_single_mesh(address, mesh);
-}
-
-static int get_grid_point_single_mesh(const int address[3],
-				      const int mesh[3])
-{  
-#ifndef GRID_ORDER_XYZ
-  return address[2] * mesh[0] * mesh[1] + address[1] * mesh[0] + address[0];
-#else
-  return address[0] * mesh[1] * mesh[2] + address[1] * mesh[2] + address[2];
-#endif  
-}
-
-static void reduce_grid_address(int reduced_address[3],
-				const int address[3],
-				const int mesh[3])
-{
-  int i;
-
-  for (i = 0; i < 3; i++) {
-#ifndef GRID_BOUNDARY_AS_NEGATIVE
-    reduced_address[i] = address[i] - mesh[i] * (address[i] > mesh[i] / 2);
-#else
-    reduced_address[i] = address[i] - mesh[i] * (address[i] >= mesh[i] / 2);
-#endif
-  }  
 }

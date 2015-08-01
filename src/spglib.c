@@ -37,6 +37,7 @@
 #include <string.h>
 #include "cell.h"
 #include "debug.h"
+#include "kgrid.h"
 #include "kpoint.h"
 #include "lattice.h"
 #include "mathfunc.h"
@@ -735,7 +736,7 @@ int spg_get_grid_point_from_address(const int grid_address[3],
     address_double[i] = grid_address[i] * 2 + is_shift[i];
   }
 
-  return kpt_get_grid_point_double_mesh(address_double, mesh);
+  return kgd_get_grid_point_double_mesh(address_double, mesh);
 }
 
 int spg_get_ir_reciprocal_mesh(int grid_address[][3],
@@ -876,47 +877,47 @@ void spg_get_neighboring_grid_points(int relative_grid_points[],
 				  bz_map);
 }
 
-/*--------------------*/
-/* tetrahedron method */
-/*--------------------*/
-void
-spg_get_tetrahedra_relative_grid_address(int relative_grid_address[24][4][3],
-					 SPGCONST double rec_lattice[3][3])
-{
-  thm_get_relative_grid_address(relative_grid_address, rec_lattice);
-}
+/* /\*--------------------*\/ */
+/* /\* tetrahedron method *\/ */
+/* /\*--------------------*\/ */
+/* void */
+/* spg_get_tetrahedra_relative_grid_address(int relative_grid_address[24][4][3], */
+/* 					 SPGCONST double rec_lattice[3][3]) */
+/* { */
+/*   thm_get_relative_grid_address(relative_grid_address, rec_lattice); */
+/* } */
 
-void
-spg_get_all_tetrahedra_relative_grid_address
-(int relative_grid_address[4][24][4][3])
-{
-  thm_get_all_relative_grid_address(relative_grid_address);
-}
+/* void */
+/* spg_get_all_tetrahedra_relative_grid_address */
+/* (int relative_grid_address[4][24][4][3]) */
+/* { */
+/*   thm_get_all_relative_grid_address(relative_grid_address); */
+/* } */
 
-double
-spg_get_tetrahedra_integration_weight(const double omega,
-				      SPGCONST double tetrahedra_omegas[24][4],
-				      const char function)
-{
-  return thm_get_integration_weight(omega,
-				    tetrahedra_omegas,
-				    function);
-}
+/* double */
+/* spg_get_tetrahedra_integration_weight(const double omega, */
+/* 				      SPGCONST double tetrahedra_omegas[24][4], */
+/* 				      const char function) */
+/* { */
+/*   return thm_get_integration_weight(omega, */
+/* 				    tetrahedra_omegas, */
+/* 				    function); */
+/* } */
 
-void
-spg_get_tetrahedra_integration_weight_at_omegas
-(double integration_weights[],
- const int num_omegas,
- const double omegas[],
- SPGCONST double tetrahedra_omegas[24][4],
- const char function)
-{
-  thm_get_integration_weight_at_omegas(integration_weights,
-				       num_omegas,
-				       omegas,
-				       tetrahedra_omegas,
-				       function);
-}
+/* void */
+/* spg_get_tetrahedra_integration_weight_at_omegas */
+/* (double integration_weights[], */
+/*  const int num_omegas, */
+/*  const double omegas[], */
+/*  SPGCONST double tetrahedra_omegas[24][4], */
+/*  const char function) */
+/* { */
+/*   thm_get_integration_weight_at_omegas(integration_weights, */
+/* 				       num_omegas, */
+/* 				       omegas, */
+/* 				       tetrahedra_omegas, */
+/* 				       function); */
+/* } */
 
 
 /*=======*/

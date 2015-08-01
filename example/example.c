@@ -23,19 +23,12 @@ static void test_spg_refine_cell(void);
 static void test_spg_get_dataset(void);
 static void test_spg_get_ir_reciprocal_mesh(void);
 static void test_spg_get_stabilized_reciprocal_mesh(void);
-static void test_spg_get_tetrahedra_relative_grid_address(void);
 static void test_spg_relocate_BZ_grid_address(void);
 static void show_spg_dataset(double lattice[3][3],
 			     const double origin_shift[3],
 			     double position[][3],
 			     const int num_atom,
 			     const int types[]);
-static int grid_address_to_index(int g[3], int mesh[3]);
-static void mat_copy_matrix_d3(double a[3][3], double b[3][3]);
-static double mat_get_determinant_d3(double a[3][3]);
-static int mat_inverse_matrix_d3(double m[3][3],
-				 double a[3][3],
-				 const double precision);
 
 int main(void)
 {
@@ -52,7 +45,6 @@ int main(void)
   test_spg_get_dataset();
   test_spg_get_ir_reciprocal_mesh();
   test_spg_get_stabilized_reciprocal_mesh();
-  /* test_spg_get_tetrahedra_relative_grid_address(); */
   test_spg_relocate_BZ_grid_address();
 
   return 0;
@@ -606,168 +598,6 @@ static void test_spg_relocate_BZ_grid_address(void)
   printf("Number of k-points of NaCl Brillouin zone\n");
   printf("with Gamma-centered 40x40x40 Monkhorst-Pack mesh is %d (65861).\n", num_q);
 }
-
-/* frequency.dat is in the example directory. */
-/* The values in this file are the phonon frequencies of NaCl */
-/* with 20x20x20 mesh. Calculation was done with reducing */
-/* k-points to the irreducible k-points using phonopy. */
-/* (http://phonopy.sf.net/) */
-static void test_spg_get_tetrahedra_relative_grid_address(void)
-{
-  printf("*** Example of tetrahedron method of NaCl to calculate DOS ***:\n");
-  printf("Read data from frequency.dat and write DOS to dos.dat.\n");
-
-  int i, j, k, l, q, r;
-
-  /* NaCl 20x20x20 mesh */
-  double lattice[3][3] = {
-    {0.000000000000000, 2.845150738087836, 2.845150738087836},
-    {2.845150738087836, 0.000000000000000, 2.845150738087836},
-    {2.845150738087836, 2.845150738087836, 0.000000000000000}
-  };
-  double position[][3] =
-    {{0, 0, 0},
-     {0.5, 0.5, 0.5}};
-  int types[] = {1, 2};
-  int num_atom = 2;
-  int m = 20;
-  int mesh[] = {m, m, m};
-  int is_shift[] = {0, 0, 0};
-  int grid_address[m * m * m][3];
-  int grid_mapping_table[m * m * m];
-  int weights[m * m * m];
-  int num_ir = spg_get_ir_reciprocal_mesh(grid_address,
-					  grid_mapping_table,
-					  mesh,
-					  is_shift,
-					  1,
-					  lattice,
-					  position,
-					  types,
-					  num_atom,
-					  1e-5);
-  int ir_gp[num_ir];
-  int ir_weights[num_ir];
-  int gp_ir_index[m * m * m];
-  
-  for (i = 0; i < m * m * m; i++) {
-    weights[i] = 0;
-  }
-
-  for (i = 0; i < m * m * m; i++) {
-    weights[grid_mapping_table[i]]++;
-  }
-
-  j = 0;
-  for (i = 0; i < m * m * m; i++) {
-    if (weights[i] != 0) {
-      ir_gp[j] = i;
-      ir_weights[j] = weights[i];
-      gp_ir_index[i] = j;
-      j++;
-    } else {
-      gp_ir_index[i] = gp_ir_index[grid_mapping_table[i]];
-    }
-  }
-
-  int relative_grid_address[24][4][3];
-  double rec_lat[3][3];
-
-  printf("Number of irreducible k-points: %d\n", num_ir);
-  
-  mat_inverse_matrix_d3(rec_lat, lattice, 1e-5);
-  spg_get_tetrahedra_relative_grid_address(relative_grid_address, rec_lat);
-
-  /* for (i = 0; i < 24; i++) { */
-  /*   for (j = 0; j < 4; j++) { */
-  /*     printf("[%2d %2d %2d] ", */
-  /* 	     relative_grid_address[i][j][0], */
-  /* 	     relative_grid_address[i][j][1], */
-  /* 	     relative_grid_address[i][j][2]); */
-  /*   } */
-  /*   printf("\n"); */
-  /* } */
-
-  FILE *fp;
-  fp = fopen("frequency.dat", "r");
-  char * line = NULL;
-  size_t len = 0;
-  ssize_t read;
-  double frequency[num_ir * num_atom * 3];
-
-  for (i = 0; i < num_ir * num_atom * 3; i++) {
-    read = getline(&line, &len, fp);
-    if (read == -1) {
-      break;
-    }
-    frequency[i] = strtod(line, NULL);
-  }
-
-  fclose(fp);
-
-  double max_f, min_f;
-  max_f = frequency[0];
-  min_f = frequency[0];
-  for (i = 0; i < num_ir * num_atom * 3; i++) {
-    if (max_f < frequency[i]) {
-      max_f = frequency[i];
-    }
-    if (min_f > frequency[i]) {
-      min_f = frequency[i];
-    }
-  }
-  
-  printf("Number of frequencies: %d\n", i);
-  
-  double t_omegas[24][4];
-  int g_addr[3];
-  int gp;
-  int num_freqs = 201;
-  double dos[num_freqs];
-  double integral_dos[num_freqs];
-  double omegas[num_freqs];
-  double iw;
-
-#pragma omp parallel for private(j, k, l, q, r, g_addr, gp, t_omegas, iw)
-  for (i = 0; i < num_freqs; i++) {
-    dos[i] = 0;
-    integral_dos[i] = 0;
-    omegas[i] = min_f + (max_f - min_f) / (num_freqs - 1) * i;
-    for (j = 0; j < num_ir;  j++) {
-      for (k = 0; k < num_atom * 3; k++) {
-	for (l = 0; l < 24; l++) {
-	  for (q = 0; q < 4; q++) {
-	    for (r = 0; r < 3; r++) {
-	      g_addr[r] = grid_address[ir_gp[j]][r] +
-		relative_grid_address[l][q][r];
-	    }
-	    gp = grid_address_to_index(g_addr, mesh);
-	    t_omegas[l][q] = frequency[gp_ir_index[gp] * num_atom * 3 + k];
-	  }
-	}
-	iw = spg_get_tetrahedra_integration_weight(omegas[i], t_omegas, 'J');
-	dos[i] += iw * ir_weights[j];
-	iw = spg_get_tetrahedra_integration_weight(omegas[i], t_omegas, 'I');
-	integral_dos[i] += iw * ir_weights[j];
-      }
-    }
-  }
-
-  fp = fopen("dos.dat", "w");
-
-  for (i = 0; i < num_freqs; i++) {
-    fprintf(fp, "%f %f\n", omegas[i], dos[i] / m / m / m);
-  }
-
-  fprintf(fp, "\n\n");
-  
-  for (i = 0; i < num_freqs; i++) {
-    fprintf(fp, "%f %f\n", omegas[i], integral_dos[i] / m / m / m);
-  }
-    
-  fclose(fp);
-}
-
 
 static void show_spg_dataset(double lattice[3][3],
 			     const double origin_shift[3],

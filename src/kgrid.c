@@ -1,4 +1,4 @@
-/* Copyright (C) 2014 Atsushi Togo */
+/* Copyright (C) 2015 Atsushi Togo */
 /* All rights reserved. */
 
 /* This file is part of spglib. */
@@ -32,31 +32,69 @@
 /* ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE */
 /* POSSIBILITY OF SUCH DAMAGE. */
 
-#ifndef __tetrahedron_method_H__
-#define __tetrahedron_method_H__
+static int get_grid_point_double_mesh(const int address_double[3],
+				      const int mesh[3]);
+static int get_grid_point_single_mesh(const int address[3],
+				      const int mesh[3]);
+static void modulo_i3(int v[3], const int m[3]);
 
-#ifndef THMCONST
-#define THMCONST
+int kgd_get_grid_point_double_mesh(const int address_double[3],
+				   const int mesh[3])
+{
+  return get_grid_point_double_mesh(address_double, mesh);
+}
+
+void kgd_reduce_grid_address(int reduced_address[3],
+				     const int address[3],
+				     const int mesh[3])
+{
+  int i;
+
+  for (i = 0; i < 3; i++) {
+#ifndef GRID_BOUNDARY_AS_NEGATIVE
+    reduced_address[i] = address[i] - mesh[i] * (address[i] > mesh[i] / 2);
+#else
+    reduced_address[i] = address[i] - mesh[i] * (address[i] >= mesh[i] / 2);
 #endif
+  }  
+}
 
-void thm_get_relative_grid_address(int relative_grid_address[24][4][3],
-				   THMCONST double rec_lattice[3][3]);
-void thm_get_all_relative_grid_address(int relative_grid_address[4][24][4][3]);
-double thm_get_integration_weight(const double omega,
-				  THMCONST double tetrahedra_omegas[24][4],
-				  const char function);
-void
-thm_get_integration_weight_at_omegas(double *integration_weights,
-				     const int num_omegas,
-				     const double *omegas,
-				     THMCONST double tetrahedra_omegas[24][4],
-				     const char function);
-void thm_get_neighboring_grid_points(int neighboring_grid_points[],
-				     const int grid_point,
-				     THMCONST int relative_grid_address[][3],
-				     const int num_relative_grid_address,
-				     const int mesh[3],
-				     THMCONST int bz_grid_address[][3],
-				     const int bz_map[]);
+static int get_grid_point_double_mesh(const int address_double[3],
+				      const int mesh[3])
+{
+  int i, address[3];
 
-#endif
+  for (i = 0; i < 3; i++) {
+    if (address_double[i] % 2 == 0) {
+      address[i] = address_double[i] / 2;
+    } else {
+      address[i] = (address_double[i] - 1) / 2;
+    }
+  }
+  modulo_i3(address, mesh);
+
+  return get_grid_point_single_mesh(address, mesh);
+}
+
+static int get_grid_point_single_mesh(const int address[3],
+				      const int mesh[3])
+{  
+#ifndef GRID_ORDER_XYZ
+  return address[2] * mesh[0] * mesh[1] + address[1] * mesh[0] + address[0];
+#else
+  return address[0] * mesh[1] * mesh[2] + address[1] * mesh[2] + address[2];
+#endif  
+}
+
+static void modulo_i3(int v[3], const int m[3])
+{
+  int i;
+
+  for (i = 0; i < 3; i++) {
+    v[i] = v[i] % m[i];
+
+    if (v[i] < 0) {
+      v[i] += m[i];
+    }
+  }
+}

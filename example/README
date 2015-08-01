@@ -10,4 +10,7 @@ To compile obsolete example.f90
 % gcc -c spglib_f.c
 % gfortran example.f90 spglib_f.o -L[library directory] -lsymspg -lm
 
+To compile tetrahedron.c
+% gcc tetrahedron.c [source directory]/tetrahedron_method.c [source directory]/kgrid.c -I[include directory] -L[library directory] -lsymspg
+
 Togo <atz.togo@gmail.com>

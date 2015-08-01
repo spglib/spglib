@@ -1,4 +1,4 @@
-/* Copyright (C) 2014 Atsushi Togo */
+/* Copyright (C) 2015 Atsushi Togo */
 /* All rights reserved. */
 
 /* This file is part of spglib. */
@@ -32,31 +32,18 @@
 /* ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE */
 /* POSSIBILITY OF SUCH DAMAGE. */
 
-#ifndef __tetrahedron_method_H__
-#define __tetrahedron_method_H__
+#ifndef __kgrid_H__
+#define __kgrid_H__
 
-#ifndef THMCONST
-#define THMCONST
-#endif
+/* #define GRID_ORDER_XYZ */
+/* The addressing order of mesh grid is defined as running left */
+/* element first. But when GRID_ORDER_XYZ is defined, it is changed to right */ 
+/* element first. */
 
-void thm_get_relative_grid_address(int relative_grid_address[24][4][3],
-				   THMCONST double rec_lattice[3][3]);
-void thm_get_all_relative_grid_address(int relative_grid_address[4][24][4][3]);
-double thm_get_integration_weight(const double omega,
-				  THMCONST double tetrahedra_omegas[24][4],
-				  const char function);
-void
-thm_get_integration_weight_at_omegas(double *integration_weights,
-				     const int num_omegas,
-				     const double *omegas,
-				     THMCONST double tetrahedra_omegas[24][4],
-				     const char function);
-void thm_get_neighboring_grid_points(int neighboring_grid_points[],
-				     const int grid_point,
-				     THMCONST int relative_grid_address[][3],
-				     const int num_relative_grid_address,
-				     const int mesh[3],
-				     THMCONST int bz_grid_address[][3],
-				     const int bz_map[]);
+int kgd_get_grid_point_double_mesh(const int address_double[3],
+				   const int mesh[3]);
+void kgd_reduce_grid_address(int address[3],
+			     const int address_double[3],
+			     const int mesh[3]);
 
 #endif
