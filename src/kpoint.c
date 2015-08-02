@@ -36,6 +36,7 @@
 #include <stdlib.h>
 #include "mathfunc.h"
 #include "kpoint.h"
+#include "kgrid.h"
 
 #ifdef KPTWARNING
 #include <stdio.h>
@@ -488,7 +489,7 @@ static int get_ir_reciprocal_mesh(int grid_address[][3],
   /* grid: reducible grid points */
   /* ir_mapping_table: the mapping from each point to ir-point. */
 
-  int i, j, grid_point, grid_point_rot, num_ir;
+  int i, j, grid_point_rot, num_ir;
   int address_double[3], address_double_rot[3];
 
   kgd_get_all_grid_addresses(grid_address, mesh);

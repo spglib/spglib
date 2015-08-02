@@ -727,15 +727,19 @@ int spgat_refine_cell(double lattice[3][3],
 /* kpoints */
 /*---------*/
 int spg_get_grid_point_from_address(const int grid_address[3],
-				    const int mesh[3],
-				    const int is_shift[3])
+				    const int mesh[3])
 {
   int i;
   int address_double[3];
-  for (i = 0; i < 3; i++) {
-    address_double[i] = grid_address[i] * 2 + is_shift[i];
-  }
+  int is_shift[3];
 
+  is_shift[0] = 0;
+  is_shift[1] = 0;
+  is_shift[2] = 0;
+  kgd_get_grid_address_double_mesh(address_double,
+				   grid_address,
+				   mesh,
+				   is_shift);
   return kgd_get_grid_point_double_mesh(address_double, mesh);
 }
 
