@@ -36,7 +36,7 @@ to obtain irreducible k-points, this is not essential for running
 tetrahedorn method packed with the spglib distribution. To compile
 tetrahedron.c::
 
-   % gcc tetrahedron.c [source directory]/tetrahedron_method.c [source directory]/kgrid.c -I[include directory] -L[library directory] -lsymspg
+   % gcc tetrahedron.c [source directory]/tetrahedron_method.c -I[include directory] -L[library directory] -lsymspg
 
 tetrahedron.c is written to work with OpenMP. To compile with "-lgomp
 -fopenmp", the tetrahedon method calculation is distributed into CPU

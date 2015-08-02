@@ -4,7 +4,6 @@
 #include <stdlib.h>
 
 static void test_tetrahedron_method(void);
-static int grid_address_to_index(int g[3], int mesh[3]);
 static void mat_copy_matrix_d3(double a[3][3], double b[3][3]);
 static double mat_get_determinant_d3(double a[3][3]);
 static int mat_inverse_matrix_d3(double m[3][3],
@@ -43,10 +42,11 @@ static void test_tetrahedron_method(void)
   int num_atom = 2;
   int m = 20;
   int mesh[] = {m, m, m};
+  int num_gp = mesh[0] * mesh[1] * mesh[2];
   int is_shift[] = {0, 0, 0};
-  int grid_address[m * m * m][3];
-  int grid_mapping_table[m * m * m];
-  int weights[m * m * m];
+  int grid_address[num_gp][3];
+  int grid_mapping_table[num_gp];
+  int weights[num_gp];
   int num_ir = spg_get_ir_reciprocal_mesh(grid_address,
 					  grid_mapping_table,
 					  mesh,
@@ -59,18 +59,34 @@ static void test_tetrahedron_method(void)
 					  1e-5);
   int ir_gp[num_ir];
   int ir_weights[num_ir];
-  int gp_ir_index[m * m * m];
+  int gp_ir_index[num_gp];
+  int relative_grid_address[24][4][3];
+  double rec_lat[3][3];
+  FILE *fp;
+  char * line = NULL;
+  size_t len = 0;
+  ssize_t read;
+  double frequency[num_ir * num_atom * 3];
+  double max_f, min_f;
+  double t_omegas[24][4];
+  int g_addr[3];
+  int gp;
+  int num_freqs = 201;
+  double dos[num_freqs];
+  double integral_dos[num_freqs];
+  double omegas[num_freqs];
+  double iw;
   
-  for (i = 0; i < m * m * m; i++) {
+  for (i = 0; i < num_gp; i++) {
     weights[i] = 0;
   }
 
-  for (i = 0; i < m * m * m; i++) {
+  for (i = 0; i < num_gp; i++) {
     weights[grid_mapping_table[i]]++;
   }
 
   j = 0;
-  for (i = 0; i < m * m * m; i++) {
+  for (i = 0; i < num_gp; i++) {
     if (weights[i] != 0) {
       ir_gp[j] = i;
       ir_weights[j] = weights[i];
@@ -80,9 +96,6 @@ static void test_tetrahedron_method(void)
       gp_ir_index[i] = gp_ir_index[grid_mapping_table[i]];
     }
   }
-
-  int relative_grid_address[24][4][3];
-  double rec_lat[3][3];
 
   printf("Number of irreducible k-points: %d\n", num_ir);
   
@@ -99,12 +112,7 @@ static void test_tetrahedron_method(void)
   /*   printf("\n"); */
   /* } */
 
-  FILE *fp;
   fp = fopen("frequency.dat", "r");
-  char * line = NULL;
-  size_t len = 0;
-  ssize_t read;
-  double frequency[num_ir * num_atom * 3];
 
   for (i = 0; i < num_ir * num_atom * 3; i++) {
     read = getline(&line, &len, fp);
@@ -116,7 +124,6 @@ static void test_tetrahedron_method(void)
 
   fclose(fp);
 
-  double max_f, min_f;
   max_f = frequency[0];
   min_f = frequency[0];
   for (i = 0; i < num_ir * num_atom * 3; i++) {
@@ -130,14 +137,6 @@ static void test_tetrahedron_method(void)
   
   printf("Number of frequencies: %d\n", i);
   
-  double t_omegas[24][4];
-  int g_addr[3];
-  int gp;
-  int num_freqs = 201;
-  double dos[num_freqs];
-  double integral_dos[num_freqs];
-  double omegas[num_freqs];
-  double iw;
 
 #pragma omp parallel for private(j, k, l, q, r, g_addr, gp, t_omegas, iw)
   for (i = 0; i < num_freqs; i++) {
@@ -152,7 +151,7 @@ static void test_tetrahedron_method(void)
 	      g_addr[r] = grid_address[ir_gp[j]][r] +
 		relative_grid_address[l][q][r];
 	    }
-	    gp = grid_address_to_index(g_addr, mesh);
+	    gp = spg_get_grid_point_from_address(g_addr, mesh);
 	    t_omegas[l][q] = frequency[gp_ir_index[gp] * num_atom * 3 + k];
 	  }
 	}
@@ -167,30 +166,16 @@ static void test_tetrahedron_method(void)
   fp = fopen("dos.dat", "w");
 
   for (i = 0; i < num_freqs; i++) {
-    fprintf(fp, "%f %f\n", omegas[i], dos[i] / m / m / m);
+    fprintf(fp, "%f %f\n", omegas[i], dos[i] / num_gp);
   }
 
   fprintf(fp, "\n\n");
   
   for (i = 0; i < num_freqs; i++) {
-    fprintf(fp, "%f %f\n", omegas[i], integral_dos[i] / m / m / m);
+    fprintf(fp, "%f %f\n", omegas[i], integral_dos[i] / num_gp);
   }
     
   fclose(fp);
-}
-
-static int grid_address_to_index(int g[3], int mesh[3])
-{
-  int i;
-  int gm[3];
-
-  for (i = 0; i < 3; i++) {
-    gm[i] = g[i] % mesh[i];
-    if (gm[i] < 0) {
-      gm[i] += mesh[i];
-    }
-  }
-  return (gm[0] + gm[1] * mesh[0] + gm[2] * mesh[0] * mesh[1]);
 }
 
 static void mat_copy_matrix_d3(double a[3][3], double b[3][3])
