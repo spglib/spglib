@@ -495,7 +495,10 @@ static int get_ir_reciprocal_mesh(int grid_address[][3],
 
 #pragma omp parallel for private(j, grid_point_rot, address_double, address_double_rot)
   for (i = 0; i < mesh[0] * mesh[1] * mesh[2]; i++) {
-    kgd_get_grid_address_double_mesh(address_double, grid_address[i], is_shift);
+    kgd_get_grid_address_double_mesh(address_double,
+				     grid_address[i],
+				     mesh,
+				     is_shift);
     ir_mapping_table[i] = i;
     for (j = 0; j < rot_reciprocal->size; j++) {
       mat_multiply_matrix_vector_i3(address_double_rot,
