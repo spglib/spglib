@@ -1,3 +1,17 @@
+2015-08-03  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.8.2
+
+	* k-points and tetrahedron method
+
+	k-point grid definitions are separated to 'kgrid.c'.
+	'kgrid.{c,h}' and 'tetrahedron_method.{c,h}' are moved to a new
+	git repository of kspclib (https://github.com/atztogo/kspclib).
+	Tetrahedron method related spglib-APIs are removed.
+
+	* Choice of triclinic basis vector directions is implemented and
+	the definition is written in the document.
+
 2015-07-09  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.8.1
