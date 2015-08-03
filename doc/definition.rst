@@ -242,7 +242,11 @@ change-of-basis transformation explained above.
 Triclinic
 """"""""""
 
-- No special treatment is applied.
+- Niggli reduced cell is used for choosing :math:`\mathbf{a}, \mathbf{b}, \mathbf{c}`.
+- :math:`\mathbf{a}` is set along :math:`+x` direction of Cartesian coordinates.
+- :math:`\mathbf{b}` is set in :math:`x\text{-}y` plane of Cartesian
+  coordinates so that :math:`\mathbf{a}\times\mathbf{b}` is along
+  :math:`+z` direction of Cartesian coordinates.
 
 Monoclinic
 """""""""""
