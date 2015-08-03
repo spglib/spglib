@@ -728,7 +728,6 @@ int spgat_refine_cell(double lattice[3][3],
 int spg_get_grid_point_from_address(const int grid_address[3],
 				    const int mesh[3])
 {
-  int i;
   int address_double[3];
   int is_shift[3];
 
