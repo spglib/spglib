@@ -199,13 +199,13 @@ def standardize_cell(bulk,
     numbers = np.zeros(num_atom * 4, dtype='intc')
     numbers[:num_atom] = np.array(bulk.get_atomic_numbers(), dtype='intc')
     num_atom_std = spg.standardize_cell(lattice,
-                                            pos,
-                                            numbers,
-                                            num_atom,
-                                            to_primitive,
-                                            no_idealize,
-                                            symprec,
-                                            angle_tolerance)
+                                        pos,
+                                        numbers,
+                                        num_atom,
+                                        to_primitive,
+                                        no_idealize,
+                                        symprec,
+                                        angle_tolerance)
 
     return (np.array(lattice.T, dtype='double', order='C'),
             np.array(pos[:num_atom_std], dtype='double', order='C'),
@@ -224,11 +224,11 @@ def refine_cell(bulk, symprec=1e-5, angle_tolerance=-1.0):
     numbers = np.zeros(num_atom * 4, dtype='intc')
     numbers[:num_atom] = np.array(bulk.get_atomic_numbers(), dtype='intc')
     num_atom_std = spg.refine_cell(lattice,
-                                       pos,
-                                       numbers,
-                                       num_atom,
-                                       symprec,
-                                       angle_tolerance)
+                                   pos,
+                                   numbers,
+                                   num_atom,
+                                   symprec,
+                                   angle_tolerance)
 
     return (np.array(lattice.T, dtype='double', order='C'),
             np.array(pos[:num_atom_std], dtype='double', order='C'),

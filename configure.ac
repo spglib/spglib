@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.61)
-AC_INIT([spglib], 1.8.2, [atz.togo@gmail.com])
+AC_INIT([spglib], 1.8.2.1, [atz.togo@gmail.com])
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([src/spglib.c])
 AC_CONFIG_HEADER([config.h])

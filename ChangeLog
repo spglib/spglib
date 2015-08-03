@@ -1,5 +1,12 @@
 2015-08-03  Atsushi Togo  <atz.togo@gmail.com>
 
+	* Version 1.8.2.1
+
+	* src/spacegroup.c (spa_transform_to_primitive):
+
+	Bug fix of transformation matrix with centering. The side to be
+	multiplied was wrong.
+
 	* Version 1.8.2
 
 	* k-points and tetrahedron method
