@@ -7,7 +7,7 @@ Spglib is a C library for finding and handling crystal symmetries.
 <https://sourceforge.net/projects/spglib/files/spglib/spglib-1.7/>`_. is
 the stable release.
 
-`Spglib-1.8.1
+`Spglib-1.8.2
 <https://sourceforge.net/projects/spglib/files/spglib/spglib-1.8/>`_
 is the latest release. This version is expected to be slightly faster
 and compact than the stable version, and the code is cleaner to be the
