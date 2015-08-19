@@ -130,6 +130,7 @@ static int get_symmetry_numerical(int rotation[][3][3],
 				  const int types[],
 				  const int num_atom,
 				  const double symprec);
+static int is_rhombohedral(const int hall_number);
 
 /*---------*/
 /* kpoints */
@@ -1360,15 +1361,10 @@ static int standardize_primitive(double lattice[3][3],
     goto err;
   }
 
-  if (dataset->hall_number == 433 ||
-      dataset->hall_number == 436 ||
-      dataset->hall_number == 444 ||
-      dataset->hall_number == 450 ||
-      dataset->hall_number == 452 ||
-      dataset->hall_number == 458 ||
-      dataset->hall_number == 460) {
+  if (is_rhombohedral(dataset->hall_number)) {
     centering = R_CENTER;
   }
+
 
   if ((bravais = cel_alloc_cell(dataset->n_std_atoms)) == NULL) {
     spg_free_dataset(dataset);
@@ -1467,13 +1463,7 @@ static int get_standardized_cell(double lattice[3][3],
     if ((centering = get_centering(dataset->hall_number)) == CENTERING_ERROR) {
       goto err;
     }
-    if (dataset->hall_number == 433 ||
-	dataset->hall_number == 436 ||
-	dataset->hall_number == 444 ||
-	dataset->hall_number == 450 ||
-	dataset->hall_number == 452 ||
-	dataset->hall_number == 458 ||
-	dataset->hall_number == 460) {
+    if (is_rhombohedral(dataset->hall_number)) {
       centering = R_CENTER;
     }
   } else {
@@ -1646,6 +1636,20 @@ static int get_symmetry_numerical(int rotation[][3][3],
   return size;
 }
 
+static int is_rhombohedral(const int hall_number)
+{
+  if (hall_number == 433 ||
+      hall_number == 436 ||
+      hall_number == 444 ||
+      hall_number == 450 ||
+      hall_number == 452 ||
+      hall_number == 458 ||
+      hall_number == 460) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
 
 /*---------*/
 /* kpoints */
@@ -1729,4 +1733,3 @@ static int get_stabilized_reciprocal_mesh(int grid_address[][3],
 
   return num_ir;
 }
-
