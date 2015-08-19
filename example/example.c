@@ -6,8 +6,10 @@
 static void test_spg_get_symmetry(void);
 static void test_spg_get_symmetry_with_collinear_spin(void);
 static void test_spg_get_multiplicity(void);
-static void test_spg_find_primitive(void);
-static void test_spg_standardize_cell(void);
+static void test_spg_find_primitive_BCC(void);
+static void test_spg_find_primitive_corundum(void);
+static void test_spg_standardize_cell_BCC(void);
+static void test_spg_standardize_cell_corundum(void);
 static int sub_spg_standardize_cell(double lattice[3][3],
 				    double position[][3],
 				    int types[],
@@ -19,7 +21,7 @@ static void test_spg_get_international(void);
 static void test_spg_get_schoenflies(void);
 static void test_spg_get_spacegroup_type(void);
 static void test_spg_get_symmetry_from_database(void);
-static void test_spg_refine_cell(void);
+static void test_spg_refine_cell_BCC(void);
 static void test_spg_get_dataset(void);
 static void test_spg_get_ir_reciprocal_mesh(void);
 static void test_spg_get_stabilized_reciprocal_mesh(void);
@@ -29,11 +31,17 @@ static void show_spg_dataset(double lattice[3][3],
 			     double position[][3],
 			     const int num_atom,
 			     const int types[]);
+static void show_cell(double lattice[3][3],
+		      double position[][3],
+		      const int types[],
+		      const int num_atom);
 
 int main(void)
 {
-  test_spg_find_primitive();
-  test_spg_standardize_cell();
+  test_spg_find_primitive_BCC();
+  test_spg_find_primitive_corundum();
+  test_spg_standardize_cell_BCC();
+  test_spg_standardize_cell_corundum();
   test_spg_get_multiplicity();
   test_spg_get_symmetry();
   test_spg_get_symmetry_with_collinear_spin();
@@ -41,7 +49,7 @@ int main(void)
   test_spg_get_schoenflies();
   test_spg_get_spacegroup_type();
   test_spg_get_symmetry_from_database();
-  test_spg_refine_cell();
+  test_spg_refine_cell_BCC();
   test_spg_get_dataset();
   test_spg_get_ir_reciprocal_mesh();
   test_spg_get_stabilized_reciprocal_mesh();
@@ -50,38 +58,88 @@ int main(void)
   return 0;
 }
 
-static void test_spg_find_primitive(void)
+static void test_spg_find_primitive_BCC(void)
 {
-  double lattice[3][3] = { {4, 0, 0}, {0, 4, 0}, {0, 0, 4} };
+  double lattice[3][3] = {{4, 0, 0}, {0, 4, 0}, {0, 0, 4}};
   double position[][3] = {
     {0, 0, 0},
     {0.5, 0.5, 0.5}
   };
-  int types[] = { 1, 1 };
+  int types[] = {1, 1};
   int i, num_atom = 2, num_primitive_atom;
   double symprec = 1e-5;
   
   /* lattice, position, and types are overwirtten. */
   printf("*** Example of spg_find_primitive (BCC unitcell --> primitive) ***:\n");
   num_primitive_atom = spg_find_primitive(lattice, position, types, num_atom, symprec);
-  if ( num_primitive_atom == 0 ) {
+  if (num_primitive_atom == 0) {
     printf("Primitive cell was not found.\n");
   } else { 
-    printf("Lattice parameter:\n");
-    for (i = 0; i < 3; i++) {
-      printf("%f %f %f\n", lattice[0][i], lattice[1][i], lattice[2][i]);
-    }
-    printf("Atomic positions:\n");
-    for (i=0; i<num_primitive_atom; i++) {
-      printf("%d: %f %f %f\n", types[i], position[i][0], position[i][1],
-	     position[i][2]);
-    }
+    show_cell(lattice, position, types, num_primitive_atom);
   }
 }
 
-static void test_spg_refine_cell(void)
+static void test_spg_find_primitive_corundum(void)
 {
-  double lattice[3][3] = { {0, 2, 2}, {2, 0, 2}, {2, 2, 0} };
+  double lattice[3][3] = {{4.8076344022756095, -2.4038172011378047, 0},
+			  {0, 4.1635335244786962, 0},
+			  {0, 0, 13.1172699198127543}};
+  double position[][3] = {
+    {0.0000000000000000, 0.0000000000000000, 0.3521850942289043},
+    {0.6666666666666643, 0.3333333333333357, 0.6855184275622400},
+    {0.3333333333333357, 0.6666666666666643, 0.0188517608955686},
+    {0.0000000000000000, 0.0000000000000000, 0.6478149057711028},
+    {0.6666666666666643, 0.3333333333333357, 0.9811482391044314},
+    {0.3333333333333357, 0.6666666666666643, 0.3144815724377600},
+    {0.0000000000000000, 0.0000000000000000, 0.1478149057710957},
+    {0.6666666666666643, 0.3333333333333357, 0.4811482391044314},
+    {0.3333333333333357, 0.6666666666666643, 0.8144815724377600},
+    {0.0000000000000000, 0.0000000000000000, 0.8521850942288972},
+    {0.6666666666666643, 0.3333333333333357, 0.1855184275622400},
+    {0.3333333333333357, 0.6666666666666643, 0.5188517608955686},
+    {0.3061673906454899, 0.0000000000000000, 0.2500000000000000},
+    {0.9728340573121541, 0.3333333333333357, 0.5833333333333357},
+    {0.6395007239788255, 0.6666666666666643, 0.9166666666666643},
+    {0.6938326093545102, 0.0000000000000000, 0.7500000000000000},
+    {0.3604992760211744, 0.3333333333333357, 0.0833333333333357},
+    {0.0271659426878458, 0.6666666666666643, 0.4166666666666643},
+    {0.0000000000000000, 0.3061673906454899, 0.2500000000000000},
+    {0.6666666666666643, 0.6395007239788255, 0.5833333333333357},
+    {0.3333333333333357, 0.9728340573121541, 0.9166666666666643},
+    {0.0000000000000000, 0.6938326093545102, 0.7500000000000000},
+    {0.6666666666666643, 0.0271659426878458, 0.0833333333333357},
+    {0.3333333333333357, 0.3604992760211744, 0.4166666666666643},
+    {0.6938326093545102, 0.6938326093545102, 0.2500000000000000},
+    {0.3604992760211744, 0.0271659426878458, 0.5833333333333357},
+    {0.0271659426878458, 0.3604992760211744, 0.9166666666666643},
+    {0.3061673906454899, 0.3061673906454899, 0.7500000000000000},
+    {0.9728340573121541, 0.6395007239788255, 0.0833333333333357},
+    {0.6395007239788255, 0.9728340573121541, 0.4166666666666643},
+  };
+  int types[30];
+  int i, num_atom = 30, num_primitive_atom;
+  double symprec = 1e-5;
+  
+  for (i = 0; i < 12; i++) {
+    types[i] = 1;
+  }
+  for (i = 12; i < 30; i++) {
+    types[i] = 2;
+  }
+
+  /* lattice, position, and types are overwirtten. */
+  printf("*** Example of spg_find_primitive (Corundum) ***:\n");
+  num_primitive_atom = spg_find_primitive(lattice, position, types, num_atom, symprec);
+  if (num_primitive_atom == 0) {
+    printf("Primitive cell was not found.\n");
+  } else { 
+    show_cell(lattice, position, types, num_primitive_atom);
+  }
+}
+
+static void test_spg_refine_cell_BCC(void)
+{
+  double lattice[3][3] = {{0, 2, 2}, {2, 0, 2}, {2, 2, 0}};
 
   /* 4 times larger memory space must be prepared. */
   double position[4][3];
@@ -102,30 +160,87 @@ static void test_spg_refine_cell(void)
 				      types,
 				      num_atom,
 				      symprec );
-  printf("Lattice parameter:\n");
-  for ( i = 0; i < 3; i++ ) {
-    printf("%f %f %f\n", lattice[0][i], lattice[1][i], lattice[2][i]);
-  }
-  printf("Atomic positions:\n");
-  for ( i = 0; i<num_atom_bravais; i++ ) {
-    printf("%d: %f %f %f\n", types[i], position[i][0], position[i][1],
-	   position[i][2]);
-  }
+  show_cell(lattice, position, types, num_atom_bravais);
 }
 
-static void test_spg_standardize_cell(void)
+static void test_spg_standardize_cell_BCC(void)
 {
-  double lattice[3][3] = { {3.97, 0, 0}, {0, 4.03, 0}, {0, 0, 4.0} };
+  double lattice[3][3] = {{3.97, 0, 0}, {0, 4.03, 0}, {0, 0, 4.0}};
   double position[][3] = {
     {0.002, 0, 0},
     {0.5, 0.5001, 0.5}
   };
-  int types[] = { 1, 1 };
+  int types[] = {1, 1};
   int i, j, k, num_atom = 2, num_primitive_atom;
   double symprec = 1e-1;
   
   /* lattice, position, and types are overwirtten. */
   printf("*** Example of spg_standardize_cell (BCC unitcell --> primitive) ***:\n");
+  printf("------------------------------------------------------\n");
+  for (j = 0; j < 2; j++) {
+    for (k = 0; k < 2; k++) {
+      sub_spg_standardize_cell(lattice,
+			       position,
+			       types,
+			       num_atom,
+			       symprec,
+			       j,
+			       k);
+      printf("------------------------------------------------------\n");
+    }
+  }
+}
+
+static void test_spg_standardize_cell_corundum(void)
+{
+  double lattice[3][3] = {{4.8076344022756095, -2.4038172011378047, 0},
+			  {0, 4.1635335244786962, 0},
+			  {0, 0, 13.1172699198127543}};
+  double position[][3] = {
+    {0.0000000000000000, 0.0000000000000000, 0.3521850942289043},
+    {0.6666666666666643, 0.3333333333333357, 0.6855184275622400},
+    {0.3333333333333357, 0.6666666666666643, 0.0188517608955686},
+    {0.0000000000000000, 0.0000000000000000, 0.6478149057711028},
+    {0.6666666666666643, 0.3333333333333357, 0.9811482391044314},
+    {0.3333333333333357, 0.6666666666666643, 0.3144815724377600},
+    {0.0000000000000000, 0.0000000000000000, 0.1478149057710957},
+    {0.6666666666666643, 0.3333333333333357, 0.4811482391044314},
+    {0.3333333333333357, 0.6666666666666643, 0.8144815724377600},
+    {0.0000000000000000, 0.0000000000000000, 0.8521850942288972},
+    {0.6666666666666643, 0.3333333333333357, 0.1855184275622400},
+    {0.3333333333333357, 0.6666666666666643, 0.5188517608955686},
+    {0.3061673906454899, 0.0000000000000000, 0.2500000000000000},
+    {0.9728340573121541, 0.3333333333333357, 0.5833333333333357},
+    {0.6395007239788255, 0.6666666666666643, 0.9166666666666643},
+    {0.6938326093545102, 0.0000000000000000, 0.7500000000000000},
+    {0.3604992760211744, 0.3333333333333357, 0.0833333333333357},
+    {0.0271659426878458, 0.6666666666666643, 0.4166666666666643},
+    {0.0000000000000000, 0.3061673906454899, 0.2500000000000000},
+    {0.6666666666666643, 0.6395007239788255, 0.5833333333333357},
+    {0.3333333333333357, 0.9728340573121541, 0.9166666666666643},
+    {0.0000000000000000, 0.6938326093545102, 0.7500000000000000},
+    {0.6666666666666643, 0.0271659426878458, 0.0833333333333357},
+    {0.3333333333333357, 0.3604992760211744, 0.4166666666666643},
+    {0.6938326093545102, 0.6938326093545102, 0.2500000000000000},
+    {0.3604992760211744, 0.0271659426878458, 0.5833333333333357},
+    {0.0271659426878458, 0.3604992760211744, 0.9166666666666643},
+    {0.3061673906454899, 0.3061673906454899, 0.7500000000000000},
+    {0.9728340573121541, 0.6395007239788255, 0.0833333333333357},
+    {0.6395007239788255, 0.9728340573121541, 0.4166666666666643},
+  };
+  int types[30];
+  int i, j, k, num_atom = 30;
+  double symprec = 1e-5;
+  
+  for (i = 0; i < 12; i++) {
+    types[i] = 1;
+  }
+  for (i = 12; i < 30; i++) {
+    types[i] = 2;
+  }
+  
+  /* lattice, position, and types are overwirtten. */
+  printf("*** Example of spg_standardize_cell (Corundum) ***:\n");
   printf("------------------------------------------------------\n");
   for (j = 0; j < 2; j++) {
     for (k = 0; k < 2; k++) {
@@ -199,17 +314,17 @@ static int sub_spg_standardize_cell(double lattice[3][3],
 
 static void test_spg_get_international(void)
 {
-  double lattice[3][3] = {{4,0,0},{0,4,0},{0,0,3}};
+  double lattice[3][3] = {{4, 0, 0}, {0, 4, 0}, {0, 0, 3}};
   double position[][3] =
     {
-      {0,0,0},
-      {0.5,0.5,0.5},
-      {0.3,0.3,0},
-      {0.7,0.7,0},
-      {0.2,0.8,0.5},
-      {0.8,0.2,0.5},
+      {0, 0, 0},
+      {0.5, 0.5, 0.5},
+      {0.3, 0.3, 0},
+      {0.7, 0.7, 0},
+      {0.2, 0.8, 0.5},
+      {0.8, 0.2, 0.5},
     };
-  int types[] = {1,1,2,2,2,2};
+  int types[] = {1, 1, 2, 2, 2, 2};
   int num_spg, num_atom = 6;
   char symbol[21];
   
@@ -224,17 +339,17 @@ static void test_spg_get_international(void)
 
 static void test_spg_get_schoenflies(void)
 {
-  double lattice[3][3] = {{4,0,0},{0,4,0},{0,0,3}};
+  double lattice[3][3] = {{4, 0, 0}, {0, 4, 0}, {0, 0, 3}};
   double position[][3] =
     {
-      {0,0,0},
-      {0.5,0.5,0.5},
-      {0.3,0.3,0},
-      {0.7,0.7,0},
-      {0.2,0.8,0.5},
-      {0.8,0.2,0.5},
+      {0, 0, 0},
+      {0.5, 0.5, 0.5},
+      {0.3, 0.3, 0},
+      {0.7, 0.7, 0},
+      {0.2, 0.8, 0.5},
+      {0.8, 0.2, 0.5},
     };
-  int types[] = {1,1,2,2,2,2};
+  int types[] = {1, 1, 2, 2, 2, 2};
   int num_atom = 6;
   char symbol[7];
   
@@ -282,12 +397,12 @@ static void test_spg_get_symmetry_from_database(void)
 
 static void test_spg_get_multiplicity(void)
 {
-  double lattice[3][3] = { {4, 0, 0}, {0, 4, 0}, {0, 0, 4} };
+  double lattice[3][3] = {{4, 0, 0}, {0, 4, 0}, {0, 0, 4}};
   double position[][3] = {
     {0, 0, 0},
     {0.5, 0.5, 0.5}
   };
-  int types[] = { 1, 2 };
+  int types[] = {1, 2};
   int num_atom = 2;
   int size;
 
@@ -300,63 +415,63 @@ static void test_spg_get_multiplicity(void)
 
 static void test_spg_get_symmetry(void)
 {
-  double lattice[3][3] = {{4,0,0},{0,4,0},{0,0,3}};
+  double lattice[3][3] = {{4, 0, 0}, {0, 4, 0}, {0, 0, 3}};
   double position[][3] =
     {
-      {0,0,0},
-      {0.5,0.5,0.25},
-      {0.3,0.3,0},
-      {0.7,0.7,0},
-      {0.2,0.8,0.25},
-      {0.8,0.2,0.25},
-      {0,0,0.5},
-      {0.5,0.5,0.75},
-      {0.3,0.3,0.5},
-      {0.7,0.7,0.5},
-      {0.2,0.8,0.75},
-      {0.8,0.2,0.75}
+      {0, 0, 0},
+      {0.5, 0.5, 0.25},
+      {0.3, 0.3, 0},
+      {0.7, 0.7, 0},
+      {0.2, 0.8, 0.25},
+      {0.8, 0.2, 0.25},
+      {0, 0, 0.5},
+      {0.5, 0.5, 0.75},
+      {0.3, 0.3, 0.5},
+      {0.7, 0.7, 0.5},
+      {0.2, 0.8, 0.75},
+      {0.8, 0.2, 0.75}
     };
-  int types[] = {1,1,2,2,2,2,1,1,2,2,2,2};
+  int types[] = {1, 1, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2};
   int num_atom = 12;
   int max_size = 50;
   int i, j, size;
   int rotation[max_size][3][3];
   double translation[max_size][3];
 
-  double origin_shift[3] = { 0.1, 0.1, 0 };
-  for ( i = 0; i < num_atom; i++ ) {
-    for ( j = 0; j < 3; j++ ) {
+  double origin_shift[3] = {0.1, 0.1, 0};
+  for (i = 0; i < num_atom; i++) {
+    for (j = 0; j < 3; j++) {
       position[i][j] += origin_shift[j];
     }
   }
 
   printf("*** Example of spg_get_symmetry (Rutile two unit cells) ***:\n");
-  size = spg_get_symmetry( rotation,
-			   translation,
-			   max_size,
-			   lattice,
-			   position,
-			   types,
-			   num_atom,
-			   1e-5 );
+  size = spg_get_symmetry(rotation,
+			  translation,
+			  max_size,
+			  lattice,
+			  position,
+			  types,
+			  num_atom,
+			  1e-5);
   for (i = 0; i < size; i++) {
     printf("--- %d ---\n", i + 1);
     for (j = 0; j < 3; j++)
       printf("%2d %2d %2d\n", rotation[i][j][0], rotation[i][j][1], rotation[i][j][2]);
-    printf("%f %f %f\n", translation[i][0], translation[i][1],
-	   translation[i][2]);
+    printf("%f %f %f\n",
+	   translation[i][0], translation[i][1], translation[i][2]);
   }
 
 }
 
 static void test_spg_get_symmetry_with_collinear_spin(void) {
-  double lattice[3][3] = {{4,0,0},{0,4,0},{0,0,4}};
+  double lattice[3][3] = {{4, 0, 0}, {0, 4, 0}, {0, 0, 4}};
   double position[][3] =
     {
-      {0,0,0},
-      {0.5,0.5,0.5}
+      {0, 0, 0},
+      {0.5, 0.5, 0.5}
     };	
-  int types[] = { 1, 1 };
+  int types[] = {1, 1};
   int equivalent_atoms[2];
   double spins[2];
   int num_atom = 2;
@@ -380,8 +495,10 @@ static void test_spg_get_symmetry_with_collinear_spin(void) {
 					      1e-5);
   for (i = 0; i < size; i++) {
     printf("--- %d ---\n", i + 1);
-    for (j = 0; j < 3; j++)
-      printf("%2d %2d %2d\n", rotation[i][j][0], rotation[i][j][1], rotation[i][j][2]);
+    for (j = 0; j < 3; j++) {
+      printf("%2d %2d %2d\n",
+	     rotation[i][j][0], rotation[i][j][1], rotation[i][j][2]);
+    }
     printf("%f %f %f\n", translation[i][0], translation[i][1],
            translation[i][2]);
   }
@@ -401,8 +518,10 @@ static void test_spg_get_symmetry_with_collinear_spin(void) {
 					      1e-5);
   for (i = 0; i < size; i++) {
     printf("--- %d ---\n", i + 1);
-    for (j = 0; j < 3; j++)
-      printf("%2d %2d %2d\n", rotation[i][j][0], rotation[i][j][1], rotation[i][j][2]);
+    for (j = 0; j < 3; j++) {
+      printf("%2d %2d %2d\n",
+	     rotation[i][j][0], rotation[i][j][1], rotation[i][j][2]);
+    }
     printf("%f %f %f\n", translation[i][0], translation[i][1],
            translation[i][2]);
   }
@@ -422,8 +541,10 @@ static void test_spg_get_symmetry_with_collinear_spin(void) {
 					      1e-5);
   for (i = 0; i < size; i++) {
     printf("--- %d ---\n", i + 1);
-    for (j = 0; j < 3; j++)
-      printf("%2d %2d %2d\n", rotation[i][j][0], rotation[i][j][1], rotation[i][j][2]);
+    for (j = 0; j < 3; j++) {
+      printf("%2d %2d %2d\n",
+	     rotation[i][j][0], rotation[i][j][1], rotation[i][j][2]);
+    }
     printf("%f %f %f\n", translation[i][0], translation[i][1],
            translation[i][2]);
   }
@@ -433,24 +554,24 @@ static void test_spg_get_symmetry_with_collinear_spin(void) {
 static void test_spg_get_dataset(void)
 {
   printf("*** Example of spg_get_dataset (Rutile two unit cells) ***:\n");
-  double lattice[3][3] = {{4,0,0},{0,4,0},{0,0,3}};
-  double origin_shift[3] = { 0.1, 0.1, 0 };
+  double lattice[3][3] = {{4, 0, 0}, {0, 4, 0}, {0, 0, 3}};
+  double origin_shift[3] = {0.1, 0.1, 0};
   double position[][3] =
     {
-      {0,0,0},
-      {0.5,0.5,0.25},
-      {0.3,0.3,0},
-      {0.7,0.7,0},
-      {0.2,0.8,0.25},
-      {0.8,0.2,0.25},
-      {0,0,0.5},
-      {0.5,0.5,0.75},
-      {0.3,0.3,0.5},
-      {0.7,0.7,0.5},
-      {0.2,0.8,0.75},
-      {0.8,0.2,0.75}
+      {0, 0, 0},
+      {0.5, 0.5, 0.25},
+      {0.3, 0.3, 0},
+      {0.7, 0.7, 0},
+      {0.2, 0.8, 0.25},
+      {0.8, 0.2, 0.25},
+      {0, 0, 0.5},
+      {0.5, 0.5, 0.75},
+      {0.3, 0.3, 0.5},
+      {0.7, 0.7, 0.5},
+      {0.2, 0.8, 0.75},
+      {0.8, 0.2, 0.75}
     };
-  int types[] = {1,1,2,2,2,2,1,1,2,2,2,2};
+  int types[] = {1, 1, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2};
   int num_atom = 12;
 
   show_spg_dataset(lattice, origin_shift, position, num_atom, types);
@@ -458,7 +579,7 @@ static void test_spg_get_dataset(void)
   double lattice_2[3][3] = {{3.7332982433264039, -1.8666491216632011, 0},
 			    {0, 3.2331311186244847, 0},
 			    {0, 0, 6.0979971306362799}};
-  double origin_shift_2[3] = { 0.1, 0.1, 0 };
+  double origin_shift_2[3] = {0.1, 0.1, 0};
   double position_2[][3] =
     {
       {0, 0, 0},
@@ -466,7 +587,7 @@ static void test_spg_get_dataset(void)
       {1.0 / 3, 2.0 / 3, 0.776},
       {2.0 / 3, 1.0 / 3, 0.2542},
     };
-  int types_2[] = {1,2,3,3};
+  int types_2[] = {1, 2, 3, 3};
   int num_atom_2 = 4;
 
   show_spg_dataset(lattice_2, origin_shift_2, position_2, num_atom_2, types_2);
@@ -474,17 +595,17 @@ static void test_spg_get_dataset(void)
 
 static void test_spg_get_ir_reciprocal_mesh(void)
 {
-  double lattice[3][3] = {{4,0,0},{0,4,0},{0,0,3}};
+  double lattice[3][3] = {{4, 0, 0}, {0, 4, 0}, {0, 0, 3}};
   double position[][3] =
     {
-      {0,0,0},
-      {0.5,0.5,0.5},
-      {0.3,0.3,0},
-      {0.7,0.7,0},
-      {0.2,0.8,0.5},
-      {0.8,0.2,0.5},
+      {0, 0, 0},
+      {0.5, 0.5, 0.5},
+      {0.3, 0.3, 0},
+      {0.7, 0.7, 0},
+      {0.2, 0.8, 0.5},
+      {0.8, 0.2, 0.5},
     };
-  int types[] = {1,1,2,2,2,2};
+  int types[] = {1, 1, 2, 2, 2, 2};
   int num_atom = 6;
   int m = 40;
   int mesh[] = {m, m, m};
@@ -512,17 +633,17 @@ static void test_spg_get_ir_reciprocal_mesh(void)
 static void test_spg_get_stabilized_reciprocal_mesh(void)
 {
   SpglibDataset *dataset;
-  double lattice[3][3] = {{4,0,0},{0,4,0},{0,0,3}};
+  double lattice[3][3] = {{4, 0, 0}, {0, 4, 0}, {0, 0, 3}};
   double position[][3] =
     {
-      {0,0,0},
-      {0.5,0.5,0.5},
-      {0.3,0.3,0},
-      {0.7,0.7,0},
-      {0.2,0.8,0.5},
-      {0.8,0.2,0.5},
+      {0, 0, 0},
+      {0.5, 0.5, 0.5},
+      {0.3, 0.3, 0},
+      {0.7, 0.7, 0},
+      {0.2, 0.8, 0.5},
+      {0.8, 0.2, 0.5},
     };
-  int types[] = {1,1,2,2,2,2};
+  int types[] = {1, 1, 2, 2, 2, 2};
   int num_atom = 6;
 
   dataset = spg_get_dataset(lattice,
@@ -667,58 +788,20 @@ static void show_spg_dataset(double lattice[3][3],
 
 }
 
-static int grid_address_to_index(int g[3], int mesh[3])
+static void show_cell(double lattice[3][3],
+		      double position[][3],
+		      const int types[],
+		      const int num_atom)
 {
   int i;
-  int gm[3];
 
+  printf("Lattice parameter:\n");
   for (i = 0; i < 3; i++) {
-    gm[i] = g[i] % mesh[i];
-    if (gm[i] < 0) {
-      gm[i] += mesh[i];
-    }
+    printf("%f %f %f\n", lattice[0][i], lattice[1][i], lattice[2][i]);
   }
-  return (gm[0] + gm[1] * mesh[0] + gm[2] * mesh[0] * mesh[1]);
+  printf("Atomic positions:\n");
+  for (i = 0; i < num_atom; i++) {
+    printf("%d: %f %f %f\n",
+	   types[i], position[i][0], position[i][1], position[i][2]);
+  }
 }
-
-static void mat_copy_matrix_d3(double a[3][3], double b[3][3])
-{
-  a[0][0] = b[0][0];
-  a[0][1] = b[0][1];
-  a[0][2] = b[0][2];
-  a[1][0] = b[1][0];
-  a[1][1] = b[1][1];
-  a[1][2] = b[1][2];
-  a[2][0] = b[2][0];
-  a[2][1] = b[2][1];
-  a[2][2] = b[2][2];
-}
-
-static double mat_get_determinant_d3(double a[3][3])
-{
-  return a[0][0] * (a[1][1] * a[2][2] - a[1][2] * a[2][1])
-    + a[0][1] * (a[1][2] * a[2][0] - a[1][0] * a[2][2])
-    + a[0][2] * (a[1][0] * a[2][1] - a[1][1] * a[2][0]);
-}
-
-static int mat_inverse_matrix_d3(double m[3][3],
-				 double a[3][3],
-				 const double precision)
-{
-  double det;
-  double c[3][3];
-  det = mat_get_determinant_d3(a);
-
-  c[0][0] = (a[1][1] * a[2][2] - a[1][2] * a[2][1]) / det;
-  c[1][0] = (a[1][2] * a[2][0] - a[1][0] * a[2][2]) / det;
-  c[2][0] = (a[1][0] * a[2][1] - a[1][1] * a[2][0]) / det;
-  c[0][1] = (a[2][1] * a[0][2] - a[2][2] * a[0][1]) / det;
-  c[1][1] = (a[2][2] * a[0][0] - a[2][0] * a[0][2]) / det;
-  c[2][1] = (a[2][0] * a[0][1] - a[2][1] * a[0][0]) / det;
-  c[0][2] = (a[0][1] * a[1][2] - a[0][2] * a[1][1]) / det;
-  c[1][2] = (a[0][2] * a[1][0] - a[0][0] * a[1][2]) / det;
-  c[2][2] = (a[0][0] * a[1][1] - a[0][1] * a[1][0]) / det;
-  mat_copy_matrix_d3(m, c);
-  return 1;
-}
-
