@@ -1,3 +1,50 @@
+2015-08-19  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.8.2.2
+
+	* src/spglib.c (is_rhombohedral): 
+
+	Regardless of rhombohedral or hexagonal setting, a primitive
+	rhombohedral is found when using finding primitive cell functions.
+
+2015-08-03  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.8.2.1
+
+	* src/spacegroup.c (spa_transform_to_primitive):
+
+	Bug fix of transformation matrix with centering. The side to be
+	multiplied was wrong.
+
+	* Version 1.8.2
+
+	* k-points and tetrahedron method
+
+	k-point grid definitions are separated to 'kgrid.c'.
+	'kgrid.{c,h}' and 'tetrahedron_method.{c,h}' are moved to a new
+	git repository of kspclib (https://github.com/atztogo/kspclib).
+	Tetrahedron method related spglib-APIs are removed.
+
+	* Choice of triclinic basis vector directions is implemented and
+	the definition is written in the document.
+
+2015-07-09  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.8.1
+
+	In SpglibDataset, definitions of transformation matrix and origin
+	shift are changed, member names of '*brv_*' are changed to
+	'*std_*', and the members, pointgroup_number and
+	pointgroup_symbol, are added.
+
+	New function 'spg_standardize_cell' is implemented. This can also
+	give 'standardized primitive cell' with 'to_primitive =
+	1'.
+
+	Due to change of internal implementation, the order of symmetry
+	operations obtained can be different from the recently released
+	versions, but the set is the same.
+
 2015-06-25  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.8

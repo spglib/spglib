@@ -3,6 +3,7 @@ libsymspg_la_SOURCES = \
 cell.c \
 debug.c \
 hall_symbol.c \
+kgrid.c \
 kpoint.c \
 lattice.c \
 mathfunc.c \
@@ -18,10 +19,10 @@ spglib.c \
 spglib_f.c \
 spin.c \
 symmetry.c \
-tetrahedron_method.c \
 cell.h \
 debug.h \
 hall_symbol.h \
+kgrid.h \
 kpoint.h \
 lattice.h \
 mathfunc.h \
@@ -35,13 +36,13 @@ spacegroup.h \
 spg_database.h \
 spglib.h \
 spin.h \
-symmetry.h \
-tetrahedron_method.h
+symmetry.h
 
 pkginclude_HEADERS = \
 cell.h \
 debug.h \
 hall_symbol.h \
+kgrid.h \
 kpoint.h \
 lattice.h \
 mathfunc.h \
@@ -55,8 +56,7 @@ spacegroup.h \
 spg_database.h \
 spglib.h \
 spin.h \
-symmetry.h \
-tetrahedron_method.h
+symmetry.h
 
 # libsymspg_la_LDFLAGS = -version-info 0:1:0
 libsymspg_la_LIBADD = -lm
