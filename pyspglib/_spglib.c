@@ -179,7 +179,7 @@ static PyObject * get_version(PyObject *self, PyObject *args)
 
   version[0] = spg_get_major_version();
   version[1] = spg_get_minor_version();
-  version[2] = spg_get_revision_version();
+  version[2] = spg_get_micro_version();
 
   array = PyList_New(3);
   for (i = 0; i < 3; i++) {

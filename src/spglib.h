@@ -45,7 +45,7 @@
 
 int spg_get_major_version(void);
 int spg_get_minor_version(void);
-int spg_get_revision_version(void);
+int spg_get_micro_version(void);
 
 /*
   ------------------------------------------------------------------

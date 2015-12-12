@@ -162,7 +162,7 @@ static int get_stabilized_reciprocal_mesh(int grid_address[][3],
 /*========*/
 
 /*--------------------------------------------*/
-/* Version: spglib-[major].[minor].[revision] */
+/* Version: spglib-[major].[minor].[micro] */
 /*--------------------------------------------*/
 int spg_get_major_version(void)
 {
@@ -174,9 +174,9 @@ int spg_get_minor_version(void)
   return SPGLIB_MINOR_VERSION;
 }
 
-int spg_get_revision_version(void)
+int spg_get_micro_version(void)
 {
-  return SPGLIB_REVISION_VERSION;
+  return SPGLIB_MICRO_VERSION;
 }
 
 /*---------*/
