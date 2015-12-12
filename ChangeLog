@@ -1,8 +1,19 @@
+2015-12-13  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.8.3
+
+	* src/version.h:
+
+	Made functions to return spglib version number,
+	'spg_get_major_version()', 'spg_get_minor_version()',
+	'spg_get_micro_version()' in 'spglib.c'. This version number is
+	stored in 'version.h'.
+
 2015-08-19  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.8.2.2
 
-	* src/spglib.c (is_rhombohedral): 
+	* src/spglib.c (is_rhombohedral):
 
 	Regardless of rhombohedral or hexagonal setting, a primitive
 	rhombohedral is found when using finding primitive cell functions.
