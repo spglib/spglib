@@ -7,7 +7,7 @@ Spglib is a C library for finding and handling crystal symmetries.
 <https://sourceforge.net/projects/spglib/files/spglib/spglib-1.7/>`_. is
 the stable release.
 
-`Spglib-1.8.2.x
+`Spglib-1.8.3
 <https://sourceforge.net/projects/spglib/files/spglib/spglib-1.8/>`_
 is the latest release. This version is expected to be slightly faster
 and compact than the stable version, and the code is cleaner to be the
@@ -17,8 +17,6 @@ written in the document.
 
 Version history is summarized in `ChangeLog
 <https://github.com/atztogo/spglib/blob/master/ChangeLog>`_.
-
-
 
 Features
 ^^^^^^^^
@@ -82,7 +80,7 @@ Example
 ^^^^^^^
 
 A few examples are found in `example
-<https://github.com/atztogo/spglib/tree/master/example>_` directory.
+<https://github.com/atztogo/spglib/tree/master/example>`_ directory.
 
 Testing
 ^^^^^^^
@@ -109,9 +107,8 @@ The way to compile the ruby module is explained in
 Python extension
 ^^^^^^^^^^^^^^^^
 
-Python extension for ASE is prepared in the `python/ase
-<https://github.com/atztogo/spglib/tree/master/python/ase>`_
-directory.  See http://spglib.sourceforge.net/pyspglibForASE/
+Python extension for ASE is prepared in the ``pyspglib`` directory.
+See the usage at :ref:`pyspglib`.
 
 Fortran interface
 ^^^^^^^^^^^^^^^^^
@@ -134,6 +131,7 @@ API & variables
    definition
    api
    variable
+   pyspglib
 
 Mailing list
 ^^^^^^^^^^^^^^^^^
