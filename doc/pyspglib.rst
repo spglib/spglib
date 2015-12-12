@@ -9,7 +9,7 @@ alternative Atoms class that contains minimum set of methods is
 prepared in the ``examples`` directory.
 
 How to build spglib python module
-=================================
+----------------------------------
 
 The C sources of spglib and interface for the python C/API are
 compiled. The development environments for python and gcc are required
@@ -30,7 +30,7 @@ before starting to build.
 3. Put ``lib/python`` path into :envvar:`$PYTHONPATH`, e.g., in your .bashrc.
 
 How to use it
-=============
+--------------
 
 1. Import spglib::
 
@@ -46,7 +46,7 @@ is known by::
    print(__version__)
 
 Example
-========
+--------
 
 Examples are found in ``examples`` directory. Instead using ASE's
 ``Atoms`` class, an alternative ``Atoms`` class in ``atoms.py`` in
@@ -55,12 +55,12 @@ this directory can be used with ``pyspglib``. To use this ``atoms.py``::
    from atoms import Atoms
 
 Methods
-=======
+--------
 
 The tolerance is given in Cartesian coordinates.
 
 ``get_version``
-----------------
+^^^^^^^^^^^^^^^^
 
 **New in version 1.8.3**
 
@@ -71,7 +71,8 @@ The tolerance is given in Cartesian coordinates.
 This returns version number of spglib by tuple with three numbers.
 
 ``get_spacegroup``
-------------------
+^^^^^^^^^^^^^^^^^^^
+
 ::
 
     spacegroup = get_spacegroup(atoms, symprec=1e-5)
@@ -82,7 +83,8 @@ variable, which is used as tolerance in symmetry search.
 International space group symbol and the number are obtained as a string.
 
 ``get_symmetry``
-----------------
+^^^^^^^^^^^^^^^^^^
+
 ::
 
     symmetry = get_symmetry(atoms, symprec=1e-5)
@@ -109,7 +111,7 @@ The three values in the vector are given for the a, b, and c axes,
 respectively.
 
 ``refine_cell``
----------------
+^^^^^^^^^^^^^^^^
 
 **Behaviour changed in version 1.8.x**
 
@@ -128,7 +130,7 @@ The detailed control of standardization of unit cell may be done using
 ``standardize_cell``.
 
 ``find_primitive``
-------------------
+^^^^^^^^^^^^^^^^^^^
 
 **Behaviour changed in version 1.8.x**
 
@@ -148,7 +150,7 @@ The detailed control of standardization of unit cell can be done using
 ``standardize_cell``.
 
 ``standardize_cell``
----------------------
+^^^^^^^^^^^^^^^^^^^^^
 
 **New in version 1.8.x**
 
@@ -165,7 +167,8 @@ with combinations of these options. More detailed explanation is
 shown in the spglib (C-API) document.
 
 ``get_symmetry_dataset``
-----------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 ::
 
     dataset = get_symmetry_dataset(atoms, symprec=1e-5)
@@ -185,7 +188,7 @@ shown in the spglib (C-API) document.
 
 
 ``get_ir_reciprocal_mesh``
---------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ::
 
