@@ -6,7 +6,7 @@ import pyspglib._spglib as spg
 import numpy as np
 
 def get_version():
-    return spg.version()
+    return tuple(spg.version())
 
 def get_symmetry(bulk, use_magmoms=False, symprec=1e-5, angle_tolerance=-1.0):
     """
