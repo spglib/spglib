@@ -37,8 +37,15 @@ extension = Extension('pyspglib._spglib',
                       extra_compile_args=['-fopenmp'],
                       extra_link_args=['-lgomp'])
 
+version_nums = [0, 0, 0]
+with open(include_dirs[0] + "/version.h") as w:
+    for line in w:
+        for i, chars in enumerate(("MAJOR", "MINOR", "REVISION")):
+            if chars in line:
+                version_nums[i] = int(line.split()[2])
+
 setup(name='spglib',
-      version='1.8.2',
+      version="%d.%d.%d" % tuple(version_nums),
       description='This is the spglib module.',
       author='Atsushi Togo',
       author_email='atz.togo@gmail.com',
