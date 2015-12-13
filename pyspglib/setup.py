@@ -33,14 +33,14 @@ if hasattr(os, 'symlink'):
 
 extension = Extension('pyspglib._spglib',
                       include_dirs=include_dirs + get_numpy_include_dirs(),
-                      sources=['_spglib.c'] + sources,
-                      extra_compile_args=['-fopenmp'],
-                      extra_link_args=['-lgomp'])
+                      sources=['_spglib.c'] + sources)
+                      # extra_compile_args=['-fopenmp'],
+                      # extra_link_args=['-lgomp'],
 
 version_nums = [0, 0, 0]
 with open(include_dirs[0] + "/version.h") as w:
     for line in w:
-        for i, chars in enumerate(("MAJOR", "MINOR", "REVISION")):
+        for i, chars in enumerate(("MAJOR", "MINOR", "MICRO")):
             if chars in line:
                 version_nums[i] = int(line.split()[2])
 
