@@ -2,7 +2,6 @@ import os
 from distutils.core import setup, Extension
 from numpy.distutils.misc_util import get_numpy_include_dirs
 
-
 include_dirs = ['../src']
 sources = ['../src/cell.c',
            '../src/hall_symbol.c',
@@ -21,28 +20,29 @@ sources = ['../src/cell.c',
            '../src/spg_database.c',
            '../src/spglib.c',
            '../src/symmetry.c']
+extra_compile_args = []
+extra_link_args = []
 
-# Hmm, bdist_rpm requires that all sources are within root directory.
-# Therefore add a symlink to src directory under systems that support it...
-if hasattr(os, 'symlink'):
-    if not os.path.exists('src'):
-        os.symlink('../src', 'src')
-    include_dirs = ['src']
-    sources = [os.path.join('src', os.path.basename(f))
-               for f in sources]
+## Uncomment to activate OpenMP support for gcc
+# extra_compile_args += ['-fopenmp']
+# extra_link_args += ['-lgomp']
 
 extension = Extension('pyspglib._spglib',
                       include_dirs=include_dirs + get_numpy_include_dirs(),
-                      sources=['_spglib.c'] + sources)
-                      # extra_compile_args=['-fopenmp'],
-                      # extra_link_args=['-lgomp'],
+                      sources=['_spglib.c'] + sources,
+                      extra_compile_args=extra_compile_args,
+                      extra_link_args=extra_link_args)
 
-version_nums = [0, 0, 0]
+version_nums = [None, None, None]
 with open(include_dirs[0] + "/version.h") as w:
     for line in w:
         for i, chars in enumerate(("MAJOR", "MINOR", "MICRO")):
             if chars in line:
                 version_nums[i] = int(line.split()[2])
+
+if None in version_nums:
+    print("Failed to get version number in setup.py.")
+    raise
 
 setup(name='spglib',
       version="%d.%d.%d" % tuple(version_nums),
