@@ -1,9 +1,10 @@
 package:
   name: pyspglib
-  version: !!str 1.8.0
+  version: !!str 1.8.3.1
 
 source:
   git_url: git@github.com:jochym/spglib.git
+  git_tag: v1.8.3.1
 #  patches:
    # List any patch files here
    # - fix.patch
