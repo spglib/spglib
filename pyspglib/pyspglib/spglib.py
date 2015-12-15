@@ -5,6 +5,9 @@ Spglib interface for ASE
 import pyspglib._spglib as spg
 import numpy as np
 
+def get_version():
+    return tuple(spg.version())
+
 def get_symmetry(bulk, use_magmoms=False, symprec=1e-5, angle_tolerance=-1.0):
     """
     Return symmetry operations as hash.
@@ -424,4 +427,3 @@ def get_stabilized_reciprocal_mesh(mesh,
         qpoints)
     
     return mapping, mesh_points
-

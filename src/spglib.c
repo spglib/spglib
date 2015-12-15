@@ -49,6 +49,7 @@
 #include "spg_database.h"
 #include "spin.h"
 #include "symmetry.h"
+#include "version.h"
 
 #define REDUCE_RATE 0.95
 
@@ -159,6 +160,24 @@ static int get_stabilized_reciprocal_mesh(int grid_address[][3],
 /*========*/
 /* global */
 /*========*/
+
+/*--------------------------------------------*/
+/* Version: spglib-[major].[minor].[micro] */
+/*--------------------------------------------*/
+int spg_get_major_version(void)
+{
+  return SPGLIB_MAJOR_VERSION;
+}
+
+int spg_get_minor_version(void)
+{
+  return SPGLIB_MINOR_VERSION;
+}
+
+int spg_get_micro_version(void)
+{
+  return SPGLIB_MICRO_VERSION;
+}
 
 /*---------*/
 /* general */

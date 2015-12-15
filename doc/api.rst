@@ -1,6 +1,14 @@
 API
 ====
 
+``spg_get_major_version``, ``spg_get_minor_version``, ``spg_get_micro_version``
+--------------------------------------------------------------------------------
+
+**New in version 1.8.3**
+
+Version number of spglib is obtained. These three functions return
+integers that correspond to spglib version [major].[minor].[micro].
+
 .. _api_spg_get_symmetry:
 
 ``spg_get_symmetry``

@@ -1,40 +1,78 @@
-pyspglib for ASE
-==========================================
+.. _pyspglib:
 
-Pyspglib is the python module for spglib. It is written for the
-Atomistic Simulation Environment (ASE).
+Spglib for python
+==================
+
+Pyspglib is the python module for spglib. This is written to work with
+Atomistic Simulation Environment (ASE) Atoms class object. An
+alternative Atoms class that contains minimum set of methods is
+prepared in the ``examples`` directory.
 
 How to build spglib python module
-=================================
+----------------------------------
 
 The C sources of spglib and interface for the python C/API are
 compiled. The development environments for python and gcc are required
 before starting to build.
 
-1. Go to the :file:`python/ase` directory
+1. Go to the :file:`pyspglib` directory
 2. Type the command::
 
-    % python setup.py install --home=<my-directory>
+      % python setup.py install --home=<my-directory>
 
-The :file:`{<my-directory>}` is possibly current directory, :file:`.`.
+   The :file:`{<my-directory>}` is possibly current directory, :file:`.`
+   or maybe::
+
+      % python setup.py install --user
+
+   to use the user scheme (see the python document.)
 
 3. Put ``lib/python`` path into :envvar:`$PYTHONPATH`, e.g., in your .bashrc.
 
 How to use it
-=============
+--------------
+
 1. Import spglib::
 
-    from pyspglib import spglib
+      from pyspglib import spglib
 
 2. Call the methods with ASE Atoms object.
 
+In version 1.8.3 or later, the spglib version is obtained as
+``__version__`` in ``pyspglib/__init__.py``, i.e., the version number
+is known by::
+
+   from pyspglib import __version__
+   print(__version__)
+
+Example
+--------
+
+Examples are found in ``examples`` directory. Instead using ASE's
+``Atoms`` class, an alternative ``Atoms`` class in ``atoms.py`` in
+this directory can be used with ``pyspglib``. To use this ``atoms.py``::
+
+   from atoms import Atoms
+
 Methods
-=======
+--------
 
 The tolerance is given in Cartesian coordinates.
 
+``get_version``
+^^^^^^^^^^^^^^^^
+
+**New in version 1.8.3**
+
+::
+
+    version = get_version()
+
+This returns version number of spglib by tuple with three numbers.
+
 ``get_spacegroup``
-------------------
+^^^^^^^^^^^^^^^^^^^
+
 ::
 
     spacegroup = get_spacegroup(atoms, symprec=1e-5)
@@ -45,7 +83,8 @@ variable, which is used as tolerance in symmetry search.
 International space group symbol and the number are obtained as a string.
 
 ``get_symmetry``
-----------------
+^^^^^^^^^^^^^^^^^^
+
 ::
 
     symmetry = get_symmetry(atoms, symprec=1e-5)
@@ -72,7 +111,10 @@ The three values in the vector are given for the a, b, and c axes,
 respectively.
 
 ``refine_cell``
--------------------------------
+^^^^^^^^^^^^^^^^
+
+**Behaviour changed in version 1.8.x**
+
 ::
 
     lattice, scaled_positions, numbers = refine_cell(atoms, symprec=1e-5)
@@ -84,8 +126,49 @@ Bravais lattice (3x3 numpy array), atomic scaled positions (a numpy
 array of [number_of_atoms,3]), and atomic numbers (a 1D numpy array)
 that are symmetrized following space group type are returned.
 
+The detailed control of standardization of unit cell may be done using
+``standardize_cell``.
+
+``find_primitive``
+^^^^^^^^^^^^^^^^^^^
+
+**Behaviour changed in version 1.8.x**
+
+::
+
+   lattice, scaled_positions, numbers = find_primitive(atoms, symprec=1e-5)
+
+``atoms`` is the object of ASE Atoms class. ``symprec`` is the float
+variable, which is used as tolerance in symmetry search.
+
+When a primitive cell is found, lattice parameters (3x3 numpy array),
+scaled positions (a numpy array of [number_of_atoms,3]), and atomic
+numbers (a 1D numpy array) is returned. When no primitive cell is
+found, (``None``, ``None``, ``None``) is returned.
+
+The detailed control of standardization of unit cell can be done using
+``standardize_cell``.
+
+``standardize_cell``
+^^^^^^^^^^^^^^^^^^^^^
+
+**New in version 1.8.x**
+
+::
+
+   lattice, scaled_positions, numbers = \\
+          standardize_cell(bulk, to_primitive=0, no_idealize=0, symprec=1e-5)
+
+``to_primitive=1`` is used to create the standardized primitive cell,
+and ``no_idealize=1`` disables to idealize lengths and angles of basis
+vectors and positions of atoms according to crystal symmetry. Now
+``refine_cell`` and ``find_primitive`` are shorthands of this method
+with combinations of these options. More detailed explanation is
+shown in the spglib (C-API) document.
+
 ``get_symmetry_dataset``
-----------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 ::
 
     dataset = get_symmetry_dataset(atoms, symprec=1e-5)
@@ -104,22 +187,8 @@ that are symmetrized following space group type are returned.
     [(r, t) for r, t in zip(dataset['rotations'], dataset['translations'])]
 
 
-``find_primitive``
-------------------
-::
-
-   lattice, scaled_positions, numbers = find_primitive(atoms, symprec=1e-5)
-
-``atoms`` is the object of ASE Atoms class. ``symprec`` is the float
-variable, which is used as tolerance in symmetry search.
-
-When a primitive cell is found, lattice parameters (3x3 numpy array),
-scaled positions (a numpy array of [number_of_atoms,3]), and atomic
-numbers (a 1D numpy array) is returned. When no primitive cell is
-found, (``None``, ``None``, ``None``) is returned.
-
 ``get_ir_reciprocal_mesh``
---------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ::
 
@@ -149,15 +218,6 @@ obtained by ::
    mapping, grid = get_ir_reciprocal_mesh( [ 8, 8, 8 ], atoms, [ 1, 1, 1 ] )
    for i in np.unique( mapping ):
      ir_grid.append( grid[ i ] )
-
-Example
-=============
-
-Examples are found in ``examples`` directory. An example code is :ref:`this <examples>`.
-
-Instead of ASE's ``Atoms`` class, ``Atoms`` class in ``atoms.py`` in the ``examples`` directory may be used. To use this ``atoms.py``, ::
-
-   from atoms import Atoms
 
 
 .. |sflogo| image:: http://sflogo.sourceforge.net/sflogo.php?group_id=161614&type=1

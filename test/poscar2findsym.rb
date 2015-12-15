@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# Time-stamp: <2007-09-11 16:05:49 togo>
+# Time-stamp: <2015-11-19 17:23:47 togo>
 #
 #   Copyright (C) 2005 Atsushi Togo
 #   togo.atsushi@gmail.com
@@ -26,8 +26,8 @@ require "optparse"
 module Crystal
   # constant
   AtomicNumber = {"H"=>1, "He"=>2, "Li"=>3, "Be"=>4, "B"=>5, "C"=>6, "N"=>7, "O"=>8,
-    "F"=>9, "Ne"=>9, "K"=>10, "Na"=>11, "Mg"=>12, "Al"=>13, "Si"=>14, "P"=>15, "S"=>16,
-    "Cl"=>17, "Al"=>18, "K"=>19, "Ca"=>20, "Sc"=>21, "Ti"=>22, "V"=>23, "Cr"=>24,
+    "F"=>9, "Ne"=>10, "Na"=>11, "Mg"=>12, "Al"=>13, "Si"=>14, "P"=>15, "S"=>16,
+    "Cl"=>17, "Ar"=>18, "K"=>19, "Ca"=>20, "Sc"=>21, "Ti"=>22, "V"=>23, "Cr"=>24,
     "Mn"=>25, "Fe"=>26, "Co"=>27, "Ni"=>28, "Cu"=>29, "Zn"=>30, "Ga"=>31, "Ge"=>32,
     "As"=>33, "Se"=>34, "Br"=>35, "Kr"=>36, "Rb"=>37, "Sr"=>38, "Y"=>39, "Zr"=>40,
     "Nb"=>41, "Mo"=>42, "Tc"=>43, "Ru"=>44, "Rh"=>45, "Pd"=>46, "Ag"=>47, "Cd"=>48,

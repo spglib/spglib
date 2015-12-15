@@ -36,7 +36,8 @@ spacegroup.h \
 spg_database.h \
 spglib.h \
 spin.h \
-symmetry.h
+symmetry.h \
+version.h
 
 pkginclude_HEADERS = \
 cell.h \
@@ -56,7 +57,8 @@ spacegroup.h \
 spg_database.h \
 spglib.h \
 spin.h \
-symmetry.h
+symmetry.h \
+version.h
 
 # libsymspg_la_LDFLAGS = -version-info 0:1:0
 libsymspg_la_LIBADD = -lm
