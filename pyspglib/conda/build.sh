@@ -1,7 +1,6 @@
 #!/bin/bash
 
-cd pyspglib 
-
+cd ..
 $PYTHON setup.py install
 
 # Add more build steps here, if they are necessary.
