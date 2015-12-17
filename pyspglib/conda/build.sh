@@ -1,7 +1,5 @@
 #!/bin/bash
-echo "Build script"
-pwd
-ls -l
+
 cd pyspglib
 $PYTHON setup.py install
 
