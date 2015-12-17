@@ -1,8 +1,4 @@
-"""
-Spglib interface for ASE
-"""
-
-import pyspglib._spglib as spg
+from . import _spglib as spg
 import numpy as np
 
 def get_version():
