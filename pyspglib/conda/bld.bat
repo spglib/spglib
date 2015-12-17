@@ -1,4 +1,4 @@
-cd python\ase
+cd pyspglib
 "%PYTHON%" setup.py install
 if errorlevel 1 exit 1
 
