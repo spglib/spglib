@@ -42,7 +42,7 @@ engine:
 
 ## Put your main computations here!  
 script:
-  - conda update -n root conda-build
+  - conda update -n root conda conda-build
   - pwd
   - ls -l
   - conda build .
