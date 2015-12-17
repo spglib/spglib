@@ -43,8 +43,6 @@ engine:
 ## Put your main computations here!  
 script:
   - conda update -n root conda conda-build
-  - pwd
-  - ls -l
   - conda build .
 
 ## This will run after the script regardless of the result of script
