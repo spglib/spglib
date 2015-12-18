@@ -27,6 +27,7 @@ requirements:
   build:
     - python
     - numpy
+    - setuptools_scm
 
   run:
     - python
