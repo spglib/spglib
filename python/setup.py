@@ -50,10 +50,10 @@ setup(name='spglib',
       author='Atsushi Togo',
       author_email='atz.togo@gmail.com',
       url='http://spglib.sourceforge.net/',
-      packages=['spglib'],
+      packages=['spglib','test'],
       requires = ['numpy'],
       provides = ['spglib'],
       platforms = ['all'],
       ext_modules = [extension],
       include_package_data = True,
-      package_data = {'test':['test/data/*']})
+      )
