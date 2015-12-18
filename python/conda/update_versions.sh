@@ -4,5 +4,5 @@ VER=`(cd ../../ ; python -c "from setuptools_scm import get_version ; print(get_
 
 echo "Building version: $VER"
 
-echo $VER > __conda_version__.txt
+echo $VER > ../__conda_version__.txt
 
