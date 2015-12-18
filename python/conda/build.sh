@@ -1,8 +1,6 @@
 #!/bin/bash
 
-python -c "from setuptools_scm import get_version ; print(get_version())" > __conda_version__.txt
-
-echo "Building in $SRC_DIR  $SOURCE_DIR"
+git describe --tags --dirty | sed -e 's/-/_/g' -e 's/^v//g'| > __conda_version__.txt
 
 cd python
 

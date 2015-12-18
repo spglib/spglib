@@ -1,9 +1,12 @@
 package:
   name: spglib
+# Manual version string. We use git describe in buildsh for version numbers.
 #  version: !!str 1.9.0
 
 source:
   git_url: https://github.com/jochym/spglib.git
+# Lock to particular tag. We always test HEAD and build and upload tags
+# so to manual tak is necessary here
 #  git_tag: v1.9.0
 #  patches:
    # List any patch files here
@@ -27,7 +30,6 @@ requirements:
   build:
     - python
     - numpy
-    - setuptools_scm
 
   run:
     - python
