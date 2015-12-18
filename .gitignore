@@ -6,7 +6,7 @@ MANIFEST
 *.so
 *.lo
 *.o
-pyspglib/src
+python/src
 
 # Packages
 *.egg
