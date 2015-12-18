@@ -80,5 +80,5 @@ after_failure:
 ## e.g. conda is an alias for /opt/anaconda/conda-bld/<os-arch>/*.tar.bz2
 build_targets:
   - conda
-  - pypi
+  #- pypi
 
