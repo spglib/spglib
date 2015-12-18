@@ -1,6 +1,6 @@
 #!/bin/bash
 
-git describe --tags --dirty | sed -e 's/-/_/g' -e 's/^v//g'| > __conda_version__.txt
+git describe --tags --dirty | sed -e 's/-/_/g' -e 's/^v//g' > __conda_version__.txt
 
 cd python
 
