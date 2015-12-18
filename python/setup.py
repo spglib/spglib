@@ -2,7 +2,7 @@ import os
 from distutils.core import setup, Extension
 from numpy.distutils.misc_util import get_numpy_include_dirs
 
-include_dirs = ['../src']
+include_dirs = ['../src','../test/data']
 sources = ['../src/cell.c',
            '../src/hall_symbol.c',
            '../src/kgrid.c',
