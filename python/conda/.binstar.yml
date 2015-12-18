@@ -1,7 +1,7 @@
 
 ## The package attribure specifies a binstar package namespace to build the package to. 
 ## This can be specified here or on the command line
-package: pyspglib
+package: spglib
 
 ## You can also specify the account to upload to,
 ## you must be an admin of that account, this 

@@ -183,7 +183,7 @@ static PyObject * get_version(PyObject *self, PyObject *args)
 
   array = PyList_New(3);
   for (i = 0; i < 3; i++) {
-    PyList_SetItem(array, i, PyInt_FromLong((long)version[i]));
+    PyList_SetItem(array, i, PyLong_FromLong((long)version[i]));
   }
 
   return array;
