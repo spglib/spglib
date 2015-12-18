@@ -1,5 +1,9 @@
 #!/bin/bash
 
+python -c "from setuptools_scm import get_version ; print(get_version())" > __conda_version__.txt
+
+echo "Building in $SRC_DIR  $SOURCE_DIR"
+
 cd python
 
 $PYTHON setup.py install
