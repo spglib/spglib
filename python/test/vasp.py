@@ -1,33 +1,105 @@
+# -*- coding: utf-8 -*-
 # Copyright (C) 2011 Atsushi Togo
+# All rights reserved.
 #
-# This file was originary part of phonopy.
+# This file is part of phonopy.
 #
-# Phonopy is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
 #
-# Phonopy is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Lesser General Public License for more details.
+# * Redistributions of source code must retain the above copyright
+#   notice, this list of conditions and the following disclaimer.
 #
-# You should have received a copy of the GNU Lesser General Public License
-# along with phonopy.  If not, see <http://www.gnu.org/licenses/>.
+# * Redistributions in binary form must reproduce the above copyright
+#   notice, this list of conditions and the following disclaimer in
+#   the documentation and/or other materials provided with the
+#   distribution.
+#
+# * Neither the name of the phonopy project nor the names of its
+#   contributors may be used to endorse or promote products derived
+#   from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+# COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+# ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
 
 import numpy as np
 from atoms import Atoms, symbol_map, atom_data
 
-#
-# read VASP POSCAR
-#
-def expand_symbols( num_atoms, symbols=None ):
+def read_vasp(filename, symbols=None):
+    lines = open(filename).readlines()
+    return _get_atoms_from_poscar(lines, symbols)
+
+def _get_atoms_from_poscar(lines, symbols):
+    line1 = [x for x in lines[0].split()]
+    if _is_exist_symbols(line1):
+        symbols = line1
+
+    scale = float(lines[1])
+
+    cell = []
+    for i in range(2, 5):
+        cell.append([float(x) for x in lines[i].split()[:3]])
+    cell = np.array(cell) * scale
+
+    try:
+        num_atoms = np.array([int(x) for x in lines[5].split()])
+        line_at = 6
+    except ValueError:
+        symbols = [x for x in lines[5].split()]
+        num_atoms = np.array([int(x) for x in lines[6].split()])
+        line_at = 7
+    
+    expaned_symbols = _expand_symbols(num_atoms, symbols)
+
+    if lines[line_at][0].lower() == 's':
+        line_at += 1
+
+    is_scaled = True
+    if (lines[line_at][0].lower() == 'c' or
+        lines[line_at][0].lower() == 'k'):
+        is_scaled = False
+
+    line_at += 1
+
+    positions = []
+    for i in range(line_at, line_at + num_atoms.sum()):
+        positions.append([float(x) for x in lines[i].split()[:3]])
+
+    if is_scaled:
+        atoms = Atoms(symbols=expaned_symbols,
+                      cell=cell,
+                      scaled_positions=positions)
+    else:
+        atoms = Atoms(symbols=expaned_symbols,
+                      cell=cell,
+                      positions=positions)
+        
+    return atoms
+
+def _is_exist_symbols(symbols):
+    for s in symbols:
+        if not (s in symbol_map):
+            return False
+    return True
+
+def _expand_symbols(num_atoms, symbols=None):
     expanded_symbols = []
     is_symbols = True
-    if symbols == None:
+    if symbols is None:
         is_symbols = False
     else:
-        if not len( symbols ) == len( num_atoms ):
+        if len(symbols) != len(num_atoms):
             is_symbols = False
         else:
             for s in symbols:
@@ -36,120 +108,10 @@ def expand_symbols( num_atoms, symbols=None ):
                     break
     
     if is_symbols:
-        for s, num in zip( symbols, num_atoms ):
+        for s, num in zip(symbols, num_atoms):
             expanded_symbols += [s] * num
     else:
-        for i, num in enumerate( num_atoms ):
-            expanded_symbols += [ atom_data[i+1][1] ] * num
+        for i, num in enumerate(num_atoms):
+            expanded_symbols += [atom_data[i + 1][1]] * num
 
     return expanded_symbols
-
-def is_exist_symbols( symbols ):
-    for s in symbols:
-        if not ( s in symbol_map ):
-            return False
-    return True
-
-def read_vasp( filename, symbols=None ):
-    file = open( filename )
-    
-    lines = file.readlines()
-
-    line1 = [ x for x in lines[0].split() ]
-    if is_exist_symbols( line1 ):
-        symbols = line1
-
-    scale = float(lines[1])
-
-    cell = []
-    for i in range( 2, 5 ):
-        cell.append( [ float(x) for x in lines[i].split()[:3] ] )
-    cell = np.array( cell ) * scale
-
-    try:
-        num_atoms = np.array([ int(x) for x in lines[5].split() ])
-        line_at = 6
-    except ValueError:
-        symbols = [ x for x in lines[5].split() ]
-        num_atoms = np.array([ int(x) for x in lines[6].split() ])
-        line_at = 7
-    
-    expaned_symbols = expand_symbols( num_atoms, symbols )
-
-    if lines[ line_at ][0].lower() == 's':
-        line_at += 1
-
-    is_scaled = True
-    if ( lines[ line_at ][0].lower() == 'c' or
-         lines[ line_at ][0].lower() == 'k' ):
-        is_scaled = False
-
-    line_at += 1
-
-    positions = []
-    for i in range( line_at, line_at + num_atoms.sum() ):
-        positions.append( [ float(x) for x in lines[i].split()[:3] ] )
-
-    if is_scaled:
-        atoms = Atoms( symbols=expaned_symbols,
-                       cell=cell,
-                       scaled_positions=positions )
-    else:
-        atoms = Atoms( symbols=expaned_symbols,
-                       cell=cell,
-                       positions=positions )
-        
-    return atoms
-                   
-#
-# write vasp POSCAR
-#
-def get_reduced_symbols( symbols ):
-    reduced_symbols = []
-    for s in symbols:
-        if not ( s in reduced_symbols ):
-            reduced_symbols.append(s)
-    return reduced_symbols
-
-def sort_positions_by_symbols( symbols, positions ):
-    reduced_symbols = get_reduced_symbols( symbols )
-    sorted_positions = []
-    num_atoms = np.zeros( len( reduced_symbols ), dtype=int )
-    for i, rs in enumerate( reduced_symbols ):
-        for s, p in zip( symbols, positions ):
-            if rs==s:
-                sorted_positions.append( p )
-                num_atoms[i] += 1
-    return num_atoms, reduced_symbols, np.array( sorted_positions )
-
-def write_vasp( filename, atoms, direct=True ):
-
-    num_atoms, symbols, scaled_positions = \
-        sort_positions_by_symbols( atoms.get_chemical_symbols(),
-                                   atoms.get_scaled_positions() )
-
-    lines = ""     
-    for s in symbols:
-        lines += "%s " % s
-    lines += "\n"
-    lines += "   1.0\n"
-    for a in atoms.get_cell():
-        lines += " %22.16f%22.16f%22.16f\n" % tuple( a )
-    lines += ("%4d" * len( num_atoms )) % tuple( num_atoms )
-    lines += "\n"
-    lines += "Direct\n"
-    for vec in scaled_positions:
-        for x in ( vec - vec.round() ):
-            if float('%20.16f' % x) < 0.0:
-                lines += "%20.16f" % ( x + 1.0 )
-            else:
-                lines += "%20.16f" % (x)
-        lines += "\n"
-
-    f = open( filename, 'w' )
-    f.write( lines )
-
-if __name__ == '__main__':
-    import sys
-    atoms = read_vasp( sys.argv[1] )
-    write_vasp( '%s-new' % sys.argv[1], atoms )
