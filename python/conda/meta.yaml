@@ -40,25 +40,15 @@ test:
   imports:
     - spglib
 
-#  files:
-#    - {{ environ.get('SRC_DIR', '') }}/python/test/
-#    - ../test/test_spglib.py
-#    - ../test/vasp.py
-#    - ../test/atoms.py
-
-  commands:
+#  commands:
     # You can put test commands to be run here.  Use this to test that the
-    # entry points work.
-    - pwd
-    - ls -l
- #   - python test_spglib.py
-
+    # entry points work. 
   # You can also put a file called run_test.py in the recipe that will be run
   # at test time.
 
-  requires:
+#  requires:
     # Put any additional test requirements here.  For example
-    - nose
+    #- nose
 
 about:
   home: http://spglib.sourceforge.net/
