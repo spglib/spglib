@@ -40,16 +40,17 @@ test:
   imports:
     - spglib
 
-  #commands:
+  commands:
     # You can put test commands to be run here.  Use this to test that the
     # entry points work.
+    - python test/test_spglib.py
 
   # You can also put a file called run_test.py in the recipe that will be run
   # at test time.
 
-  # requires:
+  requires:
     # Put any additional test requirements here.  For example
-    # - nose
+    - unittest
 
 about:
   home: http://spglib.sourceforge.net/
