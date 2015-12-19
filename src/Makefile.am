@@ -16,7 +16,6 @@ sitesym_database.c \
 spacegroup.c \
 spg_database.c \
 spglib.c \
-spglib_f.c \
 spin.c \
 symmetry.c \
 cell.h \

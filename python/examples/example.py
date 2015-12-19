@@ -1,7 +1,7 @@
 #!/usr/bin/evn python
 
 import sys
-from pyspglib import spglib
+import spglib
 import numpy as np
 
 #######################################

@@ -1,3 +1,22 @@
+2015-12-20  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.9.0
+
+	Pyspglib was considered as a special extention of spglib, but now
+	it starts to be a part of spglib as a usual extention. Therefore
+	the package name is changed to spglib, and this python wrapper
+	will be maintained to work at every update of c-spglib.
+
+	Scripts for pypi and conda package environments are prepared in
+	python wrapper by a lot of help from Paweł T. Jochym.
+
+	In previous versions, tests were in the test directory and space
+	group numbers were checked for many POSCARs by using combination
+	of ruby-spglib and shell script. Now a similar test is written in
+	a form of python unit test in the 'python' directory. Previous
+	'test' directory is renamed to 'ruby' and the POSCARs were moved
+	under the 'python/test' directory.
+
 2015-12-13  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.8.3

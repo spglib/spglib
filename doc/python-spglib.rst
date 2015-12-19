@@ -1,21 +1,22 @@
-.. _pyspglib:
+.. _python_spglib:
 
 Spglib for python
 ==================
 
-Pyspglib is the python module for spglib. This is written to work with
-Atomistic Simulation Environment (ASE) Atoms class object. An
-alternative Atoms class that contains minimum set of methods is
-prepared in the ``examples`` directory.
+This is written to work with Atomistic Simulation Environment (ASE)
+Atoms class object. An alternative Atoms class that contains minimum
+set of methods is prepared in the ``examples`` directory.
 
 How to build spglib python module
 ----------------------------------
 
-The C sources of spglib and interface for the python C/API are
-compiled. The development environments for python and gcc are required
-before starting to build.
+The easiest way to install python-spglib is to use the pypi package.
 
-1. Go to the :file:`pyspglib` directory
+The manual installation is shown as follows. At first, development
+environments for python (python-dev), gcc, and numpy are required
+before starting to the build shown below.
+
+1. Go to the :file:`python` directory
 2. Type the command::
 
       % python setup.py install --home=<my-directory>
@@ -29,21 +30,31 @@ before starting to build.
 
 3. Put ``lib/python`` path into :envvar:`$PYTHONPATH`, e.g., in your .bashrc.
 
-How to use it
+How to import spglib module
+---------------------------
+
+**Change in version 1.9.0!**
+
+For versions 1.9.x or later::
+
+   import spglib     
+
+For versions 1.8.x or before::
+
+   from pyspglib import spglib
+
+If the version is not sure::
+
+   try:
+       import spglib as spg
+   except ImportError:
+       from pyspglib import spglib as spg   
+
+Version number
 --------------
 
-1. Import spglib::
-
-      from pyspglib import spglib
-
-2. Call the methods with ASE Atoms object.
-
-In version 1.8.3 or later, the spglib version is obtained as
-``__version__`` in ``pyspglib/__init__.py``, i.e., the version number
-is known by::
-
-   from pyspglib import __version__
-   print(__version__)
+In version 1.8.3 or later, the version number is obtained by
+``spglib.__version__`` or :ref:`method_get_version`.
 
 Example
 --------
@@ -58,6 +69,8 @@ Methods
 --------
 
 The tolerance is given in Cartesian coordinates.
+
+.. _method_get_version:
 
 ``get_version``
 ^^^^^^^^^^^^^^^^
