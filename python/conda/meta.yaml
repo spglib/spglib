@@ -50,7 +50,7 @@ test:
 
   requires:
     # Put any additional test requirements here.  For example
-    - unittest
+    - nose
 
 about:
   home: http://spglib.sourceforge.net/
