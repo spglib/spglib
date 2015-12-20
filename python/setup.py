@@ -54,4 +54,6 @@ setup(name='spglib',
       requires = ['numpy'],
       provides = ['spglib'],
       platforms = ['all'],
-      ext_modules=[extension])
+      ext_modules = [extension],
+      include_package_data = True,
+      )

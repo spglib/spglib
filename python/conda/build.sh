@@ -1,5 +1,7 @@
 #!/bin/bash
 
+git describe --tags --dirty | sed -e 's/-.*//' -e 's/^v//g' > __conda_version__.txt
+
 cd python
 
 $PYTHON setup.py install
