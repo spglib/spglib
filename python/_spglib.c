@@ -363,7 +363,7 @@ static PyObject * get_spacegroup_type(PyObject *self, PyObject *args)
   PyObject *array;
   SpglibSpacegroupType symbols;
 
-  if (!PyArg_ParseTuple(args, "i",&hall_number)) {
+  if (!PyArg_ParseTuple(args, "i", &hall_number)) {
     return NULL;
   }
 

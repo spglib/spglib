@@ -27,11 +27,17 @@ extra_link_args = []
 # extra_compile_args += ['-fopenmp']
 # extra_link_args += ['-lgomp']
 
+define_macros = []
+# define_macros = [('SPGWARNING', None),
+#                  ('SPGDEBUG', None)]
+# define_macros = [('SPGWARNING', None)]
+
 extension = Extension('spglib._spglib',
                       include_dirs=include_dirs + get_numpy_include_dirs(),
                       sources=['_spglib.c'] + sources,
                       extra_compile_args=extra_compile_args,
-                      extra_link_args=extra_link_args)
+                      extra_link_args=extra_link_args,
+                      define_macros=define_macros)
 
 version_nums = [None, None, None]
 with open(include_dirs[0] + "/version.h") as w:

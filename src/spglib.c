@@ -974,6 +974,7 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
   }
 
   dataset->spacegroup_number = 0;
+  dataset->hall_number = 0;
   strcpy(dataset->international_symbol, "");
   strcpy(dataset->hall_symbol, "");
   strcpy(dataset->setting, "");
@@ -1687,7 +1688,6 @@ static int get_ir_reciprocal_mesh(int grid_address[][3],
   SpglibDataset *dataset;
   int num_ir, i;
   MatINT *rotations, *rot_reciprocal;
-
 
   dataset = get_dataset(lattice,
 			position,
