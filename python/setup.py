@@ -30,7 +30,6 @@ extra_link_args = []
 define_macros = []
 # define_macros = [('SPGWARNING', None),
 #                  ('SPGDEBUG', None)]
-# define_macros = [('SPGWARNING', None)]
 
 extension = Extension('spglib._spglib',
                       include_dirs=include_dirs + get_numpy_include_dirs(),
