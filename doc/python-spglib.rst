@@ -4,11 +4,17 @@ Spglib for python
 ==================
 
 This is written to work with Atomistic Simulation Environment (ASE)
-Atoms class object. An alternative Atoms class that contains minimum
-set of methods is prepared in the ``examples`` directory.
+Atoms class object. An alternative Atoms class (`atoms.py
+<https://github.com/atztogo/spglib/blob/master/python/examples/atoms.py>`_)
+that contains minimum
+set of methods is prepared in the `examples
+<https://github.com/atztogo/spglib/tree/master/python/examples>`_ directory.
 
 Installation
 -------------
+
+Full source codes, examples, and the test are downloaded `here
+<https://sourceforge.net/project/showfiles.php?group_id=215020>`_.
 
 Using package distribution service
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -94,12 +100,11 @@ In version 1.8.3 or later, the version number is obtained by
 Example
 --------
 
-Examples are found in :file:`examples` directory. In this directory,
-an alternative Atoms class in :file:`atoms.py` can be used with
-:file:`spglib`. To use the alternative Atoms class in
-:file:`atoms.py` is::
-
-   from atoms import Atoms
+Examples are found in `examples
+<https://github.com/atztogo/spglib/tree/master/python/examples>`_
+directory. In this directory, an alternative Atoms class in `atoms.py
+<https://github.com/atztogo/spglib/blob/master/python/examples/atoms.py>`_
+can be used instead of the ``Atoms`` class in ASE for spglib.
 
 Methods
 --------
@@ -126,8 +131,8 @@ This returns version number of spglib by tuple with three numbers.
 
     spacegroup = get_spacegroup(atoms, symprec=1e-5)
 
-``atoms`` is the object of ASE Atoms class. ``symprec`` is the float
-variable, which is used as tolerance in symmetry search.
+``symprec`` is the float variable, which is used as tolerance in
+symmetry search.
 
 International space group symbol and the number are obtained as a string.
 
