@@ -7,14 +7,34 @@ This is written to work with Atomistic Simulation Environment (ASE)
 Atoms class object. An alternative Atoms class that contains minimum
 set of methods is prepared in the ``examples`` directory.
 
-How to build spglib python module
-----------------------------------
+Installation
+-------------
 
-The easiest way to install python-spglib is to use the pypi package.
+Using package distribution service
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The manual installation is shown as follows. At first, development
-environments for python (python-dev), gcc, and numpy are required
-before starting to the build shown below.
+The easiest way to install python-spglib is to use the pypi package,
+for which numpy is required to be installed before the
+installation. A command to install spglib is::
+
+   % pip install spglib
+
+Previous versions < 1.8.x are installed by::
+
+   % pip install pyspglib
+
+Conda is another choice::
+
+   % conda install -c https://conda.anaconda.org/jochym spglib
+
+These packages are made by Paweł T. Jochym.
+
+Building from setup.py
+^^^^^^^^^^^^^^^^^^^^^^^
+
+To manually install spglib using ``setup.py``, python header files
+(python-dev), gcc, and numpy are required before the build. The
+installation steps are shown as follows:
 
 1. Go to the :file:`python` directory
 2. Type the command::
@@ -28,7 +48,22 @@ before starting to the build shown below.
 
    to use the user scheme (see the python document.)
 
-3. Put ``lib/python`` path into :envvar:`$PYTHONPATH`, e.g., in your .bashrc.
+3. Put :file:`./lib/python` path into :envvar:`$PYTHONPATH`, e.g., in your
+   .washrag.
+
+Test
+-----
+
+The test script :file:`test_spglib.py` is found in :file:`python/test`
+directory. Got to this directory and run this script. It will be like below::
+
+   % python test_spglib.py
+   test_get_symmetry_dataset (__main__.TestSpglib) ... ok
+   
+   ----------------------------------------------------------------------
+   Ran 1 test in 2.132s
+   
+   OK
 
 How to import spglib module
 ---------------------------
@@ -59,9 +94,10 @@ In version 1.8.3 or later, the version number is obtained by
 Example
 --------
 
-Examples are found in ``examples`` directory. Instead using ASE's
-``Atoms`` class, an alternative ``Atoms`` class in ``atoms.py`` in
-this directory can be used with ``pyspglib``. To use this ``atoms.py``::
+Examples are found in :file:`examples` directory. In this directory,
+an alternative Atoms class in :file:`atoms.py` can be used with
+:file:`spglib`. To use the alternative Atoms class in
+:file:`atoms.py` is::
 
    from atoms import Atoms
 
@@ -205,7 +241,7 @@ shown in the spglib (C-API) document.
 
 ::
 
-   mapping, grid = get_ir_reciprocal_mesh(mesh, atoms, is_shift=[0,0,0])
+   mapping, grid = get_ir_reciprocal_mesh(mesh, atoms, is_shift=[0, 0, 0])
 
 Irreducible k-points are obtained from a sampling mesh of k-points.
 ``mesh`` is given by three integers by array and specifies mesh
@@ -219,18 +255,18 @@ the mesh numbers. When the value is not 0, ``is_shift`` is set.
 fractional coordinates in reciprocal space. ``mapping`` gives mapping to
 the irreducible k-point indices that are obtained by ::
 
-   np.unique( mapping )
+   np.unique(mapping)
 
 Here ``np`` is the imported numpy module. The grid point is accessed
-by ``grid[ index ]``.
+by ``grid[index]``.
 
 For example, the irreducible k-points in fractional coordinates are
 obtained by ::
 
    ir_grid = []
-   mapping, grid = get_ir_reciprocal_mesh( [ 8, 8, 8 ], atoms, [ 1, 1, 1 ] )
-   for i in np.unique( mapping ):
-     ir_grid.append( grid[ i ] )
+   mapping, grid = get_ir_reciprocal_mesh([ 8, 8, 8 ], atoms, [1, 1, 1])
+   for i in np.unique(mapping):
+       ir_grid.append(grid[i])
 
 
 .. |sflogo| image:: http://sflogo.sourceforge.net/sflogo.php?group_id=161614&type=1
