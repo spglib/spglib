@@ -6,7 +6,7 @@ MANIFEST
 *.so
 *.lo
 *.o
-python/src
+#python/src
 
 # Packages
 *.egg
