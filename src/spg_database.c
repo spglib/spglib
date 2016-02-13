@@ -8575,7 +8575,7 @@ SpacegroupType spgdb_get_spacegroup_type(const int hall_number)
 
   spgtype.number = 0;
   
-  if (0 < hall_number || hall_number < 531) {
+  if (0 < hall_number && hall_number < 531) {
     spgtype = spacegroup_types[hall_number];
   } else {
     spgtype = spacegroup_types[0];
