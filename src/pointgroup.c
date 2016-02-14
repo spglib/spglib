@@ -739,7 +739,7 @@ static int laue2m(int axes[3],
 static int lauemmm(int axes[3],
 		   SPGCONST PointSymmetry * pointsym)
 {
-  int i, count, axis, tmpval;
+  int i, count, axis;
   int prop_rot[3][3];
 
 
@@ -1024,7 +1024,7 @@ static int laue3m(int axes[3],
 static int lauem3m(int axes[3],
 		   SPGCONST PointSymmetry * pointsym)
 {
-  int i, count, axis, tmpval;
+  int i, count, axis;
   int prop_rot[3][3];
 
   for (i = 0; i < 3; i++) { axes[i] = -1; }
