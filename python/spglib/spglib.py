@@ -457,3 +457,23 @@ def get_stabilized_reciprocal_mesh(mesh,
         qpoints)
     
     return mapping, mesh_points
+
+def niggli_reduce(lattice, eps=1e-5):
+    """Run Niggli reduction
+
+    Args:
+        lattice: Lattice parameters
+            [a_x, b_x, c_x, a_y, b_y, c_y, a_z, b_z, c_z] or
+            [[a_x, b_x, c_x], [a_y, b_y, c_y], [a_z, b_z, c_z]]
+        eps: Tolerance.
+    
+    Returns:
+        Reduced lattice parameters
+            [[a_x, b_x, c_x], [a_y, b_y, c_y], [a_z, b_z, c_z]]
+    """
+    reduced_lattice = np.array(np.ravel(lattice), dtype='double')
+    result = spg.niggli_reduce(reduced_lattice, float(eps))
+    if result == 0:
+        return None
+    else:
+        return np.reshape(reduced_lattice, (3, 3), order='C')

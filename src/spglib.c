@@ -41,6 +41,7 @@
 #include "kpoint.h"
 #include "lattice.h"
 #include "mathfunc.h"
+#include "niggli.h"
 #include "pointgroup.h"
 #include "spglib.h"
 #include "primitive.h"
@@ -468,14 +469,6 @@ int spgat_get_multiplicity(SPGCONST double lattice[3][3],
 }
 
 /* Return 0 if failed */
-int spg_get_smallest_lattice(double smallest_lattice[3][3],
-			     SPGCONST double lattice[3][3],
-			     const double symprec)
-{
-  return lat_smallest_lattice_vector(smallest_lattice, lattice, symprec);
-}
-
-/* Return 0 if failed */
 int spg_get_international(char symbol[11],
 			  SPGCONST double lattice[3][3],
 			  SPGCONST double position[][3],
@@ -882,64 +875,37 @@ int spg_relocate_BZ_grid_address(int bz_grid_address[][3],
 				      is_shift);
 }
 
-/* /\*--------------------*\/ */
-/* /\* tetrahedron method *\/ */
-/* /\*--------------------*\/ */
-/* void spg_get_neighboring_grid_points(int relative_grid_points[], */
-/* 				     const int grid_point, */
-/* 				     SPGCONST int relative_grid_address[][3], */
-/* 				     const int num_relative_grid_address, */
-/* 				     const int mesh[3], */
-/* 				     SPGCONST int bz_grid_address[][3], */
-/* 				     const int bz_map[]) */
-/* { */
-/*   thm_get_neighboring_grid_points(relative_grid_points, */
-/* 				  grid_point, */
-/* 				  relative_grid_address, */
-/* 				  num_relative_grid_address, */
-/* 				  mesh, */
-/* 				  bz_grid_address, */
-/* 				  bz_map); */
-/* } */
+/*--------*/
+/* Niggli */
+/*--------*/
+/* Return 0 if failed */
+int spg_niggli_reduce(double niggli_lattice[3][3],
+		      SPGCONST double lattice[3][3],
+		      const double symprec)
+{
+  int i, j, succeeded;
+  double vals[9];
+  
+  for (i = 0; i < 3; i++) {
+    for (j = 0; j < 3; j++) {
+      vals[i * 3 + j] = lattice[i][j];
+    }
+  }
 
-/* void */
-/* spg_get_tetrahedra_relative_grid_address(int relative_grid_address[24][4][3], */
-/* 					 SPGCONST double rec_lattice[3][3]) */
-/* { */
-/*   thm_get_relative_grid_address(relative_grid_address, rec_lattice); */
-/* } */
+  succeeded = niggli_reduce(vals, symprec);
 
-/* void */
-/* spg_get_all_tetrahedra_relative_grid_address */
-/* (int relative_grid_address[4][24][4][3]) */
-/* { */
-/*   thm_get_all_relative_grid_address(relative_grid_address); */
-/* } */
+  if (succeeded) {
+    for (i = 0; i < 3; i++) {
+      for (j = 0; j < 3; j++) {
+	niggli_lattice[i][j] = vals[i * 3 + j];
+      }
+    }
+  }
 
-/* double */
-/* spg_get_tetrahedra_integration_weight(const double omega, */
-/* 				      SPGCONST double tetrahedra_omegas[24][4], */
-/* 				      const char function) */
-/* { */
-/*   return thm_get_integration_weight(omega, */
-/* 				    tetrahedra_omegas, */
-/* 				    function); */
-/* } */
+  return succeeded;
+}
 
-/* void */
-/* spg_get_tetrahedra_integration_weight_at_omegas */
-/* (double integration_weights[], */
-/*  const int num_omegas, */
-/*  const double omegas[], */
-/*  SPGCONST double tetrahedra_omegas[24][4], */
-/*  const char function) */
-/* { */
-/*   thm_get_integration_weight_at_omegas(integration_weights, */
-/* 				       num_omegas, */
-/* 				       omegas, */
-/* 				       tetrahedra_omegas, */
-/* 				       function); */
-/* } */
+
 
 
 /*=======*/
