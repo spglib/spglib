@@ -824,15 +824,15 @@ static PyObject * relocate_BZ_grid_address(PyObject *self, PyObject *args)
 
 static PyObject * py_niggli_reduce(PyObject *self, PyObject *args)
 {
-  PyArrayObject* lattice;
+  PyArrayObject* lattice_py;
   double eps;
-  if (!PyArg_ParseTuple(args, "Od", &lattice, &eps)) {
+  if (!PyArg_ParseTuple(args, "Od", &lattice_py, &eps)) {
     return NULL;
   }
 
-  double *lat = (double(*))PyArray_DATA(lattice);
+  double (*lattice)[3] = (double(*)[3])PyArray_DATA(lattice_py);
 
-  int result = spg_niggli_reduce(lat, eps);
+  int result = spg_niggli_reduce(lattice, eps);
 
   return PyLong_FromLong((long) result);
 }

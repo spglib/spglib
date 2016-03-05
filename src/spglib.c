@@ -879,9 +879,7 @@ int spg_relocate_BZ_grid_address(int bz_grid_address[][3],
 /* Niggli */
 /*--------*/
 /* Return 0 if failed */
-int spg_niggli_reduce(double niggli_lattice[3][3],
-		      SPGCONST double lattice[3][3],
-		      const double symprec)
+int spg_niggli_reduce(double lattice[3][3], const double symprec)
 {
   int i, j, succeeded;
   double vals[9];
@@ -897,7 +895,7 @@ int spg_niggli_reduce(double niggli_lattice[3][3],
   if (succeeded) {
     for (i = 0; i < 3; i++) {
       for (j = 0; j < 3; j++) {
-	niggli_lattice[i][j] = vals[i * 3 + j];
+	lattice[i][j] = vals[i * 3 + j];
       }
     }
   }

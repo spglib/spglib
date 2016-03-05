@@ -26,11 +26,13 @@ def show_symmetry(symmetry):
         print "  translation:"
         print "     (%8.5f %8.5f %8.5f)" % (trans[0], trans[1], trans[2])
 
-
-def show_cell(lattice, positions, numbers):
+def show_lattice(lattice):
     print "Basis vectors:"
     for vec, axis in zip(lattice, ("a", "b", "c")):
         print "%s %10.5f %10.5f %10.5f" % (tuple(axis,) + tuple(vec))
+
+def show_cell(lattice, positions, numbers):
+    show_lattice(lattice)
     print "Atomic points:"
     for p, s in zip(positions, numbers):
         print "%2d %10.5f %10.5f %10.5f" % ((s,) + tuple(p))
@@ -99,14 +101,19 @@ rutile_dist = Atoms(symbols=['Si'] * 2 + ['O'] * 4,
 
 a = 3.07
 c = 3.52
-MgB2 = Atoms( symbols=['Mg']+['B']*2,
-              cell=[ ( a, 0, 0 ),
-                     ( -a/2, a/2*np.sqrt(3), 0 ),
-                     ( 0, 0, c ) ],
-              scaled_positions=[ ( 0, 0, 0 ),
-                                 ( 1.0/3, 2.0/3, 0.5 ),
-                                 ( 2.0/3, 1.0/3, 0.5 ) ],
-              pbc=True )
+MgB2 = Atoms(symbols=['Mg']+['B']*2,
+              cell=[(a, 0, 0),
+                    (-a/2, a/2*np.sqrt(3), 0),
+                    (0, 0, c)],
+              scaled_positions=[(0, 0, 0),
+                                (1.0/3, 2.0/3, 0.5),
+                                (2.0/3, 1.0/3, 0.5)],
+              pbc=True)
+
+a = [3., 0., 0.]
+b = [-3.66666667, 3.68178701, 0.]
+c = [-0.66666667, -1.3429469, 1.32364995]
+niggli_lattice = np.array([a, b, c])
 
 # For VASP case
 # import vasp
@@ -124,8 +131,23 @@ print
 print "[get_symmetry]"
 print "  Symmetry operations of Rutile unitcell are:"
 print
-symmetry = spglib.get_symmetry( rutile )
+symmetry = spglib.get_symmetry(rutile)
 show_symmetry(symmetry)
+print
+print "[get_symmetry]"
+print "  Symmetry operations of MgB2 are:"
+print
+symmetry = spglib.get_symmetry(MgB2)
+show_symmetry(symmetry)
+print
+print "[get_symmetry by tuple]"
+print "  Symmetry operations of MgB2 are:"
+print
+symmetry = spglib.get_symmetry((MgB2.get_cell(),
+                                MgB2.get_scaled_positions(),
+                                MgB2.get_atomic_numbers()))
+show_symmetry(symmetry)
+
 
 print
 print "[get_pointgroup]"
@@ -151,13 +173,14 @@ print "  Wyckoff letters of Rutile are: ", dataset['wyckoffs']
 print
 print "[get_symmetry_dataset] ['equivalent_atoms']"
 print "  Mapping to equivalent atoms of Rutile are: "
-for i, x in enumerate( dataset['equivalent_atoms'] ):
-  print "  %d -> %d" % ( i+1, x+1 )
+for i, x in enumerate(dataset['equivalent_atoms']):
+  print "  %d -> %d" % (i + 1, x + 1)
 print
 print "[get_symmetry_dataset] ['rotations'], ['translations']"
 print "  Symmetry operations of Rutile unitcell are:"
-for i, (rot,trans) in enumerate( zip( dataset['rotations'], dataset['translations'] ) ):
-    print "  --------------- %4d ---------------" % (i+1)
+for i, (rot,trans) in enumerate(zip(dataset['rotations'],
+                                    dataset['translations'])):
+    print "  --------------- %4d ---------------" % (i + 1)
     print "  rotation:"
     for x in rot:
         print "     [%2d %2d %2d]" % (x[0], x[1], x[2])
@@ -168,6 +191,12 @@ print
 print "[refine_cell]"
 print " Refine distorted rutile structure"
 lattice, positions, numbers = spglib.refine_cell(rutile_dist, symprec=1e-1)
+show_cell(lattice, positions, numbers)
+print
+
+print "[find_primitive]"
+print " Fine primitive distorted silicon structure"
+lattice, positions, numbers = spglib.find_primitive(silicon_dist, symprec=1e-1)
 show_cell(lattice, positions, numbers)
 print
 
@@ -214,41 +243,52 @@ print
 symmetry = spglib.get_symmetry(silicon)
 print "[get_symmetry]"
 print "  Number of symmetry operations of silicon conventional"
-print "  unit cell is ", len( symmetry['rotations'] ), "(192)."
+print "  unit cell is ", len(symmetry['rotations']), "(192)."
 show_symmetry(symmetry)
 print
 
 symmetry = spglib.get_symmetry_from_database(525)
 print "[get_symmetry_from_database]"
 print "  Number of symmetry operations of silicon conventional"
-print "  unit cell is ", len( symmetry['rotations'] ), "(192)."
+print "  unit cell is ", len(symmetry['rotations']), "(192)."
 show_symmetry(symmetry)
+print
+
+reduced_lattice = spglib.niggli_reduce(niggli_lattice)
+print "[niggli_reduce]"
+print "  Original lattice"
+show_lattice(niggli_lattice)
+print "  Reduced lattice"
+show_lattice(reduced_lattice)
 print
 
 
 
-mapping, grid = spglib.get_ir_reciprocal_mesh( [ 11, 11, 11 ],
-                                               silicon_prim,
-                                               is_shift=[ 0, 0, 0 ] )
-num_ir_kpt = len( np.unique( mapping ) )
+
+
+
+mapping, grid = spglib.get_ir_reciprocal_mesh([11, 11, 11],
+                                              silicon_prim,
+                                              is_shift=[0, 0, 0])
+num_ir_kpt = len(np.unique(mapping))
 print "[get_ir_reciprocal_mesh]"
 print "  Number of irreducible k-points of primitive silicon with"
 print "  11x11x11 Monkhorst-Pack mesh is ", num_ir_kpt, "(56)."
 print
 
-mapping, grid = spglib.get_ir_reciprocal_mesh( [ 8, 8, 8 ],
-                                               rutile,
-                                               is_shift=[ 1, 1, 1 ] )
-num_ir_kpt = len( np.unique( mapping ) )
+mapping, grid = spglib.get_ir_reciprocal_mesh([8, 8, 8],
+                                              rutile,
+                                              is_shift=[1, 1, 1])
+num_ir_kpt = len(np.unique(mapping))
 print "[get_ir_reciprocal_mesh]"
 print "  Number of irreducible k-points of Rutile with"
 print "  8x8x8 Monkhorst-Pack mesh is ", num_ir_kpt, "(40)."
 print
 
-mapping, grid = spglib.get_ir_reciprocal_mesh( [ 9, 9, 8 ],
-                                               MgB2,
-                                               is_shift=[ 0, 0, 1 ] )
-num_ir_kpt = len( np.unique( mapping ) )
+mapping, grid = spglib.get_ir_reciprocal_mesh([9, 9, 8],
+                                              MgB2,
+                                              is_shift=[0, 0, 1])
+num_ir_kpt = len(np.unique(mapping))
 print "[get_ir_reciprocal_mesh]"
 print "  Number of irreducible k-points of MgB2 with"
 print "  9x9x8 Monkhorst-Pack mesh is ", num_ir_kpt, "(48)."

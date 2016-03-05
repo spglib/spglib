@@ -473,9 +473,7 @@ void spg_get_neighboring_grid_points(int relative_grid_points[],
 /* Niggli */
 /*--------*/
 /* Return 0 if failed */
-int spg_niggli_reduce(double niggli_lattice[3][3],
-		      SPGCONST double lattice[3][3],
-		      const double symprec);
+int spg_niggli_reduce(double lattice[3][3], const double symprec);
 
 #endif
 
