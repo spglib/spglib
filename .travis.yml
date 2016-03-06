@@ -33,6 +33,7 @@ install:
     - ./configure
     - make
     - cd python
+    - git describe --tags --dirty
     - ./get_nanoversion.sh
     - cat __nanoversion__.txt
     - ln -s ../src .
