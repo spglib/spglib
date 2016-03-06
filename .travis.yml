@@ -41,9 +41,7 @@ install:
 script:
     - cd test
     - python test_spglib.py
-
-before_deploy:
-    - cd python
+    - cd ..
 
 deploy:
   skip_cleanup: true
