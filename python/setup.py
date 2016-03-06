@@ -34,18 +34,27 @@ extension = Extension('spglib._spglib',
                       extra_link_args=extra_link_args)
 
 version_nums = [None, None, None]
-with open(include_dirs[0] + "/version.h") as w:
+with open("../src/version.h") as w:
     for line in w:
         for i, chars in enumerate(("MAJOR", "MINOR", "MICRO")):
             if chars in line:
                 version_nums[i] = int(line.split()[2])
+
+with open('__nanoversion__.txt') as nv:
+    nanoversion=''
+    for line in nv:
+        nanoversion='%.4s' % (line.strip())
+        break
+    if len(nanoversion)>0 :
+        nanoversion='.'+nanoversion
+        
 
 if None in version_nums:
     print("Failed to get version number in setup.py.")
     raise
 
 setup(name='spglib',
-      version="%d.%d.%d" % tuple(version_nums),
+      version=("%d.%d.%d" % tuple(version_nums))+nanoversion,
       description='This is the spglib module.',
       author='Atsushi Togo',
       author_email='atz.togo@gmail.com',
@@ -55,5 +64,4 @@ setup(name='spglib',
       provides = ['spglib'],
       platforms = ['all'],
       ext_modules = [extension],
-      include_package_data = True,
       )
