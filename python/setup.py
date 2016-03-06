@@ -46,7 +46,7 @@ with open('__nanoversion__.txt') as nv:
         nanoversion='%.4s' % (line.strip())
         break
     if len(nanoversion)>0 :
-        nanoversion='+'+nanoversion
+        nanoversion='.'+nanoversion
         
 
 if None in version_nums:
