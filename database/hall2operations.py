@@ -135,7 +135,7 @@ class HallSymbol:
             G2_R, G2_T = self.__get_group( r, t )
             G_R, G_T = self.__multiply_groups( G_R, G_T, G2_R, G2_T )
 
-        if not self.V is None:
+        if self.V is not None:
             G_T = self.__change_of_basis( G_R, G_T )
 
         G_R_conventional = []
