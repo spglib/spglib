@@ -16,12 +16,12 @@ parser.add_option("-q", "--qpoints", dest="qpoints",
                   type="string",help="Stabilizers")
 (options, args) = parser.parse_args()
 
-if options.mesh == None:
+if options.mesh is None:
   mesh = [4, 4, 4]
 else:
   mesh = [int( x ) for x in options.mesh.split()]
 
-if options.qpoints == None:
+if options.qpoints is None:
   qpoints = np.array([[0, 0, 0]], dtype=float)
 else:
   qpoints = np.array([float(x) for x in options.qpoints.split()]).reshape(-1, 3)
