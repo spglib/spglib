@@ -135,7 +135,7 @@ class HallSymbol:
             G2_R, G2_T = self.__get_group( r, t )
             G_R, G_T = self.__multiply_groups( G_R, G_T, G2_R, G2_T )
 
-        if not self.V == None:
+        if not self.V is None:
             G_T = self.__change_of_basis( G_R, G_T )
 
         G_R_conventional = []
@@ -205,7 +205,7 @@ class HallSymbol:
             R.append( rot )
 
             trans = np.zeros( 3, dtype=float )
-            if N[3] != None:
+            if N[3] is not None:
                 for t in N[3]:
                     if t == '1' or t == '2' or t == '3' or t == '4' or t == '5':
                         trans_screw = float( t ) / int( N[1] )
@@ -270,7 +270,7 @@ class HallSymbol:
                     R = '2pp'
                     A = 'z'
                     N = N[2:]
-            if i == 1 and A == None:
+            if i == 1 and A is None:
                 if precededN == 2 or precededN == 4:   # 2x
                     R = '2'
                     A = 'x'
@@ -290,7 +290,7 @@ class HallSymbol:
                     A = '*'
                     N = N[2:]
 
-        if A == None:
+        if A is None:
             R = N[0]
             N = N[1:]
             if len( N ) > 0 and i == 0:
