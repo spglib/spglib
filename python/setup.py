@@ -3,7 +3,8 @@ from distutils.core import setup, Extension
 from numpy.distutils.misc_util import get_numpy_include_dirs
 
 include_dirs = ['../src']
-sources = ['../src/cell.c',
+sources = ['../src/arithmetic.c',
+           '../src/cell.c',
            '../src/hall_symbol.c',
            '../src/kgrid.c',
            '../src/kpoint.c',
@@ -46,12 +47,12 @@ with open("../src/version.h") as w:
                 version_nums[i] = int(line.split()[2])
 
 with open('__nanoversion__.txt') as nv:
-    nanoversion=''
+    nanoversion = ''
     for line in nv:
-        nanoversion='%.4s' % (line.strip())
+        nanoversion = '%.4s' % (line.strip())
         break
-    if len(nanoversion)>0 :
-        nanoversion='.'+nanoversion
+    if len(nanoversion) > 0:
+        nanoversion = '.' + nanoversion
         
 
 if None in version_nums:
@@ -65,8 +66,7 @@ setup(name='spglib',
       author_email='atz.togo@gmail.com',
       url='http://spglib.sourceforge.net/',
       packages=['spglib'],
-      requires = ['numpy'],
-      provides = ['spglib'],
-      platforms = ['all'],
-      ext_modules = [extension],
-      )
+      requires=['numpy'],
+      provides=['spglib'],
+      platforms=['all'],
+      ext_modules=[extension])
