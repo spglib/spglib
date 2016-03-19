@@ -9,13 +9,6 @@ python:
 
 cache: apt
 
-addons:
-  apt:
-    packages:
-    - libopenblas-dev
-    - liblapack-dev
-    - gfortran
-
 before_install:
     - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
     - bash miniconda.sh -b -p $HOME/miniconda
@@ -26,12 +19,12 @@ install:
     - conda install --yes python=$TRAVIS_PYTHON_VERSION pip numpy
     - aclocal
     - autoheader
-    - libtoolize # or glibtoolize on mac
+    - libtoolize
     - touch INSTALL NEWS README AUTHORS
     - automake -acf
     - autoconf
     - ./configure
-    - make
+    - make check # test in C
     - cd python
     - git describe --tags --dirty
     - ./get_nanoversion.sh
