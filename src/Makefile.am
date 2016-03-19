@@ -49,5 +49,6 @@ libsymspg_la_LIBADD = -lm
 check_PROGRAMS = spglib_test
 spglib_test_SOURCES = test.c $(spglib_c) $(spglib_h)
 spglib_test_CFLAGS = $(AM_CFLAGS)
+spglib_test_LDADD = -lm
 #AM_DEFAULT_SOURCE_EXT = .c
 TESTS = spglib_test
