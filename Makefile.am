@@ -6,3 +6,6 @@ EXTRA_DIST += \
   example \
   python \
   ruby
+
+clean-local:
+	-rm -rf src/spglib_test.dSYM

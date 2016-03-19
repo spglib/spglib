@@ -3,8 +3,7 @@ from distutils.core import setup, Extension
 from numpy.distutils.misc_util import get_numpy_include_dirs
 
 include_dirs = ['../src']
-sources = ['../src/arithmetic.c',
-           '../src/cell.c',
+sources = ['../src/cell.c',
            '../src/hall_symbol.c',
            '../src/kgrid.c',
            '../src/kpoint.c',

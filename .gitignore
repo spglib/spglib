@@ -75,6 +75,7 @@ src/libsymspg.la
 stamp-h1
 autoscan.log
 configure.scan
+test-driver
 
 example/a.out
 example/defs_basis.mod
