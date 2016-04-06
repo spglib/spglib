@@ -1,7 +1,10 @@
 Spglib
 ======
 
-Spglib is a C library for finding and handling crystal symmetries.
+Spglib is a library for finding and handling crystal symmetries
+written in C.
+
+Spglib for python is found at :ref:`python_spglib`.
 
 `Spglib-1.7.4.x
 <https://sourceforge.net/projects/spglib/files/spglib/spglib-1.7/>`_. is

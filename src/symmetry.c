@@ -706,6 +706,8 @@ static PointSymmetry get_lattice_symmetry(SPGCONST double cell_lattice[3][3],
 
   debug_print("get_lattice_symmetry:\n");
 
+  lattice_sym.size = 0;
+
   if (! lat_smallest_lattice_vector(min_lattice,
 				    cell_lattice,
 				    symprec)) {
@@ -727,15 +729,15 @@ static PointSymmetry get_lattice_symmetry(SPGCONST double cell_lattice[3][3],
 	mat_get_metric(metric, lattice);
 	
 	if (is_identity_metric(metric, metric_orig, symprec)) {
+	  if (num_sym > 47) {
+	    warning_print("spglib: Too many lattice symmetries was found.\n");
+	    warning_print("        Tolerance may be too large ");
+	    warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+	    goto err;
+	  }
+
 	  mat_copy_matrix_i3(lattice_sym.rot[num_sym], axes);
 	  num_sym++;
-	}
-	  
-	if (num_sym > 48) {
-	  warning_print("spglib: Too many lattice symmetries was found.\n");
-	  warning_print("        Tolerance may be too large ");
-	  warning_print("(line %d, %s).\n", __LINE__, __FILE__);
-	  goto err;
 	}
       }
     }
@@ -747,7 +749,6 @@ static PointSymmetry get_lattice_symmetry(SPGCONST double cell_lattice[3][3],
 				 min_lattice);
   
  err:
-  lattice_sym.size = 0;
   return lattice_sym;
 }
 
@@ -824,6 +825,8 @@ transform_pointsymmetry(SPGCONST PointSymmetry * lat_sym_orig,
   double trans_mat[3][3], inv_mat[3][3], drot[3][3];
   PointSymmetry lat_sym_new;
 
+  lat_sym_new.size = 0;
+
   mat_inverse_matrix_d3(inv_mat, original_lattice, 0);
   mat_multiply_matrix_d3(trans_mat, inv_mat, new_lattice);
 
@@ -856,7 +859,6 @@ transform_pointsymmetry(SPGCONST PointSymmetry * lat_sym_orig,
   return lat_sym_new;
 
  err:
-  lat_sym_new.size = 0;
   return lat_sym_new;
 }
 

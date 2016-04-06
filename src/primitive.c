@@ -94,6 +94,10 @@ Primitive * prm_alloc_primitive(const int size)
     }
   }
 
+  for (i = 0; i < size; i++) {
+    primitive->mapping_table[i] = -1;
+  }
+
   return primitive;
 }
 
@@ -210,7 +214,7 @@ static Cell * get_cell_with_smallest_lattice(SPGCONST Cell * cell,
     mat_multiply_matrix_vector_d3(smallest_cell->position[i],
 				  trans_mat, cell->position[i]);
     for (j = 0; j < 3; j++) {
-      cell->position[i][j] = mat_Dmod1(cell->position[i][j]);
+      smallest_cell->position[i][j] = mat_Dmod1(smallest_cell->position[i][j]);
     }
   }
 

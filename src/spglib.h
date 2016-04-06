@@ -245,12 +245,6 @@ int spgat_get_multiplicity(SPGCONST double lattice[3][3],
 			   const double symprec,
 			   const double angle_tolerance);
 
-/* Considering periodicity of crystal, one of the possible smallest */
-/* lattice is searched. The lattice is stored in ``smallest_lattice``. */
-int spg_get_smallest_lattice(double smallest_lattice[3][3],
-			     SPGCONST double lattice[3][3],
-			     const double symprec);
-
 /* Space group is found in international table symbol (``symbol``) and */
 /* number (return value). 0 is returned when it fails. */
 int spg_get_international(char symbol[11],
@@ -475,26 +469,11 @@ void spg_get_neighboring_grid_points(int relative_grid_points[],
 				     SPGCONST int bz_grid_address[][3],
 				     const int bz_map[]);
 
-/* /\*--------------------*\/ */
-/* /\* tetrahedron method *\/ */
-/* /\*--------------------*\/ */
-/* void */
-/* spg_get_tetrahedra_relative_grid_address(int relative_grid_address[24][4][3], */
-/* 					 SPGCONST double rec_lattice[3][3]); */
-/* void */
-/* spg_get_all_tetrahedra_relative_grid_address */
-/* (int relative_grid_address[4][24][4][3]); */
-/* double */
-/* spg_get_tetrahedra_integration_weight(const double omega, */
-/* 				      SPGCONST double tetrahedra_omegas[24][4], */
-/* 				      const char function); */
-/* void */
-/* spg_get_tetrahedra_integration_weight_at_omegas */
-/* (double integration_weights[], */
-/*  const int num_omegas, */
-/*  const double omegas[], */
-/*  SPGCONST double tetrahedra_omegas[24][4], */
-/*  const char function); */
+/*--------*/
+/* Niggli */
+/*--------*/
+/* Return 0 if failed */
+int spg_niggli_reduce(double lattice[3][3], const double symprec);
 
 #endif
 
