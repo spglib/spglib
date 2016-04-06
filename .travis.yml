@@ -27,7 +27,7 @@ install:
     - make check # test in C
     - cd python
     - git describe --tags --dirty
-    - ./get_nanoversion.sh
+    - git describe --tags --dirty | sed -e 's/\([.0-9]*\)-\(.*\)-g.*/\2/' -e 's/^v//g' > __nanoversion__.txt
     - cat __nanoversion__.txt
     - ln -s ../src .
     - python setup.py install 
