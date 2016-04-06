@@ -103,8 +103,3 @@ These functions are called by the same way with an additional argument
 of 'const double angle_tolerance' in degrees. By specifying a negative
 value, the behavior becomes the same as usual functions. The default
 value of ``angle_tolerance`` is a negative value.
-
-.. |sflogo| image:: http://sflogo.sourceforge.net/sflogo.php?group_id=161614&type=1
-            :target: http://sourceforge.net
-
-|sflogo|

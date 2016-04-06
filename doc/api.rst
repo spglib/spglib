@@ -461,20 +461,6 @@ group operations are stored in ``rotations`` and ``translations``.
 
 |
   
-``spg_get_smallest_lattice``
------------------------------
-
-::
-
-  int spg_get_smallest_lattice(double smallest_lattice[3][3],
-  			       const double lattice[3][3],
-			       const double symprec)
-
-Considering periodicity of crystal, one of the possible smallest lattice is
-searched. The lattice is stored in ``smallest_lattice``.
-
-|
-
 ``spg_get_multiplicity``
 -------------------------
 
@@ -600,8 +586,3 @@ are returned as the return value.
 This function can be used to obtain all mesh grid points by setting
 ``num_rot = 1``, ``rotations = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}}``,
 ``num_q = 1``, and ``qpoints = {0, 0, 0}``.
-
-.. |sflogo| image:: http://sflogo.sourceforge.net/sflogo.php?group_id=161614&type=1
-            :target: http://sourceforge.net
-
-|sflogo|

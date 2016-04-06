@@ -6,11 +6,7 @@ written in C.
 
 Spglib for python is found at :ref:`python_spglib`.
 
-`Spglib-1.7.4.x
-<https://sourceforge.net/projects/spglib/files/spglib/spglib-1.7/>`_. is
-the stable release.
-
-`Spglib-1.9.0
+`Spglib-1.9.1
 <https://sourceforge.net/projects/spglib/files/spglib/spglib-1.9/>`_
 is the latest release. Updates and changes of API and definitions of
 variables can happen againt previous versions and they are written in
@@ -60,8 +56,8 @@ Install
 
 2. Unzip, configure, and make::
 
-   % tar xvfz spglib-1.7.4.tar.gz
-   % cd spglib-1.7.4
+   % tar xvfz spglib-1.9.1.tar.gz
+   % cd spglib-1.9.1
    % ./configure
    % make
 
@@ -168,9 +164,3 @@ Acknowledgments
 Spglib project acknowledges Yusuke Seto for the Crystallographic
 database, Dimitar Pashov for the fortran interface, Paweł T. Jochym
 for python packages.
-
-
-.. |sflogo| image:: http://sflogo.sourceforge.net/sflogo.php?group_id=161614&type=1
-            :target: http://sourceforge.net
-
-|sflogo|
