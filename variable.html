@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Important variables &mdash; spglib 1.9.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootswatch-3.3.4/cosmo/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.9.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="spglib 1.9.1 documentation" href="index.html" />
+    <link rel="next" title="Spglib for python" href="python-spglib.html" />
+    <link rel="prev" title="API" href="api.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          spglib</a>
+        <span class="navbar-text navbar-version pull-left"><b>1.9.1</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="api.html">API</a></li>
+                <li><a href="definition.html">Definitions</a></li>
+                <li><a href="#">Variables</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="definition.html">Definitions and conventions used in spglib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Important variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python-spglib.html">Spglib for python</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Important variables</a><ul>
+<li><a class="reference internal" href="#lattice"><code class="docutils literal"><span class="pre">lattice</span></code></a></li>
+<li><a class="reference internal" href="#position"><code class="docutils literal"><span class="pre">position</span></code></a></li>
+<li><a class="reference internal" href="#types"><code class="docutils literal"><span class="pre">types</span></code></a></li>
+<li><a class="reference internal" href="#rotation"><code class="docutils literal"><span class="pre">rotation</span></code></a></li>
+<li><a class="reference internal" href="#translation"><code class="docutils literal"><span class="pre">translation</span></code></a></li>
+<li><a class="reference internal" href="#symprec"><code class="docutils literal"><span class="pre">symprec</span></code></a></li>
+<li><a class="reference internal" href="#angle-tolerance"><code class="docutils literal"><span class="pre">angle_tolerance</span></code></a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="api.html" title="Previous Chapter: API"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; API</span>
+    </a>
+  </li>
+  <li>
+    <a href="python-spglib.html" title="Next Chapter: Spglib for python"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Spglib for py... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="important-variables">
+<h1>Important variables<a class="headerlink" href="#important-variables" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="lattice">
+<h2><code class="docutils literal"><span class="pre">lattice</span></code><a class="headerlink" href="#lattice" title="Permalink to this headline">¶</a></h2>
+<p>Basis vectors (in Cartesian)</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">[</span> <span class="p">[</span> <span class="n">a_x</span><span class="p">,</span> <span class="n">b_x</span><span class="p">,</span> <span class="n">c_x</span> <span class="p">],</span>
+  <span class="p">[</span> <span class="n">a_y</span><span class="p">,</span> <span class="n">b_y</span><span class="p">,</span> <span class="n">c_y</span> <span class="p">],</span>
+  <span class="p">[</span> <span class="n">a_z</span><span class="p">,</span> <span class="n">b_z</span><span class="p">,</span> <span class="n">c_z</span> <span class="p">]</span> <span class="p">]</span>
+</pre></div>
+</div>
+<p>Cartesian position <span class="math">\mathbf{x}_\mathrm{Cart}</span> is obtained by</p>
+<div class="math">
+<p><span class="math">\mathbf{x}_\mathrm{Cart} = \mathrm{L}\cdot\mathbf{x}_\mathrm{frac}</span></p>
+</div><p>where <span class="math">\mathrm{L}</span> is the basis vectors defined above and is
+<span class="math">\mathrm{L}=(\mathbf{a},\mathbf{b},\mathbf{c})</span>, and
+<span class="math">\mathbf{x}_\mathrm{frac}</span> is the atomic position in fractional
+coordinates given below.</p>
+</div>
+<div class="section" id="position">
+<h2><code class="docutils literal"><span class="pre">position</span></code><a class="headerlink" href="#position" title="Permalink to this headline">¶</a></h2>
+<p>Atomic points (in fractional coordinates with respect to basis vectors)</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">[</span> <span class="p">[</span> <span class="n">x1_a</span><span class="p">,</span> <span class="n">x1_b</span><span class="p">,</span> <span class="n">x1_c</span> <span class="p">],</span>
+  <span class="p">[</span> <span class="n">x2_a</span><span class="p">,</span> <span class="n">x2_b</span><span class="p">,</span> <span class="n">x2_c</span> <span class="p">],</span>
+  <span class="p">[</span> <span class="n">x3_a</span><span class="p">,</span> <span class="n">x3_b</span><span class="p">,</span> <span class="n">x3_c</span> <span class="p">],</span>
+  <span class="o">...</span>                   <span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="types">
+<h2><code class="docutils literal"><span class="pre">types</span></code><a class="headerlink" href="#types" title="Permalink to this headline">¶</a></h2>
+<p>Atomic species are differenciated by integers. The nubmers are just
+used to distinguishes atoms, and is not releated to atomic numbers.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">[</span> <span class="n">type_1</span><span class="p">,</span> <span class="n">type_2</span><span class="p">,</span> <span class="n">type_3</span><span class="p">,</span> <span class="o">...</span> <span class="p">]</span>
+</pre></div>
+</div>
+<p>The number of elements is same as the number of atoms.</p>
+</div>
+<div class="section" id="rotation">
+<h2><code class="docutils literal"><span class="pre">rotation</span></code><a class="headerlink" href="#rotation" title="Permalink to this headline">¶</a></h2>
+<p>Rotation matricies (ingeger) of symmetry operations.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">[</span> <span class="p">[</span> <span class="n">r_aa</span><span class="p">,</span> <span class="n">r_ab</span><span class="p">,</span> <span class="n">r_ac</span> <span class="p">],</span>
+  <span class="p">[</span> <span class="n">r_ba</span><span class="p">,</span> <span class="n">r_bb</span><span class="p">,</span> <span class="n">r_bc</span> <span class="p">],</span>
+  <span class="p">[</span> <span class="n">r_ca</span><span class="p">,</span> <span class="n">r_cb</span><span class="p">,</span> <span class="n">r_cc</span> <span class="p">]</span> <span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="translation">
+<h2><code class="docutils literal"><span class="pre">translation</span></code><a class="headerlink" href="#translation" title="Permalink to this headline">¶</a></h2>
+<p>Translation vectors corresponding to symmetry operations in fractional
+coordinates.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">[</span> <span class="n">t_a</span><span class="p">,</span> <span class="n">t_b</span><span class="p">,</span> <span class="n">t_c</span> <span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="symprec">
+<h2><code class="docutils literal"><span class="pre">symprec</span></code><a class="headerlink" href="#symprec" title="Permalink to this headline">¶</a></h2>
+<p>Tolerance of distance between atomic positions and between lengths of
+lattice vectors to be tolerated in the symmetry finding. The angle
+distortion between lattice vectors is converted to a length and
+compared with this distance tolerance. If the explicit angle tolerance
+is expected, see <code class="docutils literal"><span class="pre">angle_tolerance</span></code>.</p>
+</div>
+<div class="section" id="angle-tolerance">
+<h2><code class="docutils literal"><span class="pre">angle_tolerance</span></code><a class="headerlink" href="#angle-tolerance" title="Permalink to this headline">¶</a></h2>
+<p><strong>Experimental</strong></p>
+<p>Tolerance of angle between lattice vectors in degrees to be tolerated
+in the symmetry finding. To use angle tolerance, another set of
+functions are prepared as follows</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">spgat_get_dataset</span>
+<span class="n">spgat_get_symmetry</span>
+<span class="n">spgat_get_symmetry_with_collinear_spin</span>
+<span class="n">spgat_get_multiplicity</span>
+<span class="n">spgat_find_primitive</span>
+<span class="n">spgat_get_international</span>
+<span class="n">spgat_get_schoenflies</span>
+<span class="n">spgat_refine_cell</span>
+</pre></div>
+</div>
+<p>These functions are called by the same way with an additional argument
+of &#8216;const double angle_tolerance&#8217; in degrees. By specifying a negative
+value, the behavior becomes the same as usual functions. The default
+value of <code class="docutils literal"><span class="pre">angle_tolerance</span></code> is a negative value.</p>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+<div id="sourcelink">
+  <a href="_sources/variable.txt"
+     rel="nofollow">Source</a>
+</div>
+      
+    </p>
+    <p>
+        &copy; Copyright 2009, Atsushi Togo.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

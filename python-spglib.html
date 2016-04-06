@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Spglib for python &mdash; spglib 1.9.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootswatch-3.3.4/cosmo/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.9.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="spglib 1.9.1 documentation" href="index.html" />
+    <link rel="prev" title="Important variables" href="variable.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          spglib</a>
+        <span class="navbar-text navbar-version pull-left"><b>1.9.1</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="api.html">API</a></li>
+                <li><a href="definition.html">Definitions</a></li>
+                <li><a href="variable.html">Variables</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="definition.html">Definitions and conventions used in spglib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="variable.html">Important variables</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Spglib for python</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Spglib for python</a><ul>
+<li><a class="reference internal" href="#installation">Installation</a><ul>
+<li><a class="reference internal" href="#using-package-distribution-service">Using package distribution service</a></li>
+<li><a class="reference internal" href="#building-from-setup-py">Building from setup.py</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#test">Test</a></li>
+<li><a class="reference internal" href="#how-to-import-spglib-module">How to import spglib module</a></li>
+<li><a class="reference internal" href="#version-number">Version number</a></li>
+<li><a class="reference internal" href="#example">Example</a></li>
+<li><a class="reference internal" href="#variables">Variables</a><ul>
+<li><a class="reference internal" href="#cristal-structure-atoms">Cristal structure (<code class="docutils literal"><span class="pre">atoms</span></code>)</a></li>
+<li><a class="reference internal" href="#symmetry-tolerance-symprec">Symmetry tolerance (<code class="docutils literal"><span class="pre">symprec</span></code>)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#methods">Methods</a><ul>
+<li><a class="reference internal" href="#get-version"><code class="docutils literal"><span class="pre">get_version</span></code></a></li>
+<li><a class="reference internal" href="#get-spacegroup"><code class="docutils literal"><span class="pre">get_spacegroup</span></code></a></li>
+<li><a class="reference internal" href="#get-symmetry"><code class="docutils literal"><span class="pre">get_symmetry</span></code></a></li>
+<li><a class="reference internal" href="#refine-cell"><code class="docutils literal"><span class="pre">refine_cell</span></code></a></li>
+<li><a class="reference internal" href="#find-primitive"><code class="docutils literal"><span class="pre">find_primitive</span></code></a></li>
+<li><a class="reference internal" href="#standardize-cell"><code class="docutils literal"><span class="pre">standardize_cell</span></code></a></li>
+<li><a class="reference internal" href="#get-symmetry-dataset"><code class="docutils literal"><span class="pre">get_symmetry_dataset</span></code></a></li>
+<li><a class="reference internal" href="#get-symmetry-from-database"><code class="docutils literal"><span class="pre">get_symmetry_from_database</span></code></a></li>
+<li><a class="reference internal" href="#get-ir-reciprocal-mesh"><code class="docutils literal"><span class="pre">get_ir_reciprocal_mesh</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="variable.html" title="Previous Chapter: Important variables"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Important var...</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="spglib-for-python">
+<span id="python-spglib"></span><h1>Spglib for python<a class="headerlink" href="#spglib-for-python" title="Permalink to this headline">¶</a></h1>
+<p>This is written to work with Atomistic Simulation Environment (ASE)
+Atoms class object. An alternative Atoms class (<a class="reference external" href="https://github.com/atztogo/spglib/blob/master/python/examples/atoms.py">atoms.py</a>)
+that contains minimum
+set of methods is prepared in the <a class="reference external" href="https://github.com/atztogo/spglib/tree/master/python/examples">examples</a> directory.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>Full source codes, examples, and the test are downloaded <a class="reference external" href="https://sourceforge.net/project/showfiles.php?group_id=215020">here</a>.</p>
+<div class="section" id="using-package-distribution-service">
+<h3>Using package distribution service<a class="headerlink" href="#using-package-distribution-service" title="Permalink to this headline">¶</a></h3>
+<p>The easiest way to install python-spglib is to use the pypi package,
+for which numpy is required to be installed before the
+installation. A command to install spglib is:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">spglib</span>
+</pre></div>
+</div>
+<p>Previous versions &lt; 1.8.x are installed by:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">pyspglib</span>
+</pre></div>
+</div>
+<p>Conda is another choice:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">conda</span> <span class="n">install</span> <span class="o">-</span><span class="n">c</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">conda</span><span class="o">.</span><span class="n">anaconda</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">jochym</span> <span class="n">spglib</span>
+</pre></div>
+</div>
+<p>These packages are made by Paweł T. Jochym.</p>
+</div>
+<div class="section" id="building-from-setup-py">
+<h3>Building from setup.py<a class="headerlink" href="#building-from-setup-py" title="Permalink to this headline">¶</a></h3>
+<p>To manually install spglib using <code class="docutils literal"><span class="pre">setup.py</span></code>, python header files
+(python-dev), gcc, and numpy are required before the build. The
+installation steps are shown as follows:</p>
+<ol class="arabic">
+<li><p class="first">Go to the <code class="file docutils literal"><span class="pre">python</span></code> directory</p>
+</li>
+<li><p class="first">Type the command:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span> <span class="o">--</span><span class="n">home</span><span class="o">=&lt;</span><span class="n">my</span><span class="o">-</span><span class="n">directory</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>The <code class="file docutils literal"><em><span class="pre">&lt;my-directory&gt;</span></em></code> is possibly current directory, <code class="file docutils literal"><span class="pre">.</span></code>
+or maybe:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span> <span class="o">--</span><span class="n">user</span>
+</pre></div>
+</div>
+<p>to use the user scheme (see the python document.)</p>
+</li>
+<li><p class="first">Put <code class="file docutils literal"><span class="pre">./lib/python</span></code> path into <span class="target" id="index-0"></span><code class="xref std std-envvar docutils literal"><span class="pre">$PYTHONPATH</span></code>, e.g., in your
+.washrag.</p>
+</li>
+</ol>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+</div>
+<div class="section" id="test">
+<h2>Test<a class="headerlink" href="#test" title="Permalink to this headline">¶</a></h2>
+<p>The test script <code class="file docutils literal"><span class="pre">test_spglib.py</span></code> is found in <code class="file docutils literal"><span class="pre">python/test</span></code>
+directory. Got to this directory and run this script. It will be like below:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">python</span> <span class="n">test_spglib</span><span class="o">.</span><span class="n">py</span>
+<span class="n">test_get_symmetry_dataset</span> <span class="p">(</span><span class="n">__main__</span><span class="o">.</span><span class="n">TestSpglib</span><span class="p">)</span> <span class="o">...</span> <span class="n">ok</span>
+
+<span class="o">----------------------------------------------------------------------</span>
+<span class="n">Ran</span> <span class="mi">1</span> <span class="n">test</span> <span class="ow">in</span> <span class="mf">2.132</span><span class="n">s</span>
+
+<span class="n">OK</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="how-to-import-spglib-module">
+<h2>How to import spglib module<a class="headerlink" href="#how-to-import-spglib-module" title="Permalink to this headline">¶</a></h2>
+<p><strong>Change in version 1.9.0!</strong></p>
+<p>For versions 1.9.x or later:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">spglib</span>
+</pre></div>
+</div>
+<p>For versions 1.8.x or before:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyspglib</span> <span class="k">import</span> <span class="n">spglib</span>
+</pre></div>
+</div>
+<p>If the version is not sure:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">spglib</span> <span class="k">as</span> <span class="nn">spg</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">pyspglib</span> <span class="k">import</span> <span class="n">spglib</span> <span class="k">as</span> <span class="n">spg</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="version-number">
+<h2>Version number<a class="headerlink" href="#version-number" title="Permalink to this headline">¶</a></h2>
+<p>In version 1.8.3 or later, the version number is obtained by
+<code class="docutils literal"><span class="pre">spglib.__version__</span></code> or <a class="reference internal" href="#method-get-version"><span class="std std-ref">get_version</span></a>.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<p>Examples are found in <a class="reference external" href="https://github.com/atztogo/spglib/tree/master/python/examples">examples</a>
+directory. In this directory, an alternative Atoms class in <a class="reference external" href="https://github.com/atztogo/spglib/blob/master/python/examples/atoms.py">atoms.py</a>
+can be used instead of the <code class="docutils literal"><span class="pre">Atoms</span></code> class in ASE for spglib.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="variables">
+<h2>Variables<a class="headerlink" href="#variables" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="cristal-structure-atoms">
+<h3>Cristal structure (<code class="docutils literal"><span class="pre">atoms</span></code>)<a class="headerlink" href="#cristal-structure-atoms" title="Permalink to this headline">¶</a></h3>
+<p>Crsytal structure information is given either in an <strong>Atoms object</strong>
+or a <strong>tuple</strong>, where the tuple is supported at version 1.9.1 or
+later. In the case given by a tuple, it has to follow the format as
+written below.</p>
+<p>The elements of a tuple are <code class="docutils literal"><span class="pre">atoms</span> <span class="pre">=</span> <span class="pre">(lattice,</span> <span class="pre">positions,</span> <span class="pre">numbers,</span>
+<span class="pre">magmoms)</span></code> where <code class="docutils literal"><span class="pre">magmoms</span></code> is optional, three elements of the tuple
+are accepted.</p>
+<p>Lattice parameters <code class="docutils literal"><span class="pre">lattice</span></code> are given by a 3x3 matrix with floating
+point values. Fractional atomic positions <code class="docutils literal"><span class="pre">positions</span></code> are given by a
+Nx3 matrix with floating point values, where N is the number of
+atoms. Numbers to distinguish atomic species <code class="docutils literal"><span class="pre">numbers</span></code> are given
+by a list of N integers. Collinear magnetic moments <code class="docutils literal"><span class="pre">magmoms</span></code> are
+given by a list of N floating point values.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">lattice</span> <span class="o">=</span> <span class="p">[[</span><span class="n">a_x</span><span class="p">,</span> <span class="n">a_y</span><span class="p">,</span> <span class="n">a_z</span><span class="p">],</span>
+           <span class="p">[</span><span class="n">b_x</span><span class="p">,</span> <span class="n">b_y</span><span class="p">,</span> <span class="n">b_z</span><span class="p">],</span>
+           <span class="p">[</span><span class="n">c_x</span><span class="p">,</span> <span class="n">c_y</span><span class="p">,</span> <span class="n">c_z</span><span class="p">]]</span>
+<span class="n">positions</span> <span class="o">=</span> <span class="p">[[</span><span class="n">a_1</span><span class="p">,</span> <span class="n">b_1</span><span class="p">,</span> <span class="n">c_1</span><span class="p">],</span>
+             <span class="p">[</span><span class="n">a_2</span><span class="p">,</span> <span class="n">b_2</span><span class="p">,</span> <span class="n">c_2</span><span class="p">],</span>
+             <span class="p">[</span><span class="n">a_3</span><span class="p">,</span> <span class="n">b_3</span><span class="p">,</span> <span class="n">c_3</span><span class="p">],</span>
+             <span class="o">...</span><span class="p">]</span>
+<span class="n">numbers</span> <span class="o">=</span> <span class="p">[</span><span class="n">n_1</span><span class="p">,</span> <span class="n">n_2</span><span class="p">,</span> <span class="n">n_3</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+<span class="n">magmoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">m_1</span><span class="p">,</span> <span class="n">m_2</span><span class="p">,</span> <span class="n">m_3</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="symmetry-tolerance-symprec">
+<h3>Symmetry tolerance (<code class="docutils literal"><span class="pre">symprec</span></code>)<a class="headerlink" href="#symmetry-tolerance-symprec" title="Permalink to this headline">¶</a></h3>
+<p>Distance tolerance in Cartesian coordinates to find crystal symmetry.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+</div>
+<div class="section" id="methods">
+<h2>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="get-version">
+<span id="method-get-version"></span><h3><code class="docutils literal"><span class="pre">get_version</span></code><a class="headerlink" href="#get-version" title="Permalink to this headline">¶</a></h3>
+<p><strong>New in version 1.8.3</strong></p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">version</span> <span class="o">=</span> <span class="n">get_version</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This returns version number of spglib by tuple with three numbers.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="get-spacegroup">
+<h3><code class="docutils literal"><span class="pre">get_spacegroup</span></code><a class="headerlink" href="#get-spacegroup" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">spacegroup</span> <span class="o">=</span> <span class="n">get_spacegroup</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>International space group symbol and the number are obtained as a
+string.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="get-symmetry">
+<h3><code class="docutils literal"><span class="pre">get_symmetry</span></code><a class="headerlink" href="#get-symmetry" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">symmetry</span> <span class="o">=</span> <span class="n">get_symmetry</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Symmetry operations are obtained as a dictionary. The key <code class="docutils literal"><span class="pre">rotation</span></code>
+contains a numpy array of integer, which is &#8220;number of symmetry
+operations&#8221; x &#8220;3x3 matrices&#8221;. The key <code class="docutils literal"><span class="pre">translation</span></code> contains a numpy
+array of float, which is &#8220;number of symmetry operations&#8221; x
+&#8220;vectors&#8221;. The orders of the rotation matrices and the translation
+vectors correspond with each other, e.g. , the second symmetry
+operation is organized by the second rotation matrix and second
+translation vector in the respective arrays. The operations are
+applied for the fractional coordinates (not for Cartesian
+coordinates).</p>
+<p>The rotation matrix and translation vector are used as follows:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">new_vector</span><span class="p">[</span><span class="mi">3</span><span class="n">x1</span><span class="p">]</span> <span class="o">=</span> <span class="n">rotation</span><span class="p">[</span><span class="mi">3</span><span class="n">x3</span><span class="p">]</span> <span class="o">*</span> <span class="n">vector</span><span class="p">[</span><span class="mi">3</span><span class="n">x1</span><span class="p">]</span> <span class="o">+</span> <span class="n">translation</span><span class="p">[</span><span class="mi">3</span><span class="n">x1</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>The three values in the vector are given for the a, b, and c axes,
+respectively.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="refine-cell">
+<h3><code class="docutils literal"><span class="pre">refine_cell</span></code><a class="headerlink" href="#refine-cell" title="Permalink to this headline">¶</a></h3>
+<p><strong>Behaviour changed in version 1.8.x</strong></p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">lattice</span><span class="p">,</span> <span class="n">scaled_positions</span><span class="p">,</span> <span class="n">numbers</span> <span class="o">=</span> <span class="n">refine_cell</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Bravais lattice (3x3 numpy array), atomic scaled positions (a numpy
+array of [number_of_atoms,3]), and atomic numbers (a 1D numpy array)
+that are symmetrized following space group type are returned.</p>
+<p>The detailed control of standardization of unit cell may be done using
+<code class="docutils literal"><span class="pre">standardize_cell</span></code>.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="find-primitive">
+<h3><code class="docutils literal"><span class="pre">find_primitive</span></code><a class="headerlink" href="#find-primitive" title="Permalink to this headline">¶</a></h3>
+<p><strong>Behaviour changed in version 1.8.x</strong></p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">lattice</span><span class="p">,</span> <span class="n">scaled_positions</span><span class="p">,</span> <span class="n">numbers</span> <span class="o">=</span> <span class="n">find_primitive</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>When a primitive cell is found, lattice parameters (3x3 numpy array),
+scaled positions (a numpy array of [number_of_atoms,3]), and atomic
+numbers (a 1D numpy array) is returned. When no primitive cell is
+found, (<code class="docutils literal"><span class="pre">None</span></code>, <code class="docutils literal"><span class="pre">None</span></code>, <code class="docutils literal"><span class="pre">None</span></code>) is returned.</p>
+<p>The detailed control of standardization of unit cell can be done using
+<code class="docutils literal"><span class="pre">standardize_cell</span></code>.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="standardize-cell">
+<h3><code class="docutils literal"><span class="pre">standardize_cell</span></code><a class="headerlink" href="#standardize-cell" title="Permalink to this headline">¶</a></h3>
+<p><strong>New in version 1.8.x</strong></p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">lattice</span><span class="p">,</span> <span class="n">scaled_positions</span><span class="p">,</span> <span class="n">numbers</span> <span class="o">=</span> \\
+       <span class="n">standardize_cell</span><span class="p">(</span><span class="n">bulk</span><span class="p">,</span> <span class="n">to_primitive</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">no_idealize</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">to_primitive=1</span></code> is used to create the standardized primitive cell,
+and <code class="docutils literal"><span class="pre">no_idealize=1</span></code> disables to idealize lengths and angles of basis
+vectors and positions of atoms according to crystal symmetry. Now
+<code class="docutils literal"><span class="pre">refine_cell</span></code> and <code class="docutils literal"><span class="pre">find_primitive</span></code> are shorthands of this method
+with combinations of these options. More detailed explanation is
+shown in the spglib (C-API) document.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="get-symmetry-dataset">
+<h3><code class="docutils literal"><span class="pre">get_symmetry_dataset</span></code><a class="headerlink" href="#get-symmetry-dataset" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">dataset</span> <span class="o">=</span> <span class="n">get_symmetry_dataset</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">dataset</span></code> is a dictionary. The keys are:</p>
+<ul>
+<li><p class="first"><code class="docutils literal"><span class="pre">number</span></code>: International space group number</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">international</span></code>: International symbol</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">hall</span></code>: Hall symbol</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">transformation_matrix</span></code>: Transformation matrix from lattice of input cell to Bravais lattice <span class="math">L^{bravais} = L^{original} * T</span></p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">origin</span> <span class="pre">shift</span></code>: Origin shift in the setting of Bravais lattice</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">wyckoffs</span></code>: Wyckoff letters</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">equivalent_atoms</span></code>: Mapping table to equivalent atoms</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">rotations</span></code> and <code class="docutils literal"><span class="pre">translations</span></code>: Rotation matrices and translation vectors. Space group operations are obtained by:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">[(</span><span class="n">r</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;rotations&#39;</span><span class="p">],</span> <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;translations&#39;</span><span class="p">])]</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="get-symmetry-from-database">
+<h3><code class="docutils literal"><span class="pre">get_symmetry_from_database</span></code><a class="headerlink" href="#get-symmetry-from-database" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">get_symmetry_from_database</span><span class="p">(</span><span class="n">hall_number</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>A set of crystallographic symmetry operations corresponding to
+<code class="docutils literal"><span class="pre">hall_number</span></code> is returned by a dictionary where rotation parts and
+translation parts are accessed by the keys <code class="docutils literal"><span class="pre">rotations</span></code> and
+<code class="docutils literal"><span class="pre">translations</span></code>, respectively. The definition of <code class="docutils literal"><span class="pre">hall_number</span></code> is
+found at <a class="reference internal" href="api.html#api-spg-get-dataset-spacegroup-type"><span class="std std-ref">Space group type</span></a>.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="get-ir-reciprocal-mesh">
+<h3><code class="docutils literal"><span class="pre">get_ir_reciprocal_mesh</span></code><a class="headerlink" href="#get-ir-reciprocal-mesh" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">mapping</span><span class="p">,</span> <span class="n">grid</span> <span class="o">=</span> <span class="n">get_ir_reciprocal_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">atoms</span><span class="p">,</span> <span class="n">is_shift</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Irreducible k-points are obtained from a sampling mesh of k-points.
+<code class="docutils literal"><span class="pre">mesh</span></code> is given by three integers by array and specifies mesh
+numbers along reciprocal primitive axis. <code class="docutils literal"><span class="pre">atoms</span></code> is an Atoms object
+of ASE. <code class="docutils literal"><span class="pre">is_shift</span></code> is given by the three integers by array. When
+<code class="docutils literal"><span class="pre">is_shift</span></code> is set for each reciprocal primitive axis, the mesh is
+shifted along the axis in half of adjacent mesh points irrespective of
+the mesh numbers. When the value is not 0, <code class="docutils literal"><span class="pre">is_shift</span></code> is set.</p>
+<p><code class="docutils literal"><span class="pre">mapping</span></code> and <code class="docutils literal"><span class="pre">grid</span></code> are returned. <code class="docutils literal"><span class="pre">grid</span></code> gives the mesh points in
+fractional coordinates in reciprocal space. <code class="docutils literal"><span class="pre">mapping</span></code> gives mapping to
+the irreducible k-point indices that are obtained by</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">mapping</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Here <code class="docutils literal"><span class="pre">np</span></code> is the imported numpy module. The grid point is accessed
+by <code class="docutils literal"><span class="pre">grid[index]</span></code>.</p>
+<p>For example, the irreducible k-points in fractional coordinates are
+obtained by</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ir_grid</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">mapping</span><span class="p">,</span> <span class="n">grid</span> <span class="o">=</span> <span class="n">get_ir_reciprocal_mesh</span><span class="p">([</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span> <span class="p">],</span> <span class="n">atoms</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">mapping</span><span class="p">):</span>
+    <span class="n">ir_grid</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">grid</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+<div id="sourcelink">
+  <a href="_sources/python-spglib.txt"
+     rel="nofollow">Source</a>
+</div>
+      
+    </p>
+    <p>
+        &copy; Copyright 2009, Atsushi Togo.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

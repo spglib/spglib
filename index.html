@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Spglib &mdash; spglib 1.9.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootswatch-3.3.4/cosmo/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.9.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="spglib 1.9.1 documentation" href="#" />
+    <link rel="next" title="Definitions and conventions used in spglib" href="definition.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">
+          spglib</a>
+        <span class="navbar-text navbar-version pull-left"><b>1.9.1</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="api.html">API</a></li>
+                <li><a href="definition.html">Definitions</a></li>
+                <li><a href="variable.html">Variables</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="definition.html">Definitions and conventions used in spglib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="variable.html">Important variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python-spglib.html">Spglib for python</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Spglib</a><ul>
+<li><a class="reference internal" href="#news">News</a></li>
+<li><a class="reference internal" href="#features">Features</a></li>
+<li><a class="reference internal" href="#algorithms">Algorithms</a></li>
+<li><a class="reference internal" href="#install">Install</a><ul>
+<li><a class="reference internal" href="#openmp">OpenMP</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+<li><a class="reference internal" href="#example">Example</a></li>
+<li><a class="reference internal" href="#python-extension">Python extension</a></li>
+<li><a class="reference internal" href="#ruby-extension">Ruby extension</a></li>
+<li><a class="reference internal" href="#fortran-interface">Fortran interface</a></li>
+<li><a class="reference internal" href="#api-variables">API &amp; variables</a></li>
+<li><a class="reference internal" href="#mailing-list">Mailing list</a></li>
+<li><a class="reference internal" href="#for-more-information">For more information</a></li>
+<li><a class="reference internal" href="#acknowledgments">Acknowledgments</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="definition.html" title="Next Chapter: Definitions and conventions used in spglib"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Definitions a... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="spglib">
+<h1>Spglib<a class="headerlink" href="#spglib" title="Permalink to this headline">¶</a></h1>
+<p>Spglib is a library for finding and handling crystal symmetries
+written in C.</p>
+<p>Spglib for python is found at <a class="reference internal" href="python-spglib.html#python-spglib"><span class="std std-ref">Spglib for python</span></a>.</p>
+<p><a class="reference external" href="https://sourceforge.net/projects/spglib/files/spglib/spglib-1.9/">Spglib-1.9.1</a>
+is the latest release. Updates and changes of API and definitions of
+variables can happen againt previous versions and they are written in
+the document.</p>
+<p>Version history is summarized in <a class="reference external" href="https://github.com/atztogo/spglib/blob/master/ChangeLog">ChangeLog</a>.</p>
+<div class="section" id="news">
+<h2>News<a class="headerlink" href="#news" title="Permalink to this headline">¶</a></h2>
+<p><strong>Python module pyspglib is renamed to spglib in version 1.9.0.</strong></p>
+<p>In versions 1.8.x or before, the python wrapper (pyspglib) was
+considered as a special extention of spglib and separately maintained,
+but in version 1.9.x and later, it starts to be a part of spglib as a
+usual extension, and this python wrapper will be maintained to work
+following every update of c-spglib. The package name is changed from
+pyspglib to spglib. Following this change, the way to import python
+spglib module is changed and it is written in <a class="reference internal" href="python-spglib.html#python-spglib"><span class="std std-ref">Spglib for python</span></a>.</p>
+</div>
+<div class="section" id="features">
+<h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Find symmetry operations</li>
+<li>Identify space-group type</li>
+<li>Wyckoff position assignment</li>
+<li>Refine crystal structure</li>
+<li>Find a primitive cell</li>
+<li>Search irreducible k-points</li>
+<li>Liner tetrahedron method (the document is to be prepared.)</li>
+</ul>
+</div>
+<div class="section" id="algorithms">
+<h2>Algorithms<a class="headerlink" href="#algorithms" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Space-group type finding algorithm: R. W. Grosse-Kunstleve, Acta
+Cryst., A55, 383-395 (1999)</li>
+<li>Crystal refinement algorithm: R. W. Grosse-Kunstleve and
+P. D. Adams, Acta Cryst., A58, 60-65 (2002)</li>
+</ul>
+</div>
+<div class="section" id="install">
+<h2>Install<a class="headerlink" href="#install" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic">
+<li><p class="first"><a class="reference external" href="https://sourceforge.net/project/showfiles.php?group_id=215020">Download spglib</a>.</p>
+</li>
+<li><p class="first">Unzip, configure, and make:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">tar</span> <span class="n">xvfz</span> <span class="n">spglib</span><span class="o">-</span><span class="mf">1.9</span><span class="o">.</span><span class="mf">1.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
+<span class="o">%</span> <span class="n">cd</span> <span class="n">spglib</span><span class="o">-</span><span class="mf">1.9</span><span class="o">.</span><span class="mi">1</span>
+<span class="o">%</span> <span class="o">./</span><span class="n">configure</span>
+<span class="o">%</span> <span class="n">make</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Copy the libraries where you want using OpenMP. The libraries may
+be in <code class="docutils literal"><span class="pre">src/.libs</span></code> if you don&#8217;t <code class="docutils literal"><span class="pre">make</span> <span class="pre">install</span></code>,</p>
+</li>
+</ol>
+<div class="section" id="openmp">
+<h3>OpenMP<a class="headerlink" href="#openmp" title="Permalink to this headline">¶</a></h3>
+<p>Bottle neck of symmetry operation search may be eased using the OpenMP
+threading. In the case of gcc (&gt; 4.2), set the following environment
+variables before running configure script:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">export</span> <span class="n">LIBS</span><span class="o">=</span><span class="s1">&#39;-lgomp&#39;</span>
+<span class="o">%</span> <span class="n">export</span> <span class="n">CFLAGS</span><span class="o">=</span><span class="s1">&#39;-fopenmp&#39;</span>
+</pre></div>
+</div>
+<p>Overhead of threading is relatively large when the number of atoms is
+small. Therefore the threading is activated when the number of atoms
+&gt;= 1000.</p>
+</div>
+</div>
+<div class="section" id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>Include <code class="docutils literal"><span class="pre">spglib.h</span></code></li>
+<li>Link <code class="docutils literal"><span class="pre">libsymspg.a</span></code> or <code class="docutils literal"><span class="pre">libsymspg.so</span></code></li>
+<li>A compilation example is shown in  <a class="reference external" href="https://github.com/atztogo/spglib/blob/master/example/README">example/README</a>.</li>
+</ol>
+</div>
+<div class="section" id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<p>A few examples are found in <a class="reference external" href="https://github.com/atztogo/spglib/tree/master/example">example</a> directory.</p>
+</div>
+<div class="section" id="python-extension">
+<h2>Python extension<a class="headerlink" href="#python-extension" title="Permalink to this headline">¶</a></h2>
+<p>Python module is prepared in the <code class="docutils literal"><span class="pre">python</span></code> directory.
+See the details at <a class="reference internal" href="python-spglib.html#python-spglib"><span class="std std-ref">Spglib for python</span></a>.</p>
+</div>
+<div class="section" id="ruby-extension">
+<h2>Ruby extension<a class="headerlink" href="#ruby-extension" title="Permalink to this headline">¶</a></h2>
+<p>The ruby script <code class="docutils literal"><span class="pre">symPoscar.rb</span></code> in <code class="docutils literal"><span class="pre">ruby</span></code> directory reads a VASP
+POSCAR formatted file and finds the space-group type. The <code class="docutils literal"><span class="pre">-l</span></code>
+option refines a slightly distorted structure within tolerance
+spacified with the <code class="docutils literal"><span class="pre">-s</span></code> option. The <code class="docutils literal"><span class="pre">-o</span></code> option gives the symmetry
+operations of the input structure.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ruby</span> <span class="n">symPoscar</span><span class="o">.</span><span class="n">rb</span> <span class="n">POSCAR</span> <span class="o">-</span><span class="n">s</span> <span class="mf">0.1</span> <span class="o">-</span><span class="n">o</span> <span class="o">-</span><span class="n">l</span>
+</pre></div>
+</div>
+<p>Some more options are shown with <code class="docutils literal"><span class="pre">--help</span></code> option:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ruby</span> <span class="n">symPoscar</span><span class="o">.</span><span class="n">rb</span> <span class="o">--</span><span class="n">help</span>
+</pre></div>
+</div>
+<p>The way to compile the ruby module is explained in
+<a class="reference external" href="https://github.com/atztogo/spglib/blob/master/ruby/README">ruby/README</a>.</p>
+</div>
+<div class="section" id="fortran-interface">
+<h2>Fortran interface<a class="headerlink" href="#fortran-interface" title="Permalink to this headline">¶</a></h2>
+<p>Fortran interface <a class="reference external" href="https://github.com/atztogo/spglib/blob/master/example/example_f08.f90">spglib_f08.f90</a>
+is found in <a class="reference external" href="https://github.com/atztogo/spglib/tree/master/example">example</a>
+directory. This fortran interface is the contribution from Dimitar
+Pashov. <a class="reference external" href="https://github.com/atztogo/spglib/blob/master/src/spglib_f.c">spglib_f.c</a> is
+obsolete and is not recommended to use.</p>
+</div>
+<div class="section" id="api-variables">
+<h2>API &amp; variables<a class="headerlink" href="#api-variables" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="definition.html">Definitions and conventions used in spglib</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="definition.html#basis-vectors-or">Basis vectors <span class="math">(\mathbf{a}, \mathbf{b}, \mathbf{c})</span> or <span class="math">(\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)</span></a></li>
+<li class="toctree-l2"><a class="reference internal" href="definition.html#atomic-point-coordinates">Atomic point coordinates <span class="math">\boldsymbol{x}</span></a></li>
+<li class="toctree-l2"><a class="reference internal" href="definition.html#symmetry-operation">Symmetry operation <span class="math">(\boldsymbol{W}, \boldsymbol{w})</span></a></li>
+<li class="toctree-l2"><a class="reference internal" href="definition.html#transformation-matrix-and-origin-shift">Transformation matrix <span class="math">\boldsymbol{P}</span> and origin shift <span class="math">\boldsymbol{p}</span></a></li>
+<li class="toctree-l2"><a class="reference internal" href="definition.html#conventions-of-standardized-unit-cell">Conventions of standardized unit cell</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api.html#spg-get-major-version-spg-get-minor-version-spg-get-micro-version"><code class="docutils literal"><span class="pre">spg_get_major_version</span></code>, <code class="docutils literal"><span class="pre">spg_get_minor_version</span></code>, <code class="docutils literal"><span class="pre">spg_get_micro_version</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#spg-get-symmetry"><code class="docutils literal"><span class="pre">spg_get_symmetry</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#spg-get-international"><code class="docutils literal"><span class="pre">spg_get_international</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#spg-get-schoenflies"><code class="docutils literal"><span class="pre">spg_get_schoenflies</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#spg-standardize-cell"><code class="docutils literal"><span class="pre">spg_standardize_cell</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#spg-find-primitive"><code class="docutils literal"><span class="pre">spg_find_primitive</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#spg-refine-cell"><code class="docutils literal"><span class="pre">spg_refine_cell</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#spg-get-dataset-and-spg-get-dataset-with-hall-number"><code class="docutils literal"><span class="pre">spg_get_dataset</span></code> and <code class="docutils literal"><span class="pre">spg_get_dataset_with_hall_number</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#spg-free-dataset"><code class="docutils literal"><span class="pre">spg_free_dataset</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#spg-get-spacegroup-type"><code class="docutils literal"><span class="pre">spg_get_spacegroup_type</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#spg-get-symmetry-from-database"><code class="docutils literal"><span class="pre">spg_get_symmetry_from_database</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#spg-get-multiplicity"><code class="docutils literal"><span class="pre">spg_get_multiplicity</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#spg-get-symmetry-with-collinear-spin"><code class="docutils literal"><span class="pre">spg_get_symmetry_with_collinear_spin</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#spg-get-ir-reciprocal-mesh"><code class="docutils literal"><span class="pre">spg_get_ir_reciprocal_mesh</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#spg-get-stabilized-reciprocal-mesh"><code class="docutils literal"><span class="pre">spg_get_stabilized_reciprocal_mesh</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="variable.html">Important variables</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="variable.html#lattice"><code class="docutils literal"><span class="pre">lattice</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="variable.html#position"><code class="docutils literal"><span class="pre">position</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="variable.html#types"><code class="docutils literal"><span class="pre">types</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="variable.html#rotation"><code class="docutils literal"><span class="pre">rotation</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="variable.html#translation"><code class="docutils literal"><span class="pre">translation</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="variable.html#symprec"><code class="docutils literal"><span class="pre">symprec</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="variable.html#angle-tolerance"><code class="docutils literal"><span class="pre">angle_tolerance</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="python-spglib.html">Spglib for python</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="python-spglib.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="python-spglib.html#test">Test</a></li>
+<li class="toctree-l2"><a class="reference internal" href="python-spglib.html#how-to-import-spglib-module">How to import spglib module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="python-spglib.html#version-number">Version number</a></li>
+<li class="toctree-l2"><a class="reference internal" href="python-spglib.html#example">Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="python-spglib.html#variables">Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="python-spglib.html#methods">Methods</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="mailing-list">
+<h2>Mailing list<a class="headerlink" href="#mailing-list" title="Permalink to this headline">¶</a></h2>
+<p>For questions, bug reports, and comments, please visit following
+mailing list:</p>
+<p><a class="reference external" href="https://lists.sourceforge.net/lists/listinfo/spglib-users">https://lists.sourceforge.net/lists/listinfo/spglib-users</a></p>
+</div>
+<div class="section" id="for-more-information">
+<h2>For more information<a class="headerlink" href="#for-more-information" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Repository: <a class="reference external" href="https://github.com/atztogo/spglib">https://github.com/atztogo/spglib</a></li>
+<li>License: New BSD after version 1.0.beta-1. The older versions are under GPLv2.</li>
+<li>Contact: <a class="reference external" href="mailto:atz&#46;togo&#37;&#52;&#48;gmail&#46;com">atz<span>&#46;</span>togo<span>&#64;</span>gmail<span>&#46;</span>com</a></li>
+<li>Authour: Atsushi Togo</li>
+</ul>
+</div>
+<div class="section" id="acknowledgments">
+<h2>Acknowledgments<a class="headerlink" href="#acknowledgments" title="Permalink to this headline">¶</a></h2>
+<p>Spglib project acknowledges Yusuke Seto for the Crystallographic
+database, Dimitar Pashov for the fortran interface, Paweł T. Jochym
+for python packages.</p>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+<div id="sourcelink">
+  <a href="_sources/index.txt"
+     rel="nofollow">Source</a>
+</div>
+      
+    </p>
+    <p>
+        &copy; Copyright 2009, Atsushi Togo.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

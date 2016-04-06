@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>API &mdash; spglib 1.9.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootswatch-3.3.4/cosmo/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.9.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="spglib 1.9.1 documentation" href="index.html" />
+    <link rel="next" title="Important variables" href="variable.html" />
+    <link rel="prev" title="Definitions and conventions used in spglib" href="definition.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          spglib</a>
+        <span class="navbar-text navbar-version pull-left"><b>1.9.1</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="#">API</a></li>
+                <li><a href="definition.html">Definitions</a></li>
+                <li><a href="variable.html">Variables</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="definition.html">Definitions and conventions used in spglib</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="variable.html">Important variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python-spglib.html">Spglib for python</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">API</a><ul>
+<li><a class="reference internal" href="#spg-get-major-version-spg-get-minor-version-spg-get-micro-version"><code class="docutils literal"><span class="pre">spg_get_major_version</span></code>, <code class="docutils literal"><span class="pre">spg_get_minor_version</span></code>, <code class="docutils literal"><span class="pre">spg_get_micro_version</span></code></a></li>
+<li><a class="reference internal" href="#spg-get-symmetry"><code class="docutils literal"><span class="pre">spg_get_symmetry</span></code></a></li>
+<li><a class="reference internal" href="#spg-get-international"><code class="docutils literal"><span class="pre">spg_get_international</span></code></a></li>
+<li><a class="reference internal" href="#spg-get-schoenflies"><code class="docutils literal"><span class="pre">spg_get_schoenflies</span></code></a></li>
+<li><a class="reference internal" href="#spg-standardize-cell"><code class="docutils literal"><span class="pre">spg_standardize_cell</span></code></a></li>
+<li><a class="reference internal" href="#spg-find-primitive"><code class="docutils literal"><span class="pre">spg_find_primitive</span></code></a></li>
+<li><a class="reference internal" href="#spg-refine-cell"><code class="docutils literal"><span class="pre">spg_refine_cell</span></code></a></li>
+<li><a class="reference internal" href="#spg-get-dataset-and-spg-get-dataset-with-hall-number"><code class="docutils literal"><span class="pre">spg_get_dataset</span></code> and <code class="docutils literal"><span class="pre">spg_get_dataset_with_hall_number</span></code></a><ul>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+<li><a class="reference internal" href="#dataset">Dataset</a><ul>
+<li><a class="reference internal" href="#space-group-type">Space group type</a></li>
+<li><a class="reference internal" href="#symmetry-operations">Symmetry operations</a></li>
+<li><a class="reference internal" href="#site-symmetry">Site symmetry</a></li>
+<li><a class="reference internal" href="#origin-shift-and-lattice-transformation">Origin shift and lattice transformation</a></li>
+<li><a class="reference internal" href="#standardized-crystal-structure">Standardized crystal structure</a></li>
+<li><a class="reference internal" href="#crystallographic-point-group">Crystallographic point group</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#spg-free-dataset"><code class="docutils literal"><span class="pre">spg_free_dataset</span></code></a></li>
+<li><a class="reference internal" href="#spg-get-spacegroup-type"><code class="docutils literal"><span class="pre">spg_get_spacegroup_type</span></code></a></li>
+<li><a class="reference internal" href="#spg-get-symmetry-from-database"><code class="docutils literal"><span class="pre">spg_get_symmetry_from_database</span></code></a></li>
+<li><a class="reference internal" href="#spg-get-multiplicity"><code class="docutils literal"><span class="pre">spg_get_multiplicity</span></code></a></li>
+<li><a class="reference internal" href="#spg-get-symmetry-with-collinear-spin"><code class="docutils literal"><span class="pre">spg_get_symmetry_with_collinear_spin</span></code></a></li>
+<li><a class="reference internal" href="#spg-get-ir-reciprocal-mesh"><code class="docutils literal"><span class="pre">spg_get_ir_reciprocal_mesh</span></code></a></li>
+<li><a class="reference internal" href="#spg-get-stabilized-reciprocal-mesh"><code class="docutils literal"><span class="pre">spg_get_stabilized_reciprocal_mesh</span></code></a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="definition.html" title="Previous Chapter: Definitions and conventions used in spglib"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Definitions a...</span>
+    </a>
+  </li>
+  <li>
+    <a href="variable.html" title="Next Chapter: Important variables"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Important var... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="api">
+<h1>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="spg-get-major-version-spg-get-minor-version-spg-get-micro-version">
+<h2><code class="docutils literal"><span class="pre">spg_get_major_version</span></code>, <code class="docutils literal"><span class="pre">spg_get_minor_version</span></code>, <code class="docutils literal"><span class="pre">spg_get_micro_version</span></code><a class="headerlink" href="#spg-get-major-version-spg-get-minor-version-spg-get-micro-version" title="Permalink to this headline">¶</a></h2>
+<p><strong>New in version 1.8.3</strong></p>
+<p>Version number of spglib is obtained. These three functions return
+integers that correspond to spglib version [major].[minor].[micro].</p>
+</div>
+<div class="section" id="spg-get-symmetry">
+<span id="api-spg-get-symmetry"></span><h2><code class="docutils literal"><span class="pre">spg_get_symmetry</span></code><a class="headerlink" href="#spg-get-symmetry" title="Permalink to this headline">¶</a></h2>
+<p>This function finds a set of representative symmetry operations for
+primitive cells or its extension with lattice translations for
+supercells.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">spg_get_symmetry</span><span class="p">(</span><span class="nb">int</span> <span class="n">rotation</span><span class="p">[][</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span>
+                     <span class="n">double</span> <span class="n">translation</span><span class="p">[][</span><span class="mi">3</span><span class="p">],</span>
+                     <span class="n">const</span> <span class="nb">int</span> <span class="n">max_size</span><span class="p">,</span>
+                     <span class="n">const</span> <span class="n">double</span> <span class="n">lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span>
+                     <span class="n">const</span> <span class="n">double</span> <span class="n">position</span><span class="p">[][</span><span class="mi">3</span><span class="p">],</span>
+                     <span class="n">const</span> <span class="nb">int</span> <span class="n">types</span><span class="p">[],</span>
+                     <span class="n">const</span> <span class="nb">int</span> <span class="n">num_atom</span><span class="p">,</span>
+                     <span class="n">const</span> <span class="n">double</span> <span class="n">symprec</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The operations are stored in <code class="docutils literal"><span class="pre">rotation</span></code> and <code class="docutils literal"><span class="pre">translation</span></code>. The
+number of operations is return as the return value. Rotations and
+translations are given in fractional coordinates, and <code class="docutils literal"><span class="pre">rotation[i]</span></code>
+and <code class="docutils literal"><span class="pre">translation[i]</span></code> with same index give a symmetry operations,
+i.e., these have to be used together.</p>
+<p>As an exceptional case, if a supercell has the basis vectors of the
+lattice that break crsytallographic point group, the crystallographic
+symmetry operations are searched with this broken symmetry, i.e., at
+most the crystallographic point group found in this case is the point
+group of the lattice. For example, this happens for the <span class="math">2\times
+1\times 1</span> supercell of a conventional cubic unit cell. This may not
+be understandable in crystallographic sense, but is practically useful
+treatment for research in computational materials science.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="spg-get-international">
+<h2><code class="docutils literal"><span class="pre">spg_get_international</span></code><a class="headerlink" href="#spg-get-international" title="Permalink to this headline">¶</a></h2>
+<p>Space group type is found and returned in international table symbol
+to <code class="docutils literal"><span class="pre">symbol</span></code> and also as a number (return value). 0 is returned when
+it fails.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">spg_get_international</span><span class="p">(</span><span class="n">char</span> <span class="n">symbol</span><span class="p">[</span><span class="mi">11</span><span class="p">],</span>
+                          <span class="n">const</span> <span class="n">double</span> <span class="n">lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span>
+                          <span class="n">const</span> <span class="n">double</span> <span class="n">position</span><span class="p">[][</span><span class="mi">3</span><span class="p">],</span>
+                          <span class="n">const</span> <span class="nb">int</span> <span class="n">types</span><span class="p">[],</span>
+                          <span class="n">const</span> <span class="nb">int</span> <span class="n">num_atom</span><span class="p">,</span>
+                          <span class="n">const</span> <span class="n">double</span> <span class="n">symprec</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="spg-get-schoenflies">
+<h2><code class="docutils literal"><span class="pre">spg_get_schoenflies</span></code><a class="headerlink" href="#spg-get-schoenflies" title="Permalink to this headline">¶</a></h2>
+<p>Space group type is found and returned in schoenflies to <code class="docutils literal"><span class="pre">symbol</span></code>
+and also as a number (return value). 0 is returned when it fails.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">spg_get_schoenflies</span><span class="p">(</span><span class="n">char</span> <span class="n">symbol</span><span class="p">[</span><span class="mi">10</span><span class="p">],</span>
+                        <span class="n">const</span> <span class="n">double</span> <span class="n">lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span>
+                        <span class="n">const</span> <span class="n">double</span> <span class="n">position</span><span class="p">[][</span><span class="mi">3</span><span class="p">],</span>
+                        <span class="n">const</span> <span class="nb">int</span> <span class="n">types</span><span class="p">[],</span>
+                        <span class="n">const</span> <span class="nb">int</span> <span class="n">num_atom</span><span class="p">,</span>
+                        <span class="n">const</span> <span class="n">double</span> <span class="n">symprec</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="spg-standardize-cell">
+<h2><code class="docutils literal"><span class="pre">spg_standardize_cell</span></code><a class="headerlink" href="#spg-standardize-cell" title="Permalink to this headline">¶</a></h2>
+<p>The standardized unit cell (see <a class="reference internal" href="definition.html#def-standardized-unit-cell"><span class="std std-ref">Conventions of standardized unit cell</span></a>) is
+generated from an input unit cell structure and its space group type
+determined about a symmetry search tolerance. Usually
+<code class="docutils literal"><span class="pre">to_primitive=0</span></code> and <code class="docutils literal"><span class="pre">no_idealize=0</span></code> are recommended to set and
+this setting results in the same behavior as <code class="docutils literal"><span class="pre">spg_refine_cell</span></code>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">spg_standardize_cell</span><span class="p">(</span><span class="n">double</span> <span class="n">lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span>
+                         <span class="n">double</span> <span class="n">position</span><span class="p">[][</span><span class="mi">3</span><span class="p">],</span>
+                         <span class="nb">int</span> <span class="n">types</span><span class="p">[],</span>
+                         <span class="n">const</span> <span class="nb">int</span> <span class="n">num_atom</span><span class="p">,</span>
+                         <span class="n">const</span> <span class="nb">int</span> <span class="n">to_primitive</span><span class="p">,</span>
+                         <span class="n">const</span> <span class="nb">int</span> <span class="n">no_idealize</span><span class="p">,</span>
+                         <span class="n">const</span> <span class="n">double</span> <span class="n">symprec</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Number of atoms in the found standardized unit (primitive) cell is
+returned.</p>
+<p><code class="docutils literal"><span class="pre">to_primitive=1</span></code> is used to create the standardized primitive cell
+with the transformation matricies shown at
+<a class="reference internal" href="definition.html#def-standardized-primitive-cell"><span class="std std-ref">Transformation to the primitive cell</span></a>, otherwise <code class="docutils literal"><span class="pre">to_primitive=0</span></code>
+must be specified. The found basis vectors and
+atomic point coordinates and types are overwritten in <code class="docutils literal"><span class="pre">lattice</span></code>,
+<code class="docutils literal"><span class="pre">position</span></code>, and <code class="docutils literal"><span class="pre">types</span></code>, respectively. Therefore with
+<code class="docutils literal"><span class="pre">to_primitive=0</span></code>, at a maximum four times larger array size for
+<code class="docutils literal"><span class="pre">position</span></code> and <code class="docutils literal"><span class="pre">types</span></code> than the those size of the input unit cell
+is required to store a standardized unit cell with face centring found
+in the case that the input unit cell is a primitive cell.</p>
+<p><code class="docutils literal"><span class="pre">no_idealize=1</span></code> disables to idealize lengths and angles of basis
+vectors and positions of atoms according to crystal symmetry. The
+detail of the idealization (<code class="docutils literal"><span class="pre">no_idealize=0</span></code>) is written at
+<a class="reference internal" href="definition.html#def-idealize-cell"><span class="std std-ref">Idealization of unit cell structure</span></a>. <code class="docutils literal"><span class="pre">no_idealize=1</span></code> may be used when we want to
+leave basis vectors and atomic positions in Cartesianl coordinates
+fixed.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="spg-find-primitive">
+<h2><code class="docutils literal"><span class="pre">spg_find_primitive</span></code><a class="headerlink" href="#spg-find-primitive" title="Permalink to this headline">¶</a></h2>
+<p><strong>Behavior is changed. This function is now a shortcut of</strong>
+<code class="docutils literal"><span class="pre">spg_standardize_cell</span></code> <strong>with</strong>
+<code class="docutils literal"><span class="pre">to_primitive=1</span></code> <strong>and</strong> <code class="docutils literal"><span class="pre">no_idealize=0</span></code>.</p>
+<p>A primitive cell is found from an input unit cell.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">spg_find_primitive</span><span class="p">(</span><span class="n">double</span> <span class="n">lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span>
+                       <span class="n">double</span> <span class="n">position</span><span class="p">[][</span><span class="mi">3</span><span class="p">],</span>
+                       <span class="nb">int</span> <span class="n">types</span><span class="p">[],</span>
+                       <span class="n">const</span> <span class="nb">int</span> <span class="n">num_atom</span><span class="p">,</span>
+                       <span class="n">const</span> <span class="n">double</span> <span class="n">symprec</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">lattice</span></code>, <code class="docutils literal"><span class="pre">position</span></code>, and <code class="docutils literal"><span class="pre">types</span></code> are overwritten. Number of
+atoms in the found primitive cell is returned.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="spg-refine-cell">
+<h2><code class="docutils literal"><span class="pre">spg_refine_cell</span></code><a class="headerlink" href="#spg-refine-cell" title="Permalink to this headline">¶</a></h2>
+<p><strong>This function exists for backward compatibility since it is same as</strong> <code class="docutils literal"><span class="pre">spg_standardize_cell</span></code> <strong>with</strong> <code class="docutils literal"><span class="pre">to_primitive=0</span></code> <strong>and</strong> <code class="docutils literal"><span class="pre">leave_distorted=0</span></code>.</p>
+<p>The standardized crystal structure is obtained from a
+non-standard crystal structure which may be slightly distorted within
+a symmetry recognition tolerance, or whose primitive vectors are differently
+chosen, etc.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">spg_refine_cell</span><span class="p">(</span><span class="n">double</span> <span class="n">lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span>
+                    <span class="n">double</span> <span class="n">position</span><span class="p">[][</span><span class="mi">3</span><span class="p">],</span>
+                    <span class="nb">int</span> <span class="n">types</span><span class="p">[],</span>
+                    <span class="n">const</span> <span class="nb">int</span> <span class="n">num_atom</span><span class="p">,</span>
+                    <span class="n">const</span> <span class="n">double</span> <span class="n">symprec</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The calculated standardized lattice and atomic positions overwrites
+<code class="docutils literal"><span class="pre">lattice</span></code>, <code class="docutils literal"><span class="pre">position</span></code>, and <code class="docutils literal"><span class="pre">types</span></code>. The number of atoms in the
+standardized unit cell is returned as the return value. When the input
+unit cell is a primitive cell and is the face centring symmetry, the
+number of the atoms returned becomes four times large. Since this
+function does not have any means of checking the array size (memory
+space) of these variables, the array size (memory space) for
+<code class="docutils literal"><span class="pre">position</span></code> and <code class="docutils literal"><span class="pre">types</span></code> should be prepared <strong>four times more</strong> than
+those required for the input unit cell in general.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="spg-get-dataset-and-spg-get-dataset-with-hall-number">
+<span id="api-spg-get-dataset"></span><h2><code class="docutils literal"><span class="pre">spg_get_dataset</span></code> and <code class="docutils literal"><span class="pre">spg_get_dataset_with_hall_number</span></code><a class="headerlink" href="#spg-get-dataset-and-spg-get-dataset-with-hall-number" title="Permalink to this headline">¶</a></h2>
+<p><strong>Changed in version 1.8.1</strong></p>
+<p>For an input unit cell structure, symmetry operations of the crystal
+are searched. Then they are compared with the crsytallographic
+database and the space group type is determined. The result is
+returned as the <code class="docutils literal"><span class="pre">SpglibDataset</span></code> structure as a dataset. The default
+choice of setting of basis vectors in spglib is explained in the
+manuscript found at <a class="reference external" href="http://arxiv.org/abs/1506.01455">http://arxiv.org/abs/1506.01455</a>.</p>
+<div class="section" id="usage">
+<h3>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h3>
+<p>Dataset corresponding to the space group type in the standard setting
+is obtained by <code class="docutils literal"><span class="pre">spg_get_dataset</span></code>. If this symmetry search fails,
+<code class="docutils literal"><span class="pre">NULL</span></code> is returned in version 1.8.1 or later (spacegroup_number = 0
+is returned in the previous versions). In this function, the other
+crystallographic setting is not obtained.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">SpglibDataset</span> <span class="o">*</span> <span class="n">spg_get_dataset</span><span class="p">(</span><span class="n">const</span> <span class="n">double</span> <span class="n">lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span>
+                                <span class="n">const</span> <span class="n">double</span> <span class="n">position</span><span class="p">[][</span><span class="mi">3</span><span class="p">],</span>
+                                <span class="n">const</span> <span class="nb">int</span> <span class="n">types</span><span class="p">[],</span>
+                                <span class="n">const</span> <span class="nb">int</span> <span class="n">num_atom</span><span class="p">,</span>
+                                <span class="n">const</span> <span class="n">double</span> <span class="n">symprec</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>To specify the other crystallographic setting (origin, axis, or cell
+choice), <code class="docutils literal"><span class="pre">spg_get_dataset_with_hall_number</span></code> is used.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">SpglibDataset</span> <span class="o">*</span> <span class="n">spg_get_dataset_with_hall_number</span><span class="p">(</span><span class="n">SPGCONST</span> <span class="n">double</span> <span class="n">lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span>
+                                                 <span class="n">SPGCONST</span> <span class="n">double</span> <span class="n">position</span><span class="p">[][</span><span class="mi">3</span><span class="p">],</span>
+                                                 <span class="n">const</span> <span class="nb">int</span> <span class="n">types</span><span class="p">[],</span>
+                                                 <span class="n">const</span> <span class="nb">int</span> <span class="n">num_atom</span><span class="p">,</span>
+                                                 <span class="n">const</span> <span class="nb">int</span> <span class="n">hall_number</span><span class="p">,</span>
+                                                 <span class="n">const</span> <span class="n">double</span> <span class="n">symprec</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>where <code class="docutils literal"><span class="pre">hall_number</span></code> is used to specify the setting. The possible
+choices and those serial numbers are found at <a class="reference external" href="http://pmsl.planet.sci.kobe-u.ac.jp/~seto/?page_id=37&amp;lang=en">list of space groups
+(Seto&#8217;s web site)</a>.
+The crystal structure has to possess the space-group type of the Hall
+symbol. If the symmetry search fails or the specified <code class="docutils literal"><span class="pre">hall_number</span></code>
+is not in the list of Hall symbols for the space group type of the
+crystal structure, <code class="docutils literal"><span class="pre">spacegroup_number</span></code> in the <code class="docutils literal"><span class="pre">SpglibDataset</span></code>
+structure is set 0.</p>
+<p>Finally, its allocated memory space must be freed by calling <code class="docutils literal"><span class="pre">spg_free_dataset</span></code>.</p>
+</div>
+<div class="section" id="dataset">
+<h3>Dataset<a class="headerlink" href="#dataset" title="Permalink to this headline">¶</a></h3>
+<p>The dataset is
+accessible through the C-structure given by</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">typedef</span> <span class="n">struct</span> <span class="p">{</span>
+  <span class="nb">int</span> <span class="n">spacegroup_number</span><span class="p">;</span>
+  <span class="nb">int</span> <span class="n">hall_number</span><span class="p">;</span>
+  <span class="n">char</span> <span class="n">international_symbol</span><span class="p">[</span><span class="mi">11</span><span class="p">];</span>
+  <span class="n">char</span> <span class="n">hall_symbol</span><span class="p">[</span><span class="mi">17</span><span class="p">];</span>
+  <span class="n">char</span> <span class="n">setting</span><span class="p">[</span><span class="mi">6</span><span class="p">];</span>
+  <span class="n">double</span> <span class="n">transformation_matrix</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">];</span>
+  <span class="n">double</span> <span class="n">origin_shift</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
+  <span class="nb">int</span> <span class="n">n_operations</span><span class="p">;</span>
+  <span class="nb">int</span> <span class="p">(</span><span class="o">*</span><span class="n">rotations</span><span class="p">)[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">];</span>
+  <span class="n">double</span> <span class="p">(</span><span class="o">*</span><span class="n">translations</span><span class="p">)[</span><span class="mi">3</span><span class="p">];</span>
+  <span class="nb">int</span> <span class="n">n_atoms</span><span class="p">;</span>
+  <span class="nb">int</span> <span class="o">*</span><span class="n">wyckoffs</span><span class="p">;</span>
+  <span class="nb">int</span> <span class="o">*</span><span class="n">equivalent_atoms</span><span class="p">;</span>
+  <span class="nb">int</span> <span class="n">n_std_atoms</span><span class="p">;</span>             <span class="o">/*</span> <span class="n">n_brv_atoms</span> <span class="n">before</span> <span class="n">version</span> <span class="mf">1.8</span><span class="o">.</span><span class="mi">1</span> <span class="o">*/</span>
+  <span class="n">double</span> <span class="n">std_lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">];</span>    <span class="o">/*</span> <span class="n">brv_lattice</span> <span class="n">before</span> <span class="n">version</span> <span class="mf">1.8</span><span class="o">.</span><span class="mi">1</span> <span class="o">*/</span>
+  <span class="nb">int</span> <span class="o">*</span><span class="n">std_types</span><span class="p">;</span>              <span class="o">/*</span> <span class="n">brv_types</span> <span class="n">before</span> <span class="n">version</span> <span class="mf">1.8</span><span class="o">.</span><span class="mi">1</span> <span class="o">*/</span>
+  <span class="n">double</span> <span class="p">(</span><span class="o">*</span><span class="n">std_positions</span><span class="p">)[</span><span class="mi">3</span><span class="p">];</span>  <span class="o">/*</span> <span class="n">brv_positions</span> <span class="n">before</span> <span class="n">version</span> <span class="mf">1.8</span><span class="o">.</span><span class="mi">1</span> <span class="o">*/</span>
+  <span class="nb">int</span> <span class="n">pointgroup_number</span><span class="p">;</span>
+  <span class="n">char</span> <span class="n">pointgroup_symbol</span><span class="p">[</span><span class="mi">6</span><span class="p">];</span>
+<span class="p">}</span> <span class="n">SpglibDataset</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>In <strong>versions before 1.8.1</strong>, the member names of <code class="docutils literal"><span class="pre">n_std_atoms</span></code>,
+<code class="docutils literal"><span class="pre">std_lattice</span></code>, <code class="docutils literal"><span class="pre">std_types</span></code>, and <code class="docutils literal"><span class="pre">std_positions</span></code> were
+<code class="docutils literal"><span class="pre">n_brv_atoms</span></code>, <code class="docutils literal"><span class="pre">brv_lattice</span></code>, <code class="docutils literal"><span class="pre">brv_types</span></code>, and
+<code class="docutils literal"><span class="pre">brv_positions</span></code>, respectively.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<div class="section" id="space-group-type">
+<span id="api-spg-get-dataset-spacegroup-type"></span><h4>Space group type<a class="headerlink" href="#space-group-type" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal"><span class="pre">spacegroup_number</span></code> is the space group type number defined in
+International Tables for Crystallography (ITA). <code class="docutils literal"><span class="pre">hall_number</span></code> is the
+serial number between 1 and 530 which are found at <a class="reference external" href="http://pmsl.planet.sci.kobe-u.ac.jp/~seto/?page_id=37&amp;lang=en">list of space
+groups (Seto&#8217;s web site)</a>.
+The (full) Hermann–Mauguin notation of space group type is given by
+<code class="docutils literal"><span class="pre">international_symbol</span></code>. The Hall symbol is stored in
+<code class="docutils literal"><span class="pre">hall_symbol</span></code>. The information on unique axis,
+setting or cell choices is found in <code class="docutils literal"><span class="pre">setting</span></code>.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="symmetry-operations">
+<h4>Symmetry operations<a class="headerlink" href="#symmetry-operations" title="Permalink to this headline">¶</a></h4>
+<p>The symmetry operations of the input unit cell are stored in
+<code class="docutils literal"><span class="pre">rotations</span></code> and <code class="docutils literal"><span class="pre">translations</span></code>. A crystallographic symmetry
+operation <span class="math">(\boldsymbol{W}, \boldsymbol{w})</span> is made from a pair
+of rotation <span class="math">\boldsymbol{W}</span> and translation
+<span class="math">\boldsymbol{w}</span> parts with the same index. Number of symmetry
+operations is given as <code class="docutils literal"><span class="pre">n_operations</span></code>. The detailed explanation of
+the values is found at <a class="reference internal" href="#api-spg-get-symmetry"><span class="std std-ref">spg_get_symmetry</span></a>.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="site-symmetry">
+<h4>Site symmetry<a class="headerlink" href="#site-symmetry" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal"><span class="pre">n_atoms</span></code> is the number of atoms of the input unit
+cell. <code class="docutils literal"><span class="pre">wyckoffs</span></code> gives Wyckoff letters that are assigned to atomic
+positions of the input unit cell. The numbers of 0, 1, 2,
+<span class="math">\ldots</span>, correspond to the a, b, c, <span class="math">\ldots</span>,
+respectively. Number of elements in <code class="docutils literal"><span class="pre">wyckoffs</span></code> is same as
+<code class="docutils literal"><span class="pre">n_atoms</span></code>. <code class="docutils literal"><span class="pre">equivalent_atoms</span></code> is a list of atomic indices that map
+to indices of symmetrically independent atoms, where the list index
+corresponds to atomic index of the input crystal structure.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="origin-shift-and-lattice-transformation">
+<h4>Origin shift and lattice transformation<a class="headerlink" href="#origin-shift-and-lattice-transformation" title="Permalink to this headline">¶</a></h4>
+<p><strong>Changed in version 1.8.1</strong></p>
+<p><code class="docutils literal"><span class="pre">transformation_matrix</span></code> and <code class="docutils literal"><span class="pre">origin_shift</span></code> are obtained as a
+result of space-group-type matching under a set of unique axis,
+setting and cell choices. In this matching, basis vectors and atomic
+point coordinates have to be standardized to compare with the database
+of symmetry operations. The basis vectors are transformed to those of
+a standardized unit cell. Atomic point coordinates are shifted so that
+symmetry operations have the standard
+origin. <code class="docutils literal"><span class="pre">transformation_matrix</span></code> (<span class="math">\boldsymbol{P}</span>) is the
+matrix to transform the input basis vectors to the standardized basis
+vectors, wihch is represented as</p>
+<div class="math">
+<p><span class="math">( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
+= ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )  \boldsymbol{P}</span></p>
+</div><p>where <span class="math">\mathbf{a}</span>, <span class="math">\mathbf{b}</span>, and <span class="math">\mathbf{c}</span>
+are the input (original) basis vectors, and
+<span class="math">\mathbf{a}_\mathrm{s}</span>, <span class="math">\mathbf{b}_\mathrm{s}</span>, and
+<span class="math">\mathbf{c}_\mathrm{s}</span> are the standardized basis vectors. The
+<code class="docutils literal"><span class="pre">origin_shift</span></code> (<span class="math">\boldsymbol{p}</span>) is the vector from the
+origin of the standardized coordinate system to the origin of the
+input (original) coordinate system measured in the standardized
+coordinate system. The atomic point shift is measured from the
+standardized unit cell (conventional unit cell) to the original unit
+cell measured in the coordinates of the standardized unit cell. An
+atomic point in the original unit cell <span class="math">\boldsymbol{x}</span> (input
+data) is mapped to that in the standardized unit cell
+<span class="math">\boldsymbol{x}_\mathrm{s}</span> by</p>
+<div class="math">
+<p><span class="math">\boldsymbol{x}_\mathrm{s} = \boldsymbol{P}\boldsymbol{x} +
+\boldsymbol{p} \;\;(\mathrm{mod}\; \mathbf{1}).</span></p>
+</div><p>In <strong>versions 1.7.x and 1.8 or before</strong>, <code class="docutils literal"><span class="pre">transformation_matrix</span></code> and
+<code class="docutils literal"><span class="pre">origin_shift</span></code> are defined as follows:</p>
+<div class="math">
+<p><span class="math">( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
+\mathbf{c}_\mathrm{s} ) = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c}
+) \boldsymbol{P} \;\; \text{and} \;\; \boldsymbol{x}_\mathrm{s} =
+\boldsymbol{P}^{-1}\boldsymbol{x} - \boldsymbol{p}
+\;\;(\mathrm{mod}\; \mathbf{1}),</span></p>
+</div><p>respectively.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="standardized-crystal-structure">
+<h4>Standardized crystal structure<a class="headerlink" href="#standardized-crystal-structure" title="Permalink to this headline">¶</a></h4>
+<p><strong>Changed in version 1.8.1</strong></p>
+<p>The standardized crystal structure corresponding to a Hall symbol is
+stored in <code class="docutils literal"><span class="pre">n_std_atoms</span></code>, <code class="docutils literal"><span class="pre">std_lattice</span></code>, <code class="docutils literal"><span class="pre">std_types</span></code>, and
+<code class="docutils literal"><span class="pre">std_positions</span></code>.</p>
+<p>In <strong>versions 1.7.x and 1.8 or before</strong>, the variable names of the
+members corresponding to those above are <code class="docutils literal"><span class="pre">n_brv_atoms</span></code>,
+<code class="docutils literal"><span class="pre">brv_lattice</span></code>, <code class="docutils literal"><span class="pre">brv_types</span></code>, and <code class="docutils literal"><span class="pre">brv_positions</span></code>, respectively.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="crystallographic-point-group">
+<h4>Crystallographic point group<a class="headerlink" href="#crystallographic-point-group" title="Permalink to this headline">¶</a></h4>
+<p><strong>New in version 1.8.1</strong></p>
+<p><code class="docutils literal"><span class="pre">pointgroup_number</span></code> is the serial number of the crystallographic
+point group, which refers <a class="reference external" href="http://pmsl.planet.sci.kobe-u.ac.jp/~seto/?page_id=37&amp;lang=en">list of space
+groups (Seto&#8217;s web site)</a>.
+<code class="docutils literal"><span class="pre">pointgroup_symbol</span></code> is the symbol of the crystallographic point
+group in the Hermann–Mauguin notation.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="spg-free-dataset">
+<h2><code class="docutils literal"><span class="pre">spg_free_dataset</span></code><a class="headerlink" href="#spg-free-dataset" title="Permalink to this headline">¶</a></h2>
+<p>Allocated memoery space of the C-structure of <code class="docutils literal"><span class="pre">SpglibDataset</span></code> is
+freed by calling <code class="docutils literal"><span class="pre">spg_free_dataset</span></code>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">void</span> <span class="n">spg_free_dataset</span><span class="p">(</span><span class="n">SpglibDataset</span> <span class="o">*</span><span class="n">dataset</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="spg-get-spacegroup-type">
+<h2><code class="docutils literal"><span class="pre">spg_get_spacegroup_type</span></code><a class="headerlink" href="#spg-get-spacegroup-type" title="Permalink to this headline">¶</a></h2>
+<p>This function allows to directly access to the space-group-type
+database in spglib (spg_database.c). To specify the space group type
+with a specific setting, <code class="docutils literal"><span class="pre">hall_number</span></code> is used. The definition of
+<code class="docutils literal"><span class="pre">hall_number</span></code> is found at
+<a class="reference internal" href="#api-spg-get-dataset-spacegroup-type"><span class="std std-ref">Space group type</span></a>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">SpglibSpacegroupType</span> <span class="n">spg_get_spacegroup_type</span><span class="p">(</span><span class="n">const</span> <span class="nb">int</span> <span class="n">hall_number</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">SpglibSpacegroupType</span></code> structure is as follows:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">typedef</span> <span class="n">struct</span> <span class="p">{</span>
+  <span class="nb">int</span> <span class="n">number</span><span class="p">;</span>
+  <span class="n">char</span> <span class="n">schoenflies</span><span class="p">[</span><span class="mi">7</span><span class="p">];</span>
+  <span class="n">char</span> <span class="n">hall_symbol</span><span class="p">[</span><span class="mi">17</span><span class="p">];</span>
+  <span class="n">char</span> <span class="n">international</span><span class="p">[</span><span class="mi">32</span><span class="p">];</span>
+  <span class="n">char</span> <span class="n">international_full</span><span class="p">[</span><span class="mi">20</span><span class="p">];</span>
+  <span class="n">char</span> <span class="n">international_short</span><span class="p">[</span><span class="mi">11</span><span class="p">];</span>
+<span class="p">}</span> <span class="n">SpglibSpacegroupType</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="spg-get-symmetry-from-database">
+<h2><code class="docutils literal"><span class="pre">spg_get_symmetry_from_database</span></code><a class="headerlink" href="#spg-get-symmetry-from-database" title="Permalink to this headline">¶</a></h2>
+<p>This function allows to directly access to the space group operations
+in the spglib database (spg_database.c). To specify the space group
+type with a specific setting, <code class="docutils literal"><span class="pre">hall_number</span></code> is used. The definition
+of <code class="docutils literal"><span class="pre">hall_number</span></code> is found at
+<a class="reference internal" href="#api-spg-get-dataset-spacegroup-type"><span class="std std-ref">Space group type</span></a>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">spg_get_symmetry_from_database</span><span class="p">(</span><span class="nb">int</span> <span class="n">rotations</span><span class="p">[</span><span class="mi">192</span><span class="p">][</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span>
+                                   <span class="n">double</span> <span class="n">translations</span><span class="p">[</span><span class="mi">192</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span>
+                                   <span class="n">const</span> <span class="nb">int</span> <span class="n">hall_number</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The returned value is the number of space group operations. The space
+group operations are stored in <code class="docutils literal"><span class="pre">rotations</span></code> and <code class="docutils literal"><span class="pre">translations</span></code>.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="spg-get-multiplicity">
+<h2><code class="docutils literal"><span class="pre">spg_get_multiplicity</span></code><a class="headerlink" href="#spg-get-multiplicity" title="Permalink to this headline">¶</a></h2>
+<p>This function returns exact number of symmetry operations.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">spg_get_multiplicity</span><span class="p">(</span><span class="n">const</span> <span class="n">double</span> <span class="n">lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span>
+                         <span class="n">const</span> <span class="n">double</span> <span class="n">position</span><span class="p">[][</span><span class="mi">3</span><span class="p">],</span>
+                         <span class="n">const</span> <span class="nb">int</span> <span class="n">types</span><span class="p">[],</span>
+                         <span class="n">const</span> <span class="nb">int</span> <span class="n">num_atom</span><span class="p">,</span>
+                         <span class="n">const</span> <span class="n">double</span> <span class="n">symprec</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>This function may be used in advance to allocate memoery space for
+symmetry operations.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="spg-get-symmetry-with-collinear-spin">
+<h2><code class="docutils literal"><span class="pre">spg_get_symmetry_with_collinear_spin</span></code><a class="headerlink" href="#spg-get-symmetry-with-collinear-spin" title="Permalink to this headline">¶</a></h2>
+<p>This function finds symmetry operations with collinear spins on
+atoms. Except for the argument of <code class="docutils literal"><span class="pre">const</span> <span class="pre">double</span> <span class="pre">spins[]</span></code>, the usage
+is same as <code class="docutils literal"><span class="pre">spg_get_symmetry</span></code>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">spg_get_symmetry_with_collinear_spin</span><span class="p">(</span><span class="nb">int</span> <span class="n">rotation</span><span class="p">[][</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span>
+                                         <span class="n">double</span> <span class="n">translation</span><span class="p">[][</span><span class="mi">3</span><span class="p">],</span>
+                                         <span class="n">const</span> <span class="nb">int</span> <span class="n">max_size</span><span class="p">,</span>
+                                         <span class="n">SPGCONST</span> <span class="n">double</span> <span class="n">lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span>
+                                         <span class="n">SPGCONST</span> <span class="n">double</span> <span class="n">position</span><span class="p">[][</span><span class="mi">3</span><span class="p">],</span>
+                                         <span class="n">const</span> <span class="nb">int</span> <span class="n">types</span><span class="p">[],</span>
+                                         <span class="n">const</span> <span class="n">double</span> <span class="n">spins</span><span class="p">[],</span>
+                                         <span class="n">const</span> <span class="nb">int</span> <span class="n">num_atom</span><span class="p">,</span>
+                                         <span class="n">const</span> <span class="n">double</span> <span class="n">symprec</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="spg-get-ir-reciprocal-mesh">
+<h2><code class="docutils literal"><span class="pre">spg_get_ir_reciprocal_mesh</span></code><a class="headerlink" href="#spg-get-ir-reciprocal-mesh" title="Permalink to this headline">¶</a></h2>
+<p>Irreducible reciprocal grid points are searched from uniform mesh grid
+points specified by <code class="docutils literal"><span class="pre">mesh</span></code> and <code class="docutils literal"><span class="pre">is_shift</span></code>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">spg_get_ir_reciprocal_mesh</span><span class="p">(</span><span class="nb">int</span> <span class="n">grid_address</span><span class="p">[][</span><span class="mi">3</span><span class="p">],</span>
+                               <span class="nb">int</span> <span class="nb">map</span><span class="p">[],</span>
+                               <span class="n">const</span> <span class="nb">int</span> <span class="n">mesh</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+                               <span class="n">const</span> <span class="nb">int</span> <span class="n">is_shift</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+                               <span class="n">const</span> <span class="nb">int</span> <span class="n">is_time_reversal</span><span class="p">,</span>
+                               <span class="n">const</span> <span class="n">double</span> <span class="n">lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span>
+                               <span class="n">const</span> <span class="n">double</span> <span class="n">position</span><span class="p">[][</span><span class="mi">3</span><span class="p">],</span>
+                               <span class="n">const</span> <span class="nb">int</span> <span class="n">types</span><span class="p">[],</span>
+                               <span class="n">const</span> <span class="nb">int</span> <span class="n">num_atom</span><span class="p">,</span>
+                               <span class="n">const</span> <span class="n">double</span> <span class="n">symprec</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">mesh</span></code> stores three integers. Reciprocal primitive vectors are
+divided by the number stored in <code class="docutils literal"><span class="pre">mesh</span></code> with (0,0,0) point
+centering. The center of grid mesh is shifted +1/2 of a grid spacing
+along corresponding reciprocal axis by setting 1 to a <code class="docutils literal"><span class="pre">is_shift</span></code>
+element. No grid mesh shift is made if 0 is set for <code class="docutils literal"><span class="pre">is_shift</span></code>.</p>
+<p>The reducible uniform grid points are returned in fractional coordinates
+as <code class="docutils literal"><span class="pre">grid_address</span></code>. A map between reducible and irreducible points are
+returned as <code class="docutils literal"><span class="pre">map</span></code> as in the indices of <code class="docutils literal"><span class="pre">grid_address</span></code>. The number of
+the irreducible k-points are returned as the return value.  The time
+reversal symmetry is imposed by setting <code class="docutils literal"><span class="pre">is_time_reversal</span></code> 1.</p>
+<p>Grid points are stored in the order that runs left most element
+first, e.g. (4x4x4 mesh).:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">[[</span> <span class="mi">0</span>  <span class="mi">0</span>  <span class="mi">0</span><span class="p">]</span>
+ <span class="p">[</span> <span class="mi">1</span>  <span class="mi">0</span>  <span class="mi">0</span><span class="p">]</span>
+ <span class="p">[</span> <span class="mi">2</span>  <span class="mi">0</span>  <span class="mi">0</span><span class="p">]</span>
+ <span class="p">[</span><span class="o">-</span><span class="mi">1</span>  <span class="mi">0</span>  <span class="mi">0</span><span class="p">]</span>
+ <span class="p">[</span> <span class="mi">0</span>  <span class="mi">1</span>  <span class="mi">0</span><span class="p">]</span>
+ <span class="p">[</span> <span class="mi">1</span>  <span class="mi">1</span>  <span class="mi">0</span><span class="p">]</span>
+ <span class="p">[</span> <span class="mi">2</span>  <span class="mi">1</span>  <span class="mi">0</span><span class="p">]</span>
+ <span class="p">[</span><span class="o">-</span><span class="mi">1</span>  <span class="mi">1</span>  <span class="mi">0</span><span class="p">]</span>
+ <span class="o">....</span>      <span class="p">]</span>
+</pre></div>
+</div>
+<p>where the first index runs first.  k-qpoints are calculated by
+<code class="docutils literal"><span class="pre">(grid_address</span> <span class="pre">+</span> <span class="pre">is_shift</span> <span class="pre">/</span> <span class="pre">2)</span> <span class="pre">/</span> <span class="pre">mesh</span></code>. A grid point index is
+recovered from <code class="docutils literal"><span class="pre">grid_address</span></code> by <code class="docutils literal"><span class="pre">numpy.dot(grid_address</span> <span class="pre">%</span> <span class="pre">mesh,</span>
+<span class="pre">[1,</span> <span class="pre">mesh[0],</span> <span class="pre">mesh[0]</span> <span class="pre">*</span> <span class="pre">mesh[1]])</span></code> in Python-numpy notation, where
+<code class="docutils literal"><span class="pre">%</span></code> always returns non-negative integers. The order of
+<code class="docutils literal"><span class="pre">grid_address</span></code> can be changed so that the last index runs first by
+setting the macro <code class="docutils literal"><span class="pre">GRID_ORDER_XYZ</span></code> in <code class="docutils literal"><span class="pre">kpoint.c</span></code>. In this case the
+grid point index is recovered by <code class="docutils literal"><span class="pre">numpy.dot(grid_address</span> <span class="pre">%</span> <span class="pre">mesh,</span>
+<span class="pre">[mesh[2]</span> <span class="pre">*</span> <span class="pre">mesh[1],</span> <span class="pre">mesh[2],</span> <span class="pre">1])</span></code>.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="spg-get-stabilized-reciprocal-mesh">
+<h2><code class="docutils literal"><span class="pre">spg_get_stabilized_reciprocal_mesh</span></code><a class="headerlink" href="#spg-get-stabilized-reciprocal-mesh" title="Permalink to this headline">¶</a></h2>
+<p>The irreducible k-points are searched from unique k-point mesh grids
+from direct (real space) basis vectors and a set of rotation parts of
+symmetry operations in direct space with one or multiple
+stabilizers.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">spg_get_stabilized_reciprocal_mesh</span><span class="p">(</span><span class="nb">int</span> <span class="n">grid_address</span><span class="p">[][</span><span class="mi">3</span><span class="p">],</span>
+                                       <span class="nb">int</span> <span class="nb">map</span><span class="p">[],</span>
+                                       <span class="n">const</span> <span class="nb">int</span> <span class="n">mesh</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+                                       <span class="n">const</span> <span class="nb">int</span> <span class="n">is_shift</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+                                       <span class="n">const</span> <span class="nb">int</span> <span class="n">is_time_reversal</span><span class="p">,</span>
+                                       <span class="n">const</span> <span class="nb">int</span> <span class="n">num_rot</span><span class="p">,</span>
+                                       <span class="n">const</span> <span class="nb">int</span> <span class="n">rotations</span><span class="p">[][</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span>
+                                       <span class="n">const</span> <span class="nb">int</span> <span class="n">num_q</span><span class="p">,</span>
+                                       <span class="n">const</span> <span class="n">double</span> <span class="n">qpoints</span><span class="p">[][</span><span class="mi">3</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>The stabilizers are written in fractional coordinates. Number of the
+stabilizers are given by <code class="docutils literal"><span class="pre">num_q</span></code>. Symmetrically equivalent k-points
+(stars) in fractional coordinates are stored in <code class="docutils literal"><span class="pre">map</span></code> as indices of
+<code class="docutils literal"><span class="pre">grid_address</span></code>. The number of reduced k-points with the stabilizers
+are returned as the return value.</p>
+<p>This function can be used to obtain all mesh grid points by setting
+<code class="docutils literal"><span class="pre">num_rot</span> <span class="pre">=</span> <span class="pre">1</span></code>, <code class="docutils literal"><span class="pre">rotations</span> <span class="pre">=</span> <span class="pre">{{1,</span> <span class="pre">0,</span> <span class="pre">0},</span> <span class="pre">{0,</span> <span class="pre">1,</span> <span class="pre">0},</span> <span class="pre">{0,</span> <span class="pre">0,</span> <span class="pre">1}}</span></code>,
+<code class="docutils literal"><span class="pre">num_q</span> <span class="pre">=</span> <span class="pre">1</span></code>, and <code class="docutils literal"><span class="pre">qpoints</span> <span class="pre">=</span> <span class="pre">{0,</span> <span class="pre">0,</span> <span class="pre">0}</span></code>.</p>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+<div id="sourcelink">
+  <a href="_sources/api.txt"
+     rel="nofollow">Source</a>
+</div>
+      
+    </p>
+    <p>
+        &copy; Copyright 2009, Atsushi Togo.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
