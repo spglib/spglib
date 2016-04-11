@@ -35,7 +35,6 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "lattice.h"
 #include "pointgroup.h"
 #include "symmetry.h"
 #include "mathfunc.h"

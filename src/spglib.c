@@ -37,9 +37,9 @@
 #include <string.h>
 #include "cell.h"
 #include "debug.h"
+#include "delaunay.h"
 #include "kgrid.h"
 #include "kpoint.h"
-#include "lattice.h"
 #include "mathfunc.h"
 #include "niggli.h"
 #include "pointgroup.h"

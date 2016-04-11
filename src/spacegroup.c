@@ -36,8 +36,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "cell.h"
+#include "delaunay.h"
 #include "hall_symbol.h"
-#include "lattice.h"
 #include "mathfunc.h"
 #include "niggli.h"
 #include "pointgroup.h"
@@ -683,10 +683,10 @@ static int change_basis_monocli(int int_transform_mat[3][3],
 {
   double smallest_lattice[3][3], inv_lattice[3][3], transform_mat[3][3];
 
-  if (! lat_smallest_lattice_vector_2D(smallest_lattice,
-				     conv_lattice,
-				     1, /* unique axis of b */
-				     symprec)) {
+  if (! lat_delaunay_reduce_2D(smallest_lattice,
+			       conv_lattice,
+			       1, /* unique axis of b */
+			       symprec)) {
     return 0;
   }
 
