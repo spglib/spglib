@@ -117,13 +117,6 @@ void spg_get_symmetry_(int *nsym,
 			   types, *num_atom, *symprec);
 }
 
-void spg_get_smallest_lattice_(double smallest_lattice[3][3],
-			       double lattice[3][3],
-			       double *symprec)
-{
-  spg_get_smallest_lattice(smallest_lattice, lattice, *symprec);
-}
-
 void spg_get_international_(int *spacegroup,
 			    char symbol[11],
 			    double lattice[3][3],
@@ -200,6 +193,18 @@ void spg_find_primitive_(double lattice[3][3],
 
   *num_atom = spg_find_primitive(lattice, position, types, *num_atom,
 				 *symprec);
+}
+
+void spg_delaunay_reduce_(double lattice[3][3],
+			  double *symprec)
+{
+  spg_delaunay_reduce(lattice, *symprec);
+}
+
+void spg_niggli_reduce_(double lattice[3][3],
+			double *symprec)
+{
+  spg_niggli_reduce(lattice, *symprec);
 }
 
 void spg_get_ir_reciprocal_mesh_(int *num_ir_grid,

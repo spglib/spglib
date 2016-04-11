@@ -1,3 +1,11 @@
+2016-04-11  Atsushi Togo  <atz.togo@gmail.com>
+
+	* src/delaunay.c:
+
+	lattice.{c,h} are renamed to delaunay.{c.h},
+	respectively. Function names in them, *get_smallest_lattice, are
+	changed to *delaunay_reduce.
+
 2016-04-06  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.9.1

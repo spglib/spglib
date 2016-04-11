@@ -37,9 +37,9 @@
 #include <string.h>
 #include "cell.h"
 #include "debug.h"
+#include "delaunay.h"
 #include "kgrid.h"
 #include "kpoint.h"
-#include "lattice.h"
 #include "mathfunc.h"
 #include "niggli.h"
 #include "pointgroup.h"
@@ -733,6 +733,24 @@ int spgat_refine_cell(double lattice[3][3],
 			  types,
 			  num_atom,
 			  symprec);
+}
+
+int spg_delaunay_reduce(double lattice[3][3], const double symprec)
+{
+  int i, j, succeeded;
+  double red_lattice[3][3];
+
+  succeeded = del_delaunay_reduce(red_lattice, lattice, symprec);
+
+  if (succeeded) {
+    for (i = 0; i < 3; i++) {
+      for (j = 0; j < 3; j++) {
+	lattice[i][j] = red_lattice[i][j];
+      }
+    }
+  }
+
+  return succeeded;
 }
 
 /*---------*/

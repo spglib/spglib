@@ -36,7 +36,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "cell.h"
-#include "lattice.h"
+#include "delaunay.h"
 #include "mathfunc.h"
 #include "symmetry.h"
 
@@ -708,9 +708,7 @@ static PointSymmetry get_lattice_symmetry(SPGCONST double cell_lattice[3][3],
 
   lattice_sym.size = 0;
 
-  if (! lat_smallest_lattice_vector(min_lattice,
-				    cell_lattice,
-				    symprec)) {
+  if (! del_delaunay_reduce(min_lattice, cell_lattice, symprec)) {
     goto err;
   }
 

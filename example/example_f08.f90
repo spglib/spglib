@@ -1,8 +1,9 @@
 ! How to make 
 !
 ! gcc -c spglib_f.c 
-! gfortran -c spglib_f_test.f90 
-! gfortran -o spglib_test spglib_f_test.o spglib_f.o ~/code/spglib/trunk/src/.libs/libsymspg.a
+! gfortran -c spglib_f08.f90 
+! gfortran -c example_f08.f90 
+! gfortran -o example_f08 example_f08.o spglib_f08.o spglib_f.o ~/code/spglib/src/.libs/libsymspg.a
 
 module defs_basis
   implicit none
@@ -118,7 +119,7 @@ subroutine write_syminfo( max_num_sym, num_atom, &
   
 end subroutine write_syminfo
 
-program spglib_test
+program spglib_example_f08
 
   use defs_basis
 
@@ -226,5 +227,6 @@ program spglib_test
   &     lattice, symprec, atom_types, positions, &
   &    mesh, is_shift, is_time_reversal )
        
-end program spglib_test
+end program spglib_example_f08
+
 
