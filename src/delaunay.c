@@ -61,21 +61,21 @@ static void get_exteneded_basis_2D(double basis[3][3],
 				   SPGCONST double lattice[3][2]);
 
 /* Return 0 if failed */
-int lat_delaunay_reduce(double min_lattice[3][3],
+int del_delaunay_reduce(double min_lattice[3][3],
 			SPGCONST double lattice[3][3],
 			const double symprec)
 {
-  debug_print("lat_delaunay_reduce (tolerance = %f):\n", symprec);
+  debug_print("del_delaunay_reduce (tolerance = %f):\n", symprec);
 
   return delaunay_reduce(min_lattice, lattice, symprec);
 }
 
-int lat_delaunay_reduce_2D(double min_lattice[3][3],
+int del_delaunay_reduce_2D(double min_lattice[3][3],
 			   SPGCONST double lattice[3][3],
 			   const int unique_axis,
 			   const double symprec)
 {
-  debug_print("lat_delaunay_reduce_2D:\n");
+  debug_print("del_delaunay_reduce_2D:\n");
   return delaunay_reduce_2D(min_lattice, lattice, unique_axis, symprec);
 }
 

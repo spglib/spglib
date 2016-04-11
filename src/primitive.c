@@ -195,7 +195,7 @@ static Cell * get_cell_with_smallest_lattice(SPGCONST Cell * cell,
   
   smallest_cell = NULL;
 
-  if (!lat_delaunay_reduce(min_lat, cell->lattice, symprec)) {
+  if (!del_delaunay_reduce(min_lat, cell->lattice, symprec)) {
     goto err;
   }
 
@@ -247,7 +247,7 @@ static Cell * get_primitive_cell(int * mapping_table,
     goto not_found;
   }
 
-  if (! lat_delaunay_reduce(smallest_lat, prim_lat, symprec)) {
+  if (! del_delaunay_reduce(smallest_lat, prim_lat, symprec)) {
     goto not_found;
   }
 

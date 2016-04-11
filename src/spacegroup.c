@@ -683,7 +683,7 @@ static int change_basis_monocli(int int_transform_mat[3][3],
 {
   double smallest_lattice[3][3], inv_lattice[3][3], transform_mat[3][3];
 
-  if (! lat_delaunay_reduce_2D(smallest_lattice,
+  if (! del_delaunay_reduce_2D(smallest_lattice,
 			       conv_lattice,
 			       1, /* unique axis of b */
 			       symprec)) {

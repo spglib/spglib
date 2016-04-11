@@ -37,10 +37,10 @@
 
 #include "mathfunc.h"
 
-int lat_delaunay_reduce(double lattice_new[3][3],
+int del_delaunay_reduce(double lattice_new[3][3],
 			SPGCONST double lattice[3][3],
 			const double symprec);
-int lat_delaunay_reduce_2D(double min_lattice[3][3],
+int del_delaunay_reduce_2D(double min_lattice[3][3],
 			   SPGCONST double lattice[3][3],
 			   const int unique_axis,
 			   const double symprec);

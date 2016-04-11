@@ -708,7 +708,7 @@ static PointSymmetry get_lattice_symmetry(SPGCONST double cell_lattice[3][3],
 
   lattice_sym.size = 0;
 
-  if (! lat_delaunay_reduce(min_lattice, cell_lattice, symprec)) {
+  if (! del_delaunay_reduce(min_lattice, cell_lattice, symprec)) {
     goto err;
   }
 
