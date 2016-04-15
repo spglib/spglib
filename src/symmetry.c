@@ -43,7 +43,7 @@
 #include "debug.h"
 
 #define NUM_ATOMS_CRITERION_FOR_OPENMP 1000
-#define REDUCE_RATE 0.95
+#define ANGLE_REDUCE_RATE 0.95
 #define PI 3.14159265358979323846
 /* Tolerance of angle between lattice vectors in degrees */
 /* Negative value invokes converter from symprec. */
@@ -88,10 +88,12 @@ static VecDBL * get_translation(SPGCONST int rot[3][3],
 				const double symprec,
 				const int is_identity);
 static Symmetry * get_operations(SPGCONST Cell *primitive,
-				 const double symprec);
+				 const double symprec,
+				 const double angle_symprec);
 static Symmetry * reduce_operation(SPGCONST Cell * primitive,
 				   SPGCONST Symmetry * symmetry,
-				   const double symprec);
+				   const double symprec,
+				   const double angle_symprec);
 static int search_translation_part(int lat_point_atoms[],
 				   SPGCONST Cell * cell,
 				   SPGCONST int rot[3][3],
@@ -115,10 +117,12 @@ get_space_group_operations(SPGCONST PointSymmetry *lattice_sym,
 static void set_axes(int axes[3][3],
 		     const int a1, const int a2, const int a3);
 static PointSymmetry get_lattice_symmetry(SPGCONST double cell_lattice[3][3],
-					  const double symprec);
+					  const double symprec,
+					  const double angle_symprec);
 static int is_identity_metric(SPGCONST double metric_rotated[3][3],
 			      SPGCONST double metric_orig[3][3],
-			      const double symprec);
+			      const double symprec,
+			      const double angle_symprec);
 static double get_angle(SPGCONST double metric[3][3],
 			const int i,
 			const int j);
@@ -183,7 +187,7 @@ Symmetry * sym_get_operation(SPGCONST Cell * primitive,
 
   debug_print("sym_get_operations:\n");
 
-  return get_operations(primitive, symprec);
+  return get_operations(primitive, symprec, angle_tolerance);
 }
 
 /* Return NULL if failed */
@@ -191,7 +195,7 @@ Symmetry * sym_reduce_operation(SPGCONST Cell * primitive,
 				SPGCONST Symmetry * symmetry,
 				const double symprec)
 {
-  return reduce_operation(primitive, symmetry, symprec);
+  return reduce_operation(primitive, symmetry, symprec, angle_tolerance);
 }
 
 /* Return NULL if failed */
@@ -246,7 +250,8 @@ VecDBL * sym_reduce_pure_translation(SPGCONST Cell * cell,
     mat_copy_vector_d3(symmetry->trans[i], pure_trans->vec[i]);
   }
 
-  if ((symmetry_reduced = reduce_operation(cell, symmetry, symprec)) == NULL) {
+  if ((symmetry_reduced =
+       reduce_operation(cell, symmetry, symprec, angle_tolerance)) == NULL) {
     sym_free_symmetry(symmetry);
     symmetry = NULL;
     return NULL;
@@ -292,7 +297,8 @@ double sym_get_angle_tolerance(void)
 /*    transformed to those of original input cells, if the input cell */
 /*    was not a primitive cell. */
 static Symmetry * get_operations(SPGCONST Cell *primitive,
-				 const double symprec)
+				 const double symprec,
+				 const double angle_symprec)
 {
   PointSymmetry lattice_sym;
   Symmetry *symmetry;
@@ -301,7 +307,9 @@ static Symmetry * get_operations(SPGCONST Cell *primitive,
 
   symmetry = NULL;
 
-  lattice_sym = get_lattice_symmetry(primitive->lattice, symprec);
+  lattice_sym = get_lattice_symmetry(primitive->lattice,
+				     symprec,
+				     angle_symprec);
   if (lattice_sym.size == 0) {
     return NULL;
   }
@@ -318,7 +326,8 @@ static Symmetry * get_operations(SPGCONST Cell *primitive,
 /* Return NULL if failed */
 static Symmetry * reduce_operation(SPGCONST Cell * primitive,
 				   SPGCONST Symmetry * symmetry,
-				   const double symprec)
+				   const double symprec,
+				   const double angle_symprec)
 {
   int i, j, num_sym;
   Symmetry * sym_reduced;
@@ -332,7 +341,9 @@ static Symmetry * reduce_operation(SPGCONST Cell * primitive,
   rot = NULL;
   trans = NULL;
 
-  point_symmetry = get_lattice_symmetry(primitive->lattice, symprec);
+  point_symmetry = get_lattice_symmetry(primitive->lattice,
+					symprec,
+					angle_symprec);
   if (point_symmetry.size == 0) {
     return NULL;
   }
@@ -704,9 +715,11 @@ get_space_group_operations(SPGCONST PointSymmetry *lattice_sym,
 }
 
 static PointSymmetry get_lattice_symmetry(SPGCONST double cell_lattice[3][3],
-					  const double symprec)
+					  const double symprec,
+					  const double angle_symprec)
 {
-  int i, j, k, num_sym;
+  int i, j, k, attempt, num_sym;
+  double angle_tol;
   int axes[3][3];
   double lattice[3][3], min_lattice[3][3];
   double metric[3][3], metric_orig[3][3];
@@ -721,38 +734,45 @@ static PointSymmetry get_lattice_symmetry(SPGCONST double cell_lattice[3][3],
   }
 
   mat_get_metric(metric_orig, min_lattice);
+  angle_tol = angle_symprec;
 
-  num_sym = 0;
-  for (i = 0; i < 26; i++) {
-    for (j = 0; j < 26; j++) {
-      for (k = 0; k < 26; k++) {
-	set_axes(axes, i, j, k);
-	if (! ((mat_get_determinant_i3(axes) == 1) ||
-	       (mat_get_determinant_i3(axes) == -1))) {
-	  continue;
-	}
-	mat_multiply_matrix_di3(lattice, min_lattice, axes);
-	mat_get_metric(metric, lattice);
-
-	if (is_identity_metric(metric, metric_orig, symprec)) {
-	  if (num_sym > 47) {
-	    warning_print("spglib: Too many lattice symmetries was found.\n");
-	    warning_print("        Tolerance may be too large ");
-	    warning_print("(line %d, %s).\n", __LINE__, __FILE__);
-	    goto err;
+  for (attempt = 0; attempt < 100; attempt++) {
+    num_sym = 0;
+    for (i = 0; i < 26; i++) {
+      for (j = 0; j < 26; j++) {
+	for (k = 0; k < 26; k++) {
+	  set_axes(axes, i, j, k);
+	  if (! ((mat_get_determinant_i3(axes) == 1) ||
+		 (mat_get_determinant_i3(axes) == -1))) {
+	    continue;
 	  }
+	  mat_multiply_matrix_di3(lattice, min_lattice, axes);
+	  mat_get_metric(metric, lattice);
 
-	  mat_copy_matrix_i3(lattice_sym.rot[num_sym], axes);
-	  num_sym++;
+	  if (is_identity_metric(metric, metric_orig, symprec, angle_tol)) {
+	    if (num_sym > 47) {
+	      angle_tol *= ANGLE_REDUCE_RATE;
+	      warning_print("spglib: Too many lattice symmetries was found.\n");
+	      warning_print("        Reduce angle tolerance to %f", angle_tol);
+	      warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
+	      goto next_attempt;
+	    }
+
+	    mat_copy_matrix_i3(lattice_sym.rot[num_sym], axes);
+	    num_sym++;
+	  }
 	}
       }
     }
-  }
 
-  lattice_sym.size = num_sym;
-  return transform_pointsymmetry(&lattice_sym,
-				 cell_lattice,
-				 min_lattice);
+    if (num_sym < 49 || angle_tol < 0) {
+      lattice_sym.size = num_sym;
+      return transform_pointsymmetry(&lattice_sym, cell_lattice, min_lattice);
+    }
+
+  next_attempt:
+    ;
+  }
 
  err:
   debug_print("get_lattice_symmetry failed.\n");
@@ -761,7 +781,8 @@ static PointSymmetry get_lattice_symmetry(SPGCONST double cell_lattice[3][3],
 
 static int is_identity_metric(SPGCONST double metric_rotated[3][3],
 			      SPGCONST double metric_orig[3][3],
-			      const double symprec)
+			      const double symprec,
+			      const double angle_symprec)
 {
   int i, j, k;
   int elem_sets[3][2] = {{0, 1},
@@ -781,9 +802,9 @@ static int is_identity_metric(SPGCONST double metric_rotated[3][3],
   for (i = 0; i < 3; i++) {
     j = elem_sets[i][0];
     k = elem_sets[i][1];
-    if (angle_tolerance > 0) {
+    if (angle_symprec > 0) {
       if (mat_Dabs(get_angle(metric_orig, j, k) -
-		   get_angle(metric_rotated, j, k)) > angle_tolerance) {
+		   get_angle(metric_rotated, j, k)) > angle_symprec) {
 	goto fail;
       }
     } else {
