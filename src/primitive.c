@@ -111,9 +111,9 @@ void prm_free_primitive(Primitive * primitive)
 
     if (primitive->cell != NULL) {
       cel_free_cell(primitive->cell);
+      primitive->cell = NULL;
     }
     free(primitive);
-    primitive = NULL;
   }
 }
 
@@ -143,6 +143,7 @@ static Primitive * get_primitive(SPGCONST Cell * cell, const double symprec)
 
   tolerance = symprec;
   for (attempt = 0; attempt < 100; attempt++) {
+    debug_print("get_primitive (attempt = %d):\n", attempt);
     if ((pure_trans = sym_get_pure_translation(cell, tolerance)) == NULL) {
       goto cont;
     }
@@ -165,6 +166,7 @@ static Primitive * get_primitive(SPGCONST Cell * cell, const double symprec)
     }
 
     mat_free_VecDBL(pure_trans);
+    pure_trans = NULL;
 
   cont:
     tolerance *= REDUCE_RATE;
@@ -180,6 +182,7 @@ static Primitive * get_primitive(SPGCONST Cell * cell, const double symprec)
   mat_inverse_matrix_d3(inv_lat, cell->lattice, 0);
   mat_multiply_matrix_d3(primitive->t_mat, primitive->cell->lattice, inv_lat);
   mat_free_VecDBL(pure_trans);
+  pure_trans = NULL;
   return primitive;
 }
 
@@ -192,18 +195,18 @@ static Cell * get_cell_with_smallest_lattice(SPGCONST Cell * cell,
   Cell * smallest_cell;
 
   debug_print("get_cell_with_smallest_lattice:\n");
-  
+
   smallest_cell = NULL;
 
   if (!del_delaunay_reduce(min_lat, cell->lattice, symprec)) {
-    goto err;
+    return NULL;
   }
 
   mat_inverse_matrix_d3(inv_lat, min_lat, 0);
   mat_multiply_matrix_d3(trans_mat, inv_lat, cell->lattice);
 
   if ((smallest_cell = cel_alloc_cell(cell->size)) == NULL) {
-    goto err;
+    return NULL;
   }
 
   mat_copy_matrix_d3(smallest_cell->lattice, min_lat);
@@ -217,9 +220,6 @@ static Cell * get_cell_with_smallest_lattice(SPGCONST Cell * cell,
   }
 
   return smallest_cell;
-
- err:
-  return NULL;
 }
 
 /* Return NULL if failed */
@@ -232,7 +232,7 @@ static Cell * get_primitive_cell(int * mapping_table,
   double prim_lat[3][3], smallest_lat[3][3];
   Cell * primitive_cell;
 
-  debug_print("get_primitive:\n");
+  debug_print("get_primitive_cell:\n");
 
   primitive_cell = NULL;
 
@@ -292,12 +292,13 @@ static int get_primitive_lattice_vectors_iterative(double prim_lattice[3][3],
   for (i = 0; i < pure_trans->size; i++) {
     mat_copy_vector_d3(pure_trans_reduced->vec[i], pure_trans->vec[i]);
   }
-  
+
   for (attempt = 0; attempt < 100; attempt++) {
     multi = pure_trans_reduced->size;
 
     if ((vectors = get_translation_candidates(pure_trans_reduced)) == NULL) {
       mat_free_VecDBL(pure_trans_reduced);
+      pure_trans_reduced = NULL;
       goto fail;
     }
 
@@ -308,7 +309,9 @@ static int get_primitive_lattice_vectors_iterative(double prim_lattice[3][3],
 				      tolerance)) {
 
       mat_free_VecDBL(vectors);
+      vectors = NULL;
       mat_free_VecDBL(pure_trans_reduced);
+      pure_trans_reduced = NULL;
 
       goto found;
 
@@ -316,7 +319,9 @@ static int get_primitive_lattice_vectors_iterative(double prim_lattice[3][3],
 
       if ((tmp_vec = mat_alloc_VecDBL(multi)) == NULL) {
 	mat_free_VecDBL(vectors);
+	vectors = NULL;
 	mat_free_VecDBL(pure_trans_reduced);
+	pure_trans_reduced = NULL;
 	goto fail;
       }
 
@@ -324,13 +329,16 @@ static int get_primitive_lattice_vectors_iterative(double prim_lattice[3][3],
 	mat_copy_vector_d3(tmp_vec->vec[i], pure_trans_reduced->vec[i]);
       }
       mat_free_VecDBL(pure_trans_reduced);
+      pure_trans_reduced = NULL;
 
       pure_trans_reduced = sym_reduce_pure_translation(cell,
 						       tmp_vec,
 						       tolerance);
 
       mat_free_VecDBL(tmp_vec);
+      tmp_vec = NULL;
       mat_free_VecDBL(vectors);
+      vectors = NULL;
 
       if (pure_trans_reduced == NULL) {
 	goto fail;
@@ -344,6 +352,7 @@ static int get_primitive_lattice_vectors_iterative(double prim_lattice[3][3],
   }
 
   mat_free_VecDBL(pure_trans_reduced);
+  pure_trans_reduced = NULL;
 
  fail:
   return 0;
@@ -419,7 +428,7 @@ static int get_primitive_lattice_vectors(double prim_lattice[3][3],
   }
   mat_multiply_matrix_d3(prim_lattice, cell->lattice, relative_lattice);
 
-  return 1;  
+  return 1;
 }
 
 static VecDBL * get_translation_candidates(const VecDBL * pure_trans)
@@ -434,7 +443,7 @@ static VecDBL * get_translation_candidates(const VecDBL * pure_trans)
     return NULL;
   }
 
-  /* store pure translations in original cell */ 
+  /* store pure translations in original cell */
   /* as trial primitive lattice vectors */
   for (i = 0; i < multi - 1; i++) {
     mat_copy_vector_d3(vectors->vec[i], pure_trans->vec[i + 1]);
@@ -454,4 +463,3 @@ static VecDBL * get_translation_candidates(const VecDBL * pure_trans)
 
   return vectors;
 }
-

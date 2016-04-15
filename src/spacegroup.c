@@ -316,9 +316,10 @@ Primitive * spa_get_spacegroup(Spacegroup * spacegroup,
 				    primitive->tolerance);
     if (spacegroup->number > 0) {
       break;
+    } else {
+      prm_free_primitive(primitive);
+      primitive = NULL;
     }
-
-    prm_free_primitive(primitive);
 
   cont:    
     warning_print("spglib: Attempt %d tolerance = %f failed.",
@@ -453,6 +454,7 @@ static Spacegroup search_spacegroup(SPGCONST Cell * primitive,
 					     symmetry,
 					     symprec);
   sym_free_symmetry(symmetry);
+  symmetry = NULL;
   spacegroup = get_spacegroup(hall_number, origin_shift, conv_lattice);
 
  ret:
@@ -540,6 +542,7 @@ static int iterative_search_hall_number(double origin_shift[3],
 				     sym_reduced,
 				     symprec);
     sym_free_symmetry(sym_reduced);
+    sym_reduced = NULL;
     if (hall_number > 0) {
       break;
     }
@@ -627,6 +630,7 @@ static int search_hall_number(double origin_shift[3],
   }
 
   sym_free_symmetry(conv_symmetry);
+  conv_symmetry = NULL;
 
   return hall_number;
 
@@ -816,6 +820,7 @@ static int match_hall_symbol_db(double origin_shift[3],
 					    2,
 					    symprec);
       sym_free_symmetry(changed_symmetry);	
+      changed_symmetry = NULL;
       if (is_found) {
 	mat_copy_matrix_d3(lattice, changed_lattice);
 	return 1;
@@ -861,6 +866,7 @@ static int match_hall_symbol_db(double origin_shift[3],
 					  changed_symmetry,
 					  symprec);
       sym_free_symmetry(changed_symmetry);
+      changed_symmetry = NULL;
       if (is_found) {
 	mat_copy_matrix_d3(lattice, changed_lattice);
 	return 1;
@@ -893,6 +899,7 @@ static int match_hall_symbol_db(double origin_shift[3],
 					    changed_symmetry,
 					    symprec);
 	sym_free_symmetry(changed_symmetry);
+	changed_symmetry = NULL;
 	if (is_found) {
 	  mat_copy_matrix_d3(lattice, changed_lattice);
 	  return 1;
@@ -970,6 +977,7 @@ static int match_hall_symbol_db_monocli(double origin_shift[3],
 					changed_symmetry,
 					symprec);
     sym_free_symmetry(changed_symmetry);
+    changed_symmetry = NULL;
     if (is_found) {
       mat_copy_matrix_d3(lattice, changed_lattice);
       return 1;
@@ -1048,6 +1056,7 @@ static int match_hall_symbol_db_ortho(double origin_shift[3],
 					changed_symmetry,
 					symprec);
     sym_free_symmetry(changed_symmetry);
+    changed_symmetry = NULL;
     if (is_found) {
       mat_copy_matrix_d3(lattice, changed_lattice);
       return 1;
