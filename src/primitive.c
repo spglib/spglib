@@ -344,7 +344,7 @@ static int get_primitive_lattice_vectors_iterative(double prim_lattice[3][3],
 	goto fail;
       }
 
-      warning_print("Tolerance is reduced to %f (%d), size = %d\n",
+      warning_print("Tolerance is reduced to %f (%d), num_pure_trans = %d\n",
 		    tolerance, attempt, pure_trans_reduced->size);
 
       tolerance *= REDUCE_RATE;

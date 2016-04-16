@@ -321,7 +321,7 @@ Primitive * spa_get_spacegroup(Spacegroup * spacegroup,
       primitive = NULL;
     }
 
-  cont:    
+  cont:
     warning_print("spglib: Attempt %d tolerance = %f failed.",
 		  attempt, tolerance);
     warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
@@ -344,13 +344,13 @@ Spacegroup spa_get_spacegroup_with_hall_number(SPGCONST Primitive * primitive,
   int num_candidates;
   int candidate[1];
   Spacegroup spacegroup;
-  
+
   spacegroup.number = 0;
 
   if (hall_number < 1 || hall_number > 530) {
     goto err;
   }
-  
+
   num_candidates = 1;
   candidate[0] = hall_number;
   spacegroup = search_spacegroup(primitive->cell,
@@ -435,6 +435,7 @@ static Spacegroup search_spacegroup(SPGCONST Cell * primitive,
   double origin_shift[3];
   Spacegroup spacegroup;
   Symmetry *symmetry;
+  PointSymmetry pointsym;
 
   debug_print("search_spacegroup (tolerance = %f):\n", symprec);
 
@@ -443,6 +444,15 @@ static Spacegroup search_spacegroup(SPGCONST Cell * primitive,
   spacegroup.number = 0;
 
   if ((symmetry = sym_get_operation(primitive, symprec)) == NULL) {
+    goto ret;
+  }
+
+  pointsym = ptg_get_pointsymmetry(symmetry->rot, symmetry->size);
+  if (pointsym.size < symmetry->size) {
+    warning_print("spglib: Point symmetry of primitive cell is broken. ");
+    warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+    sym_free_symmetry(symmetry);
+    symmetry = NULL;
     goto ret;
   }
 
@@ -468,7 +478,7 @@ static Spacegroup get_spacegroup(const int hall_number,
 {
   Spacegroup spacegroup;
   SpacegroupType spacegroup_type;
-  
+
   spacegroup.number = 0;
   spacegroup_type = spgdb_get_spacegroup_type(hall_number);
 
@@ -711,7 +721,7 @@ get_initial_conventional_symmetry(const Centering centering,
   debug_print("get_initial_conventional_symmetry\n");
 
   conv_symmetry = NULL;
-  
+
   if (centering == R_CENTER) {
     /* hP for rhombohedral */
     conv_symmetry = get_conventional_symmetry(transform_mat,
@@ -740,7 +750,7 @@ static int match_hall_symbol_db(double origin_shift[3],
   SpacegroupType spacegroup_type;
   Symmetry * changed_symmetry;
   double changed_lattice[3][3], inv_lattice[3][3], transform_mat[3][3];
-  
+
   changed_symmetry = NULL;
 
   spacegroup_type = spgdb_get_spacegroup_type(hall_number);
@@ -761,7 +771,7 @@ static int match_hall_symbol_db(double origin_shift[3],
 				     symmetry,
 				     symprec)) {return 1;}
     break;
-      
+
   case ORTHO:
     if (spacegroup_type.number == 48 ||
 	spacegroup_type.number == 50 ||
@@ -770,7 +780,7 @@ static int match_hall_symbol_db(double origin_shift[3],
 	spacegroup_type.number == 70) { /* uncount origin shift */
       num_hall_types /= 2;
     }
-      
+
     if (num_hall_types == 1) {
       if (match_hall_symbol_db_ortho(origin_shift,
 				     lattice,
@@ -819,7 +829,7 @@ static int match_hall_symbol_db(double origin_shift[3],
 					    changed_symmetry,
 					    2,
 					    symprec);
-      sym_free_symmetry(changed_symmetry);	
+      sym_free_symmetry(changed_symmetry);
       changed_symmetry = NULL;
       if (is_found) {
 	mat_copy_matrix_d3(lattice, changed_lattice);
@@ -848,7 +858,7 @@ static int match_hall_symbol_db(double origin_shift[3],
 				 centering,
 				 symmetry,
 				 symprec)) {return 1;}
-      
+
     if (hall_number == 501) { /* Try another basis for No.205 */
       mat_multiply_matrix_d3(changed_lattice,
 			     lattice,
@@ -873,7 +883,7 @@ static int match_hall_symbol_db(double origin_shift[3],
       }
     }
     break;
-      
+
   case TRIGO:
     if (centering == R_CENTER) {
       if (hall_number == 433 ||
@@ -939,7 +949,7 @@ static int match_hall_symbol_db_monocli(double origin_shift[3],
   double changed_lattice[3][3];
 
   changed_symmetry = NULL;
-  
+
   for (i = 0; i < 18; i++) {
     if (centering == C_FACE) {
       changed_centering = change_of_centering_monocli[i];
@@ -1004,14 +1014,14 @@ static int match_hall_symbol_db_ortho(double origin_shift[3],
   double changed_lattice[3][3];
 
   changed_symmetry = NULL;
-  
+
   for (i = 0; i < 6; i++) {
     if (centering == C_FACE) {
       changed_centering = change_of_centering_ortho[i];
     } else {
       changed_centering = centering;
     }
-    
+
     mat_multiply_matrix_d3(changed_lattice,
 			   lattice,
 			   change_of_basis_ortho[i]);
@@ -1042,7 +1052,7 @@ static int match_hall_symbol_db_ortho(double origin_shift[3],
       }
       if (norms[0] > norms[1] || norms[1] > norms[2]) {continue;}
     }
-    
+
     if ((changed_symmetry = get_conventional_symmetry(change_of_basis_ortho[i],
 						      PRIMITIVE,
 						      symmetry)) == NULL) {
@@ -1144,7 +1154,7 @@ static Symmetry * get_conventional_symmetry(SPGCONST double transform_mat[3][3],
       shift[1][2] = 2. / 3;
       multi = 3;
     }
-    
+
     if (centering == FACE) {
       shift[0][0] = 0;
       shift[0][1] = 0.5;
@@ -1272,7 +1282,7 @@ static Centering get_base_center(SPGCONST int transform_mat[3][3])
 
   /* A center */
   for (i = 0; i < 3; i++) {
-    if (abs(transform_mat[i][0]) == 1 && 
+    if (abs(transform_mat[i][0]) == 1 &&
 	transform_mat[i][1] == 0 &&
 	transform_mat[i][2] == 0) {
       centering = A_FACE;
@@ -1283,7 +1293,7 @@ static Centering get_base_center(SPGCONST int transform_mat[3][3])
   /* B center */
   for (i = 0; i < 3; i++) {
     if (transform_mat[i][0] == 0 &&
-	abs(transform_mat[i][1]) == 1 && 
+	abs(transform_mat[i][1]) == 1 &&
 	transform_mat[i][2] == 0) {
       centering = B_FACE;
       goto end;
@@ -1292,7 +1302,7 @@ static Centering get_base_center(SPGCONST int transform_mat[3][3])
 
   /* body center */
   if (abs(transform_mat[0][0]) +
-      abs(transform_mat[0][1]) + 
+      abs(transform_mat[0][1]) +
       abs(transform_mat[0][2]) == 2) {
     centering = BODY;
     goto end;
