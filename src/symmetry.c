@@ -211,6 +211,8 @@ VecDBL * sym_get_pure_translation(SPGCONST Cell *cell,
   pure_trans = NULL;
 
   if ((pure_trans = get_translation(identity, cell, symprec, 1)) == NULL) {
+    warning_print("spglib: get_translation failed (line %d, %s).\n",
+		  __LINE__, __FILE__);
     return NULL;
   }
 
