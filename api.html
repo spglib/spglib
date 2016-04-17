@@ -5,7 +5,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>API &mdash; spglib 1.9.1 documentation</title>
+    <title>API &mdash; spglib 1.9.2 documentation</title>
     
     <link rel="stylesheet" href="_static/basic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.9.1',
+        VERSION:     '1.9.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -28,7 +28,7 @@
     <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
     <script type="text/javascript" src="_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
-    <link rel="top" title="spglib 1.9.1 documentation" href="index.html" />
+    <link rel="top" title="spglib 1.9.2 documentation" href="index.html" />
     <link rel="next" title="Important variables" href="variable.html" />
     <link rel="prev" title="Definitions and conventions used in spglib" href="definition.html" />
 <meta charset='utf-8'>
@@ -50,7 +50,7 @@
         </button>
         <a class="navbar-brand" href="index.html">
           spglib</a>
-        <span class="navbar-text navbar-version pull-left"><b>1.9.1</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>1.9.2</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -190,8 +190,8 @@ i.e., these have to be used together.</p>
 lattice that break crsytallographic point group, the crystallographic
 symmetry operations are searched with this broken symmetry, i.e., at
 most the crystallographic point group found in this case is the point
-group of the lattice. For example, this happens for the <span class="math">2\times
-1\times 1</span> supercell of a conventional cubic unit cell. This may not
+group of the lattice. For example, this happens for the <img class="math" src="_images/math/25e9150981c52135c28fdef4f42847e90d71ccc7.png" alt="2\times
+1\times 1"/> supercell of a conventional cubic unit cell. This may not
 be understandable in crystallographic sense, but is practically useful
 treatment for research in computational materials science.</p>
 <div class="line-block">
@@ -410,9 +410,9 @@ setting or cell choices is found in <code class="docutils literal"><span class="
 <h4>Symmetry operations<a class="headerlink" href="#symmetry-operations" title="Permalink to this headline">¶</a></h4>
 <p>The symmetry operations of the input unit cell are stored in
 <code class="docutils literal"><span class="pre">rotations</span></code> and <code class="docutils literal"><span class="pre">translations</span></code>. A crystallographic symmetry
-operation <span class="math">(\boldsymbol{W}, \boldsymbol{w})</span> is made from a pair
-of rotation <span class="math">\boldsymbol{W}</span> and translation
-<span class="math">\boldsymbol{w}</span> parts with the same index. Number of symmetry
+operation <img class="math" src="_images/math/fadc8b05a27134881e99de1f69da25dac175dc51.png" alt="(\boldsymbol{W}, \boldsymbol{w})"/> is made from a pair
+of rotation <img class="math" src="_images/math/1c139b2a70ec38e300f42aceabaa7eddac36a46b.png" alt="\boldsymbol{W}"/> and translation
+<img class="math" src="_images/math/007d60f67f9a1ec03227cdf5925d44eacff1484b.png" alt="\boldsymbol{w}"/> parts with the same index. Number of symmetry
 operations is given as <code class="docutils literal"><span class="pre">n_operations</span></code>. The detailed explanation of
 the values is found at <a class="reference internal" href="#api-spg-get-symmetry"><span class="std std-ref">spg_get_symmetry</span></a>.</p>
 <div class="line-block">
@@ -424,7 +424,7 @@ the values is found at <a class="reference internal" href="#api-spg-get-symmetry
 <p><code class="docutils literal"><span class="pre">n_atoms</span></code> is the number of atoms of the input unit
 cell. <code class="docutils literal"><span class="pre">wyckoffs</span></code> gives Wyckoff letters that are assigned to atomic
 positions of the input unit cell. The numbers of 0, 1, 2,
-<span class="math">\ldots</span>, correspond to the a, b, c, <span class="math">\ldots</span>,
+<img class="math" src="_images/math/570f75407575dcfde1b3d2297624d8f139c9131c.png" alt="\ldots"/>, correspond to the a, b, c, <img class="math" src="_images/math/570f75407575dcfde1b3d2297624d8f139c9131c.png" alt="\ldots"/>,
 respectively. Number of elements in <code class="docutils literal"><span class="pre">wyckoffs</span></code> is same as
 <code class="docutils literal"><span class="pre">n_atoms</span></code>. <code class="docutils literal"><span class="pre">equivalent_atoms</span></code> is a list of atomic indices that map
 to indices of symmetrically independent atoms, where the list index
@@ -443,36 +443,36 @@ point coordinates have to be standardized to compare with the database
 of symmetry operations. The basis vectors are transformed to those of
 a standardized unit cell. Atomic point coordinates are shifted so that
 symmetry operations have the standard
-origin. <code class="docutils literal"><span class="pre">transformation_matrix</span></code> (<span class="math">\boldsymbol{P}</span>) is the
+origin. <code class="docutils literal"><span class="pre">transformation_matrix</span></code> (<img class="math" src="_images/math/916e1737b026746b3b28396f8d28701295471563.png" alt="\boldsymbol{P}"/>) is the
 matrix to transform the input basis vectors to the standardized basis
 vectors, wihch is represented as</p>
 <div class="math">
-<p><span class="math">( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
-= ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )  \boldsymbol{P}</span></p>
-</div><p>where <span class="math">\mathbf{a}</span>, <span class="math">\mathbf{b}</span>, and <span class="math">\mathbf{c}</span>
+<p><img src="_images/math/746594d4ff90c9b877400b331b6f090b3fc6a37b.png" alt="( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
+= ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )  \boldsymbol{P}"/></p>
+</div><p>where <img class="math" src="_images/math/a7ca8d225c064dae6b3c328bf7acd82b7d8933c9.png" alt="\mathbf{a}"/>, <img class="math" src="_images/math/dd6a0c79ee7e76c8e6f1310a5d171d5b3848b685.png" alt="\mathbf{b}"/>, and <img class="math" src="_images/math/c20b076757f2c84dbfba8d79beeb264442324609.png" alt="\mathbf{c}"/>
 are the input (original) basis vectors, and
-<span class="math">\mathbf{a}_\mathrm{s}</span>, <span class="math">\mathbf{b}_\mathrm{s}</span>, and
-<span class="math">\mathbf{c}_\mathrm{s}</span> are the standardized basis vectors. The
-<code class="docutils literal"><span class="pre">origin_shift</span></code> (<span class="math">\boldsymbol{p}</span>) is the vector from the
+<img class="math" src="_images/math/5a3081ef3ed7b99083f1dbeaac0c75f368a2fb85.png" alt="\mathbf{a}_\mathrm{s}"/>, <img class="math" src="_images/math/a454cca58ead035bdbdfad251eda86d17a8fc5bf.png" alt="\mathbf{b}_\mathrm{s}"/>, and
+<img class="math" src="_images/math/0298b49b4e11950a7d7fb75b0640a25264c63428.png" alt="\mathbf{c}_\mathrm{s}"/> are the standardized basis vectors. The
+<code class="docutils literal"><span class="pre">origin_shift</span></code> (<img class="math" src="_images/math/5e3ac53f2a3b078f16d75452ab30d8476a6b78b1.png" alt="\boldsymbol{p}"/>) is the vector from the
 origin of the standardized coordinate system to the origin of the
 input (original) coordinate system measured in the standardized
 coordinate system. The atomic point shift is measured from the
 standardized unit cell (conventional unit cell) to the original unit
 cell measured in the coordinates of the standardized unit cell. An
-atomic point in the original unit cell <span class="math">\boldsymbol{x}</span> (input
+atomic point in the original unit cell <img class="math" src="_images/math/80ba696b882e52c7e4d833039710ff8b4005e777.png" alt="\boldsymbol{x}"/> (input
 data) is mapped to that in the standardized unit cell
-<span class="math">\boldsymbol{x}_\mathrm{s}</span> by</p>
+<img class="math" src="_images/math/146d071769289d4f8b4dba4bbe952421ec840d22.png" alt="\boldsymbol{x}_\mathrm{s}"/> by</p>
 <div class="math">
-<p><span class="math">\boldsymbol{x}_\mathrm{s} = \boldsymbol{P}\boldsymbol{x} +
-\boldsymbol{p} \;\;(\mathrm{mod}\; \mathbf{1}).</span></p>
+<p><img src="_images/math/b517b6f6845bb1f915148906360f2e5802dad732.png" alt="\boldsymbol{x}_\mathrm{s} = \boldsymbol{P}\boldsymbol{x} +
+\boldsymbol{p} \;\;(\mathrm{mod}\; \mathbf{1})."/></p>
 </div><p>In <strong>versions 1.7.x and 1.8 or before</strong>, <code class="docutils literal"><span class="pre">transformation_matrix</span></code> and
 <code class="docutils literal"><span class="pre">origin_shift</span></code> are defined as follows:</p>
 <div class="math">
-<p><span class="math">( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
+<p><img src="_images/math/f8225eacd024c20476df1cf8675f719b6cdca020.png" alt="( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
 \mathbf{c}_\mathrm{s} ) = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c}
 ) \boldsymbol{P} \;\; \text{and} \;\; \boldsymbol{x}_\mathrm{s} =
 \boldsymbol{P}^{-1}\boldsymbol{x} - \boldsymbol{p}
-\;\;(\mathrm{mod}\; \mathbf{1}),</span></p>
+\;\;(\mathrm{mod}\; \mathbf{1}),"/></p>
 </div><p>respectively.</p>
 <div class="line-block">
 <div class="line"><br /></div>

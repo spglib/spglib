@@ -5,7 +5,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Definitions and conventions used in spglib &mdash; spglib 1.9.1 documentation</title>
+    <title>Definitions and conventions used in spglib &mdash; spglib 1.9.2 documentation</title>
     
     <link rel="stylesheet" href="_static/basic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.9.1',
+        VERSION:     '1.9.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -28,7 +28,7 @@
     <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
     <script type="text/javascript" src="_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
-    <link rel="top" title="spglib 1.9.1 documentation" href="index.html" />
+    <link rel="top" title="spglib 1.9.2 documentation" href="index.html" />
     <link rel="next" title="API" href="api.html" />
     <link rel="prev" title="Spglib" href="index.html" />
 <meta charset='utf-8'>
@@ -50,7 +50,7 @@
         </button>
         <a class="navbar-brand" href="index.html">
           spglib</a>
-        <span class="navbar-text navbar-version pull-left"><b>1.9.1</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>1.9.2</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -88,10 +88,10 @@
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
 <li><a class="reference internal" href="#">Definitions and conventions used in spglib</a><ul>
-<li><a class="reference internal" href="#basis-vectors-or">Basis vectors <span class="math">(\mathbf{a}, \mathbf{b}, \mathbf{c})</span> or <span class="math">(\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)</span></a></li>
-<li><a class="reference internal" href="#atomic-point-coordinates">Atomic point coordinates <span class="math">\boldsymbol{x}</span></a></li>
-<li><a class="reference internal" href="#symmetry-operation">Symmetry operation <span class="math">(\boldsymbol{W}, \boldsymbol{w})</span></a></li>
-<li><a class="reference internal" href="#transformation-matrix-and-origin-shift">Transformation matrix <span class="math">\boldsymbol{P}</span> and origin shift <span class="math">\boldsymbol{p}</span></a></li>
+<li><a class="reference internal" href="#basis-vectors-or">Basis vectors <img class="math" src="_images/math/71ce6bc59bc8fa9c716468f9aaa02a81fb2c9ba1.png" alt="(\mathbf{a}, \mathbf{b}, \mathbf{c})"/> or <img class="math" src="_images/math/09970adb456cc4c143f3e77ba0fd8576aa837c16.png" alt="(\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)"/></a></li>
+<li><a class="reference internal" href="#atomic-point-coordinates">Atomic point coordinates <img class="math" src="_images/math/80ba696b882e52c7e4d833039710ff8b4005e777.png" alt="\boldsymbol{x}"/></a></li>
+<li><a class="reference internal" href="#symmetry-operation">Symmetry operation <img class="math" src="_images/math/fadc8b05a27134881e99de1f69da25dac175dc51.png" alt="(\boldsymbol{W}, \boldsymbol{w})"/></a></li>
+<li><a class="reference internal" href="#transformation-matrix-and-origin-shift">Transformation matrix <img class="math" src="_images/math/916e1737b026746b3b28396f8d28701295471563.png" alt="\boldsymbol{P}"/> and origin shift <img class="math" src="_images/math/5e3ac53f2a3b078f16d75452ab30d8476a6b78b1.png" alt="\boldsymbol{p}"/></a></li>
 <li><a class="reference internal" href="#conventions-of-standardized-unit-cell">Conventions of standardized unit cell</a><ul>
 <li><a class="reference internal" href="#choice-of-basis-vectors">Choice of basis vectors</a></li>
 <li><a class="reference internal" href="#transformation-to-the-primitive-cell">Transformation to the primitive cell</a></li>
@@ -156,10 +156,10 @@
 definitions of transformation matrix and origin shift were different
 in the previous versions.</p>
 <div class="section" id="basis-vectors-or">
-<h2>Basis vectors <span class="math">(\mathbf{a}, \mathbf{b}, \mathbf{c})</span> or <span class="math">(\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)</span><a class="headerlink" href="#basis-vectors-or" title="Permalink to this headline">¶</a></h2>
+<h2>Basis vectors <img class="math" src="_images/math/71ce6bc59bc8fa9c716468f9aaa02a81fb2c9ba1.png" alt="(\mathbf{a}, \mathbf{b}, \mathbf{c})"/> or <img class="math" src="_images/math/09970adb456cc4c143f3e77ba0fd8576aa837c16.png" alt="(\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)"/><a class="headerlink" href="#basis-vectors-or" title="Permalink to this headline">¶</a></h2>
 <p>In spglib, basis vectors are represented by three column vectors:</p>
 <div class="math">
-<p><span class="math">\mathbf{a}= \begin{pmatrix}
+<p><img src="_images/math/63025c43bb5384a4655b740751ee462d8dbb98fa.png" alt="\mathbf{a}= \begin{pmatrix}
 a_x \\
 a_y \\
 a_z \\
@@ -173,84 +173,84 @@ b_z \\
 c_x \\
 c_y \\
 c_z \\
-\end{pmatrix},</span></p>
+\end{pmatrix},"/></p>
 </div><p>in Cartesian coordinates. Depending on the situation,
-<span class="math">(\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)</span> is used instead of
-<span class="math">(\mathbf{a}, \mathbf{b}, \mathbf{c})</span>.</p>
+<img class="math" src="_images/math/09970adb456cc4c143f3e77ba0fd8576aa837c16.png" alt="(\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)"/> is used instead of
+<img class="math" src="_images/math/71ce6bc59bc8fa9c716468f9aaa02a81fb2c9ba1.png" alt="(\mathbf{a}, \mathbf{b}, \mathbf{c})"/>.</p>
 </div>
 <div class="section" id="atomic-point-coordinates">
-<h2>Atomic point coordinates <span class="math">\boldsymbol{x}</span><a class="headerlink" href="#atomic-point-coordinates" title="Permalink to this headline">¶</a></h2>
-<p>Coordinates of an atomic point <span class="math">\boldsymbol{x}</span> are represented
+<h2>Atomic point coordinates <img class="math" src="_images/math/80ba696b882e52c7e4d833039710ff8b4005e777.png" alt="\boldsymbol{x}"/><a class="headerlink" href="#atomic-point-coordinates" title="Permalink to this headline">¶</a></h2>
+<p>Coordinates of an atomic point <img class="math" src="_images/math/80ba696b882e52c7e4d833039710ff8b4005e777.png" alt="\boldsymbol{x}"/> are represented
 as three fractional values relative to basis vectors as follows,</p>
 <div class="math">
-<p><span class="math">\boldsymbol{x}= \begin{pmatrix}
+<p><img src="_images/math/f51e4ecdb3b00b87215331eb4d355f760fd6bb57.png" alt="\boldsymbol{x}= \begin{pmatrix}
 x_1 \\
 x_2 \\
 x_3 \\
-\end{pmatrix},</span></p>
-</div><p>where <span class="math">0 \le x_i &lt; 1</span>. A position vector <span class="math">\mathbf{x}</span> in
+\end{pmatrix},"/></p>
+</div><p>where <img class="math" src="_images/math/2e1a22d9fbcd32896befce8edcf70ff8839672ee.png" alt="0 \le x_i &lt; 1"/>. A position vector <img class="math" src="_images/math/46aec6aaff80d183cc0ed35d77ce75c7c9ffd174.png" alt="\mathbf{x}"/> in
 Cartesian coordinates is obtained by</p>
 <div class="math">
-<p><span class="math">\mathbf{x} = (\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{x}.</span></p>
+<p><img src="_images/math/dad6fa83e6caccc0a727fa6b79ba05fc1e937af3.png" alt="\mathbf{x} = (\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{x}."/></p>
 </div><p>or</p>
 <div class="math">
-<p><span class="math">\mathbf{x} = \sum_i x_i \mathbf{a}_i.</span></p>
+<p><img src="_images/math/4b66b089daac7bcc14393010edc398a167df7f07.png" alt="\mathbf{x} = \sum_i x_i \mathbf{a}_i."/></p>
 </div></div>
 <div class="section" id="symmetry-operation">
-<h2>Symmetry operation <span class="math">(\boldsymbol{W}, \boldsymbol{w})</span><a class="headerlink" href="#symmetry-operation" title="Permalink to this headline">¶</a></h2>
+<h2>Symmetry operation <img class="math" src="_images/math/fadc8b05a27134881e99de1f69da25dac175dc51.png" alt="(\boldsymbol{W}, \boldsymbol{w})"/><a class="headerlink" href="#symmetry-operation" title="Permalink to this headline">¶</a></h2>
 <p>A symmetry operation consists of a pair of the rotation part
-<span class="math">\boldsymbol{W}</span> and translation part <span class="math">\boldsymbol{w}</span>,
-and is represented as <span class="math">(\boldsymbol{W}, \boldsymbol{w})</span> in the
-spglib document. The symmetry operation transfers <span class="math">\boldsymbol{x}</span> to
-<span class="math">\tilde{\boldsymbol{x}}</span> as follows:</p>
+<img class="math" src="_images/math/1c139b2a70ec38e300f42aceabaa7eddac36a46b.png" alt="\boldsymbol{W}"/> and translation part <img class="math" src="_images/math/007d60f67f9a1ec03227cdf5925d44eacff1484b.png" alt="\boldsymbol{w}"/>,
+and is represented as <img class="math" src="_images/math/fadc8b05a27134881e99de1f69da25dac175dc51.png" alt="(\boldsymbol{W}, \boldsymbol{w})"/> in the
+spglib document. The symmetry operation transfers <img class="math" src="_images/math/80ba696b882e52c7e4d833039710ff8b4005e777.png" alt="\boldsymbol{x}"/> to
+<img class="math" src="_images/math/da64a582d03d6875592c54b3f60dbcc1e35a1ff7.png" alt="\tilde{\boldsymbol{x}}"/> as follows:</p>
 <div class="math">
-<p><span class="math">\tilde{\boldsymbol{x}} = \boldsymbol{W}\boldsymbol{x} + \boldsymbol{w}.</span></p>
+<p><img src="_images/math/2e4f759c68466291cedd503a99af3832b3ed3410.png" alt="\tilde{\boldsymbol{x}} = \boldsymbol{W}\boldsymbol{x} + \boldsymbol{w}."/></p>
 </div></div>
 <div class="section" id="transformation-matrix-and-origin-shift">
-<h2>Transformation matrix <span class="math">\boldsymbol{P}</span> and origin shift <span class="math">\boldsymbol{p}</span><a class="headerlink" href="#transformation-matrix-and-origin-shift" title="Permalink to this headline">¶</a></h2>
-<p>The transformation matrix <span class="math">\boldsymbol{P}</span> changes choice of
+<h2>Transformation matrix <img class="math" src="_images/math/916e1737b026746b3b28396f8d28701295471563.png" alt="\boldsymbol{P}"/> and origin shift <img class="math" src="_images/math/5e3ac53f2a3b078f16d75452ab30d8476a6b78b1.png" alt="\boldsymbol{p}"/><a class="headerlink" href="#transformation-matrix-and-origin-shift" title="Permalink to this headline">¶</a></h2>
+<p>The transformation matrix <img class="math" src="_images/math/916e1737b026746b3b28396f8d28701295471563.png" alt="\boldsymbol{P}"/> changes choice of
 basis vectors as follows</p>
 <div class="math">
-<p><span class="math">( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
+<p><img src="_images/math/ede031c4a3520425b11ff241e9952046ffac6ac9.png" alt="( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
 = ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
-\mathbf{c}_\mathrm{s} )  \boldsymbol{P},</span></p>
-</div><p>where <span class="math">( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )</span> and <span class="math">(
+\mathbf{c}_\mathrm{s} )  \boldsymbol{P},"/></p>
+</div><p>where <img class="math" src="_images/math/c737209f2d796be46333729ad9d392bcde7d226e.png" alt="( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )"/> and <img class="math" src="_images/math/391b250095dee33ee3633b91a5be3b620653307f.png" alt="(
 \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
-\mathbf{c}_\mathrm{s} )</span> are the basis vectors of an arbitrary system
+\mathbf{c}_\mathrm{s} )"/> are the basis vectors of an arbitrary system
 and of a starndardized system, respectively. Transformation matrix
 <strong>doesn&#8217;t</strong> rotate a crystal in Cartesian coordinates, but just
 changes the choices of basis vectors.</p>
-<p>The origin shift <span class="math">\boldsymbol{p}</span> gives the vector from the
-origin of the standardized system <span class="math">\boldsymbol{O}_\mathrm{s}</span> to
-the origin of the arbitrary system <span class="math">\boldsymbol{O}</span>,</p>
+<p>The origin shift <img class="math" src="_images/math/5e3ac53f2a3b078f16d75452ab30d8476a6b78b1.png" alt="\boldsymbol{p}"/> gives the vector from the
+origin of the standardized system <img class="math" src="_images/math/8619121ccdb26788d8cc1a09a1fbc9bfb9441652.png" alt="\boldsymbol{O}_\mathrm{s}"/> to
+the origin of the arbitrary system <img class="math" src="_images/math/16d8f009159910377df1df827fc1fe61f9c39dc5.png" alt="\boldsymbol{O}"/>,</p>
 <div class="math">
-<p><span class="math">\boldsymbol{p} = \boldsymbol{O} - \boldsymbol{O}_\mathrm{s}.</span></p>
+<p><img src="_images/math/260969e3886972ea79f2c03104cf3649b2e6a3f9.png" alt="\boldsymbol{p} = \boldsymbol{O} - \boldsymbol{O}_\mathrm{s}."/></p>
 </div><p>Origin shift <strong>doesn&#8217;t</strong> move a crystal in Cartesian coordinates, but
 just changes the origin to measure the coordinates of atomic points.</p>
 <p>A change of basis is described by the combination of the
 transformation matrix and the origin shift denoted by
-<span class="math">(\boldsymbol{P}, \boldsymbol{p})</span> where first the
+<img class="math" src="_images/math/17211c86b99508ae918a3e9f591f26d1449d0cdd.png" alt="(\boldsymbol{P}, \boldsymbol{p})"/> where first the
 transformation matrix is applied and then origin shift. The points in
-the standardized system <span class="math">\boldsymbol{x}_\mathrm{s}</span> and
-arbitrary system <span class="math">\boldsymbol{x}</span> are related by</p>
+the standardized system <img class="math" src="_images/math/146d071769289d4f8b4dba4bbe952421ec840d22.png" alt="\boldsymbol{x}_\mathrm{s}"/> and
+arbitrary system <img class="math" src="_images/math/80ba696b882e52c7e4d833039710ff8b4005e777.png" alt="\boldsymbol{x}"/> are related by</p>
 <div class="math">
-<p><span class="math">\boldsymbol{x}_\mathrm{s} = \boldsymbol{P}\boldsymbol{x} +
-\boldsymbol{p},</span></p>
+<p><img src="_images/math/df4c3b27245fec7021a7a6b6e6ce5c2ba20e032c.png" alt="\boldsymbol{x}_\mathrm{s} = \boldsymbol{P}\boldsymbol{x} +
+\boldsymbol{p},"/></p>
 </div><p>or equivalently,</p>
 <div class="math">
-<p><span class="math">\boldsymbol{x} = \boldsymbol{P}^{-1}\boldsymbol{x}_\mathrm{s} -
-\boldsymbol{P}^{-1}\boldsymbol{p}.</span></p>
+<p><img src="_images/math/52dc5a8d8be0845909fd63d040fe1333d8e64389.png" alt="\boldsymbol{x} = \boldsymbol{P}^{-1}\boldsymbol{x}_\mathrm{s} -
+\boldsymbol{P}^{-1}\boldsymbol{p}."/></p>
 </div><p>A graphical example is shown below.</p>
 <p><a class="reference internal" href="_images/change-of-basis.png"><img alt="cob" src="_images/change-of-basis.png" style="width: 20%;" /></a></p>
 <p>(click the figure to enlarge)</p>
 <p>In this example,</p>
 <div class="math">
-<p><span class="math">\renewcommand*{\arraystretch}{1.4}
+<p><img src="_images/math/f11891b91a5b3ccf7cf504462c257ff2a8aa68d4.png" alt="\renewcommand*{\arraystretch}{1.4}
 \boldsymbol{P} = \begin{pmatrix}
 \frac{1}{2} &amp; \frac{1}{2} &amp; 0 \\
 \frac{\bar{1}}{2} &amp; \frac{1}{2} &amp; 0 \\
 0 &amp; 0 &amp; 1
-\end{pmatrix}.</span></p>
+\end{pmatrix}."/></p>
 </div></div>
 <div class="section" id="conventions-of-standardized-unit-cell">
 <span id="def-standardized-unit-cell"></span><h2>Conventions of standardized unit cell<a class="headerlink" href="#conventions-of-standardized-unit-cell" title="Permalink to this headline">¶</a></h2>
@@ -264,7 +264,7 @@ standardized by the crystal symmetry and lengths of basis vectors.
 Crystals are categorized by Hall symbols in 530 different types in
 terms of 230 space group types, unique axes, settings, and cell
 choices. Moreover in spglib, lengths of basis vectors are used to
-choose the order of <span class="math">(\mathbf{a}, \mathbf{b}, \mathbf{c})</span> if
+choose the order of <img class="math" src="_images/math/71ce6bc59bc8fa9c716468f9aaa02a81fb2c9ba1.png" alt="(\mathbf{a}, \mathbf{b}, \mathbf{c})"/> if
 the order can not be determined only by the symmetrical conventions. The
 details of these conventions are summarized in the article found at
 <a class="reference external" href="http://arxiv.org/abs/1506.01455">http://arxiv.org/abs/1506.01455</a>.</p>
@@ -276,17 +276,17 @@ types available, base centrings of A and C, rhombohedral (R), body centred
 (I), and face centred (F). The transformation is applied to the
 standardized unit cell by</p>
 <div class="math">
-<p><span class="math">( \mathbf{a}_\mathrm{p} \; \mathbf{b}_\mathrm{p} \; \mathbf{c}_\mathrm{p} )
+<p><img src="_images/math/8705b0522c1d4dc70fdd7478150666aaf6501c2d.png" alt="( \mathbf{a}_\mathrm{p} \; \mathbf{b}_\mathrm{p} \; \mathbf{c}_\mathrm{p} )
 = ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
-\mathbf{c}_\mathrm{s} )  \boldsymbol{P}_\mathrm{c},</span></p>
-</div><p>where <span class="math">\mathbf{a}_\mathrm{p}</span>, <span class="math">\mathbf{b}_\mathrm{p}</span>,
-and <span class="math">\mathbf{c}_\mathrm{p}</span> are the basis vectors of the
-primitive cell and <span class="math">\boldsymbol{P}_\mathrm{c}</span> is the
+\mathbf{c}_\mathrm{s} )  \boldsymbol{P}_\mathrm{c},"/></p>
+</div><p>where <img class="math" src="_images/math/5954dc42d29df3a300246e8f86ff6f2b8a276abf.png" alt="\mathbf{a}_\mathrm{p}"/>, <img class="math" src="_images/math/2a11ea14b938f167771e6645622afa0832f6dd1c.png" alt="\mathbf{b}_\mathrm{p}"/>,
+and <img class="math" src="_images/math/a3969b8079498f063e84f8a36ef1de8cded0f198.png" alt="\mathbf{c}_\mathrm{p}"/> are the basis vectors of the
+primitive cell and <img class="math" src="_images/math/64bb5251c9bbba36d0371d9553981aeac3750820.png" alt="\boldsymbol{P}_\mathrm{c}"/> is the
 transformation matrix from the standardized unit cell to the primitive
-cell. <span class="math">\boldsymbol{P}_\mathrm{c}</span> for centring types are given
+cell. <img class="math" src="_images/math/64bb5251c9bbba36d0371d9553981aeac3750820.png" alt="\boldsymbol{P}_\mathrm{c}"/> for centring types are given
 as follows:</p>
 <div class="math">
-<p><span class="math">\renewcommand*{\arraystretch}{1.4}
+<p><img src="_images/math/c638b30e785da56bdf321c19269c3afb565fa1e3.png" alt="\renewcommand*{\arraystretch}{1.4}
 \boldsymbol{P}_\mathrm{A} =
 \begin{pmatrix}
 1 &amp; 0 &amp; 0 \\
@@ -317,9 +317,9 @@ as follows:</p>
 0 &amp; \frac{{1}}{2} &amp; \frac{{1}}{2} \\
 \frac{{1}}{2} &amp; 0 &amp; \frac{{1}}{2} \\
 \frac{{1}}{2} &amp; \frac{{1}}{2} &amp; 0
-\end{pmatrix}.</span></p>
+\end{pmatrix}."/></p>
 </div><p>In rhombohedral cells, regardless of rhombohedral or hexagonal
-setting, <span class="math">\boldsymbol{P}_\mathrm{R}</span> is applied.</p>
+setting, <img class="math" src="_images/math/5514a3ce7c2168ee39c2a5a80f516627ceeb9aa2.png" alt="\boldsymbol{P}_\mathrm{R}"/> is applied.</p>
 </div>
 <div class="section" id="def-idealize-cell">
 <span id="idealization-of-unit-cell-structure"></span><h3>Idealization of unit cell structure<a class="headerlink" href="#def-idealize-cell" title="Permalink to this headline">¶</a></h3>
@@ -336,86 +336,86 @@ change-of-basis transformation explained above.</p>
 <div class="section" id="triclinic">
 <h4>Triclinic<a class="headerlink" href="#triclinic" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
-<li>Niggli reduced cell is used for choosing <span class="math">\mathbf{a}, \mathbf{b}, \mathbf{c}</span>.</li>
-<li><span class="math">\mathbf{a}</span> is set along <span class="math">+x</span> direction of Cartesian coordinates.</li>
-<li><span class="math">\mathbf{b}</span> is set in <span class="math">x\text{-}y</span> plane of Cartesian
-coordinates so that <span class="math">\mathbf{a}\times\mathbf{b}</span> is along
-<span class="math">+z</span> direction of Cartesian coordinates.</li>
+<li>Niggli reduced cell is used for choosing <img class="math" src="_images/math/0399975245409f171adff9e424c1cfd81e44cbf1.png" alt="\mathbf{a}, \mathbf{b}, \mathbf{c}"/>.</li>
+<li><img class="math" src="_images/math/a7ca8d225c064dae6b3c328bf7acd82b7d8933c9.png" alt="\mathbf{a}"/> is set along <img class="math" src="_images/math/d246eafd090a8727e443e9a38c52b920e215bbae.png" alt="+x"/> direction of Cartesian coordinates.</li>
+<li><img class="math" src="_images/math/dd6a0c79ee7e76c8e6f1310a5d171d5b3848b685.png" alt="\mathbf{b}"/> is set in <img class="math" src="_images/math/94e1ffeb414404e528802a8f6253ef02a1f09982.png" alt="x\text{-}y"/> plane of Cartesian
+coordinates so that <img class="math" src="_images/math/427f2ff35ed54a71a86800f429014b237e570e6d.png" alt="\mathbf{a}\times\mathbf{b}"/> is along
+<img class="math" src="_images/math/3cebfddaf42f50301d8f19a71594839d8f384b4d.png" alt="+z"/> direction of Cartesian coordinates.</li>
 </ul>
 </div>
 <div class="section" id="monoclinic">
 <h4>Monoclinic<a class="headerlink" href="#monoclinic" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
-<li><span class="math">b</span> axis is taken as the unique axis.</li>
-<li><span class="math">\alpha = 90^\circ</span> and <span class="math">\gamma = 90^\circ</span></li>
-<li><span class="math">90^\circ &lt; \beta &lt; 120^\circ</span>.</li>
-<li><span class="math">\mathbf{a}</span> is set along <span class="math">+x</span> direction of Cartesian coordinates.</li>
-<li><span class="math">\mathbf{b}</span> is set along <span class="math">+y</span> direction of Cartesian coordinates.</li>
-<li><span class="math">\mathbf{c}</span> is set in <span class="math">x\text{-}z</span> plane of Cartesian coordinates.</li>
+<li><img class="math" src="_images/math/5e87bf41a96deddf6cb485ff530f153f2590e9cc.png" alt="b"/> axis is taken as the unique axis.</li>
+<li><img class="math" src="_images/math/de83d43fa3f0b66e9355b1bd3920b59e562167b7.png" alt="\alpha = 90^\circ"/> and <img class="math" src="_images/math/da06cc39e3bdf1d2433c51999a586c8db616601c.png" alt="\gamma = 90^\circ"/></li>
+<li><img class="math" src="_images/math/28aabbf8571812a3e01e17c576dc1c564074cd3c.png" alt="90^\circ &lt; \beta &lt; 120^\circ"/>.</li>
+<li><img class="math" src="_images/math/a7ca8d225c064dae6b3c328bf7acd82b7d8933c9.png" alt="\mathbf{a}"/> is set along <img class="math" src="_images/math/d246eafd090a8727e443e9a38c52b920e215bbae.png" alt="+x"/> direction of Cartesian coordinates.</li>
+<li><img class="math" src="_images/math/dd6a0c79ee7e76c8e6f1310a5d171d5b3848b685.png" alt="\mathbf{b}"/> is set along <img class="math" src="_images/math/be03104fbc0d7a99d659af133bb7c3b9e25cd7c0.png" alt="+y"/> direction of Cartesian coordinates.</li>
+<li><img class="math" src="_images/math/c20b076757f2c84dbfba8d79beeb264442324609.png" alt="\mathbf{c}"/> is set in <img class="math" src="_images/math/3e0295de4ca25ddedab727864d14cccf543a9faf.png" alt="x\text{-}z"/> plane of Cartesian coordinates.</li>
 </ul>
 </div>
 <div class="section" id="orthorhombic">
 <h4>Orthorhombic<a class="headerlink" href="#orthorhombic" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
-<li><span class="math">\alpha = \beta = \gamma = 90^\circ</span>.</li>
-<li><span class="math">\mathbf{a}</span> is set along <span class="math">+x</span> direction of Cartesian coordinates.</li>
-<li><span class="math">\mathbf{b}</span> is set along <span class="math">+y</span> direction of Cartesian coordinates.</li>
-<li><span class="math">\mathbf{c}</span> is set along <span class="math">+z</span> direction of Cartesian coordinates.</li>
+<li><img class="math" src="_images/math/fa8eb2e5cf7afda29d22904b71ed12872c77e172.png" alt="\alpha = \beta = \gamma = 90^\circ"/>.</li>
+<li><img class="math" src="_images/math/a7ca8d225c064dae6b3c328bf7acd82b7d8933c9.png" alt="\mathbf{a}"/> is set along <img class="math" src="_images/math/d246eafd090a8727e443e9a38c52b920e215bbae.png" alt="+x"/> direction of Cartesian coordinates.</li>
+<li><img class="math" src="_images/math/dd6a0c79ee7e76c8e6f1310a5d171d5b3848b685.png" alt="\mathbf{b}"/> is set along <img class="math" src="_images/math/be03104fbc0d7a99d659af133bb7c3b9e25cd7c0.png" alt="+y"/> direction of Cartesian coordinates.</li>
+<li><img class="math" src="_images/math/c20b076757f2c84dbfba8d79beeb264442324609.png" alt="\mathbf{c}"/> is set along <img class="math" src="_images/math/3cebfddaf42f50301d8f19a71594839d8f384b4d.png" alt="+z"/> direction of Cartesian coordinates.</li>
 </ul>
 </div>
 <div class="section" id="tetragonal">
 <h4>Tetragonal<a class="headerlink" href="#tetragonal" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
-<li><span class="math">\alpha = \beta = \gamma = 90^\circ</span>.</li>
-<li><span class="math">a=b</span>.</li>
-<li><span class="math">\mathbf{a}</span> is set along <span class="math">+x</span> direction of Cartesian coordinates.</li>
-<li><span class="math">\mathbf{b}</span> is set along <span class="math">+y</span> direction of Cartesian coordinates.</li>
-<li><span class="math">\mathbf{c}</span> is set along <span class="math">+z</span> direction of Cartesian coordinates.</li>
+<li><img class="math" src="_images/math/fa8eb2e5cf7afda29d22904b71ed12872c77e172.png" alt="\alpha = \beta = \gamma = 90^\circ"/>.</li>
+<li><img class="math" src="_images/math/73711b3bc2f0a03eff1af170a6fcb57ba77dd946.png" alt="a=b"/>.</li>
+<li><img class="math" src="_images/math/a7ca8d225c064dae6b3c328bf7acd82b7d8933c9.png" alt="\mathbf{a}"/> is set along <img class="math" src="_images/math/d246eafd090a8727e443e9a38c52b920e215bbae.png" alt="+x"/> direction of Cartesian coordinates.</li>
+<li><img class="math" src="_images/math/dd6a0c79ee7e76c8e6f1310a5d171d5b3848b685.png" alt="\mathbf{b}"/> is set along <img class="math" src="_images/math/be03104fbc0d7a99d659af133bb7c3b9e25cd7c0.png" alt="+y"/> direction of Cartesian coordinates.</li>
+<li><img class="math" src="_images/math/c20b076757f2c84dbfba8d79beeb264442324609.png" alt="\mathbf{c}"/> is set along <img class="math" src="_images/math/3cebfddaf42f50301d8f19a71594839d8f384b4d.png" alt="+z"/> direction of Cartesian coordinates.</li>
 </ul>
 </div>
 <div class="section" id="rhombohedral">
 <h4>Rhombohedral<a class="headerlink" href="#rhombohedral" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
-<li><span class="math">\alpha = \beta = \gamma</span>.</li>
-<li><span class="math">a=b=c</span>.</li>
-<li>Let <span class="math">\mathbf{a}</span>, <span class="math">\mathbf{b}</span>, and <span class="math">\mathbf{c}</span>
-projected on <span class="math">x\text{-}y</span> plane in Cartesian coordinates be
-<span class="math">\mathbf{a}_{xy}</span>, <span class="math">\mathbf{b}_{xy}</span>, and
-<span class="math">\mathbf{c}_{xy}</span>, respectively, and their angles be
-<span class="math">\alpha_{xy}</span>, <span class="math">\beta_{xy}</span>,
-<span class="math">\gamma_{xy}</span>, respectively.</li>
-<li>Let <span class="math">\mathbf{a}</span>, <span class="math">\mathbf{b}</span>, and <span class="math">\mathbf{c}</span>
-projected along <span class="math">z</span>-axis in Cartesian coordinates be
-<span class="math">\mathbf{a}_{z}</span>, <span class="math">\mathbf{b}_{z}</span>, and
-<span class="math">\mathbf{c}_{z}</span>, respectively.</li>
-<li><span class="math">\mathbf{a}_{xy}</span> is set along <span class="math">+x</span> direction of Cartesian
-coordinates, and <span class="math">\mathbf{b}_{xy}</span> and <span class="math">\mathbf{c}_{xy}</span>
-are placed by angles <span class="math">120^\circ</span> and <span class="math">240^\circ</span> from
-<span class="math">\mathbf{a}_{xy}</span> counter-clockwise, respectively.</li>
-<li><span class="math">\alpha_{xy} = \beta_{xy} = \gamma_{xy} = 120^\circ</span>.</li>
-<li><span class="math">a_{xy} = b_{xy} = c_{xy}</span>.</li>
-<li><span class="math">a_{z} = b_{z} = c_{z}</span>.</li>
+<li><img class="math" src="_images/math/1b480d751e36b9e77dc25f9b7f8436f87d3ceaba.png" alt="\alpha = \beta = \gamma"/>.</li>
+<li><img class="math" src="_images/math/f437d264471d14e861cbc9bec9897e0188c4c3cd.png" alt="a=b=c"/>.</li>
+<li>Let <img class="math" src="_images/math/a7ca8d225c064dae6b3c328bf7acd82b7d8933c9.png" alt="\mathbf{a}"/>, <img class="math" src="_images/math/dd6a0c79ee7e76c8e6f1310a5d171d5b3848b685.png" alt="\mathbf{b}"/>, and <img class="math" src="_images/math/c20b076757f2c84dbfba8d79beeb264442324609.png" alt="\mathbf{c}"/>
+projected on <img class="math" src="_images/math/94e1ffeb414404e528802a8f6253ef02a1f09982.png" alt="x\text{-}y"/> plane in Cartesian coordinates be
+<img class="math" src="_images/math/073c75aedd7320b014bbfa97ad9704caa45af57c.png" alt="\mathbf{a}_{xy}"/>, <img class="math" src="_images/math/6dc1e677f3ce34bb367018a8d0bbc059a7bd87f0.png" alt="\mathbf{b}_{xy}"/>, and
+<img class="math" src="_images/math/d8fd505ac0fa27b9095e3ff49c318aeb563b4ff4.png" alt="\mathbf{c}_{xy}"/>, respectively, and their angles be
+<img class="math" src="_images/math/25502235995b202a4e47b9a94ec9e88bc32c42d6.png" alt="\alpha_{xy}"/>, <img class="math" src="_images/math/6b31e862b40a62738747668abbf7875c1b6ca81d.png" alt="\beta_{xy}"/>,
+<img class="math" src="_images/math/f411a0f0f3c290e84587d78ee20463e679ba8922.png" alt="\gamma_{xy}"/>, respectively.</li>
+<li>Let <img class="math" src="_images/math/a7ca8d225c064dae6b3c328bf7acd82b7d8933c9.png" alt="\mathbf{a}"/>, <img class="math" src="_images/math/dd6a0c79ee7e76c8e6f1310a5d171d5b3848b685.png" alt="\mathbf{b}"/>, and <img class="math" src="_images/math/c20b076757f2c84dbfba8d79beeb264442324609.png" alt="\mathbf{c}"/>
+projected along <img class="math" src="_images/math/84d7271dd9e78c1e05d6c3c6ecb60309ef7dfc73.png" alt="z"/>-axis in Cartesian coordinates be
+<img class="math" src="_images/math/3317d7055f6d0d7bbeb7853aa974dc04c5034567.png" alt="\mathbf{a}_{z}"/>, <img class="math" src="_images/math/da865f6918618dea258b6c18f6c648a744138dce.png" alt="\mathbf{b}_{z}"/>, and
+<img class="math" src="_images/math/5627c370d215adddb17c4ca74b976815afc18ddd.png" alt="\mathbf{c}_{z}"/>, respectively.</li>
+<li><img class="math" src="_images/math/073c75aedd7320b014bbfa97ad9704caa45af57c.png" alt="\mathbf{a}_{xy}"/> is set along <img class="math" src="_images/math/d246eafd090a8727e443e9a38c52b920e215bbae.png" alt="+x"/> direction of Cartesian
+coordinates, and <img class="math" src="_images/math/6dc1e677f3ce34bb367018a8d0bbc059a7bd87f0.png" alt="\mathbf{b}_{xy}"/> and <img class="math" src="_images/math/d8fd505ac0fa27b9095e3ff49c318aeb563b4ff4.png" alt="\mathbf{c}_{xy}"/>
+are placed by angles <img class="math" src="_images/math/f1461a7e5c56e0df2c77277dc65b0c9b03899b99.png" alt="120^\circ"/> and <img class="math" src="_images/math/ea36ebedd4a8e870e9402aeff5430e887eb88f89.png" alt="240^\circ"/> from
+<img class="math" src="_images/math/073c75aedd7320b014bbfa97ad9704caa45af57c.png" alt="\mathbf{a}_{xy}"/> counter-clockwise, respectively.</li>
+<li><img class="math" src="_images/math/479dd49343821fc10d9ab1dea13a719cfc3f1208.png" alt="\alpha_{xy} = \beta_{xy} = \gamma_{xy} = 120^\circ"/>.</li>
+<li><img class="math" src="_images/math/e97d0a98cee39246d2fdad3a459b67402d028ea8.png" alt="a_{xy} = b_{xy} = c_{xy}"/>.</li>
+<li><img class="math" src="_images/math/80c317ab61309a7685a3abcf3415cfbe5e176559.png" alt="a_{z} = b_{z} = c_{z}"/>.</li>
 </ul>
 </div>
 <div class="section" id="hexagonal">
 <h4>Hexagonal<a class="headerlink" href="#hexagonal" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
-<li><span class="math">\alpha = \beta = 90^\circ</span>.</li>
-<li><span class="math">\gamma = 120^\circ</span>.</li>
-<li><span class="math">a=b</span>.</li>
-<li><span class="math">\mathbf{a}</span> is set along <span class="math">+x</span> direction of Cartesian coordinates.</li>
-<li><span class="math">\mathbf{b}</span> is set in <span class="math">x\text{-}y</span> plane of Cartesian coordinates.</li>
-<li><span class="math">\mathbf{c}</span> is set along <span class="math">+z</span> direction of Cartesian coordinates.</li>
+<li><img class="math" src="_images/math/4abc1eb73b14fb664fc6322894ead638569ef822.png" alt="\alpha = \beta = 90^\circ"/>.</li>
+<li><img class="math" src="_images/math/28b97b29ff7f470b7ec2bd2c28f38636cf57610b.png" alt="\gamma = 120^\circ"/>.</li>
+<li><img class="math" src="_images/math/73711b3bc2f0a03eff1af170a6fcb57ba77dd946.png" alt="a=b"/>.</li>
+<li><img class="math" src="_images/math/a7ca8d225c064dae6b3c328bf7acd82b7d8933c9.png" alt="\mathbf{a}"/> is set along <img class="math" src="_images/math/d246eafd090a8727e443e9a38c52b920e215bbae.png" alt="+x"/> direction of Cartesian coordinates.</li>
+<li><img class="math" src="_images/math/dd6a0c79ee7e76c8e6f1310a5d171d5b3848b685.png" alt="\mathbf{b}"/> is set in <img class="math" src="_images/math/94e1ffeb414404e528802a8f6253ef02a1f09982.png" alt="x\text{-}y"/> plane of Cartesian coordinates.</li>
+<li><img class="math" src="_images/math/c20b076757f2c84dbfba8d79beeb264442324609.png" alt="\mathbf{c}"/> is set along <img class="math" src="_images/math/3cebfddaf42f50301d8f19a71594839d8f384b4d.png" alt="+z"/> direction of Cartesian coordinates.</li>
 </ul>
 </div>
 <div class="section" id="cubic">
 <h4>Cubic<a class="headerlink" href="#cubic" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
-<li><span class="math">\alpha = \beta = \gamma = 90^\circ</span>.</li>
-<li><span class="math">a=b=c</span>.</li>
-<li><span class="math">\mathbf{a}</span> is set along <span class="math">+x</span> direction of Cartesian coordinates.</li>
-<li><span class="math">\mathbf{b}</span> is set along <span class="math">+y</span> direction of Cartesian coordinates.</li>
-<li><span class="math">\mathbf{c}</span> is set along <span class="math">+z</span> direction of Cartesian coordinates.</li>
+<li><img class="math" src="_images/math/fa8eb2e5cf7afda29d22904b71ed12872c77e172.png" alt="\alpha = \beta = \gamma = 90^\circ"/>.</li>
+<li><img class="math" src="_images/math/f437d264471d14e861cbc9bec9897e0188c4c3cd.png" alt="a=b=c"/>.</li>
+<li><img class="math" src="_images/math/a7ca8d225c064dae6b3c328bf7acd82b7d8933c9.png" alt="\mathbf{a}"/> is set along <img class="math" src="_images/math/d246eafd090a8727e443e9a38c52b920e215bbae.png" alt="+x"/> direction of Cartesian coordinates.</li>
+<li><img class="math" src="_images/math/dd6a0c79ee7e76c8e6f1310a5d171d5b3848b685.png" alt="\mathbf{b}"/> is set along <img class="math" src="_images/math/be03104fbc0d7a99d659af133bb7c3b9e25cd7c0.png" alt="+y"/> direction of Cartesian coordinates.</li>
+<li><img class="math" src="_images/math/c20b076757f2c84dbfba8d79beeb264442324609.png" alt="\mathbf{c}"/> is set along <img class="math" src="_images/math/3cebfddaf42f50301d8f19a71594839d8f384b4d.png" alt="+z"/> direction of Cartesian coordinates.</li>
 </ul>
 </div>
 </div>

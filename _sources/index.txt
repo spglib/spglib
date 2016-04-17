@@ -6,12 +6,6 @@ written in C.
 
 Spglib for python is found at :ref:`python_spglib`.
 
-`Spglib-1.9.1
-<https://sourceforge.net/projects/spglib/files/spglib/spglib-1.9/>`_
-is the latest release. Updates and changes of API and definitions of
-variables can happen againt previous versions and they are written in
-the document.
-
 Version history is summarized in `ChangeLog
 <https://github.com/atztogo/spglib/blob/master/ChangeLog>`_.
 
@@ -56,8 +50,8 @@ Install
 
 2. Unzip, configure, and make::
 
-   % tar xvfz spglib-1.9.1.tar.gz
-   % cd spglib-1.9.1
+   % tar xvfz spglib-1.9.2.tar.gz
+   % cd spglib-1.9.2
    % ./configure
    % make
 
