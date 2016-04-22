@@ -118,12 +118,13 @@ typedef struct {
 
 typedef struct {
   int number;
+  char international_short[11];
+  char international_full[20];
+  char international[32];
   char schoenflies[7];
   char hall_symbol[17];
-  char international[32];
-  char international_full[20];
-  char international_short[11];
-  int pointgroup_number;
+  char pointgroup_schoenflies[4];
+  char pointgroup_international[6];
 } SpglibSpacegroupType;
 
 SpglibDataset * spg_get_dataset(SPGCONST double lattice[3][3],

@@ -594,6 +594,7 @@ SpglibSpacegroupType spg_get_spacegroup_type(const int hall_number)
 {
   SpglibSpacegroupType spglibtype;
   SpacegroupType spgtype;
+  Pointgroup pointgroup;
 
   spgtype = spgdb_get_spacegroup_type(hall_number);
   spglibtype.number = spgtype.number;
@@ -602,6 +603,9 @@ SpglibSpacegroupType spg_get_spacegroup_type(const int hall_number)
   strcpy(spglibtype.international, spgtype.international);
   strcpy(spglibtype.international_full, spgtype.international_full);
   strcpy(spglibtype.international_short, spgtype.international_short);
+  pointgroup = ptg_get_pointgroup(spgtype.pointgroup_number);
+  strcpy(spglibtype.pointgroup_international, pointgroup.symbol);
+  strcpy(spglibtype.pointgroup_schoenflies, pointgroup.schoenflies);
   
   return spglibtype;
 }
