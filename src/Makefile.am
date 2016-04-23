@@ -1,6 +1,7 @@
 lib_LTLIBRARIES = libsymspg.la 
 
 spglib_c = \
+arithmetic.c \
 cell.c \
 debug.c \
 delaunay.c \
@@ -21,6 +22,7 @@ spin.c \
 symmetry.c
 
 spglib_h = \
+arithmetic.h \
 cell.h \
 debug.h \
 delaunay.h \

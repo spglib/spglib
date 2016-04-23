@@ -64,7 +64,7 @@ static int arithmetic_crystal_classes[231] = {
   67, 65, 65, 67, 68, 69, 70, 68, 69, 70,
   71, 71, 71, 71, 72, 72, 72, 72, 73, 73};
 
-static const char arithmetic_crystal_class_symbols[73][7] = {
+static const char arithmetic_crystal_class_symbols[74][7] = {
   "      ", /*  0 */
   "1P    ", /*  1 */
   "-1P   ", /*  2 */
@@ -145,7 +145,7 @@ int arth_get_symbol(char symbol[7], const int spgroup_number)
 {
   int i, arth_number;
 
-  if (spgroup_number < 1 || spgroup_number > 230} {
+  if (spgroup_number < 1 || spgroup_number > 230) {
     return 0;
   }
 
