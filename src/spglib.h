@@ -125,6 +125,8 @@ typedef struct {
   char hall_symbol[17];
   char pointgroup_schoenflies[4];
   char pointgroup_international[6];
+  int arithmetic_crystal_class_number;
+  char arithmetic_crystal_class_symbol[7];
 } SpglibSpacegroupType;
 
 SpglibDataset * spg_get_dataset(SPGCONST double lattice[3][3],

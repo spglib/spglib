@@ -64,7 +64,7 @@ static int arithmetic_crystal_classes[231] = {
   67, 65, 65, 67, 68, 69, 70, 68, 69, 70,
   71, 71, 71, 71, 72, 72, 72, 72, 73, 73};
 
-static const char arithmetic_crystal_class_types[73][7] = {
+static const char arithmetic_crystal_class_symbols[73][7] = {
   "      ", /*  0 */
   "1P    ", /*  1 */
   "-1P   ", /*  2 */
@@ -139,79 +139,21 @@ static const char arithmetic_crystal_class_types[73][7] = {
   "m-3mP ", /* 71 */
   "m-3mF ", /* 72 */
   "m-3mI "  /* 73 */
+};
+
+int arth_get_symbol(char symbol[7], const int spgroup_number)
+{
+  int i, arth_number;
+
+  if (spgroup_number < 1 || spgroup_number > 230} {
+    return 0;
+  }
+
+  arth_number = arithmetic_crystal_classes[spgroup_number];
+  strcpy(symbol, arithmetic_crystal_class_symbols[arth_number]);
+  for (i = 0; i < 6; i++) {
+    if (symbol[i] == ' ') {symbol[i] = '\0';}
+  }
+
+  return arth_number;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
