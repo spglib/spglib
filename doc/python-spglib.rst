@@ -299,12 +299,14 @@ shown in the spglib (C-API) document.
 ..
    * ``pointgrouop_number``: Serial number of the crystallographic point
      group, which refers list of space groups (Seto’s web site)
+
 * ``pointgroup_symbol``: Symbol of the crystallographic point group in
   the Hermann–Mauguin notation.
-* ``std_lattice``, ``std_types``, ``std_positions``: Standardized
+* ``std_lattice``, ``std_positions``, ``std_types``: Standardized
   crystal structure corresponding to a Hall symbol found. These are
-  similarly given in the array formats presented at
-  :ref:`variables_crystal_structure`.
+  equivalently given in the array formats of ``lattice``,
+  ``positions``, and ``numbers`` presented at
+  :ref:`variables_crystal_structure`, respectively.
 
 |
 
