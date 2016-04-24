@@ -1,3 +1,12 @@
+2016-04-23  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.9.3
+
+	* src/spglib.c (spg_get_spacegroup_type):
+
+	Arithmetic crystal class number and symbol are returned. Python
+	interface 'get_spacegroup_type' was created.
+
 2016-04-17  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.9.2

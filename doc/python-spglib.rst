@@ -121,6 +121,8 @@ can be used instead of the ``Atoms`` class in ASE for spglib.
 Variables
 ----------
 
+.. _variables_crystal_structure:
+
 Cristal structure (``atoms``)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -184,8 +186,9 @@ This returns version number of spglib by tuple with three numbers.
 
     spacegroup = get_spacegroup(atoms, symprec=1e-5)
 
-International space group symbol and the number are obtained as a
-string.
+International space group short symbol and number are obtained as a
+string. With ``symbol_type=1``, Schoenflies symbol is given instead of
+international symbol.
 
 |
 
@@ -282,15 +285,28 @@ shown in the spglib (C-API) document.
 ``dataset`` is a dictionary. The keys are:
 
 * ``number``: International space group number
-* ``international``: International symbol
+* ``international``: International short symbol
 * ``hall``: Hall symbol
 * ``transformation_matrix``: Transformation matrix from lattice of input cell to Bravais lattice :math:`L^{bravais} = L^{original} * T`
 * ``origin shift``: Origin shift in the setting of Bravais lattice
 * ``wyckoffs``: Wyckoff letters
 * ``equivalent_atoms``: Mapping table to equivalent atoms
-* ``rotations`` and ``translations``: Rotation matrices and translation vectors. Space group operations are obtained by::
+* ``rotations`` and ``translations``: Rotation matrices and
+  translation vectors. Space group operations are obtained by::
 
     [(r, t) for r, t in zip(dataset['rotations'], dataset['translations'])]
+
+..
+   * ``pointgrouop_number``: Serial number of the crystallographic point
+     group, which refers list of space groups (Seto’s web site)
+
+* ``pointgroup_symbol``: Symbol of the crystallographic point group in
+  the Hermann–Mauguin notation.
+* ``std_lattice``, ``std_positions``, ``std_types``: Standardized
+  crystal structure corresponding to a Hall symbol found. These are
+  equivalently given in the array formats of ``lattice``,
+  ``positions``, and ``numbers`` presented at
+  :ref:`variables_crystal_structure`, respectively.
 
 |
 
@@ -299,13 +315,49 @@ shown in the spglib (C-API) document.
 
 ::
 
-   get_symmetry_from_database(hall_number):
+   symmetry = get_symmetry_from_database(hall_number)
 
 A set of crystallographic symmetry operations corresponding to
 ``hall_number`` is returned by a dictionary where rotation parts and
 translation parts are accessed by the keys ``rotations`` and
 ``translations``, respectively. The definition of ``hall_number`` is
 found at :ref:`api_spg_get_dataset_spacegroup_type`.
+
+|
+
+``get_spacegroup_type``
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+::
+
+   spacegroup_type = get_spacegroup_type(hall_number)
+
+This function allows to directly access to the space-group-type
+database in spglib (spg_database.c). A dictionary is returned. To
+specify the space group type with a specific setting, ``hall_number``
+is used. The definition of ``hall_number`` is found at
+:ref:`api_spg_get_dataset_spacegroup_type`. The keys of the returned
+dictionary is as follows:
+
+::
+
+   number
+   international_short
+   international_full
+   international
+   schoenflies
+   hall_symbol
+   pointgroup_schoenflies
+   pointgroup_international
+   arithmetic_crystal_class_number
+   arithmetic_crystal_class_symbol
+
+Here ``spacegroup_type['international_short']`` is equivalent to
+``dataset['international']`` of ``get_symmetry_dataset``,
+``spacegroup_type['hall_symbol']`` is equivalent to
+``dataset['hall']`` of ``get_symmetry_dataset``, and
+``spacegroup_type['pointgroup_international']`` is equivalent to
+``dataset['pointgroup_symbol']`` of ``get_symmetry_dataset``.
 
 |
 

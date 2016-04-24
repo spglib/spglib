@@ -35,6 +35,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "arithmetic.h"
 #include "cell.h"
 #include "debug.h"
 #include "delaunay.h"
@@ -594,14 +595,36 @@ SpglibSpacegroupType spg_get_spacegroup_type(const int hall_number)
 {
   SpglibSpacegroupType spglibtype;
   SpacegroupType spgtype;
+  Pointgroup pointgroup;
+  int arth_number;
+  char arth_symbol[7];
 
-  spgtype = spgdb_get_spacegroup_type(hall_number);
-  spglibtype.number = spgtype.number;
-  strcpy(spglibtype.schoenflies, spgtype.schoenflies);
-  strcpy(spglibtype.hall_symbol, spgtype.hall_symbol);
-  strcpy(spglibtype.international, spgtype.international);
-  strcpy(spglibtype.international_full, spgtype.international_full);
-  strcpy(spglibtype.international_short, spgtype.international_short);
+  spglibtype.number = 0;
+  strcpy(spglibtype.schoenflies, "");
+  strcpy(spglibtype.hall_symbol, "");
+  strcpy(spglibtype.international, "");
+  strcpy(spglibtype.international_full, "");
+  strcpy(spglibtype.international_short, "");
+  strcpy(spglibtype.pointgroup_international, "");
+  strcpy(spglibtype.pointgroup_schoenflies, "");
+  spglibtype.arithmetic_crystal_class_number = 0;
+  strcpy(spglibtype.arithmetic_crystal_class_symbol, "");
+
+  if (0 < hall_number || hall_number < 531) {
+    spgtype = spgdb_get_spacegroup_type(hall_number);
+    spglibtype.number = spgtype.number;
+    strcpy(spglibtype.schoenflies, spgtype.schoenflies);
+    strcpy(spglibtype.hall_symbol, spgtype.hall_symbol);
+    strcpy(spglibtype.international, spgtype.international);
+    strcpy(spglibtype.international_full, spgtype.international_full);
+    strcpy(spglibtype.international_short, spgtype.international_short);
+    pointgroup = ptg_get_pointgroup(spgtype.pointgroup_number);
+    strcpy(spglibtype.pointgroup_international, pointgroup.symbol);
+    strcpy(spglibtype.pointgroup_schoenflies, pointgroup.schoenflies);
+    arth_number = arth_get_symbol(arth_symbol, spgtype.number);
+    spglibtype.arithmetic_crystal_class_number = arth_number;
+    strcpy(spglibtype.arithmetic_crystal_class_symbol, arth_symbol);
+  }
   
   return spglibtype;
 }

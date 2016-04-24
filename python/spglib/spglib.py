@@ -108,8 +108,7 @@ def get_symmetry(cell, use_magmoms=False, symprec=1e-5, angle_tolerance=-1.0):
                                          dtype='double', order='C')}
 
 def get_symmetry_dataset(cell, symprec=1e-5, angle_tolerance=-1.0):
-    """
-    number: International space group number
+    """number: International space group number
     international: International symbol
     hall: Hall symbol
     transformation_matrix:
@@ -120,11 +119,9 @@ def get_symmetry_dataset(cell, symprec=1e-5, angle_tolerance=-1.0):
       Rotation matrices and translation vectors
       Space group operations are obtained by
         [(r,t) for r, t in zip(rotations, translations)]
-    wyckoffs:
-      Wyckoff letters
-    std_lattice, std_types, std_positions:
-      Standardized unit cell
-    pointgroup_number, pointgroup_symbol: Point group number (see get_pointgroup)
+    wyckoffs: Wyckoff letters
+    std_lattice, std_types, std_positions: Standardized unit cell
+    pointgroup_number, pointgroup: Point group number (see get_pointgroup)
     """
 
     lattice, positions, numbers, _ = _expand_cell(cell)
@@ -182,16 +179,37 @@ def get_spacegroup(cell, symprec=1e-5, angle_tolerance=-1.0, symbol_type=0):
     dataset = get_symmetry_dataset(cell,
                                    symprec=symprec,
                                    angle_tolerance=angle_tolerance)
-    symbols = spg.spacegroup_type(dataset['hall_number'])
-
+    spg_type = get_spacegroup_type(dataset['hall_number'])
     if symbol_type == 1:
-        return "%s (%d)" % (symbols[0], dataset['number'])
+        return "%s (%d)" % (spg_type['schoenflies'], dataset['number'])
     else:
-        return "%s (%d)" % (symbols[4], dataset['number'])
+        return "%s (%d)" % (spg_type['international_short'], dataset['number'])
+
+def get_spacegroup_type(hall_number):
+    """Translate Hall number to space group type information"""
+
+    keys = ('number',
+            'international_short',
+            'international_full',
+            'international',
+            'schoenflies',
+            'hall_symbol',
+            'pointgroup_schoenflies',
+            'pointgroup_international',
+            'arithmetic_crystal_class_number',
+            'arithmetic_crystal_class_symbol')
+    spg_type_list = spg.spacegroup_type(hall_number)
+    if spg_type_list is not None:
+        spg_type = dict(zip(keys, spg_type_list))
+        for key in spg_type:
+            if key != 'number' and key != 'arithmetic_crystal_class_number':
+                spg_type[key] = spg_type[key].strip()
+        return spg_type
+    else:
+        return None
 
 def get_pointgroup(rotations):
-    """
-    Return point group in international table symbol and number.
+    """Return point group in international table symbol and number.
     The symbols are mapped to the numbers as follows:
     1   "1    "
     2   "-1   "
@@ -235,9 +253,7 @@ def standardize_cell(cell,
                      no_idealize=0,
                      symprec=1e-5,
                      angle_tolerance=-1.0):
-    """
-    Return standardized cell
-    """
+    """Return standardized cell"""
 
     lattice, _positions, _numbers, _ = _expand_cell(cell)
 
@@ -261,9 +277,7 @@ def standardize_cell(cell,
             np.array(numbers[:num_atom_std], dtype='intc'))
 
 def refine_cell(cell, symprec=1e-5, angle_tolerance=-1.0):
-    """
-    Return refined cell
-    """
+    """Return refined cell"""
 
     lattice, _positions, _numbers, _ = _expand_cell(cell)
 
@@ -285,8 +299,7 @@ def refine_cell(cell, symprec=1e-5, angle_tolerance=-1.0):
             np.array(numbers[:num_atom_std], dtype='intc'))
 
 def find_primitive(cell, symprec=1e-5, angle_tolerance=-1.0):
-    """
-    A primitive cell in the input cell is searched and returned
+    """A primitive cell in the input cell is searched and returned
     as an object of Atoms class.
     If no primitive cell is found, (None, None, None) is returned.
     """
@@ -320,9 +333,7 @@ def get_symmetry_from_database(hall_number):
 # k-points #
 ############
 def get_grid_point_from_address(grid_address, mesh):
-    """
-    Return grid point index by tranlating grid address
-    """
+    """Return grid point index by tranlating grid address"""
 
     return spg.grid_point_from_address(np.array(grid_address, dtype='intc'),
                                        np.array(mesh, dtype='intc'))
@@ -359,8 +370,7 @@ def get_grid_points_by_rotations(address_orig,
                                  reciprocal_rotations,
                                  mesh,
                                  is_shift=np.zeros(3, dtype='intc')):
-    """
-    Rotation operations in reciprocal space ``reciprocal_rotations`` are applied
+    """Rotation operations in reciprocal space ``reciprocal_rotations`` are applied
     to a grid point ``grid_point`` and resulting grid points are returned.
     """
     
@@ -379,8 +389,7 @@ def get_BZ_grid_points_by_rotations(address_orig,
                                     mesh,
                                     bz_map,
                                     is_shift=np.zeros(3, dtype='intc')):
-    """
-    Rotation operations in reciprocal space ``reciprocal_rotations`` are applied
+    """Rotation operations in reciprocal space ``reciprocal_rotations`` are applied
     to a grid point ``grid_point`` and resulting grid points are returned.
     """
     
@@ -399,8 +408,7 @@ def relocate_BZ_grid_address(grid_address,
                              mesh,
                              reciprocal_lattice, # column vectors
                              is_shift=np.zeros(3, dtype='intc')):
-    """
-    Grid addresses are relocated inside Brillouin zone. 
+    """Grid addresses are relocated inside Brillouin zone. 
     Number of ir-grid-points inside Brillouin zone is returned. 
     It is assumed that the following arrays have the shapes of 
       bz_grid_address[prod(mesh + 1)][3] 
@@ -443,8 +451,7 @@ def get_stabilized_reciprocal_mesh(mesh,
                                    is_shift=np.zeros(3, dtype='intc'),
                                    is_time_reversal=True,
                                    qpoints=np.array([], dtype='double')):
-    """
-    Return k-point map to the irreducible k-points and k-point grid points .
+    """Return k-point map to the irreducible k-points and k-point grid points .
 
     The symmetry is searched from the input rotation matrices in real space.
     
