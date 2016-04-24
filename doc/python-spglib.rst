@@ -296,8 +296,9 @@ shown in the spglib (C-API) document.
 
     [(r, t) for r, t in zip(dataset['rotations'], dataset['translations'])]
 
-* ``pointgrouop_number``: Serial number of the crystallographic point
-  group, which refers list of space groups (Seto’s web site)
+..
+   * ``pointgrouop_number``: Serial number of the crystallographic point
+     group, which refers list of space groups (Seto’s web site)
 * ``pointgroup_symbol``: Symbol of the crystallographic point group in
   the Hermann–Mauguin notation.
 * ``std_lattice``, ``std_types``, ``std_positions``: Standardized
