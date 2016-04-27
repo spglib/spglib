@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from spglib import get_symmetry_dataset
+from spglib import get_symmetry_dataset, refine_cell
 from vasp import read_vasp
 from os import listdir
 
@@ -33,6 +33,19 @@ class TestSpglib(unittest.TestCase):
                 dataset = get_symmetry_dataset(cell, symprec=1e-1)
             else:
                 dataset = get_symmetry_dataset(cell, symprec=1e-5)
+            self.assertEqual(dataset['number'], spgnum)
+
+    def test_refine_cell(self):
+        for fname in self._filenames:
+            spgnum = int(fname.split('-')[1])
+            cell = read_vasp("./data/%s" % fname)
+            if 'distorted' in fname:
+                ref_cell = refine_cell(cell, symprec=1e-1)
+            else:
+                ref_cell = refine_cell(cell, symprec=1e-5)
+            dataset = get_symmetry_dataset(ref_cell, symprec=1e-5)
+            if dataset['number'] != spgnum:
+                print("%s" % fname)
             self.assertEqual(dataset['number'], spgnum)
 
 if __name__ == '__main__':
