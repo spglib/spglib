@@ -346,7 +346,7 @@ def refine_cell(cell, symprec=1e-5, angle_tolerance=-1.0):
                                    angle_tolerance)
 
 
-    if num_atom_prim > 0:
+    if num_atom_std > 0:
         return (np.array(lattice.T, dtype='double', order='C'),
                 np.array(positions[:num_atom_std], dtype='double', order='C'),
                 np.array(numbers[:num_atom_std], dtype='intc'))
