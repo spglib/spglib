@@ -216,12 +216,14 @@ static PyObject * get_dataset(PyObject *self, PyObject *args)
   const int num_atom = PyArray_DIMS(position)[0];
   const int* typat = (int*)PyArray_DATA(atom_type);
 
-  dataset = spgat_get_dataset(lat,
-			      pos,
-			      typat,
-			      num_atom,
-			      symprec,
-			      angle_tolerance);
+  if ((dataset = spgat_get_dataset(lat,
+				   pos,
+				   typat,
+				   num_atom,
+				   symprec,
+				   angle_tolerance)) == NULL) {
+    Py_RETURN_NONE;
+  }
 
   array = PyList_New(15);
   n = 0;
@@ -363,25 +365,38 @@ static PyObject * get_spacegroup_type(PyObject *self, PyObject *args)
 {
   int n, hall_number;
   PyObject *array;
-  SpglibSpacegroupType symbols;
+  SpglibSpacegroupType spg_type;
 
   if (!PyArg_ParseTuple(args, "i", &hall_number)) {
     return NULL;
   }
 
-  symbols = spg_get_spacegroup_type(hall_number);
+  spg_type = spg_get_spacegroup_type(hall_number);
+  if (spg_type.number == 0) {
+    Py_RETURN_NONE;
+  }
 
-  array = PyList_New(5);
+  array = PyList_New(10);
   n = 0;
-  PyList_SetItem(array, n, PYUNICODE_FROMSTRING(symbols.schoenflies));
+  PyList_SetItem(array, n, PyLong_FromLong((long) spg_type.number));
   n++;
-  PyList_SetItem(array, n, PYUNICODE_FROMSTRING(symbols.hall_symbol));
+  PyList_SetItem(array, n, PYUNICODE_FROMSTRING(spg_type.international_short));
   n++;
-  PyList_SetItem(array, n, PYUNICODE_FROMSTRING(symbols.international));
+  PyList_SetItem(array, n, PYUNICODE_FROMSTRING(spg_type.international_full));
   n++;
-  PyList_SetItem(array, n, PYUNICODE_FROMSTRING(symbols.international_full));
+  PyList_SetItem(array, n, PYUNICODE_FROMSTRING(spg_type.international));
   n++;
-  PyList_SetItem(array, n, PYUNICODE_FROMSTRING(symbols.international_short));
+  PyList_SetItem(array, n, PYUNICODE_FROMSTRING(spg_type.schoenflies));
+  n++;
+  PyList_SetItem(array, n, PYUNICODE_FROMSTRING(spg_type.hall_symbol));
+  n++;
+  PyList_SetItem(array, n, PYUNICODE_FROMSTRING(spg_type.pointgroup_international));
+  n++;
+  PyList_SetItem(array, n, PYUNICODE_FROMSTRING(spg_type.pointgroup_schoenflies));
+  n++;
+  PyList_SetItem(array, n, PyLong_FromLong((long) spg_type.arithmetic_crystal_class_number));
+  n++;
+  PyList_SetItem(array, n, PYUNICODE_FROMSTRING(spg_type.arithmetic_crystal_class_symbol));
   n++;
 
   return array;

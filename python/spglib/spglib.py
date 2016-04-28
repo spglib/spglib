@@ -108,23 +108,41 @@ def get_symmetry(cell, use_magmoms=False, symprec=1e-5, angle_tolerance=-1.0):
                                          dtype='double', order='C')}
 
 def get_symmetry_dataset(cell, symprec=1e-5, angle_tolerance=-1.0):
-    """
-    number: International space group number
-    international: International symbol
-    hall: Hall symbol
-    transformation_matrix:
-      Transformation matrix from input lattice to standardized lattice
-      L^original = L^standardized * Tmat
-    origin shift: Origin shift from standardized to input origin 
-    rotations, translations:
-      Rotation matrices and translation vectors
-      Space group operations are obtained by
-        [(r,t) for r, t in zip(rotations, translations)]
-    wyckoffs:
-      Wyckoff letters
-    std_lattice, std_types, std_positions:
-      Standardized unit cell
-    pointgroup_number, pointgroup_symbol: Point group number (see get_pointgroup)
+    """Search symmetry dataset from an input cell.
+
+    Args:
+        cell, symprec, angle_tolerance:
+            See the docstring of get_symmetry.
+
+    Return:
+        A dictionary is returned.
+
+        number:
+            int: International space group number
+        international:
+            str: International symbol
+        hall: 
+            str: Hall symbol
+        transformation_matrix:
+            3x3 float matrix:
+                Transformation matrix from input lattice to standardized lattice
+                L^original = L^standardized * Tmat
+        origin shift:
+            float vecotr: Origin shift from standardized to input origin 
+        rotations, translations:
+            3x3 int matrix, float vector:
+                Rotation matrices and translation vectors. Space group
+                operations are obtained by
+                [(r,t) for r, t in zip(rotations, translations)]
+        wyckoffs: 
+            List of characters: Wyckoff letters
+        std_lattice, std_positions, std_types:
+            3x3 float matrix, Nx3 float vectors, list of int:
+                Standardized unit cell
+        pointgroup:
+            str: Pointgroup symbol
+    
+        If it fails, None is returned.
     """
 
     lattice, positions, numbers, _ = _expand_cell(cell)
@@ -143,12 +161,12 @@ def get_symmetry_dataset(cell, symprec=1e-5, angle_tolerance=-1.0):
             'std_positions',
             'pointgroup_number',
             'pointgroup')
+    spg_ds = spg.dataset(lattice, positions, numbers, symprec, angle_tolerance)
+    if spg_ds is None:
+        return None
+
     dataset = {}
-    for key, data in zip(keys, spg.dataset(lattice,
-                                           positions,
-                                           numbers,
-                                           symprec,
-                                           angle_tolerance)):
+    for key, data in zip(keys, spg_ds):
         dataset[key] = data
 
     dataset['international'] = dataset['international'].strip()
@@ -174,24 +192,52 @@ def get_symmetry_dataset(cell, symprec=1e-5, angle_tolerance=-1.0):
     return dataset
 
 def get_spacegroup(cell, symprec=1e-5, angle_tolerance=-1.0, symbol_type=0):
-    """
-    Return space group in international table symbol and number
-    as a string.
+    """Return space group in international table symbol and number as a string.
+
+    If it fails, None is returned.
     """
 
     dataset = get_symmetry_dataset(cell,
                                    symprec=symprec,
                                    angle_tolerance=angle_tolerance)
-    symbols = spg.spacegroup_type(dataset['hall_number'])
+    if dataset is None:
+        return None
 
+    spg_type = get_spacegroup_type(dataset['hall_number'])
     if symbol_type == 1:
-        return "%s (%d)" % (symbols[0], dataset['number'])
+        return "%s (%d)" % (spg_type['schoenflies'], dataset['number'])
     else:
-        return "%s (%d)" % (symbols[4], dataset['number'])
+        return "%s (%d)" % (spg_type['international_short'], dataset['number'])
+
+def get_spacegroup_type(hall_number):
+    """Translate Hall number to space group type information.
+
+    If it fails, None is returned.
+    """
+
+    keys = ('number',
+            'international_short',
+            'international_full',
+            'international',
+            'schoenflies',
+            'hall_symbol',
+            'pointgroup_schoenflies',
+            'pointgroup_international',
+            'arithmetic_crystal_class_number',
+            'arithmetic_crystal_class_symbol')
+    spg_type_list = spg.spacegroup_type(hall_number)
+    if spg_type_list is not None:
+        spg_type = dict(zip(keys, spg_type_list))
+        for key in spg_type:
+            if key != 'number' and key != 'arithmetic_crystal_class_number':
+                spg_type[key] = spg_type[key].strip()
+        return spg_type
+    else:
+        return None
 
 def get_pointgroup(rotations):
-    """
-    Return point group in international table symbol and number.
+    """Return point group in international table symbol and number.
+
     The symbols are mapped to the numbers as follows:
     1   "1    "
     2   "-1   "
@@ -231,12 +277,25 @@ def get_pointgroup(rotations):
     return spg.pointgroup(np.array(rotations, dtype='intc', order='C'))
 
 def standardize_cell(cell,
-                     to_primitive=0,
-                     no_idealize=0,
+                     to_primitive=False,
+                     no_idealize=False,
                      symprec=1e-5,
                      angle_tolerance=-1.0):
-    """
-    Return standardized cell
+    """Return standardized cell.
+
+    Args:
+        cell, symprec, angle_tolerance:
+            See the docstring of get_symmetry.
+        to_primitive:
+            bool: If True, the standardized primitive cell is created.
+        no_idealize:
+            bool: If True,  it is disabled to idealize lengths and angles of
+                  basis vectors and positions of atoms according to crystal
+                  symmetry. 
+    Return:
+        The standardized unit cell or primitive cell is returned by a tuple of
+        (lattice, positions, numbers).
+        If it fails, None is returned.
     """
 
     lattice, _positions, _numbers, _ = _expand_cell(cell)
@@ -251,18 +310,24 @@ def standardize_cell(cell,
                                         positions,
                                         numbers,
                                         num_atom,
-                                        to_primitive,
-                                        no_idealize,
+                                        to_primitive * 1,
+                                        no_idealize * 1,
                                         symprec,
                                         angle_tolerance)
 
-    return (np.array(lattice.T, dtype='double', order='C'),
-            np.array(positions[:num_atom_std], dtype='double', order='C'),
-            np.array(numbers[:num_atom_std], dtype='intc'))
+    if num_atom_std > 0:
+        return (np.array(lattice.T, dtype='double', order='C'),
+                np.array(positions[:num_atom_std], dtype='double', order='C'),
+                np.array(numbers[:num_atom_std], dtype='intc'))
+    else:
+        return None
 
 def refine_cell(cell, symprec=1e-5, angle_tolerance=-1.0):
-    """
-    Return refined cell
+    """Return refined cell.
+
+    The standardized unit cell is returned by a tuple of
+    (lattice, positions, numbers).
+    If it fails, None is returned.
     """
 
     lattice, _positions, _numbers, _ = _expand_cell(cell)
@@ -280,15 +345,19 @@ def refine_cell(cell, symprec=1e-5, angle_tolerance=-1.0):
                                    symprec,
                                    angle_tolerance)
 
-    return (np.array(lattice.T, dtype='double', order='C'),
-            np.array(positions[:num_atom_std], dtype='double', order='C'),
-            np.array(numbers[:num_atom_std], dtype='intc'))
+
+    if num_atom_prim > 0:
+        return (np.array(lattice.T, dtype='double', order='C'),
+                np.array(positions[:num_atom_std], dtype='double', order='C'),
+                np.array(numbers[:num_atom_std], dtype='intc'))
+    else:
+        return None
 
 def find_primitive(cell, symprec=1e-5, angle_tolerance=-1.0):
-    """
-    A primitive cell in the input cell is searched and returned
-    as an object of Atoms class.
-    If no primitive cell is found, (None, None, None) is returned.
+    """Primitive cell is searched in the input cell.
+
+    The primitive cell is returned by a tuple of (lattice, positions, numbers).
+    If it fails, None is returned.
     """
 
     lattice, positions, numbers, _ = _expand_cell(cell)
@@ -302,9 +371,17 @@ def find_primitive(cell, symprec=1e-5, angle_tolerance=-1.0):
                 np.array(positions[:num_atom_prim], dtype='double', order='C'),
                 np.array(numbers[:num_atom_prim], dtype='intc'))
     else:
-        return None, None, None
+        return None
 
 def get_symmetry_from_database(hall_number):
+    """Return symmetry operations corresponding to a Hall symbol.
+
+    The Hall symbol is given by the serial number in between 1 and 530.
+    The symmetry operations are given by a dictionary whose keys are
+    'rotations' and 'translations'.
+    If it fails, None is returned.
+    """
+
     rotations = np.zeros((192, 3, 3), dtype='intc')
     translations = np.zeros((192, 3), dtype='double')
     num_sym = spg.symmetry_from_database(rotations, translations, hall_number)
@@ -320,9 +397,7 @@ def get_symmetry_from_database(hall_number):
 # k-points #
 ############
 def get_grid_point_from_address(grid_address, mesh):
-    """
-    Return grid point index by tranlating grid address
-    """
+    """Return grid point index by tranlating grid address"""
 
     return spg.grid_point_from_address(np.array(grid_address, dtype='intc'),
                                        np.array(mesh, dtype='intc'))
@@ -330,37 +405,107 @@ def get_grid_point_from_address(grid_address, mesh):
 
 def get_ir_reciprocal_mesh(mesh,
                            cell,
-                           is_shift=np.zeros(3, dtype='intc'),
+                           is_shift=None,
                            is_time_reversal=True,
                            symprec=1e-5):
-    """
-    Return k-points mesh and k-point map to the irreducible k-points
+    """Return k-points mesh and k-point map to the irreducible k-points.
+
     The symmetry is serched from the input cell.
-    is_shift=[0, 0, 0] gives Gamma center mesh.
+
+    Args:
+        mesh:
+            int array (3,): Uniform sampling mesh numbers
+        cell, symprec:
+            See the docstring of get_symmetry.
+        is_shift:
+            int array (3,): [0, 0, 0] gives Gamma center mesh and value 1 gives
+                            half mesh shift.
+        is_time_reversal:
+            bool: Time reversal symmetry is included or not.
+
+    Return:
+        mapping_table:
+            int array (N,): Grid point mapping table to ir-gird-points
+        grid_address:
+            int array (N, 3): Address of all grid points
     """
 
     lattice, positions, numbers, _ = _expand_cell(cell)
     mapping = np.zeros(np.prod(mesh), dtype='intc')
-    mesh_points = np.zeros((np.prod(mesh), 3), dtype='intc')
-    spg.ir_reciprocal_mesh(
-        mesh_points,
-        mapping,
-        np.array(mesh, dtype='intc'),
-        np.array(is_shift, dtype='intc'),
-        is_time_reversal * 1,
-        lattice,
-        positions,
-        numbers,
-        symprec)
-  
-    return mapping, mesh_points
+    grid_address = np.zeros((np.prod(mesh), 3), dtype='intc')
+    if is_shift is None:
+        is_shift = [0, 0, 0]
+    if spg.ir_reciprocal_mesh(
+            grid_address,
+            mapping,
+            np.array(mesh, dtype='intc'),
+            np.array(is_shift, dtype='intc'),
+            is_time_reversal * 1,
+            lattice,
+            positions,
+            numbers,
+            symprec) > 0:
+        return mapping, grid_address
+    else:
+        return None
+
+def get_stabilized_reciprocal_mesh(mesh,
+                                   rotations,
+                                   is_shift=None,
+                                   is_time_reversal=True,
+                                   qpoints=None):
+    """Return k-point map to the irreducible k-points and k-point grid points .
+
+    The symmetry is searched from the input rotation matrices in real space.
+
+    Args:
+        mesh:
+            int array (3,): Uniform sampling mesh numbers
+        is_shift:
+            int array (3,): [0, 0, 0] gives Gamma center mesh and value 1 gives
+                            half mesh shift.
+        is_time_reversal:
+            bool: Time reversal symmetry is included or not.
+        qpoints:
+            float array (N ,3) or (3,):
+                Stabilizer(s) in the fractional coordinates.
+
+    Return:
+        mapping_table:
+            int array (N,): Grid point mapping table to ir-gird-points
+        grid_address:
+            int array (N, 3): Address of all grid points
+    """
+    
+
+    mapping_table = np.zeros(np.prod(mesh), dtype='intc')
+    grid_address = np.zeros((np.prod(mesh), 3), dtype='intc')
+    if is_shift is None:
+        is_shift = [0, 0, 0]
+    if qpoints is None:
+        qpoints = np.array([[0, 0, 0]], dtype='double', order='C')
+    else:
+        qpoints = np.array(qpoints, dtype='double', order='C')
+        if qpoints.shape == (3,):
+            qpoints = np.array([qpoints], dtype='double', order='C')
+
+    if spg.stabilized_reciprocal_mesh(
+            grid_address,
+            mapping_table,
+            np.array(mesh, dtype='intc'),
+            np.array(is_shift, dtype='intc'),
+            is_time_reversal * 1,
+            np.array(rotations, dtype='intc', order='C'),
+            qpoints) > 0:
+        return mapping_table, grid_address
+    else:
+        return None
 
 def get_grid_points_by_rotations(address_orig,
                                  reciprocal_rotations,
                                  mesh,
                                  is_shift=np.zeros(3, dtype='intc')):
-    """
-    Rotation operations in reciprocal space ``reciprocal_rotations`` are applied
+    """Rotation operations in reciprocal space ``reciprocal_rotations`` are applied
     to a grid point ``grid_point`` and resulting grid points are returned.
     """
     
@@ -379,8 +524,7 @@ def get_BZ_grid_points_by_rotations(address_orig,
                                     mesh,
                                     bz_map,
                                     is_shift=np.zeros(3, dtype='intc')):
-    """
-    Rotation operations in reciprocal space ``reciprocal_rotations`` are applied
+    """Rotation operations in reciprocal space ``reciprocal_rotations`` are applied
     to a grid point ``grid_point`` and resulting grid points are returned.
     """
     
@@ -399,8 +543,7 @@ def relocate_BZ_grid_address(grid_address,
                              mesh,
                              reciprocal_lattice, # column vectors
                              is_shift=np.zeros(3, dtype='intc')):
-    """
-    Grid addresses are relocated inside Brillouin zone. 
+    """Grid addresses are relocated inside Brillouin zone. 
     Number of ir-grid-points inside Brillouin zone is returned. 
     It is assumed that the following arrays have the shapes of 
       bz_grid_address[prod(mesh + 1)][3] 
@@ -438,39 +581,6 @@ def relocate_BZ_grid_address(grid_address,
 
     return bz_grid_address[:num_bz_ir], bz_map
   
-def get_stabilized_reciprocal_mesh(mesh,
-                                   rotations,
-                                   is_shift=np.zeros(3, dtype='intc'),
-                                   is_time_reversal=True,
-                                   qpoints=np.array([], dtype='double')):
-    """
-    Return k-point map to the irreducible k-points and k-point grid points .
-
-    The symmetry is searched from the input rotation matrices in real space.
-    
-    is_shift=[0, 0, 0] gives Gamma center mesh and the values 1 give
-    half mesh distance shifts.
-    """
-    
-    mapping = np.zeros(np.prod(mesh), dtype='intc')
-    mesh_points = np.zeros((np.prod(mesh), 3), dtype='intc')
-    qpoints = np.array(qpoints, dtype='double', order='C')
-    if qpoints.shape == (3,):
-        qpoints = np.array([qpoints], dtype='double', order='C')
-    if qpoints.shape == (0,):
-        qpoints = np.array([[0, 0, 0]], dtype='double', order='C')
-
-    spg.stabilized_reciprocal_mesh(
-        mesh_points,
-        mapping,
-        np.array(mesh, dtype='intc'),
-        np.array(is_shift, dtype='intc'),
-        is_time_reversal * 1,
-        np.array(rotations, dtype='intc', order='C'),
-        qpoints)
-    
-    return mapping, mesh_points
-
 def niggli_reduce(lattice, eps=1e-5):
     """Run Niggli reduction
 
