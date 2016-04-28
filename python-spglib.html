@@ -355,7 +355,8 @@ respectively.</p>
 </div>
 <p>Bravais lattice (3x3 numpy array), atomic scaled positions (a numpy
 array of [number_of_atoms,3]), and atomic numbers (a 1D numpy array)
-that are symmetrized following space group type are returned.</p>
+that are symmetrized following space group type are returned. When it
+fails, <code class="docutils literal"><span class="pre">None</span></code> is returned.</p>
 <p>The detailed control of standardization of unit cell may be done using
 <code class="docutils literal"><span class="pre">standardize_cell</span></code>.</p>
 <div class="line-block">
@@ -370,8 +371,7 @@ that are symmetrized following space group type are returned.</p>
 </div>
 <p>When a primitive cell is found, lattice parameters (3x3 numpy array),
 scaled positions (a numpy array of [number_of_atoms,3]), and atomic
-numbers (a 1D numpy array) is returned. When no primitive cell is
-found, (<code class="docutils literal"><span class="pre">None</span></code>, <code class="docutils literal"><span class="pre">None</span></code>, <code class="docutils literal"><span class="pre">None</span></code>) is returned.</p>
+numbers (a 1D numpy array) is returned. When it fails, <code class="docutils literal"><span class="pre">None</span></code> is returned.</p>
 <p>The detailed control of standardization of unit cell can be done using
 <code class="docutils literal"><span class="pre">standardize_cell</span></code>.</p>
 <div class="line-block">
@@ -381,16 +381,16 @@ found, (<code class="docutils literal"><span class="pre">None</span></code>, <co
 <div class="section" id="standardize-cell">
 <h3><code class="docutils literal"><span class="pre">standardize_cell</span></code><a class="headerlink" href="#standardize-cell" title="Permalink to this headline">¶</a></h3>
 <p><strong>New in version 1.8.x</strong></p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">lattice</span><span class="p">,</span> <span class="n">scaled_positions</span><span class="p">,</span> <span class="n">numbers</span> <span class="o">=</span> \\
-       <span class="n">standardize_cell</span><span class="p">(</span><span class="n">bulk</span><span class="p">,</span> <span class="n">to_primitive</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">no_idealize</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">lattice</span><span class="p">,</span> <span class="n">scaled_positions</span><span class="p">,</span> <span class="n">numbers</span> <span class="o">=</span> <span class="n">standardize_cell</span><span class="p">(</span><span class="n">bulk</span><span class="p">,</span> <span class="n">to_primitive</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">no_idealize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 </div>
-<p><code class="docutils literal"><span class="pre">to_primitive=1</span></code> is used to create the standardized primitive cell,
-and <code class="docutils literal"><span class="pre">no_idealize=1</span></code> disables to idealize lengths and angles of basis
-vectors and positions of atoms according to crystal symmetry. Now
-<code class="docutils literal"><span class="pre">refine_cell</span></code> and <code class="docutils literal"><span class="pre">find_primitive</span></code> are shorthands of this method
-with combinations of these options. More detailed explanation is
-shown in the spglib (C-API) document.</p>
+<p><code class="docutils literal"><span class="pre">to_primitive=True</span></code> is used to create the standardized primitive
+cell, and <code class="docutils literal"><span class="pre">no_idealize=True</span></code> disables to idealize lengths and angles
+of basis vectors and positions of atoms according to crystal
+symmetry. Now <code class="docutils literal"><span class="pre">refine_cell</span></code> and <code class="docutils literal"><span class="pre">find_primitive</span></code> are shorthands of
+this method with combinations of these options. When it fails,
+<code class="docutils literal"><span class="pre">None</span></code> is returned. More detailed explanation is shown in the spglib
+(C-API) document.</p>
 <div class="line-block">
 <div class="line"><br /></div>
 </div>

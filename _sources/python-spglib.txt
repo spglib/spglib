@@ -230,7 +230,8 @@ respectively.
 
 Bravais lattice (3x3 numpy array), atomic scaled positions (a numpy
 array of [number_of_atoms,3]), and atomic numbers (a 1D numpy array)
-that are symmetrized following space group type are returned.
+that are symmetrized following space group type are returned. When it
+fails, ``None`` is returned.
 
 The detailed control of standardization of unit cell may be done using
 ``standardize_cell``.
@@ -248,8 +249,7 @@ The detailed control of standardization of unit cell may be done using
 
 When a primitive cell is found, lattice parameters (3x3 numpy array),
 scaled positions (a numpy array of [number_of_atoms,3]), and atomic
-numbers (a 1D numpy array) is returned. When no primitive cell is
-found, (``None``, ``None``, ``None``) is returned.
+numbers (a 1D numpy array) is returned. When it fails, ``None`` is returned.
 
 The detailed control of standardization of unit cell can be done using
 ``standardize_cell``.
@@ -263,15 +263,15 @@ The detailed control of standardization of unit cell can be done using
 
 ::
 
-   lattice, scaled_positions, numbers = \\
-          standardize_cell(bulk, to_primitive=0, no_idealize=0, symprec=1e-5)
+   lattice, scaled_positions, numbers = standardize_cell(bulk, to_primitive=False, no_idealize=False, symprec=1e-5)
 
-``to_primitive=1`` is used to create the standardized primitive cell,
-and ``no_idealize=1`` disables to idealize lengths and angles of basis
-vectors and positions of atoms according to crystal symmetry. Now
-``refine_cell`` and ``find_primitive`` are shorthands of this method
-with combinations of these options. More detailed explanation is
-shown in the spglib (C-API) document.
+``to_primitive=True`` is used to create the standardized primitive
+cell, and ``no_idealize=True`` disables to idealize lengths and angles
+of basis vectors and positions of atoms according to crystal
+symmetry. Now ``refine_cell`` and ``find_primitive`` are shorthands of
+this method with combinations of these options. When it fails,
+``None`` is returned. More detailed explanation is shown in the spglib
+(C-API) document.
 
 |
 
