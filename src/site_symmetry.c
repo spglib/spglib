@@ -41,12 +41,15 @@
 
 #include "debug.h"
 
-static VecDBL * get_exact_positions(int * wyckoffs,
-				    int * equiv_atoms,
-				    SPGCONST Cell * bravais,
-				    SPGCONST Symmetry * conv_sym,
-				    const int hall_number,
-				    const double symprec);
+#define INCREASE_RATE 1.05
+#define REDUCE_RATE 0.95
+
+static int get_exact_positions(VecDBL *positions,
+			       int * equiv_atoms,
+			       SPGCONST Cell * conv_prim,
+			       SPGCONST Symmetry * conv_sym,
+			       const int hall_number,
+			       const double symprec);
 static int set_exact_location(double position[3],
 			      SPGCONST Symmetry * conv_sym,
 			      SPGCONST double bravais_lattice[3][3],
@@ -56,113 +59,138 @@ static int set_equivalent_atom(VecDBL *positions,
 			       const int i,
 			       const int num_indep_atoms,
 			       const int *indep_atoms,
-			       SPGCONST Cell * bravais,
+			       SPGCONST Cell * conv_prim,
 			       SPGCONST Symmetry * conv_sym,
 			       const double symprec);
-static int set_wyckoffs(int * wyckoffs,
-			const VecDBL *positions,
-			const int * equiv_atoms,
-			SPGCONST Cell * bravais,
-			SPGCONST Symmetry * conv_sym,
-			const int hall_number,
-			const double symprec);
+static int set_Wyckoffs_labels(int * wyckoffs,
+			       const VecDBL *positions,
+			       const int * equiv_atoms,
+			       SPGCONST Cell * conv_prim,
+			       SPGCONST Symmetry * conv_sym,
+			       const int hall_number,
+			       const double symprec);
 static int get_Wyckoff_notation(double position[3],
 				SPGCONST Symmetry * conv_sym,
 				SPGCONST double bravais_lattice[3][3],
 				const int hall_number,
 				const double symprec);
+static SPGCONST int identity[3][3] = {
+  { 1, 0, 0},
+  { 0, 1, 0},
+  { 0, 0, 1},
+};
 
 /* Return if failed */
 VecDBL * ssm_get_exact_positions(int *wyckoffs,
 				 int *equiv_atoms,
-				 SPGCONST Cell * bravais,
+				 SPGCONST Cell * conv_prim,
 				 SPGCONST Symmetry * conv_sym,
 				 const int hall_number,
 				 const double symprec)
 {
-  int i;
+  int attempt, num_atoms;
+  double tolerance;
   VecDBL *positions;
 
-  positions = get_exact_positions(wyckoffs,
-				  equiv_atoms,
-				  bravais,
-				  conv_sym,
-				  hall_number,
-				  symprec);
+  positions = NULL;
 
-  if (positions != NULL) {
-    set_wyckoffs(wyckoffs,
-		 positions,
-		 equiv_atoms,
-		 bravais,
-		 conv_sym,
-		 hall_number,
-		 symprec);
+  if ((positions = mat_alloc_VecDBL(conv_prim->size)) == NULL) {
+    return NULL;
+  }
 
-    for (i = 0; i < bravais->size; i++) {
-      if (wyckoffs[i] == -1) {
-	mat_free_VecDBL(positions);
-	positions = NULL;
-	break;
-      }
+  tolerance = symprec;
+  for (attempt = 0; attempt < 100; attempt++) {
+    num_atoms = get_exact_positions(positions,
+				    equiv_atoms,
+				    conv_prim,
+				    conv_sym,
+				    hall_number,
+				    tolerance);
+    if (num_atoms == conv_prim->size) {
+      goto succeeded;
     }
+
+    if (num_atoms > conv_prim->size || num_atoms == 0) {
+      tolerance *= INCREASE_RATE;
+      warning_print("spglib: Some site-symmetry is found broken. ");
+      warning_print("(%d != %d)\n", num_atoms, conv_prim->size);
+      warning_print("        Increase tolerance to %f", tolerance);
+      warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
+    }
+
+    if (num_atoms < conv_prim->size && num_atoms) {
+      tolerance *= REDUCE_RATE;
+      warning_print("spglib: Some site-symmetry is found broken. ");
+      warning_print("(%d != %d)\n", num_atoms, conv_prim->size);
+      warning_print("        Reduce tolerance to %f", tolerance);
+      warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
+    }
+  }
+
+  mat_free_VecDBL(positions);
+  positions = NULL;
+  return NULL;
+
+ succeeded:
+  if (! set_Wyckoffs_labels(wyckoffs,
+			    positions,
+			    equiv_atoms,
+			    conv_prim,
+			    conv_sym,
+			    hall_number,
+			    symprec)) {
+    mat_free_VecDBL(positions);
+    positions = NULL;
   }
 
   return positions;
 }
 
-/* Return NULL if failed */
-static VecDBL * get_exact_positions(int * wyckoffs,
-				    int * equiv_atoms,
-				    SPGCONST Cell * bravais,
-				    SPGCONST Symmetry * conv_sym,
-				    const int hall_number,
-				    const double symprec)
+/* Return 0 if failed */
+static int get_exact_positions(VecDBL *positions,
+			       int * equiv_atoms,
+			       SPGCONST Cell * conv_prim,
+			       SPGCONST Symmetry * conv_sym,
+			       const int hall_number,
+			       const double symprec)
 {
   int i, num_indep_atoms, sum_num_atoms_in_orbits, num_atoms_in_orbits;
   int *indep_atoms;
-  VecDBL *positions;
 
   debug_print("get_exact_positions\n");
 
   indep_atoms = NULL;
-  positions = NULL;
 
-  if ((indep_atoms = (int*) malloc(sizeof(int) * bravais->size)) == NULL) {
+  if ((indep_atoms = (int*) malloc(sizeof(int) * conv_prim->size)) == NULL) {
     warning_print("spglib: Memory could not be allocated ");
-    return NULL;
-  }
-
-  if ((positions = mat_alloc_VecDBL(bravais->size)) == NULL) {
-    free(indep_atoms);
-    indep_atoms = NULL;
-    return NULL;
+    return 0;
   }
 
   num_indep_atoms = 0;
   sum_num_atoms_in_orbits = 0;
-  for (i = 0; i < bravais->size; i++) {
+  for (i = 0; i < conv_prim->size; i++) {
     /* Check if atom_i overlap to an atom already set at the exact position. */
     if (! set_equivalent_atom(positions,
 			      equiv_atoms,
 			      i,
 			      num_indep_atoms,
 			      indep_atoms,
-			      bravais,
+			      conv_prim,
 			      conv_sym,
 			      symprec)) {
       /* No equivalent atom was found. */
       indep_atoms[num_indep_atoms] = i;
       num_indep_atoms++;
-      mat_copy_vector_d3(positions->vec[i], bravais->position[i]);
+      mat_copy_vector_d3(positions->vec[i], conv_prim->position[i]);
       num_atoms_in_orbits = set_exact_location(positions->vec[i],
 					       conv_sym,
-					       bravais->lattice,
+					       conv_prim->lattice,
 					       symprec);
       if (num_atoms_in_orbits) {
 	sum_num_atoms_in_orbits += num_atoms_in_orbits;
 	equiv_atoms[i] = i;
       } else {
+	sum_num_atoms_in_orbits = 0;
 	break;
       }
     }
@@ -171,7 +199,43 @@ static VecDBL * get_exact_positions(int * wyckoffs,
   free(indep_atoms);
   indep_atoms = NULL;
 
-  return positions;
+  return sum_num_atoms_in_orbits;
+}
+
+static int set_equivalent_atom(VecDBL *positions,
+			       int * equiv_atoms,
+			       const int i,
+			       const int num_indep_atoms,
+			       const int *indep_atoms,
+			       SPGCONST Cell * conv_prim,
+			       SPGCONST Symmetry * conv_sym,
+			       const double symprec)
+{
+  int j, k, l;
+  double pos[3];
+
+  for (j = 0; j < num_indep_atoms; j++) {
+    for (k = 0; k < conv_sym->size; k++) {
+      mat_multiply_matrix_vector_id3(pos,
+				     conv_sym->rot[k],
+				     positions->vec[indep_atoms[j]]);
+      for (l = 0; l < 3; l++) {
+	pos[l] += conv_sym->trans[k][l];
+      }
+      if (cel_is_overlap(pos,
+			 conv_prim->position[i],
+			 conv_prim->lattice,
+			 symprec)) {
+	for (l = 0; l < 3; l++) {
+	  positions->vec[i][l] = mat_Dmod1(pos[l]);
+	}
+	equiv_atoms[i] = indep_atoms[j];
+	return 1;
+      }
+    }
+  }
+
+  return 0;
 }
 
 /* Site-symmetry is used to determine exact location of an atom */
@@ -182,7 +246,7 @@ static int set_exact_location(double position[3],
 			      SPGCONST double bravais_lattice[3][3],
 			      const double symprec)
 {
-  int i, j, k, num_sum, multi;
+  int i, j, k, num_sum, multi, num_pure_trans;
   double sum_rot[3][3];
   double pos[3], sum_trans[3];
 
@@ -196,10 +260,18 @@ static int set_exact_location(double position[3],
     }
   }
 
+  num_pure_trans = 0;
   for (i = 0; i < conv_sym->size; i++) {
-    mat_multiply_matrix_vector_id3(pos,
-				   conv_sym->rot[i],
-				   position);
+    if (mat_check_identity_matrix_i3(identity, conv_sym->rot[i])) {
+      num_pure_trans++;
+      for (j = 0; j < 3; j++) {
+	pos[j] = position[j];
+      }
+    } else {
+      mat_multiply_matrix_vector_id3(pos,
+				     conv_sym->rot[i],
+				     position);
+    }
     for (j = 0; j < 3; j++) {
       pos[j] += conv_sym->trans[i][j];
     }
@@ -236,82 +308,49 @@ static int set_exact_location(double position[3],
     position[i] += sum_trans[i];
   }
 
-  multi = conv_sym->size / num_sum;
-  if (multi * num_sum == conv_sym->size) {
+  multi = conv_sym->size / num_pure_trans / num_sum;
+  if (multi * num_sum * num_pure_trans == conv_sym->size) {
     return multi;
   } else {
     return 0;
   }
 }
 
-static int set_equivalent_atom(VecDBL *positions,
-			       int * equiv_atoms,
-			       const int i,
-			       const int num_indep_atoms,
-			       const int *indep_atoms,
-			       SPGCONST Cell * bravais,
+static int set_Wyckoffs_labels(int *wyckoffs,
+			       const VecDBL *positions,
+			       const int * equiv_atoms,
+			       SPGCONST Cell * conv_prim,
 			       SPGCONST Symmetry * conv_sym,
+			       const int hall_number,
 			       const double symprec)
-{
-  int j, k, l;
-  double pos[3];
-
-  for (j = 0; j < num_indep_atoms; j++) {
-    for (k = 0; k < conv_sym->size; k++) {
-      mat_multiply_matrix_vector_id3(pos,
-				     conv_sym->rot[k],
-				     positions->vec[indep_atoms[j]]);
-      for (l = 0; l < 3; l++) {
-	pos[l] += conv_sym->trans[k][l];
-      }
-      if (cel_is_overlap(pos,
-			 bravais->position[i],
-			 bravais->lattice,
-			 symprec)) {
-	for (l = 0; l < 3; l++) {
-	  positions->vec[i][l] = mat_Dmod1(pos[l]);
-	}
-	equiv_atoms[i] = indep_atoms[j];
-	return 1;
-      }
-    }
-  }
-
-  return 0;
-}
-
-static int set_wyckoffs(int *wyckoffs,
-			const VecDBL *positions,
-			const int * equiv_atoms,
-			SPGCONST Cell * bravais,
-			SPGCONST Symmetry * conv_sym,
-			const int hall_number,
-			const double symprec)
 {
   int i, w;
 
-  for (i = 0; i < bravais->size; i++) {
+  for (i = 0; i < conv_prim->size; i++) {
     if (i == equiv_atoms[i]) {
       w = get_Wyckoff_notation(positions->vec[i],
 			       conv_sym,
-			       bravais->lattice,
+			       conv_prim->lattice,
 			       hall_number,
 			       symprec);
       if (w < 0) {
-	return 0;
+	goto err;
       } else {
 	wyckoffs[i] = w;
       }
     }
   }
 
-  for (i = 0; i < bravais->size; i++) {
+  for (i = 0; i < conv_prim->size; i++) {
     if (i != equiv_atoms[i]) {
       wyckoffs[i] = wyckoffs[equiv_atoms[i]];
     }
   }
 
   return 1;
+
+ err:
+  return 0;
 }
 
 /* Return -1 if failed */

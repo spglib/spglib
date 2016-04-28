@@ -216,12 +216,14 @@ static PyObject * get_dataset(PyObject *self, PyObject *args)
   const int num_atom = PyArray_DIMS(position)[0];
   const int* typat = (int*)PyArray_DATA(atom_type);
 
-  dataset = spgat_get_dataset(lat,
-			      pos,
-			      typat,
-			      num_atom,
-			      symprec,
-			      angle_tolerance);
+  if ((dataset = spgat_get_dataset(lat,
+				   pos,
+				   typat,
+				   num_atom,
+				   symprec,
+				   angle_tolerance)) == NULL) {
+    Py_RETURN_NONE;
+  }
 
   array = PyList_New(15);
   n = 0;

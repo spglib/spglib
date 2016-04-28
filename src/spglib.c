@@ -53,7 +53,7 @@
 #include "symmetry.h"
 #include "version.h"
 
-#define REDUCE_RATE 0.95
+#define REDUCE_RATE 0.9
 
 /*---------*/
 /* general */
@@ -965,6 +965,8 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
 				   const int hall_number,
 				   const double symprec)
 {
+  int attempt;
+  double tolerance;
   Spacegroup spacegroup;
   SpacegroupType spacegroup_type;
   SpglibDataset *dataset;
@@ -1009,38 +1011,44 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
 
   cel_set_cell(cell, lattice, position, types);
 
-  if ((primitive = spa_get_spacegroup(&spacegroup, cell, symprec)) == NULL) {
-    cel_free_cell(cell);
-    cell = NULL;
-    free(dataset);
-    dataset = NULL;
-    return NULL;
-  }
-
-  if (spacegroup.number > 0) {
-    /* With hall_number > 0, specific choice is searched. */
-    if (hall_number > 0) {
-      spacegroup_type = spgdb_get_spacegroup_type(hall_number);
-      if (spacegroup.number == spacegroup_type.number) {
-	spacegroup = spa_get_spacegroup_with_hall_number(primitive,
-							 hall_number);
-      } else {
-	goto err;
-      }
-
-      if (spacegroup.number == 0) {
-	goto err;
-      }
+  tolerance = symprec;
+  for (attempt = 0; attempt < 10; attempt++) {
+    if ((primitive = spa_get_spacegroup(&spacegroup, cell, tolerance))
+	== NULL) {
+      cel_free_cell(cell);
+      cell = NULL;
+      free(dataset);
+      dataset = NULL;
+      return NULL;
     }
 
     if (spacegroup.number > 0) {
-      if ((set_dataset(dataset,
-		       cell,
-		       primitive->cell,
-		       &spacegroup,
-		       primitive->mapping_table,
-		       primitive->tolerance)) == 0) {
-	goto err;
+      /* With hall_number > 0, specific choice is searched. */
+      if (hall_number > 0) {
+	spacegroup_type = spgdb_get_spacegroup_type(hall_number);
+	if (spacegroup.number == spacegroup_type.number) {
+	  spacegroup = spa_get_spacegroup_with_hall_number(primitive,
+							   hall_number);
+	} else {
+	  goto err;
+	}
+
+	if (spacegroup.number == 0) {
+	  goto err;
+	}
+      }
+
+      if (spacegroup.number > 0) {
+	if (set_dataset(dataset,
+			cell,
+			primitive->cell,
+			&spacegroup,
+			primitive->mapping_table,
+			primitive->tolerance)) {
+	  break;
+	} else {
+	  tolerance *= REDUCE_RATE;
+	}
       }
     }
   }
@@ -1728,12 +1736,14 @@ static int get_ir_reciprocal_mesh(int grid_address[][3],
   int num_ir, i;
   MatINT *rotations, *rot_reciprocal;
 
-  dataset = get_dataset(lattice,
-			position,
-			types,
-			num_atom,
-			0,
-			symprec);
+  if ((dataset = get_dataset(lattice,
+			     position,
+			     types,
+			     num_atom,
+			     0,
+			     symprec)) == NULL) {
+    return 0;
+  }
 
   if ((rotations = mat_alloc_MatINT(dataset->n_operations)) == NULL) {
     spg_free_dataset(dataset);

@@ -21,10 +21,10 @@ class TestSpglib(unittest.TestCase):
         for d in dirnames:
             self._filenames += ["%s/%s" % (d, fname)
                                 for fname in listdir("./data/%s" % d)]
-    
+
     def tearDown(self):
         pass
-    
+
     def test_get_symmetry_dataset(self):
         for fname in self._filenames:
             spgnum = int(fname.split('-')[1])
@@ -40,9 +40,12 @@ class TestSpglib(unittest.TestCase):
             spgnum = int(fname.split('-')[1])
             cell = read_vasp("./data/%s" % fname)
             if 'distorted' in fname:
-                ref_cell = refine_cell(cell, symprec=1e-1)
+                dataset_orig = get_symmetry_dataset(cell, symprec=1e-1)
             else:
-                ref_cell = refine_cell(cell, symprec=1e-5)
+                dataset_orig = get_symmetry_dataset(cell, symprec=1e-5)
+            ref_cell = (dataset_orig['std_lattice'],
+                        dataset_orig['std_positions'],
+                        dataset_orig['std_types'])
             dataset = get_symmetry_dataset(ref_cell, symprec=1e-5)
             if dataset['number'] != spgnum:
                 print("%s" % fname)

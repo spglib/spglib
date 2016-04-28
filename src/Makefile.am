@@ -44,7 +44,7 @@ symmetry.h \
 version.h
 
 libsymspg_la_SOURCES = $(spglib_c) $(spglib_h)
-pkginclude_HEADERS = $(spglib_h) debug.h
+pkginclude_HEADERS = $(spglib_h)
 # libsymspg_la_LDFLAGS = -version-info 0:1:0
 libsymspg_la_LIBADD = -lm
 
