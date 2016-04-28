@@ -128,7 +128,7 @@ def get_symmetry_dataset(cell, symprec=1e-5, angle_tolerance=-1.0):
                 Transformation matrix from input lattice to standardized lattice
                 L^original = L^standardized * Tmat
         origin shift:
-            float vecotr:  Origin shift from standardized to input origin 
+            float vecotr: Origin shift from standardized to input origin 
         rotations, translations:
             3x3 int matrix, float vector:
                 Rotation matrices and translation vectors. Space group
@@ -405,20 +405,38 @@ def get_grid_point_from_address(grid_address, mesh):
 
 def get_ir_reciprocal_mesh(mesh,
                            cell,
-                           is_shift=np.zeros(3, dtype='intc'),
+                           is_shift=None,
                            is_time_reversal=True,
                            symprec=1e-5):
-    """
-    Return k-points mesh and k-point map to the irreducible k-points
+    """Return k-points mesh and k-point map to the irreducible k-points.
+
     The symmetry is serched from the input cell.
-    is_shift=[0, 0, 0] gives Gamma center mesh.
+
+    Args:
+        mesh:
+            int array (3,): Uniform sampling mesh numbers
+        cell, symprec:
+            See the docstring of get_symmetry.
+        is_shift:
+            int array (3,): [0, 0, 0] gives Gamma center mesh and value 1 gives
+                            half mesh shift.
+        is_time_reversal:
+            bool: Time reversal symmetry is included or not.
+
+    Return:
+        mapping_table:
+            int array (N,): Grid point mapping table to ir-gird-points
+        grid_address:
+            int array (N, 3): Address of all grid points
     """
 
     lattice, positions, numbers, _ = _expand_cell(cell)
     mapping = np.zeros(np.prod(mesh), dtype='intc')
-    mesh_points = np.zeros((np.prod(mesh), 3), dtype='intc')
+    grid_address = np.zeros((np.prod(mesh), 3), dtype='intc')
+    if is_shift is None:
+        is_shift = [0, 0, 0]
     if spg.ir_reciprocal_mesh(
-            mesh_points,
+            grid_address,
             mapping,
             np.array(mesh, dtype='intc'),
             np.array(is_shift, dtype='intc'),
@@ -427,9 +445,61 @@ def get_ir_reciprocal_mesh(mesh,
             positions,
             numbers,
             symprec) > 0:
-        return mapping, mesh_points
+        return mapping, grid_address
     else:
-        return None, None
+        return None
+
+def get_stabilized_reciprocal_mesh(mesh,
+                                   rotations,
+                                   is_shift=None,
+                                   is_time_reversal=True,
+                                   qpoints=None):
+    """Return k-point map to the irreducible k-points and k-point grid points .
+
+    The symmetry is searched from the input rotation matrices in real space.
+
+    Args:
+        mesh:
+            int array (3,): Uniform sampling mesh numbers
+        is_shift:
+            int array (3,): [0, 0, 0] gives Gamma center mesh and value 1 gives
+                            half mesh shift.
+        is_time_reversal:
+            bool: Time reversal symmetry is included or not.
+        qpoints:
+            float array (N ,3) or (3,):
+                Stabilizer(s) in the fractional coordinates.
+
+    Return:
+        mapping_table:
+            int array (N,): Grid point mapping table to ir-gird-points
+        grid_address:
+            int array (N, 3): Address of all grid points
+    """
+    
+
+    mapping_table = np.zeros(np.prod(mesh), dtype='intc')
+    grid_address = np.zeros((np.prod(mesh), 3), dtype='intc')
+    if is_shift is None:
+        is_shift = [0, 0, 0]
+    if qpoints is None:
+        qpoints = np.array([[0, 0, 0]], dtype='double', order='C')
+    else:
+        qpoints = np.array(qpoints, dtype='double', order='C')
+        if qpoints.shape == (3,):
+            qpoints = np.array([qpoints], dtype='double', order='C')
+
+    if spg.stabilized_reciprocal_mesh(
+            grid_address,
+            mapping_table,
+            np.array(mesh, dtype='intc'),
+            np.array(is_shift, dtype='intc'),
+            is_time_reversal * 1,
+            np.array(rotations, dtype='intc', order='C'),
+            qpoints) > 0:
+        return mapping_table, grid_address
+    else:
+        return None
 
 def get_grid_points_by_rotations(address_orig,
                                  reciprocal_rotations,
@@ -511,39 +581,6 @@ def relocate_BZ_grid_address(grid_address,
 
     return bz_grid_address[:num_bz_ir], bz_map
   
-def get_stabilized_reciprocal_mesh(mesh,
-                                   rotations,
-                                   is_shift=np.zeros(3, dtype='intc'),
-                                   is_time_reversal=True,
-                                   qpoints=np.array([], dtype='double')):
-    """Return k-point map to the irreducible k-points and k-point grid points .
-
-    The symmetry is searched from the input rotation matrices in real space.
-    
-    is_shift=[0, 0, 0] gives Gamma center mesh and the values 1 give
-    half mesh distance shifts.
-    """
-    
-    mapping = np.zeros(np.prod(mesh), dtype='intc')
-    mesh_points = np.zeros((np.prod(mesh), 3), dtype='intc')
-    qpoints = np.array(qpoints, dtype='double', order='C')
-    if qpoints.shape == (3,):
-        qpoints = np.array([qpoints], dtype='double', order='C')
-    if qpoints.shape == (0,):
-        qpoints = np.array([[0, 0, 0]], dtype='double', order='C')
-
-    if spg.stabilized_reciprocal_mesh(
-            mesh_points,
-            mapping,
-            np.array(mesh, dtype='intc'),
-            np.array(is_shift, dtype='intc'),
-            is_time_reversal * 1,
-            np.array(rotations, dtype='intc', order='C'),
-            qpoints) > 0:
-        return mapping, mesh_points
-    else:
-        return None, None
-
 def niggli_reduce(lattice, eps=1e-5):
     """Run Niggli reduction
 
