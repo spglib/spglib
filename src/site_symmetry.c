@@ -48,7 +48,6 @@ static int get_exact_positions(VecDBL *positions,
 			       int * equiv_atoms,
 			       SPGCONST Cell * conv_prim,
 			       SPGCONST Symmetry * conv_sym,
-			       const int hall_number,
 			       const double symprec);
 static int set_exact_location(double position[3],
 			      SPGCONST Symmetry * conv_sym,
@@ -104,7 +103,6 @@ VecDBL * ssm_get_exact_positions(int *wyckoffs,
 				    equiv_atoms,
 				    conv_prim,
 				    conv_sym,
-				    hall_number,
 				    tolerance);
     if (num_atoms == conv_prim->size) {
       goto succeeded;
@@ -151,7 +149,6 @@ static int get_exact_positions(VecDBL *positions,
 			       int * equiv_atoms,
 			       SPGCONST Cell * conv_prim,
 			       SPGCONST Symmetry * conv_sym,
-			       const int hall_number,
 			       const double symprec)
 {
   int i, num_indep_atoms, sum_num_atoms_in_orbits, num_atoms_in_orbits;
