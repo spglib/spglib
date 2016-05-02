@@ -50,13 +50,14 @@ Install
 
 2. Unzip, configure, and make::
 
-   % tar xvfz spglib-1.9.2.tar.gz
-   % cd spglib-1.9.2
-   % ./configure
+   % tar xvfz spglib-1.9.4.tar.gz
+   % cd spglib-1.9.4
+   % ./configure --prefix=INSTALL_LOCATION
    % make
+   % make install
 
-3. Copy the libraries where you want using OpenMP. The libraries may
-   be in ``src/.libs`` if you don't ``make install``,
+3. The libraries are installed at ``INSTALL_LOCATION`` or found in
+   ``src/.libs`` if you don't run ``make install``,
 
 OpenMP
 ^^^^^^^

@@ -3,19 +3,10 @@
 Spglib for python
 ==================
 
-This is written to work with Atomistic Simulation Environment (ASE)
-Atoms class object. An alternative Atoms class (`atoms.py
-<https://github.com/atztogo/spglib/blob/master/python/examples/atoms.py>`_)
-that contains minimum
-set of methods is prepared in the `examples
-<https://github.com/atztogo/spglib/tree/master/python/examples>`_ directory.
-
-|
-
 Installation
 -------------
 
-Full source codes, examples, and the test are downloaded `here
+Source codes, examples, and the test are downloaded `here
 <https://sourceforge.net/project/showfiles.php?group_id=215020>`_.
 
 Using package distribution service
@@ -37,10 +28,10 @@ Conda is another choice::
 
 These packages are made by Paweł T. Jochym.
 
-Building from setup.py
-^^^^^^^^^^^^^^^^^^^^^^^
+Building using setup.py
+^^^^^^^^^^^^^^^^^^^^^^^^
 
-To manually install spglib using ``setup.py``, python header files
+To manually install python-spglib using ``setup.py``, python header files
 (python-dev), gcc, and numpy are required before the build. The
 installation steps are shown as follows:
 
@@ -112,9 +103,7 @@ Example
 
 Examples are found in `examples
 <https://github.com/atztogo/spglib/tree/master/python/examples>`_
-directory. In this directory, an alternative Atoms class in `atoms.py
-<https://github.com/atztogo/spglib/blob/master/python/examples/atoms.py>`_
-can be used instead of the ``Atoms`` class in ASE for spglib.
+directory.
 
 |
 
@@ -123,17 +112,21 @@ Variables
 
 .. _variables_crystal_structure:
 
-Cristal structure (``atoms``)
+Crystal structure (``cell``)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Crsytal structure information is given either in an **Atoms object**
-or a **tuple**, where the tuple is supported at version 1.9.1 or
-later. In the case given by a tuple, it has to follow the format as
-written below.
+A crystal structure is given by a **tuple**. This tuple format
+is supported at version 1.9.1 or later. Optionally, an **ASE Atoms-like
+object** is also supported. An alternative Atoms class (`atoms.py
+<https://github.com/atztogo/spglib/blob/master/python/examples/atoms.py>`_)
+that contains minimum set of methods is prepared in the `examples
+<https://github.com/atztogo/spglib/tree/master/python/examples>`_
+directory.
 
-The elements of a tuple are ``atoms = (lattice, positions, numbers,
-magmoms)`` where ``magmoms`` is optional, three elements of the tuple
-are accepted.
+The tuple format is shown as follows. There are three or four elements
+in the tuple: ``cell = (lattice, positions, numbers)`` or ``cell =
+(lattice, positions, numbers, magmoms)`` where ``magmoms`` is
+optional.
 
 Lattice parameters ``lattice`` are given by a 3x3 matrix with floating
 point values. Fractional atomic positions ``positions`` are given by a
@@ -184,7 +177,7 @@ This returns version number of spglib by tuple with three numbers.
 
 ::
 
-    spacegroup = get_spacegroup(atoms, symprec=1e-5)
+    spacegroup = get_spacegroup(cell, symprec=1e-5)
 
 International space group short symbol and number are obtained as a
 string. With ``symbol_type=1``, Schoenflies symbol is given instead of
@@ -197,7 +190,7 @@ international symbol.
 
 ::
 
-    symmetry = get_symmetry(atoms, symprec=1e-5)
+    symmetry = get_symmetry(cell, symprec=1e-5)
 
 Symmetry operations are obtained as a dictionary. The key ``rotation``
 contains a numpy array of integer, which is "number of symmetry
@@ -226,7 +219,7 @@ respectively.
 
 ::
 
-    lattice, scaled_positions, numbers = refine_cell(atoms, symprec=1e-5)
+    lattice, scaled_positions, numbers = refine_cell(cell, symprec=1e-5)
 
 Bravais lattice (3x3 numpy array), atomic scaled positions (a numpy
 array of [number_of_atoms,3]), and atomic numbers (a 1D numpy array)
@@ -245,7 +238,7 @@ The detailed control of standardization of unit cell may be done using
 
 ::
 
-   lattice, scaled_positions, numbers = find_primitive(atoms, symprec=1e-5)
+   lattice, scaled_positions, numbers = find_primitive(cell, symprec=1e-5)
 
 When a primitive cell is found, lattice parameters (3x3 numpy array),
 scaled positions (a numpy array of [number_of_atoms,3]), and atomic
@@ -280,7 +273,7 @@ this method with combinations of these options. When it fails,
 
 ::
 
-    dataset = get_symmetry_dataset(atoms, symprec=1e-5)
+    dataset = get_symmetry_dataset(cell, symprec=1e-5)
 
 ``dataset`` is a dictionary. The keys are:
 
@@ -366,15 +359,15 @@ Here ``spacegroup_type['international_short']`` is equivalent to
 
 ::
 
-   mapping, grid = get_ir_reciprocal_mesh(mesh, atoms, is_shift=[0, 0, 0])
+   mapping, grid = get_ir_reciprocal_mesh(mesh, cell, is_shift=[0, 0, 0])
 
 Irreducible k-points are obtained from a sampling mesh of k-points.
 ``mesh`` is given by three integers by array and specifies mesh
-numbers along reciprocal primitive axis. ``atoms`` is an Atoms object
-of ASE. ``is_shift`` is given by the three integers by array. When
-``is_shift`` is set for each reciprocal primitive axis, the mesh is
-shifted along the axis in half of adjacent mesh points irrespective of
-the mesh numbers. When the value is not 0, ``is_shift`` is set.
+numbers along reciprocal primitive axis. ``is_shift`` is given by the
+three integers by array. When ``is_shift`` is set for each reciprocal
+primitive axis, the mesh is shifted along the axis in half of adjacent
+mesh points irrespective of the mesh numbers. When the value is not 0,
+``is_shift`` is set.
 
 ``mapping`` and ``grid`` are returned. ``grid`` gives the mesh points in
 fractional coordinates in reciprocal space. ``mapping`` gives mapping to
@@ -389,6 +382,6 @@ For example, the irreducible k-points in fractional coordinates are
 obtained by ::
 
    ir_grid = []
-   mapping, grid = get_ir_reciprocal_mesh([ 8, 8, 8 ], atoms, [1, 1, 1])
+   mapping, grid = get_ir_reciprocal_mesh([ 8, 8, 8 ], cell, [1, 1, 1])
    for i in np.unique(mapping):
        ir_grid.append(grid[i])

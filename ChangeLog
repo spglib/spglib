@@ -1,3 +1,12 @@
+2016-05-02  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.9.4
+
+	* src/cell.c (get_overlap_table):
+
+	Fix unexpected behavior. This might happen in a rare case with
+	large tolerance.
+
 2016-04-28  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.9.3
