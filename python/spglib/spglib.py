@@ -590,9 +590,9 @@ def delaunay_reduce(lattice, eps=1e-5):
              [b_x, b_y, b_z],
              [c_x, c_y, c_z]]
         symprec:
-            float: Tolerance to check if volume is close to zero or 
+            float: Tolerance to check if volume is close to zero or not and
                    if two basis vectors are orthogonal by the value of dot
-                   product being close to zero.
+                   product being close to zero or not.
     
     Returns:
         if the Delaunay reduction succeeded:
@@ -621,9 +621,10 @@ def niggli_reduce(lattice, eps=1e-5):
              [c_x, c_y, c_z]]
         eps:
             float: Tolerance to check if difference of norms of two basis
-                   vectors is close to zero or if two basis vectors are
-                   orthogonal by the value of dot product being close to zero.
-                   The detail is shown at https://atztogo.github.io/niggli/.
+                   vectors is close to zero or not and if two basis vectors are
+                   orthogonal by the value of dot product being close to zero or
+                   not. The detail is shown at 
+                   https://atztogo.github.io/niggli/.
     
     Returns:
         if the Niggli reduction succeeded:

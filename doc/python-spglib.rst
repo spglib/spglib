@@ -354,6 +354,44 @@ Here ``spacegroup_type['international_short']`` is equivalent to
 
 |
 
+``niggli_reduce``
+^^^^^^^^^^^^^^^^^^
+
+::
+
+   niggli_lattice = niggli_reduce(lattice, eps=1e-5)
+
+Niggli reduction is achieved using this method. The algorithm detail
+is found at https://atztogo.github.io/niggli/ and the references are
+there in. Basis vectors are stored in ``lattice`` and
+``niggli_lattice`` as shown in
+:ref:`variables_crystal_structure`. ``esp`` is the tolerance
+parameter, but unlike ``symprec`` the unit is not a length. This is used
+to check if difference of norms of two basis vectors is close to zero
+or not and if two basis vectors are orthogonal by the value of dot product
+being close to zero or not.  The detail is shown at
+https://atztogo.github.io/niggli/.
+
+|
+
+``delaunay_reduce``
+^^^^^^^^^^^^^^^^^^^^
+
+::
+
+   delaunay_lattice = delaunay_reduce(lattice, eps=1e-5)
+
+Delaunay reduction is achieved using this method. The algorithm is
+found in the international tables for crystallography volume A. Basis
+vectors are stored in ``lattice`` and ``niggli_lattice`` as shown in
+:ref:`variables_crystal_structure`. ``esp`` is the tolerance
+parameter, but unlike ``symprec`` the unit is not a length. This is
+used as the criterion if volume is close to zero or not and if two
+basis vectors are orthogonal by the value of dot product being close
+to zero or not.
+
+|
+
 ``get_ir_reciprocal_mesh``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
