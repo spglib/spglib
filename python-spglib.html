@@ -5,17 +5,17 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Spglib for python &mdash; spglib 1.9.3 documentation</title>
+    <title>Spglib for python &mdash; spglib 1.9.4 documentation</title>
     
     <link rel="stylesheet" href="_static/basic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/bootswatch-3.3.4/cosmo/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootswatch-3.3.6/cosmo/bootstrap.min.css" type="text/css" />
     <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.9.3',
+        VERSION:     '1.9.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -26,9 +26,9 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
     <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
-    <script type="text/javascript" src="_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-3.3.6/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
-    <link rel="top" title="spglib 1.9.3 documentation" href="index.html" />
+    <link rel="top" title="spglib 1.9.4 documentation" href="index.html" />
     <link rel="prev" title="Important variables" href="variable.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
@@ -49,7 +49,7 @@
         </button>
         <a class="navbar-brand" href="index.html">
           spglib</a>
-        <span class="navbar-text navbar-version pull-left"><b>1.9.3</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>1.9.4</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -90,7 +90,7 @@
 <li><a class="reference internal" href="#">Spglib for python</a><ul>
 <li><a class="reference internal" href="#installation">Installation</a><ul>
 <li><a class="reference internal" href="#using-package-distribution-service">Using package distribution service</a></li>
-<li><a class="reference internal" href="#building-from-setup-py">Building from setup.py</a></li>
+<li><a class="reference internal" href="#building-using-setup-py">Building using setup.py</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#test">Test</a></li>
@@ -98,7 +98,7 @@
 <li><a class="reference internal" href="#version-number">Version number</a></li>
 <li><a class="reference internal" href="#example">Example</a></li>
 <li><a class="reference internal" href="#variables">Variables</a><ul>
-<li><a class="reference internal" href="#cristal-structure-atoms">Cristal structure (<code class="docutils literal"><span class="pre">atoms</span></code>)</a></li>
+<li><a class="reference internal" href="#crystal-structure-cell">Crystal structure (<code class="docutils literal"><span class="pre">cell</span></code>)</a></li>
 <li><a class="reference internal" href="#symmetry-tolerance-symprec">Symmetry tolerance (<code class="docutils literal"><span class="pre">symprec</span></code>)</a></li>
 </ul>
 </li>
@@ -112,6 +112,8 @@
 <li><a class="reference internal" href="#get-symmetry-dataset"><code class="docutils literal"><span class="pre">get_symmetry_dataset</span></code></a></li>
 <li><a class="reference internal" href="#get-symmetry-from-database"><code class="docutils literal"><span class="pre">get_symmetry_from_database</span></code></a></li>
 <li><a class="reference internal" href="#get-spacegroup-type"><code class="docutils literal"><span class="pre">get_spacegroup_type</span></code></a></li>
+<li><a class="reference internal" href="#niggli-reduce"><code class="docutils literal"><span class="pre">niggli_reduce</span></code></a></li>
+<li><a class="reference internal" href="#delaunay-reduce"><code class="docutils literal"><span class="pre">delaunay_reduce</span></code></a></li>
 <li><a class="reference internal" href="#get-ir-reciprocal-mesh"><code class="docutils literal"><span class="pre">get_ir_reciprocal_mesh</span></code></a></li>
 </ul>
 </li>
@@ -148,16 +150,9 @@
       
   <div class="section" id="spglib-for-python">
 <span id="python-spglib"></span><h1>Spglib for python<a class="headerlink" href="#spglib-for-python" title="Permalink to this headline">¶</a></h1>
-<p>This is written to work with Atomistic Simulation Environment (ASE)
-Atoms class object. An alternative Atoms class (<a class="reference external" href="https://github.com/atztogo/spglib/blob/master/python/examples/atoms.py">atoms.py</a>)
-that contains minimum
-set of methods is prepared in the <a class="reference external" href="https://github.com/atztogo/spglib/tree/master/python/examples">examples</a> directory.</p>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
 <div class="section" id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
-<p>Full source codes, examples, and the test are downloaded <a class="reference external" href="https://sourceforge.net/project/showfiles.php?group_id=215020">here</a>.</p>
+<p>Source codes, examples, and the test are downloaded <a class="reference external" href="https://sourceforge.net/project/showfiles.php?group_id=215020">here</a>.</p>
 <div class="section" id="using-package-distribution-service">
 <h3>Using package distribution service<a class="headerlink" href="#using-package-distribution-service" title="Permalink to this headline">¶</a></h3>
 <p>The easiest way to install python-spglib is to use the pypi package,
@@ -176,9 +171,9 @@ installation. A command to install spglib is:</p>
 </div>
 <p>These packages are made by Paweł T. Jochym.</p>
 </div>
-<div class="section" id="building-from-setup-py">
-<h3>Building from setup.py<a class="headerlink" href="#building-from-setup-py" title="Permalink to this headline">¶</a></h3>
-<p>To manually install spglib using <code class="docutils literal"><span class="pre">setup.py</span></code>, python header files
+<div class="section" id="building-using-setup-py">
+<h3>Building using setup.py<a class="headerlink" href="#building-using-setup-py" title="Permalink to this headline">¶</a></h3>
+<p>To manually install python-spglib using <code class="docutils literal"><span class="pre">setup.py</span></code>, python header files
 (python-dev), gcc, and numpy are required before the build. The
 installation steps are shown as follows:</p>
 <ol class="arabic">
@@ -254,23 +249,24 @@ directory. Got to this directory and run this script. It will be like below:</p>
 <div class="section" id="example">
 <h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
 <p>Examples are found in <a class="reference external" href="https://github.com/atztogo/spglib/tree/master/python/examples">examples</a>
-directory. In this directory, an alternative Atoms class in <a class="reference external" href="https://github.com/atztogo/spglib/blob/master/python/examples/atoms.py">atoms.py</a>
-can be used instead of the <code class="docutils literal"><span class="pre">Atoms</span></code> class in ASE for spglib.</p>
+directory.</p>
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
 </div>
 <div class="section" id="variables">
 <h2>Variables<a class="headerlink" href="#variables" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="cristal-structure-atoms">
-<span id="variables-crystal-structure"></span><h3>Cristal structure (<code class="docutils literal"><span class="pre">atoms</span></code>)<a class="headerlink" href="#cristal-structure-atoms" title="Permalink to this headline">¶</a></h3>
-<p>Crsytal structure information is given either in an <strong>Atoms object</strong>
-or a <strong>tuple</strong>, where the tuple is supported at version 1.9.1 or
-later. In the case given by a tuple, it has to follow the format as
-written below.</p>
-<p>The elements of a tuple are <code class="docutils literal"><span class="pre">atoms</span> <span class="pre">=</span> <span class="pre">(lattice,</span> <span class="pre">positions,</span> <span class="pre">numbers,</span>
-<span class="pre">magmoms)</span></code> where <code class="docutils literal"><span class="pre">magmoms</span></code> is optional, three elements of the tuple
-are accepted.</p>
+<div class="section" id="crystal-structure-cell">
+<span id="variables-crystal-structure"></span><h3>Crystal structure (<code class="docutils literal"><span class="pre">cell</span></code>)<a class="headerlink" href="#crystal-structure-cell" title="Permalink to this headline">¶</a></h3>
+<p>A crystal structure is given by a <strong>tuple</strong>. This tuple format
+is supported at version 1.9.1 or later. Optionally, an <strong>ASE Atoms-like
+object</strong> is also supported. An alternative Atoms class (<a class="reference external" href="https://github.com/atztogo/spglib/blob/master/python/examples/atoms.py">atoms.py</a>)
+that contains minimum set of methods is prepared in the <a class="reference external" href="https://github.com/atztogo/spglib/tree/master/python/examples">examples</a>
+directory.</p>
+<p>The tuple format is shown as follows. There are three or four elements
+in the tuple: <code class="docutils literal"><span class="pre">cell</span> <span class="pre">=</span> <span class="pre">(lattice,</span> <span class="pre">positions,</span> <span class="pre">numbers)</span></code> or <code class="docutils literal"><span class="pre">cell</span> <span class="pre">=</span>
+<span class="pre">(lattice,</span> <span class="pre">positions,</span> <span class="pre">numbers,</span> <span class="pre">magmoms)</span></code> where <code class="docutils literal"><span class="pre">magmoms</span></code> is
+optional.</p>
 <p>Lattice parameters <code class="docutils literal"><span class="pre">lattice</span></code> are given by a 3x3 matrix with floating
 point values. Fractional atomic positions <code class="docutils literal"><span class="pre">positions</span></code> are given by a
 Nx3 matrix with floating point values, where N is the number of
@@ -312,7 +308,7 @@ given by a list of N floating point values.</p>
 </div>
 <div class="section" id="get-spacegroup">
 <h3><code class="docutils literal"><span class="pre">get_spacegroup</span></code><a class="headerlink" href="#get-spacegroup" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">spacegroup</span> <span class="o">=</span> <span class="n">get_spacegroup</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">spacegroup</span> <span class="o">=</span> <span class="n">get_spacegroup</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>International space group short symbol and number are obtained as a
@@ -324,7 +320,7 @@ international symbol.</p>
 </div>
 <div class="section" id="get-symmetry">
 <h3><code class="docutils literal"><span class="pre">get_symmetry</span></code><a class="headerlink" href="#get-symmetry" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">symmetry</span> <span class="o">=</span> <span class="n">get_symmetry</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">symmetry</span> <span class="o">=</span> <span class="n">get_symmetry</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Symmetry operations are obtained as a dictionary. The key <code class="docutils literal"><span class="pre">rotation</span></code>
@@ -350,7 +346,7 @@ respectively.</p>
 <div class="section" id="refine-cell">
 <h3><code class="docutils literal"><span class="pre">refine_cell</span></code><a class="headerlink" href="#refine-cell" title="Permalink to this headline">¶</a></h3>
 <p><strong>Behaviour changed in version 1.8.x</strong></p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">lattice</span><span class="p">,</span> <span class="n">scaled_positions</span><span class="p">,</span> <span class="n">numbers</span> <span class="o">=</span> <span class="n">refine_cell</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">lattice</span><span class="p">,</span> <span class="n">scaled_positions</span><span class="p">,</span> <span class="n">numbers</span> <span class="o">=</span> <span class="n">refine_cell</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Bravais lattice (3x3 numpy array), atomic scaled positions (a numpy
@@ -366,7 +362,7 @@ fails, <code class="docutils literal"><span class="pre">None</span></code> is re
 <div class="section" id="find-primitive">
 <h3><code class="docutils literal"><span class="pre">find_primitive</span></code><a class="headerlink" href="#find-primitive" title="Permalink to this headline">¶</a></h3>
 <p><strong>Behaviour changed in version 1.8.x</strong></p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">lattice</span><span class="p">,</span> <span class="n">scaled_positions</span><span class="p">,</span> <span class="n">numbers</span> <span class="o">=</span> <span class="n">find_primitive</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">lattice</span><span class="p">,</span> <span class="n">scaled_positions</span><span class="p">,</span> <span class="n">numbers</span> <span class="o">=</span> <span class="n">find_primitive</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>When a primitive cell is found, lattice parameters (3x3 numpy array),
@@ -397,7 +393,7 @@ this method with combinations of these options. When it fails,
 </div>
 <div class="section" id="get-symmetry-dataset">
 <h3><code class="docutils literal"><span class="pre">get_symmetry_dataset</span></code><a class="headerlink" href="#get-symmetry-dataset" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">dataset</span> <span class="o">=</span> <span class="n">get_symmetry_dataset</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">dataset</span> <span class="o">=</span> <span class="n">get_symmetry_dataset</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><code class="docutils literal"><span class="pre">dataset</span></code> is a dictionary. The keys are:</p>
@@ -430,7 +426,7 @@ the Hermann–Mauguin notation.</li>
 crystal structure corresponding to a Hall symbol found. These are
 equivalently given in the array formats of <code class="docutils literal"><span class="pre">lattice</span></code>,
 <code class="docutils literal"><span class="pre">positions</span></code>, and <code class="docutils literal"><span class="pre">numbers</span></code> presented at
-<a class="reference internal" href="#variables-crystal-structure"><span class="std std-ref">Cristal structure (atoms)</span></a>, respectively.</li>
+<a class="reference internal" href="#variables-crystal-structure"><span class="std std-ref">Crystal structure (cell)</span></a>, respectively.</li>
 </ul>
 <div class="line-block">
 <div class="line"><br /></div>
@@ -483,18 +479,54 @@ dictionary is as follows:</p>
 <div class="line"><br /></div>
 </div>
 </div>
+<div class="section" id="niggli-reduce">
+<h3><code class="docutils literal"><span class="pre">niggli_reduce</span></code><a class="headerlink" href="#niggli-reduce" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">niggli_lattice</span> <span class="o">=</span> <span class="n">niggli_reduce</span><span class="p">(</span><span class="n">lattice</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Niggli reduction is achieved using this method. The algorithm detail
+is found at <a class="reference external" href="https://atztogo.github.io/niggli/">https://atztogo.github.io/niggli/</a> and the references are
+there in. Basis vectors are stored in <code class="docutils literal"><span class="pre">lattice</span></code> and
+<code class="docutils literal"><span class="pre">niggli_lattice</span></code> as shown in
+<a class="reference internal" href="#variables-crystal-structure"><span class="std std-ref">Crystal structure (cell)</span></a>. <code class="docutils literal"><span class="pre">esp</span></code> is the tolerance
+parameter, but unlike <code class="docutils literal"><span class="pre">symprec</span></code> the unit is not a length. This is used
+to check if difference of norms of two basis vectors is close to zero
+or not and if two basis vectors are orthogonal by the value of dot product
+being close to zero or not.  The detail is shown at
+<a class="reference external" href="https://atztogo.github.io/niggli/">https://atztogo.github.io/niggli/</a>.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="delaunay-reduce">
+<h3><code class="docutils literal"><span class="pre">delaunay_reduce</span></code><a class="headerlink" href="#delaunay-reduce" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">delaunay_lattice</span> <span class="o">=</span> <span class="n">delaunay_reduce</span><span class="p">(</span><span class="n">lattice</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Delaunay reduction is achieved using this method. The algorithm is
+found in the international tables for crystallography volume A. Basis
+vectors are stored in <code class="docutils literal"><span class="pre">lattice</span></code> and <code class="docutils literal"><span class="pre">niggli_lattice</span></code> as shown in
+<a class="reference internal" href="#variables-crystal-structure"><span class="std std-ref">Crystal structure (cell)</span></a>. <code class="docutils literal"><span class="pre">esp</span></code> is the tolerance
+parameter, but unlike <code class="docutils literal"><span class="pre">symprec</span></code> the unit is not a length. This is
+used as the criterion if volume is close to zero or not and if two
+basis vectors are orthogonal by the value of dot product being close
+to zero or not.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
 <div class="section" id="get-ir-reciprocal-mesh">
 <h3><code class="docutils literal"><span class="pre">get_ir_reciprocal_mesh</span></code><a class="headerlink" href="#get-ir-reciprocal-mesh" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">mapping</span><span class="p">,</span> <span class="n">grid</span> <span class="o">=</span> <span class="n">get_ir_reciprocal_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">atoms</span><span class="p">,</span> <span class="n">is_shift</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">mapping</span><span class="p">,</span> <span class="n">grid</span> <span class="o">=</span> <span class="n">get_ir_reciprocal_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">cell</span><span class="p">,</span> <span class="n">is_shift</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>Irreducible k-points are obtained from a sampling mesh of k-points.
 <code class="docutils literal"><span class="pre">mesh</span></code> is given by three integers by array and specifies mesh
-numbers along reciprocal primitive axis. <code class="docutils literal"><span class="pre">atoms</span></code> is an Atoms object
-of ASE. <code class="docutils literal"><span class="pre">is_shift</span></code> is given by the three integers by array. When
-<code class="docutils literal"><span class="pre">is_shift</span></code> is set for each reciprocal primitive axis, the mesh is
-shifted along the axis in half of adjacent mesh points irrespective of
-the mesh numbers. When the value is not 0, <code class="docutils literal"><span class="pre">is_shift</span></code> is set.</p>
+numbers along reciprocal primitive axis. <code class="docutils literal"><span class="pre">is_shift</span></code> is given by the
+three integers by array. When <code class="docutils literal"><span class="pre">is_shift</span></code> is set for each reciprocal
+primitive axis, the mesh is shifted along the axis in half of adjacent
+mesh points irrespective of the mesh numbers. When the value is not 0,
+<code class="docutils literal"><span class="pre">is_shift</span></code> is set.</p>
 <p><code class="docutils literal"><span class="pre">mapping</span></code> and <code class="docutils literal"><span class="pre">grid</span></code> are returned. <code class="docutils literal"><span class="pre">grid</span></code> gives the mesh points in
 fractional coordinates in reciprocal space. <code class="docutils literal"><span class="pre">mapping</span></code> gives mapping to
 the irreducible k-point indices that are obtained by</p>
@@ -506,7 +538,7 @@ by <code class="docutils literal"><span class="pre">grid[index]</span></code>.</
 <p>For example, the irreducible k-points in fractional coordinates are
 obtained by</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ir_grid</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">mapping</span><span class="p">,</span> <span class="n">grid</span> <span class="o">=</span> <span class="n">get_ir_reciprocal_mesh</span><span class="p">([</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span> <span class="p">],</span> <span class="n">atoms</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">mapping</span><span class="p">,</span> <span class="n">grid</span> <span class="o">=</span> <span class="n">get_ir_reciprocal_mesh</span><span class="p">([</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span> <span class="p">],</span> <span class="n">cell</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">mapping</span><span class="p">):</span>
     <span class="n">ir_grid</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">grid</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
 </pre></div>
@@ -535,7 +567,7 @@ obtained by</p>
     </p>
     <p>
         &copy; Copyright 2009, Atsushi Togo.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.<br/>
     </p>
   </div>
 </footer>
