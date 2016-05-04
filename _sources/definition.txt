@@ -223,8 +223,8 @@ as follows:
    \frac{{1}}{2} & \frac{{1}}{2} & 0
    \end{pmatrix}.
 
-In rhombohedral cells, regardless of rhombohedral or hexagonal
-setting, :math:`\boldsymbol{P}_\mathrm{R}` is applied.
+For rhombohedral lattice systems with the choice of hexagonal axes,
+:math:`\boldsymbol{P}_\mathrm{R}` is applied.
 
 .. _def_idealize_cell:
 

@@ -327,8 +327,8 @@ crystallographic setting is not obtained.</p>
                                 <span class="n">const</span> <span class="n">double</span> <span class="n">symprec</span><span class="p">);</span>
 </pre></div>
 </div>
-<p>To specify the other crystallographic setting (origin, axis, or cell
-choice), <code class="docutils literal"><span class="pre">spg_get_dataset_with_hall_number</span></code> is used.</p>
+<p>To specify the other crystallographic choice (setting, origin, axis,
+or cell choice), <code class="docutils literal"><span class="pre">spg_get_dataset_with_hall_number</span></code> is used.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">SpglibDataset</span> <span class="o">*</span> <span class="n">spg_get_dataset_with_hall_number</span><span class="p">(</span><span class="n">SPGCONST</span> <span class="n">double</span> <span class="n">lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span>
                                                  <span class="n">SPGCONST</span> <span class="n">double</span> <span class="n">position</span><span class="p">[][</span><span class="mi">3</span><span class="p">],</span>
                                                  <span class="n">const</span> <span class="nb">int</span> <span class="n">types</span><span class="p">[],</span>
@@ -337,7 +337,7 @@ choice), <code class="docutils literal"><span class="pre">spg_get_dataset_with_h
                                                  <span class="n">const</span> <span class="n">double</span> <span class="n">symprec</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>where <code class="docutils literal"><span class="pre">hall_number</span></code> is used to specify the setting. The possible
+<p>where <code class="docutils literal"><span class="pre">hall_number</span></code> is used to specify the choice. The possible
 choices and those serial numbers are found at <a class="reference external" href="http://pmsl.planet.sci.kobe-u.ac.jp/~seto/?page_id=37&amp;lang=en">list of space groups
 (Seto&#8217;s web site)</a>.
 The crystal structure has to possess the space-group type of the Hall
@@ -349,14 +349,14 @@ structure is set 0.</p>
 </div>
 <div class="section" id="dataset">
 <h3>Dataset<a class="headerlink" href="#dataset" title="Permalink to this headline">¶</a></h3>
-<p>The dataset is
-accessible through the C-structure given by</p>
+<p><strong>At version 1.9.4, the member name &#8216;setting&#8217; is changed to &#8216;choice&#8217;.</strong></p>
+<p>The dataset is accessible through the C-structure given by</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">typedef</span> <span class="n">struct</span> <span class="p">{</span>
   <span class="nb">int</span> <span class="n">spacegroup_number</span><span class="p">;</span>
   <span class="nb">int</span> <span class="n">hall_number</span><span class="p">;</span>
   <span class="n">char</span> <span class="n">international_symbol</span><span class="p">[</span><span class="mi">11</span><span class="p">];</span>
   <span class="n">char</span> <span class="n">hall_symbol</span><span class="p">[</span><span class="mi">17</span><span class="p">];</span>
-  <span class="n">char</span> <span class="n">setting</span><span class="p">[</span><span class="mi">6</span><span class="p">];</span>
+  <span class="n">char</span> <span class="n">choice</span><span class="p">[</span><span class="mi">6</span><span class="p">];</span>
   <span class="n">double</span> <span class="n">transformation_matrix</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">];</span>
   <span class="n">double</span> <span class="n">origin_shift</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
   <span class="nb">int</span> <span class="n">n_operations</span><span class="p">;</span>
@@ -390,7 +390,7 @@ groups (Seto&#8217;s web site)</a>.
 The (full) Hermann–Mauguin notation of space group type is given by
 <code class="docutils literal"><span class="pre">international_symbol</span></code>. The Hall symbol is stored in
 <code class="docutils literal"><span class="pre">hall_symbol</span></code>. The information on unique axis,
-setting or cell choices is found in <code class="docutils literal"><span class="pre">setting</span></code>.</p>
+setting or cell choices is found in <code class="docutils literal"><span class="pre">choice</span></code>.</p>
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
@@ -507,9 +507,13 @@ freed by calling <code class="docutils literal"><span class="pre">spg_free_datas
 </div>
 <div class="section" id="spg-get-spacegroup-type">
 <h2><code class="docutils literal"><span class="pre">spg_get_spacegroup_type</span></code><a class="headerlink" href="#spg-get-spacegroup-type" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><a href="#id3"><span class="problematic" id="id4">**</span></a>Changed at version 1.9.4: Some members are added and the member name</dt>
+<dd>&#8216;setting&#8217; is changed to &#8216;choice&#8217;.**</dd>
+</dl>
 <p>This function allows to directly access to the space-group-type
 database in spglib (spg_database.c). To specify the space group type
-with a specific setting, <code class="docutils literal"><span class="pre">hall_number</span></code> is used. The definition of
+with a specific choice, <code class="docutils literal"><span class="pre">hall_number</span></code> is used. The definition of
 <code class="docutils literal"><span class="pre">hall_number</span></code> is found at
 <a class="reference internal" href="#api-spg-get-dataset-spacegroup-type"><span class="std std-ref">Space group type</span></a>.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">SpglibSpacegroupType</span> <span class="n">spg_get_spacegroup_type</span><span class="p">(</span><span class="n">const</span> <span class="nb">int</span> <span class="n">hall_number</span><span class="p">)</span>
@@ -523,6 +527,7 @@ with a specific setting, <code class="docutils literal"><span class="pre">hall_n
   <span class="n">char</span> <span class="n">international</span><span class="p">[</span><span class="mi">32</span><span class="p">];</span>
   <span class="n">char</span> <span class="n">schoenflies</span><span class="p">[</span><span class="mi">7</span><span class="p">];</span>
   <span class="n">char</span> <span class="n">hall_symbol</span><span class="p">[</span><span class="mi">17</span><span class="p">];</span>
+  <span class="n">char</span> <span class="n">choice</span><span class="p">[</span><span class="mi">6</span><span class="p">];</span>
   <span class="n">char</span> <span class="n">pointgroup_schoenflies</span><span class="p">[</span><span class="mi">4</span><span class="p">];</span>
   <span class="n">char</span> <span class="n">pointgroup_international</span><span class="p">[</span><span class="mi">6</span><span class="p">];</span>
   <span class="nb">int</span> <span class="n">arithmetic_crystal_class_number</span><span class="p">;</span>
@@ -538,7 +543,7 @@ with a specific setting, <code class="docutils literal"><span class="pre">hall_n
 <h2><code class="docutils literal"><span class="pre">spg_get_symmetry_from_database</span></code><a class="headerlink" href="#spg-get-symmetry-from-database" title="Permalink to this headline">¶</a></h2>
 <p>This function allows to directly access to the space group operations
 in the spglib database (spg_database.c). To specify the space group
-type with a specific setting, <code class="docutils literal"><span class="pre">hall_number</span></code> is used. The definition
+type with a specific choice, <code class="docutils literal"><span class="pre">hall_number</span></code> is used. The definition
 of <code class="docutils literal"><span class="pre">hall_number</span></code> is found at
 <a class="reference internal" href="#api-spg-get-dataset-spacegroup-type"><span class="std std-ref">Space group type</span></a>.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">spg_get_symmetry_from_database</span><span class="p">(</span><span class="nb">int</span> <span class="n">rotations</span><span class="p">[</span><span class="mi">192</span><span class="p">][</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span>

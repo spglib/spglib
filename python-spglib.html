@@ -393,6 +393,7 @@ this method with combinations of these options. When it fails,
 </div>
 <div class="section" id="get-symmetry-dataset">
 <h3><code class="docutils literal"><span class="pre">get_symmetry_dataset</span></code><a class="headerlink" href="#get-symmetry-dataset" title="Permalink to this headline">¶</a></h3>
+<p><strong>At version 1.9.4, the member &#8216;choice&#8217; is added.</strong></p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">dataset</span> <span class="o">=</span> <span class="n">get_symmetry_dataset</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -404,9 +405,11 @@ this method with combinations of these options. When it fails,
 </li>
 <li><p class="first"><code class="docutils literal"><span class="pre">hall</span></code>: Hall symbol</p>
 </li>
+<li><p class="first"><code class="docutils literal"><span class="pre">choice</span></code>: Centring, origin, basis vector setting</p>
+</li>
 <li><p class="first"><code class="docutils literal"><span class="pre">transformation_matrix</span></code>: Transformation matrix from lattice of input cell to Bravais lattice <img class="math" src="_images/math/f8cb9d224702767dd9cfedb4b1fd6cf8f15a1713.png" alt="L^{bravais} = L^{original} * T"/></p>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">origin</span> <span class="pre">shift</span></code>: Origin shift in the setting of Bravais lattice</p>
+<li><p class="first"><code class="docutils literal"><span class="pre">origin</span> <span class="pre">shift</span></code>: Origin shift choice in the setting of Bravais lattice</p>
 </li>
 <li><p class="first"><code class="docutils literal"><span class="pre">wyckoffs</span></code>: Wyckoff letters</p>
 </li>
@@ -448,12 +451,13 @@ found at <a class="reference internal" href="api.html#api-spg-get-dataset-spaceg
 </div>
 <div class="section" id="get-spacegroup-type">
 <h3><code class="docutils literal"><span class="pre">get_spacegroup_type</span></code><a class="headerlink" href="#get-spacegroup-type" title="Permalink to this headline">¶</a></h3>
+<p><strong>New at version 1.9.4</strong></p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">spacegroup_type</span> <span class="o">=</span> <span class="n">get_spacegroup_type</span><span class="p">(</span><span class="n">hall_number</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>This function allows to directly access to the space-group-type
 database in spglib (spg_database.c). A dictionary is returned. To
-specify the space group type with a specific setting, <code class="docutils literal"><span class="pre">hall_number</span></code>
+specify the space group type with a specific choice, <code class="docutils literal"><span class="pre">hall_number</span></code>
 is used. The definition of <code class="docutils literal"><span class="pre">hall_number</span></code> is found at
 <a class="reference internal" href="api.html#api-spg-get-dataset-spacegroup-type"><span class="std std-ref">Space group type</span></a>. The keys of the returned
 dictionary is as follows:</p>
@@ -463,6 +467,7 @@ dictionary is as follows:</p>
 <span class="n">international</span>
 <span class="n">schoenflies</span>
 <span class="n">hall_symbol</span>
+<span class="n">choice</span>
 <span class="n">pointgroup_schoenflies</span>
 <span class="n">pointgroup_international</span>
 <span class="n">arithmetic_crystal_class_number</span>
@@ -481,6 +486,7 @@ dictionary is as follows:</p>
 </div>
 <div class="section" id="niggli-reduce">
 <h3><code class="docutils literal"><span class="pre">niggli_reduce</span></code><a class="headerlink" href="#niggli-reduce" title="Permalink to this headline">¶</a></h3>
+<p><strong>New at version 1.9.4</strong></p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">niggli_lattice</span> <span class="o">=</span> <span class="n">niggli_reduce</span><span class="p">(</span><span class="n">lattice</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -500,6 +506,7 @@ being close to zero or not.  The detail is shown at
 </div>
 <div class="section" id="delaunay-reduce">
 <h3><code class="docutils literal"><span class="pre">delaunay_reduce</span></code><a class="headerlink" href="#delaunay-reduce" title="Permalink to this headline">¶</a></h3>
+<p><strong>New at version 1.9.4</strong></p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">delaunay_lattice</span> <span class="o">=</span> <span class="n">delaunay_reduce</span><span class="p">(</span><span class="n">lattice</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 </div>
