@@ -46,6 +46,8 @@ class TestNiggliDelaunay(unittest.TestCase):
             # self._show_lattice(i, reduced_lattice)
             self.assertTrue(np.allclose([np.linalg.det(input_lattice)],
                                         [np.linalg.det(reduced_lattice)]))
+            T = np.dot(np.linalg.inv(reference_lattice.T), input_lattice.T)
+            self.assertTrue(np.allclose(T, np.rint(T)))
             self.assertTrue(
                 np.allclose(reduced_lattice, reference_lattice),
                 msg="\n".join(
