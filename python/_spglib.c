@@ -43,23 +43,28 @@
 #define PYUNICODE_FROMSTRING PyUnicode_FromString
 #endif
 
-static PyObject * get_version(PyObject *self, PyObject *args);
-static PyObject * get_dataset(PyObject *self, PyObject *args);
-static PyObject * get_spacegroup_type(PyObject *self, PyObject *args);
-static PyObject * get_pointgroup(PyObject *self, PyObject *args);
-static PyObject * standardize_cell(PyObject *self, PyObject *args);
-static PyObject * refine_cell(PyObject *self, PyObject *args);
-static PyObject * get_symmetry(PyObject *self, PyObject *args);
+static PyObject * py_get_version(PyObject *self, PyObject *args);
+static PyObject * py_get_dataset(PyObject *self, PyObject *args);
+static PyObject * py_get_spacegroup_type(PyObject *self, PyObject *args);
+static PyObject * py_get_pointgroup(PyObject *self, PyObject *args);
+static PyObject * py_standardize_cell(PyObject *self, PyObject *args);
+static PyObject * py_refine_cell(PyObject *self, PyObject *args);
+static PyObject * py_get_symmetry(PyObject *self, PyObject *args);
 static PyObject *
-get_symmetry_with_collinear_spin(PyObject *self, PyObject *args);
-static PyObject * find_primitive(PyObject *self, PyObject *args);
-static PyObject * get_grid_point_from_address(PyObject *self, PyObject *args);
-static PyObject * get_ir_reciprocal_mesh(PyObject *self, PyObject *args);
-static PyObject * get_stabilized_reciprocal_mesh(PyObject *self, PyObject *args);
-static PyObject * get_grid_points_by_rotations(PyObject *self, PyObject *args);
-static PyObject * get_BZ_grid_points_by_rotations(PyObject *self, PyObject *args);
-static PyObject * relocate_BZ_grid_address(PyObject *self, PyObject *args);
-static PyObject * get_symmetry_from_database(PyObject *self, PyObject *args);
+py_get_symmetry_with_collinear_spin(PyObject *self, PyObject *args);
+static PyObject * py_find_primitive(PyObject *self, PyObject *args);
+static PyObject *
+py_get_grid_point_from_address(PyObject *self, PyObject *args);
+static PyObject * py_get_ir_reciprocal_mesh(PyObject *self, PyObject *args);
+static PyObject *
+py_get_stabilized_reciprocal_mesh(PyObject *self, PyObject *args);
+static PyObject *
+py_get_grid_points_by_rotations(PyObject *self, PyObject *args);
+static PyObject *
+py_get_BZ_grid_points_by_rotations(PyObject *self, PyObject *args);
+static PyObject * py_relocate_BZ_grid_address(PyObject *self, PyObject *args);
+static PyObject * py_get_symmetry_from_database(PyObject *self, PyObject *args);
+static PyObject * py_delaunay_reduce(PyObject *self, PyObject *args);
 static PyObject * py_niggli_reduce(PyObject *self, PyObject *args);
 
 struct module_state {
@@ -82,32 +87,33 @@ error_out(PyObject *m) {
 
 static PyMethodDef _spglib_methods[] = {
   {"error_out", (PyCFunction)error_out, METH_NOARGS, NULL},
-  {"version", get_version, METH_VARARGS, "Spglib version"},
-  {"dataset", get_dataset, METH_VARARGS, "Dataset for crystal symmetry"},
-  {"spacegroup_type", get_spacegroup_type, METH_VARARGS, "Space-group type symbols"},
-  {"symmetry_from_database", get_symmetry_from_database, METH_VARARGS,
+  {"version", py_get_version, METH_VARARGS, "Spglib version"},
+  {"dataset", py_get_dataset, METH_VARARGS, "Dataset for crystal symmetry"},
+  {"spacegroup_type", py_get_spacegroup_type, METH_VARARGS, "Space-group type symbols"},
+  {"symmetry_from_database", py_get_symmetry_from_database, METH_VARARGS,
    "Get symmetry operations from database"},
-  {"pointgroup", get_pointgroup, METH_VARARGS,
+  {"pointgroup", py_get_pointgroup, METH_VARARGS,
    "International symbol of pointgroup"},
-  {"standardize_cell", standardize_cell, METH_VARARGS, "Standardize cell"},
-  {"refine_cell", refine_cell, METH_VARARGS, "Refine cell"},
-  {"symmetry", get_symmetry, METH_VARARGS, "Symmetry operations"},
-  {"symmetry_with_collinear_spin", get_symmetry_with_collinear_spin,
+  {"standardize_cell", py_standardize_cell, METH_VARARGS, "Standardize cell"},
+  {"refine_cell", py_refine_cell, METH_VARARGS, "Refine cell"},
+  {"symmetry", py_get_symmetry, METH_VARARGS, "Symmetry operations"},
+  {"symmetry_with_collinear_spin", py_get_symmetry_with_collinear_spin,
    METH_VARARGS, "Symmetry operations with collinear spin magnetic moments"},
-  {"primitive", find_primitive, METH_VARARGS,
+  {"primitive", py_find_primitive, METH_VARARGS,
    "Find primitive cell in the input cell"},
-  {"grid_point_from_address", get_grid_point_from_address, METH_VARARGS,
+  {"grid_point_from_address", py_get_grid_point_from_address, METH_VARARGS,
    "Translate grid adress to grid point index"},
-  {"ir_reciprocal_mesh", get_ir_reciprocal_mesh, METH_VARARGS,
+  {"ir_reciprocal_mesh", py_get_ir_reciprocal_mesh, METH_VARARGS,
    "Reciprocal mesh points with map"},
-  {"stabilized_reciprocal_mesh", get_stabilized_reciprocal_mesh, METH_VARARGS,
+  {"stabilized_reciprocal_mesh", py_get_stabilized_reciprocal_mesh, METH_VARARGS,
    "Reciprocal mesh points with map"},
-  {"grid_points_by_rotations", get_grid_points_by_rotations, METH_VARARGS,
+  {"grid_points_by_rotations", py_get_grid_points_by_rotations, METH_VARARGS,
    "Rotated grid points are returned"},
-  {"BZ_grid_points_by_rotations", get_BZ_grid_points_by_rotations, METH_VARARGS,
+  {"BZ_grid_points_by_rotations", py_get_BZ_grid_points_by_rotations, METH_VARARGS,
    "Rotated grid points in BZ are returned"},
-  {"BZ_grid_address", relocate_BZ_grid_address, METH_VARARGS,
+  {"BZ_grid_address", py_relocate_BZ_grid_address, METH_VARARGS,
    "Relocate grid addresses inside Brillouin zone"},
+  {"delaunay_reduce", py_delaunay_reduce, METH_VARARGS, "Delaunay reduction"},
   {"niggli_reduce", py_niggli_reduce, METH_VARARGS, "Niggli reduction"},
   {NULL, NULL, 0, NULL}
 };
@@ -169,7 +175,7 @@ PyInit__spglib(void)
 #endif
 }
 
-static PyObject * get_version(PyObject *self, PyObject *args)
+static PyObject * py_get_version(PyObject *self, PyObject *args)
 {
   if (!PyArg_ParseTuple(args, "")) {
     return NULL;
@@ -191,7 +197,7 @@ static PyObject * get_version(PyObject *self, PyObject *args)
   return array;
 }
 
-static PyObject * get_dataset(PyObject *self, PyObject *args)
+static PyObject * py_get_dataset(PyObject *self, PyObject *args)
 {
   int i, j, k, n;
   double symprec, angle_tolerance;
@@ -336,7 +342,7 @@ static PyObject * get_dataset(PyObject *self, PyObject *args)
   return array;
 }
 
-static PyObject * get_symmetry_from_database(PyObject *self, PyObject *args)
+static PyObject * py_get_symmetry_from_database(PyObject *self, PyObject *args)
 {
   int hall_number;
   PyArrayObject* rotation;
@@ -361,7 +367,7 @@ static PyObject * get_symmetry_from_database(PyObject *self, PyObject *args)
   return PyLong_FromLong((long) num_sym);
 }
 
-static PyObject * get_spacegroup_type(PyObject *self, PyObject *args)
+static PyObject * py_get_spacegroup_type(PyObject *self, PyObject *args)
 {
   int n, hall_number;
   PyObject *array;
@@ -402,7 +408,7 @@ static PyObject * get_spacegroup_type(PyObject *self, PyObject *args)
   return array;
 }
 
-static PyObject * get_pointgroup(PyObject *self, PyObject *args)
+static PyObject * py_get_pointgroup(PyObject *self, PyObject *args)
 {
   PyArrayObject* rotations;
   if (! PyArg_ParseTuple(args, "O", &rotations)) {
@@ -436,7 +442,7 @@ static PyObject * get_pointgroup(PyObject *self, PyObject *args)
   return array;
 }
 
-static PyObject * standardize_cell(PyObject *self, PyObject *args)
+static PyObject * py_standardize_cell(PyObject *self, PyObject *args)
 {
   int num_atom, to_primitive, no_idealize;
   double symprec, angle_tolerance;
@@ -471,7 +477,7 @@ static PyObject * standardize_cell(PyObject *self, PyObject *args)
   return PyLong_FromLong((long) num_atom_std);
 }
 
-static PyObject * refine_cell(PyObject *self, PyObject *args)
+static PyObject * py_refine_cell(PyObject *self, PyObject *args)
 {
   int num_atom;
   double symprec, angle_tolerance;
@@ -503,7 +509,7 @@ static PyObject * refine_cell(PyObject *self, PyObject *args)
 }
 
 
-static PyObject * find_primitive(PyObject *self, PyObject *args)
+static PyObject * py_find_primitive(PyObject *self, PyObject *args)
 {
   double symprec, angle_tolerance;
   PyArrayObject* lattice;
@@ -533,7 +539,7 @@ static PyObject * find_primitive(PyObject *self, PyObject *args)
   return PyLong_FromLong((long) num_atom_prim);
 }
 
-static PyObject * get_symmetry(PyObject *self, PyObject *args)
+static PyObject * py_get_symmetry(PyObject *self, PyObject *args)
 {
   double symprec, angle_tolerance;
   PyArrayObject* lattice;
@@ -573,8 +579,8 @@ static PyObject * get_symmetry(PyObject *self, PyObject *args)
   return PyLong_FromLong((long) num_sym);
 }
 
-static PyObject * get_symmetry_with_collinear_spin(PyObject *self,
-						   PyObject *args)
+static PyObject * py_get_symmetry_with_collinear_spin(PyObject *self,
+						      PyObject *args)
 {
   double symprec, angle_tolerance;
   PyArrayObject* lattice;
@@ -624,7 +630,7 @@ static PyObject * get_symmetry_with_collinear_spin(PyObject *self,
   return PyLong_FromLong((long) num_sym);
 }
 
-static PyObject * get_grid_point_from_address(PyObject *self, PyObject *args)
+static PyObject * py_get_grid_point_from_address(PyObject *self, PyObject *args)
 {
   PyArrayObject* grid_address_py;
   PyArrayObject* mesh_py;
@@ -642,7 +648,7 @@ static PyObject * get_grid_point_from_address(PyObject *self, PyObject *args)
   return PyLong_FromLong((long) gp);
 }
 
-static PyObject * get_ir_reciprocal_mesh(PyObject *self, PyObject *args)
+static PyObject * py_get_ir_reciprocal_mesh(PyObject *self, PyObject *args)
 {
   double symprec;
   PyArrayObject* grid_address_py;
@@ -690,7 +696,8 @@ static PyObject * get_ir_reciprocal_mesh(PyObject *self, PyObject *args)
   return PyLong_FromLong((long) num_ir);
 }
 
-static PyObject * get_stabilized_reciprocal_mesh(PyObject *self, PyObject *args)
+static PyObject *
+py_get_stabilized_reciprocal_mesh(PyObject *self, PyObject *args)
 {
   PyArrayObject* grid_address_py;
   PyArrayObject* map;
@@ -732,7 +739,8 @@ static PyObject * get_stabilized_reciprocal_mesh(PyObject *self, PyObject *args)
   return PyLong_FromLong((long) num_ir);
 }
 
-static PyObject * get_grid_points_by_rotations(PyObject *self, PyObject *args)
+static PyObject *
+py_get_grid_points_by_rotations(PyObject *self, PyObject *args)
 {
   PyArrayObject* rot_grid_points_py;
   PyArrayObject* address_orig_py;
@@ -764,7 +772,8 @@ static PyObject * get_grid_points_by_rotations(PyObject *self, PyObject *args)
   Py_RETURN_NONE;
 }
 
-static PyObject * get_BZ_grid_points_by_rotations(PyObject *self, PyObject *args)
+static PyObject *
+py_get_BZ_grid_points_by_rotations(PyObject *self, PyObject *args)
 {
   PyArrayObject* rot_grid_points_py;
   PyArrayObject* address_orig_py;
@@ -800,7 +809,7 @@ static PyObject * get_BZ_grid_points_by_rotations(PyObject *self, PyObject *args
   Py_RETURN_NONE;
 }
 
-static PyObject * relocate_BZ_grid_address(PyObject *self, PyObject *args)
+static PyObject * py_relocate_BZ_grid_address(PyObject *self, PyObject *args)
 {
   PyArrayObject* bz_grid_address_py;
   PyArrayObject* bz_map_py;
@@ -835,6 +844,21 @@ static PyObject * relocate_BZ_grid_address(PyObject *self, PyObject *args)
 					   is_shift);
 
   return PyLong_FromLong((long) num_ir_gp);
+}
+
+static PyObject * py_delaunay_reduce(PyObject *self, PyObject *args)
+{
+  PyArrayObject* lattice_py;
+  double symprec;
+  if (!PyArg_ParseTuple(args, "Od", &lattice_py, &symprec)) {
+    return NULL;
+  }
+
+  double (*lattice)[3] = (double(*)[3])PyArray_DATA(lattice_py);
+
+  int result = spg_delaunay_reduce(lattice, symprec);
+
+  return PyLong_FromLong((long) result);
 }
 
 static PyObject * py_niggli_reduce(PyObject *self, PyObject *args)
