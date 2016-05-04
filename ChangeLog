@@ -1,6 +1,10 @@
-2016-05-02  Atsushi Togo  <atz.togo@gmail.com>
+2016-05-0  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.9.4
+
+	* src/spglib.h (SpglibDataset):
+
+	The member of SpglibDataset, 'setting', is renamed to 'choice'.
 
 	* src/cell.c (get_overlap_table):
 

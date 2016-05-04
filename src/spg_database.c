@@ -8587,6 +8587,7 @@ SpacegroupType spgdb_get_spacegroup_type(const int hall_number)
   remove_space(spgtype.international, 32);
   remove_space(spgtype.international_full, 20);
   remove_space(spgtype.international_short, 11);
+  remove_space(spgtype.choice, 6);
   
   return spgtype;
 }

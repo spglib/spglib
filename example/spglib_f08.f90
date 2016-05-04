@@ -12,7 +12,7 @@
       integer :: hall_number
       character(len=11) :: international_symbol
       character(len=17) :: hall_symbol
-      character(len=6) :: setting
+      character(len=6) :: choice
       real(c_double)  :: transformation_matrix(3,3)
       real(c_double)  :: origin_shift(3)
       integer :: n_operations
@@ -346,7 +346,7 @@
          integer(c_int) :: hall_number
          character(kind=c_char) :: international_symbol(11)
          character(kind=c_char) :: hall_symbol(17)
-         character(kind=c_char) :: setting(6)
+         character(kind=c_char) :: choice(6)
          real(c_double)      :: transformation_matrix(3,3)
          real(c_double) :: origin_shift(3)
          integer(c_int) :: n_operations
@@ -408,8 +408,8 @@
          dset % hall_symbol(i:i) = dset_c % hall_symbol(i)
       end do
 
-      do i = 1, size(dset_c % setting)
-         dset % setting(i:i) = dset_c % setting(i)
+      do i = 1, size(dset_c % choice)
+         dset % choice(i:i) = dset_c % choice(i)
       end do
 
       n_operations = dset_c % n_operations

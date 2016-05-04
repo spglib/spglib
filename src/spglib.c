@@ -287,7 +287,7 @@ void spg_free_dataset(SpglibDataset *dataset)
   dataset->hall_number = 0;
   strcpy(dataset->international_symbol, "");
   strcpy(dataset->hall_symbol, "");
-  strcpy(dataset->setting, "");
+  strcpy(dataset->choice, "");
   
   free(dataset);
   dataset = NULL;
@@ -602,6 +602,7 @@ SpglibSpacegroupType spg_get_spacegroup_type(const int hall_number)
   spglibtype.number = 0;
   strcpy(spglibtype.schoenflies, "");
   strcpy(spglibtype.hall_symbol, "");
+  strcpy(spglibtype.choice, "");
   strcpy(spglibtype.international, "");
   strcpy(spglibtype.international_full, "");
   strcpy(spglibtype.international_short, "");
@@ -615,6 +616,7 @@ SpglibSpacegroupType spg_get_spacegroup_type(const int hall_number)
     spglibtype.number = spgtype.number;
     strcpy(spglibtype.schoenflies, spgtype.schoenflies);
     strcpy(spglibtype.hall_symbol, spgtype.hall_symbol);
+    strcpy(spglibtype.choice, spgtype.choice);
     strcpy(spglibtype.international, spgtype.international);
     strcpy(spglibtype.international_full, spgtype.international_full);
     strcpy(spglibtype.international_short, spgtype.international_short);
@@ -987,7 +989,7 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
   dataset->hall_number = 0;
   strcpy(dataset->international_symbol, "");
   strcpy(dataset->hall_symbol, "");
-  strcpy(dataset->setting, "");
+  strcpy(dataset->choice, "");
   dataset->origin_shift[0] = 0;
   dataset->origin_shift[1] = 0;
   dataset->origin_shift[2] = 0;
@@ -1093,7 +1095,7 @@ static int set_dataset(SpglibDataset * dataset,
   dataset->hall_number = spacegroup->hall_number;
   strcpy(dataset->international_symbol, spacegroup->international_short);
   strcpy(dataset->hall_symbol, spacegroup->hall_symbol);
-  strcpy(dataset->setting, spacegroup->setting);
+  strcpy(dataset->choice, spacegroup->choice);
   mat_inverse_matrix_d3(inv_lat, spacegroup->bravais_lattice, 0);
   mat_multiply_matrix_d3(dataset->transformation_matrix,
 			 inv_lat,

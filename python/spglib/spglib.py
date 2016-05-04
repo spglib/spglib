@@ -123,6 +123,8 @@ def get_symmetry_dataset(cell, symprec=1e-5, angle_tolerance=-1.0):
             str: International symbol
         hall: 
             str: Hall symbol
+        choice: 
+            str: Centring, origin, basis vector setting
         transformation_matrix:
             3x3 float matrix:
                 Transformation matrix from input lattice to standardized lattice
@@ -150,6 +152,7 @@ def get_symmetry_dataset(cell, symprec=1e-5, angle_tolerance=-1.0):
             'hall_number',
             'international',
             'hall',
+            'choice',
             'transformation_matrix',
             'origin_shift',
             'rotations',
@@ -171,6 +174,7 @@ def get_symmetry_dataset(cell, symprec=1e-5, angle_tolerance=-1.0):
 
     dataset['international'] = dataset['international'].strip()
     dataset['hall'] = dataset['hall'].strip()
+    dataset['choice'] = dataset['choice'].strip()
     dataset['transformation_matrix'] = np.array(
         dataset['transformation_matrix'], dtype='double', order='C')
     dataset['origin_shift'] = np.array(dataset['origin_shift'], dtype='double')
@@ -221,6 +225,7 @@ def get_spacegroup_type(hall_number):
             'international',
             'schoenflies',
             'hall_symbol',
+            'choice',
             'pointgroup_schoenflies',
             'pointgroup_international',
             'arithmetic_crystal_class_number',

@@ -271,6 +271,8 @@ this method with combinations of these options. When it fails,
 ``get_symmetry_dataset``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+**At version 1.9.4, the member 'choice' is added.**
+
 ::
 
     dataset = get_symmetry_dataset(cell, symprec=1e-5)
@@ -280,8 +282,9 @@ this method with combinations of these options. When it fails,
 * ``number``: International space group number
 * ``international``: International short symbol
 * ``hall``: Hall symbol
+* ``choice``: Centring, origin, basis vector setting
 * ``transformation_matrix``: Transformation matrix from lattice of input cell to Bravais lattice :math:`L^{bravais} = L^{original} * T`
-* ``origin shift``: Origin shift in the setting of Bravais lattice
+* ``origin shift``: Origin shift choice in the setting of Bravais lattice
 * ``wyckoffs``: Wyckoff letters
 * ``equivalent_atoms``: Mapping table to equivalent atoms
 * ``rotations`` and ``translations``: Rotation matrices and
@@ -321,13 +324,15 @@ found at :ref:`api_spg_get_dataset_spacegroup_type`.
 ``get_spacegroup_type``
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
+**New at version 1.9.4**
+
 ::
 
    spacegroup_type = get_spacegroup_type(hall_number)
 
 This function allows to directly access to the space-group-type
 database in spglib (spg_database.c). A dictionary is returned. To
-specify the space group type with a specific setting, ``hall_number``
+specify the space group type with a specific choice, ``hall_number``
 is used. The definition of ``hall_number`` is found at
 :ref:`api_spg_get_dataset_spacegroup_type`. The keys of the returned
 dictionary is as follows:
@@ -340,6 +345,7 @@ dictionary is as follows:
    international
    schoenflies
    hall_symbol
+   choice
    pointgroup_schoenflies
    pointgroup_international
    arithmetic_crystal_class_number
@@ -356,6 +362,8 @@ Here ``spacegroup_type['international_short']`` is equivalent to
 
 ``niggli_reduce``
 ^^^^^^^^^^^^^^^^^^
+
+**New at version 1.9.4**
 
 ::
 
@@ -376,6 +384,8 @@ https://atztogo.github.io/niggli/.
 
 ``delaunay_reduce``
 ^^^^^^^^^^^^^^^^^^^^
+
+**New at version 1.9.4**
 
 ::
 

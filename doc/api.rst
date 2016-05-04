@@ -16,7 +16,7 @@ integers that correspond to spglib version [major].[minor].[micro].
 
 This function finds a set of representative symmetry operations for
 primitive cells or its extension with lattice translations for
-supercells. 
+supercells.
 
 ::
 
@@ -136,7 +136,7 @@ fixed.
 A primitive cell is found from an input unit cell.
 
 ::
-  
+
   int spg_find_primitive(double lattice[3][3],
                          double position[][3],
                          int types[],
@@ -209,11 +209,11 @@ crystallographic setting is not obtained.
                                    const int num_atom,
                                    const double symprec);
 
-To specify the other crystallographic setting (origin, axis, or cell
-choice), ``spg_get_dataset_with_hall_number`` is used. 
-				   
-:: 
-				  
+To specify the other crystallographic choice (setting, origin, axis,
+or cell choice), ``spg_get_dataset_with_hall_number`` is used.
+
+::
+
    SpglibDataset * spg_get_dataset_with_hall_number(SPGCONST double lattice[3][3],
 						    SPGCONST double position[][3],
 						    const int types[],
@@ -221,7 +221,7 @@ choice), ``spg_get_dataset_with_hall_number`` is used.
 						    const int hall_number,
 						    const double symprec)
 
-where ``hall_number`` is used to specify the setting. The possible
+where ``hall_number`` is used to specify the choice. The possible
 choices and those serial numbers are found at `list of space groups
 (Seto's web site)
 <http://pmsl.planet.sci.kobe-u.ac.jp/~seto/?page_id=37&lang=en>`_.
@@ -236,9 +236,10 @@ Finally, its allocated memory space must be freed by calling ``spg_free_dataset`
 
 Dataset
 ^^^^^^^^
-				  
-The dataset is
-accessible through the C-structure given by
+
+**At version 1.9.4, the member name 'setting' is changed to 'choice'.**
+
+The dataset is accessible through the C-structure given by
 
 ::
 
@@ -247,7 +248,7 @@ accessible through the C-structure given by
      int hall_number;
      char international_symbol[11];
      char hall_symbol[17];
-     char setting[6];
+     char choice[6];
      double transformation_matrix[3][3];
      double origin_shift[3];
      int n_operations;
@@ -284,13 +285,13 @@ groups (Seto's web site)
 The (full) Hermann–Mauguin notation of space group type is given by
 ``international_symbol``. The Hall symbol is stored in
 ``hall_symbol``. The information on unique axis,
-setting or cell choices is found in ``setting``.
+setting or cell choices is found in ``choice``.
 
 |
-   
+
 Symmetry operations
 """""""""""""""""""""""
-   
+
 The symmetry operations of the input unit cell are stored in
 ``rotations`` and ``translations``. A crystallographic symmetry
 operation :math:`(\boldsymbol{W}, \boldsymbol{w})` is made from a pair
@@ -406,18 +407,21 @@ group in the Hermann–Mauguin notation.
 Allocated memoery space of the C-structure of ``SpglibDataset`` is
 freed by calling ``spg_free_dataset``.
 
-:: 
+::
 
   void spg_free_dataset(SpglibDataset *dataset);
- 
-| 
+
+|
 
 ``spg_get_spacegroup_type``
 -----------------------------
 
+**Changed at version 1.9.4: Some members are added and the member name
+ 'setting' is changed to 'choice'.**
+
 This function allows to directly access to the space-group-type
 database in spglib (spg_database.c). To specify the space group type
-with a specific setting, ``hall_number`` is used. The definition of
+with a specific choice, ``hall_number`` is used. The definition of
 ``hall_number`` is found at
 :ref:`api_spg_get_dataset_spacegroup_type`.
 
@@ -429,7 +433,7 @@ with a specific setting, ``hall_number`` is used. The definition of
 ``SpglibSpacegroupType`` structure is as follows:
 
 ::
-   
+
    typedef struct {
      int number;
      char international_short[11];
@@ -437,6 +441,7 @@ with a specific setting, ``hall_number`` is used. The definition of
      char international[32];
      char schoenflies[7];
      char hall_symbol[17];
+     char choice[6];
      char pointgroup_schoenflies[4];
      char pointgroup_international[6];
      int arithmetic_crystal_class_number;
@@ -450,7 +455,7 @@ with a specific setting, ``hall_number`` is used. The definition of
 
 This function allows to directly access to the space group operations
 in the spglib database (spg_database.c). To specify the space group
-type with a specific setting, ``hall_number`` is used. The definition
+type with a specific choice, ``hall_number`` is used. The definition
 of ``hall_number`` is found at
 :ref:`api_spg_get_dataset_spacegroup_type`.
 
@@ -464,12 +469,12 @@ The returned value is the number of space group operations. The space
 group operations are stored in ``rotations`` and ``translations``.
 
 |
-  
+
 ``spg_get_multiplicity``
 -------------------------
 
 This function returns exact number of symmetry operations.
-  
+
 ::
 
   int spg_get_multiplicity(const double lattice[3][3],
@@ -539,15 +544,15 @@ reversal symmetry is imposed by setting ``is_time_reversal`` 1.
 Grid points are stored in the order that runs left most element
 first, e.g. (4x4x4 mesh).::
 
-   [[ 0  0  0]   
-    [ 1  0  0]   
-    [ 2  0  0]   
-    [-1  0  0]   
-    [ 0  1  0]   
-    [ 1  1  0]   
-    [ 2  1  0]   
-    [-1  1  0]   
-    ....      ]  
+   [[ 0  0  0]
+    [ 1  0  0]
+    [ 2  0  0]
+    [-1  0  0]
+    [ 0  1  0]
+    [ 1  1  0]
+    [ 2  1  0]
+    [-1  1  0]
+    ....      ]
 
 where the first index runs first.  k-qpoints are calculated by
 ``(grid_address + is_shift / 2) / mesh``. A grid point index is

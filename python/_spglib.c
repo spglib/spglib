@@ -231,7 +231,7 @@ static PyObject * py_get_dataset(PyObject *self, PyObject *args)
     Py_RETURN_NONE;
   }
 
-  array = PyList_New(15);
+  array = PyList_New(16);
   n = 0;
 
   /* Space group number, international symbol, hall symbol */
@@ -242,6 +242,8 @@ static PyObject * py_get_dataset(PyObject *self, PyObject *args)
   PyList_SetItem(array, n, PYUNICODE_FROMSTRING(dataset->international_symbol));
   n++;
   PyList_SetItem(array, n, PYUNICODE_FROMSTRING(dataset->hall_symbol));
+  n++;
+  PyList_SetItem(array, n, PYUNICODE_FROMSTRING(dataset->choice));
   n++;
 
   /* Transformation matrix */
@@ -382,7 +384,7 @@ static PyObject * py_get_spacegroup_type(PyObject *self, PyObject *args)
     Py_RETURN_NONE;
   }
 
-  array = PyList_New(10);
+  array = PyList_New(11);
   n = 0;
   PyList_SetItem(array, n, PyLong_FromLong((long) spg_type.number));
   n++;
@@ -395,6 +397,8 @@ static PyObject * py_get_spacegroup_type(PyObject *self, PyObject *args)
   PyList_SetItem(array, n, PYUNICODE_FROMSTRING(spg_type.schoenflies));
   n++;
   PyList_SetItem(array, n, PYUNICODE_FROMSTRING(spg_type.hall_symbol));
+  n++;
+  PyList_SetItem(array, n, PYUNICODE_FROMSTRING(spg_type.choice));
   n++;
   PyList_SetItem(array, n, PYUNICODE_FROMSTRING(spg_type.pointgroup_international));
   n++;
