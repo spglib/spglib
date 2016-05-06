@@ -231,7 +231,7 @@ static PyObject * py_get_dataset(PyObject *self, PyObject *args)
     Py_RETURN_NONE;
   }
 
-  array = PyList_New(16);
+  array = PyList_New(15);
   n = 0;
 
   /* Space group number, international symbol, hall symbol */
@@ -334,8 +334,8 @@ static PyObject * py_get_dataset(PyObject *self, PyObject *args)
   n++;
 
   /* Point group */
-  PyList_SetItem(array, n, PyLong_FromLong((long) dataset->pointgroup_number));
-  n++;
+  /* PyList_SetItem(array, n, PyLong_FromLong((long) dataset->pointgroup_number)); */
+  /* n++; */
   PyList_SetItem(array, n, PYUNICODE_FROMSTRING(dataset->pointgroup_symbol));
   n++;
 

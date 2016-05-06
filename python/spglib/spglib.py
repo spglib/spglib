@@ -162,7 +162,7 @@ def get_symmetry_dataset(cell, symprec=1e-5, angle_tolerance=-1.0):
             'std_lattice',
             'std_types',
             'std_positions',
-            'pointgroup_number',
+            # 'pointgroup_number',
             'pointgroup')
     spg_ds = spg.dataset(lattice, positions, numbers, symprec, angle_tolerance)
     if spg_ds is None:

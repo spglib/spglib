@@ -36,6 +36,17 @@ class TestSpglib(unittest.TestCase):
                 dataset = get_symmetry_dataset(cell, symprec=1e-5)
             self.assertEqual(dataset['number'], spgnum,
                              msg=("%s" % fname))
+            spg_type = get_spacegroup_type(dataset['hall_number'])
+            self.assertEqual(dataset['international'],
+                             spg_type['international_short'],
+                             msg=("%s" % fname))
+            self.assertEqual(dataset['hall'], spg_type['hall_symbol'],
+                             msg=("%s" % fname))
+            self.assertEqual(dataset['choice'], spg_type['choice'],
+                             msg=("%s" % fname))
+            self.assertEqual(dataset['pointgroup'],
+                             spg_type['pointgroup_schoenflies'],
+                             msg=("%s" % fname))
 
     def test_refine_cell(self):
         for fname in self._filenames:
