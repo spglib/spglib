@@ -12,10 +12,10 @@ Version history is summarized in `ChangeLog
 News
 -----
 
-- SpglibDataset is slightly modified at version 1.9.4. This may hit
+* SpglibDataset is slightly modified at version 1.9.4. This may hit
   some users.
 
-- Python module pyspglib is renamed to spglib in version 1.9.0.
+* Python module pyspglib is renamed to spglib in version 1.9.0.
 
   In versions 1.8.x or before, the python wrapper (pyspglib) was
   considered as a special extention of spglib and separately maintained,
@@ -35,15 +35,6 @@ Features
 * Find a primitive cell
 * Search irreducible k-points
 
-Algorithms
-------------
-
-* Space-group type finding algorithm: R. W. Grosse-Kunstleve, Acta
-  Cryst., A55, 383-395 (1999)
-* Crystal refinement algorithm: R. W. Grosse-Kunstleve and
-  P. D. Adams, Acta Cryst., A58, 60-65 (2002)
-
-
 Documentation
 --------------
 
@@ -52,10 +43,28 @@ Documentation
 
    install
    api
-   definition
    variable
-   python-spglib
+   Python interface <python-spglib>
    interface
+   definition
+
+References
+----------
+
+General materials
+
+* International tables for crystallography volumes A, B, C
+* Online dictionary of crystallography:
+  http://reference.iucr.org/dictionary/
+* Symmetry relationships between crystal structures by Ulrich Muller,
+  Oxford university press (2013)
+
+Specific algorithms
+
+* Space-group type determination: R. W. Grosse-Kunstleve, Acta Cryst.,
+  A55, 383-395 (1999)
+* Crystal refinement: R. W. Grosse-Kunstleve and P. D. Adams, Acta
+  Cryst., A58, 60-65 (2002)
 
 Mailing list
 -------------
@@ -78,4 +87,4 @@ Acknowledgments
 
 Spglib project acknowledges Yusuke Seto for the Crystallographic
 database, Dimitar Pashov for the fortran interface, Paweł T. Jochym
-for python packages.
+for Python packages.

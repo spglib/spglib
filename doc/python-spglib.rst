@@ -1,6 +1,6 @@
 .. _python_spglib:
 
-Spglib for python
+Spglib for Python
 ==================
 
 .. contents::
