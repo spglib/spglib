@@ -3,11 +3,17 @@
 Spglib for python
 ==================
 
+.. contents::
+   :depth: 2
+   :local:
+
 Installation
 -------------
 
-Source codes, examples, and the test are downloaded `here
-<https://sourceforge.net/project/showfiles.php?group_id=215020>`_.
+Source codes, examples, and the test are downloaded `SourceForge
+<https://sourceforge.net/project/showfiles.php?group_id=215020>`_ or
+`GitHub
+<https://github.com/atztogo/spglib/releases>`_.
 
 Using package distribution service
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -28,8 +34,8 @@ Conda is another choice::
 
 These packages are made by Paweł T. Jochym.
 
-Building using setup.py
-^^^^^^^^^^^^^^^^^^^^^^^^
+Building using setup.py (distutils)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To manually install python-spglib using ``setup.py``, python header files
 (python-dev), gcc, and numpy are required before the build. The
@@ -50,8 +56,6 @@ installation steps are shown as follows:
 3. Put :file:`./lib/python` path into :envvar:`$PYTHONPATH`, e.g., in your
    .washrag.
 
-|
-
 Test
 -----
 
@@ -65,8 +69,6 @@ directory. Got to this directory and run this script. It will be like below::
    Ran 1 test in 2.132s
    
    OK
-
-|
 
 How to import spglib module
 ---------------------------
@@ -88,15 +90,11 @@ If the version is not sure::
    except ImportError:
        from pyspglib import spglib as spg   
 
-|
-
 Version number
 --------------
 
 In version 1.8.3 or later, the version number is obtained by
 ``spglib.__version__`` or :ref:`method_get_version`.
-
-|
 
 Example
 --------
@@ -104,8 +102,6 @@ Example
 Examples are found in `examples
 <https://github.com/atztogo/spglib/tree/master/python/examples>`_
 directory.
-
-|
 
 Variables
 ----------
@@ -152,8 +148,6 @@ Symmetry tolerance (``symprec``)
 
 Distance tolerance in Cartesian coordinates to find crystal symmetry.
 
-|
-
 Methods
 --------
 
@@ -170,8 +164,6 @@ Methods
 
 This returns version number of spglib by tuple with three numbers.
 
-|
-
 ``get_spacegroup``
 ^^^^^^^^^^^^^^^^^^^
 
@@ -182,8 +174,6 @@ This returns version number of spglib by tuple with three numbers.
 International space group short symbol and number are obtained as a
 string. With ``symbol_type=1``, Schoenflies symbol is given instead of
 international symbol.
-
-|
 
 ``get_symmetry``
 ^^^^^^^^^^^^^^^^^^
@@ -210,8 +200,6 @@ The rotation matrix and translation vector are used as follows::
 The three values in the vector are given for the a, b, and c axes,
 respectively.
 
-|
-
 ``refine_cell``
 ^^^^^^^^^^^^^^^^
 
@@ -229,8 +217,6 @@ fails, ``None`` is returned.
 The detailed control of standardization of unit cell may be done using
 ``standardize_cell``.
 
-|
-
 ``find_primitive``
 ^^^^^^^^^^^^^^^^^^^
 
@@ -246,8 +232,6 @@ numbers (a 1D numpy array) is returned. When it fails, ``None`` is returned.
 
 The detailed control of standardization of unit cell can be done using
 ``standardize_cell``.
-
-|
 
 ``standardize_cell``
 ^^^^^^^^^^^^^^^^^^^^^
@@ -265,8 +249,6 @@ symmetry. Now ``refine_cell`` and ``find_primitive`` are shorthands of
 this method with combinations of these options. When it fails,
 ``None`` is returned. More detailed explanation is shown in the spglib
 (C-API) document.
-
-|
 
 ``get_symmetry_dataset``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -304,8 +286,6 @@ this method with combinations of these options. When it fails,
   ``positions``, and ``numbers`` presented at
   :ref:`variables_crystal_structure`, respectively.
 
-|
-
 ``get_symmetry_from_database``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -318,8 +298,6 @@ A set of crystallographic symmetry operations corresponding to
 translation parts are accessed by the keys ``rotations`` and
 ``translations``, respectively. The definition of ``hall_number`` is
 found at :ref:`api_spg_get_dataset_spacegroup_type`.
-
-|
 
 ``get_spacegroup_type``
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -358,8 +336,6 @@ Here ``spacegroup_type['international_short']`` is equivalent to
 ``spacegroup_type['pointgroup_international']`` is equivalent to
 ``dataset['pointgroup_symbol']`` of ``get_symmetry_dataset``.
 
-|
-
 ``niggli_reduce``
 ^^^^^^^^^^^^^^^^^^
 
@@ -380,8 +356,6 @@ or not and if two basis vectors are orthogonal by the value of dot product
 being close to zero or not.  The detail is shown at
 https://atztogo.github.io/niggli/.
 
-|
-
 ``delaunay_reduce``
 ^^^^^^^^^^^^^^^^^^^^
 
@@ -399,8 +373,6 @@ parameter, but unlike ``symprec`` the unit is not a length. This is
 used as the criterion if volume is close to zero or not and if two
 basis vectors are orthogonal by the value of dot product being close
 to zero or not.
-
-|
 
 ``get_ir_reciprocal_mesh``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
