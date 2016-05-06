@@ -1,14 +1,8 @@
-Python, Fortran and Ruby interfaces
-===================================
+Fortran and Ruby interfaces
+============================
 
-Only Python interface is well maintained. But It is expected Fortran
-and Ruby interfaces work at certain level.
-
-Python interface
------------------
-
-Python module is prepared in the ``python`` directory.
-See the details at :ref:`python_spglib`.
+It is expected that Fortran and Ruby interfaces work at a certain
+level but not as goog as Python interface.
 
 Ruby interface
 ---------------

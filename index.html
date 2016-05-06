@@ -72,10 +72,10 @@
       aria-labelledby="dLabelGlobalToc"><ul>
 <li class="toctree-l1"><a class="reference internal" href="install.html">How to install spglib C-API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">C-APIs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="definition.html">Definitions and conventions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="variable.html">Variables</a></li>
-<li class="toctree-l1"><a class="reference internal" href="python-spglib.html">Spglib for python</a></li>
-<li class="toctree-l1"><a class="reference internal" href="interface.html">Python, Fortran and Ruby interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python-spglib.html">Python interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interface.html">Fortran and Ruby interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="definition.html">Definitions and conventions</a></li>
 </ul>
 </ul>
 </li>
@@ -92,8 +92,8 @@
 <li><a class="reference internal" href="#">Spglib</a><ul>
 <li><a class="reference internal" href="#news">News</a></li>
 <li><a class="reference internal" href="#features">Features</a></li>
-<li><a class="reference internal" href="#algorithms">Algorithms</a></li>
 <li><a class="reference internal" href="#documentation">Documentation</a></li>
+<li><a class="reference internal" href="#references">References</a></li>
 <li><a class="reference internal" href="#mailing-list">Mailing list</a></li>
 <li><a class="reference internal" href="#for-more-information">For more information</a></li>
 <li><a class="reference internal" href="#acknowledgments">Acknowledgments</a></li>
@@ -132,7 +132,7 @@
 <h1>Spglib<a class="headerlink" href="#spglib" title="Permalink to this headline">¶</a></h1>
 <p>Spglib is a library for finding and handling crystal symmetries
 written in C.</p>
-<p>Spglib for python is found at <a class="reference internal" href="python-spglib.html#python-spglib"><span class="std std-ref">Spglib for python</span></a>.</p>
+<p>Spglib for python is found at <a class="reference internal" href="python-spglib.html#python-spglib"><span class="std std-ref">Spglib for Python</span></a>.</p>
 <p>Version history is summarized in <a class="reference external" href="https://github.com/atztogo/spglib/blob/master/ChangeLog">ChangeLog</a>.</p>
 <div class="section" id="news">
 <h2>News<a class="headerlink" href="#news" title="Permalink to this headline">¶</a></h2>
@@ -147,7 +147,7 @@ but in version 1.9.x and later, it starts to be a part of spglib as a
 usual extension, and this python wrapper will be maintained to work
 following every update of c-spglib. The package name is changed from
 pyspglib to spglib. Following this change, the way to import python
-spglib module is changed and it is written in <a class="reference internal" href="python-spglib.html#python-spglib"><span class="std std-ref">Spglib for python</span></a>.</p>
+spglib module is changed and it is written in <a class="reference internal" href="python-spglib.html#python-spglib"><span class="std std-ref">Spglib for Python</span></a>.</p>
 </li>
 </ul>
 </div>
@@ -162,27 +162,36 @@ spglib module is changed and it is written in <a class="reference internal" href
 <li>Search irreducible k-points</li>
 </ul>
 </div>
-<div class="section" id="algorithms">
-<h2>Algorithms<a class="headerlink" href="#algorithms" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li>Space-group type finding algorithm: R. W. Grosse-Kunstleve, Acta
-Cryst., A55, 383-395 (1999)</li>
-<li>Crystal refinement algorithm: R. W. Grosse-Kunstleve and
-P. D. Adams, Acta Cryst., A58, 60-65 (2002)</li>
-</ul>
-</div>
 <div class="section" id="documentation">
 <h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="install.html">How to install spglib C-API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">C-APIs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="definition.html">Definitions and conventions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="variable.html">Variables</a></li>
-<li class="toctree-l1"><a class="reference internal" href="python-spglib.html">Spglib for python</a></li>
-<li class="toctree-l1"><a class="reference internal" href="interface.html">Python, Fortran and Ruby interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python-spglib.html">Python interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interface.html">Fortran and Ruby interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="definition.html">Definitions and conventions</a></li>
 </ul>
 </div>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<p>General materials</p>
+<ul class="simple">
+<li>International tables for crystallography volumes A, B, C</li>
+<li>Online dictionary of crystallography:
+<a class="reference external" href="http://reference.iucr.org/dictionary/">http://reference.iucr.org/dictionary/</a></li>
+<li>Symmetry relationships between crystal structures by Ulrich Muller,
+Oxford university press (2013)</li>
+</ul>
+<p>Specific algorithms</p>
+<ul class="simple">
+<li>Space-group type determination: R. W. Grosse-Kunstleve, Acta Cryst.,
+A55, 383-395 (1999)</li>
+<li>Crystal refinement: R. W. Grosse-Kunstleve and P. D. Adams, Acta
+Cryst., A58, 60-65 (2002)</li>
+</ul>
 </div>
 <div class="section" id="mailing-list">
 <h2>Mailing list<a class="headerlink" href="#mailing-list" title="Permalink to this headline">¶</a></h2>
@@ -203,7 +212,7 @@ mailing list:</p>
 <h2>Acknowledgments<a class="headerlink" href="#acknowledgments" title="Permalink to this headline">¶</a></h2>
 <p>Spglib project acknowledges Yusuke Seto for the Crystallographic
 database, Dimitar Pashov for the fortran interface, Paweł T. Jochym
-for python packages.</p>
+for Python packages.</p>
 </div>
 </div>
 
