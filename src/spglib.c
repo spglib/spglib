@@ -1002,7 +1002,7 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
   dataset->n_std_atoms = 0;
   dataset->std_positions = NULL;
   dataset->std_types = NULL;
-  dataset->pointgroup_number = 0;
+  /* dataset->pointgroup_number = 0; */
   strcpy(dataset->pointgroup_symbol, "");
 
   if ((cell = cel_alloc_cell(num_atom)) == NULL) {
@@ -1182,7 +1182,7 @@ static int set_dataset(SpglibDataset * dataset,
   sym_free_symmetry(symmetry);
   symmetry = NULL;
 
-  dataset->pointgroup_number = spacegroup->pointgroup_number;
+  /* dataset->pointgroup_number = spacegroup->pointgroup_number; */
   pointgroup = ptg_get_pointgroup(spacegroup->pointgroup_number);
   strcpy(dataset->pointgroup_symbol, pointgroup.symbol);
 
@@ -1419,10 +1419,9 @@ static int standardize_primitive(double lattice[3][3],
     goto err;
   }
 
-  if (is_rhombohedral(dataset->hall_number)) {
-    centering = R_CENTER;
-  }
-
+  /* if (is_rhombohedral(dataset->hall_number)) { */
+  /*   centering = R_CENTER; */
+  /* } */
 
   if ((bravais = cel_alloc_cell(dataset->n_std_atoms)) == NULL) {
     spg_free_dataset(dataset);
@@ -1523,9 +1522,9 @@ static int get_standardized_cell(double lattice[3][3],
     if ((centering = get_centering(dataset->hall_number)) == CENTERING_ERROR) {
       goto err;
     }
-    if (is_rhombohedral(dataset->hall_number)) {
-      centering = R_CENTER;
-    }
+    /* if (is_rhombohedral(dataset->hall_number)) { */
+    /*   centering = R_CENTER; */
+    /* } */
   } else {
     centering = PRIMITIVE;
   }
