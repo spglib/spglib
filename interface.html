@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 
 
@@ -6,7 +5,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Index &mdash; spglib 1.9.4 documentation</title>
+    <title>Python, Fortran and Ruby interfaces &mdash; spglib 1.9.4 documentation</title>
     
     <link rel="stylesheet" href="_static/basic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -30,6 +29,7 @@
     <script type="text/javascript" src="_static/bootstrap-3.3.6/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
     <link rel="top" title="spglib 1.9.4 documentation" href="index.html" />
+    <link rel="prev" title="Spglib for python" href="python-spglib.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
@@ -69,13 +69,13 @@
      href="index.html">Site <b class="caret"></b></a>
   <ul class="dropdown-menu globaltoc"
       role="menu"
-      aria-labelledby="dLabelGlobalToc"><ul>
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="install.html">How to install spglib C-API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">C-APIs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="definition.html">Definitions and conventions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="variable.html">Variables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="python-spglib.html">Spglib for python</a></li>
-<li class="toctree-l1"><a class="reference internal" href="interface.html">Python, Fortran and Ruby interfaces</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Python, Fortran and Ruby interfaces</a></li>
 </ul>
 </ul>
 </li>
@@ -88,7 +88,15 @@
      href="#">Page <b class="caret"></b></a>
   <ul class="dropdown-menu localtoc"
       role="menu"
-      aria-labelledby="dLabelLocalToc"></ul>
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Python, Fortran and Ruby interfaces</a><ul>
+<li><a class="reference internal" href="#python-interface">Python interface</a></li>
+<li><a class="reference internal" href="#ruby-interface">Ruby interface</a></li>
+<li><a class="reference internal" href="#fortran-interface">Fortran interface</a></li>
+</ul>
+</li>
+</ul>
+</ul>
 </li>
               
             
@@ -116,41 +124,41 @@
   <div class="row">
     <div class="col-md-12 content">
       
-
-<h1 id="index">Index</h1>
-
-<div class="genindex-jumpbox">
- <a href="#Symbols"><strong>Symbols</strong></a>
- | <a href="#E"><strong>E</strong></a>
- 
+  <div class="section" id="python-fortran-and-ruby-interfaces">
+<h1>Python, Fortran and Ruby interfaces<a class="headerlink" href="#python-fortran-and-ruby-interfaces" title="Permalink to this headline">¶</a></h1>
+<p>Only Python interface is well maintained. But It is expected Fortran
+and Ruby interfaces work at certain level.</p>
+<div class="section" id="python-interface">
+<h2>Python interface<a class="headerlink" href="#python-interface" title="Permalink to this headline">¶</a></h2>
+<p>Python module is prepared in the <code class="docutils literal"><span class="pre">python</span></code> directory.
+See the details at <a class="reference internal" href="python-spglib.html#python-spglib"><span class="std std-ref">Spglib for python</span></a>.</p>
 </div>
-<h2 id="Symbols">Symbols</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt><a href="python-spglib.html#index-0">$PYTHONPATH</a>
-  </dt>
-
-  </dl></td>
-</tr></table>
-
-<h2 id="E">E</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt>
-    environment variable
-  </dt>
-
-      <dd><dl>
-        
-  <dt><a href="python-spglib.html#index-0">$PYTHONPATH</a>
-  </dt>
-
-      </dl></dd>
-  </dl></td>
-</tr></table>
-
+<div class="section" id="ruby-interface">
+<h2>Ruby interface<a class="headerlink" href="#ruby-interface" title="Permalink to this headline">¶</a></h2>
+<p>The ruby script <code class="docutils literal"><span class="pre">symPoscar.rb</span></code> in <code class="docutils literal"><span class="pre">ruby</span></code> directory reads a VASP
+POSCAR formatted file and finds the space-group type. The <code class="docutils literal"><span class="pre">-l</span></code>
+option refines a slightly distorted structure within tolerance
+spacified with the <code class="docutils literal"><span class="pre">-s</span></code> option. The <code class="docutils literal"><span class="pre">-o</span></code> option gives the symmetry
+operations of the input structure.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ruby</span> <span class="n">symPoscar</span><span class="o">.</span><span class="n">rb</span> <span class="n">POSCAR</span> <span class="o">-</span><span class="n">s</span> <span class="mf">0.1</span> <span class="o">-</span><span class="n">o</span> <span class="o">-</span><span class="n">l</span>
+</pre></div>
+</div>
+<p>Some more options are shown with <code class="docutils literal"><span class="pre">--help</span></code> option:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ruby</span> <span class="n">symPoscar</span><span class="o">.</span><span class="n">rb</span> <span class="o">--</span><span class="n">help</span>
+</pre></div>
+</div>
+<p>The way to compile the ruby module is explained in
+<a class="reference external" href="https://github.com/atztogo/spglib/blob/master/ruby/README">ruby/README</a>.</p>
+</div>
+<div class="section" id="fortran-interface">
+<h2>Fortran interface<a class="headerlink" href="#fortran-interface" title="Permalink to this headline">¶</a></h2>
+<p>Fortran interface <a class="reference external" href="https://github.com/atztogo/spglib/blob/master/example/example_f08.f90">spglib_f08.f90</a>
+is found in <a class="reference external" href="https://github.com/atztogo/spglib/tree/master/example">example</a>
+directory. This fortran interface is the contribution from Dimitar
+Pashov. <a class="reference external" href="https://github.com/atztogo/spglib/blob/master/src/spglib_f.c">spglib_f.c</a> is
+obsolete and is not recommended to use.</p>
+</div>
+</div>
 
 
     </div>
@@ -164,6 +172,10 @@
       
         <br/>
         
+<div id="sourcelink">
+  <a href="_sources/interface.txt"
+     rel="nofollow">Source</a>
+</div>
       
     </p>
     <p>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>How to install spglib C-API &mdash; spglib 1.9.4 documentation</title>
+    
+    <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootswatch-3.3.6/cosmo/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.9.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-3.3.6/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="spglib 1.9.4 documentation" href="index.html" />
+    <link rel="next" title="C-APIs" href="api.html" />
+    <link rel="prev" title="Spglib" href="index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          spglib</a>
+        <span class="navbar-text navbar-version pull-left"><b>1.9.4</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="api.html">C-API</a></li>
+                <li><a href="definition.html">Definitions</a></li>
+                <li><a href="variable.html">Variables</a></li>
+                <li><a href="python-spglib.html">Python-API</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">How to install spglib C-API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">C-APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="definition.html">Definitions and conventions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="variable.html">Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python-spglib.html">Spglib for python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interface.html">Python, Fortran and Ruby interfaces</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">How to install spglib C-API</a><ul>
+<li><a class="reference internal" href="#download-install">Download &amp; install</a><ul>
+<li><a class="reference internal" href="#openmp">OpenMP</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+<li><a class="reference internal" href="#example">Example</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="how-to-install-spglib-c-api">
+<h1>How to install spglib C-API<a class="headerlink" href="#how-to-install-spglib-c-api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="download-install">
+<h2>Download &amp; install<a class="headerlink" href="#download-install" title="Permalink to this headline">¶</a></h2>
+<p>Major releases are found at <a class="reference external" href="https://sourceforge.net/project/showfiles.php?group_id=215020">SourceForge</a>.</p>
+<ol class="arabic">
+<li><p class="first">Unzip, configure, and make:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">tar</span> <span class="n">xvfz</span> <span class="n">spglib</span><span class="o">-</span><span class="mf">1.9</span><span class="o">.</span><span class="mf">4.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
+<span class="o">%</span> <span class="n">cd</span> <span class="n">spglib</span><span class="o">-</span><span class="mf">1.9</span><span class="o">.</span><span class="mi">4</span>
+<span class="o">%</span> <span class="o">./</span><span class="n">configure</span> <span class="o">--</span><span class="n">prefix</span><span class="o">=</span><span class="n">INSTALL_LOCATION</span>
+<span class="o">%</span> <span class="n">make</span>
+<span class="o">%</span> <span class="n">make</span> <span class="n">install</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">The libraries are installed at <code class="docutils literal"><span class="pre">INSTALL_LOCATION</span></code> or found in
+<code class="docutils literal"><span class="pre">src/.libs</span></code> if you don&#8217;t run <code class="docutils literal"><span class="pre">make</span> <span class="pre">install</span></code>,</p>
+</li>
+</ol>
+<p>Full package is found at <a class="reference external" href="https://github.com/atztogo/spglib/releases">GitHub</a>. In this case, if you
+need configure script, it can be created using autotools and libtool
+as follows:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">aclocal</span>
+<span class="o">%</span> <span class="n">autoheader</span>
+<span class="o">%</span> <span class="n">libtoolize</span> <span class="c1"># or glibtoolize with macport etc</span>
+<span class="o">%</span> <span class="n">touch</span> <span class="n">INSTALL</span> <span class="n">NEWS</span> <span class="n">README</span> <span class="n">AUTHORS</span>
+<span class="o">%</span> <span class="n">automake</span> <span class="o">-</span><span class="n">acf</span>
+<span class="o">%</span> <span class="n">autoconf</span>
+</pre></div>
+</div>
+<div class="section" id="openmp">
+<h3>OpenMP<a class="headerlink" href="#openmp" title="Permalink to this headline">¶</a></h3>
+<p>Bottle neck of symmetry operation search may be eased using the OpenMP
+threading. In the case of gcc (&gt; 4.2), set the following environment
+variables before running configure script:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">export</span> <span class="n">LIBS</span><span class="o">=</span><span class="s1">&#39;-lgomp&#39;</span>
+<span class="o">%</span> <span class="n">export</span> <span class="n">CFLAGS</span><span class="o">=</span><span class="s1">&#39;-fopenmp&#39;</span>
+</pre></div>
+</div>
+<p>Overhead of threading is relatively large when the number of atoms is
+small. Therefore the threading is activated when the number of atoms
+&gt;= 1000.</p>
+</div>
+</div>
+<div class="section" id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>Include <code class="docutils literal"><span class="pre">spglib.h</span></code></li>
+<li>Link <code class="docutils literal"><span class="pre">libsymspg.a</span></code> or <code class="docutils literal"><span class="pre">libsymspg.so</span></code></li>
+<li>A compilation example is shown in  <a class="reference external" href="https://github.com/atztogo/spglib/blob/master/example/README">example/README</a>.</li>
+</ol>
+</div>
+<div class="section" id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<p>A few examples are found in <a class="reference external" href="https://github.com/atztogo/spglib/tree/master/example">example</a> directory.</p>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+<div id="sourcelink">
+  <a href="_sources/install.txt"
+     rel="nofollow">Source</a>
+</div>
+      
+    </p>
+    <p>
+        &copy; Copyright 2009, Atsushi Togo.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

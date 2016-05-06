@@ -1,5 +1,9 @@
-API
-====
+C-APIs
+======
+
+.. contents:: List of C-APIs
+   :depth: 1
+   :local:
 
 ``spg_get_major_version``, ``spg_get_minor_version``, ``spg_get_micro_version``
 --------------------------------------------------------------------------------
@@ -237,7 +241,8 @@ Finally, its allocated memory space must be freed by calling ``spg_free_dataset`
 Dataset
 ^^^^^^^^
 
-**At version 1.9.4, the member name 'setting' is changed to 'choice'.**
+**At version 1.9.4, SpglibDataset was modified.** The member name
+``setting`` is changed to ``choice`` and ``pointgroup_number`` is removed.
 
 The dataset is accessible through the C-structure given by
 
@@ -261,7 +266,6 @@ The dataset is accessible through the C-structure given by
      double std_lattice[3][3];    /* brv_lattice before version 1.8.1 */
      int *std_types;              /* brv_types before version 1.8.1 */
      double (*std_positions)[3];  /* brv_positions before version 1.8.1 */
-     int pointgroup_number;
      char pointgroup_symbol[6];
    } SpglibDataset;
 
@@ -416,8 +420,7 @@ freed by calling ``spg_free_dataset``.
 ``spg_get_spacegroup_type``
 -----------------------------
 
-**Changed at version 1.9.4: Some members are added and the member name
- 'setting' is changed to 'choice'.**
+**Changed at version 1.9.4: Some members are added and the member name 'setting' is changed to 'choice'.**
 
 This function allows to directly access to the space-group-type
 database in spglib (spg_database.c). To specify the space group type

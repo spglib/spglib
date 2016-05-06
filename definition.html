@@ -5,7 +5,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Definitions and conventions used in spglib &mdash; spglib 1.9.4 documentation</title>
+    <title>Definitions and conventions &mdash; spglib 1.9.4 documentation</title>
     
     <link rel="stylesheet" href="_static/basic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -29,8 +29,8 @@
     <script type="text/javascript" src="_static/bootstrap-3.3.6/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
     <link rel="top" title="spglib 1.9.4 documentation" href="index.html" />
-    <link rel="next" title="API" href="api.html" />
-    <link rel="prev" title="Spglib" href="index.html" />
+    <link rel="next" title="Variables" href="variable.html" />
+    <link rel="prev" title="C-APIs" href="api.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
@@ -71,10 +71,12 @@
   <ul class="dropdown-menu globaltoc"
       role="menu"
       aria-labelledby="dLabelGlobalToc"><ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Definitions and conventions used in spglib</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="variable.html">Important variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">How to install spglib C-API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">C-APIs</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Definitions and conventions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="variable.html">Variables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="python-spglib.html">Spglib for python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interface.html">Python, Fortran and Ruby interfaces</a></li>
 </ul>
 </ul>
 </li>
@@ -88,7 +90,7 @@
   <ul class="dropdown-menu localtoc"
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
-<li><a class="reference internal" href="#">Definitions and conventions used in spglib</a><ul>
+<li><a class="reference internal" href="#">Definitions and conventions</a><ul>
 <li><a class="reference internal" href="#basis-vectors-or">Basis vectors <img class="math" src="_images/math/71ce6bc59bc8fa9c716468f9aaa02a81fb2c9ba1.png" alt="(\mathbf{a}, \mathbf{b}, \mathbf{c})"/> or <img class="math" src="_images/math/09970adb456cc4c143f3e77ba0fd8576aa837c16.png" alt="(\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)"/></a></li>
 <li><a class="reference internal" href="#atomic-point-coordinates">Atomic point coordinates <img class="math" src="_images/math/80ba696b882e52c7e4d833039710ff8b4005e777.png" alt="\boldsymbol{x}"/></a></li>
 <li><a class="reference internal" href="#symmetry-operation">Symmetry operation <img class="math" src="_images/math/fadc8b05a27134881e99de1f69da25dac175dc51.png" alt="(\boldsymbol{W}, \boldsymbol{w})"/></a></li>
@@ -97,13 +99,13 @@
 <li><a class="reference internal" href="#choice-of-basis-vectors">Choice of basis vectors</a></li>
 <li><a class="reference internal" href="#transformation-to-the-primitive-cell">Transformation to the primitive cell</a></li>
 <li><a class="reference internal" href="#def-idealize-cell">Idealization of unit cell structure</a><ul>
-<li><a class="reference internal" href="#triclinic">Triclinic</a></li>
-<li><a class="reference internal" href="#monoclinic">Monoclinic</a></li>
-<li><a class="reference internal" href="#orthorhombic">Orthorhombic</a></li>
-<li><a class="reference internal" href="#tetragonal">Tetragonal</a></li>
-<li><a class="reference internal" href="#rhombohedral">Rhombohedral</a></li>
-<li><a class="reference internal" href="#hexagonal">Hexagonal</a></li>
-<li><a class="reference internal" href="#cubic">Cubic</a></li>
+<li><a class="reference internal" href="#triclinic-lattice">Triclinic lattice</a></li>
+<li><a class="reference internal" href="#monoclinic-lattice">Monoclinic lattice</a></li>
+<li><a class="reference internal" href="#orthorhombic-lattice">Orthorhombic lattice</a></li>
+<li><a class="reference internal" href="#tetragonal-lattice">Tetragonal lattice</a></li>
+<li><a class="reference internal" href="#rhombohedral-lattice">Rhombohedral lattice</a></li>
+<li><a class="reference internal" href="#hexagonal-lattice">Hexagonal lattice</a></li>
+<li><a class="reference internal" href="#cubic-lattice">Cubic lattice</a></li>
 </ul>
 </li>
 </ul>
@@ -139,13 +141,27 @@
   <div class="row">
     <div class="col-md-12 content">
       
-  <div class="section" id="definitions-and-conventions-used-in-spglib">
-<h1>Definitions and conventions used in spglib<a class="headerlink" href="#definitions-and-conventions-used-in-spglib" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="definitions-and-conventions">
+<h1>Definitions and conventions<a class="headerlink" href="#definitions-and-conventions" title="Permalink to this headline">¶</a></h1>
 <p>Information in this page is valid for spglib 1.8.1 or later. The
 definitions of transformation matrix and origin shift were different
 in the previous versions.</p>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#basis-vectors-or" id="id1">Basis vectors <img class="math" src="_images/math/71ce6bc59bc8fa9c716468f9aaa02a81fb2c9ba1.png" alt="(\mathbf{a}, \mathbf{b}, \mathbf{c})"/> or <img class="math" src="_images/math/09970adb456cc4c143f3e77ba0fd8576aa837c16.png" alt="(\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)"/></a></li>
+<li><a class="reference internal" href="#atomic-point-coordinates" id="id2">Atomic point coordinates <img class="math" src="_images/math/80ba696b882e52c7e4d833039710ff8b4005e777.png" alt="\boldsymbol{x}"/></a></li>
+<li><a class="reference internal" href="#symmetry-operation" id="id3">Symmetry operation <img class="math" src="_images/math/fadc8b05a27134881e99de1f69da25dac175dc51.png" alt="(\boldsymbol{W}, \boldsymbol{w})"/></a></li>
+<li><a class="reference internal" href="#transformation-matrix-and-origin-shift" id="id4">Transformation matrix <img class="math" src="_images/math/916e1737b026746b3b28396f8d28701295471563.png" alt="\boldsymbol{P}"/> and origin shift <img class="math" src="_images/math/5e3ac53f2a3b078f16d75452ab30d8476a6b78b1.png" alt="\boldsymbol{p}"/></a></li>
+<li><a class="reference internal" href="#conventions-of-standardized-unit-cell" id="id5">Conventions of standardized unit cell</a><ul>
+<li><a class="reference internal" href="#choice-of-basis-vectors" id="id6">Choice of basis vectors</a></li>
+<li><a class="reference internal" href="#transformation-to-the-primitive-cell" id="id7">Transformation to the primitive cell</a></li>
+<li><a class="reference internal" href="#def-idealize-cell" id="id8">Idealization of unit cell structure</a></li>
+</ul>
+</li>
+</ul>
+</div>
 <div class="section" id="basis-vectors-or">
-<h2>Basis vectors <img class="math" src="_images/math/71ce6bc59bc8fa9c716468f9aaa02a81fb2c9ba1.png" alt="(\mathbf{a}, \mathbf{b}, \mathbf{c})"/> or <img class="math" src="_images/math/09970adb456cc4c143f3e77ba0fd8576aa837c16.png" alt="(\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)"/><a class="headerlink" href="#basis-vectors-or" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id1">Basis vectors <img class="math" src="_images/math/71ce6bc59bc8fa9c716468f9aaa02a81fb2c9ba1.png" alt="(\mathbf{a}, \mathbf{b}, \mathbf{c})"/> or <img class="math" src="_images/math/09970adb456cc4c143f3e77ba0fd8576aa837c16.png" alt="(\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)"/></a><a class="headerlink" href="#basis-vectors-or" title="Permalink to this headline">¶</a></h2>
 <p>In spglib, basis vectors are represented by three column vectors:</p>
 <div class="math">
 <p><img src="_images/math/63025c43bb5384a4655b740751ee462d8dbb98fa.png" alt="\mathbf{a}= \begin{pmatrix}
@@ -168,7 +184,7 @@ c_z \\
 <img class="math" src="_images/math/71ce6bc59bc8fa9c716468f9aaa02a81fb2c9ba1.png" alt="(\mathbf{a}, \mathbf{b}, \mathbf{c})"/>.</p>
 </div>
 <div class="section" id="atomic-point-coordinates">
-<h2>Atomic point coordinates <img class="math" src="_images/math/80ba696b882e52c7e4d833039710ff8b4005e777.png" alt="\boldsymbol{x}"/><a class="headerlink" href="#atomic-point-coordinates" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id2">Atomic point coordinates <img class="math" src="_images/math/80ba696b882e52c7e4d833039710ff8b4005e777.png" alt="\boldsymbol{x}"/></a><a class="headerlink" href="#atomic-point-coordinates" title="Permalink to this headline">¶</a></h2>
 <p>Coordinates of an atomic point <img class="math" src="_images/math/80ba696b882e52c7e4d833039710ff8b4005e777.png" alt="\boldsymbol{x}"/> are represented
 as three fractional values relative to basis vectors as follows,</p>
 <div class="math">
@@ -186,7 +202,7 @@ Cartesian coordinates is obtained by</p>
 <p><img src="_images/math/4b66b089daac7bcc14393010edc398a167df7f07.png" alt="\mathbf{x} = \sum_i x_i \mathbf{a}_i."/></p>
 </div></div>
 <div class="section" id="symmetry-operation">
-<h2>Symmetry operation <img class="math" src="_images/math/fadc8b05a27134881e99de1f69da25dac175dc51.png" alt="(\boldsymbol{W}, \boldsymbol{w})"/><a class="headerlink" href="#symmetry-operation" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id3">Symmetry operation <img class="math" src="_images/math/fadc8b05a27134881e99de1f69da25dac175dc51.png" alt="(\boldsymbol{W}, \boldsymbol{w})"/></a><a class="headerlink" href="#symmetry-operation" title="Permalink to this headline">¶</a></h2>
 <p>A symmetry operation consists of a pair of the rotation part
 <img class="math" src="_images/math/1c139b2a70ec38e300f42aceabaa7eddac36a46b.png" alt="\boldsymbol{W}"/> and translation part <img class="math" src="_images/math/007d60f67f9a1ec03227cdf5925d44eacff1484b.png" alt="\boldsymbol{w}"/>,
 and is represented as <img class="math" src="_images/math/fadc8b05a27134881e99de1f69da25dac175dc51.png" alt="(\boldsymbol{W}, \boldsymbol{w})"/> in the
@@ -196,7 +212,7 @@ spglib document. The symmetry operation transfers <img class="math" src="_images
 <p><img src="_images/math/2e4f759c68466291cedd503a99af3832b3ed3410.png" alt="\tilde{\boldsymbol{x}} = \boldsymbol{W}\boldsymbol{x} + \boldsymbol{w}."/></p>
 </div></div>
 <div class="section" id="transformation-matrix-and-origin-shift">
-<h2>Transformation matrix <img class="math" src="_images/math/916e1737b026746b3b28396f8d28701295471563.png" alt="\boldsymbol{P}"/> and origin shift <img class="math" src="_images/math/5e3ac53f2a3b078f16d75452ab30d8476a6b78b1.png" alt="\boldsymbol{p}"/><a class="headerlink" href="#transformation-matrix-and-origin-shift" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id4">Transformation matrix <img class="math" src="_images/math/916e1737b026746b3b28396f8d28701295471563.png" alt="\boldsymbol{P}"/> and origin shift <img class="math" src="_images/math/5e3ac53f2a3b078f16d75452ab30d8476a6b78b1.png" alt="\boldsymbol{p}"/></a><a class="headerlink" href="#transformation-matrix-and-origin-shift" title="Permalink to this headline">¶</a></h2>
 <p>The transformation matrix <img class="math" src="_images/math/916e1737b026746b3b28396f8d28701295471563.png" alt="\boldsymbol{P}"/> changes choice of
 basis vectors as follows</p>
 <div class="math">
@@ -242,9 +258,9 @@ arbitrary system <img class="math" src="_images/math/80ba696b882e52c7e4d83303971
 \end{pmatrix}."/></p>
 </div></div>
 <div class="section" id="conventions-of-standardized-unit-cell">
-<span id="def-standardized-unit-cell"></span><h2>Conventions of standardized unit cell<a class="headerlink" href="#conventions-of-standardized-unit-cell" title="Permalink to this headline">¶</a></h2>
+<span id="def-standardized-unit-cell"></span><h2><a class="toc-backref" href="#id5">Conventions of standardized unit cell</a><a class="headerlink" href="#conventions-of-standardized-unit-cell" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="choice-of-basis-vectors">
-<h3>Choice of basis vectors<a class="headerlink" href="#choice-of-basis-vectors" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id6">Choice of basis vectors</a><a class="headerlink" href="#choice-of-basis-vectors" title="Permalink to this headline">¶</a></h3>
 <p>Using the APIs <code class="docutils literal"><span class="pre">spg_get_dataset</span></code>,
 <code class="docutils literal"><span class="pre">spg_get_dataset_with_hall_number</span></code>, or <code class="docutils literal"><span class="pre">spg_standardize_cell</span></code>, the
 starndardized unit cell is obtained. The &#8220;starndardized unit cell&#8221; in
@@ -259,7 +275,7 @@ details of these conventions are summarized in the article found at
 <a class="reference external" href="http://arxiv.org/abs/1506.01455">http://arxiv.org/abs/1506.01455</a>.</p>
 </div>
 <div class="section" id="transformation-to-the-primitive-cell">
-<span id="def-standardized-primitive-cell"></span><h3>Transformation to the primitive cell<a class="headerlink" href="#transformation-to-the-primitive-cell" title="Permalink to this headline">¶</a></h3>
+<span id="def-standardized-primitive-cell"></span><h3><a class="toc-backref" href="#id7">Transformation to the primitive cell</a><a class="headerlink" href="#transformation-to-the-primitive-cell" title="Permalink to this headline">¶</a></h3>
 <p>In the standardized unit cells, there are five different centring
 types available, base centrings of A and C, rhombohedral (R), body centred
 (I), and face centred (F). The transformation is applied to the
@@ -311,7 +327,7 @@ as follows:</p>
 <img class="math" src="_images/math/5514a3ce7c2168ee39c2a5a80f516627ceeb9aa2.png" alt="\boldsymbol{P}_\mathrm{R}"/> is applied.</p>
 </div>
 <div class="section" id="def-idealize-cell">
-<span id="idealization-of-unit-cell-structure"></span><h3>Idealization of unit cell structure<a class="headerlink" href="#def-idealize-cell" title="Permalink to this headline">¶</a></h3>
+<span id="idealization-of-unit-cell-structure"></span><h3><a class="toc-backref" href="#id8">Idealization of unit cell structure</a><a class="headerlink" href="#def-idealize-cell" title="Permalink to this headline">¶</a></h3>
 <p>Spglib allows tolerance parameters to match a slightly distorted unit
 cell structure to a space group type with some higher symmetry. Using
 obtained symmetry operations, the distortion is removed to idealize
@@ -322,8 +338,8 @@ respective lattice shapes as follows. In this treatment, except for
 triclinic crystals, crystals can be rotated in Cartesian coordinates,
 which is the different type of transformation from that of the
 change-of-basis transformation explained above.</p>
-<div class="section" id="triclinic">
-<h4>Triclinic<a class="headerlink" href="#triclinic" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="triclinic-lattice">
+<h4>Triclinic lattice<a class="headerlink" href="#triclinic-lattice" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
 <li>Niggli reduced cell is used for choosing <img class="math" src="_images/math/0399975245409f171adff9e424c1cfd81e44cbf1.png" alt="\mathbf{a}, \mathbf{b}, \mathbf{c}"/>.</li>
 <li><img class="math" src="_images/math/a7ca8d225c064dae6b3c328bf7acd82b7d8933c9.png" alt="\mathbf{a}"/> is set along <img class="math" src="_images/math/d246eafd090a8727e443e9a38c52b920e215bbae.png" alt="+x"/> direction of Cartesian coordinates.</li>
@@ -332,8 +348,8 @@ coordinates so that <img class="math" src="_images/math/427f2ff35ed54a71a86800f4
 <img class="math" src="_images/math/3cebfddaf42f50301d8f19a71594839d8f384b4d.png" alt="+z"/> direction of Cartesian coordinates.</li>
 </ul>
 </div>
-<div class="section" id="monoclinic">
-<h4>Monoclinic<a class="headerlink" href="#monoclinic" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="monoclinic-lattice">
+<h4>Monoclinic lattice<a class="headerlink" href="#monoclinic-lattice" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
 <li><img class="math" src="_images/math/5e87bf41a96deddf6cb485ff530f153f2590e9cc.png" alt="b"/> axis is taken as the unique axis.</li>
 <li><img class="math" src="_images/math/de83d43fa3f0b66e9355b1bd3920b59e562167b7.png" alt="\alpha = 90^\circ"/> and <img class="math" src="_images/math/da06cc39e3bdf1d2433c51999a586c8db616601c.png" alt="\gamma = 90^\circ"/></li>
@@ -343,8 +359,8 @@ coordinates so that <img class="math" src="_images/math/427f2ff35ed54a71a86800f4
 <li><img class="math" src="_images/math/c20b076757f2c84dbfba8d79beeb264442324609.png" alt="\mathbf{c}"/> is set in <img class="math" src="_images/math/3e0295de4ca25ddedab727864d14cccf543a9faf.png" alt="x\text{-}z"/> plane of Cartesian coordinates.</li>
 </ul>
 </div>
-<div class="section" id="orthorhombic">
-<h4>Orthorhombic<a class="headerlink" href="#orthorhombic" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="orthorhombic-lattice">
+<h4>Orthorhombic lattice<a class="headerlink" href="#orthorhombic-lattice" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
 <li><img class="math" src="_images/math/fa8eb2e5cf7afda29d22904b71ed12872c77e172.png" alt="\alpha = \beta = \gamma = 90^\circ"/>.</li>
 <li><img class="math" src="_images/math/a7ca8d225c064dae6b3c328bf7acd82b7d8933c9.png" alt="\mathbf{a}"/> is set along <img class="math" src="_images/math/d246eafd090a8727e443e9a38c52b920e215bbae.png" alt="+x"/> direction of Cartesian coordinates.</li>
@@ -352,8 +368,8 @@ coordinates so that <img class="math" src="_images/math/427f2ff35ed54a71a86800f4
 <li><img class="math" src="_images/math/c20b076757f2c84dbfba8d79beeb264442324609.png" alt="\mathbf{c}"/> is set along <img class="math" src="_images/math/3cebfddaf42f50301d8f19a71594839d8f384b4d.png" alt="+z"/> direction of Cartesian coordinates.</li>
 </ul>
 </div>
-<div class="section" id="tetragonal">
-<h4>Tetragonal<a class="headerlink" href="#tetragonal" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="tetragonal-lattice">
+<h4>Tetragonal lattice<a class="headerlink" href="#tetragonal-lattice" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
 <li><img class="math" src="_images/math/fa8eb2e5cf7afda29d22904b71ed12872c77e172.png" alt="\alpha = \beta = \gamma = 90^\circ"/>.</li>
 <li><img class="math" src="_images/math/73711b3bc2f0a03eff1af170a6fcb57ba77dd946.png" alt="a=b"/>.</li>
@@ -362,8 +378,8 @@ coordinates so that <img class="math" src="_images/math/427f2ff35ed54a71a86800f4
 <li><img class="math" src="_images/math/c20b076757f2c84dbfba8d79beeb264442324609.png" alt="\mathbf{c}"/> is set along <img class="math" src="_images/math/3cebfddaf42f50301d8f19a71594839d8f384b4d.png" alt="+z"/> direction of Cartesian coordinates.</li>
 </ul>
 </div>
-<div class="section" id="rhombohedral">
-<h4>Rhombohedral<a class="headerlink" href="#rhombohedral" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="rhombohedral-lattice">
+<h4>Rhombohedral lattice<a class="headerlink" href="#rhombohedral-lattice" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
 <li><img class="math" src="_images/math/1b480d751e36b9e77dc25f9b7f8436f87d3ceaba.png" alt="\alpha = \beta = \gamma"/>.</li>
 <li><img class="math" src="_images/math/f437d264471d14e861cbc9bec9897e0188c4c3cd.png" alt="a=b=c"/>.</li>
@@ -386,8 +402,8 @@ are placed by angles <img class="math" src="_images/math/f1461a7e5c56e0df2c77277
 <li><img class="math" src="_images/math/80c317ab61309a7685a3abcf3415cfbe5e176559.png" alt="a_{z} = b_{z} = c_{z}"/>.</li>
 </ul>
 </div>
-<div class="section" id="hexagonal">
-<h4>Hexagonal<a class="headerlink" href="#hexagonal" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="hexagonal-lattice">
+<h4>Hexagonal lattice<a class="headerlink" href="#hexagonal-lattice" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
 <li><img class="math" src="_images/math/4abc1eb73b14fb664fc6322894ead638569ef822.png" alt="\alpha = \beta = 90^\circ"/>.</li>
 <li><img class="math" src="_images/math/28b97b29ff7f470b7ec2bd2c28f38636cf57610b.png" alt="\gamma = 120^\circ"/>.</li>
@@ -397,8 +413,8 @@ are placed by angles <img class="math" src="_images/math/f1461a7e5c56e0df2c77277
 <li><img class="math" src="_images/math/c20b076757f2c84dbfba8d79beeb264442324609.png" alt="\mathbf{c}"/> is set along <img class="math" src="_images/math/3cebfddaf42f50301d8f19a71594839d8f384b4d.png" alt="+z"/> direction of Cartesian coordinates.</li>
 </ul>
 </div>
-<div class="section" id="cubic">
-<h4>Cubic<a class="headerlink" href="#cubic" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="cubic-lattice">
+<h4>Cubic lattice<a class="headerlink" href="#cubic-lattice" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
 <li><img class="math" src="_images/math/fa8eb2e5cf7afda29d22904b71ed12872c77e172.png" alt="\alpha = \beta = \gamma = 90^\circ"/>.</li>
 <li><img class="math" src="_images/math/f437d264471d14e861cbc9bec9897e0188c4c3cd.png" alt="a=b=c"/>.</li>
