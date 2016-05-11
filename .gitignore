@@ -86,3 +86,6 @@ test/getspg.bundle
 test/mkmf.log
 
 findsym.log
+
+spglib_test*
+test-suite.log

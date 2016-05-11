@@ -1,3 +1,41 @@
+2016-04-17  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.9.2
+
+	* src/symmetry.c (get_lattice_symmetry):
+
+	The treatment after the conditon, order of point symmetry
+	becomes larger than 48, is found was bad and it induced
+	segfault. It is fixed and a better treatment for angle_tolerance
+	is implemented as an iterative method.
+
+	* src/spglib.c (spg_delaunay_reduce):
+
+	spg_delaunay_reduce is made as an interface to the Delaunay
+	reduction.
+
+	* src/spacegroup.c (search_spacegroup):
+
+	A check if excess symmetry operations are found for a primitive
+	cell is inserted by watching its point group. This made the
+	algorithm of database matching safer.
+
+2016-04-11  Atsushi Togo  <atz.togo@gmail.com>
+
+	* src/delaunay.c:
+
+	lattice.{c,h} are renamed to delaunay.{c.h},
+	respectively. Function names in them, *get_smallest_lattice, are
+	changed to *delaunay_reduce.
+
+2016-04-06  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.9.1
+
+	This is a minor update. Only a small notable change is in the
+	python wrapper, where for crystal structure, now a tuple format
+	can be sued.
+
 2015-12-20  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.9.0
@@ -132,7 +170,7 @@
 
 2015-04-03  Atsushi Togo  <atz.togo@gmail.com>
 
-	* src/spacegroup.c (match_hall_symbol_db_ortho): 
+	* src/spacegroup.c (match_hall_symbol_db_ortho):
 
 	Change the convention of lengths of basis vector preference to:
 	a < b < c for hall number 290 and a < c < b for 291 or
@@ -142,7 +180,7 @@
 
 2015-03-31  Atsushi Togo  <atz.togo@gmail.com>
 
-	* src/spacegroup.c (match_hall_symbol_db_ortho): 
+	* src/spacegroup.c (match_hall_symbol_db_ortho):
 
 	Fix choice of lengths of basis vectors in orthorhombic Pbca. There
 	are two choices for Pbca. The basis vectors can be chosen so as to
@@ -153,7 +191,7 @@
 
 2015-03-20  Atsushi Togo  <atz.togo@gmail.com>
 
-	* src/hall_symbol.c (find_hall_symbol): 
+	* src/hall_symbol.c (find_hall_symbol):
 
 	A critical bug was found in version 1.7.2, where origin shift was
 	given for the primitive cell but not for the Bravais lattice. This
@@ -748,7 +786,7 @@
 	using new function of 'prm_get_cell_with_smallest_lattice' in
 	primitive.c. This function was originally in spacegroup.c as
 	'get_cell_with_smallest_lattice'. Following this, spacegroup.c,
-	primitive.c, and primitive.h were modified. 
+	primitive.c, and primitive.h were modified.
 
 2011-03-18  Atsushi Togo  <atz.togo@gmail.com>
 
@@ -827,7 +865,7 @@
 	* spglib-1.0.2:
 
 	Bug fix in finding lattice point symmetry (symmetry.c).
-	spg_get_bravais is added and spg_get_international_with_bravais 
+	spg_get_bravais is added and spg_get_international_with_bravais
 	was removed.
 
 2010-12-26  Atsushi Togo  <atz.togo@gmail.com>
@@ -866,7 +904,7 @@
 
 	New release under the modified BSD license.
 
-	* pointgroup.c: 
+	* pointgroup.c:
 
 	Sometimes symmetry operations that don't match point-group type
 	can be found. In the current implementation, some of non-necessary
@@ -1116,7 +1154,7 @@
 2008-05-25  Atsushi Togo  <atz.togo@gmail.com>
 
 	* *.c, *.h :
-	
+
 	Many codes are re-built. Many functions are changed to
 	"static". The first three characters of public functions are
 	re-named using those file names.
@@ -1136,7 +1174,7 @@
 
 	"lattice_symmetry" is removed from the "Bravais" structure.
 
-	* spglib.h: 
+	* spglib.h:
 
 	Misspelled function prototypes of spg_get_symmetry and
 	spg_check_symmetry are corrected.
@@ -1147,4 +1185,3 @@
 
 	For fixing many warning in many codes and gcc-4.3 related problem
 	in bravais.c.
-

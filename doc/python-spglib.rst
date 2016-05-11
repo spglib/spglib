@@ -10,6 +10,8 @@ that contains minimum
 set of methods is prepared in the `examples
 <https://github.com/atztogo/spglib/tree/master/python/examples>`_ directory.
 
+|
+
 Installation
 -------------
 
@@ -57,6 +59,8 @@ installation steps are shown as follows:
 3. Put :file:`./lib/python` path into :envvar:`$PYTHONPATH`, e.g., in your
    .washrag.
 
+|
+
 Test
 -----
 
@@ -70,6 +74,8 @@ directory. Got to this directory and run this script. It will be like below::
    Ran 1 test in 2.132s
    
    OK
+
+|
 
 How to import spglib module
 ---------------------------
@@ -91,11 +97,15 @@ If the version is not sure::
    except ImportError:
        from pyspglib import spglib as spg   
 
+|
+
 Version number
 --------------
 
 In version 1.8.3 or later, the version number is obtained by
 ``spglib.__version__`` or :ref:`method_get_version`.
+
+|
 
 Example
 --------
@@ -106,10 +116,51 @@ directory. In this directory, an alternative Atoms class in `atoms.py
 <https://github.com/atztogo/spglib/blob/master/python/examples/atoms.py>`_
 can be used instead of the ``Atoms`` class in ASE for spglib.
 
+|
+
+Variables
+----------
+
+Cristal structure (``atoms``)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Crsytal structure information is given either in an **Atoms object**
+or a **tuple**, where the tuple is supported at version 1.9.1 or
+later. In the case given by a tuple, it has to follow the format as
+written below.
+
+The elements of a tuple are ``atoms = (lattice, positions, numbers,
+magmoms)`` where ``magmoms`` is optional, three elements of the tuple
+are accepted.
+
+Lattice parameters ``lattice`` are given by a 3x3 matrix with floating
+point values. Fractional atomic positions ``positions`` are given by a
+Nx3 matrix with floating point values, where N is the number of
+atoms. Numbers to distinguish atomic species ``numbers`` are given
+by a list of N integers. Collinear magnetic moments ``magmoms`` are
+given by a list of N floating point values.
+
+::
+
+   lattice = [[a_x, a_y, a_z],
+              [b_x, b_y, b_z],
+              [c_x, c_y, c_z]]
+   positions = [[a_1, b_1, c_1],
+                [a_2, b_2, c_2],
+                [a_3, b_3, c_3],
+                ...]
+   numbers = [n_1, n_2, n_3, ...]
+   magmoms = [m_1, m_2, m_3, ...]
+
+Symmetry tolerance (``symprec``)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Distance tolerance in Cartesian coordinates to find crystal symmetry.
+
+|
+
 Methods
 --------
-
-The tolerance is given in Cartesian coordinates.
 
 .. _method_get_version:
 
@@ -124,6 +175,8 @@ The tolerance is given in Cartesian coordinates.
 
 This returns version number of spglib by tuple with three numbers.
 
+|
+
 ``get_spacegroup``
 ^^^^^^^^^^^^^^^^^^^
 
@@ -131,10 +184,10 @@ This returns version number of spglib by tuple with three numbers.
 
     spacegroup = get_spacegroup(atoms, symprec=1e-5)
 
-``symprec`` is the float variable, which is used as tolerance in
-symmetry search.
+International space group symbol and the number are obtained as a
+string.
 
-International space group symbol and the number are obtained as a string.
+|
 
 ``get_symmetry``
 ^^^^^^^^^^^^^^^^^^
@@ -142,9 +195,6 @@ International space group symbol and the number are obtained as a string.
 ::
 
     symmetry = get_symmetry(atoms, symprec=1e-5)
-
-``atoms`` is the object of ASE Atoms class. ``symprec`` is the float
-variable, which is used as tolerance in symmetry search.
 
 Symmetry operations are obtained as a dictionary. The key ``rotation``
 contains a numpy array of integer, which is "number of symmetry
@@ -164,6 +214,8 @@ The rotation matrix and translation vector are used as follows::
 The three values in the vector are given for the a, b, and c axes,
 respectively.
 
+|
+
 ``refine_cell``
 ^^^^^^^^^^^^^^^^
 
@@ -173,15 +225,14 @@ respectively.
 
     lattice, scaled_positions, numbers = refine_cell(atoms, symprec=1e-5)
 
-``atoms`` is the object of ASE Atoms class. ``symprec`` is the float
-variable, which is used as tolerance in symmetry search. 
-
 Bravais lattice (3x3 numpy array), atomic scaled positions (a numpy
 array of [number_of_atoms,3]), and atomic numbers (a 1D numpy array)
 that are symmetrized following space group type are returned.
 
 The detailed control of standardization of unit cell may be done using
 ``standardize_cell``.
+
+|
 
 ``find_primitive``
 ^^^^^^^^^^^^^^^^^^^
@@ -192,9 +243,6 @@ The detailed control of standardization of unit cell may be done using
 
    lattice, scaled_positions, numbers = find_primitive(atoms, symprec=1e-5)
 
-``atoms`` is the object of ASE Atoms class. ``symprec`` is the float
-variable, which is used as tolerance in symmetry search.
-
 When a primitive cell is found, lattice parameters (3x3 numpy array),
 scaled positions (a numpy array of [number_of_atoms,3]), and atomic
 numbers (a 1D numpy array) is returned. When no primitive cell is
@@ -202,6 +250,8 @@ found, (``None``, ``None``, ``None``) is returned.
 
 The detailed control of standardization of unit cell can be done using
 ``standardize_cell``.
+
+|
 
 ``standardize_cell``
 ^^^^^^^^^^^^^^^^^^^^^
@@ -219,6 +269,8 @@ vectors and positions of atoms according to crystal symmetry. Now
 ``refine_cell`` and ``find_primitive`` are shorthands of this method
 with combinations of these options. More detailed explanation is
 shown in the spglib (C-API) document.
+
+|
 
 ``get_symmetry_dataset``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -240,6 +292,22 @@ shown in the spglib (C-API) document.
 
     [(r, t) for r, t in zip(dataset['rotations'], dataset['translations'])]
 
+|
+
+``get_symmetry_from_database``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+::
+
+   get_symmetry_from_database(hall_number):
+
+A set of crystallographic symmetry operations corresponding to
+``hall_number`` is returned by a dictionary where rotation parts and
+translation parts are accessed by the keys ``rotations`` and
+``translations``, respectively. The definition of ``hall_number`` is
+found at :ref:`api_spg_get_dataset_spacegroup_type`.
+
+|
 
 ``get_ir_reciprocal_mesh``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -272,11 +340,3 @@ obtained by ::
    mapping, grid = get_ir_reciprocal_mesh([ 8, 8, 8 ], atoms, [1, 1, 1])
    for i in np.unique(mapping):
        ir_grid.append(grid[i])
-
-
-.. |sflogo| image:: http://sflogo.sourceforge.net/sflogo.php?group_id=161614&type=1
-            :target: http://sourceforge.net
-
-
-
-|sflogo|
