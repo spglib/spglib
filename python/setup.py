@@ -50,9 +50,12 @@ with open("src/version.h") as w:
 if os.path.isfile("__nanoversion__.txt"):
     with open('__nanoversion__.txt') as nv:
         nanoversion = None
-        for line in nv:
-            nanoversion = int(line.strip())
-            break
+        try :
+            for line in nv:
+                nanoversion = int(line.strip())
+                break
+        except ValueError :
+            nanoversion=0
         if nanoversion:
             version_nums.append(nanoversion)
 
