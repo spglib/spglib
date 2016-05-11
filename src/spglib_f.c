@@ -174,7 +174,7 @@ void spg_get_schoenflies_(int *spacegroup,
 			  int *num_atom,
 			  double *symprec)
 {
-  char symbol_c[7];
+  char symbol_c[10];
   int i, length;
     
   *spacegroup = spg_get_schoenflies(symbol_c, lattice, position, types,
