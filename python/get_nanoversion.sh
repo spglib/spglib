@@ -8,6 +8,6 @@ git clone $u $TD
 cd $TD
 echo $u $br
 git checkout $br
-git describe --tags --dirty | sed -e 's/\([.0-9]*\)-\(.*\)-g.*/\2/' -e 's/^v//g' >$WD/__nanoversion__.txt
+git describe --tags --dirty | sed -e 's/\([.0-9]*\)-\(.*\)-g.*/\2/' -e 's/^[vr]//g' >$WD/__nanoversion__.txt
 cd $WD
 rm -rf "$TD"
