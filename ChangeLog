@@ -1,3 +1,23 @@
+2016-04-28  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.9.3
+
+	* src/spglib.c (spg_get_spacegroup_type):
+
+	Arithmetic crystal class number and symbol are returned. Python
+	interface 'get_spacegroup_type' was created.
+
+	* src/spglib.c (get_dataset):
+	* src/site_symmetry.c (ssm_get_exact_positions, set_exact_location):
+
+	Two iterative loops are implemented. The outer one is in
+	get_dataset, and the inner one is in ssm_get_exact_positions.
+	Each site-symmetry is checked in set_exact_location. In the inner loop,
+	symmetry tolerance is controled until all site-symmetries become
+	reasonable. If the inner loop finally fails, the symmetry
+	tolerance in the outer loop is reduced and the symmetry search
+	starts from the begginig.
+
 2016-04-17  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.9.2

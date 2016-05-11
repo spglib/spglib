@@ -432,11 +432,15 @@ with a specific setting, ``hall_number`` is used. The definition of
    
    typedef struct {
      int number;
+     char international_short[11];
+     char international_full[20];
+     char international[32];
      char schoenflies[7];
      char hall_symbol[17];
-     char international[32];
-     char international_full[20];
-     char international_short[11];
+     char pointgroup_schoenflies[4];
+     char pointgroup_international[6];
+     int arithmetic_crystal_class_number;
+     char arithmetic_crystal_class_symbol[7];
    } SpglibSpacegroupType;
 
 |
