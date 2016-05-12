@@ -1,2 +1,3 @@
-graft ../src
+include src/*.h
+include src/*.c
 include __nanoversion__.txt
