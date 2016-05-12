@@ -1,3 +1,2 @@
-include src/*.h
-include src/*.c
+graft ../src
 include __nanoversion__.txt
