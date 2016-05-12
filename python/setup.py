@@ -47,9 +47,9 @@ with open("src/version.h") as w:
                 version_nums[i] = int(line.split()[2])
 
 # To deploy to pypi by travis-CI
+nanoversion = 0
 if os.path.isfile("__nanoversion__.txt"):
     with open('__nanoversion__.txt') as nv:
-        nanoversion = None
         try :
             for line in nv:
                 nanoversion = int(line.strip())
