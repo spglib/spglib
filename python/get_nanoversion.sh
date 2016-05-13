@@ -1,7 +1,8 @@
 #!/bin/bash
 
-br=`git branch |tail -n1`
-read o u f <<< `git remote -v |grep fetch`
+br=`git branch |grep '^\*'|sed 's/^\(\*\s*\)//'`
+read o u f <<< `git remote -v |grep origin |grep fetch`
+echo "Repo: $o $u $br"
 TD=`mktemp -d`
 WD=`pwd`
 git clone $u $TD
