@@ -34,23 +34,21 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import numpy as np
-from atoms import Atoms, symbol_map, atom_data
 
-def read_vasp(filename, symbols=None):
+def read_vasp(filename):
     lines = open(filename).readlines()
-    return _get_atoms_from_poscar(lines, symbols)
-
-def _get_atoms_from_poscar(lines, symbols):
     line1 = [x for x in lines[0].split()]
     if _is_exist_symbols(line1):
         symbols = line1
+    else:
+        symbols = None
 
     scale = float(lines[1])
 
-    cell = []
+    lattice = []
     for i in range(2, 5):
-        cell.append([float(x) for x in lines[i].split()[:3]])
-    cell = np.array(cell) * scale
+        lattice.append([float(x) for x in lines[i].split()[:3]])
+    lattice = np.array(lattice) * scale
 
     try:
         num_atoms = np.array([int(x) for x in lines[5].split()])
@@ -59,16 +57,16 @@ def _get_atoms_from_poscar(lines, symbols):
         symbols = [x for x in lines[5].split()]
         num_atoms = np.array([int(x) for x in lines[6].split()])
         line_at = 7
-    
-    expaned_symbols = _expand_symbols(num_atoms, symbols)
 
+    numbers = _expand_symbols(num_atoms, symbols)
+    
     if lines[line_at][0].lower() == 's':
         line_at += 1
 
-    is_scaled = True
+    is_cartesian = False
     if (lines[line_at][0].lower() == 'c' or
         lines[line_at][0].lower() == 'k'):
-        is_scaled = False
+        is_cartesian = True
 
     line_at += 1
 
@@ -76,22 +74,10 @@ def _get_atoms_from_poscar(lines, symbols):
     for i in range(line_at, line_at + num_atoms.sum()):
         positions.append([float(x) for x in lines[i].split()[:3]])
 
-    if is_scaled:
-        atoms = Atoms(symbols=expaned_symbols,
-                      cell=cell,
-                      scaled_positions=positions)
-    else:
-        atoms = Atoms(symbols=expaned_symbols,
-                      cell=cell,
-                      positions=positions)
-        
-    return atoms
+    if is_cartesian:
+        positions = np.dot(positions, np.linalg.inv(lattice))
 
-def _is_exist_symbols(symbols):
-    for s in symbols:
-        if not (s in symbol_map):
-            return False
-    return True
+    return (lattice, positions, numbers)
 
 def _expand_symbols(num_atoms, symbols=None):
     expanded_symbols = []
@@ -109,9 +95,136 @@ def _expand_symbols(num_atoms, symbols=None):
     
     if is_symbols:
         for s, num in zip(symbols, num_atoms):
-            expanded_symbols += [s] * num
+            expanded_symbols += [symbol_map[s],] * num
     else:
         for i, num in enumerate(num_atoms):
-            expanded_symbols += [atom_data[i + 1][1]] * num
+            expanded_symbols += [i + 1,] * num
 
     return expanded_symbols
+
+def _is_exist_symbols(symbols):
+    for s in symbols:
+        if not (s in symbol_map):
+            return False
+    return True
+
+symbol_map = {
+    "H":1,
+    "He":2,
+    "Li":3,
+    "Be":4,
+    "B":5,
+    "C":6,
+    "N":7,
+    "O":8,
+    "F":9,
+    "Ne":10,
+    "Na":11,
+    "Mg":12,
+    "Al":13,
+    "Si":14,
+    "P":15,
+    "S":16,
+    "Cl":17,
+    "Ar":18,
+    "K":19,
+    "Ca":20,
+    "Sc":21,
+    "Ti":22,
+    "V":23,
+    "Cr":24,
+    "Mn":25,
+    "Fe":26,
+    "Co":27,
+    "Ni":28,
+    "Cu":29,
+    "Zn":30,
+    "Ga":31,
+    "Ge":32,
+    "As":33,
+    "Se":34,
+    "Br":35,
+    "Kr":36,
+    "Rb":37,
+    "Sr":38,
+    "Y":39,
+    "Zr":40,
+    "Nb":41,
+    "Mo":42,
+    "Tc":43,
+    "Ru":44,
+    "Rh":45,
+    "Pd":46,
+    "Ag":47,
+    "Cd":48,
+    "In":49,
+    "Sn":50,
+    "Sb":51,
+    "Te":52,
+    "I":53,
+    "Xe":54,
+    "Cs":55,
+    "Ba":56,
+    "La":57,
+    "Ce":58,
+    "Pr":59,
+    "Nd":60,
+    "Pm":61,
+    "Sm":62,
+    "Eu":63,
+    "Gd":64,
+    "Tb":65,
+    "Dy":66,
+    "Ho":67,
+    "Er":68,
+    "Tm":69,
+    "Yb":70,
+    "Lu":71,
+    "Hf":72,
+    "Ta":73,
+    "W":74,
+    "Re":75,
+    "Os":76,
+    "Ir":77,
+    "Pt":78,
+    "Au":79,
+    "Hg":80,
+    "Tl":81,
+    "Pb":82,
+    "Bi":83,
+    "Po":84,
+    "At":85,
+    "Rn":86,
+    "Fr":87,
+    "Ra":88,
+    "Ac":89,
+    "Th":90,
+    "Pa":91,
+    "U":92,
+    "Np":93,
+    "Pu":94,
+    "Am":95,
+    "Cm":96,
+    "Bk":97,
+    "Cf":98,
+    "Es":99,
+    "Fm":100,
+    "Md":101,
+    "No":102,
+    "Lr":103,
+    "Rf":104,
+    "Db":105,
+    "Sg":106,
+    "Bh":107,
+    "Hs":108,
+    "Mt":109,
+    "Ds":110,
+    "Rg":111,
+    "Cn":112,
+    "Uut":113,
+    "Uuq":114,
+    "Uup":115,
+    "Uuh":116,
+    "Uus":117,
+    "Uuo":118,
+    }

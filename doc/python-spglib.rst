@@ -1,22 +1,19 @@
 .. _python_spglib:
 
-Spglib for python
+Spglib for Python
 ==================
 
-This is written to work with Atomistic Simulation Environment (ASE)
-Atoms class object. An alternative Atoms class (`atoms.py
-<https://github.com/atztogo/spglib/blob/master/python/examples/atoms.py>`_)
-that contains minimum
-set of methods is prepared in the `examples
-<https://github.com/atztogo/spglib/tree/master/python/examples>`_ directory.
-
-|
+.. contents::
+   :depth: 2
+   :local:
 
 Installation
 -------------
 
-Full source codes, examples, and the test are downloaded `here
-<https://sourceforge.net/project/showfiles.php?group_id=215020>`_.
+Source codes, examples, and the test are downloaded `SourceForge
+<https://sourceforge.net/project/showfiles.php?group_id=215020>`_ or
+`GitHub
+<https://github.com/atztogo/spglib/releases>`_.
 
 Using package distribution service
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -37,10 +34,10 @@ Conda is another choice::
 
 These packages are made by Paweł T. Jochym.
 
-Building from setup.py
-^^^^^^^^^^^^^^^^^^^^^^^
+Building using setup.py (distutils)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To manually install spglib using ``setup.py``, python header files
+To manually install python-spglib using ``setup.py``, python header files
 (python-dev), gcc, and numpy are required before the build. The
 installation steps are shown as follows:
 
@@ -59,8 +56,6 @@ installation steps are shown as follows:
 3. Put :file:`./lib/python` path into :envvar:`$PYTHONPATH`, e.g., in your
    .washrag.
 
-|
-
 Test
 -----
 
@@ -74,8 +69,6 @@ directory. Got to this directory and run this script. It will be like below::
    Ran 1 test in 2.132s
    
    OK
-
-|
 
 How to import spglib module
 ---------------------------
@@ -97,43 +90,39 @@ If the version is not sure::
    except ImportError:
        from pyspglib import spglib as spg   
 
-|
-
 Version number
 --------------
 
 In version 1.8.3 or later, the version number is obtained by
 ``spglib.__version__`` or :ref:`method_get_version`.
 
-|
-
 Example
 --------
 
 Examples are found in `examples
 <https://github.com/atztogo/spglib/tree/master/python/examples>`_
-directory. In this directory, an alternative Atoms class in `atoms.py
-<https://github.com/atztogo/spglib/blob/master/python/examples/atoms.py>`_
-can be used instead of the ``Atoms`` class in ASE for spglib.
-
-|
+directory.
 
 Variables
 ----------
 
 .. _variables_crystal_structure:
 
-Cristal structure (``atoms``)
+Crystal structure (``cell``)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Crsytal structure information is given either in an **Atoms object**
-or a **tuple**, where the tuple is supported at version 1.9.1 or
-later. In the case given by a tuple, it has to follow the format as
-written below.
+A crystal structure is given by a **tuple**. This tuple format
+is supported at version 1.9.1 or later. Optionally, an **ASE Atoms-like
+object** is also supported. An alternative Atoms class (`atoms.py
+<https://github.com/atztogo/spglib/blob/master/python/examples/atoms.py>`_)
+that contains minimum set of methods is prepared in the `examples
+<https://github.com/atztogo/spglib/tree/master/python/examples>`_
+directory.
 
-The elements of a tuple are ``atoms = (lattice, positions, numbers,
-magmoms)`` where ``magmoms`` is optional, three elements of the tuple
-are accepted.
+The tuple format is shown as follows. There are three or four elements
+in the tuple: ``cell = (lattice, positions, numbers)`` or ``cell =
+(lattice, positions, numbers, magmoms)`` where ``magmoms`` is
+optional.
 
 Lattice parameters ``lattice`` are given by a 3x3 matrix with floating
 point values. Fractional atomic positions ``positions`` are given by a
@@ -159,8 +148,6 @@ Symmetry tolerance (``symprec``)
 
 Distance tolerance in Cartesian coordinates to find crystal symmetry.
 
-|
-
 Methods
 --------
 
@@ -177,27 +164,23 @@ Methods
 
 This returns version number of spglib by tuple with three numbers.
 
-|
-
 ``get_spacegroup``
 ^^^^^^^^^^^^^^^^^^^
 
 ::
 
-    spacegroup = get_spacegroup(atoms, symprec=1e-5)
+    spacegroup = get_spacegroup(cell, symprec=1e-5)
 
 International space group short symbol and number are obtained as a
 string. With ``symbol_type=1``, Schoenflies symbol is given instead of
 international symbol.
-
-|
 
 ``get_symmetry``
 ^^^^^^^^^^^^^^^^^^
 
 ::
 
-    symmetry = get_symmetry(atoms, symprec=1e-5)
+    symmetry = get_symmetry(cell, symprec=1e-5)
 
 Symmetry operations are obtained as a dictionary. The key ``rotation``
 contains a numpy array of integer, which is "number of symmetry
@@ -217,8 +200,6 @@ The rotation matrix and translation vector are used as follows::
 The three values in the vector are given for the a, b, and c axes,
 respectively.
 
-|
-
 ``refine_cell``
 ^^^^^^^^^^^^^^^^
 
@@ -226,7 +207,7 @@ respectively.
 
 ::
 
-    lattice, scaled_positions, numbers = refine_cell(atoms, symprec=1e-5)
+    lattice, scaled_positions, numbers = refine_cell(cell, symprec=1e-5)
 
 Bravais lattice (3x3 numpy array), atomic scaled positions (a numpy
 array of [number_of_atoms,3]), and atomic numbers (a 1D numpy array)
@@ -236,8 +217,6 @@ fails, ``None`` is returned.
 The detailed control of standardization of unit cell may be done using
 ``standardize_cell``.
 
-|
-
 ``find_primitive``
 ^^^^^^^^^^^^^^^^^^^
 
@@ -245,7 +224,7 @@ The detailed control of standardization of unit cell may be done using
 
 ::
 
-   lattice, scaled_positions, numbers = find_primitive(atoms, symprec=1e-5)
+   lattice, scaled_positions, numbers = find_primitive(cell, symprec=1e-5)
 
 When a primitive cell is found, lattice parameters (3x3 numpy array),
 scaled positions (a numpy array of [number_of_atoms,3]), and atomic
@@ -253,8 +232,6 @@ numbers (a 1D numpy array) is returned. When it fails, ``None`` is returned.
 
 The detailed control of standardization of unit cell can be done using
 ``standardize_cell``.
-
-|
 
 ``standardize_cell``
 ^^^^^^^^^^^^^^^^^^^^^
@@ -273,22 +250,23 @@ this method with combinations of these options. When it fails,
 ``None`` is returned. More detailed explanation is shown in the spglib
 (C-API) document.
 
-|
-
 ``get_symmetry_dataset``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+**At version 1.9.4, the member 'choice' is added.**
+
 ::
 
-    dataset = get_symmetry_dataset(atoms, symprec=1e-5)
+    dataset = get_symmetry_dataset(cell, symprec=1e-5)
 
 ``dataset`` is a dictionary. The keys are:
 
 * ``number``: International space group number
 * ``international``: International short symbol
 * ``hall``: Hall symbol
+* ``choice``: Centring, origin, basis vector setting
 * ``transformation_matrix``: Transformation matrix from lattice of input cell to Bravais lattice :math:`L^{bravais} = L^{original} * T`
-* ``origin shift``: Origin shift in the setting of Bravais lattice
+* ``origin shift``: Origin shift choice in the setting of Bravais lattice
 * ``wyckoffs``: Wyckoff letters
 * ``equivalent_atoms``: Mapping table to equivalent atoms
 * ``rotations`` and ``translations``: Rotation matrices and
@@ -308,8 +286,6 @@ this method with combinations of these options. When it fails,
   ``positions``, and ``numbers`` presented at
   :ref:`variables_crystal_structure`, respectively.
 
-|
-
 ``get_symmetry_from_database``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -323,10 +299,10 @@ translation parts are accessed by the keys ``rotations`` and
 ``translations``, respectively. The definition of ``hall_number`` is
 found at :ref:`api_spg_get_dataset_spacegroup_type`.
 
-|
-
 ``get_spacegroup_type``
 ^^^^^^^^^^^^^^^^^^^^^^^^
+
+**New at version 1.9.4**
 
 ::
 
@@ -334,7 +310,7 @@ found at :ref:`api_spg_get_dataset_spacegroup_type`.
 
 This function allows to directly access to the space-group-type
 database in spglib (spg_database.c). A dictionary is returned. To
-specify the space group type with a specific setting, ``hall_number``
+specify the space group type with a specific choice, ``hall_number``
 is used. The definition of ``hall_number`` is found at
 :ref:`api_spg_get_dataset_spacegroup_type`. The keys of the returned
 dictionary is as follows:
@@ -347,6 +323,7 @@ dictionary is as follows:
    international
    schoenflies
    hall_symbol
+   choice
    pointgroup_schoenflies
    pointgroup_international
    arithmetic_crystal_class_number
@@ -359,22 +336,58 @@ Here ``spacegroup_type['international_short']`` is equivalent to
 ``spacegroup_type['pointgroup_international']`` is equivalent to
 ``dataset['pointgroup_symbol']`` of ``get_symmetry_dataset``.
 
-|
+``niggli_reduce``
+^^^^^^^^^^^^^^^^^^
+
+**New at version 1.9.4**
+
+::
+
+   niggli_lattice = niggli_reduce(lattice, eps=1e-5)
+
+Niggli reduction is achieved using this method. The algorithm detail
+is found at https://atztogo.github.io/niggli/ and the references are
+there in. Basis vectors are stored in ``lattice`` and
+``niggli_lattice`` as shown in
+:ref:`variables_crystal_structure`. ``esp`` is the tolerance
+parameter, but unlike ``symprec`` the unit is not a length. This is used
+to check if difference of norms of two basis vectors is close to zero
+or not and if two basis vectors are orthogonal by the value of dot product
+being close to zero or not.  The detail is shown at
+https://atztogo.github.io/niggli/.
+
+``delaunay_reduce``
+^^^^^^^^^^^^^^^^^^^^
+
+**New at version 1.9.4**
+
+::
+
+   delaunay_lattice = delaunay_reduce(lattice, eps=1e-5)
+
+Delaunay reduction is achieved using this method. The algorithm is
+found in the international tables for crystallography volume A. Basis
+vectors are stored in ``lattice`` and ``niggli_lattice`` as shown in
+:ref:`variables_crystal_structure`. ``esp`` is the tolerance
+parameter, but unlike ``symprec`` the unit is not a length. This is
+used as the criterion if volume is close to zero or not and if two
+basis vectors are orthogonal by the value of dot product being close
+to zero or not.
 
 ``get_ir_reciprocal_mesh``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ::
 
-   mapping, grid = get_ir_reciprocal_mesh(mesh, atoms, is_shift=[0, 0, 0])
+   mapping, grid = get_ir_reciprocal_mesh(mesh, cell, is_shift=[0, 0, 0])
 
 Irreducible k-points are obtained from a sampling mesh of k-points.
 ``mesh`` is given by three integers by array and specifies mesh
-numbers along reciprocal primitive axis. ``atoms`` is an Atoms object
-of ASE. ``is_shift`` is given by the three integers by array. When
-``is_shift`` is set for each reciprocal primitive axis, the mesh is
-shifted along the axis in half of adjacent mesh points irrespective of
-the mesh numbers. When the value is not 0, ``is_shift`` is set.
+numbers along reciprocal primitive axis. ``is_shift`` is given by the
+three integers by array. When ``is_shift`` is set for each reciprocal
+primitive axis, the mesh is shifted along the axis in half of adjacent
+mesh points irrespective of the mesh numbers. When the value is not 0,
+``is_shift`` is set.
 
 ``mapping`` and ``grid`` are returned. ``grid`` gives the mesh points in
 fractional coordinates in reciprocal space. ``mapping`` gives mapping to
@@ -389,6 +402,6 @@ For example, the irreducible k-points in fractional coordinates are
 obtained by ::
 
    ir_grid = []
-   mapping, grid = get_ir_reciprocal_mesh([ 8, 8, 8 ], atoms, [1, 1, 1])
+   mapping, grid = get_ir_reciprocal_mesh([ 8, 8, 8 ], cell, [1, 1, 1])
    for i in np.unique(mapping):
        ir_grid.append(grid[i])

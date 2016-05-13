@@ -204,7 +204,7 @@ VALUE method_get_dataset(VALUE self,
   rb_ary_push(array, rb_str_new2(dataset->international_symbol));
   rb_ary_push(array, INT2NUM(dataset->hall_number));
   rb_ary_push(array, rb_str_new2(dataset->hall_symbol));
-  rb_ary_push(array, rb_str_new2(dataset->setting));
+  rb_ary_push(array, rb_str_new2(dataset->choice));
   
   /* Transformation_matrix */
   r_tmat = rb_ary_new();

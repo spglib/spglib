@@ -1,8 +1,19 @@
-Important variables
-====================
+Variables
+==========
+
+Variables frequently used in C-API are explained. In interfaces of
+other languages, the definition may be different, e.g., ``lattice``
+for Python interface is transposed.
+
+.. contents::
+   :depth: 2
+   :local:
 
 ``lattice``
 -------------
+
+**Attention**: In Python interface, ``lattice`` is transposed
+(:ref:`variables_crystal_structure`.)
 
 Basis vectors (in Cartesian)
 

@@ -123,6 +123,8 @@ def get_symmetry_dataset(cell, symprec=1e-5, angle_tolerance=-1.0):
             str: International symbol
         hall: 
             str: Hall symbol
+        choice: 
+            str: Centring, origin, basis vector setting
         transformation_matrix:
             3x3 float matrix:
                 Transformation matrix from input lattice to standardized lattice
@@ -150,6 +152,7 @@ def get_symmetry_dataset(cell, symprec=1e-5, angle_tolerance=-1.0):
             'hall_number',
             'international',
             'hall',
+            'choice',
             'transformation_matrix',
             'origin_shift',
             'rotations',
@@ -159,7 +162,7 @@ def get_symmetry_dataset(cell, symprec=1e-5, angle_tolerance=-1.0):
             'std_lattice',
             'std_types',
             'std_positions',
-            'pointgroup_number',
+            # 'pointgroup_number',
             'pointgroup')
     spg_ds = spg.dataset(lattice, positions, numbers, symprec, angle_tolerance)
     if spg_ds is None:
@@ -171,6 +174,7 @@ def get_symmetry_dataset(cell, symprec=1e-5, angle_tolerance=-1.0):
 
     dataset['international'] = dataset['international'].strip()
     dataset['hall'] = dataset['hall'].strip()
+    dataset['choice'] = dataset['choice'].strip()
     dataset['transformation_matrix'] = np.array(
         dataset['transformation_matrix'], dtype='double', order='C')
     dataset['origin_shift'] = np.array(dataset['origin_shift'], dtype='double')
@@ -221,6 +225,7 @@ def get_spacegroup_type(hall_number):
             'international',
             'schoenflies',
             'hall_symbol',
+            'choice',
             'pointgroup_schoenflies',
             'pointgroup_international',
             'arithmetic_crystal_class_number',
@@ -346,7 +351,7 @@ def refine_cell(cell, symprec=1e-5, angle_tolerance=-1.0):
                                    angle_tolerance)
 
 
-    if num_atom_prim > 0:
+    if num_atom_std > 0:
         return (np.array(lattice.T, dtype='double', order='C'),
                 np.array(positions[:num_atom_std], dtype='double', order='C'),
                 np.array(numbers[:num_atom_std], dtype='intc'))
@@ -581,6 +586,36 @@ def relocate_BZ_grid_address(grid_address,
 
     return bz_grid_address[:num_bz_ir], bz_map
   
+def delaunay_reduce(lattice, eps=1e-5):
+    """Run Delaunay reduction
+
+    Args:
+        lattice: Lattice parameters in the form of
+            [[a_x, a_y, a_z],
+             [b_x, b_y, b_z],
+             [c_x, c_y, c_z]]
+        symprec:
+            float: Tolerance to check if volume is close to zero or not and
+                   if two basis vectors are orthogonal by the value of dot
+                   product being close to zero or not.
+    
+    Returns:
+        if the Delaunay reduction succeeded:
+            Reduced lattice parameters are given as a numpy 'double' array:
+            [[a_x, a_y, a_z],
+             [b_x, b_y, b_z],
+             [c_x, c_y, c_z]]
+        otherwise None is returned.
+    """
+    delaunay_lattice = np.array(np.transpose(lattice),
+                                dtype='double', order='C')
+    result = spg.delaunay_reduce(delaunay_lattice, float(eps))
+    if result == 0:
+        return None
+    else:
+        return np.array(np.transpose(delaunay_lattice),
+                        dtype='double', order='C')
+
 def niggli_reduce(lattice, eps=1e-5):
     """Run Niggli reduction
 
@@ -589,7 +624,12 @@ def niggli_reduce(lattice, eps=1e-5):
             [[a_x, a_y, a_z],
              [b_x, b_y, b_z],
              [c_x, c_y, c_z]]
-        eps: Tolerance.
+        eps:
+            float: Tolerance to check if difference of norms of two basis
+                   vectors is close to zero or not and if two basis vectors are
+                   orthogonal by the value of dot product being close to zero or
+                   not. The detail is shown at 
+                   https://atztogo.github.io/niggli/.
     
     Returns:
         if the Niggli reduction succeeded:
@@ -597,7 +637,7 @@ def niggli_reduce(lattice, eps=1e-5):
             [[a_x, a_y, a_z],
              [b_x, b_y, b_z],
              [c_x, c_y, c_z]]
-        otherwise returns None.
+        otherwise None is returned.
     """
     niggli_lattice = np.array(np.transpose(lattice), dtype='double', order='C')
     result = spg.niggli_reduce(niggli_lattice, float(eps))
