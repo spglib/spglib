@@ -1,9 +1,13 @@
-Definitions and conventions used in spglib
-===========================================
+Definitions and conventions
+============================
 
 Information in this page is valid for spglib 1.8.1 or later. The
 definitions of transformation matrix and origin shift were different
 in the previous versions.
+
+.. contents::
+   :depth: 2
+   :local:
 
 Basis vectors :math:`(\mathbf{a}, \mathbf{b}, \mathbf{c})` or :math:`(\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)`
 ------------------------------------------------------------------------------------------------------------------
@@ -223,8 +227,8 @@ as follows:
    \frac{{1}}{2} & \frac{{1}}{2} & 0
    \end{pmatrix}.
 
-In rhombohedral cells, regardless of rhombohedral or hexagonal
-setting, :math:`\boldsymbol{P}_\mathrm{R}` is applied.
+For rhombohedral lattice systems with the choice of hexagonal axes,
+:math:`\boldsymbol{P}_\mathrm{R}` is applied.
 
 .. _def_idealize_cell:
 
@@ -242,8 +246,8 @@ triclinic crystals, crystals can be rotated in Cartesian coordinates,
 which is the different type of transformation from that of the
 change-of-basis transformation explained above.
 
-Triclinic
-""""""""""
+Triclinic lattice
+""""""""""""""""""
 
 - Niggli reduced cell is used for choosing :math:`\mathbf{a}, \mathbf{b}, \mathbf{c}`.
 - :math:`\mathbf{a}` is set along :math:`+x` direction of Cartesian coordinates.
@@ -251,8 +255,8 @@ Triclinic
   coordinates so that :math:`\mathbf{a}\times\mathbf{b}` is along
   :math:`+z` direction of Cartesian coordinates.
 
-Monoclinic
-"""""""""""
+Monoclinic lattice
+"""""""""""""""""""
 
 - :math:`b` axis is taken as the unique axis.
 - :math:`\alpha = 90^\circ` and :math:`\gamma = 90^\circ`
@@ -262,8 +266,8 @@ Monoclinic
 - :math:`\mathbf{b}` is set along :math:`+y` direction of Cartesian coordinates.
 - :math:`\mathbf{c}` is set in :math:`x\text{-}z` plane of Cartesian coordinates.
 
-Orthorhombic
-"""""""""""""
+Orthorhombic lattice
+"""""""""""""""""""""
 
 - :math:`\alpha = \beta = \gamma = 90^\circ`.
 
@@ -271,8 +275,8 @@ Orthorhombic
 - :math:`\mathbf{b}` is set along :math:`+y` direction of Cartesian coordinates.
 - :math:`\mathbf{c}` is set along :math:`+z` direction of Cartesian coordinates.
 
-Tetragonal
-"""""""""""
+Tetragonal lattice
+"""""""""""""""""""
 
 - :math:`\alpha = \beta = \gamma = 90^\circ`.
 - :math:`a=b`.
@@ -281,8 +285,8 @@ Tetragonal
 - :math:`\mathbf{b}` is set along :math:`+y` direction of Cartesian coordinates.
 - :math:`\mathbf{c}` is set along :math:`+z` direction of Cartesian coordinates.
 
-Rhombohedral
-"""""""""""""
+Rhombohedral lattice
+"""""""""""""""""""""
 
 - :math:`\alpha = \beta = \gamma`.
 - :math:`a=b=c`.
@@ -307,8 +311,8 @@ Rhombohedral
 - :math:`a_{z} = b_{z} = c_{z}`.
 
 
-Hexagonal
-""""""""""
+Hexagonal lattice
+""""""""""""""""""
 
 - :math:`\alpha = \beta = 90^\circ`.
 - :math:`\gamma = 120^\circ`.
@@ -318,8 +322,8 @@ Hexagonal
 - :math:`\mathbf{b}` is set in :math:`x\text{-}y` plane of Cartesian coordinates.
 - :math:`\mathbf{c}` is set along :math:`+z` direction of Cartesian coordinates.
 
-Cubic
-""""""
+Cubic lattice
+""""""""""""""
 
 - :math:`\alpha = \beta = \gamma = 90^\circ`.
 - :math:`a=b=c`.

@@ -1,6 +1,18 @@
-2016-04-28  Atsushi Togo  <atz.togo@gmail.com>
+2016-05-06  Atsushi Togo  <atz.togo@gmail.com>
 
-	* Version 1.9.3
+	* Version 1.9.4
+
+	* src/spglib.h (SpglibDataset):
+
+	The member of SpglibDataset, 'setting', is renamed to 'choice',
+	and 'pointgroup_number' is removed.
+
+	* src/cell.c (get_overlap_table):
+
+	Fix unexpected behavior. This might happen in a rare case with
+	large tolerance.
+
+2016-04-28  Atsushi Togo  <atz.togo@gmail.com>
 
 	* src/spglib.c (spg_get_spacegroup_type):
 

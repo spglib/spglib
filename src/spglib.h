@@ -99,7 +99,7 @@ typedef struct {
   int hall_number;
   char international_symbol[11];
   char hall_symbol[17];
-  char setting[6];
+  char choice[6];
   double transformation_matrix[3][3];
   double origin_shift[3];
   int n_operations;
@@ -112,7 +112,7 @@ typedef struct {
   double std_lattice[3][3];
   int *std_types;
   double (*std_positions)[3];
-  int pointgroup_number;
+  /* int pointgroup_number; */
   char pointgroup_symbol[6];
 } SpglibDataset;
 
@@ -123,6 +123,7 @@ typedef struct {
   char international[32];
   char schoenflies[7];
   char hall_symbol[17];
+  char choice[6];
   char pointgroup_international[6];
   char pointgroup_schoenflies[4];
   int arithmetic_crystal_class_number;

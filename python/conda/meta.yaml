@@ -5,6 +5,8 @@ package:
 
 source:
   git_url: https://github.com/jochym/spglib.git
+  git_branch: {{ environ.get('GIT_BRANCH','master') }}
+
 # Lock to particular tag. We always test HEAD and build and upload tags
 # so to manual tak is necessary here
 #  git_tag: v1.9.0
@@ -13,6 +15,8 @@ source:
    # - fix.patch
 
 build:
+  script_env:
+    - GIT_BRANCH
   preserve_egg_dir: True
 # entry_points:
     # Put any entry points (scripts to be generated automatically) here. The
@@ -52,7 +56,7 @@ test:
     #- nose
 
 about:
-  home: http://spglib.sourceforge.net/
+  home: https://atztogo.github.io/spglib/
   license: BSD
   summary: 'Space symmetry groups spglib module.'
 

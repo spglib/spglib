@@ -133,7 +133,6 @@ static int get_symmetry_numerical(int rotation[][3][3],
 				  const int types[],
 				  const int num_atom,
 				  const double symprec);
-static int is_rhombohedral(const int hall_number);
 
 /*---------*/
 /* kpoints */
@@ -287,7 +286,7 @@ void spg_free_dataset(SpglibDataset *dataset)
   dataset->hall_number = 0;
   strcpy(dataset->international_symbol, "");
   strcpy(dataset->hall_symbol, "");
-  strcpy(dataset->setting, "");
+  strcpy(dataset->choice, "");
   
   free(dataset);
   dataset = NULL;
@@ -602,6 +601,7 @@ SpglibSpacegroupType spg_get_spacegroup_type(const int hall_number)
   spglibtype.number = 0;
   strcpy(spglibtype.schoenflies, "");
   strcpy(spglibtype.hall_symbol, "");
+  strcpy(spglibtype.choice, "");
   strcpy(spglibtype.international, "");
   strcpy(spglibtype.international_full, "");
   strcpy(spglibtype.international_short, "");
@@ -615,6 +615,7 @@ SpglibSpacegroupType spg_get_spacegroup_type(const int hall_number)
     spglibtype.number = spgtype.number;
     strcpy(spglibtype.schoenflies, spgtype.schoenflies);
     strcpy(spglibtype.hall_symbol, spgtype.hall_symbol);
+    strcpy(spglibtype.choice, spgtype.choice);
     strcpy(spglibtype.international, spgtype.international);
     strcpy(spglibtype.international_full, spgtype.international_full);
     strcpy(spglibtype.international_short, spgtype.international_short);
@@ -987,7 +988,7 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
   dataset->hall_number = 0;
   strcpy(dataset->international_symbol, "");
   strcpy(dataset->hall_symbol, "");
-  strcpy(dataset->setting, "");
+  strcpy(dataset->choice, "");
   dataset->origin_shift[0] = 0;
   dataset->origin_shift[1] = 0;
   dataset->origin_shift[2] = 0;
@@ -1000,7 +1001,7 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
   dataset->n_std_atoms = 0;
   dataset->std_positions = NULL;
   dataset->std_types = NULL;
-  dataset->pointgroup_number = 0;
+  /* dataset->pointgroup_number = 0; */
   strcpy(dataset->pointgroup_symbol, "");
 
   if ((cell = cel_alloc_cell(num_atom)) == NULL) {
@@ -1093,7 +1094,7 @@ static int set_dataset(SpglibDataset * dataset,
   dataset->hall_number = spacegroup->hall_number;
   strcpy(dataset->international_symbol, spacegroup->international_short);
   strcpy(dataset->hall_symbol, spacegroup->hall_symbol);
-  strcpy(dataset->setting, spacegroup->setting);
+  strcpy(dataset->choice, spacegroup->choice);
   mat_inverse_matrix_d3(inv_lat, spacegroup->bravais_lattice, 0);
   mat_multiply_matrix_d3(dataset->transformation_matrix,
 			 inv_lat,
@@ -1180,7 +1181,7 @@ static int set_dataset(SpglibDataset * dataset,
   sym_free_symmetry(symmetry);
   symmetry = NULL;
 
-  dataset->pointgroup_number = spacegroup->pointgroup_number;
+  /* dataset->pointgroup_number = spacegroup->pointgroup_number; */
   pointgroup = ptg_get_pointgroup(spacegroup->pointgroup_number);
   strcpy(dataset->pointgroup_symbol, pointgroup.symbol);
 
@@ -1417,11 +1418,6 @@ static int standardize_primitive(double lattice[3][3],
     goto err;
   }
 
-  if (is_rhombohedral(dataset->hall_number)) {
-    centering = R_CENTER;
-  }
-
-
   if ((bravais = cel_alloc_cell(dataset->n_std_atoms)) == NULL) {
     spg_free_dataset(dataset);
     return 0;
@@ -1520,9 +1516,6 @@ static int get_standardized_cell(double lattice[3][3],
   if (to_primitive) {
     if ((centering = get_centering(dataset->hall_number)) == CENTERING_ERROR) {
       goto err;
-    }
-    if (is_rhombohedral(dataset->hall_number)) {
-      centering = R_CENTER;
     }
   } else {
     centering = PRIMITIVE;
@@ -1701,21 +1694,6 @@ static int get_symmetry_numerical(int rotation[][3][3],
   cell = NULL;
 
   return size;
-}
-
-static int is_rhombohedral(const int hall_number)
-{
-  if (hall_number == 433 ||
-      hall_number == 436 ||
-      hall_number == 444 ||
-      hall_number == 450 ||
-      hall_number == 452 ||
-      hall_number == 458 ||
-      hall_number == 460) {
-    return 1;
-  } else {
-    return 0;
-  }
 }
 
 /*---------*/

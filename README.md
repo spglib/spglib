@@ -12,7 +12,7 @@ How to compile
 
     % aclocal
     % autoheader
-    % libtoolize # or glibtoolize on mac
+    % libtoolize # or glibtoolize with macport etc
     % touch INSTALL NEWS README AUTHORS
     % automake -acf
     % autoconf

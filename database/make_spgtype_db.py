@@ -74,9 +74,9 @@ def get_centering(centering, setting):
         return "C_FACE"
     elif centering == 'R':
         if setting == 'H':
-            return "PRIMITIVE"
-        else:
             return "R_CENTER"
+        else:
+            return "PRIMITIVE"
     else:
         return "PRIMITIVE"
 
