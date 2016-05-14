@@ -28,8 +28,8 @@ if os.path.exists('src'):
 else:
     source_dir = "../src"
 include_dirs = [source_dir,]
-for i in range(len(sources)):
-    sources[i] = "%s/%s" % (source_dir, sources[i]) 
+for i,s in enumerate(sources):
+    sources[i] = "%s/%s" % (source_dir, s) 
 
 ## Uncomment to activate OpenMP support for gcc
 # extra_compile_args += ['-fopenmp']

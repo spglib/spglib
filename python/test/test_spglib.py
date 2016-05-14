@@ -75,7 +75,7 @@ class TestSpglib(unittest.TestCase):
                 primitive = find_primitive(cell, symprec=1e-5)
             spg_type = get_spacegroup_type(dataset['hall_number'])
             c = spg_type['international_short'][0]
-            if c == 'A' or c == 'B' or c == 'C' or c == 'I':
+            if c in ['A', 'B', 'C', 'I']:
                 multiplicity = 2
             elif c == 'F':
                 multiplicity = 4
