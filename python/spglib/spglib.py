@@ -38,7 +38,7 @@ import numpy as np
 def get_version():
     return tuple(spg.version())
 
-def get_symmetry(cell, use_magmoms=False, symprec=1e-5, angle_tolerance=-1.0):
+def get_symmetry(cell, symprec=1e-5, angle_tolerance=-1.0):
     """This gives crystal symmetry operations from a crystal structure.
 
     Args:
@@ -53,8 +53,6 @@ def get_symmetry(cell, use_magmoms=False, symprec=1e-5, angle_tolerance=-1.0):
                 [[a_x, a_y, a_z],
                  [b_x, b_y, b_z],
                  [c_x, c_y, c_z]]
-        use_magmoms:
-            bool: If True, collinear magnetic polarizatin is considered.
         symprec:
             float: Symmetry search tolerance in the unit of length.
         angle_tolerance:
@@ -70,30 +68,13 @@ def get_symmetry(cell, use_magmoms=False, symprec=1e-5, angle_tolerance=-1.0):
             translations with respect to a, b, c axes.
     """
 
-    lattice, positions, numbers, magmoms = _expand_cell(
-        cell, use_magmoms=use_magmoms)
+    lattice, positions, numbers, magmoms = _expand_cell(cell)
     multi = 48 * len(positions)
     rotation = np.zeros((multi, 3, 3), dtype='intc')
     translation = np.zeros((multi, 3), dtype='double')
 
     # Get symmetry operations
-    if use_magmoms:
-        equivalent_atoms = np.zeros(len(magmoms), dtype='intc')
-        num_sym = spg.symmetry_with_collinear_spin(rotation,
-                                                   translation,
-                                                   equivalent_atoms,
-                                                   lattice,
-                                                   positions,
-                                                   numbers,
-                                                   magmoms,
-                                                   symprec,
-                                                   angle_tolerance)
-        return ({'rotations': np.array(rotation[:num_sym],
-                                       dtype='intc', order='C'),
-                 'translations': np.array(translation[:num_sym],
-                                          dtype='double', order='C')},
-                equivalent_atoms)
-    else:
+    if magmoms is None:
         num_sym = spg.symmetry(rotation,
                                translation,
                                lattice,
@@ -106,6 +87,22 @@ def get_symmetry(cell, use_magmoms=False, symprec=1e-5, angle_tolerance=-1.0):
                                       dtype='intc', order='C'),
                 'translations': np.array(translation[:num_sym],
                                          dtype='double', order='C')}
+    else:
+        equivalent_atoms = np.zeros(len(magmoms), dtype='intc')
+        num_sym = spg.symmetry_with_collinear_spin(rotation,
+                                                   translation,
+                                                   equivalent_atoms,
+                                                   lattice,
+                                                   positions,
+                                                   numbers,
+                                                   magmoms,
+                                                   symprec,
+                                                   angle_tolerance)
+        return {'rotations': np.array(rotation[:num_sym],
+                                      dtype='intc', order='C'),
+                'translations': np.array(translation[:num_sym],
+                                         dtype='double', order='C'),
+                'equivalent_atoms': equivalent_atoms}
 
 def get_symmetry_dataset(cell, symprec=1e-5, angle_tolerance=-1.0):
     """Search symmetry dataset from an input cell.
@@ -646,12 +643,12 @@ def niggli_reduce(lattice, eps=1e-5):
     else:
         return np.array(np.transpose(niggli_lattice), dtype='double', order='C')
 
-def _expand_cell(cell, use_magmoms=False):
+def _expand_cell(cell):
     if isinstance(cell, tuple):
         lattice = np.array(np.transpose(cell[0]), dtype='double', order='C')
         positions = np.array(cell[1], dtype='double', order='C')
         numbers = np.array(cell[2], dtype='intc')
-        if len(cell) > 3 and use_magmoms:
+        if len(cell) > 3:
             magmoms = np.array(cell[3], dtype='double')
         else:
             magmoms = None
@@ -660,9 +657,6 @@ def _expand_cell(cell, use_magmoms=False):
         positions = np.array(cell.get_scaled_positions(),
                              dtype='double', order='C')
         numbers = np.array(cell.get_atomic_numbers(), dtype='intc')
-        if use_magmoms:
-            magmoms = np.array(cell.get_magnetic_moments(), dtype='double')
-        else:
-            magmoms = None
+        magmoms = None
 
     return (lattice, positions, numbers, magmoms)
