@@ -106,30 +106,34 @@ directory.
 Variables
 ----------
 
-.. _variables_crystal_structure:
+.. _py_variables_crystal_structure:
 
 Crystal structure (``cell``)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-A crystal structure is given by a **tuple**. This tuple format
-is supported at version 1.9.1 or later. Optionally, an **ASE Atoms-like
+A crystal structure is given by a **tuple**. This tuple format is
+supported at version 1.9.1 or later. Optionally, an **ASE Atoms-like
 object** is also supported. An alternative Atoms class (`atoms.py
 <https://github.com/atztogo/spglib/blob/master/python/examples/atoms.py>`_)
 that contains minimum set of methods is prepared in the `examples
 <https://github.com/atztogo/spglib/tree/master/python/examples>`_
-directory.
+directory. When using ASE Atoms-like object, ``get_symmetry`` with
+collinear polarizations is not supported.
 
 The tuple format is shown as follows. There are three or four elements
 in the tuple: ``cell = (lattice, positions, numbers)`` or ``cell =
-(lattice, positions, numbers, magmoms)`` where ``magmoms`` is
-optional.
+(lattice, positions, numbers, magmoms)`` where ``magmoms`` represents
+collinear polarizations on atoms and is optional.
 
 Lattice parameters ``lattice`` are given by a 3x3 matrix with floating
-point values. Fractional atomic positions ``positions`` are given by a
-Nx3 matrix with floating point values, where N is the number of
-atoms. Numbers to distinguish atomic species ``numbers`` are given
-by a list of N integers. Collinear magnetic moments ``magmoms`` are
-given by a list of N floating point values.
+point values, where :math:`\mathbf{a}, \mathbf{b}, \mathbf{c}` are
+given as rows, which results in the transpose of the definition for
+C-API (:ref:`variables_lattice`). Fractional atomic positions
+``positions`` are given by a Nx3 matrix with floating point values,
+where N is the number of atoms. Numbers to distinguish atomic species
+``numbers`` are given by a list of N integers. The collinear polarizations
+``magmoms`` only work with ``get_symmetry`` and are given
+as a list of N floating point values.
 
 ::
 
@@ -141,7 +145,7 @@ given by a list of N floating point values.
                 [a_3, b_3, c_3],
                 ...]
    numbers = [n_1, n_2, n_3, ...]
-   magmoms = [m_1, m_2, m_3, ...]
+   magmoms = [m_1, m_2, m_3, ...]  # Only works with get_symmetry
 
 Symmetry tolerance (``symprec``)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -175,6 +179,8 @@ International space group short symbol and number are obtained as a
 string. With ``symbol_type=1``, Schoenflies symbol is given instead of
 international symbol.
 
+.. _py_method_get_symmetry:
+
 ``get_symmetry``
 ^^^^^^^^^^^^^^^^^^
 
@@ -188,17 +194,31 @@ operations" x "3x3 matrices". The key ``translation`` contains a numpy
 array of float, which is "number of symmetry operations" x
 "vectors". The orders of the rotation matrices and the translation
 vectors correspond with each other, e.g. , the second symmetry
-operation is organized by the second rotation matrix and second
-translation vector in the respective arrays. The operations are
-applied for the fractional coordinates (not for Cartesian
-coordinates).
+operation is organized by the set of the second rotation matrix and second
+translation vector in the respective arrays. Therefore a set of
+symmetry operations may obtained by::
 
-The rotation matrix and translation vector are used as follows::
+   [(r, t) for r, t in zip(dataset['rotations'], dataset['translations'])]
+
+The operations are given with respect to the fractional coordinates
+(not for Cartesian coordinates). The rotation matrix and translation
+vector are used as follows::
 
     new_vector[3x1] = rotation[3x3] * vector[3x1] + translation[3x1]
 
 The three values in the vector are given for the a, b, and c axes,
-respectively.
+respectively. The key ``equivalent_atoms`` gives a mapping table of
+atoms to symmetrically independent atoms. This is used to find
+symmetrically equivalent atoms. The numbers contained are the indices
+of atoms starting from 0, i.e., the first atom is numbered as 0, and
+then 1, 2, 3, ... ``np.unique(equivalent_atoms)`` gives representative
+symmetrically independent atoms. A list of atoms that are symmetrically
+euivalent to some independent atom (here for example 1 is in
+``equivalent_atom``) is found by ``np.where(equivalent_atom=1)[0]``.
+
+If ``cell`` is given as a tuple and collinear polarizations are given
+as the fourth element of this tuple, symmetry operations are searched
+considering this freedome. In ASE Atoms-class object, this is not supported.
 
 ``refine_cell``
 ^^^^^^^^^^^^^^^^
@@ -250,6 +270,8 @@ this method with combinations of these options. When it fails,
 ``None`` is returned. More detailed explanation is shown in the spglib
 (C-API) document.
 
+.. _py_method_get_symmetry_dataset:
+
 ``get_symmetry_dataset``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -270,21 +292,17 @@ this method with combinations of these options. When it fails,
 * ``wyckoffs``: Wyckoff letters
 * ``equivalent_atoms``: Mapping table to equivalent atoms
 * ``rotations`` and ``translations``: Rotation matrices and
-  translation vectors. Space group operations are obtained by::
-
-    [(r, t) for r, t in zip(dataset['rotations'], dataset['translations'])]
-
-..
-   * ``pointgrouop_number``: Serial number of the crystallographic point
-     group, which refers list of space groups (Seto’s web site)
-
+  translation vectors. See :ref:`py_method_get_symmetry` for more details
 * ``pointgroup_symbol``: Symbol of the crystallographic point group in
   the Hermann–Mauguin notation.
 * ``std_lattice``, ``std_positions``, ``std_types``: Standardized
   crystal structure corresponding to a Hall symbol found. These are
   equivalently given in the array formats of ``lattice``,
   ``positions``, and ``numbers`` presented at
-  :ref:`variables_crystal_structure`, respectively.
+  :ref:`py_variables_crystal_structure`, respectively.
+..
+   * ``pointgrouop_number``: Serial number of the crystallographic point
+     group, which refers list of space groups (Seto’s web site)
 
 ``get_symmetry_from_database``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -349,7 +367,7 @@ Niggli reduction is achieved using this method. The algorithm detail
 is found at https://atztogo.github.io/niggli/ and the references are
 there in. Basis vectors are stored in ``lattice`` and
 ``niggli_lattice`` as shown in
-:ref:`variables_crystal_structure`. ``esp`` is the tolerance
+:ref:`py_variables_crystal_structure`. ``esp`` is the tolerance
 parameter, but unlike ``symprec`` the unit is not a length. This is used
 to check if difference of norms of two basis vectors is close to zero
 or not and if two basis vectors are orthogonal by the value of dot product
@@ -368,7 +386,7 @@ https://atztogo.github.io/niggli/.
 Delaunay reduction is achieved using this method. The algorithm is
 found in the international tables for crystallography volume A. Basis
 vectors are stored in ``lattice`` and ``niggli_lattice`` as shown in
-:ref:`variables_crystal_structure`. ``esp`` is the tolerance
+:ref:`py_variables_crystal_structure`. ``esp`` is the tolerance
 parameter, but unlike ``symprec`` the unit is not a length. This is
 used as the criterion if volume is close to zero or not and if two
 basis vectors are orthogonal by the value of dot product being close
