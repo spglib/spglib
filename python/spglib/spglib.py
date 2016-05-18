@@ -75,18 +75,12 @@ def get_symmetry(cell, symprec=1e-5, angle_tolerance=-1.0):
 
     # Get symmetry operations
     if magmoms is None:
-        num_sym = spg.symmetry(rotation,
-                               translation,
-                               lattice,
-                               positions,
-                               numbers,
-                               symprec,
-                               angle_tolerance)
-
-        return {'rotations': np.array(rotation[:num_sym],
-                                      dtype='intc', order='C'),
-                'translations': np.array(translation[:num_sym],
-                                         dtype='double', order='C')}
+        dataset = get_symmetry_dataset(cell,
+                                       symprec=symprec,
+                                       angle_tolerance=angle_tolerance)
+        return {'rotations': dataset['rotations'],
+                'translations': dataset['translations'],
+                'equivalent_atoms': dataset['equivalent_atoms']}
     else:
         equivalent_atoms = np.zeros(len(magmoms), dtype='intc')
         num_sym = spg.symmetry_with_collinear_spin(rotation,
