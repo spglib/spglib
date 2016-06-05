@@ -9,10 +9,10 @@ import numpy as np
 #######################################
 # from ase import Atoms
 
-##################################################################
-# Using the local Atoms class (BSE license) where a small set of #
-# ASE Atoms features is comaptible but enough for this example.  #
-##################################################################
+#######################################################################
+# Using the local Atoms-like class (BSD license) where a small set of #
+# ASE Atoms features is comaptible but enough for this example.       #
+#######################################################################
 from atoms import Atoms
 
 def show_symmetry(symmetry):
@@ -150,15 +150,6 @@ print('')
 symmetry = spglib.get_symmetry(MgB2)
 show_symmetry(symmetry)
 print('')
-print("[get_symmetry by tuple]")
-print("  Symmetry operations of MgB2 are:")
-print('')
-symmetry = spglib.get_symmetry((MgB2.get_cell(),
-                                MgB2.get_scaled_positions(),
-                                MgB2.get_atomic_numbers()))
-show_symmetry(symmetry)
-
-print('')
 print("[get_pointgroup]")
 print("  Pointgroup of Rutile is %s." %
       spglib.get_pointgroup(symmetry['rotations'])[0])
@@ -170,8 +161,7 @@ print("  Spacegroup of Rutile is %s (%d)." % (dataset['international'],
                                               dataset['number']))
 print('')
 print("[get_symmetry_dataset] ['pointgroup']")
-print("  Pointgroup of Rutile is %s (%d)." % (dataset['pointgroup'], 
-                                             dataset['pointgroup_number']))
+print("  Pointgroup of Rutile is %s." % (dataset['pointgroup']))
 print('')
 print("[get_symmetry_dataset] ['hall']")
 print("  Hall symbol of Rutile is %s (%d)." % (dataset['hall'],
