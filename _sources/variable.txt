@@ -9,11 +9,13 @@ for Python interface is transposed.
    :depth: 2
    :local:
 
+.. _variables_lattice:
+
 ``lattice``
 -------------
 
 **Attention**: In Python interface, ``lattice`` is transposed
-(:ref:`variables_crystal_structure`.)
+(:ref:`py_variables_crystal_structure`.)
 
 Basis vectors (in Cartesian)
 

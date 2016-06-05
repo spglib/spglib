@@ -307,6 +307,8 @@ the values is found at :ref:`api_spg_get_symmetry`.
 |
 
 
+.. _api_spg_get_dataset_site_symmetry:
+
 Site symmetry
 """"""""""""""
 
@@ -494,14 +496,18 @@ symmetry operations.
 ``spg_get_symmetry_with_collinear_spin``
 -----------------------------------------
 
-This function finds symmetry operations with collinear spins on
-atoms. Except for the argument of ``const double spins[]``, the usage
-is same as ``spg_get_symmetry``.
+This function finds symmetry operations with collinear polarizations
+(spins) on atoms. Except for the argument of ``const double spins[]``,
+the usage is basically the same as ``spg_get_symmetry``, but as an
+output, ``equivalent_atoms`` are obtained. The size of this array is
+the same of ``num_atom``. See :ref:`api_spg_get_dataset_site_symmetry`
+for the definition ``equivalent_atoms``.
 
 ::
 
   int spg_get_symmetry_with_collinear_spin(int rotation[][3][3],
                                            double translation[][3],
+					   int equivalent_atoms[],
                                            const int max_size,
                                            SPGCONST double lattice[3][3],
                                            SPGCONST double position[][3],
