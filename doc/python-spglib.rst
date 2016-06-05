@@ -147,6 +147,11 @@ as a list of N floating point values.
    numbers = [n_1, n_2, n_3, ...]
    magmoms = [m_1, m_2, m_3, ...]  # Only works with get_symmetry
 
+
+**Version 1.9.5 or later**:
+When a crystal structure is not properly given, the methods that use
+the crsytal strcutre will return ``None``.
+
 Symmetry tolerance (``symprec``)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -231,8 +236,8 @@ considering this freedome. In ASE Atoms-class object, this is not supported.
 
 Bravais lattice (3x3 numpy array), atomic scaled positions (a numpy
 array of [number_of_atoms,3]), and atomic numbers (a 1D numpy array)
-that are symmetrized following space group type are returned. When it
-fails, ``None`` is returned.
+that are symmetrized following space group type are returned. When the
+search failed, ``None`` is returned.
 
 The detailed control of standardization of unit cell may be done using
 ``standardize_cell``.
@@ -248,7 +253,8 @@ The detailed control of standardization of unit cell may be done using
 
 When a primitive cell is found, lattice parameters (3x3 numpy array),
 scaled positions (a numpy array of [number_of_atoms,3]), and atomic
-numbers (a 1D numpy array) is returned. When it fails, ``None`` is returned.
+numbers (a 1D numpy array) is returned. When the search failed,
+``None`` is returned.
 
 The detailed control of standardization of unit cell can be done using
 ``standardize_cell``.
@@ -266,9 +272,9 @@ The detailed control of standardization of unit cell can be done using
 cell, and ``no_idealize=True`` disables to idealize lengths and angles
 of basis vectors and positions of atoms according to crystal
 symmetry. Now ``refine_cell`` and ``find_primitive`` are shorthands of
-this method with combinations of these options. When it fails,
-``None`` is returned. More detailed explanation is shown in the spglib
-(C-API) document.
+this method with combinations of these options. When the search
+failed, ``None`` is returned.  is returned. More detailed explanation
+is shown in the spglib (C-API) document.
 
 .. _py_method_get_symmetry_dataset:
 
@@ -304,6 +310,8 @@ this method with combinations of these options. When it fails,
    * ``pointgrouop_number``: Serial number of the crystallographic point
      group, which refers list of space groups (Seto’s web site)
 
+When the search failed, ``None`` is returned.
+
 ``get_symmetry_from_database``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -316,6 +324,8 @@ A set of crystallographic symmetry operations corresponding to
 translation parts are accessed by the keys ``rotations`` and
 ``translations``, respectively. The definition of ``hall_number`` is
 found at :ref:`api_spg_get_dataset_spacegroup_type`.
+
+When something wrong happened, ``None`` is returned.
 
 ``get_spacegroup_type``
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -354,6 +364,8 @@ Here ``spacegroup_type['international_short']`` is equivalent to
 ``spacegroup_type['pointgroup_international']`` is equivalent to
 ``dataset['pointgroup_symbol']`` of ``get_symmetry_dataset``.
 
+When something wrong happened, ``None`` is returned.
+
 ``niggli_reduce``
 ^^^^^^^^^^^^^^^^^^
 
@@ -374,6 +386,8 @@ or not and if two basis vectors are orthogonal by the value of dot product
 being close to zero or not.  The detail is shown at
 https://atztogo.github.io/niggli/.
 
+When the search failed, ``None`` is returned.
+
 ``delaunay_reduce``
 ^^^^^^^^^^^^^^^^^^^^
 
@@ -391,6 +405,8 @@ parameter, but unlike ``symprec`` the unit is not a length. This is
 used as the criterion if volume is close to zero or not and if two
 basis vectors are orthogonal by the value of dot product being close
 to zero or not.
+
+When the search failed, ``None`` is returned.
 
 ``get_ir_reciprocal_mesh``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -416,6 +432,8 @@ the irreducible k-point indices that are obtained by ::
 Here ``np`` is the imported numpy module. The grid point is accessed
 by ``grid[index]``.
 
+When the sesarch failed, ``None`` is returned.
+
 For example, the irreducible k-points in fractional coordinates are
 obtained by ::
 
@@ -423,3 +441,4 @@ obtained by ::
    mapping, grid = get_ir_reciprocal_mesh([ 8, 8, 8 ], cell, [1, 1, 1])
    for i in np.unique(mapping):
        ir_grid.append(grid[i])
+
