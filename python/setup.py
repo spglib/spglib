@@ -2,6 +2,13 @@ import os
 from distutils.core import setup, Extension
 from numpy.distutils.misc_util import get_numpy_include_dirs
 
+# Workaround Python issue 21121
+import sysconfig
+config_var = sysconfig.get_config_var("CFLAGS")
+if "-Werror=declaration-after-statement" in config_var:
+    os.environ['CFLAGS'] = config_var.replace(
+        "-Werror=declaration-after-statement", "")    
+
 sources = ['arithmetic.c',
            'cell.c',
            'delaunay.c',
@@ -20,8 +27,6 @@ sources = ['arithmetic.c',
            'spg_database.c',
            'spglib.c',
            'symmetry.c']
-extra_compile_args = []
-extra_link_args = []
 
 if os.path.exists('src'):
     source_dir = "src"
@@ -31,11 +36,15 @@ include_dirs = [source_dir,]
 for i,s in enumerate(sources):
     sources[i] = "%s/%s" % (source_dir, s) 
 
+extra_compile_args = []
+extra_link_args = []
+define_macros = []
+
 ## Uncomment to activate OpenMP support for gcc
 # extra_compile_args += ['-fopenmp']
 # extra_link_args += ['-lgomp']
 
-define_macros = []
+## For debugging
 # define_macros = [('SPGWARNING', None),
 #                  ('SPGDEBUG', None)]
 
