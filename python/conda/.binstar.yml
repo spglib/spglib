@@ -38,11 +38,13 @@ env:
 #===============================================================================
 
 ## Run before the script
-#before_script:
+before_script:
+  - conda install anaconda-client --yes
+
 
 ## Put your main computations here!  
 script:
-  - conda update -n root conda conda-build
+  - conda update -n root conda conda-build --yes
   - GIT_BRANCH=`git branch |grep '^*'|sed -e 's/^*\s\?//' -e 's/(HEAD [a-z ]* \(.*\))$/\1/'`
   - conda build .
 
