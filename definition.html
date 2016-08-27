@@ -163,7 +163,7 @@ in the previous versions.</p>
 <h2><a class="toc-backref" href="#id1">Basis vectors <img class="math" src="_images/math/71ce6bc59bc8fa9c716468f9aaa02a81fb2c9ba1.png" alt="(\mathbf{a}, \mathbf{b}, \mathbf{c})"/> or <img class="math" src="_images/math/09970adb456cc4c143f3e77ba0fd8576aa837c16.png" alt="(\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)"/></a><a class="headerlink" href="#basis-vectors-or" title="Permalink to this headline">¶</a></h2>
 <p>In spglib, basis vectors are represented by three column vectors:</p>
 <div class="math">
-<p><img src="_images/math/63025c43bb5384a4655b740751ee462d8dbb98fa.png" alt="\mathbf{a}= \begin{pmatrix}
+<p><img src="_images/math/a2bf665bc00ce41f7f4d44f88177fd84d1b115b1.png" alt="\mathbf{a}= \begin{pmatrix}
 a_x \\
 a_y \\
 a_z \\
@@ -187,7 +187,7 @@ c_z \\
 <p>Coordinates of an atomic point <img class="math" src="_images/math/80ba696b882e52c7e4d833039710ff8b4005e777.png" alt="\boldsymbol{x}"/> are represented
 as three fractional values relative to basis vectors as follows,</p>
 <div class="math">
-<p><img src="_images/math/f51e4ecdb3b00b87215331eb4d355f760fd6bb57.png" alt="\boldsymbol{x}= \begin{pmatrix}
+<p><img src="_images/math/90235ec27097500b88c6504ad4b4a8ae7329c2f5.png" alt="\boldsymbol{x}= \begin{pmatrix}
 x_1 \\
 x_2 \\
 x_3 \\
@@ -195,10 +195,10 @@ x_3 \\
 </div><p>where <img class="math" src="_images/math/2e1a22d9fbcd32896befce8edcf70ff8839672ee.png" alt="0 \le x_i &lt; 1"/>. A position vector <img class="math" src="_images/math/46aec6aaff80d183cc0ed35d77ce75c7c9ffd174.png" alt="\mathbf{x}"/> in
 Cartesian coordinates is obtained by</p>
 <div class="math">
-<p><img src="_images/math/dad6fa83e6caccc0a727fa6b79ba05fc1e937af3.png" alt="\mathbf{x} = (\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{x}."/></p>
+<p><img src="_images/math/fc6a066dcc43dd359641ac2b679c58152b54d02f.png" alt="\mathbf{x} = (\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{x}."/></p>
 </div><p>or</p>
 <div class="math">
-<p><img src="_images/math/4b66b089daac7bcc14393010edc398a167df7f07.png" alt="\mathbf{x} = \sum_i x_i \mathbf{a}_i."/></p>
+<p><img src="_images/math/fd99e3f3803b8ee8a0cd45d016623cac2e32c2d5.png" alt="\mathbf{x} = \sum_i x_i \mathbf{a}_i."/></p>
 </div></div>
 <div class="section" id="symmetry-operation">
 <h2><a class="toc-backref" href="#id3">Symmetry operation <img class="math" src="_images/math/fadc8b05a27134881e99de1f69da25dac175dc51.png" alt="(\boldsymbol{W}, \boldsymbol{w})"/></a><a class="headerlink" href="#symmetry-operation" title="Permalink to this headline">¶</a></h2>
@@ -208,14 +208,14 @@ and is represented as <img class="math" src="_images/math/fadc8b05a27134881e99de
 spglib document. The symmetry operation transfers <img class="math" src="_images/math/80ba696b882e52c7e4d833039710ff8b4005e777.png" alt="\boldsymbol{x}"/> to
 <img class="math" src="_images/math/da64a582d03d6875592c54b3f60dbcc1e35a1ff7.png" alt="\tilde{\boldsymbol{x}}"/> as follows:</p>
 <div class="math">
-<p><img src="_images/math/2e4f759c68466291cedd503a99af3832b3ed3410.png" alt="\tilde{\boldsymbol{x}} = \boldsymbol{W}\boldsymbol{x} + \boldsymbol{w}."/></p>
+<p><img src="_images/math/482451ff02bf3e5e5ab37870ffe6cdd3fb73bd46.png" alt="\tilde{\boldsymbol{x}} = \boldsymbol{W}\boldsymbol{x} + \boldsymbol{w}."/></p>
 </div></div>
 <div class="section" id="transformation-matrix-and-origin-shift">
 <h2><a class="toc-backref" href="#id4">Transformation matrix <img class="math" src="_images/math/916e1737b026746b3b28396f8d28701295471563.png" alt="\boldsymbol{P}"/> and origin shift <img class="math" src="_images/math/5e3ac53f2a3b078f16d75452ab30d8476a6b78b1.png" alt="\boldsymbol{p}"/></a><a class="headerlink" href="#transformation-matrix-and-origin-shift" title="Permalink to this headline">¶</a></h2>
 <p>The transformation matrix <img class="math" src="_images/math/916e1737b026746b3b28396f8d28701295471563.png" alt="\boldsymbol{P}"/> changes choice of
 basis vectors as follows</p>
 <div class="math">
-<p><img src="_images/math/ede031c4a3520425b11ff241e9952046ffac6ac9.png" alt="( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
+<p><img src="_images/math/cbdbb956809e5dd2505d699d09004e5586f67df2.png" alt="( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
 = ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
 \mathbf{c}_\mathrm{s} )  \boldsymbol{P},"/></p>
 </div><p>where <img class="math" src="_images/math/c737209f2d796be46333729ad9d392bcde7d226e.png" alt="( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )"/> and <img class="math" src="_images/math/391b250095dee33ee3633b91a5be3b620653307f.png" alt="(
@@ -228,7 +228,7 @@ changes the choices of basis vectors.</p>
 origin of the standardized system <img class="math" src="_images/math/8619121ccdb26788d8cc1a09a1fbc9bfb9441652.png" alt="\boldsymbol{O}_\mathrm{s}"/> to
 the origin of the arbitrary system <img class="math" src="_images/math/16d8f009159910377df1df827fc1fe61f9c39dc5.png" alt="\boldsymbol{O}"/>,</p>
 <div class="math">
-<p><img src="_images/math/260969e3886972ea79f2c03104cf3649b2e6a3f9.png" alt="\boldsymbol{p} = \boldsymbol{O} - \boldsymbol{O}_\mathrm{s}."/></p>
+<p><img src="_images/math/e2c1ae5bcd8f449b8b257c10d5b73ac73e972eb3.png" alt="\boldsymbol{p} = \boldsymbol{O} - \boldsymbol{O}_\mathrm{s}."/></p>
 </div><p>Origin shift <strong>doesn&#8217;t</strong> move a crystal in Cartesian coordinates, but
 just changes the origin to measure the coordinates of atomic points.</p>
 <p>A change of basis is described by the combination of the
@@ -238,18 +238,18 @@ transformation matrix is applied and then origin shift. The points in
 the standardized system <img class="math" src="_images/math/146d071769289d4f8b4dba4bbe952421ec840d22.png" alt="\boldsymbol{x}_\mathrm{s}"/> and
 arbitrary system <img class="math" src="_images/math/80ba696b882e52c7e4d833039710ff8b4005e777.png" alt="\boldsymbol{x}"/> are related by</p>
 <div class="math">
-<p><img src="_images/math/df4c3b27245fec7021a7a6b6e6ce5c2ba20e032c.png" alt="\boldsymbol{x}_\mathrm{s} = \boldsymbol{P}\boldsymbol{x} +
+<p><img src="_images/math/e927c93ed69a2484d42a30fc64784f07f391637a.png" alt="\boldsymbol{x}_\mathrm{s} = \boldsymbol{P}\boldsymbol{x} +
 \boldsymbol{p},"/></p>
 </div><p>or equivalently,</p>
 <div class="math">
-<p><img src="_images/math/52dc5a8d8be0845909fd63d040fe1333d8e64389.png" alt="\boldsymbol{x} = \boldsymbol{P}^{-1}\boldsymbol{x}_\mathrm{s} -
+<p><img src="_images/math/13b7c5cd5ff2127ae1c958d3912de201b6e7926f.png" alt="\boldsymbol{x} = \boldsymbol{P}^{-1}\boldsymbol{x}_\mathrm{s} -
 \boldsymbol{P}^{-1}\boldsymbol{p}."/></p>
 </div><p>A graphical example is shown below.</p>
 <p><a class="reference internal" href="_images/change-of-basis.png"><img alt="cob" src="_images/change-of-basis.png" style="width: 20%;" /></a></p>
 <p>(click the figure to enlarge)</p>
 <p>In this example,</p>
 <div class="math">
-<p><img src="_images/math/f11891b91a5b3ccf7cf504462c257ff2a8aa68d4.png" alt="\renewcommand*{\arraystretch}{1.4}
+<p><img src="_images/math/8994e4b9087977bbf8ed9fa567f809796dcc7038.png" alt="\renewcommand*{\arraystretch}{1.4}
 \boldsymbol{P} = \begin{pmatrix}
 \frac{1}{2} &amp; \frac{1}{2} &amp; 0 \\
 \frac{\bar{1}}{2} &amp; \frac{1}{2} &amp; 0 \\
@@ -280,7 +280,7 @@ types available, base centrings of A and C, rhombohedral (R), body centred
 (I), and face centred (F). The transformation is applied to the
 standardized unit cell by</p>
 <div class="math">
-<p><img src="_images/math/8705b0522c1d4dc70fdd7478150666aaf6501c2d.png" alt="( \mathbf{a}_\mathrm{p} \; \mathbf{b}_\mathrm{p} \; \mathbf{c}_\mathrm{p} )
+<p><img src="_images/math/2fc724cef999557ea038b912e5a3cbd9afa41e51.png" alt="( \mathbf{a}_\mathrm{p} \; \mathbf{b}_\mathrm{p} \; \mathbf{c}_\mathrm{p} )
 = ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
 \mathbf{c}_\mathrm{s} )  \boldsymbol{P}_\mathrm{c},"/></p>
 </div><p>where <img class="math" src="_images/math/5954dc42d29df3a300246e8f86ff6f2b8a276abf.png" alt="\mathbf{a}_\mathrm{p}"/>, <img class="math" src="_images/math/2a11ea14b938f167771e6645622afa0832f6dd1c.png" alt="\mathbf{b}_\mathrm{p}"/>,
@@ -290,7 +290,7 @@ transformation matrix from the standardized unit cell to the primitive
 cell. <img class="math" src="_images/math/64bb5251c9bbba36d0371d9553981aeac3750820.png" alt="\boldsymbol{P}_\mathrm{c}"/> for centring types are given
 as follows:</p>
 <div class="math">
-<p><img src="_images/math/c638b30e785da56bdf321c19269c3afb565fa1e3.png" alt="\renewcommand*{\arraystretch}{1.4}
+<p><img src="_images/math/34cbb5a66495951dca62c3d6fbeda6e5a40bc516.png" alt="\renewcommand*{\arraystretch}{1.4}
 \boldsymbol{P}_\mathrm{A} =
 \begin{pmatrix}
 1 &amp; 0 &amp; 0 \\
@@ -446,7 +446,7 @@ are placed by angles <img class="math" src="_images/math/f1461a7e5c56e0df2c77277
     </p>
     <p>
         &copy; Copyright 2009, Atsushi Togo.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.5.<br/>
     </p>
   </div>
 </footer>
