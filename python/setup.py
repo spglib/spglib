@@ -1,6 +1,12 @@
 import os
 from distutils.core import setup, Extension
-from numpy.distutils.misc_util import get_numpy_include_dirs
+
+try:
+    from numpy.distutils.misc_util import get_numpy_include_dirs
+except ImportError:
+    print("numpy.distutils.misc_util cannot be imported. Please install
+           numpy first before installing spglib...")
+    sys.exit(-1)
 
 # Workaround Python issue 21121
 import sysconfig
