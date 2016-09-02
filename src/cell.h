@@ -55,6 +55,8 @@ int cel_is_overlap(const double a[3],
 		   const double b[3],
 		   SPGCONST double lattice[3][3],
 		   const double symprec);
+int cel_any_overlap(SPGCONST Cell * cell,
+		    const double symprec);
 Cell * cel_trim_cell(int * mapping_table,
 		     SPGCONST double trimmed_lattice[3][3],
 		     SPGCONST Cell * cell,

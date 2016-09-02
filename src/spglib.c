@@ -68,7 +68,7 @@ typedef struct {
 static SpglibErrorMessage spglib_error_message[] = {
   {SPGLIB_SUCCESS, "No error"},
   {SPGERR_SEARCH_FAILED, "Search failed"},
-  {SPGERR_TOO_CLOSE_ATOMS, "Too close atoms each other"},
+  {SPGERR_ATOMS_TOO_CLOSE, "Atoms too close each other found"},
   {SPGERR_NONE, ""},
 };
 
@@ -1052,6 +1052,13 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
   }
 
   cel_set_cell(cell, lattice, position, types);
+  if (cel_any_overlap(cell, symprec)) {
+    cel_free_cell(cell);
+    cell = NULL;
+    free(dataset);
+    dataset = NULL;
+    goto atoms_too_close;
+  }
 
   tolerance = symprec;
   for (attempt = 0; attempt < 10; attempt++) {
@@ -1113,6 +1120,10 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
 
  not_found:
   spglib_error = SPGERR_SEARCH_FAILED;
+  return NULL;
+
+ atoms_too_close:
+  spglib_error = SPGERR_ATOMS_TOO_CLOSE;
   return NULL;
 }
 
