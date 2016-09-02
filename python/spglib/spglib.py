@@ -35,7 +35,13 @@
 from . import _spglib as spg
 import numpy as np
 
+class SpglibError(object):
+    message = "no error"
+
+spglib_error = SpglibError()
+
 def get_version():
+    _set_no_error()
     return tuple(spg.version())
 
 def get_symmetry(cell, symprec=1e-5, angle_tolerance=-1.0):
@@ -67,6 +73,7 @@ def get_symmetry(cell, symprec=1e-5, angle_tolerance=-1.0):
         'translations': Gives the numpy 'double' array of fractional
             translations with respect to a, b, c axes.
     """
+    _set_no_error()
 
     lattice, positions, numbers, magmoms = _expand_cell(cell)
     if lattice is None:
@@ -95,6 +102,7 @@ def get_symmetry(cell, symprec=1e-5, angle_tolerance=-1.0):
                                                    magmoms,
                                                    symprec,
                                                    angle_tolerance)
+        _set_error_message()
         return {'rotations': np.array(rotation[:num_sym],
                                       dtype='intc', order='C'),
                 'translations': np.array(translation[:num_sym],
@@ -140,6 +148,7 @@ def get_symmetry_dataset(cell, symprec=1e-5, angle_tolerance=-1.0):
 
         If it fails, None is returned.
     """
+    _set_no_error()
 
     lattice, positions, numbers, _ = _expand_cell(cell)
     if lattice is None:
@@ -163,6 +172,7 @@ def get_symmetry_dataset(cell, symprec=1e-5, angle_tolerance=-1.0):
             'pointgroup')
     spg_ds = spg.dataset(lattice, positions, numbers, symprec, angle_tolerance)
     if spg_ds is None:
+        _set_error_message()
         return None
 
     dataset = {}
@@ -190,6 +200,7 @@ def get_symmetry_dataset(cell, symprec=1e-5, angle_tolerance=-1.0):
                                         dtype='double', order='C')
     dataset['pointgroup'] = dataset['pointgroup'].strip()
 
+    _set_error_message()
     return dataset
 
 def get_spacegroup(cell, symprec=1e-5, angle_tolerance=-1.0, symbol_type=0):
@@ -197,6 +208,7 @@ def get_spacegroup(cell, symprec=1e-5, angle_tolerance=-1.0, symbol_type=0):
 
     If it fails, None is returned.
     """
+    _set_no_error()
 
     dataset = get_symmetry_dataset(cell,
                                    symprec=symprec,
@@ -215,6 +227,7 @@ def get_spacegroup_type(hall_number):
 
     If it fails, None is returned.
     """
+    _set_no_error()
 
     keys = ('number',
             'international_short',
@@ -228,6 +241,8 @@ def get_spacegroup_type(hall_number):
             'arithmetic_crystal_class_number',
             'arithmetic_crystal_class_symbol')
     spg_type_list = spg.spacegroup_type(hall_number)
+    _set_error_message()
+
     if spg_type_list is not None:
         spg_type = dict(zip(keys, spg_type_list))
         for key in spg_type:
@@ -274,9 +289,12 @@ def get_pointgroup(rotations):
     31  "-43m "
     32  "m-3m "
     """
+    _set_no_error()
 
     # (symbol, pointgroup_number, transformation_matrix)
-    return spg.pointgroup(np.array(rotations, dtype='intc', order='C'))
+    pointgroup = spg.pointgroup(np.array(rotations, dtype='intc', order='C'))
+    _set_error_message()
+    return pointgroup
 
 def standardize_cell(cell,
                      to_primitive=False,
@@ -299,6 +317,7 @@ def standardize_cell(cell,
         (lattice, positions, numbers).
         If it fails, None is returned.
     """
+    _set_no_error()
 
     lattice, _positions, _numbers, _ = _expand_cell(cell)
     if lattice is None:
@@ -318,6 +337,7 @@ def standardize_cell(cell,
                                         no_idealize * 1,
                                         symprec,
                                         angle_tolerance)
+    _set_error_message()
 
     if num_atom_std > 0:
         return (np.array(lattice.T, dtype='double', order='C'),
@@ -333,6 +353,7 @@ def refine_cell(cell, symprec=1e-5, angle_tolerance=-1.0):
     (lattice, positions, numbers).
     If it fails, None is returned.
     """
+    _set_no_error()
 
     lattice, _positions, _numbers, _ = _expand_cell(cell)
     if lattice is None:
@@ -350,7 +371,7 @@ def refine_cell(cell, symprec=1e-5, angle_tolerance=-1.0):
                                    num_atom,
                                    symprec,
                                    angle_tolerance)
-
+    _set_error_message()
 
     if num_atom_std > 0:
         return (np.array(lattice.T, dtype='double', order='C'),
@@ -365,6 +386,7 @@ def find_primitive(cell, symprec=1e-5, angle_tolerance=-1.0):
     The primitive cell is returned by a tuple of (lattice, positions, numbers).
     If it fails, None is returned.
     """
+    _set_no_error()
 
     lattice, positions, numbers, _ = _expand_cell(cell)
     if lattice is None:
@@ -375,6 +397,8 @@ def find_primitive(cell, symprec=1e-5, angle_tolerance=-1.0):
                                   numbers,
                                   symprec,
                                   angle_tolerance)
+    _set_error_message()
+
     if num_atom_prim > 0:
         return (np.array(lattice.T, dtype='double', order='C'),
                 np.array(positions[:num_atom_prim], dtype='double', order='C'),
@@ -390,10 +414,13 @@ def get_symmetry_from_database(hall_number):
     'rotations' and 'translations'.
     If it fails, None is returned.
     """
+    _set_no_error()
 
     rotations = np.zeros((192, 3, 3), dtype='intc')
     translations = np.zeros((192, 3), dtype='double')
     num_sym = spg.symmetry_from_database(rotations, translations, hall_number)
+    _set_error_message()
+
     if num_sym is None:
         return None
     else:
@@ -407,6 +434,7 @@ def get_symmetry_from_database(hall_number):
 ############
 def get_grid_point_from_address(grid_address, mesh):
     """Return grid point index by tranlating grid address"""
+    _set_no_error()
 
     return spg.grid_point_from_address(np.array(grid_address, dtype='intc'),
                                        np.array(mesh, dtype='intc'))
@@ -438,6 +466,7 @@ def get_ir_reciprocal_mesh(mesh,
         grid_address:
             int array (N, 3): Address of all grid points
     """
+    _set_no_error()
 
     lattice, positions, numbers, _ = _expand_cell(cell)
     if lattice is None:
@@ -488,7 +517,7 @@ def get_stabilized_reciprocal_mesh(mesh,
         grid_address:
             int array (N, 3): Address of all grid points
     """
-
+    _set_no_error()
 
     mapping_table = np.zeros(np.prod(mesh), dtype='intc')
     grid_address = np.zeros((np.prod(mesh), 3), dtype='intc')
@@ -520,6 +549,7 @@ def get_grid_points_by_rotations(address_orig,
     """Rotation operations in reciprocal space ``reciprocal_rotations`` are applied
     to a grid point ``grid_point`` and resulting grid points are returned.
     """
+    _set_no_error()
 
     rot_grid_points = np.zeros(len(reciprocal_rotations), dtype='intc')
     spg.grid_points_by_rotations(
@@ -539,6 +569,7 @@ def get_BZ_grid_points_by_rotations(address_orig,
     """Rotation operations in reciprocal space ``reciprocal_rotations`` are applied
     to a grid point ``grid_point`` and resulting grid points are returned.
     """
+    _set_no_error()
 
     rot_grid_points = np.zeros(len(reciprocal_rotations), dtype='intc')
     spg.BZ_grid_points_by_rotations(
@@ -578,6 +609,7 @@ def relocate_BZ_grid_address(grid_address,
     surface from grid address. The grid point indices are mapped to
     (mesh[0] * 2) x (mesh[1] * 2) x (mesh[2] * 2) space (bz_map).
     """
+    _set_no_error()
 
     bz_grid_address = np.zeros(
         ((mesh[0] + 1) * (mesh[1] + 1) * (mesh[2] + 1), 3), dtype='intc')
@@ -614,9 +646,13 @@ def delaunay_reduce(lattice, eps=1e-5):
              [c_x, c_y, c_z]]
         otherwise None is returned.
     """
+    _set_no_error()
+
     delaunay_lattice = np.array(np.transpose(lattice),
                                 dtype='double', order='C')
     result = spg.delaunay_reduce(delaunay_lattice, float(eps))
+    _set_error_message()
+
     if result == 0:
         return None
     else:
@@ -646,15 +682,19 @@ def niggli_reduce(lattice, eps=1e-5):
              [c_x, c_y, c_z]]
         otherwise None is returned.
     """
+    _set_no_error()
+
     niggli_lattice = np.array(np.transpose(lattice), dtype='double', order='C')
     result = spg.niggli_reduce(niggli_lattice, float(eps))
+    _set_error_message()
+
     if result == 0:
         return None
     else:
         return np.array(np.transpose(niggli_lattice), dtype='double', order='C')
 
 def get_error_message():
-    return spg.error_message()
+    return spglib_error.message
 
 def _expand_cell(cell):
     if isinstance(cell, tuple):
@@ -694,3 +734,9 @@ def _check(lattice, positions, numbers, magmoms):
         if len(magmoms) != len(numbers):
             return False
     return True
+
+def _set_error_message():
+    spglib_error.message = spg.error_message()
+
+def _set_no_error():
+    spglib_error.message = "no error"
