@@ -41,10 +41,6 @@
 #define SPGCONST
 #endif
 
-int spg_get_major_version(void);
-int spg_get_minor_version(void);
-int spg_get_micro_version(void);
-
 /*
   ------------------------------------------------------------------
 
@@ -94,6 +90,13 @@ int spg_get_micro_version(void);
   ------------------------------------------------------------------
 */
 
+typedef enum {
+  SPGLIB_SUCCESS = 0,
+  SPGERR_SEARCH_FAILED,
+  SPGERR_TOO_CLOSE_ATOMS,
+  SPGERR_NONE,
+} SpglibError;
+
 typedef struct {
   int spacegroup_number;
   int hall_number;
@@ -129,6 +132,13 @@ typedef struct {
   int arithmetic_crystal_class_number;
   char arithmetic_crystal_class_symbol[7];
 } SpglibSpacegroupType;
+
+int spg_get_major_version(void);
+int spg_get_minor_version(void);
+int spg_get_micro_version(void);
+
+SpglibError spg_get_error(void);
+char * spg_get_error_message(SpglibError spglib_error);
 
 SpglibDataset * spg_get_dataset(SPGCONST double lattice[3][3],
 				SPGCONST double position[][3],
