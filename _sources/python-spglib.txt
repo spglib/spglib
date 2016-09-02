@@ -388,6 +388,15 @@ https://atztogo.github.io/niggli/.
 
 When the search failed, ``None`` is returned.
 
+The transformation from original lattice vectors :math:`( \mathbf{a}
+\; \mathbf{b} \; \mathbf{c} )` to final lattice vectors :math:`(
+\mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )` is achieved by linear
+combination of lattice vectors with integer coefficients without
+rotating coordinates. Therefore the transformation matrix is obtained
+by :math:`\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
+( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}` and the matrix
+elements have to be almost integers.
+
 ``delaunay_reduce``
 ^^^^^^^^^^^^^^^^^^^^
 
@@ -407,6 +416,15 @@ basis vectors are orthogonal by the value of dot product being close
 to zero or not.
 
 When the search failed, ``None`` is returned.
+
+The transformation from original lattice vectors :math:`( \mathbf{a}
+\; \mathbf{b} \; \mathbf{c} )` to final lattice vectors :math:`(
+\mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )` is achieved by linear
+combination of lattice vectors with integer coefficients without
+rotating coordinates. Therefore the transformation matrix is obtained
+by :math:`\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
+( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}` and the matrix
+elements have to be almost integers.
 
 ``get_ir_reciprocal_mesh``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -429,8 +447,8 @@ the irreducible k-point indices that are obtained by ::
 
    np.unique(mapping)
 
-Here ``np`` is the imported numpy module. The grid point is accessed
-by ``grid[index]``.
+Here ``np`` means the numpy module. The grid point is accessed by
+``grid[index]``.
 
 When the sesarch failed, ``None`` is returned.
 
