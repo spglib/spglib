@@ -653,6 +653,9 @@ def niggli_reduce(lattice, eps=1e-5):
     else:
         return np.array(np.transpose(niggli_lattice), dtype='double', order='C')
 
+def get_error_message():
+    return spg.error_message()
+
 def _expand_cell(cell):
     if isinstance(cell, tuple):
         lattice = np.array(np.transpose(cell[0]), dtype='double', order='C')
