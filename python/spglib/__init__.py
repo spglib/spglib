@@ -49,6 +49,7 @@ from .spglib import (get_version,
                      get_grid_points_by_rotations,
                      get_BZ_grid_points_by_rotations,
                      relocate_BZ_grid_address,
-                     get_stabilized_reciprocal_mesh)
+                     get_stabilized_reciprocal_mesh,
+                     get_error_message)
 
 __version__ = "%d.%d.%d" % get_version()

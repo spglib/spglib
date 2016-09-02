@@ -58,7 +58,7 @@
 /*-------*/
 /* error */
 /*-------*/
-static SpglibError spglib_error = SPGLIB_SUCCESS;
+static SpglibError spglib_error_code = SPGLIB_SUCCESS;
 
 typedef struct {
   SpglibError error;
@@ -66,9 +66,9 @@ typedef struct {
 } SpglibErrorMessage;
 
 static SpglibErrorMessage spglib_error_message[] = {
-  {SPGLIB_SUCCESS, "No error"},
-  {SPGERR_SEARCH_FAILED, "Search failed"},
-  {SPGERR_ATOMS_TOO_CLOSE, "Atoms too close each other found"},
+  {SPGLIB_SUCCESS, "no error"},
+  {SPGERR_SEARCH_FAILED, "search failed"},
+  {SPGERR_ATOMS_TOO_CLOSE, "too close distance between atoms"},
   {SPGERR_NONE, ""},
 };
 
@@ -200,9 +200,9 @@ int spg_get_micro_version(void)
 /*-------*/
 /* error */
 /*-------*/
-SpglibError spg_get_error(void)
+SpglibError spg_get_error_code(void)
 {
-  return spglib_error;
+  return spglib_error_code;
 }
 
 char * spg_get_error_message(SpglibError error)
@@ -1107,7 +1107,7 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
   cel_free_cell(cell);
   cell = NULL;
 
-  spglib_error = SPGLIB_SUCCESS;
+  spglib_error_code = SPGLIB_SUCCESS;
   return dataset;
 
  err:
@@ -1119,11 +1119,11 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
   dataset = NULL;
 
  not_found:
-  spglib_error = SPGERR_SEARCH_FAILED;
+  spglib_error_code = SPGERR_SEARCH_FAILED;
   return NULL;
 
  atoms_too_close:
-  spglib_error = SPGERR_ATOMS_TOO_CLOSE;
+  spglib_error_code = SPGERR_ATOMS_TOO_CLOSE;
   return NULL;
 }
 

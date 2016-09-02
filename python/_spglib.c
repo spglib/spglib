@@ -66,6 +66,7 @@ static PyObject * py_relocate_BZ_grid_address(PyObject *self, PyObject *args);
 static PyObject * py_get_symmetry_from_database(PyObject *self, PyObject *args);
 static PyObject * py_delaunay_reduce(PyObject *self, PyObject *args);
 static PyObject * py_niggli_reduce(PyObject *self, PyObject *args);
+static PyObject * py_get_error_message(PyObject *self, PyObject *args);
 
 struct module_state {
   PyObject *error;
@@ -115,6 +116,8 @@ static PyMethodDef _spglib_methods[] = {
    "Relocate grid addresses inside Brillouin zone"},
   {"delaunay_reduce", py_delaunay_reduce, METH_VARARGS, "Delaunay reduction"},
   {"niggli_reduce", py_niggli_reduce, METH_VARARGS, "Niggli reduction"},
+  {"error_message", py_get_error_message, METH_VARARGS, "Error message"},
+
   {NULL, NULL, 0, NULL}
 };
 
@@ -878,4 +881,15 @@ static PyObject * py_niggli_reduce(PyObject *self, PyObject *args)
   int result = spg_niggli_reduce(lattice, eps);
 
   return PyLong_FromLong((long) result);
+}
+
+static PyObject * py_get_error_message(PyObject *self, PyObject *args)
+{
+  if (!PyArg_ParseTuple(args, "")) {
+    return NULL;
+  }
+
+  const SpglibError error = spg_get_error_code();
+
+  return PYUNICODE_FROMSTRING(spg_get_error_message(error));
 }

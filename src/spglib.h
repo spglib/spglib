@@ -137,7 +137,7 @@ int spg_get_major_version(void);
 int spg_get_minor_version(void);
 int spg_get_micro_version(void);
 
-SpglibError spg_get_error(void);
+SpglibError spg_get_error_code(void);
 char * spg_get_error_message(SpglibError spglib_error);
 
 SpglibDataset * spg_get_dataset(SPGCONST double lattice[3][3],
