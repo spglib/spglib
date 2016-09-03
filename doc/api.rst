@@ -526,17 +526,18 @@ for the definition ``equivalent_atoms``. 0 is returned when it failed.
 ``spg_niggli_reduce``
 ----------------------
 
-Niggli reduction is applied to an input lattice and the result is overwritten.
-0 is returned if it failed.
+Niggli reduction is applied to input basis vectors ``lattice`` and the
+reduced basis vectors are overwritten to ``lattice``. 0 is returned if
+it failed.
 
 ::
 
    int spg_niggli_reduce(double lattice[3][3], const double symprec);
 
-The transformation from original lattice vectors :math:`( \mathbf{a}
-\; \mathbf{b} \; \mathbf{c} )` to final lattice vectors :math:`(
+The transformation from original basis vectors :math:`( \mathbf{a}
+\; \mathbf{b} \; \mathbf{c} )` to final basis vectors :math:`(
 \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )` is achieved by linear
-combination of lattice vectors with integer coefficients without
+combination of basis vectors with integer coefficients without
 rotating coordinates. Therefore the transformation matrix is obtained
 by :math:`\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
 ( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}` and the matrix
@@ -547,17 +548,18 @@ elements have to be almost integers.
 ``spg_delaunay_reduce``
 ------------------------
 
-Delaunay reduction is applied to an input lattice and the result is overwritten.
-0 is returned if it failed.
+Delaunay reduction is applied to input basis vectors ``lattice`` and
+the reduced basis vectors are overwritten to ``lattice``. 0 is
+returned if it failed.
 
 ::
 
    int spg_delaunay_reduce(double lattice[3][3], const double symprec);
 
-The transformation from original lattice vectors :math:`( \mathbf{a}
-\; \mathbf{b} \; \mathbf{c} )` to final lattice vectors :math:`(
+The transformation from original basis vectors :math:`( \mathbf{a}
+\; \mathbf{b} \; \mathbf{c} )` to final basis vectors :math:`(
 \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )` is achieved by linear
-combination of lattice vectors with integer coefficients without
+combination of basis vectors with integer coefficients without
 rotating coordinates. Therefore the transformation matrix is obtained
 by :math:`\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
 ( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}` and the matrix

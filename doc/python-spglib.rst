@@ -388,10 +388,10 @@ https://atztogo.github.io/niggli/.
 
 When the search failed, ``None`` is returned.
 
-The transformation from original lattice vectors :math:`( \mathbf{a}
-\; \mathbf{b} \; \mathbf{c} )` to final lattice vectors :math:`(
+The transformation from original basis vectors :math:`( \mathbf{a}
+\; \mathbf{b} \; \mathbf{c} )` to final baiss vectors :math:`(
 \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )` is achieved by linear
-combination of lattice vectors with integer coefficients without
+combination of basis vectors with integer coefficients without
 rotating coordinates. Therefore the transformation matrix is obtained
 by :math:`\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
 ( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}` and the matrix
@@ -417,10 +417,10 @@ to zero or not.
 
 When the search failed, ``None`` is returned.
 
-The transformation from original lattice vectors :math:`( \mathbf{a}
-\; \mathbf{b} \; \mathbf{c} )` to final lattice vectors :math:`(
+The transformation from original basis vectors :math:`( \mathbf{a}
+\; \mathbf{b} \; \mathbf{c} )` to final basis vectors :math:`(
 \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )` is achieved by linear
-combination of lattice vectors with integer coefficients without
+combination of basis vectors with integer coefficients without
 rotating coordinates. Therefore the transformation matrix is obtained
 by :math:`\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
 ( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}` and the matrix
