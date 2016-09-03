@@ -627,15 +627,16 @@ for the definition <code class="docutils literal"><span class="pre">equivalent_a
 </div>
 <div class="section" id="spg-niggli-reduce">
 <h2><a class="toc-backref" href="#id16"><code class="docutils literal"><span class="pre">spg_niggli_reduce</span></code></a><a class="headerlink" href="#spg-niggli-reduce" title="Permalink to this headline">¶</a></h2>
-<p>Niggli reduction is applied to an input lattice and the result is overwritten.
-0 is returned if it failed.</p>
+<p>Niggli reduction is applied to input basis vectors <code class="docutils literal"><span class="pre">lattice</span></code> and the
+reduced basis vectors are overwritten to <code class="docutils literal"><span class="pre">lattice</span></code>. 0 is returned if
+it failed.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">spg_niggli_reduce</span><span class="p">(</span><span class="n">double</span> <span class="n">lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span> <span class="n">const</span> <span class="n">double</span> <span class="n">symprec</span><span class="p">);</span>
 </pre></div>
 </div>
-<p>The transformation from original lattice vectors <img class="math" src="_images/math/12e49b6e247ac149e71e3b71ecc7ef278f3cd227.png" alt="( \mathbf{a}
-\; \mathbf{b} \; \mathbf{c} )"/> to final lattice vectors <img class="math" src="_images/math/94e3c4fbdbc0afa3a50c35fd94c933b3a2fd2a6b.png" alt="(
+<p>The transformation from original basis vectors <img class="math" src="_images/math/12e49b6e247ac149e71e3b71ecc7ef278f3cd227.png" alt="( \mathbf{a}
+\; \mathbf{b} \; \mathbf{c} )"/> to final basis vectors <img class="math" src="_images/math/94e3c4fbdbc0afa3a50c35fd94c933b3a2fd2a6b.png" alt="(
 \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )"/> is achieved by linear
-combination of lattice vectors with integer coefficients without
+combination of basis vectors with integer coefficients without
 rotating coordinates. Therefore the transformation matrix is obtained
 by <img class="math" src="_images/math/b4cb3883c369204a2e0cf2a141bcef5562caf5fc.png" alt="\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
 ( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}"/> and the matrix
@@ -646,15 +647,16 @@ elements have to be almost integers.</p>
 </div>
 <div class="section" id="spg-delaunay-reduce">
 <h2><a class="toc-backref" href="#id17"><code class="docutils literal"><span class="pre">spg_delaunay_reduce</span></code></a><a class="headerlink" href="#spg-delaunay-reduce" title="Permalink to this headline">¶</a></h2>
-<p>Delaunay reduction is applied to an input lattice and the result is overwritten.
-0 is returned if it failed.</p>
+<p>Delaunay reduction is applied to input basis vectors <code class="docutils literal"><span class="pre">lattice</span></code> and
+the reduced basis vectors are overwritten to <code class="docutils literal"><span class="pre">lattice</span></code>. 0 is
+returned if it failed.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">spg_delaunay_reduce</span><span class="p">(</span><span class="n">double</span> <span class="n">lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span> <span class="n">const</span> <span class="n">double</span> <span class="n">symprec</span><span class="p">);</span>
 </pre></div>
 </div>
-<p>The transformation from original lattice vectors <img class="math" src="_images/math/12e49b6e247ac149e71e3b71ecc7ef278f3cd227.png" alt="( \mathbf{a}
-\; \mathbf{b} \; \mathbf{c} )"/> to final lattice vectors <img class="math" src="_images/math/94e3c4fbdbc0afa3a50c35fd94c933b3a2fd2a6b.png" alt="(
+<p>The transformation from original basis vectors <img class="math" src="_images/math/12e49b6e247ac149e71e3b71ecc7ef278f3cd227.png" alt="( \mathbf{a}
+\; \mathbf{b} \; \mathbf{c} )"/> to final basis vectors <img class="math" src="_images/math/94e3c4fbdbc0afa3a50c35fd94c933b3a2fd2a6b.png" alt="(
 \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )"/> is achieved by linear
-combination of lattice vectors with integer coefficients without
+combination of basis vectors with integer coefficients without
 rotating coordinates. Therefore the transformation matrix is obtained
 by <img class="math" src="_images/math/b4cb3883c369204a2e0cf2a141bcef5562caf5fc.png" alt="\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
 ( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}"/> and the matrix
