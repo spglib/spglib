@@ -377,13 +377,14 @@ When something wrong happened, ``None`` is returned.
 
 Niggli reduction is achieved using this method. The algorithm detail
 is found at https://atztogo.github.io/niggli/ and the references are
-there in. Basis vectors are stored in ``lattice`` and
-``niggli_lattice`` as shown in
+there in. Original basis vectors are stored in ``lattice`` and the
+Niggli reduced basis vectors are given in ``niggli_lattice``. The
+format of basis vectors are found at
 :ref:`py_variables_crystal_structure`. ``esp`` is the tolerance
-parameter, but unlike ``symprec`` the unit is not a length. This is used
-to check if difference of norms of two basis vectors is close to zero
-or not and if two basis vectors are orthogonal by the value of dot product
-being close to zero or not.  The detail is shown at
+parameter, but unlike ``symprec`` the unit is not a length. This is
+used to check if difference of norms of two basis vectors is close to
+zero or not and if two basis vectors are orthogonal by the value of
+dot product being close to zero or not.  The detail is shown at
 https://atztogo.github.io/niggli/.
 
 When the search failed, ``None`` is returned.
@@ -407,8 +408,10 @@ elements have to be almost integers.
    delaunay_lattice = delaunay_reduce(lattice, eps=1e-5)
 
 Delaunay reduction is achieved using this method. The algorithm is
-found in the international tables for crystallography volume A. Basis
-vectors are stored in ``lattice`` and ``niggli_lattice`` as shown in
+found in the international tables for crystallography
+volume A. Original basis vectors are stored in ``lattice`` and the
+Delaunay reduced basis vectors are given in ``delaunay_lattice``,
+where the format of basis vectors are shown in
 :ref:`py_variables_crystal_structure`. ``esp`` is the tolerance
 parameter, but unlike ``symprec`` the unit is not a length. This is
 used as the criterion if volume is close to zero or not and if two

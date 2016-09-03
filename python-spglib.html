@@ -495,13 +495,14 @@ dictionary is as follows:</p>
 </div>
 <p>Niggli reduction is achieved using this method. The algorithm detail
 is found at <a class="reference external" href="https://atztogo.github.io/niggli/">https://atztogo.github.io/niggli/</a> and the references are
-there in. Basis vectors are stored in <code class="docutils literal"><span class="pre">lattice</span></code> and
-<code class="docutils literal"><span class="pre">niggli_lattice</span></code> as shown in
+there in. Original basis vectors are stored in <code class="docutils literal"><span class="pre">lattice</span></code> and the
+Niggli reduced basis vectors are given in <code class="docutils literal"><span class="pre">niggli_lattice</span></code>. The
+format of basis vectors are found at
 <a class="reference internal" href="#py-variables-crystal-structure"><span class="std std-ref">Crystal structure (cell)</span></a>. <code class="docutils literal"><span class="pre">esp</span></code> is the tolerance
-parameter, but unlike <code class="docutils literal"><span class="pre">symprec</span></code> the unit is not a length. This is used
-to check if difference of norms of two basis vectors is close to zero
-or not and if two basis vectors are orthogonal by the value of dot product
-being close to zero or not.  The detail is shown at
+parameter, but unlike <code class="docutils literal"><span class="pre">symprec</span></code> the unit is not a length. This is
+used to check if difference of norms of two basis vectors is close to
+zero or not and if two basis vectors are orthogonal by the value of
+dot product being close to zero or not.  The detail is shown at
 <a class="reference external" href="https://atztogo.github.io/niggli/">https://atztogo.github.io/niggli/</a>.</p>
 <p>When the search failed, <code class="docutils literal"><span class="pre">None</span></code> is returned.</p>
 <p>The transformation from original basis vectors <img class="math" src="_images/math/12e49b6e247ac149e71e3b71ecc7ef278f3cd227.png" alt="( \mathbf{a}
@@ -520,8 +521,10 @@ elements have to be almost integers.</p>
 </pre></div>
 </div>
 <p>Delaunay reduction is achieved using this method. The algorithm is
-found in the international tables for crystallography volume A. Basis
-vectors are stored in <code class="docutils literal"><span class="pre">lattice</span></code> and <code class="docutils literal"><span class="pre">niggli_lattice</span></code> as shown in
+found in the international tables for crystallography
+volume A. Original basis vectors are stored in <code class="docutils literal"><span class="pre">lattice</span></code> and the
+Delaunay reduced basis vectors are given in <code class="docutils literal"><span class="pre">delaunay_lattice</span></code>,
+where the format of basis vectors are shown in
 <a class="reference internal" href="#py-variables-crystal-structure"><span class="std std-ref">Crystal structure (cell)</span></a>. <code class="docutils literal"><span class="pre">esp</span></code> is the tolerance
 parameter, but unlike <code class="docutils literal"><span class="pre">symprec</span></code> the unit is not a length. This is
 used as the criterion if volume is close to zero or not and if two
