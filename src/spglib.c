@@ -1025,7 +1025,7 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
   }
 
   cel_set_cell(cell, lattice, position, types);
-  if (cel_any_overlap(cell, symprec)) {
+  if (cel_any_overlap_with_same_type(cell, symprec)) {
     cel_free_cell(cell);
     cell = NULL;
     free(dataset);
