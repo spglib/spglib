@@ -13,6 +13,45 @@ C-APIs
 Version number of spglib is obtained. These three functions return
 integers that correspond to spglib version [major].[minor].[micro].
 
+``spg_get_error_code`` and ``spg_get_error_message``
+-----------------------------------------------------
+
+**New in version 1.9.5**
+
+These methods may be used to see why spglib failed though error handling
+in spglib is not very sophisticated.
+
+::
+
+   SpglibError spg_get_error_code(void);
+
+::
+
+   char * spg_get_error_message(SpglibError spglib_error);
+
+The ``SpglibError`` type is a enum type as shown below.
+
+::
+
+   typedef enum {
+     SPGLIB_SUCCESS = 0,
+     SPGERR_SPACEGROUP_SEARCH_FAILED,
+     SPGERR_CELL_STANDARDIZATION_FAILED,
+     SPGERR_SYMMETRY_OPERATION_SEARCH_FAILED,
+     SPGERR_ATOMS_TOO_CLOSE,
+     SPGERR_POINTGROUP_NOT_FOUND,
+     SPGERR_NIGGLI_FAILED,
+     SPGERR_DELAUNAY_FAILED,
+     SPGERR_ARRAY_SIZE_SHORTAGE,
+     SPGERR_NONE,
+   } SpglibError;
+
+The usage is as follows::
+
+   SpglibError error;
+   error = spg_get_error_code();
+   printf("%s\n", spg_get_error_message(error));
+   
 .. _api_spg_get_symmetry:
 
 ``spg_get_symmetry``

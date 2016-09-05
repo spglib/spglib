@@ -173,6 +173,18 @@ Methods
 
 This returns version number of spglib by tuple with three numbers.
 
+``get_error_message``
+^^^^^^^^^^^^^^^^^^^^^^
+
+**New in version 1.9.5**
+
+This method may be used to see why spglib failed though error handling
+in spglib is not very sophisticated.
+
+::
+
+   error_message = get_error_message()
+
 ``get_spacegroup``
 ^^^^^^^^^^^^^^^^^^^
 
@@ -217,9 +229,11 @@ atoms to symmetrically independent atoms. This is used to find
 symmetrically equivalent atoms. The numbers contained are the indices
 of atoms starting from 0, i.e., the first atom is numbered as 0, and
 then 1, 2, 3, ... ``np.unique(equivalent_atoms)`` gives representative
-symmetrically independent atoms. A list of atoms that are symmetrically
-euivalent to some independent atom (here for example 1 is in
-``equivalent_atom``) is found by ``np.where(equivalent_atom=1)[0]``.
+symmetrically independent atoms. A list of atoms that are
+symmetrically euivalent to some independent atom (here for example 1
+is in ``equivalent_atom``) is found by
+``np.where(equivalent_atom=1)[0]``. When the search failed, ``None``
+is returned.
 
 If ``cell`` is given as a tuple and collinear polarizations are given
 as the fourth element of this tuple, symmetry operations are searched
