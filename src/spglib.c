@@ -148,14 +148,6 @@ static int get_schoenflies(char symbol[10],
 			   SPGCONST double position[][3],
 			   const int types[], const int num_atom,
 			   const double symprec);
-static int get_symmetry_numerical(int rotation[][3][3],
-				  double translation[][3],
-				  const int max_size,
-				  SPGCONST double lattice[3][3],
-				  SPGCONST double position[][3],
-				  const int types[],
-				  const int num_atom,
-				  const double symprec);
 
 /*---------*/
 /* kpoints */
@@ -386,51 +378,6 @@ int spgat_get_symmetry(int rotation[][3][3],
 				   types,
 				   num_atom,
 				   symprec);
-}
-
-/* Return 0 if failed */
-int spg_get_symmetry_numerical(int rotation[][3][3],
-			       double translation[][3],
-			       const int max_size,
-			       SPGCONST double lattice[3][3],
-			       SPGCONST double position[][3],
-			       const int types[],
-			       const int num_atom,
-			       const double symprec)
-{
-  sym_set_angle_tolerance(-1.0);
-
-  return get_symmetry_numerical(rotation,
-				translation,
-				max_size,
-				lattice,
-				position,
-				types,
-				num_atom,
-				symprec);
-}
-
-/* Return 0 if failed */
-int spgat_get_symmetry_numerical(int rotation[][3][3],
-				 double translation[][3],
-				 const int max_size,
-				 SPGCONST double lattice[3][3],
-				 SPGCONST double position[][3],
-				 const int types[],
-				 const int num_atom,
-				 const double symprec,
-				 const double angle_tolerance)
-{
-  sym_set_angle_tolerance(angle_tolerance);
-
-  return get_symmetry_numerical(rotation,
-				translation,
-				max_size,
-				lattice,
-				position,
-				types,
-				num_atom,
-				symprec);
 }
 
 /* Return 0 if failed */
@@ -1388,7 +1335,7 @@ static int get_symmetry_with_collinear_spin(int rotation[][3][3],
 			     symprec)) == NULL) {
     cel_free_cell(cell);
     cell = NULL;
-    goto err;
+    goto get_dataset_failed;
   }
 
   if ((sym_nonspin = sym_alloc_symmetry(dataset->n_operations)) == NULL) {
@@ -1444,6 +1391,8 @@ static int get_symmetry_with_collinear_spin(int rotation[][3][3],
 
  err:
   spglib_error_code = SPGERR_SYMMETRY_OPERATION_SEARCH_FAILED;
+
+ get_dataset_failed:
   return 0;
 }
 
@@ -1759,63 +1708,6 @@ static int get_schoenflies(char symbol[10],
 
 }
 
-
-/* Return 0 if failed */
-static int get_symmetry_numerical(int rotation[][3][3],
-				  double translation[][3],
-				  const int max_size,
-				  SPGCONST double lattice[3][3],
-				  SPGCONST double position[][3],
-				  const int types[],
-				  const int num_atom,
-				  const double symprec)
-{
-  int i, size;
-  Cell *cell;
-  Symmetry *symmetry;
-
-  size = 0;
-  cell = NULL;
-  symmetry = NULL;
-
-  if ((cell = cel_alloc_cell(num_atom)) == NULL) {
-    goto err;
-  }
-
-  cel_set_cell(cell, lattice, position, types);
-
-  if ((symmetry = sym_get_operation(cell, symprec)) == NULL) {
-    cel_free_cell(cell);
-    cell = NULL;
-    goto err;
-  }
-
-  if (symmetry->size > max_size) {
-    fprintf(stderr, "spglib: Indicated max size(=%d) is less than number ",
-	    max_size);
-    fprintf(stderr, "spglib: of symmetry operations(=%d).\n", symmetry->size);
-    goto ret;
-  }
-
-  for (i = 0; i < symmetry->size; i++) {
-    mat_copy_matrix_i3(rotation[i], symmetry->rot[i]);
-    mat_copy_vector_d3(translation[i], symmetry->trans[i]);
-  }
-  size = symmetry->size;
-
- ret:
-  sym_free_symmetry(symmetry);
-  symmetry = NULL;
-  cel_free_cell(cell);
-  cell = NULL;
-
-  spglib_error_code = SPGLIB_SUCCESS;
-  return size;
-
- err:
-  spglib_error_code = SPGERR_SYMMETRY_OPERATION_SEARCH_FAILED;
-  return 0;
-}
 
 /*---------*/
 /* kpoints */

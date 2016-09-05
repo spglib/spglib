@@ -88,9 +88,12 @@ def get_symmetry(cell, symprec=1e-5, angle_tolerance=-1.0):
         dataset = get_symmetry_dataset(cell,
                                        symprec=symprec,
                                        angle_tolerance=angle_tolerance)
-        return {'rotations': dataset['rotations'],
-                'translations': dataset['translations'],
-                'equivalent_atoms': dataset['equivalent_atoms']}
+        if dataset is None:
+            return None
+        else:
+            return {'rotations': dataset['rotations'],
+                    'translations': dataset['translations'],
+                    'equivalent_atoms': dataset['equivalent_atoms']}
     else:
         equivalent_atoms = np.zeros(len(magmoms), dtype='intc')
         num_sym = spg.symmetry_with_collinear_spin(rotation,
@@ -103,11 +106,14 @@ def get_symmetry(cell, symprec=1e-5, angle_tolerance=-1.0):
                                                    symprec,
                                                    angle_tolerance)
         _set_error_message()
-        return {'rotations': np.array(rotation[:num_sym],
-                                      dtype='intc', order='C'),
-                'translations': np.array(translation[:num_sym],
-                                         dtype='double', order='C'),
-                'equivalent_atoms': equivalent_atoms}
+        if num_sym == 0:
+            return None
+        else:
+            return {'rotations': np.array(rotation[:num_sym],
+                                          dtype='intc', order='C'),
+                    'translations': np.array(translation[:num_sym],
+                                             dtype='double', order='C'),
+                    'equivalent_atoms': equivalent_atoms}
 
 def get_symmetry_dataset(cell, symprec=1e-5, angle_tolerance=-1.0):
     """Search symmetry dataset from an input cell.
