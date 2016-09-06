@@ -24,37 +24,30 @@ installation. A command to install spglib is::
 
    % pip install spglib
 
-Previous versions < 1.8.x are installed by::
-
-   % pip install pyspglib
-
 Conda is another choice::
 
    % conda install -c https://conda.anaconda.org/jochym spglib
 
 These packages are made by Paweł T. Jochym.
 
-Building using setup.py (distutils)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Building using setup.py
+^^^^^^^^^^^^^^^^^^^^^^^^
 
-To manually install python-spglib using ``setup.py``, python header files
-(python-dev), gcc, and numpy are required before the build. The
-installation steps are shown as follows:
+To manually install python-spglib using ``setup.py``, python header
+files (python-dev), C-compiler (e.g., gcc, clang), and numpy are
+required before the build. The installation steps are shown as
+follows:
 
 1. Go to the :file:`python` directory
 2. Type the command::
 
-      % python setup.py install --home=<my-directory>
-
-   The :file:`{<my-directory>}` is possibly current directory, :file:`.`
-   or maybe::
-
       % python setup.py install --user
 
-   to use the user scheme (see the python document.)
-
-3. Put :file:`./lib/python` path into :envvar:`$PYTHONPATH`, e.g., in your
-   .washrag.
+   Document about where spglib is installed is found at the
+   links below:
+   
+   - https://docs.python.org/2/install/#alternate-installation-the-user-scheme
+   - https://docs.python.org/3/install/#alternate-installation-the-user-scheme
 
 Test
 -----
@@ -63,10 +56,13 @@ The test script :file:`test_spglib.py` is found in :file:`python/test`
 directory. Got to this directory and run this script. It will be like below::
 
    % python test_spglib.py
+   test_find_primitive (__main__.TestSpglib) ... ok
+   test_get_symmetry (__main__.TestSpglib) ... ok
    test_get_symmetry_dataset (__main__.TestSpglib) ... ok
+   test_refine_cell (__main__.TestSpglib) ... ok
    
    ----------------------------------------------------------------------
-   Ran 1 test in 2.132s
+   Ran 4 tests in 13.147s
    
    OK
 
