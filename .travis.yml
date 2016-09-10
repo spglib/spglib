@@ -56,7 +56,7 @@ deploy:
       skip_cleanup: true
     # script: anaconda -t $ANACONDA_TOKEN build trigger --test-only --branch rc jochym/spglib
       script: 
-        - conda install conda-build anaconda-client --yes
+        - conda install conda-build --yes
         - conda build --token $ANACONDA_TOKEN conda
       on:
         branch: rc
