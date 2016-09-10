@@ -54,7 +54,8 @@ deploy:
     # testing anaconda
     - provider: script
       skip_cleanup: true
-      script: anaconda -t $ANACONDA_TOKEN build trigger --test-only --branch rc jochym/spglib
+    # script: anaconda -t $ANACONDA_TOKEN build trigger --test-only --branch rc jochym/spglib
+      script: GIT_BRANCH=rc conda build --token $ANACONDA_TOKEN conda
       on:
         branch: rc
         tags: false
