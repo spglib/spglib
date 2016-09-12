@@ -1052,10 +1052,14 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
 	  spacegroup = spa_get_spacegroup_with_hall_number(primitive,
 							   hall_number);
 	} else {
+	  prm_free_primitive(primitive);
+	  primitive = NULL;
 	  goto err;
 	}
 
 	if (spacegroup.number == 0) {
+	  prm_free_primitive(primitive);
+	  primitive = NULL;
 	  goto err;
 	}
       }
@@ -1073,13 +1077,14 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
 	}
       }
     }
+
+    prm_free_primitive(primitive);
+    primitive = NULL;
   }
 
  err:
   cel_free_cell(cell);
   cell = NULL;
-  prm_free_primitive(primitive);
-  primitive = NULL;
   free(dataset);
   dataset = NULL;
 
