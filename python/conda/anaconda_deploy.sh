@@ -5,6 +5,8 @@ export TKN=$2
 export GIT_BRANCH=$3
 
 conda install conda-build anaconda-client --yes
-conda build conda --no-anaconda-upload --output
-anaconda --token $TKN upload --label $LBL /home/travis/miniconda/conda-bld/linux-64/spglib*py*.tar.bz2
+conda build conda --no-anaconda-upload
+TRG=`conda build conda --output`
+echo "Uploading: $TRG"
+anaconda --token $TKN upload --label $LBL $TRG
 
