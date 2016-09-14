@@ -59,7 +59,7 @@ deploy:
       on:
         branch: rc
         tags: false
-        python: 2.7
+#        python: 2.7
     # production
     - provider: pypi
       skip_cleanup: true
