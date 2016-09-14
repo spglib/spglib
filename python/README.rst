@@ -8,13 +8,11 @@ Python bindings for C library for finding and handling crystal symmetries
 Installation
 -------------
 
-Source codes, examples, and the test are downloaded `SourceForge
-<https://sourceforge.net/project/showfiles.php?group_id=215020>`_ or
-`GitHub
-<https://github.com/atztogo/spglib/releases>`_.
+The package is developed on github. You can get the source for the released 
+versions from the repository_. 
 
 Using package distribution service
-------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The easiest way to install python-spglib is to use the pypi package,
 for which numpy is required to be installed before the
@@ -29,7 +27,7 @@ Conda is another choice::
 These packages are made by Paweł T. Jochym.
 
 Building using setup.py
--------------------
+^^^^^^^^^^^^^^^^^^^^^^^
 
 To manually install python-spglib using ``setup.py``, python header
 files (python-dev), C-compiler (e.g., gcc, clang), and numpy are
@@ -47,6 +45,7 @@ follows:
    - https://docs.python.org/2/install/#alternate-installation-the-user-scheme
    - https://docs.python.org/3/install/#alternate-installation-the-user-scheme
 
+.. _repository: https://github.com/atztogo/spglib/releases
 
 .. |Version Badge| image:: https://anaconda.org/jochym/spglib/badges/version.svg
    :target: https://anaconda.org/jochym/spglib
