@@ -61,7 +61,11 @@ deploy:
 #        - conda build --token $ANACONDA_TOKEN conda
     - provider: script
       skip_cleanup: true
-      script: pwd ; conda info ; conda install conda-build --yes ; conda build --no-anaconda-upload conda
+      script: 
+        - pwd
+        - conda info
+        - conda install conda-build --yes 
+        - conda build --no-anaconda-upload conda
       on:
         branch: rc
         tags: false
