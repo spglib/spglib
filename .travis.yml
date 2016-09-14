@@ -50,7 +50,6 @@ deploy:
       on:
         branch: rc
         tags: false
-        python: 2.7
     
     # testing conda
     - provider: script
