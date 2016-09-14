@@ -3,49 +3,48 @@ spglib
 
 |Version Badge| |Downloads Badge| |Build Status|
 
-Python bindings for C library for finding and handling crystal symmetries
+Python bindings for C library for finding and handling crystal
+symmetries
 
 Installation
--------------
+------------
 
-The package is developed on github. You can get the source for the released 
-versions from the repository_. 
+The package is developed on github. You can get the source for the
+released versions from the
+`repository <https://github.com/atztogo/spglib/releases>`__.
 
 Using package distribution service
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The easiest way to install python-spglib is to use the pypi package,
-for which numpy is required to be installed before the
-installation. A command to install spglib is::
+The easiest way to install python-spglib is to use the pypi package, for
+which numpy is required to be installed before the installation. A
+command to install spglib is:
 
-   % pip install spglib
+::
 
-Conda is another choice::
+    pip install spglib
 
-   % conda install -c jochym spglib
+Conda is another choice:
+
+::
+
+    conda install -c jochym spglib
 
 These packages are made by Paweł T. Jochym.
 
 Building using setup.py
-^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~
 
 To manually install python-spglib using ``setup.py``, python header
 files (python-dev), C-compiler (e.g., gcc, clang), and numpy are
-required before the build. The installation steps are shown as
-follows:
+required before the build. The installation steps are shown as follows:
 
-1. Go to the :file:`python` directory
-2. Type the command::
+1. Go to the python directory
+2. Type the command:
 
-      % python setup.py install --user
+   ::
 
-   Document about where spglib is installed is found at the
-   links below:
-   
-   - https://docs.python.org/2/install/#alternate-installation-the-user-scheme
-   - https://docs.python.org/3/install/#alternate-installation-the-user-scheme
-
-.. _repository: https://github.com/atztogo/spglib/releases
+       python setup.py install --user
 
 .. |Version Badge| image:: https://anaconda.org/jochym/spglib/badges/version.svg
    :target: https://anaconda.org/jochym/spglib
