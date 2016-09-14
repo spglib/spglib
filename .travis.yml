@@ -51,15 +51,14 @@ deploy:
         branch: rc
         tags: false
         python: 2.7
-    # testing anaconda
+    
+    # testing anaconda script: anaconda -t $ANACONDA_TOKEN build trigger --test-only --branch rc jochym/spglib
+#        - conda info
+#        - conda install conda-build --yes
+#        - conda build --token $ANACONDA_TOKEN conda
     - provider: script
       skip_cleanup: true
-    # script: anaconda -t $ANACONDA_TOKEN build trigger --test-only --branch rc jochym/spglib
-      script: 
-        - pwd
-        - conda info
-        - conda install conda-build --yes
-        - conda build --token $ANACONDA_TOKEN conda
+      script: pwd
       on:
         branch: rc
         tags: false
