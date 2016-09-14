@@ -38,9 +38,6 @@ script:
     - python test_spglib.py
     - cd ..
 
-env:
-    - GIT_BRANCH=$TRAVIS_BRANCH
-
 deploy:
     # testing
     - provider: pypi
@@ -55,17 +52,10 @@ deploy:
         tags: false
         python: 2.7
     
-    # testing anaconda script: anaconda -t $ANACONDA_TOKEN build trigger --test-only --branch rc jochym/spglib
-#        - conda info
-#        - conda install conda-build --yes
-#        - conda build --token $ANACONDA_TOKEN conda
+    # testing 
     - provider: script
       skip_cleanup: true
-      script: 
-        - pwd
-        - conda info
-        - conda install conda-build --yes 
-        - conda build --no-anaconda-upload conda
+      script: conda/anaconda_deploy.sh rc $ANACONDA_TOKEN $TRAVIS_BRANCH
       on:
         branch: rc
         tags: false
@@ -84,7 +74,7 @@ deploy:
     # production anaconda
     - provider: script
       skip_cleanup: true
-      script: anaconda -t $ANACONDA_TOKEN build trigger --branch master jochym/spglib
+      script: conda/anaconda_deploy.sh main $ANACONDA_TOKEN $TRAVIS_BRANCH
       on:
         branch: master
         tags: false
