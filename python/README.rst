@@ -14,7 +14,7 @@ Source codes, examples, and the test are downloaded `SourceForge
 <https://github.com/atztogo/spglib/releases>`_.
 
 Using package distribution service
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+------------------
 
 The easiest way to install python-spglib is to use the pypi package,
 for which numpy is required to be installed before the
@@ -29,7 +29,7 @@ Conda is another choice::
 These packages are made by Paweł T. Jochym.
 
 Building using setup.py
-^^^^^^^^^^^^^^^^^^^^^^^^
+-------------------
 
 To manually install python-spglib using ``setup.py``, python header
 files (python-dev), C-compiler (e.g., gcc, clang), and numpy are
