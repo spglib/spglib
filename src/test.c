@@ -26,6 +26,7 @@ static int test_spg_get_dataset(void);
 static int test_spg_get_ir_reciprocal_mesh(void);
 static int test_spg_get_stabilized_reciprocal_mesh(void);
 static int test_spg_relocate_BZ_grid_address(void);
+static int test_spg_get_error_message(void);
 static int show_spg_dataset(double lattice[3][3],
 			    const double origin_shift[3],
 			    double position[][3],
@@ -56,6 +57,7 @@ int main(void)
     test_spg_get_ir_reciprocal_mesh,
     test_spg_get_stabilized_reciprocal_mesh,
     test_spg_relocate_BZ_grid_address,
+    test_spg_get_error_message,
     NULL};
 
   int i, result;
@@ -893,6 +895,37 @@ static int show_spg_dataset(double lattice[3][3],
     return 0;
   } else {
     spg_free_dataset(dataset);
+    return 1;
+  }
+}
+
+static int test_spg_get_error_message(void)
+{
+  double lattice[3][3] = {{4, 0, 0}, {0, 4, 0}, {0, 0, 4}};
+  double position[][3] = {
+    {0, 0, 0},
+    {0.5, 0.5, 0.5},
+    {0.5, 0.5, 0.5}
+  };
+  int types[] = {1, 1, 1};
+  int i, num_atom = 3, num_primitive_atom;
+  double symprec = 1e-5;
+  SpglibError error;
+  
+  
+  /* lattice, position, and types are overwirtten. */
+  printf("*** Example of spg_get_error_message ***:\n");
+  num_primitive_atom = spg_find_primitive(lattice, position, types, num_atom, symprec);
+  if (num_primitive_atom == 0) {
+    printf("Primitive cell was not found.\n");
+    error = spg_get_error_code();
+    printf("%s\n", spg_get_error_message(error));
+    if (error == SPGLIB_SUCCESS) {
+      return 1;
+    } else {
+      return 0;
+    }
+  } else {
     return 1;
   }
 }

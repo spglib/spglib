@@ -24,37 +24,30 @@ installation. A command to install spglib is::
 
    % pip install spglib
 
-Previous versions < 1.8.x are installed by::
-
-   % pip install pyspglib
-
 Conda is another choice::
 
-   % conda install -c https://conda.anaconda.org/jochym spglib
+   % conda install -c jochym spglib
 
 These packages are made by Paweł T. Jochym.
 
-Building using setup.py (distutils)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Building using setup.py
+^^^^^^^^^^^^^^^^^^^^^^^^
 
-To manually install python-spglib using ``setup.py``, python header files
-(python-dev), gcc, and numpy are required before the build. The
-installation steps are shown as follows:
+To manually install python-spglib using ``setup.py``, python header
+files (python-dev), C-compiler (e.g., gcc, clang), and numpy are
+required before the build. The installation steps are shown as
+follows:
 
 1. Go to the :file:`python` directory
 2. Type the command::
 
-      % python setup.py install --home=<my-directory>
-
-   The :file:`{<my-directory>}` is possibly current directory, :file:`.`
-   or maybe::
-
       % python setup.py install --user
 
-   to use the user scheme (see the python document.)
-
-3. Put :file:`./lib/python` path into :envvar:`$PYTHONPATH`, e.g., in your
-   .washrag.
+   Document about where spglib is installed is found at the
+   links below:
+   
+   - https://docs.python.org/2/install/#alternate-installation-the-user-scheme
+   - https://docs.python.org/3/install/#alternate-installation-the-user-scheme
 
 Test
 -----
@@ -63,10 +56,13 @@ The test script :file:`test_spglib.py` is found in :file:`python/test`
 directory. Got to this directory and run this script. It will be like below::
 
    % python test_spglib.py
+   test_find_primitive (__main__.TestSpglib) ... ok
+   test_get_symmetry (__main__.TestSpglib) ... ok
    test_get_symmetry_dataset (__main__.TestSpglib) ... ok
+   test_refine_cell (__main__.TestSpglib) ... ok
    
    ----------------------------------------------------------------------
-   Ran 1 test in 2.132s
+   Ran 4 tests in 13.147s
    
    OK
 
@@ -106,30 +102,34 @@ directory.
 Variables
 ----------
 
-.. _variables_crystal_structure:
+.. _py_variables_crystal_structure:
 
 Crystal structure (``cell``)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-A crystal structure is given by a **tuple**. This tuple format
-is supported at version 1.9.1 or later. Optionally, an **ASE Atoms-like
+A crystal structure is given by a **tuple**. This tuple format is
+supported at version 1.9.1 or later. Optionally, an **ASE Atoms-like
 object** is also supported. An alternative Atoms class (`atoms.py
 <https://github.com/atztogo/spglib/blob/master/python/examples/atoms.py>`_)
 that contains minimum set of methods is prepared in the `examples
 <https://github.com/atztogo/spglib/tree/master/python/examples>`_
-directory.
+directory. When using ASE Atoms-like object, ``get_symmetry`` with
+collinear polarizations is not supported.
 
 The tuple format is shown as follows. There are three or four elements
 in the tuple: ``cell = (lattice, positions, numbers)`` or ``cell =
-(lattice, positions, numbers, magmoms)`` where ``magmoms`` is
-optional.
+(lattice, positions, numbers, magmoms)`` where ``magmoms`` represents
+collinear polarizations on atoms and is optional.
 
 Lattice parameters ``lattice`` are given by a 3x3 matrix with floating
-point values. Fractional atomic positions ``positions`` are given by a
-Nx3 matrix with floating point values, where N is the number of
-atoms. Numbers to distinguish atomic species ``numbers`` are given
-by a list of N integers. Collinear magnetic moments ``magmoms`` are
-given by a list of N floating point values.
+point values, where :math:`\mathbf{a}, \mathbf{b}, \mathbf{c}` are
+given as rows, which results in the transpose of the definition for
+C-API (:ref:`variables_lattice`). Fractional atomic positions
+``positions`` are given by a Nx3 matrix with floating point values,
+where N is the number of atoms. Numbers to distinguish atomic species
+``numbers`` are given by a list of N integers. The collinear polarizations
+``magmoms`` only work with ``get_symmetry`` and are given
+as a list of N floating point values.
 
 ::
 
@@ -141,7 +141,12 @@ given by a list of N floating point values.
                 [a_3, b_3, c_3],
                 ...]
    numbers = [n_1, n_2, n_3, ...]
-   magmoms = [m_1, m_2, m_3, ...]
+   magmoms = [m_1, m_2, m_3, ...]  # Only works with get_symmetry
+
+
+**Version 1.9.5 or later**:
+When a crystal structure is not properly given, the methods that use
+the crsytal strcutre will return ``None``.
 
 Symmetry tolerance (``symprec``)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -164,6 +169,18 @@ Methods
 
 This returns version number of spglib by tuple with three numbers.
 
+``get_error_message``
+^^^^^^^^^^^^^^^^^^^^^^
+
+**New in version 1.9.5**
+
+This method may be used to see why spglib failed though error handling
+in spglib is not very sophisticated.
+
+::
+
+   error_message = get_error_message()
+
 ``get_spacegroup``
 ^^^^^^^^^^^^^^^^^^^
 
@@ -174,6 +191,8 @@ This returns version number of spglib by tuple with three numbers.
 International space group short symbol and number are obtained as a
 string. With ``symbol_type=1``, Schoenflies symbol is given instead of
 international symbol.
+
+.. _py_method_get_symmetry:
 
 ``get_symmetry``
 ^^^^^^^^^^^^^^^^^^
@@ -188,17 +207,33 @@ operations" x "3x3 matrices". The key ``translation`` contains a numpy
 array of float, which is "number of symmetry operations" x
 "vectors". The orders of the rotation matrices and the translation
 vectors correspond with each other, e.g. , the second symmetry
-operation is organized by the second rotation matrix and second
-translation vector in the respective arrays. The operations are
-applied for the fractional coordinates (not for Cartesian
-coordinates).
+operation is organized by the set of the second rotation matrix and second
+translation vector in the respective arrays. Therefore a set of
+symmetry operations may obtained by::
 
-The rotation matrix and translation vector are used as follows::
+   [(r, t) for r, t in zip(dataset['rotations'], dataset['translations'])]
+
+The operations are given with respect to the fractional coordinates
+(not for Cartesian coordinates). The rotation matrix and translation
+vector are used as follows::
 
     new_vector[3x1] = rotation[3x3] * vector[3x1] + translation[3x1]
 
 The three values in the vector are given for the a, b, and c axes,
-respectively.
+respectively. The key ``equivalent_atoms`` gives a mapping table of
+atoms to symmetrically independent atoms. This is used to find
+symmetrically equivalent atoms. The numbers contained are the indices
+of atoms starting from 0, i.e., the first atom is numbered as 0, and
+then 1, 2, 3, ... ``np.unique(equivalent_atoms)`` gives representative
+symmetrically independent atoms. A list of atoms that are
+symmetrically euivalent to some independent atom (here for example 1
+is in ``equivalent_atom``) is found by
+``np.where(equivalent_atom=1)[0]``. When the search failed, ``None``
+is returned.
+
+If ``cell`` is given as a tuple and collinear polarizations are given
+as the fourth element of this tuple, symmetry operations are searched
+considering this freedome. In ASE Atoms-class object, this is not supported.
 
 ``refine_cell``
 ^^^^^^^^^^^^^^^^
@@ -211,8 +246,8 @@ respectively.
 
 Bravais lattice (3x3 numpy array), atomic scaled positions (a numpy
 array of [number_of_atoms,3]), and atomic numbers (a 1D numpy array)
-that are symmetrized following space group type are returned. When it
-fails, ``None`` is returned.
+that are symmetrized following space group type are returned. When the
+search failed, ``None`` is returned.
 
 The detailed control of standardization of unit cell may be done using
 ``standardize_cell``.
@@ -228,7 +263,8 @@ The detailed control of standardization of unit cell may be done using
 
 When a primitive cell is found, lattice parameters (3x3 numpy array),
 scaled positions (a numpy array of [number_of_atoms,3]), and atomic
-numbers (a 1D numpy array) is returned. When it fails, ``None`` is returned.
+numbers (a 1D numpy array) is returned. When the search failed,
+``None`` is returned.
 
 The detailed control of standardization of unit cell can be done using
 ``standardize_cell``.
@@ -246,9 +282,11 @@ The detailed control of standardization of unit cell can be done using
 cell, and ``no_idealize=True`` disables to idealize lengths and angles
 of basis vectors and positions of atoms according to crystal
 symmetry. Now ``refine_cell`` and ``find_primitive`` are shorthands of
-this method with combinations of these options. When it fails,
-``None`` is returned. More detailed explanation is shown in the spglib
-(C-API) document.
+this method with combinations of these options. When the search
+failed, ``None`` is returned.  is returned. More detailed explanation
+is shown in the spglib (C-API) document.
+
+.. _py_method_get_symmetry_dataset:
 
 ``get_symmetry_dataset``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -270,21 +308,19 @@ this method with combinations of these options. When it fails,
 * ``wyckoffs``: Wyckoff letters
 * ``equivalent_atoms``: Mapping table to equivalent atoms
 * ``rotations`` and ``translations``: Rotation matrices and
-  translation vectors. Space group operations are obtained by::
-
-    [(r, t) for r, t in zip(dataset['rotations'], dataset['translations'])]
-
-..
-   * ``pointgrouop_number``: Serial number of the crystallographic point
-     group, which refers list of space groups (Seto’s web site)
-
+  translation vectors. See :ref:`py_method_get_symmetry` for more details
 * ``pointgroup_symbol``: Symbol of the crystallographic point group in
   the Hermann–Mauguin notation.
 * ``std_lattice``, ``std_positions``, ``std_types``: Standardized
   crystal structure corresponding to a Hall symbol found. These are
   equivalently given in the array formats of ``lattice``,
   ``positions``, and ``numbers`` presented at
-  :ref:`variables_crystal_structure`, respectively.
+  :ref:`py_variables_crystal_structure`, respectively.
+..
+   * ``pointgrouop_number``: Serial number of the crystallographic point
+     group, which refers list of space groups (Seto’s web site)
+
+When the search failed, ``None`` is returned.
 
 ``get_symmetry_from_database``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -298,6 +334,8 @@ A set of crystallographic symmetry operations corresponding to
 translation parts are accessed by the keys ``rotations`` and
 ``translations``, respectively. The definition of ``hall_number`` is
 found at :ref:`api_spg_get_dataset_spacegroup_type`.
+
+When something wrong happened, ``None`` is returned.
 
 ``get_spacegroup_type``
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -336,6 +374,8 @@ Here ``spacegroup_type['international_short']`` is equivalent to
 ``spacegroup_type['pointgroup_international']`` is equivalent to
 ``dataset['pointgroup_symbol']`` of ``get_symmetry_dataset``.
 
+When something wrong happened, ``None`` is returned.
+
 ``niggli_reduce``
 ^^^^^^^^^^^^^^^^^^
 
@@ -347,14 +387,26 @@ Here ``spacegroup_type['international_short']`` is equivalent to
 
 Niggli reduction is achieved using this method. The algorithm detail
 is found at https://atztogo.github.io/niggli/ and the references are
-there in. Basis vectors are stored in ``lattice`` and
-``niggli_lattice`` as shown in
-:ref:`variables_crystal_structure`. ``esp`` is the tolerance
-parameter, but unlike ``symprec`` the unit is not a length. This is used
-to check if difference of norms of two basis vectors is close to zero
-or not and if two basis vectors are orthogonal by the value of dot product
-being close to zero or not.  The detail is shown at
+there in. Original basis vectors are stored in ``lattice`` and the
+Niggli reduced basis vectors are given in ``niggli_lattice``. The
+format of basis vectors are found at
+:ref:`py_variables_crystal_structure`. ``esp`` is the tolerance
+parameter, but unlike ``symprec`` the unit is not a length. This is
+used to check if difference of norms of two basis vectors is close to
+zero or not and if two basis vectors are orthogonal by the value of
+dot product being close to zero or not.  The detail is shown at
 https://atztogo.github.io/niggli/.
+
+When the search failed, ``None`` is returned.
+
+The transformation from original basis vectors :math:`( \mathbf{a}
+\; \mathbf{b} \; \mathbf{c} )` to final baiss vectors :math:`(
+\mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )` is achieved by linear
+combination of basis vectors with integer coefficients without
+rotating coordinates. Therefore the transformation matrix is obtained
+by :math:`\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
+( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}` and the matrix
+elements have to be almost integers.
 
 ``delaunay_reduce``
 ^^^^^^^^^^^^^^^^^^^^
@@ -366,13 +418,26 @@ https://atztogo.github.io/niggli/.
    delaunay_lattice = delaunay_reduce(lattice, eps=1e-5)
 
 Delaunay reduction is achieved using this method. The algorithm is
-found in the international tables for crystallography volume A. Basis
-vectors are stored in ``lattice`` and ``niggli_lattice`` as shown in
-:ref:`variables_crystal_structure`. ``esp`` is the tolerance
+found in the international tables for crystallography
+volume A. Original basis vectors are stored in ``lattice`` and the
+Delaunay reduced basis vectors are given in ``delaunay_lattice``,
+where the format of basis vectors are shown in
+:ref:`py_variables_crystal_structure`. ``esp`` is the tolerance
 parameter, but unlike ``symprec`` the unit is not a length. This is
 used as the criterion if volume is close to zero or not and if two
 basis vectors are orthogonal by the value of dot product being close
 to zero or not.
+
+When the search failed, ``None`` is returned.
+
+The transformation from original basis vectors :math:`( \mathbf{a}
+\; \mathbf{b} \; \mathbf{c} )` to final basis vectors :math:`(
+\mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )` is achieved by linear
+combination of basis vectors with integer coefficients without
+rotating coordinates. Therefore the transformation matrix is obtained
+by :math:`\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
+( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}` and the matrix
+elements have to be almost integers.
 
 ``get_ir_reciprocal_mesh``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -395,13 +460,48 @@ the irreducible k-point indices that are obtained by ::
 
    np.unique(mapping)
 
-Here ``np`` is the imported numpy module. The grid point is accessed
-by ``grid[index]``.
+Here ``np`` means the numpy module. The grid point is accessed by
+``grid[index]``.
 
-For example, the irreducible k-points in fractional coordinates are
-obtained by ::
+When the sesarch failed, ``None`` is returned.
 
-   ir_grid = []
-   mapping, grid = get_ir_reciprocal_mesh([ 8, 8, 8 ], cell, [1, 1, 1])
-   for i in np.unique(mapping):
-       ir_grid.append(grid[i])
+An example is shown below::
+
+   import numpy as np
+   import spglib
+   
+   lattice = np.array([[0.0, 0.5, 0.5],
+                       [0.5, 0.0, 0.5],
+                       [0.5, 0.5, 0.0]]) * 5.4
+   positions = [[0.875, 0.875, 0.875],
+                [0.125, 0.125, 0.125]]
+   numbers= [1,] * 2
+   cell = (lattice, positions, numbers)
+   print(spglib.get_spacegroup(cell, symprec=1e-5))
+   mesh = [8, 8, 8]
+   
+   #
+   # Gamma centre mesh
+   #
+   mapping, grid = spglib.get_ir_reciprocal_mesh(mesh, cell, is_shift=[0, 0, 0])
+   
+   # All k-points and mapping to ir-grid points
+   for i, (ir_gp_id, gp) in enumerate(zip(mapping, grid)):
+       print("%3d ->%3d %s" % (i, ir_gp_id, gp.astype(float) / mesh))
+   
+   # Irreducible k-points
+   print("Number of ir-kpoints: %d" % len(np.unique(mapping)))
+   print(grid[np.unique(mapping)] / np.array(mesh, dtype=float))
+   
+   #
+   # With shift
+   #
+   mapping, grid = spglib.get_ir_reciprocal_mesh(mesh, cell, is_shift=[1, 1, 1])
+   
+   # All k-points and mapping to ir-grid points
+   for i, (ir_gp_id, gp) in enumerate(zip(mapping, grid)):
+       print("%3d ->%3d %s" % (i, ir_gp_id, (gp + [0.5, 0.5, 0.5]) / mesh))
+   
+   # Irreducible k-points
+   print("Number of ir-kpoints: %d" % len(np.unique(mapping)))
+   print((grid[np.unique(mapping)] + [0.5, 0.5, 0.5]) / mesh)

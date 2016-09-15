@@ -41,10 +41,6 @@
 #define SPGCONST
 #endif
 
-int spg_get_major_version(void);
-int spg_get_minor_version(void);
-int spg_get_micro_version(void);
-
 /*
   ------------------------------------------------------------------
 
@@ -94,6 +90,19 @@ int spg_get_micro_version(void);
   ------------------------------------------------------------------
 */
 
+typedef enum {
+  SPGLIB_SUCCESS = 0,
+  SPGERR_SPACEGROUP_SEARCH_FAILED,
+  SPGERR_CELL_STANDARDIZATION_FAILED,
+  SPGERR_SYMMETRY_OPERATION_SEARCH_FAILED,
+  SPGERR_ATOMS_TOO_CLOSE,
+  SPGERR_POINTGROUP_NOT_FOUND,
+  SPGERR_NIGGLI_FAILED,
+  SPGERR_DELAUNAY_FAILED,
+  SPGERR_ARRAY_SIZE_SHORTAGE,
+  SPGERR_NONE,
+} SpglibError;
+
 typedef struct {
   int spacegroup_number;
   int hall_number;
@@ -129,6 +138,13 @@ typedef struct {
   int arithmetic_crystal_class_number;
   char arithmetic_crystal_class_symbol[7];
 } SpglibSpacegroupType;
+
+int spg_get_major_version(void);
+int spg_get_minor_version(void);
+int spg_get_micro_version(void);
+
+SpglibError spg_get_error_code(void);
+char * spg_get_error_message(SpglibError spglib_error);
 
 SpglibDataset * spg_get_dataset(SPGCONST double lattice[3][3],
 				SPGCONST double position[][3],
@@ -187,27 +203,6 @@ int spgat_get_symmetry(int rotation[][3][3],
 		       const int num_atom,
 		       const double symprec,
 		       const double angle_tolerance);
-
-/* This is only used to check consistensy with spg_get_symmetry. */
-int spg_get_symmetry_numerical(int rotation[][3][3],
-			       double translation[][3],
-			       const int max_size,
-			       SPGCONST double lattice[3][3],
-			       SPGCONST double position[][3],
-			       const int types[],
-			       const int num_atom,
-			       const double symprec);
-
-int spgat_get_symmetry_numerical(int rotation[][3][3],
-				 double translation[][3],
-				 const int max_size,
-				 SPGCONST double lattice[3][3],
-				 SPGCONST double position[][3],
-				 const int types[],
-				 const int num_atom,
-				 const double symprec,
-				 const double angle_tolerance);
-
 
 /* Find symmetry operations with collinear spins on atoms. */
 int spg_get_symmetry_with_collinear_spin(int rotation[][3][3],

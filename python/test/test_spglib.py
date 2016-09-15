@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 from spglib import (get_symmetry_dataset, refine_cell, find_primitive,
-                    get_spacegroup_type)
+                    get_spacegroup_type, get_symmetry)
 from vasp import read_vasp
 from os import listdir
 
@@ -75,7 +75,7 @@ class TestSpglib(unittest.TestCase):
                 primitive = find_primitive(cell, symprec=1e-5)
             spg_type = get_spacegroup_type(dataset['hall_number'])
             c = spg_type['international_short'][0]
-            if c == 'A' or c == 'B' or c == 'C' or c == 'I':
+            if c in ['A', 'B', 'C', 'I']:
                 multiplicity = 2
             elif c == 'F':
                 multiplicity = 4
@@ -90,6 +90,20 @@ class TestSpglib(unittest.TestCase):
             self.assertEqual(len(dataset['std_types']),
                              len(primitive[2]) * multiplicity,
                              msg=("multi: %d, %s" % (multiplicity, fname)))
+
+    def test_get_symmetry(self):
+        for fname in self._filenames:
+            spgnum = int(fname.split('-')[1])
+            cell = read_vasp("./data/%s" % fname)
+            if 'distorted' in fname:
+                num_sym_dataset = len(
+                    get_symmetry_dataset(cell, symprec=1e-1)['rotations'])
+                num_sym = len(get_symmetry(cell, symprec=1e-1)['rotations'])
+            else:
+                num_sym_dataset = len(
+                    get_symmetry_dataset(cell, symprec=1e-5)['rotations'])
+                num_sym = len(get_symmetry(cell, symprec=1e-5)['rotations'])
+            self.assertEqual(num_sym_dataset, num_sym)
 
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(TestSpglib)

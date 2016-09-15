@@ -1,6 +1,27 @@
 import os
-from distutils.core import setup, Extension
-from numpy.distutils.misc_util import get_numpy_include_dirs
+
+try:
+    from setuptools import setup, Extension
+    use_setuptools = True
+    print("setuptools is used.")
+except ImportError:
+    from distutils.core import setup, Extension
+    use_setuptools = False
+    print("distutils is used.")
+
+try:
+    from numpy.distutils.misc_util import get_numpy_include_dirs
+except ImportError:
+    print("numpy.distutils.misc_util cannot be imported. Please install "
+          "numpy first before installing spglib...")
+    sys.exit(1)
+
+# Workaround Python issue 21121
+import sysconfig
+config_var = sysconfig.get_config_var("CFLAGS")
+if "-Werror=declaration-after-statement" in config_var:
+    os.environ['CFLAGS'] = config_var.replace(
+        "-Werror=declaration-after-statement", "")    
 
 sources = ['arithmetic.c',
            'cell.c',
@@ -20,22 +41,24 @@ sources = ['arithmetic.c',
            'spg_database.c',
            'spglib.c',
            'symmetry.c']
-extra_compile_args = []
-extra_link_args = []
 
 if os.path.exists('src'):
     source_dir = "src"
 else:
     source_dir = "../src"
 include_dirs = [source_dir,]
-for i in range(len(sources)):
-    sources[i] = "%s/%s" % (source_dir, sources[i]) 
+for i,s in enumerate(sources):
+    sources[i] = "%s/%s" % (source_dir, s) 
+
+extra_compile_args = []
+extra_link_args = []
+define_macros = []
 
 ## Uncomment to activate OpenMP support for gcc
 # extra_compile_args += ['-fopenmp']
 # extra_link_args += ['-lgomp']
 
-define_macros = []
+## For debugging
 # define_macros = [('SPGWARNING', None),
 #                  ('SPGDEBUG', None)]
 
@@ -70,14 +93,28 @@ if None in version_nums:
     print("Failed to get version number in setup.py.")
     raise
 
-setup(name='spglib',
-      version=(".".join(["%d" % n for n in version_nums])),
-      description='This is the spglib module.',
-      author='Atsushi Togo',
-      author_email='atz.togo@gmail.com',
-      url='http://atztogo.github.io/spglib/',
-      packages=['spglib'],
-      requires=['numpy'],
-      provides=['spglib'],
-      platforms=['all'],
-      ext_modules=[extension])
+version = ".".join(["%d" % n for n in version_nums])
+if use_setuptools:
+    setup(name='spglib',
+          version=version,
+          description='This is the spglib module.',
+          author='Atsushi Togo',
+          author_email='atz.togo@gmail.com',
+          url='http://atztogo.github.io/spglib/',
+          packages=['spglib'],
+          install_requires=['numpy'],
+          provides=['spglib'],
+          platforms=['all'],
+          ext_modules=[extension])
+else:
+    setup(name='spglib',
+          version=version,
+          description='This is the spglib module.',
+          author='Atsushi Togo',
+          author_email='atz.togo@gmail.com',
+          url='http://atztogo.github.io/spglib/',
+          packages=['spglib'],
+          requires=['numpy'],
+          provides=['spglib'],
+          platforms=['all'],
+          ext_modules=[extension])
