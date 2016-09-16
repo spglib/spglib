@@ -26,7 +26,7 @@ installation. A command to install spglib is::
 
 Conda is another choice::
 
-   % conda install -c https://conda.anaconda.org/jochym spglib
+   % conda install -c jochym spglib
 
 These packages are made by Paweł T. Jochym.
 
