@@ -1,3 +1,19 @@
+2016-09-05  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.9.5
+	* src/spglib.h (SpglibError):
+
+	'spg_get_error_code' and 'spg_get_error_message' were made to
+	handle a few types of internal errors.
+
+	* src/spglib.c, src/cell.c (cel_any_overlap_with_same_type):
+
+	To check overlap of atoms, 'cel_any_overlap' and
+	'cel_any_overlap_with_same_type' were implemented. The former
+	doesn't check atomic type but the later does. Currently this check
+	is done before symmetry search and the later is used for
+	it. Therefore overlap of different types of atoms is allowed.
+
 2016-05-06  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.9.4

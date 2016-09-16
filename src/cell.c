@@ -174,6 +174,46 @@ int cel_is_overlap(const double a[3],
   }
 }
 
+/* 1: At least one overlap of a pair of atoms was found. */
+/* 0: No overlap of atoms was found. */
+int cel_any_overlap(SPGCONST Cell * cell,
+		    const double symprec) {
+  int i, j;
+
+  for (i = 0; i < cell->size; i++) {
+    for (j = i + 1; j < cell->size; j++) {
+      if (cel_is_overlap(cell->position[i],
+			 cell->position[j],
+			 cell->lattice,
+			 symprec)) {
+	return 1;
+      }
+    }
+  }
+  return 0;
+}
+
+/* 1: At least one overlap of a pair of atoms with same type was found. */
+/* 0: No overlap of atoms was found. */
+int cel_any_overlap_with_same_type(SPGCONST Cell * cell,
+				   const double symprec) {
+  int i, j;
+
+  for (i = 0; i < cell->size; i++) {
+    for (j = i + 1; j < cell->size; j++) {
+      if (cell->types[i] == cell->types[j]) {
+	if (cel_is_overlap(cell->position[i],
+			   cell->position[j],
+			   cell->lattice,
+			   symprec)) {
+	  return 1;
+	}
+      }
+    }
+  }
+  return 0;
+}
+
 Cell * cel_trim_cell(int * mapping_table,
 		     SPGCONST double trimmed_lattice[3][3],
 		     SPGCONST Cell * cell,

@@ -13,6 +13,45 @@ C-APIs
 Version number of spglib is obtained. These three functions return
 integers that correspond to spglib version [major].[minor].[micro].
 
+``spg_get_error_code`` and ``spg_get_error_message``
+-----------------------------------------------------
+
+**New in version 1.9.5**
+
+These methods may be used to see why spglib failed though error handling
+in spglib is not very sophisticated.
+
+::
+
+   SpglibError spg_get_error_code(void);
+
+::
+
+   char * spg_get_error_message(SpglibError spglib_error);
+
+The ``SpglibError`` type is a enum type as shown below.
+
+::
+
+   typedef enum {
+     SPGLIB_SUCCESS = 0,
+     SPGERR_SPACEGROUP_SEARCH_FAILED,
+     SPGERR_CELL_STANDARDIZATION_FAILED,
+     SPGERR_SYMMETRY_OPERATION_SEARCH_FAILED,
+     SPGERR_ATOMS_TOO_CLOSE,
+     SPGERR_POINTGROUP_NOT_FOUND,
+     SPGERR_NIGGLI_FAILED,
+     SPGERR_DELAUNAY_FAILED,
+     SPGERR_ARRAY_SIZE_SHORTAGE,
+     SPGERR_NONE,
+   } SpglibError;
+
+The usage is as follows::
+
+   SpglibError error;
+   error = spg_get_error_code();
+   printf("%s\n", spg_get_error_message(error));
+   
 .. _api_spg_get_symmetry:
 
 ``spg_get_symmetry``
@@ -20,7 +59,7 @@ integers that correspond to spglib version [major].[minor].[micro].
 
 This function finds a set of representative symmetry operations for
 primitive cells or its extension with lattice translations for
-supercells.
+supercells. 0 is returned if it failed.
 
 ::
 
@@ -54,8 +93,8 @@ treatment for research in computational materials science.
 --------------------------
 
 Space group type is found and returned in international table symbol
-to ``symbol`` and also as a number (return value). 0 is returned when
-it fails.
+to ``symbol`` and also as a number (return value). 0 is returned if
+it failed.
 
 ::
 
@@ -73,7 +112,7 @@ it fails.
 -------------------------
 
 Space group type is found and returned in schoenflies to ``symbol``
-and also as a number (return value). 0 is returned when it fails.
+and also as a number (return value). 0 is returned if it failed.
 
 ::
 
@@ -95,7 +134,8 @@ The standardized unit cell (see :ref:`def_standardized_unit_cell`) is
 generated from an input unit cell structure and its space group type
 determined about a symmetry search tolerance. Usually
 ``to_primitive=0`` and ``no_idealize=0`` are recommended to set and
-this setting results in the same behavior as ``spg_refine_cell``.
+this setting results in the same behavior as ``spg_refine_cell``. 0 is
+returned if it failed.
 
 ::
 
@@ -137,7 +177,8 @@ fixed.
 ``spg_standardize_cell`` **with**
 ``to_primitive=1`` **and** ``no_idealize=0``.
 
-A primitive cell is found from an input unit cell.
+A primitive cell is found from an input unit cell. 0 is returned if it
+failed.
 
 ::
 
@@ -157,10 +198,10 @@ atoms in the found primitive cell is returned.
 
 **This function exists for backward compatibility since it is same as** ``spg_standardize_cell`` **with** ``to_primitive=0`` **and** ``leave_distorted=0``.
 
-The standardized crystal structure is obtained from a
-non-standard crystal structure which may be slightly distorted within
-a symmetry recognition tolerance, or whose primitive vectors are differently
-chosen, etc.
+The standardized crystal structure is obtained from a non-standard
+crystal structure which may be slightly distorted within a symmetry
+recognition tolerance, or whose primitive vectors are differently
+chosen, etc. 0 is returned if it failed.
 
 ::
 
@@ -307,6 +348,8 @@ the values is found at :ref:`api_spg_get_symmetry`.
 |
 
 
+.. _api_spg_get_dataset_site_symmetry:
+
 Site symmetry
 """"""""""""""
 
@@ -427,7 +470,7 @@ database in spglib (spg_database.c). To specify the space group type
 with a specific choice, ``hall_number`` is used. The definition of
 ``hall_number`` is found at
 :ref:`api_spg_get_dataset_spacegroup_type`.
-
+``number = 0`` is returned when it failed.
 
 ::
 
@@ -460,7 +503,8 @@ This function allows to directly access to the space group operations
 in the spglib database (spg_database.c). To specify the space group
 type with a specific choice, ``hall_number`` is used. The definition
 of ``hall_number`` is found at
-:ref:`api_spg_get_dataset_spacegroup_type`.
+:ref:`api_spg_get_dataset_spacegroup_type`. 0 is returned when it
+failed.
 
 ::
 
@@ -476,7 +520,8 @@ group operations are stored in ``rotations`` and ``translations``.
 ``spg_get_multiplicity``
 -------------------------
 
-This function returns exact number of symmetry operations.
+This function returns exact number of symmetry operations. 0 is
+returned when it failed.
 
 ::
 
@@ -494,14 +539,18 @@ symmetry operations.
 ``spg_get_symmetry_with_collinear_spin``
 -----------------------------------------
 
-This function finds symmetry operations with collinear spins on
-atoms. Except for the argument of ``const double spins[]``, the usage
-is same as ``spg_get_symmetry``.
+This function finds symmetry operations with collinear polarizations
+(spins) on atoms. Except for the argument of ``const double spins[]``,
+the usage is basically the same as ``spg_get_symmetry``, but as an
+output, ``equivalent_atoms`` are obtained. The size of this array is
+the same of ``num_atom``. See :ref:`api_spg_get_dataset_site_symmetry`
+for the definition ``equivalent_atoms``. 0 is returned when it failed.
 
 ::
 
   int spg_get_symmetry_with_collinear_spin(int rotation[][3][3],
                                            double translation[][3],
+					   int equivalent_atoms[],
                                            const int max_size,
                                            SPGCONST double lattice[3][3],
                                            SPGCONST double position[][3],
@@ -512,6 +561,49 @@ is same as ``spg_get_symmetry``.
 
 
 |
+
+``spg_niggli_reduce``
+----------------------
+
+Niggli reduction is applied to input basis vectors ``lattice`` and the
+reduced basis vectors are overwritten to ``lattice``. 0 is returned if
+it failed.
+
+::
+
+   int spg_niggli_reduce(double lattice[3][3], const double symprec);
+
+The transformation from original basis vectors :math:`( \mathbf{a}
+\; \mathbf{b} \; \mathbf{c} )` to final basis vectors :math:`(
+\mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )` is achieved by linear
+combination of basis vectors with integer coefficients without
+rotating coordinates. Therefore the transformation matrix is obtained
+by :math:`\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
+( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}` and the matrix
+elements have to be almost integers.
+
+|
+
+``spg_delaunay_reduce``
+------------------------
+
+Delaunay reduction is applied to input basis vectors ``lattice`` and
+the reduced basis vectors are overwritten to ``lattice``. 0 is
+returned if it failed.
+
+::
+
+   int spg_delaunay_reduce(double lattice[3][3], const double symprec);
+
+The transformation from original basis vectors :math:`( \mathbf{a}
+\; \mathbf{b} \; \mathbf{c} )` to final basis vectors :math:`(
+\mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )` is achieved by linear
+combination of basis vectors with integer coefficients without
+rotating coordinates. Therefore the transformation matrix is obtained
+by :math:`\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
+( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}` and the matrix
+elements have to be almost integers.
+
 
 ``spg_get_ir_reciprocal_mesh``
 -------------------------------
