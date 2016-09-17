@@ -19,7 +19,7 @@ except ImportError:
 # Workaround Python issue 21121
 import sysconfig
 config_var = sysconfig.get_config_var("CFLAGS")
-if "-Werror=declaration-after-statement" in config_var:
+if config_var is not None and "-Werror=declaration-after-statement" in config_var:
     os.environ['CFLAGS'] = config_var.replace(
         "-Werror=declaration-after-statement", "")    
 
