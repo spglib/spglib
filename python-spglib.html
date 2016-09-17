@@ -9,7 +9,7 @@
     
     <link rel="stylesheet" href="_static/basic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/bootswatch-3.3.4/cosmo/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootswatch-3.3.6/cosmo/bootstrap.min.css" type="text/css" />
     <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     
     <script type="text/javascript">
@@ -26,7 +26,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
     <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
-    <script type="text/javascript" src="_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-3.3.6/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
     <link rel="top" title="spglib 1.9.5 documentation" href="index.html" />
     <link rel="next" title="Fortran and Ruby interfaces" href="interface.html" />
@@ -55,11 +55,6 @@
 
         <div class="collapse navbar-collapse nav-collapse">
           <ul class="nav navbar-nav">
-            
-                <li><a href="api.html">C-API</a></li>
-                <li><a href="definition.html">Definitions</a></li>
-                <li><a href="variable.html">Variables</a></li>
-                <li><a href="#">Python-API</a></li>
             
             
               <li class="dropdown globaltoc-container">
@@ -92,7 +87,11 @@
       aria-labelledby="dLabelLocalToc"><ul>
 <li><a class="reference internal" href="#">Spglib for Python</a><ul>
 <li><a class="reference internal" href="#installation">Installation</a><ul>
-<li><a class="reference internal" href="#using-package-distribution-service">Using package distribution service</a></li>
+<li><a class="reference internal" href="#using-package-distribution-service">Using package distribution service</a><ul>
+<li><a class="reference internal" href="#using-pip">Using pip</a></li>
+<li><a class="reference internal" href="#using-conda">Using conda</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#building-using-setup-py">Building using setup.py</a></li>
 </ul>
 </li>
@@ -194,17 +193,32 @@
 <a class="reference external" href="https://github.com/atztogo/spglib/releases">GitHub</a>.</p>
 <div class="section" id="using-package-distribution-service">
 <h3><a class="toc-backref" href="#id3">Using package distribution service</a><a class="headerlink" href="#using-package-distribution-service" title="Permalink to this headline">¶</a></h3>
-<p>The easiest way to install python-spglib is to use the pypi package,
-for which numpy is required to be installed before the
-installation. A command to install spglib is:</p>
+<p>These packages are made and maintained by Paweł T. Jochym.</p>
+<div class="section" id="using-pip">
+<h4>Using pip<a class="headerlink" href="#using-pip" title="Permalink to this headline">¶</a></h4>
+<p>Numpy is required before the python-spglib installation. The command to
+install spglib is:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">spglib</span>
 </pre></div>
 </div>
-<p>Conda is another choice:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">conda</span> <span class="n">install</span> <span class="o">-</span><span class="n">c</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">conda</span><span class="o">.</span><span class="n">anaconda</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">jochym</span> <span class="n">spglib</span>
+<p>If you see the error message like below in the installation process:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">_spglib</span><span class="o">.</span><span class="n">c</span><span class="p">:</span><span class="mi">35</span><span class="p">:</span><span class="mi">20</span><span class="p">:</span> <span class="n">fatal</span> <span class="n">error</span><span class="p">:</span> <span class="n">Python</span><span class="o">.</span><span class="n">h</span><span class="p">:</span> <span class="n">No</span> <span class="n">such</span> <span class="n">file</span> <span class="ow">or</span> <span class="n">directory</span>
 </pre></div>
 </div>
-<p>These packages are made by Paweł T. Jochym.</p>
+<p>development tools for building python module are additionally
+necessary and are installed using OS&#8217;s package management system,
+e.g.,:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">python</span><span class="o">-</span><span class="n">dev</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="using-conda">
+<h4>Using conda<a class="headerlink" href="#using-conda" title="Permalink to this headline">¶</a></h4>
+<p>Conda is another choice:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">conda</span> <span class="n">install</span> <span class="o">-</span><span class="n">c</span> <span class="n">jochym</span> <span class="n">spglib</span>
+</pre></div>
+</div>
+</div>
 </div>
 <div class="section" id="building-using-setup-py">
 <h3><a class="toc-backref" href="#id4">Building using setup.py</a><a class="headerlink" href="#building-using-setup-py" title="Permalink to this headline">¶</a></h3>
