@@ -1,5 +1,13 @@
 import os
-from distutils.core import setup, Extension
+
+try:
+    from setuptools import setup, Extension
+    use_setuptools = True
+    print("setuptools is used.")
+except ImportError:
+    from distutils.core import setup, Extension
+    use_setuptools = False
+    print("distutils is used.")
 
 try:
     from numpy.distutils.misc_util import get_numpy_include_dirs
@@ -85,14 +93,28 @@ if None in version_nums:
     print("Failed to get version number in setup.py.")
     raise
 
-setup(name='spglib',
-      version=(".".join(["%d" % n for n in version_nums])),
-      description='This is the spglib module.',
-      author='Atsushi Togo',
-      author_email='atz.togo@gmail.com',
-      url='http://atztogo.github.io/spglib/',
-      packages=['spglib'],
-      requires=['numpy'],
-      provides=['spglib'],
-      platforms=['all'],
-      ext_modules=[extension])
+version = ".".join(["%d" % n for n in version_nums])
+if use_setuptools:
+    setup(name='spglib',
+          version=version,
+          description='This is the spglib module.',
+          author='Atsushi Togo',
+          author_email='atz.togo@gmail.com',
+          url='http://atztogo.github.io/spglib/',
+          packages=['spglib'],
+          install_requires=['numpy'],
+          provides=['spglib'],
+          platforms=['all'],
+          ext_modules=[extension])
+else:
+    setup(name='spglib',
+          version=version,
+          description='This is the spglib module.',
+          author='Atsushi Togo',
+          author_email='atz.togo@gmail.com',
+          url='http://atztogo.github.io/spglib/',
+          packages=['spglib'],
+          requires=['numpy'],
+          provides=['spglib'],
+          platforms=['all'],
+          ext_modules=[extension])

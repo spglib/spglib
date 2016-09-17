@@ -18,43 +18,52 @@ Source codes, examples, and the test are downloaded `SourceForge
 Using package distribution service
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The easiest way to install python-spglib is to use the pypi package,
-for which numpy is required to be installed before the
-installation. A command to install spglib is::
+These packages are made and maintained by Paweł T. Jochym.
+
+Using pip
+~~~~~~~~~
+
+Numpy is required before the python-spglib installation. The command to
+install spglib is::
 
    % pip install spglib
 
-Previous versions < 1.8.x are installed by::
+If you see the error message like below in the installation process::
 
-   % pip install pyspglib
+   _spglib.c:35:20: fatal error: Python.h: No such file or directory
+
+development tools for building python module are additionally
+necessary and are installed using OS's package management system,
+e.g.,::
+
+   sudo apt-get install python-dev
+
+
+Using conda
+~~~~~~~~~~~~
 
 Conda is another choice::
 
-   % conda install -c https://conda.anaconda.org/jochym spglib
+   % conda install -c jochym spglib
 
-These packages are made by Paweł T. Jochym.
+Building using setup.py
+^^^^^^^^^^^^^^^^^^^^^^^^
 
-Building using setup.py (distutils)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-To manually install python-spglib using ``setup.py``, python header files
-(python-dev), gcc, and numpy are required before the build. The
-installation steps are shown as follows:
+To manually install python-spglib using ``setup.py``, python header
+files (python-dev), C-compiler (e.g., gcc, clang), and numpy are
+required before the build. The installation steps are shown as
+follows:
 
 1. Go to the :file:`python` directory
 2. Type the command::
 
-      % python setup.py install --home=<my-directory>
-
-   The :file:`{<my-directory>}` is possibly current directory, :file:`.`
-   or maybe::
-
       % python setup.py install --user
 
-   to use the user scheme (see the python document.)
-
-3. Put :file:`./lib/python` path into :envvar:`$PYTHONPATH`, e.g., in your
-   .washrag.
+   Document about where spglib is installed is found at the
+   links below:
+   
+   - https://docs.python.org/2/install/#alternate-installation-the-user-scheme
+   - https://docs.python.org/3/install/#alternate-installation-the-user-scheme
 
 Test
 -----
@@ -63,10 +72,13 @@ The test script :file:`test_spglib.py` is found in :file:`python/test`
 directory. Got to this directory and run this script. It will be like below::
 
    % python test_spglib.py
+   test_find_primitive (__main__.TestSpglib) ... ok
+   test_get_symmetry (__main__.TestSpglib) ... ok
    test_get_symmetry_dataset (__main__.TestSpglib) ... ok
+   test_refine_cell (__main__.TestSpglib) ... ok
    
    ----------------------------------------------------------------------
-   Ran 1 test in 2.132s
+   Ran 4 tests in 13.147s
    
    OK
 
@@ -173,6 +185,18 @@ Methods
 
 This returns version number of spglib by tuple with three numbers.
 
+``get_error_message``
+^^^^^^^^^^^^^^^^^^^^^^
+
+**New in version 1.9.5**
+
+This method may be used to see why spglib failed though error handling
+in spglib is not very sophisticated.
+
+::
+
+   error_message = get_error_message()
+
 ``get_spacegroup``
 ^^^^^^^^^^^^^^^^^^^
 
@@ -217,9 +241,11 @@ atoms to symmetrically independent atoms. This is used to find
 symmetrically equivalent atoms. The numbers contained are the indices
 of atoms starting from 0, i.e., the first atom is numbered as 0, and
 then 1, 2, 3, ... ``np.unique(equivalent_atoms)`` gives representative
-symmetrically independent atoms. A list of atoms that are symmetrically
-euivalent to some independent atom (here for example 1 is in
-``equivalent_atom``) is found by ``np.where(equivalent_atom=1)[0]``.
+symmetrically independent atoms. A list of atoms that are
+symmetrically euivalent to some independent atom (here for example 1
+is in ``equivalent_atom``) is found by
+``np.where(equivalent_atom=1)[0]``. When the search failed, ``None``
+is returned.
 
 If ``cell`` is given as a tuple and collinear polarizations are given
 as the fourth element of this tuple, symmetry operations are searched
