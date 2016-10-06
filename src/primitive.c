@@ -138,7 +138,7 @@ static Primitive * get_primitive(SPGCONST Cell * cell, const double symprec)
   pure_trans = NULL;
 
   if ((primitive = prm_alloc_primitive(cell->size)) == NULL) {
-    return NULL;
+    goto notfound;
   }
 
   tolerance = symprec;
@@ -175,6 +175,9 @@ static Primitive * get_primitive(SPGCONST Cell * cell, const double symprec)
   }
 
   prm_free_primitive(primitive);
+  primitive = NULL;
+
+ notfound:
   return NULL;
 
  found:

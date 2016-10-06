@@ -129,7 +129,7 @@ void cel_set_cell(Cell * cell,
   mat_copy_matrix_d3(cell->lattice, lattice);
   for (i = 0; i < cell->size; i++) {
     for (j = 0; j < 3; j++) {
-      cell->position[i][j] = position[i][j];
+      cell->position[i][j] = position[i][j] - mat_Nint(position[i][j]);
     }
     cell->types[i] = types[i];
   }
