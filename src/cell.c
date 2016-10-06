@@ -41,7 +41,7 @@
 
 #define INCREASE_RATE 2.0
 #define REDUCE_RATE 0.95
-
+#define NUM_ATTEMPT 100
 
 static Cell * trim_cell(int * mapping_table,
 			SPGCONST double trimmed_lattice[3][3],
@@ -394,7 +394,7 @@ static int * get_overlap_table(const VecDBL * position,
     return NULL;
   }
 
-  for (attempt = 0; attempt < 100; attempt++) {
+  for (attempt = 0; attempt < NUM_ATTEMPT; attempt++) {
     for (i = 0; i < cell_size; i++) {
       overlap_table[i] = i;
       for (j = 0; j < cell_size; j++) {
@@ -437,6 +437,7 @@ static int * get_overlap_table(const VecDBL * position,
       if (num_overlap > ratio) {
 	trim_tolerance *= REDUCE_RATE;
 	warning_print("spglib: Reduce tolerance to %f ", trim_tolerance);
+	warning_print("(%d) ", attempt);
 	warning_print("(line %d, %s).\n", __LINE__, __FILE__);
 	goto cont;
       }
