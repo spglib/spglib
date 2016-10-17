@@ -18,17 +18,33 @@ Source codes, examples, and the test are downloaded `SourceForge
 Using package distribution service
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The easiest way to install python-spglib is to use the pypi package,
-for which numpy is required to be installed before the
-installation. A command to install spglib is::
+These packages are made and maintained by Paweł T. Jochym.
+
+Using pip
+~~~~~~~~~
+
+Numpy is required before the python-spglib installation. The command to
+install spglib is::
 
    % pip install spglib
+
+If you see the error message like below in the installation process::
+
+   _spglib.c:35:20: fatal error: Python.h: No such file or directory
+
+development tools for building python module are additionally
+necessary and are installed using OS's package management system,
+e.g.,::
+
+   sudo apt-get install python-dev
+
+
+Using conda
+~~~~~~~~~~~~
 
 Conda is another choice::
 
    % conda install -c jochym spglib
-
-These packages are made by Paweł T. Jochym.
 
 Building using setup.py
 ^^^^^^^^^^^^^^^^^^^^^^^^

@@ -111,12 +111,12 @@ html_theme_options = {
     #     ("Examples", "examples"),
     #     ("Link", "http://example.com", True),
     #     ],
-    'navbar_links': [
-        ("C-API", "api"),
-        ("Definitions", "definition"),
-        ("Variables", "variable"),
-        ("Python-API", "python-spglib"),
-        ],
+    # 'navbar_links': [
+    #     ("C-API", "api"),
+    #     ("Definitions", "definition"),
+    #     ("Variables", "variable"),
+    #     ("Python-API", "python-spglib"),
+    #     ],
         
     # Render the next and previous page links in navbar. (Default: true)
     'navbar_sidebarrel': False,
