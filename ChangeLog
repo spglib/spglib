@@ -1,3 +1,16 @@
+2016-10-19  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.9.6
+
+	Collection of minor fixes.
+
+	* src/cell.c (cel_set_cell):
+
+	Reduced atomic positions of the input cell are inisitalized by
+	their moving in the range between -0.5 and 0.5. The cell shape is
+	kept unchanged but this may need to be considered to handle some
+	extreme case in the future.
+
 2016-09-05  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.9.5
