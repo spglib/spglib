@@ -1,7 +1,7 @@
 spglib
 ======
 
-|Version Badge| |Downloads Badge| |Build Status|
+|Version Badge| |Downloads Badge| |PyPi downloads| |Build Status|
 
 Python bindings for C library for finding and handling crystal
 symmetries
@@ -50,5 +50,7 @@ required before the build. The installation steps are shown as follows:
    :target: https://anaconda.org/jochym/spglib
 .. |Downloads Badge| image:: https://anaconda.org/jochym/spglib/badges/downloads.svg
    :target: https://anaconda.org/jochym/spglib
+.. |PyPi downloads| image:: https://img.shields.io/pypi/dm/spglib.svg?maxAge=2592000   
+   :target: https://pypi.python.org/pypi/spglib
 .. |Build Status| image:: https://travis-ci.org/jochym/spglib.svg?branch=master
    :target: https://travis-ci.org/jochym/spglib
