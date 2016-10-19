@@ -5,7 +5,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Spglib for Python &mdash; spglib 1.9.5 documentation</title>
+    <title>Spglib for Python &#8212; spglib 1.9.6 documentation</title>
     
     <link rel="stylesheet" href="_static/basic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.9.5',
+        VERSION:     '1.9.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -28,7 +28,9 @@
     <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
     <script type="text/javascript" src="_static/bootstrap-3.3.6/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
-    <link rel="top" title="spglib 1.9.5 documentation" href="index.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="spglib 1.9.6 documentation" href="index.html" />
     <link rel="next" title="Fortran and Ruby interfaces" href="interface.html" />
     <link rel="prev" title="Variables" href="variable.html" />
 <meta charset='utf-8'>
@@ -50,7 +52,7 @@
         </button>
         <a class="navbar-brand" href="index.html">
           spglib</a>
-        <span class="navbar-text navbar-version pull-left"><b>1.9.5</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>1.9.6</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -304,7 +306,7 @@ in the tuple: <code class="docutils literal"><span class="pre">cell</span> <span
 <span class="pre">(lattice,</span> <span class="pre">positions,</span> <span class="pre">numbers,</span> <span class="pre">magmoms)</span></code> where <code class="docutils literal"><span class="pre">magmoms</span></code> represents
 collinear polarizations on atoms and is optional.</p>
 <p>Lattice parameters <code class="docutils literal"><span class="pre">lattice</span></code> are given by a 3x3 matrix with floating
-point values, where <img class="math" src="_images/math/0399975245409f171adff9e424c1cfd81e44cbf1.png" alt="\mathbf{a}, \mathbf{b}, \mathbf{c}"/> are
+point values, where <img class="math" src="_images/math/939a1e305698237258ed9616777a12bd18493fcc.png" alt="\mathbf{a}, \mathbf{b}, \mathbf{c}"/> are
 given as rows, which results in the transpose of the definition for
 C-API (<a class="reference internal" href="variable.html#variables-lattice"><span class="std std-ref">lattice</span></a>). Fractional atomic positions
 <code class="docutils literal"><span class="pre">positions</span></code> are given by a Nx3 matrix with floating point values,
@@ -450,13 +452,13 @@ is shown in the spglib (C-API) document.</p>
 <li><code class="docutils literal"><span class="pre">international</span></code>: International short symbol</li>
 <li><code class="docutils literal"><span class="pre">hall</span></code>: Hall symbol</li>
 <li><code class="docutils literal"><span class="pre">choice</span></code>: Centring, origin, basis vector setting</li>
-<li><code class="docutils literal"><span class="pre">transformation_matrix</span></code>: Transformation matrix from lattice of input cell to Bravais lattice <img class="math" src="_images/math/f8cb9d224702767dd9cfedb4b1fd6cf8f15a1713.png" alt="L^{bravais} = L^{original} * T"/></li>
+<li><code class="docutils literal"><span class="pre">transformation_matrix</span></code>: Transformation matrix from lattice of input cell to Bravais lattice <img class="math" src="_images/math/c7bd18635fe81e8ffc040afc7aaf4b8ead77b592.png" alt="L^{bravais} = L^{original} * T"/></li>
 <li><code class="docutils literal"><span class="pre">origin</span> <span class="pre">shift</span></code>: Origin shift choice in the setting of Bravais lattice</li>
 <li><code class="docutils literal"><span class="pre">wyckoffs</span></code>: Wyckoff letters</li>
 <li><code class="docutils literal"><span class="pre">equivalent_atoms</span></code>: Mapping table to equivalent atoms</li>
 <li><code class="docutils literal"><span class="pre">rotations</span></code> and <code class="docutils literal"><span class="pre">translations</span></code>: Rotation matrices and
 translation vectors. See <a class="reference internal" href="#py-method-get-symmetry"><span class="std std-ref">get_symmetry</span></a> for more details</li>
-<li><code class="docutils literal"><span class="pre">pointgroup_symbol</span></code>: Symbol of the crystallographic point group in
+<li><code class="docutils literal"><span class="pre">pointgroup</span></code>: Symbol of the crystallographic point group in
 the Hermann–Mauguin notation.</li>
 <li><code class="docutils literal"><span class="pre">std_lattice</span></code>, <code class="docutils literal"><span class="pre">std_positions</span></code>, <code class="docutils literal"><span class="pre">std_types</span></code>: Standardized
 crystal structure corresponding to a Hall symbol found. These are
@@ -529,12 +531,12 @@ zero or not and if two basis vectors are orthogonal by the value of
 dot product being close to zero or not.  The detail is shown at
 <a class="reference external" href="https://atztogo.github.io/niggli/">https://atztogo.github.io/niggli/</a>.</p>
 <p>When the search failed, <code class="docutils literal"><span class="pre">None</span></code> is returned.</p>
-<p>The transformation from original basis vectors <img class="math" src="_images/math/12e49b6e247ac149e71e3b71ecc7ef278f3cd227.png" alt="( \mathbf{a}
-\; \mathbf{b} \; \mathbf{c} )"/> to final baiss vectors <img class="math" src="_images/math/94e3c4fbdbc0afa3a50c35fd94c933b3a2fd2a6b.png" alt="(
+<p>The transformation from original basis vectors <img class="math" src="_images/math/f5bd92e98c15a359f34917f65e5bf619a4dd92f5.png" alt="( \mathbf{a}
+\; \mathbf{b} \; \mathbf{c} )"/> to final baiss vectors <img class="math" src="_images/math/a09173cdcfe8fd456339e01d0be62a9759f3e2ad.png" alt="(
 \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )"/> is achieved by linear
 combination of basis vectors with integer coefficients without
 rotating coordinates. Therefore the transformation matrix is obtained
-by <img class="math" src="_images/math/b4cb3883c369204a2e0cf2a141bcef5562caf5fc.png" alt="\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
+by <img class="math" src="_images/math/7d57856af16da2748657aa5db236e404dd74d828.png" alt="\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
 ( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}"/> and the matrix
 elements have to be almost integers.</p>
 </div>
@@ -555,12 +557,12 @@ used as the criterion if volume is close to zero or not and if two
 basis vectors are orthogonal by the value of dot product being close
 to zero or not.</p>
 <p>When the search failed, <code class="docutils literal"><span class="pre">None</span></code> is returned.</p>
-<p>The transformation from original basis vectors <img class="math" src="_images/math/12e49b6e247ac149e71e3b71ecc7ef278f3cd227.png" alt="( \mathbf{a}
-\; \mathbf{b} \; \mathbf{c} )"/> to final basis vectors <img class="math" src="_images/math/94e3c4fbdbc0afa3a50c35fd94c933b3a2fd2a6b.png" alt="(
+<p>The transformation from original basis vectors <img class="math" src="_images/math/f5bd92e98c15a359f34917f65e5bf619a4dd92f5.png" alt="( \mathbf{a}
+\; \mathbf{b} \; \mathbf{c} )"/> to final basis vectors <img class="math" src="_images/math/a09173cdcfe8fd456339e01d0be62a9759f3e2ad.png" alt="(
 \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )"/> is achieved by linear
 combination of basis vectors with integer coefficients without
 rotating coordinates. Therefore the transformation matrix is obtained
-by <img class="math" src="_images/math/b4cb3883c369204a2e0cf2a141bcef5562caf5fc.png" alt="\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
+by <img class="math" src="_images/math/7d57856af16da2748657aa5db236e404dd74d828.png" alt="\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
 ( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}"/> and the matrix
 elements have to be almost integers.</p>
 </div>
@@ -650,7 +652,7 @@ the irreducible k-point indices that are obtained by</p>
     </p>
     <p>
         &copy; Copyright 2009, Atsushi Togo.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.5.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.<br/>
     </p>
   </div>
 </footer>
