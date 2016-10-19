@@ -28,7 +28,7 @@ Conda is another choice:
 
 ::
 
-    conda install -c jochym spglib
+    conda install -c atztogo spglib
 
 These packages are made by Paweł T. Jochym.
 
@@ -46,11 +46,11 @@ required before the build. The installation steps are shown as follows:
 
        python setup.py install --user
 
-.. |Version Badge| image:: https://anaconda.org/jochym/spglib/badges/version.svg
-   :target: https://anaconda.org/jochym/spglib
-.. |Downloads Badge| image:: https://anaconda.org/jochym/spglib/badges/downloads.svg
-   :target: https://anaconda.org/jochym/spglib
+.. |Version Badge| image:: https://anaconda.org/atztogo/spglib/badges/version.svg
+   :target: https://anaconda.org/atztogo/spglib
+.. |Downloads Badge| image:: https://anaconda.org/atztogo/spglib/badges/downloads.svg
+   :target: https://anaconda.org/atztogo/spglib
 .. |PyPi downloads| image:: https://img.shields.io/pypi/dm/spglib.svg?maxAge=2592000   
    :target: https://pypi.python.org/pypi/spglib
-.. |Build Status| image:: https://travis-ci.org/jochym/spglib.svg?branch=master
-   :target: https://travis-ci.org/jochym/spglib
+.. |Build Status| image:: https://travis-ci.org/atztogo/spglib.svg?branch=master
+   :target: https://travis-ci.org/atztogo/spglib
