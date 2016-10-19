@@ -325,13 +325,14 @@ is shown in the spglib (C-API) document.
 * ``equivalent_atoms``: Mapping table to equivalent atoms
 * ``rotations`` and ``translations``: Rotation matrices and
   translation vectors. See :ref:`py_method_get_symmetry` for more details
-* ``pointgroup_symbol``: Symbol of the crystallographic point group in
+* ``pointgroup``: Symbol of the crystallographic point group in
   the Hermann–Mauguin notation.
 * ``std_lattice``, ``std_positions``, ``std_types``: Standardized
   crystal structure corresponding to a Hall symbol found. These are
   equivalently given in the array formats of ``lattice``,
   ``positions``, and ``numbers`` presented at
   :ref:`py_variables_crystal_structure`, respectively.
+
 ..
    * ``pointgrouop_number``: Serial number of the crystallographic point
      group, which refers list of space groups (Seto’s web site)
