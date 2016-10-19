@@ -48,6 +48,7 @@ deploy:
       password:
           secure: "Po6vOS9TlkXHD8SBbQxPkZHWzekpk99YnxFmKRILsZpNw32MJk039wTkDEz3e3XJkNIWdAK3dhfkxkJgnwpeBwUlYCGSU5FdNsTpqJDhLtEDkhq1rs1icL/P0C2Y4X0QMIug32HlQQU2kNzi+rS0ldB/TSEInrIoSw98r50SQt5mTPGjxVQ0LC9HdLCKEjdGAry8zY+n6IgoF+YxwB2F85Wr480bbYMhgNt+LCt99ABcTDZd7CI9qmBUgXAacOCLfpcMG36gnAZrN4wOQia8TnlHLP9bPTc7jRk8KW/2NOFFjbbwTmtEHQeB3lxC2lfGEEiqyHCDo3cpv0DR683M/KpIdDBUONbIaKAJLg5Ty/993jAhetnlLTZOYoDPX6LnUDoOcSF+33JEikG2c5xTs7oqGM1KJiK5gOp8aWUA7D5kHmv0a2GxhK19xZ5So/qJpxDuOgwzoc5RxPgpzt/T2uk4lX4LiQrB1fA2TRA7Vl7kN2QJjCTzCbB4AamRoDCAsBAix4arKHNrYpXgouXOx9Dbr6x7VsMFr184BdJyT2nsi1XpqBabdopK41c6atZQBQggzBcYWs1qlkJb0ISf+P6SklyCgXGX4djH6+UwMmVG15cSc4AS7Z9peGP3LoGpv2QmtbSwmmr/AnOLL1puK8OFd45whI/BTcdfhksWqiY"
       on:
+        repo: atztogo/spglib
         branch: rc
         tags: false
     
@@ -56,6 +57,7 @@ deploy:
       skip_cleanup: true
       script: conda/anaconda_deploy.sh rc $ANACONDA_TOKEN $TRAVIS_BRANCH
       on:
+        repo: atztogo/spglib
         branch: rc
         tags: false
 
@@ -67,6 +69,7 @@ deploy:
       password:
           secure: "sjUxbFSrhflB/NqMwcJCmalmQRX1EN4zgsK2YyY93JEk16aep+5pRyV87Q3Q54L19PGOkTqOrGyvUhwxTHUweo87F2DM1gd695bg0rROcquvhwWxlTuhMhMoUGSxDljgKbEeTvLikFd91JX2Rr/deIZLog/c3z/m55MbgHqGoyR5p1twxqLoUcJHznM8Mnn/KTauVHVQKG/6sVQr/h9AhRB8qI5VRCcrnDqAWoePqkgibWjEKchx/lmgW4TiB15IIvmIVgMxNwUa2q91Lqn3AhZDOcB/TST34yZCx8j1TpLJgAtB8+aRnTdmtfhnPWN8gebVuHJni+EQYsq4sIOiRzsU5qHkCzmW2x6I/kcTTYWYW4KybKorWQcypotTkyDoSfFuhZ93kyMy6QXBdV0/3xskBAbA++Mc93u6KaNMDnBGLb9PoeIT6R6YRNnwDAYBSlJ8lMZoNwVKrPhxI11r15eAK/4NamUHSLORBJWYKw1Z1Ko5wjkMXTSC4y7rC5UD+wrgZCfhB7WBLvatGBA3oD83dmEzMl3zA3wyaegDqHbEzKIFCGX5/eKrVN91hQrvlFkVYwf7YHAcNTvplZi0EGotfuZVsyhHiYSXRrMdF16g/NyZwunMEydafsbbwQatLxMhCMufX+5B1bk8VsmM0QDI9EV3rdvC7vgpnO5KPpY="
       on:
+        repo: atztogo/spglib
         branch: master
         tags: false
 
@@ -75,5 +78,6 @@ deploy:
       skip_cleanup: true
       script: conda/anaconda_deploy.sh main $ANACONDA_TOKEN $TRAVIS_BRANCH
       on:
+        repo: atztogo/spglib
         branch: master
         tags: false
