@@ -4,7 +4,7 @@ package:
 #  version: {{ environ.get('GIT_DESCRIBE_TAG', '') }}
 
 source:
-  git_url: https://github.com/jochym/spglib.git
+  git_url: https://github.com/atztogo/spglib.git
   git_branch: {{ environ.get('GIT_BRANCH','master') }}
 
 # Lock to particular tag. We always test HEAD and build and upload tags
