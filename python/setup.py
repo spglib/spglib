@@ -1,20 +1,17 @@
 import os
 
-try:
-    from setuptools import setup, Extension
-    use_setuptools = True
-    print("setuptools is used.")
-except ImportError:
-    from distutils.core import setup, Extension
-    use_setuptools = False
-    print("distutils is used.")
+from setuptools import setup, Extension
+from setuptools.command.build_ext import build_ext as _build_ext
 
-try:
-    from numpy.distutils.misc_util import get_numpy_include_dirs
-except ImportError:
-    print("numpy.distutils.misc_util cannot be imported. Please install "
-          "numpy first before installing spglib...")
-    sys.exit(1)
+
+class build_ext(_build_ext):
+    def finalize_options(self):
+        _build_ext.finalize_options(self)
+        # Prevent numpy from thinking it is still in its setup process:
+        __builtins__.__NUMPY_SETUP__ = False
+        import numpy
+        self.include_dirs.append(numpy.get_include())
+
 
 # Workaround Python issue 21121
 import sysconfig
@@ -63,7 +60,6 @@ define_macros = []
 #                  ('SPGDEBUG', None)]
 
 extension = Extension('spglib._spglib',
-                      include_dirs=include_dirs + get_numpy_include_dirs(),
                       sources=['_spglib.c'] + sources,
                       extra_compile_args=extra_compile_args,
                       extra_link_args=extra_link_args,
@@ -94,27 +90,17 @@ if None in version_nums:
     raise
 
 version = ".".join(["%d" % n for n in version_nums])
-if use_setuptools:
-    setup(name='spglib',
-          version=version,
-          description='This is the spglib module.',
-          author='Atsushi Togo',
-          author_email='atz.togo@gmail.com',
-          url='http://atztogo.github.io/spglib/',
-          packages=['spglib'],
-          install_requires=['numpy'],
-          provides=['spglib'],
-          platforms=['all'],
-          ext_modules=[extension])
-else:
-    setup(name='spglib',
-          version=version,
-          description='This is the spglib module.',
-          author='Atsushi Togo',
-          author_email='atz.togo@gmail.com',
-          url='http://atztogo.github.io/spglib/',
-          packages=['spglib'],
-          requires=['numpy'],
-          provides=['spglib'],
-          platforms=['all'],
-          ext_modules=[extension])
+
+setup(name='spglib',
+      version=version,
+      cmdclass={'build_ext': build_ext},
+      setup_requires=['numpy', 'setuptools>=18.0'],
+      description='This is the spglib module.',
+      author='Atsushi Togo',
+      author_email='atz.togo@gmail.com',
+      url='http://atztogo.github.io/spglib/',
+      packages=['spglib'],
+      install_requires=['numpy'],
+      provides=['spglib'],
+      platforms=['all'],
+      ext_modules=[extension])
