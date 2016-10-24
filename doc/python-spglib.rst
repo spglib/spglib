@@ -42,9 +42,15 @@ e.g.,::
 Using conda
 ~~~~~~~~~~~~
 
-Conda is another choice::
+Conda is another choice for Linux (64bit) users::
 
-   % conda install -c jochym spglib
+   % conda install -c atztogo spglib
+
+Currently conda packages for the other OS, e.g., Mac and windows, are
+not prepared by the main developers of spglib, but the following
+channel may be used::
+
+   % conda install -c materials pymatgen spglib
 
 Building using setup.py
 ^^^^^^^^^^^^^^^^^^^^^^^^
