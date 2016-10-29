@@ -21,6 +21,7 @@ sdist
 develop-eggs
 .installed.cfg
 lib
+include
 lib64
 
 # Installer logs
