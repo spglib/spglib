@@ -174,6 +174,20 @@ int cel_is_overlap(const double a[3],
   }
 }
 
+int cel_is_overlap_with_same_type(const double a[3],
+				  const double b[3],
+				  const int type_a,
+				  const int type_b,
+				  SPGCONST double lattice[3][3],
+				  const double symprec)
+{
+  if (type_a == type_b) {
+    return cel_is_overlap(a, b, lattice, symprec);
+  } else {
+    return 0;
+  }
+}
+
 /* 1: At least one overlap of a pair of atoms was found. */
 /* 0: No overlap of atoms was found. */
 int cel_any_overlap(SPGCONST Cell * cell,
