@@ -4,20 +4,27 @@ try:
     from setuptools import setup, Extension
     from setuptools.command.build_ext import build_ext as _build_ext
     use_setuptools = True
+
+    class build_ext(_build_ext):
+        def finalize_options(self):
+            _build_ext.finalize_options(self)
+            # Prevent numpy from thinking it is still in its setup process:
+            __builtins__.__NUMPY_SETUP__ = False
+            import numpy
+            self.include_dirs.append(numpy.get_include())
     print("setuptools is used.")
 except ImportError:
     from distutils.core import setup, Extension
     use_setuptools = False
     print("distutils is used.")
 
-class build_ext(_build_ext):
-    def finalize_options(self):
-        _build_ext.finalize_options(self)
-        # Prevent numpy from thinking it is still in its setup process:
-        __builtins__.__NUMPY_SETUP__ = False
-        import numpy
-        self.include_dirs.append(numpy.get_include())
-
+    try:
+        from numpy.distutils.misc_util import get_numpy_include_dirs
+    except ImportError:
+        print("numpy.distutils.misc_util cannot be imported. Please install "
+              "numpy first before installing spglib...")
+        import sys
+        sys.exit(1)
 
 # Workaround Python issue 21121
 import sysconfig
@@ -49,7 +56,12 @@ if os.path.exists('src'):
     source_dir = "src"
 else:
     source_dir = "../src"
-for i, s in enumerate(sources):
+
+include_dirs = [source_dir,]
+if not use_setuptools:
+    include_dirs += get_numpy_include_dirs()
+
+for i,s in enumerate(sources):
     sources[i] = "%s/%s" % (source_dir, s) 
 
 extra_compile_args = []
@@ -65,7 +77,7 @@ define_macros = []
 #                  ('SPGDEBUG', None)]
 
 extension = Extension('spglib._spglib',
-                      include_dirs=[source_dir],
+                      include_dirs=include_dirs,
                       sources=['_spglib.c'] + sources,
                       extra_compile_args=extra_compile_args,
                       extra_link_args=extra_link_args,
@@ -113,7 +125,6 @@ if use_setuptools:
 else:
     setup(name='spglib',
           version=version,
-          cmdclass={'build_ext': build_ext},
           description='This is the spglib module.',
           author='Atsushi Togo',
           author_email='atz.togo@gmail.com',
