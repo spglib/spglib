@@ -215,13 +215,13 @@ int cel_any_overlap_with_same_type(SPGCONST Cell * cell,
 
   for (i = 0; i < cell->size; i++) {
     for (j = i + 1; j < cell->size; j++) {
-      if (cell->types[i] == cell->types[j]) {
-	if (cel_is_overlap(cell->position[i],
-			   cell->position[j],
-			   cell->lattice,
-			   symprec)) {
-	  return 1;
-	}
+      if (cel_is_overlap_with_same_type(cell->position[i],
+					cell->position[j],
+					cell->types[i],
+					cell->types[j],
+					cell->lattice,
+					symprec)) {
+	return 1;
       }
     }
   }
