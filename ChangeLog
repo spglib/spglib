@@ -1,6 +1,13 @@
-2016-10-19  Atsushi Togo  <atz.togo@gmail.com>
+2016-11-02  Atsushi Togo  <atz.togo@gmail.com>
 
-	* Travis test
+	* Version 1.9.8
+
+	* src/cell.c (cel_is_overlap_with_same_type):
+
+	'cel_is_overlap_with_same_type' is implemented to check
+	overlapping of atoms along with checking atom type
+	agreement. Using this, atoms that have about the same position but
+	with different types can be separately handled.
 
 2016-10-19  Atsushi Togo  <atz.togo@gmail.com>
 
