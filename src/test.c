@@ -908,7 +908,7 @@ static int test_spg_get_error_message(void)
     {0.5, 0.5, 0.5}
   };
   int types[] = {1, 1, 1};
-  int i, num_atom = 3, num_primitive_atom;
+  int num_atom = 3, num_primitive_atom;
   double symprec = 1e-5;
   SpglibError error;
   
