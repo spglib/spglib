@@ -9,8 +9,21 @@ try:
         def finalize_options(self):
             _build_ext.finalize_options(self)
             # Prevent numpy from thinking it is still in its setup process:
-            __builtins__.__NUMPY_SETUP__ = False
-            import numpy
+            if sys.version_info[0] >= 3:
+                import builtins
+                if hasattr(builtins, '__NUMPY_SETUP__'):
+                    del builtins.__NUMPY_SETUP__
+                import importlib
+                import numpy
+                importlib.reload(numpy)
+
+            else:
+                import __builtin__
+                if hasattr(__builtin__, '__NUMPY_SETUP__'):
+                    del __builtin__.__NUMPY_SETUP__
+                import imp
+                import numpy
+                imp.reload(numpy)
             self.include_dirs.append(numpy.get_include())
     print("setuptools is used.")
 except ImportError:
