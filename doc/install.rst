@@ -4,31 +4,53 @@ How to install spglib C-API
 Download & install
 -------------------
 
-Major releases are found at `SourceForge
-<https://sourceforge.net/project/showfiles.php?group_id=215020>`_.
+Latest source codes are downloaded at
+https://pypi.python.org/pypi/spglib .
 
-1. Unzip, configure, and make::
+Compiling using cmake
+^^^^^^^^^^^^^^^^^^^^^^
 
-   % tar xvfz spglib-1.9.4.tar.gz
-   % cd spglib-1.9.4
-   % ./configure --prefix=INSTALL_LOCATION
-   % make
-   % make install
+1. After expanding source code, go into the source code directory::
 
-2. The libraries are installed at ``INSTALL_LOCATION`` or found in
-   ``src/.libs`` if you don't run ``make install``,
+     % tar xvfz spglib-1.9.8.tar.gz
+     % cd spglib-1.9.8
 
-Full package is found at `GitHub
-<https://github.com/atztogo/spglib/releases>`_. In this case, if you
-need configure script, it can be created using autotools and libtool
-as follows::
+   The current directory is ``PROJECT_SOURCE_DIR``.
 
-   % aclocal
-   % autoheader
-   % libtoolize # or glibtoolize with macport etc
-   % touch INSTALL NEWS README AUTHORS
-   % automake -acf
-   % autoconf
+2. Create a directory for the build::
+
+     % mkdir _build; cd _build
+     % cmake ..
+     % make
+     % make install
+
+3. The libraries are installed at ``PROJECT_SOURCE_DIR/lib`` and the
+   header file is installed at ``PROJECT_SOURCE_DIR/include``.
+
+Compiling using configure script
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+1. The configure script is prepared using
+   autotools and libtool as follows::
+
+     % aclocal
+     % autoheader
+     % libtoolize # or glibtoolize with macport etc
+     % touch INSTALL NEWS README AUTHORS
+     % automake -acf
+     % autoconf
+
+
+2. Run configure script::
+
+     % tar xvfz spglib-1.9.8.tar.gz
+     % cd spglib-1.9.8
+     % ./configure --prefix=INSTALLATION_LOCATION
+     % make
+     % make install
+
+3. The libraries are installed at ``INSTALLATION_LOCATION/lib`` or found in
+   ``src/.libs`` if you don't run ``make install``.
 
 OpenMP
 ^^^^^^^
