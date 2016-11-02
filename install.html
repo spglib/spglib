@@ -5,7 +5,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>How to install spglib C-API &#8212; spglib 1.9.7 documentation</title>
+    <title>How to install spglib C-API &#8212; spglib 1.9.8 documentation</title>
     
     <link rel="stylesheet" href="_static/basic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.9.7',
+        VERSION:     '1.9.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -30,7 +30,7 @@
     <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="spglib 1.9.7 documentation" href="index.html" />
+    <link rel="top" title="spglib 1.9.8 documentation" href="index.html" />
     <link rel="next" title="C-APIs" href="api.html" />
     <link rel="prev" title="Spglib" href="index.html" />
 <meta charset='utf-8'>
@@ -52,7 +52,7 @@
         </button>
         <a class="navbar-brand" href="index.html">
           spglib</a>
-        <span class="navbar-text navbar-version pull-left"><b>1.9.7</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>1.9.8</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -89,6 +89,8 @@
       aria-labelledby="dLabelLocalToc"><ul>
 <li><a class="reference internal" href="#">How to install spglib C-API</a><ul>
 <li><a class="reference internal" href="#download-install">Download &amp; install</a><ul>
+<li><a class="reference internal" href="#compiling-using-cmake">Compiling using cmake</a></li>
+<li><a class="reference internal" href="#compiling-using-configure-script">Compiling using configure script</a></li>
 <li><a class="reference internal" href="#openmp">OpenMP</a></li>
 </ul>
 </li>
@@ -129,24 +131,36 @@
 <h1>How to install spglib C-API<a class="headerlink" href="#how-to-install-spglib-c-api" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="download-install">
 <h2>Download &amp; install<a class="headerlink" href="#download-install" title="Permalink to this headline">¶</a></h2>
-<p>Major releases are found at <a class="reference external" href="https://sourceforge.net/project/showfiles.php?group_id=215020">SourceForge</a>.</p>
+<p>Latest source codes are downloaded at
+<a class="reference external" href="https://pypi.python.org/pypi/spglib">https://pypi.python.org/pypi/spglib</a> .</p>
+<div class="section" id="compiling-using-cmake">
+<h3>Compiling using cmake<a class="headerlink" href="#compiling-using-cmake" title="Permalink to this headline">¶</a></h3>
 <ol class="arabic">
-<li><p class="first">Unzip, configure, and make:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">tar</span> <span class="n">xvfz</span> <span class="n">spglib</span><span class="o">-</span><span class="mf">1.9</span><span class="o">.</span><span class="mf">4.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
-<span class="o">%</span> <span class="n">cd</span> <span class="n">spglib</span><span class="o">-</span><span class="mf">1.9</span><span class="o">.</span><span class="mi">4</span>
-<span class="o">%</span> <span class="o">./</span><span class="n">configure</span> <span class="o">--</span><span class="n">prefix</span><span class="o">=</span><span class="n">INSTALL_LOCATION</span>
+<li><p class="first">After expanding source code, go into the source code directory:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">tar</span> <span class="n">xvfz</span> <span class="n">spglib</span><span class="o">-</span><span class="mf">1.9</span><span class="o">.</span><span class="mf">8.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
+<span class="o">%</span> <span class="n">cd</span> <span class="n">spglib</span><span class="o">-</span><span class="mf">1.9</span><span class="o">.</span><span class="mi">8</span>
+</pre></div>
+</div>
+<p>The current directory is <code class="docutils literal"><span class="pre">PROJECT_SOURCE_DIR</span></code>.</p>
+</li>
+<li><p class="first">Create a directory for the build:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">mkdir</span> <span class="n">_build</span><span class="p">;</span> <span class="n">cd</span> <span class="n">_build</span>
+<span class="o">%</span> <span class="n">cmake</span> <span class="o">..</span>
 <span class="o">%</span> <span class="n">make</span>
 <span class="o">%</span> <span class="n">make</span> <span class="n">install</span>
 </pre></div>
 </div>
 </li>
-<li><p class="first">The libraries are installed at <code class="docutils literal"><span class="pre">INSTALL_LOCATION</span></code> or found in
-<code class="docutils literal"><span class="pre">src/.libs</span></code> if you don&#8217;t run <code class="docutils literal"><span class="pre">make</span> <span class="pre">install</span></code>,</p>
+<li><p class="first">The libraries are installed at <code class="docutils literal"><span class="pre">PROJECT_SOURCE_DIR/lib</span></code> and the
+header file is installed at <code class="docutils literal"><span class="pre">PROJECT_SOURCE_DIR/include</span></code>.</p>
 </li>
 </ol>
-<p>Full package is found at <a class="reference external" href="https://github.com/atztogo/spglib/releases">GitHub</a>. In this case, if you
-need configure script, it can be created using autotools and libtool
-as follows:</p>
+</div>
+<div class="section" id="compiling-using-configure-script">
+<h3>Compiling using configure script<a class="headerlink" href="#compiling-using-configure-script" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic">
+<li><p class="first">The configure script is prepared using
+autotools and libtool as follows:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">aclocal</span>
 <span class="o">%</span> <span class="n">autoheader</span>
 <span class="o">%</span> <span class="n">libtoolize</span> <span class="c1"># or glibtoolize with macport etc</span>
@@ -154,6 +168,21 @@ as follows:</p>
 <span class="o">%</span> <span class="n">automake</span> <span class="o">-</span><span class="n">acf</span>
 <span class="o">%</span> <span class="n">autoconf</span>
 </pre></div>
+</div>
+</li>
+<li><p class="first">Run configure script:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">tar</span> <span class="n">xvfz</span> <span class="n">spglib</span><span class="o">-</span><span class="mf">1.9</span><span class="o">.</span><span class="mf">8.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
+<span class="o">%</span> <span class="n">cd</span> <span class="n">spglib</span><span class="o">-</span><span class="mf">1.9</span><span class="o">.</span><span class="mi">8</span>
+<span class="o">%</span> <span class="o">./</span><span class="n">configure</span> <span class="o">--</span><span class="n">prefix</span><span class="o">=</span><span class="n">INSTALLATION_LOCATION</span>
+<span class="o">%</span> <span class="n">make</span>
+<span class="o">%</span> <span class="n">make</span> <span class="n">install</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">The libraries are installed at <code class="docutils literal"><span class="pre">INSTALLATION_LOCATION/lib</span></code> or found in
+<code class="docutils literal"><span class="pre">src/.libs</span></code> if you don&#8217;t run <code class="docutils literal"><span class="pre">make</span> <span class="pre">install</span></code>.</p>
+</li>
+</ol>
 </div>
 <div class="section" id="openmp">
 <h3>OpenMP<a class="headerlink" href="#openmp" title="Permalink to this headline">¶</a></h3>
