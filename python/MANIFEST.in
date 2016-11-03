@@ -1,3 +1,4 @@
 include src/*.h
 include src/*.c
 include __nanoversion__.txt
+recursive_include test *
