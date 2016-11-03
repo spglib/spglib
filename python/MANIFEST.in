@@ -2,3 +2,4 @@ include src/*.h
 include src/*.c
 include __nanoversion__.txt
 recursive-include test *
+recursive-exclude test *.pyc
