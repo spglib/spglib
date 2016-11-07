@@ -1,11 +1,24 @@
 
    module spglib_f08
 
-   use iso_c_binding, only:  c_char, c_int, c_double, c_ptr, c_f_pointer
+   use iso_c_binding, only:  c_char, c_int, c_double, c_ptr, c_null_char, c_f_pointer, c_associated
 
    implicit none
 
    private
+
+   enum, bind(C)
+    enumerator ::  SPGLIB_SUCCESS = 0
+    enumerator ::  SPGERR_SPACEGROUP_SEARCH_FAILED
+    enumerator ::  SPGERR_CELL_STANDARDIZATION_FAILED
+    enumerator ::  SPGERR_SYMMETRY_OPERATION_SEARCH_FAILED
+    enumerator ::  SPGERR_ATOMS_TOO_CLOSE
+    enumerator ::  SPGERR_POINTGROUP_NOT_FOUND
+    enumerator ::  SPGERR_NIGGLI_FAILED
+    enumerator ::  SPGERR_DELAUNAY_FAILED
+    enumerator ::  SPGERR_ARRAY_SIZE_SHORTAGE
+    enumerator ::  SPGERR_NONE
+   end enum
 
    type :: SpglibDataset
       integer :: spacegroup_number
@@ -26,9 +39,9 @@
       integer, allocatable :: std_types(:)
       real(c_double), allocatable :: std_positions(:,:)
       character(len=6) :: pointgroup_symbol
+      integer(kind(SPGLIB_SUCCESS)) :: spglib_error
+
    end type
-
-
 
    interface
 
@@ -123,7 +136,7 @@
       import c_int, c_double
       real(c_double), intent(inout) :: lattice(3,3)
       real(c_double), intent(in), value :: symprec
-      integer(c_int) :: spg_delaunay_reduce
+      integer(c_int) :: spg_niggli_reduce
    end function spg_niggli_reduce
 
 
@@ -174,7 +187,7 @@
 
    function spg_get_schoenflies( symbol, lattice, position, types, num_atom, symprec) bind(c)
       import c_char, c_int, c_double
-      character(kind=c_char), intent(out) :: symbol(10)
+      character(kind=c_char), intent(out) :: symbol(7)
       real(c_double), intent(in) :: lattice(3,3), position(3, *)
       integer(c_int), intent(in) :: types(*)
       integer(c_int), intent(in), value :: num_atom
@@ -184,7 +197,7 @@
 
    function spgat_get_schoenflies( symbol, lattice, position, types, num_atom, symprec, angle_tolerance) bind(c)
       import c_char, c_int, c_double
-      character(kind=c_char), intent(out) :: symbol(10)
+      character(kind=c_char), intent(out) :: symbol(7)
       real(c_double), intent(in) :: lattice(3,3), position(3, *)
       integer(c_int), intent(in) :: types(*)
       integer(c_int), intent(in), value :: num_atom
@@ -305,7 +318,10 @@
       integer(c_int) :: spg_extract_triplets_reciprocal_mesh_at_q
    end function spg_extract_triplets_reciprocal_mesh_at_q
 
-
+   function spg_get_error_code() bind(c, name='spg_get_error_code')
+     integer(kind(SPGLIB_SUCCESS)) :: spg_get_error_code
+   end function spg_get_error_code
+      
    end interface
 
 
@@ -323,12 +339,43 @@
       & spg_get_ir_kpoints, spg_get_ir_reciprocal_mesh, &
       & spg_get_stabilized_reciprocal_mesh, &
       & spg_get_triplets_reciprocal_mesh_at_q, &
-      & spg_extract_triplets_reciprocal_mesh_at_q
+      & spg_extract_triplets_reciprocal_mesh_at_q, &
+      & spg_get_error_code, spg_get_error_message 
 
 
    contains
 
+   function spg_get_error_message(spglib_error)
+     integer(kind(SPGLIB_SUCCESS)) :: spglib_error
+     character(len=32) :: spg_get_error_message
 
+     character, pointer, dimension(:) :: message
+     type(c_ptr) :: message_ptr
+
+     integer :: i
+
+     interface
+
+        function spg_get_error_message_c(spglib_error) bind(c, name='spg_get_error_message')
+          import c_ptr, SPGLIB_SUCCESS
+
+          integer(kind(SPGLIB_SUCCESS)), value :: spglib_error
+          type(c_ptr) :: spg_get_error_message_c
+
+        end function spg_get_error_message_c
+
+     end interface
+
+     message_ptr = spg_get_error_message_c(spglib_error)
+     call c_f_pointer( message_ptr, message, [len(spg_get_error_message)])
+
+     spg_get_error_message = ' '
+     do i = 1, len(spg_get_error_message)
+        if(  message(i) == C_NULL_CHAR ) exit
+        spg_get_error_message(i:i) = message(i)
+     end do
+
+   end function spg_get_error_message
 
 
    function spg_get_dataset(lattice, position, types, num_atom, symprec) result(dset)
@@ -383,63 +430,103 @@
             import SpglibDataset_c
             type(SpglibDataset_c), intent(inout) :: dataset
          end subroutine spg_free_dataset_c
+
       end interface
 
       type(SpglibDataset_c), pointer :: dset_c
+      type(c_ptr) :: dataset_ptr_c
       integer :: n_operations, n_atoms, n_std_atoms, i
-
+      integer(kind(SPGLIB_SUCCESS)) :: SpglibErrcode
       real(c_double), pointer :: translations(:,:)
       integer(c_int), pointer :: rotations(:,:,:), wyckoffs(:), equivalent_atoms(:), std_types(:), std_positions(:,:)
 
-      call c_f_pointer( spg_get_dataset_c(lattice, position, types, num_atom, symprec), dset_c)
+      dataset_ptr_c = spg_get_dataset_c(lattice, position, types, num_atom, symprec)
 
-      dset % spacegroup_number     = dset_c % spacegroup_number
-      dset % hall_number           = dset_c % hall_number
-      dset % transformation_matrix = dset_c % transformation_matrix
-      dset % origin_shift          = dset_c % origin_shift
-      dset % n_operations          = dset_c % n_operations
-      dset % n_atoms               = dset_c % n_atoms
-      dset % n_std_atoms           = dset_c % n_std_atoms
-      dset % std_lattice           = dset_c % std_lattice
+      if( c_associated(dataset_ptr_c)) then
 
-      do i = 1, size(dset_c % international_symbol)
-         dset % international_symbol(i:i) = dset_c % international_symbol(i)
-      end do
+         dset%spglib_error = SPGLIB_SUCCESS
 
-      do i = 1, size(dset_c % hall_symbol)
-         dset % hall_symbol(i:i) = dset_c % hall_symbol(i)
-      end do
+         call c_f_pointer(dataset_ptr_c , dset_c)
 
-      do i = 1, size(dset_c % choice)
-         dset % choice(i:i) = dset_c % choice(i)
-      end do
+         dset % spacegroup_number     = dset_c % spacegroup_number
+         dset % hall_number           = dset_c % hall_number
+         dset % transformation_matrix = dset_c % transformation_matrix
+         dset % origin_shift          = dset_c % origin_shift
+         dset % n_operations          = dset_c % n_operations
+         dset % n_atoms               = dset_c % n_atoms
+         dset % n_std_atoms           = dset_c % n_std_atoms
+         dset % std_lattice           = dset_c % std_lattice
 
-      n_operations = dset_c % n_operations
-      n_atoms      = dset_c % n_atoms
-      n_std_atoms  = dset_c % n_std_atoms
+         ! Copy C strings to Fortran characters, converting C NULL to Fortran space padded strings
+         do i = 1, size(dset_c % international_symbol)
+            if(  dset_c % international_symbol(i) == C_NULL_CHAR ) then
+                dset % international_symbol(i:) = ' '
+                exit
+            end if
+            dset % international_symbol(i:i) = dset_c % international_symbol(i)
+         end do
 
-      call c_f_pointer (dset_c % rotations       , rotations       , shape = [3, 3, n_operations])
-      call c_f_pointer (dset_c % translations    , translations    , shape = [3,    n_operations])
-      call c_f_pointer (dset_c % wyckoffs        , wyckoffs        , shape = [n_atoms])
-      call c_f_pointer (dset_c % equivalent_atoms, equivalent_atoms, shape = [n_atoms])
-      call c_f_pointer (dset_c % std_types       , std_types       , shape = [n_std_atoms])
-      call c_f_pointer (dset_c % std_positions   , std_positions   , shape = [3, n_std_atoms])
+         do i = 1, size(dset_c % hall_symbol)
+            if(  dset_c % hall_symbol(i) == C_NULL_CHAR ) then
+                dset % hall_symbol(i:) = ' '
+                exit
+            end if
+            dset % hall_symbol(i:i) = dset_c % hall_symbol(i)
+         end do
 
-      allocate( dset % rotations       (3, 3, n_operations))
-      allocate( dset % translations    (3,    n_operations))
-      allocate( dset % wyckoffs        (n_atoms))
-      allocate( dset % equivalent_atoms(n_atoms))
-      allocate( dset % std_types       (n_std_atoms))
-      allocate( dset % std_positions   (3, n_std_atoms))
+         do i = 1, size(dset_c % choice)
+            if(  dset_c % choice(i) == C_NULL_CHAR ) then
+                dset % choice(i:) = ' '
+                exit
+            end if
+            dset % choice(i:i) = dset_c % choice(i)
+         end do
 
-      dset % rotations        = rotations
-      dset % translations     = translations
-      dset % wyckoffs         = wyckoffs
-      dset % equivalent_atoms = equivalent_atoms
-      dset % std_types        = std_types
-      dset % std_positions    = std_positions
+         n_operations = dset_c % n_operations
+         n_atoms      = dset_c % n_atoms
+         n_std_atoms  = dset_c % n_std_atoms
 
-      call spg_free_dataset_c(dset_c)
+         call c_f_pointer (dset_c % rotations       , rotations       , shape = [3, 3, n_operations])
+         call c_f_pointer (dset_c % translations    , translations    , shape = [3,    n_operations])
+         call c_f_pointer (dset_c % wyckoffs        , wyckoffs        , shape = [n_atoms])
+         call c_f_pointer (dset_c % equivalent_atoms, equivalent_atoms, shape = [n_atoms])
+         call c_f_pointer (dset_c % std_types       , std_types       , shape = [n_std_atoms])
+         call c_f_pointer (dset_c % std_positions   , std_positions   , shape = [3, n_std_atoms])
+
+         allocate( dset % rotations       (3, 3, n_operations))
+         allocate( dset % translations    (3,    n_operations))
+         allocate( dset % wyckoffs        (n_atoms))
+         allocate( dset % equivalent_atoms(n_atoms))
+         allocate( dset % std_types       (n_std_atoms))
+         allocate( dset % std_positions   (3, n_std_atoms))
+
+         dset % rotations        = rotations
+         dset % translations     = translations
+         dset % wyckoffs         = wyckoffs
+         dset % equivalent_atoms = equivalent_atoms
+         dset % std_types        = std_types
+         dset % std_positions    = std_positions
+
+         call spg_free_dataset_c(dset_c)
+
+      else
+
+         dset%spglib_error = spg_get_error_code()
+
+         dset%spacegroup_number = 0
+         dset%hall_number = 0
+         dset%international_symbol = ' '
+         dset%hall_symbol = ' '
+         dset%choice = ' '
+         dset%transformation_matrix = 0.0_c_double
+         dset%origin_shift = 0.0_c_double
+         dset%n_operations = 0
+         dset%n_atoms = 0
+         dset%n_std_atoms = 0
+         dset%std_lattice = 0.0_c_double
+         dset%pointgroup_symbol = ' '
+
+      end if
 
    end function spg_get_dataset
 
