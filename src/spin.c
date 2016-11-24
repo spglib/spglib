@@ -37,6 +37,7 @@
 #include "mathfunc.h"
 #include "symmetry.h"
 #include "cell.h"
+#include "spin.h"
 #include "debug.h"
 
 static Symmetry * get_collinear_operations(SPGCONST Symmetry *sym_nonspin,
