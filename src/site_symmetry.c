@@ -37,6 +37,7 @@
 #include "cell.h"
 #include "mathfunc.h"
 #include "symmetry.h"
+#include "site_symmetry.h"
 #include "sitesym_database.h"
 
 #include "debug.h"
