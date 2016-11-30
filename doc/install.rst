@@ -1,11 +1,18 @@
 How to install spglib C-API
 ============================
 
-Download & install
--------------------
+Download
+---------
 
-Latest source codes are downloaded at
-https://pypi.python.org/pypi/spglib .
+The source code is downloaded at
+https://github.com/atztogo/spglib/releases . 
+But minor updates are not included in this package. If you want the
+latest version, you can git-clone the spglib repository::
+
+   % git clone https://github.com/atztogo/spglib.git
+
+Install
+--------
 
 Compiling using cmake
 ^^^^^^^^^^^^^^^^^^^^^^
