@@ -92,7 +92,7 @@ static Symmetry * get_operations(SPGCONST Cell *primitive,
 				 const double symprec,
 				 const double angle_symprec);
 static Symmetry * reduce_operation(SPGCONST Cell * primitive,
-				   SPGCONST Symmetry * symmetry,
+				   const Symmetry * symmetry,
 				   const double symprec,
 				   const double angle_symprec);
 static int search_translation_part(int lat_point_atoms[],
@@ -193,7 +193,7 @@ Symmetry * sym_get_operation(SPGCONST Cell * primitive,
 
 /* Return NULL if failed */
 Symmetry * sym_reduce_operation(SPGCONST Cell * primitive,
-				SPGCONST Symmetry * symmetry,
+				const Symmetry * symmetry,
 				const double symprec)
 {
   return reduce_operation(primitive, symmetry, symprec, angle_tolerance);
@@ -328,7 +328,7 @@ static Symmetry * get_operations(SPGCONST Cell *primitive,
 
 /* Return NULL if failed */
 static Symmetry * reduce_operation(SPGCONST Cell * primitive,
-				   SPGCONST Symmetry * symmetry,
+				   const Symmetry * symmetry,
 				   const double symprec,
 				   const double angle_symprec)
 {

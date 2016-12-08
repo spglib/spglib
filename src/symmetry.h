@@ -54,7 +54,7 @@ void sym_free_symmetry(Symmetry * symmetry);
 Symmetry * sym_get_operation(SPGCONST Cell * primitive,
 			     const double symprec);
 Symmetry * sym_reduce_operation(SPGCONST Cell * primitive,
-				SPGCONST Symmetry * symmetry,
+				const Symmetry * symmetry,
 				const double symprec);
 VecDBL * sym_get_pure_translation(SPGCONST Cell *cell,
 				   const double symprec);
