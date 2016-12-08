@@ -324,6 +324,7 @@ is shown in the spglib (C-API) document.
 * ``number``: International space group number
 * ``international``: International short symbol
 * ``hall``: Hall symbol
+* ``hall_number``: Hall number. Can be used in :ref:`py_method_get_symmetry_from_database` and :ref:`py_method_get_spacegroup_type`
 * ``choice``: Centring, origin, basis vector setting
 * ``transformation_matrix``: Transformation matrix from lattice of input cell to Bravais lattice :math:`L^{bravais} = L^{original} * T`
 * ``origin shift``: Origin shift choice in the setting of Bravais lattice
