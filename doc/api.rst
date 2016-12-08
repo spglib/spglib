@@ -2,7 +2,7 @@ C-APIs
 ======
 
 .. contents:: List of C-APIs
-   :depth: 1
+   :depth: 3
    :local:
 
 ``spg_get_major_version``, ``spg_get_minor_version``, ``spg_get_micro_version``
@@ -12,6 +12,8 @@ C-APIs
 
 Version number of spglib is obtained. These three functions return
 integers that correspond to spglib version [major].[minor].[micro].
+
+|
 
 ``spg_get_error_code`` and ``spg_get_error_message``
 -----------------------------------------------------
@@ -52,6 +54,8 @@ The usage is as follows::
    error = spg_get_error_code();
    printf("%s\n", spg_get_error_message(error));
    
+|
+
 .. _api_spg_get_symmetry:
 
 ``spg_get_symmetry``
@@ -276,8 +280,10 @@ is not in the list of Hall symbols for the space group type of the
 crystal structure, ``spacegroup_number`` in the ``SpglibDataset``
 structure is set 0.
 
-Finally, its allocated memory space must be freed by calling ``spg_free_dataset``.
+Finally, its allocated memory space must be freed by calling
+``spg_free_dataset``.
 
+.. _api_struct_spglibdataset:
 
 Dataset
 ^^^^^^^^
@@ -315,8 +321,6 @@ In **versions before 1.8.1**, the member names of ``n_std_atoms``,
 ``n_brv_atoms``, ``brv_lattice``, ``brv_types``, and
 ``brv_positions``, respectively.
 
-|
-
 .. _api_spg_get_dataset_spacegroup_type:
 
 Space group type
@@ -332,8 +336,6 @@ The (full) Hermann–Mauguin notation of space group type is given by
 ``hall_symbol``. The information on unique axis,
 setting or cell choices is found in ``choice``.
 
-|
-
 Symmetry operations
 """""""""""""""""""""""
 
@@ -344,9 +346,6 @@ of rotation :math:`\boldsymbol{W}` and translation
 :math:`\boldsymbol{w}` parts with the same index. Number of symmetry
 operations is given as ``n_operations``. The detailed explanation of
 the values is found at :ref:`api_spg_get_symmetry`.
-
-|
-
 
 .. _api_spg_get_dataset_site_symmetry:
 
@@ -361,8 +360,6 @@ respectively. Number of elements in ``wyckoffs`` is same as
 ``n_atoms``. ``equivalent_atoms`` is a list of atomic indices that map
 to indices of symmetrically independent atoms, where the list index
 corresponds to atomic index of the input crystal structure.
-
-|
 
 Origin shift and lattice transformation
 """"""""""""""""""""""""""""""""""""""""
@@ -417,8 +414,6 @@ In **versions 1.7.x and 1.8 or before**, ``transformation_matrix`` and
 
 respectively.
 
-|
-
 Standardized crystal structure
 """""""""""""""""""""""""""""""
 
@@ -431,8 +426,6 @@ stored in ``n_std_atoms``, ``std_lattice``, ``std_types``, and
 In **versions 1.7.x and 1.8 or before**, the variable names of the
 members corresponding to those above are ``n_brv_atoms``,
 ``brv_lattice``, ``brv_types``, and ``brv_positions``, respectively.
-
-|
 
 Crystallographic point group
 """""""""""""""""""""""""""""
