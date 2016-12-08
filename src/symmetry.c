@@ -85,18 +85,18 @@ static int identity[3][3] = {{1, 0, 0},
 
 static int get_index_with_least_atoms(const Cell *cell);
 static VecDBL * get_translation(SPGCONST int rot[3][3],
-				SPGCONST Cell *cell,
+				const Cell *cell,
 				const double symprec,
 				const int is_identity);
-static Symmetry * get_operations(SPGCONST Cell *primitive,
+static Symmetry * get_operations(const Cell *primitive,
 				 const double symprec,
 				 const double angle_symprec);
-static Symmetry * reduce_operation(SPGCONST Cell * primitive,
+static Symmetry * reduce_operation(const Cell * primitive,
 				   const Symmetry * symmetry,
 				   const double symprec,
 				   const double angle_symprec);
 static int search_translation_part(int lat_point_atoms[],
-				   SPGCONST Cell * cell,
+				   const Cell * cell,
 				   SPGCONST int rot[3][3],
 				   const int min_atom_index,
 				   const double origin[3],
@@ -104,7 +104,7 @@ static int search_translation_part(int lat_point_atoms[],
 				   const int is_identity);
 static int is_overlap_all_atoms(const double test_trans[3],
 				SPGCONST int rot[3][3],
-				SPGCONST Cell * cell,
+				const Cell * cell,
 				const double symprec,
 				const int is_identity);
 static PointSymmetry
@@ -113,7 +113,7 @@ transform_pointsymmetry(SPGCONST PointSymmetry * point_sym_prim,
 			SPGCONST double original_lattice[3][3]);
 static Symmetry *
 get_space_group_operations(SPGCONST PointSymmetry *lattice_sym,
-			   SPGCONST Cell *primitive,
+			   const Cell *primitive,
 			   const double symprec);
 static void set_axes(int axes[3][3],
 		     const int a1, const int a2, const int a3);
@@ -182,7 +182,7 @@ void sym_free_symmetry(Symmetry *symmetry)
 }
 
 /* Return NULL if failed */
-Symmetry * sym_get_operation(SPGCONST Cell * primitive,
+Symmetry * sym_get_operation(const Cell * primitive,
 			     const double symprec)
 {
 
@@ -192,7 +192,7 @@ Symmetry * sym_get_operation(SPGCONST Cell * primitive,
 }
 
 /* Return NULL if failed */
-Symmetry * sym_reduce_operation(SPGCONST Cell * primitive,
+Symmetry * sym_reduce_operation(const Cell * primitive,
 				const Symmetry * symmetry,
 				const double symprec)
 {
@@ -200,7 +200,7 @@ Symmetry * sym_reduce_operation(SPGCONST Cell * primitive,
 }
 
 /* Return NULL if failed */
-VecDBL * sym_get_pure_translation(SPGCONST Cell *cell,
+VecDBL * sym_get_pure_translation(const Cell *cell,
 				  const double symprec)
 {
   int multi;
@@ -230,7 +230,7 @@ VecDBL * sym_get_pure_translation(SPGCONST Cell *cell,
 }
 
 /* Return NULL if failed */
-VecDBL * sym_reduce_pure_translation(SPGCONST Cell * cell,
+VecDBL * sym_reduce_pure_translation(const Cell * cell,
 				     const VecDBL * pure_trans,
 				     const double symprec)
 {
@@ -299,7 +299,7 @@ double sym_get_angle_tolerance(void)
 /* 3) The spacegroup operations for the primitive cell are */
 /*    transformed to those of original input cells, if the input cell */
 /*    was not a primitive cell. */
-static Symmetry * get_operations(SPGCONST Cell *primitive,
+static Symmetry * get_operations(const Cell *primitive,
 				 const double symprec,
 				 const double angle_symprec)
 {
@@ -327,7 +327,7 @@ static Symmetry * get_operations(SPGCONST Cell *primitive,
 }
 
 /* Return NULL if failed */
-static Symmetry * reduce_operation(SPGCONST Cell * primitive,
+static Symmetry * reduce_operation(const Cell * primitive,
 				   const Symmetry * symmetry,
 				   const double symprec,
 				   const double angle_symprec)
@@ -398,7 +398,7 @@ static Symmetry * reduce_operation(SPGCONST Cell * primitive,
 /* This function is heaviest in this code. */
 /* Return NULL if failed */
 static VecDBL * get_translation(SPGCONST int rot[3][3],
-				SPGCONST Cell *cell,
+				const Cell *cell,
 				const double symprec,
 				const int is_identity)
 {
@@ -524,7 +524,7 @@ static VecDBL * get_translation(SPGCONST int rot[3][3],
 }
 
 static int search_translation_part(int lat_point_atoms[],
-				   SPGCONST Cell * cell,
+				   const Cell * cell,
 				   SPGCONST int rot[3][3],
 				   const int min_atom_index,
 				   const double origin[3],
@@ -559,7 +559,7 @@ static int search_translation_part(int lat_point_atoms[],
 
 static int is_overlap_all_atoms(const double trans[3],
 				SPGCONST int rot[3][3],
-				SPGCONST Cell * cell,
+				const Cell * cell,
 				const double symprec,
 				const int is_identity)
 {
@@ -654,7 +654,7 @@ static int get_index_with_least_atoms(const Cell *cell)
 /* Return NULL if failed */
 static Symmetry *
 get_space_group_operations(SPGCONST PointSymmetry *lattice_sym,
-			   SPGCONST Cell *primitive,
+			   const Cell *primitive,
 			   const double symprec)
 {
   int i, j, num_sym, total_num_sym;

@@ -227,11 +227,11 @@ static double F_mat[3][3] = {{    0, 1./2, 1./2 },
                              { 1./2,    0, 1./2 },
                              { 1./2, 1./2,    0 }};
 
-static Spacegroup search_spacegroup(SPGCONST Cell * primitive,
+static Spacegroup search_spacegroup(const Cell * primitive,
                                     const int candidates[],
                                     const int num_candidates,
                                     const double symprec);
-static Spacegroup search_spacegroup_with_symmetry(SPGCONST Cell * primitive,
+static Spacegroup search_spacegroup_with_symmetry(const Cell * primitive,
                                                   const int candidates[],
                                                   const int num_candidates,
                                                   const Symmetry *symmetry,
@@ -243,7 +243,7 @@ static int iterative_search_hall_number(double origin_shift[3],
                                         double conv_lattice[3][3],
                                         const int candidates[],
                                         const int num_candidates,
-                                        SPGCONST Cell * primitive,
+                                        const Cell * primitive,
                                         const Symmetry * symmetry,
                                         const double symprec);
 static int change_basis_tricli(int int_transform_mat[3][3],
@@ -298,7 +298,7 @@ static Centering get_base_center(SPGCONST int transform_mat[3][3]);
 
 /* NULL is returned if failed */
 Primitive * spa_get_spacegroup(Spacegroup * spacegroup,
-                               SPGCONST Cell * cell,
+                               const Cell * cell,
                                const double symprec)
 {
   int attempt;
@@ -344,7 +344,7 @@ Primitive * spa_get_spacegroup(Spacegroup * spacegroup,
 }
 
 /* Return spacegroup.number = 0 if failed */
-Spacegroup spa_get_spacegroup_with_hall_number(SPGCONST Primitive * primitive,
+Spacegroup spa_get_spacegroup_with_hall_number(const Primitive * primitive,
                                                const int hall_number)
 {
   int num_candidates;
@@ -376,7 +376,7 @@ Spacegroup spa_get_spacegroup_with_hall_number(SPGCONST Primitive * primitive,
 }
 
 /* Return NULL if failed */
-Cell * spa_transform_to_primitive(SPGCONST Cell * cell,
+Cell * spa_transform_to_primitive(const Cell * cell,
                                   SPGCONST double trans_mat[3][3],
                                   const Centering centering,
                                   const double symprec)
@@ -431,7 +431,7 @@ Cell * spa_transform_to_primitive(SPGCONST Cell * cell,
 }
 
 /* Return spacegroup.number = 0 if failed */
-static Spacegroup search_spacegroup(SPGCONST Cell * primitive,
+static Spacegroup search_spacegroup(const Cell * primitive,
                                     const int candidates[],
                                     const int num_candidates,
                                     const double symprec)
@@ -461,7 +461,7 @@ static Spacegroup search_spacegroup(SPGCONST Cell * primitive,
 }
 
 /* Return spacegroup.number = 0 if failed */
-static Spacegroup search_spacegroup_with_symmetry(SPGCONST Cell * primitive,
+static Spacegroup search_spacegroup_with_symmetry(const Cell * primitive,
                                                   const int candidates[],
                                                   const int num_candidates,
                                                   const Symmetry *symmetry,
@@ -537,7 +537,7 @@ static int iterative_search_hall_number(double origin_shift[3],
                                         double conv_lattice[3][3],
                                         const int candidates[],
                                         const int num_candidates,
-                                        SPGCONST Cell * primitive,
+                                        const Cell * primitive,
                                         const Symmetry * symmetry,
                                         const double symprec)
 {

@@ -66,14 +66,14 @@ typedef enum {
 } Centering;
 
 Primitive * spa_get_spacegroup(Spacegroup * spacegroup,
-			       SPGCONST Cell * cell,
-			       const double symprec);
-Spacegroup spa_get_spacegroup_with_hall_number(SPGCONST Primitive * primitive,
-					       const int hall_number);
-Cell * spa_transform_to_primitive(SPGCONST Cell * cell,
-				  SPGCONST double trans_mat[3][3],
-				  const Centering centering,
-				  const double symprec);
+                               const Cell * cell,
+                               const double symprec);
+Spacegroup spa_get_spacegroup_with_hall_number(const Primitive * primitive,
+                                               const int hall_number);
+Cell * spa_transform_to_primitive(const Cell * cell,
+                                  SPGCONST double trans_mat[3][3],
+                                  const Centering centering,
+                                  const double symprec);
 
 
 #endif
