@@ -44,10 +44,12 @@ typedef struct {
   int size;
   double (*t_mat)[3]; /* 3x3 matrix */
   double tolerance;
+  double angle_tolerance;
 } Primitive;
 
 Primitive * prm_alloc_primitive(const int size);
 void prm_free_primitive(Primitive * primitive);
-Primitive * prm_get_primitive(const Cell * cell, const double symprec);
-
+Primitive * prm_get_primitive(const Cell * cell,
+                              const double symprec,
+                              const double angle_tolerance);
 #endif

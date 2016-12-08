@@ -230,12 +230,14 @@ static double F_mat[3][3] = {{    0, 1./2, 1./2 },
 static Spacegroup search_spacegroup(const Cell * primitive,
                                     const int candidates[],
                                     const int num_candidates,
-                                    const double symprec);
+                                    const double symprec,
+                                    const double angle_tolerance);
 static Spacegroup search_spacegroup_with_symmetry(const Cell * primitive,
                                                   const int candidates[],
                                                   const int num_candidates,
                                                   const Symmetry *symmetry,
-                                                  const double symprec);
+                                                  const double symprec,
+                                                  const double angle_tolerance);
 static Spacegroup get_spacegroup(const int hall_number,
                                  const double origin_shift[3],
                                  SPGCONST double conv_lattice[3][3]);
@@ -245,7 +247,8 @@ static int iterative_search_hall_number(double origin_shift[3],
                                         const int num_candidates,
                                         const Cell * primitive,
                                         const Symmetry * symmetry,
-                                        const double symprec);
+                                        const double symprec,
+                                        const double angle_tolerance);
 static int change_basis_tricli(int int_transform_mat[3][3],
                                SPGCONST double conv_lattice[3][3],
                                SPGCONST double primitive_lattice[3][3],
@@ -299,7 +302,8 @@ static Centering get_base_center(SPGCONST int transform_mat[3][3]);
 /* NULL is returned if failed */
 Primitive * spa_get_spacegroup(Spacegroup * spacegroup,
                                const Cell * cell,
-                               const double symprec)
+                               const double symprec,
+                               const double angle_tolerance)
 {
   int attempt;
   double tolerance;
@@ -312,14 +316,16 @@ Primitive * spa_get_spacegroup(Spacegroup * spacegroup,
   tolerance = symprec;
 
   for (attempt = 0; attempt < NUM_ATTEMPT; attempt++) {
-    if ((primitive = prm_get_primitive(cell, tolerance)) == NULL) {
+    if ((primitive = prm_get_primitive(cell, tolerance, angle_tolerance)) ==
+	NULL) {
       goto cont;
     }
 
     *spacegroup = search_spacegroup(primitive->cell,
                                     spacegroup_to_hall_number,
                                     230,
-                                    primitive->tolerance);
+                                    primitive->tolerance,
+                                    primitive->angle_tolerance);
     if (spacegroup->number > 0) {
       break;
     } else {
@@ -362,7 +368,8 @@ Spacegroup spa_get_spacegroup_with_hall_number(const Primitive * primitive,
   spacegroup = search_spacegroup(primitive->cell,
                                  candidate,
                                  num_candidates,
-                                 primitive->tolerance);
+                                 primitive->tolerance,
+				 primitive->angle_tolerance);
   if (spacegroup.number > 0) {
     goto ret;
   }
@@ -434,7 +441,8 @@ Cell * spa_transform_to_primitive(const Cell * cell,
 static Spacegroup search_spacegroup(const Cell * primitive,
                                     const int candidates[],
                                     const int num_candidates,
-                                    const double symprec)
+                                    const double symprec,
+                                    const double angle_tolerance)
 {
   Spacegroup spacegroup;
   Symmetry *symmetry;
@@ -444,7 +452,8 @@ static Spacegroup search_spacegroup(const Cell * primitive,
   symmetry = NULL;
   spacegroup.number = 0;
 
-  if ((symmetry = sym_get_operation(primitive, symprec)) == NULL) {
+  if ((symmetry = sym_get_operation(primitive, symprec, angle_tolerance)) ==
+      NULL) {
     goto ret;
   }
 
@@ -452,7 +461,8 @@ static Spacegroup search_spacegroup(const Cell * primitive,
                                                candidates,
                                                num_candidates,
                                                symmetry,
-                                               symprec);
+                                               symprec,
+					       angle_tolerance);
   sym_free_symmetry(symmetry);
   symmetry = NULL;
 
@@ -465,7 +475,8 @@ static Spacegroup search_spacegroup_with_symmetry(const Cell * primitive,
                                                   const int candidates[],
                                                   const int num_candidates,
                                                   const Symmetry *symmetry,
-                                                  const double symprec)
+                                                  const double symprec,
+						  const double angle_tolerance)
 {
   int hall_number;
   double conv_lattice[3][3];
@@ -491,7 +502,8 @@ static Spacegroup search_spacegroup_with_symmetry(const Cell * primitive,
                                              num_candidates,
                                              primitive,
                                              symmetry,
-                                             symprec);
+                                             symprec,
+					     angle_tolerance);
   spacegroup = get_spacegroup(hall_number, origin_shift, conv_lattice);
 
  ret:
@@ -539,7 +551,8 @@ static int iterative_search_hall_number(double origin_shift[3],
                                         const int num_candidates,
                                         const Cell * primitive,
                                         const Symmetry * symmetry,
-                                        const double symprec)
+                                        const double symprec,
+                                        const double angle_tolerance)
 {
   int attempt, hall_number;
   double tolerance;
@@ -570,7 +583,10 @@ static int iterative_search_hall_number(double origin_shift[3],
     warning_print("(line %d, %s).\n", __LINE__, __FILE__);
 
     tolerance *= REDUCE_RATE;
-    sym_reduced = sym_reduce_operation(primitive, symmetry, tolerance);
+    sym_reduced = sym_reduce_operation(primitive,
+				       symmetry,
+				       tolerance,
+				       angle_tolerance);
     hall_number = search_hall_number(origin_shift,
                                      conv_lattice,
                                      candidates,

@@ -48,8 +48,6 @@
 #define PI 3.14159265358979323846
 /* Tolerance of angle between lattice vectors in degrees */
 /* Negative value invokes converter from symprec. */
-static double angle_tolerance = -1.0;
-
 static int relative_axes[][3] = {
   { 1, 0, 0},
   { 0, 1, 0},
@@ -183,7 +181,8 @@ void sym_free_symmetry(Symmetry *symmetry)
 
 /* Return NULL if failed */
 Symmetry * sym_get_operation(const Cell * primitive,
-			     const double symprec)
+			     const double symprec,
+			     const double angle_tolerance)
 {
 
   debug_print("sym_get_operations:\n");
@@ -194,7 +193,8 @@ Symmetry * sym_get_operation(const Cell * primitive,
 /* Return NULL if failed */
 Symmetry * sym_reduce_operation(const Cell * primitive,
 				const Symmetry * symmetry,
-				const double symprec)
+				const double symprec,
+				const double angle_tolerance)
 {
   return reduce_operation(primitive, symmetry, symprec, angle_tolerance);
 }
@@ -232,7 +232,8 @@ VecDBL * sym_get_pure_translation(const Cell *cell,
 /* Return NULL if failed */
 VecDBL * sym_reduce_pure_translation(const Cell * cell,
 				     const VecDBL * pure_trans,
-				     const double symprec)
+				     const double symprec,
+				     const double angle_tolerance)
 {
   int i, multi;
   Symmetry *symmetry, *symmetry_reduced;
@@ -278,17 +279,6 @@ VecDBL * sym_reduce_pure_translation(const Cell * cell,
 
   return pure_trans_reduced;
 }
-
-void sym_set_angle_tolerance(double tolerance)
-{
-  angle_tolerance = tolerance;
-}
-
-double sym_get_angle_tolerance(void)
-{
-  return angle_tolerance;
-}
-
 
 /* 1) Pointgroup operations of the primitive cell are obtained. */
 /*    These are constrained by the input cell lattice pointgroup, */

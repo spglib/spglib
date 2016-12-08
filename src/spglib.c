@@ -87,7 +87,8 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
                                    const int types[],
                                    const int num_atom,
                                    const int hall_number,
-                                   const double symprec);
+                                   const double symprec,
+                                   const double angle_tolerance);
 static int set_dataset(SpglibDataset * dataset,
                        const Cell * cell,
                        const Cell * primitive,
@@ -101,7 +102,8 @@ static int get_symmetry_from_dataset(int rotation[][3][3],
                                      SPGCONST double position[][3],
                                      const int types[],
                                      const int num_atom,
-                                     const double symprec);
+                                     const double symprec,
+                                     const double angle_tolerance);
 static int get_symmetry_with_collinear_spin(int rotation[][3][3],
                                             double translation[][3],
                                             int equivalent_atoms[],
@@ -111,28 +113,33 @@ static int get_symmetry_with_collinear_spin(int rotation[][3][3],
                                             const int types[],
                                             const double spins[],
                                             const int num_atom,
-                                            const double symprec);
+                                            const double symprec,
+					    const double angle_tolerance);
 static int get_multiplicity(SPGCONST double lattice[3][3],
                             SPGCONST double position[][3],
                             const int types[],
                             const int num_atom,
-                            const double symprec);
+                            const double symprec,
+			    const double angle_tolerance);
 static int standardize_primitive(double lattice[3][3],
                                  double position[][3],
                                  int types[],
                                  const int num_atom,
-                                 const double symprec);
+                                 const double symprec,
+                                 const double angle_tolerance);
 static int standardize_cell(double lattice[3][3],
                             double position[][3],
                             int types[],
                             const int num_atom,
-                            const double symprec);
+                            const double symprec,
+                            const double angle_tolerance);
 static int get_standardized_cell(double lattice[3][3],
                                  double position[][3],
                                  int types[],
                                  const int num_atom,
                                  const int to_primitive,
-                                 const double symprec);
+                                 const double symprec,
+                                 const double angle_tolerance);
 static Centering get_centering(int hall_number);
 static void set_cell(double lattice[3][3],
                      double position[][3],
@@ -143,12 +150,14 @@ static int get_international(char symbol[11],
                              SPGCONST double position[][3],
                              const int types[],
                              const int num_atom,
-                             const double symprec);
+                             const double symprec,
+			     const double angle_tolerance);
 static int get_schoenflies(char symbol[7],
                            SPGCONST double lattice[3][3],
                            SPGCONST double position[][3],
                            const int types[], const int num_atom,
-                           const double symprec);
+                           const double symprec,
+                           const double angle_tolerance);
 
 /*---------*/
 /* kpoints */
@@ -162,7 +171,8 @@ static int get_ir_reciprocal_mesh(int grid_address[][3],
                                   SPGCONST double position[][3],
                                   const int types[],
                                   const int num_atom,
-                                  const double symprec);
+                                  const double symprec,
+                                  const double angle_tolerance);
 
 static int get_stabilized_reciprocal_mesh(int grid_address[][3],
                                           int map[],
@@ -234,14 +244,13 @@ SpglibDataset * spg_get_dataset(SPGCONST double lattice[3][3],
                                 const int num_atom,
                                 const double symprec)
 {
-  sym_set_angle_tolerance(-1.0);
-
   return get_dataset(lattice,
                      position,
                      types,
                      num_atom,
                      0,
-                     symprec);
+                     symprec,
+		     -1.0);
 }
 
 /* Return NULL if failed */
@@ -252,14 +261,13 @@ SpglibDataset * spgat_get_dataset(SPGCONST double lattice[3][3],
                                   const double symprec,
                                   const double angle_tolerance)
 {
-  sym_set_angle_tolerance(angle_tolerance);
-
   return get_dataset(lattice,
                      position,
                      types,
                      num_atom,
                      0,
-                     symprec);
+                     symprec,
+		     angle_tolerance);
 }
 
 /* Return NULL if failed */
@@ -270,14 +278,13 @@ SpglibDataset * spg_get_dataset_with_hall_number(SPGCONST double lattice[3][3],
                                                  const int hall_number,
                                                  const double symprec)
 {
-  sym_set_angle_tolerance(-1.0);
-
   return get_dataset(lattice,
                      position,
                      types,
                      num_atom,
                      hall_number,
-                     symprec);
+                     symprec,
+		     -1.0);
 }
 
 /* Return NULL if failed */
@@ -290,14 +297,13 @@ spgat_get_dataset_with_hall_number(SPGCONST double lattice[3][3],
                                    const double symprec,
                                    const double angle_tolerance)
 {
-  sym_set_angle_tolerance(angle_tolerance);
-
   return get_dataset(lattice,
                      position,
                      types,
                      num_atom,
                      hall_number,
-                     symprec);
+                     symprec,
+		     angle_tolerance);
 }
 
 void spg_free_dataset(SpglibDataset *dataset)
@@ -346,8 +352,6 @@ int spg_get_symmetry(int rotation[][3][3],
                      const int num_atom,
                      const double symprec)
 {
-  sym_set_angle_tolerance(-1.0);
-
   return get_symmetry_from_dataset(rotation,
                                    translation,
                                    max_size,
@@ -355,7 +359,8 @@ int spg_get_symmetry(int rotation[][3][3],
                                    position,
                                    types,
                                    num_atom,
-                                   symprec);
+                                   symprec,
+				   -1.0);
 }
 
 /* Return 0 if failed */
@@ -369,8 +374,6 @@ int spgat_get_symmetry(int rotation[][3][3],
                        const double symprec,
                        const double angle_tolerance)
 {
-  sym_set_angle_tolerance(angle_tolerance);
-
   return get_symmetry_from_dataset(rotation,
                                    translation,
                                    max_size,
@@ -378,7 +381,8 @@ int spgat_get_symmetry(int rotation[][3][3],
                                    position,
                                    types,
                                    num_atom,
-                                   symprec);
+                                   symprec,
+				   angle_tolerance);
 }
 
 /* Return 0 if failed */
@@ -393,8 +397,6 @@ int spg_get_symmetry_with_collinear_spin(int rotation[][3][3],
                                          const int num_atom,
                                          const double symprec)
 {
-  sym_set_angle_tolerance(-1.0);
-
   return get_symmetry_with_collinear_spin(rotation,
                                           translation,
                                           equivalent_atoms,
@@ -404,7 +406,8 @@ int spg_get_symmetry_with_collinear_spin(int rotation[][3][3],
                                           types,
                                           spins,
                                           num_atom,
-                                          symprec);
+                                          symprec,
+					  -1.0);
 }
 
 /* Return 0 if failed */
@@ -420,8 +423,6 @@ int spgat_get_symmetry_with_collinear_spin(int rotation[][3][3],
                                            const double symprec,
                                            const double angle_tolerance)
 {
-  sym_set_angle_tolerance(angle_tolerance);
-
   return get_symmetry_with_collinear_spin(rotation,
                                           translation,
                                           equivalent_atoms,
@@ -431,7 +432,8 @@ int spgat_get_symmetry_with_collinear_spin(int rotation[][3][3],
                                           types,
                                           spins,
                                           num_atom,
-                                          symprec);
+                                          symprec,
+					  angle_tolerance);
 }
 
 /* Return 0 if failed */
@@ -441,13 +443,12 @@ int spg_get_multiplicity(SPGCONST double lattice[3][3],
                          const int num_atom,
                          const double symprec)
 {
-  sym_set_angle_tolerance(-1.0);
-
   return get_multiplicity(lattice,
                           position,
                           types,
                           num_atom,
-                          symprec);
+                          symprec,
+			  -1.0);
 }
 
 /* Return 0 if failed */
@@ -458,13 +459,12 @@ int spgat_get_multiplicity(SPGCONST double lattice[3][3],
                            const double symprec,
                            const double angle_tolerance)
 {
-  sym_set_angle_tolerance(angle_tolerance);
-
   return get_multiplicity(lattice,
                           position,
                           types,
                           num_atom,
-                          symprec);
+                          symprec,
+			  angle_tolerance);
 }
 
 /* Return 0 if failed */
@@ -475,14 +475,13 @@ int spg_get_international(char symbol[11],
                           const int num_atom,
                           const double symprec)
 {
-  sym_set_angle_tolerance(-1.0);
-
   return get_international(symbol,
                            lattice,
                            position,
                            types,
                            num_atom,
-                           symprec);
+                           symprec,
+			   -1.0);
 }
 
 /* Return 0 if failed */
@@ -494,14 +493,13 @@ int spgat_get_international(char symbol[11],
                             const double symprec,
                             const double angle_tolerance)
 {
-  sym_set_angle_tolerance(angle_tolerance);
-
   return get_international(symbol,
                            lattice,
                            position,
                            types,
                            num_atom,
-                           symprec);
+                           symprec,
+			   angle_tolerance);
 }
 
 /* Return 0 if failed */
@@ -512,14 +510,13 @@ int spg_get_schoenflies(char symbol[7],
                         const int num_atom,
                         const double symprec)
 {
-  sym_set_angle_tolerance(-1.0);
-
   return get_schoenflies(symbol,
                          lattice,
                          position,
                          types,
                          num_atom,
-                         symprec);
+                         symprec,
+			 -1.0);
 }
 
 /* Return 0 if failed */
@@ -531,14 +528,13 @@ int spgat_get_schoenflies(char symbol[7],
                           const double symprec,
                           const double angle_tolerance)
 {
-  sym_set_angle_tolerance(angle_tolerance);
-
   return get_schoenflies(symbol,
                          lattice,
                          position,
                          types,
                          num_atom,
-                         symprec);
+                         symprec,
+			 angle_tolerance);
 }
 
 /* Return 0 if failed */
@@ -668,8 +664,6 @@ int spgat_standardize_cell(double lattice[3][3],
                            const double symprec,
                            const double angle_tolerance)
 {
-  sym_set_angle_tolerance(angle_tolerance);
-
   if (to_primitive) {
     if (no_idealize) {
       return get_standardized_cell(lattice,
@@ -677,13 +671,15 @@ int spgat_standardize_cell(double lattice[3][3],
                                    types,
                                    num_atom,
                                    1,
-                                   symprec);
+                                   symprec,
+				   angle_tolerance);
     } else {
       return standardize_primitive(lattice,
                                    position,
                                    types,
                                    num_atom,
-                                   symprec);
+                                   symprec,
+				   angle_tolerance);
     }
   } else {
     if (no_idealize) {
@@ -692,13 +688,15 @@ int spgat_standardize_cell(double lattice[3][3],
                                    types,
                                    num_atom,
                                    0,
-                                   symprec);
+                                   symprec,
+				   angle_tolerance);
     } else {
       return standardize_cell(lattice,
                               position,
                               types,
                               num_atom,
-                              symprec);
+                              symprec,
+			      angle_tolerance);
     }
   }
 }
@@ -710,13 +708,12 @@ int spg_find_primitive(double lattice[3][3],
                        const int num_atom,
                        const double symprec)
 {
-  sym_set_angle_tolerance(-1.0);
-
   return standardize_primitive(lattice,
                                position,
                                types,
                                num_atom,
-                               symprec);
+                               symprec,
+			       -1.0);
 }
 
 /* Return 0 if failed */
@@ -727,13 +724,12 @@ int spgat_find_primitive(double lattice[3][3],
                          const double symprec,
                          const double angle_tolerance)
 {
-  sym_set_angle_tolerance(angle_tolerance);
-
   return standardize_primitive(lattice,
                                position,
                                types,
                                num_atom,
-                               symprec);
+                               symprec,
+			       angle_tolerance);
 }
 
 /* Return 0 if failed */
@@ -743,13 +739,12 @@ int spg_refine_cell(double lattice[3][3],
                     const int num_atom,
                     const double symprec)
 {
-  sym_set_angle_tolerance(-1.0);
-
   return standardize_cell(lattice,
                           position,
                           types,
                           num_atom,
-                          symprec);
+                          symprec,
+			  -1.0);
 }
 
 /* Return 0 if failed */
@@ -760,13 +755,12 @@ int spgat_refine_cell(double lattice[3][3],
                       const double symprec,
                       const double angle_tolerance)
 {
-  sym_set_angle_tolerance(angle_tolerance);
-
   return standardize_cell(lattice,
                           position,
                           types,
                           num_atom,
-                          symprec);
+                          symprec,
+			  angle_tolerance);
 }
 
 int spg_delaunay_reduce(double lattice[3][3], const double symprec)
@@ -820,8 +814,6 @@ int spg_get_ir_reciprocal_mesh(int grid_address[][3],
                                const int num_atom,
                                const double symprec)
 {
-  sym_set_angle_tolerance(-1.0);
-
   return get_ir_reciprocal_mesh(grid_address,
                                 map,
                                 mesh,
@@ -831,7 +823,8 @@ int spg_get_ir_reciprocal_mesh(int grid_address[][3],
                                 position,
                                 types,
                                 num_atom,
-                                symprec);
+                                symprec,
+				-1.0);
 }
 
 int spg_get_stabilized_reciprocal_mesh(int grid_address[][3],
@@ -979,7 +972,8 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
                                    const int types[],
                                    const int num_atom,
                                    const int hall_number,
-                                   const double symprec)
+                                   const double symprec,
+                                   const double angle_tolerance)
 {
   int attempt;
   double tolerance;
@@ -1036,7 +1030,10 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
 
   tolerance = symprec;
   for (attempt = 0; attempt < NUM_ATTEMPT; attempt++) {
-    if ((primitive = spa_get_spacegroup(&spacegroup, cell, tolerance))
+    if ((primitive = spa_get_spacegroup(&spacegroup,
+					cell,
+					tolerance,
+					angle_tolerance))
         == NULL) {
       cel_free_cell(cell);
       cell = NULL;
@@ -1264,7 +1261,8 @@ static int get_symmetry_from_dataset(int rotation[][3][3],
                                      SPGCONST double position[][3],
                                      const int types[],
                                      const int num_atom,
-                                     const double symprec)
+                                     const double symprec,
+                                     const double angle_tolerance)
 {
   int i, num_sym;
   SpglibDataset *dataset;
@@ -1277,7 +1275,8 @@ static int get_symmetry_from_dataset(int rotation[][3][3],
                              types,
                              num_atom,
                              0,
-                             symprec)) == NULL) {
+                             symprec,
+			     angle_tolerance)) == NULL) {
     return 0;
   }
 
@@ -1314,7 +1313,8 @@ static int get_symmetry_with_collinear_spin(int rotation[][3][3],
                                             const int types[],
                                             const double spins[],
                                             const int num_atom,
-                                            const double symprec)
+                                            const double symprec,
+                                            const double angle_tolerance)
 {
   int i, size;
   Symmetry *symmetry, *sym_nonspin;
@@ -1338,7 +1338,8 @@ static int get_symmetry_with_collinear_spin(int rotation[][3][3],
                              types,
                              num_atom,
                              0,
-                             symprec)) == NULL) {
+                             symprec,
+			     angle_tolerance)) == NULL) {
     cel_free_cell(cell);
     cell = NULL;
     goto get_dataset_failed;
@@ -1407,7 +1408,8 @@ static int get_multiplicity(SPGCONST double lattice[3][3],
                             SPGCONST double position[][3],
                             const int types[],
                             const int num_atom,
-                            const double symprec)
+                            const double symprec,
+                            const double angle_tolerance)
 {
   int size;
   SpglibDataset *dataset;
@@ -1420,7 +1422,8 @@ static int get_multiplicity(SPGCONST double lattice[3][3],
                              types,
                              num_atom,
                              0,
-                             symprec)) == NULL) {
+                             symprec,
+			     angle_tolerance)) == NULL) {
     return 0;
   }
 
@@ -1434,7 +1437,8 @@ static int standardize_primitive(double lattice[3][3],
                                  double position[][3],
                                  int types[],
                                  const int num_atom,
-                                 const double symprec)
+                                 const double symprec,
+                                 const double angle_tolerance)
 {
   int num_prim_atom;
   Centering centering;
@@ -1455,7 +1459,8 @@ static int standardize_primitive(double lattice[3][3],
                              types,
                              num_atom,
                              0,
-                             symprec)) == NULL) {
+                             symprec,
+			     angle_tolerance)) == NULL) {
     return 0;
   }
 
@@ -1503,7 +1508,8 @@ static int standardize_cell(double lattice[3][3],
                             double position[][3],
                             int types[],
                             const int num_atom,
-                            const double symprec)
+                            const double symprec,
+                            const double angle_tolerance)
 {
   int i, n_std_atoms;
   SpglibDataset *dataset;
@@ -1516,7 +1522,8 @@ static int standardize_cell(double lattice[3][3],
                              types,
                              num_atom,
                              0,
-                             symprec)) == NULL) {
+                             symprec,
+			     angle_tolerance)) == NULL) {
     return 0;
   }
 
@@ -1538,7 +1545,8 @@ static int get_standardized_cell(double lattice[3][3],
                                  int types[],
                                  const int num_atom,
                                  const int to_primitive,
-                                 const double symprec)
+                                 const double symprec,
+                                 const double angle_tolerance)
 {
   int num_std_atom;
   SpglibDataset *dataset;
@@ -1555,7 +1563,8 @@ static int get_standardized_cell(double lattice[3][3],
                              types,
                              num_atom,
                              0,
-                             symprec)) == NULL) {
+                             symprec,
+			     angle_tolerance)) == NULL) {
     goto err;
   }
 
@@ -1626,7 +1635,8 @@ static int get_international(char symbol[11],
                              SPGCONST double position[][3],
                              const int types[],
                              const int num_atom,
-                             const double symprec)
+                             const double symprec,
+			     const double angle_tolerance)
 {
   Cell *cell;
   Primitive *primitive;
@@ -1642,7 +1652,10 @@ static int get_international(char symbol[11],
 
   cel_set_cell(cell, lattice, position, types);
 
-  if ((primitive = spa_get_spacegroup(&spacegroup, cell, symprec)) == NULL) {
+  if ((primitive = spa_get_spacegroup(&spacegroup,
+				      cell,
+				      symprec,
+				      angle_tolerance)) == NULL) {
     cel_free_cell(cell);
     cell = NULL;
     goto err;
@@ -1672,7 +1685,8 @@ static int get_schoenflies(char symbol[7],
                            SPGCONST double position[][3],
                            const int types[],
                            const int num_atom,
-                           const double symprec)
+                           const double symprec,
+                           const double angle_tolerance)
 {
   Cell *cell;
   Primitive *primitive;
@@ -1688,7 +1702,10 @@ static int get_schoenflies(char symbol[7],
 
   cel_set_cell(cell, lattice, position, types);
 
-  if ((primitive = spa_get_spacegroup(&spacegroup, cell, symprec)) == NULL) {
+  if ((primitive = spa_get_spacegroup(&spacegroup,
+				      cell,
+				      symprec,
+				      angle_tolerance)) == NULL) {
     cel_free_cell(cell);
     cell = NULL;
     goto err;
@@ -1727,7 +1744,8 @@ static int get_ir_reciprocal_mesh(int grid_address[][3],
                                   SPGCONST double position[][3],
                                   const int types[],
                                   const int num_atom,
-                                  const double symprec)
+                                  const double symprec,
+                                  const double angle_tolerance)
 {
   SpglibDataset *dataset;
   int num_ir, i;
@@ -1738,7 +1756,8 @@ static int get_ir_reciprocal_mesh(int grid_address[][3],
                              types,
                              num_atom,
                              0,
-                             symprec)) == NULL) {
+                             symprec,
+			     angle_tolerance)) == NULL) {
     return 0;
   }
 

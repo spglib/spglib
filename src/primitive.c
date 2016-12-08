@@ -45,17 +45,22 @@
 #define REDUCE_RATE 0.95
 #define NUM_ATTEMPT 20
 
-static Primitive * get_primitive(const Cell * cell, const double symprec);
+static Primitive * get_primitive(const Cell * cell,
+				 const double symprec,
+				 const double angle_tolerance);
 static Cell * get_cell_with_smallest_lattice(const Cell * cell,
                                              const double symprec);
 static Cell * get_primitive_cell(int * mapping_table,
                                  const Cell * cell,
                                  const VecDBL * pure_trans,
-                                 const double symprec);
-static int get_primitive_lattice_vectors_iterative(double prim_lattice[3][3],
-                                                   const Cell * cell,
-                                                   const VecDBL * pure_trans,
-                                                   const double symprec);
+                                 const double symprec,
+                                 const double angle_tolerance);
+static int get_primitive_lattice_vectors_iterative
+(double prim_lattice[3][3],
+ const Cell * cell,
+ const VecDBL * pure_trans,
+ const double symprec,
+ const double angle_tolerance);
 static int get_primitive_lattice_vectors(double prim_lattice[3][3],
                                          const VecDBL * vectors,
                                          const Cell * cell,
@@ -79,6 +84,7 @@ Primitive * prm_alloc_primitive(const int size)
   primitive->mapping_table = NULL;
   primitive->size = size;
   primitive->tolerance = 0;
+  primitive->angle_tolerance = -1.0;
 
   if ((primitive->t_mat = (double (*)[3]) malloc(sizeof(double[3]) * 3)) ==
       NULL) {
@@ -135,13 +141,17 @@ void prm_free_primitive(Primitive * primitive)
 }
 
 /* Return NULL if failed */
-Primitive * prm_get_primitive(const Cell * cell, const double symprec)
+Primitive * prm_get_primitive(const Cell * cell,
+			      const double symprec,
+			      const double angle_tolerance)
 {
-  return get_primitive(cell, symprec);
+  return get_primitive(cell, symprec, angle_tolerance);
 }
 
 /* Return NULL if failed */
-static Primitive * get_primitive(const Cell * cell, const double symprec)
+static Primitive * get_primitive(const Cell * cell,
+				 const double symprec,
+				 const double angle_tolerance)
 {
   int i, attempt;
   double tolerance;
@@ -177,7 +187,8 @@ static Primitive * get_primitive(const Cell * cell, const double symprec)
       if ((primitive->cell = get_primitive_cell(primitive->mapping_table,
                                                 cell,
                                                 pure_trans,
-                                                tolerance)) != NULL) {
+                                                tolerance,
+						angle_tolerance)) != NULL) {
         goto found;
       }
     }
@@ -199,6 +210,7 @@ static Primitive * get_primitive(const Cell * cell, const double symprec)
 
  found:
   primitive->tolerance = tolerance;
+  primitive->angle_tolerance = angle_tolerance;
   mat_inverse_matrix_d3(inv_lat, cell->lattice, 0);
   mat_multiply_matrix_d3(primitive->t_mat, primitive->cell->lattice, inv_lat);
   mat_free_VecDBL(pure_trans);
@@ -246,7 +258,8 @@ static Cell * get_cell_with_smallest_lattice(const Cell * cell,
 static Cell * get_primitive_cell(int * mapping_table,
                                  const Cell * cell,
                                  const VecDBL * pure_trans,
-                                 const double symprec)
+                                 const double symprec,
+                                 const double angle_tolerance)
 {
   int multi;
   double prim_lat[3][3], smallest_lat[3][3];
@@ -262,7 +275,8 @@ static Cell * get_primitive_cell(int * mapping_table,
   multi = get_primitive_lattice_vectors_iterative(prim_lat,
                                                   cell,
                                                   pure_trans,
-                                                  symprec);
+                                                  symprec,
+						  angle_tolerance);
   if (! multi) {
     goto not_found;
   }
@@ -293,7 +307,8 @@ static Cell * get_primitive_cell(int * mapping_table,
 static int get_primitive_lattice_vectors_iterative(double prim_lattice[3][3],
                                                    const Cell * cell,
                                                    const VecDBL * pure_trans,
-                                                   const double symprec)
+                                                   const double symprec,
+                                                   const double angle_tolerance)
 {
   int i, multi, attempt;
   double tolerance;
@@ -353,7 +368,8 @@ static int get_primitive_lattice_vectors_iterative(double prim_lattice[3][3],
 
       pure_trans_reduced = sym_reduce_pure_translation(cell,
                                                        tmp_vec,
-                                                       tolerance);
+                                                       tolerance,
+						       angle_tolerance);
 
       mat_free_VecDBL(tmp_vec);
       tmp_vec = NULL;
