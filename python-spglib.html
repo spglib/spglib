@@ -457,13 +457,18 @@ is shown in the spglib (C-API) document.</p>
 <li><code class="docutils literal"><span class="pre">number</span></code>: International space group number</li>
 <li><code class="docutils literal"><span class="pre">international</span></code>: International short symbol</li>
 <li><code class="docutils literal"><span class="pre">hall</span></code>: Hall symbol</li>
+<li><code class="docutils literal"><span class="pre">hall_number</span></code>: Hall number. This number is used in
+<a class="reference internal" href="#py-method-get-symmetry-from-database"><span class="std std-ref">get_symmetry_from_database</span></a> and
+<a class="reference internal" href="#py-method-get-spacegroup-type"><span class="std std-ref">get_spacegroup_type</span></a>.</li>
 <li><code class="docutils literal"><span class="pre">choice</span></code>: Centring, origin, basis vector setting</li>
-<li><code class="docutils literal"><span class="pre">transformation_matrix</span></code>: Transformation matrix from lattice of input cell to Bravais lattice <img class="math" src="_images/math/c7bd18635fe81e8ffc040afc7aaf4b8ead77b592.png" alt="L^{bravais} = L^{original} * T"/></li>
+<li><code class="docutils literal"><span class="pre">transformation_matrix</span></code>: Transformation matrix from lattice of
+input cell to Bravais lattice <img class="math" src="_images/math/c7bd18635fe81e8ffc040afc7aaf4b8ead77b592.png" alt="L^{bravais} = L^{original} * T"/></li>
 <li><code class="docutils literal"><span class="pre">origin</span> <span class="pre">shift</span></code>: Origin shift choice in the setting of Bravais lattice</li>
 <li><code class="docutils literal"><span class="pre">wyckoffs</span></code>: Wyckoff letters</li>
 <li><code class="docutils literal"><span class="pre">equivalent_atoms</span></code>: Mapping table to equivalent atoms</li>
 <li><code class="docutils literal"><span class="pre">rotations</span></code> and <code class="docutils literal"><span class="pre">translations</span></code>: Rotation matrices and
-translation vectors. See <a class="reference internal" href="#py-method-get-symmetry"><span class="std std-ref">get_symmetry</span></a> for more details</li>
+translation vectors. See <a class="reference internal" href="#py-method-get-symmetry"><span class="std std-ref">get_symmetry</span></a> for more
+details.</li>
 <li><code class="docutils literal"><span class="pre">pointgroup</span></code>: Symbol of the crystallographic point group in
 the Hermann–Mauguin notation.</li>
 <li><code class="docutils literal"><span class="pre">std_lattice</span></code>, <code class="docutils literal"><span class="pre">std_positions</span></code>, <code class="docutils literal"><span class="pre">std_types</span></code>: Standardized
@@ -472,10 +477,11 @@ equivalently given in the array formats of <code class="docutils literal"><span 
 <code class="docutils literal"><span class="pre">positions</span></code>, and <code class="docutils literal"><span class="pre">numbers</span></code> presented at
 <a class="reference internal" href="#py-variables-crystal-structure"><span class="std std-ref">Crystal structure (cell)</span></a>, respectively.</li>
 </ul>
-<p>When the search failed, <code class="docutils literal"><span class="pre">None</span></code> is returned.</p>
+<p>When the search failed, <code class="docutils literal"><span class="pre">None</span></code> is returned. See more details of the
+keys at <a class="reference internal" href="api.html#api-struct-spglibdataset"><span class="std std-ref">Dataset</span></a>.</p>
 </div>
 <div class="section" id="get-symmetry-from-database">
-<h3><a class="toc-backref" href="#id21"><code class="docutils literal"><span class="pre">get_symmetry_from_database</span></code></a><a class="headerlink" href="#get-symmetry-from-database" title="Permalink to this headline">¶</a></h3>
+<span id="py-method-get-symmetry-from-database"></span><h3><a class="toc-backref" href="#id21"><code class="docutils literal"><span class="pre">get_symmetry_from_database</span></code></a><a class="headerlink" href="#get-symmetry-from-database" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">symmetry</span> <span class="o">=</span> <span class="n">get_symmetry_from_database</span><span class="p">(</span><span class="n">hall_number</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -487,7 +493,7 @@ found at <a class="reference internal" href="api.html#api-spg-get-dataset-spaceg
 <p>When something wrong happened, <code class="docutils literal"><span class="pre">None</span></code> is returned.</p>
 </div>
 <div class="section" id="get-spacegroup-type">
-<h3><a class="toc-backref" href="#id22"><code class="docutils literal"><span class="pre">get_spacegroup_type</span></code></a><a class="headerlink" href="#get-spacegroup-type" title="Permalink to this headline">¶</a></h3>
+<span id="py-method-get-spacegroup-type"></span><h3><a class="toc-backref" href="#id22"><code class="docutils literal"><span class="pre">get_spacegroup_type</span></code></a><a class="headerlink" href="#get-spacegroup-type" title="Permalink to this headline">¶</a></h3>
 <p><strong>New at version 1.9.4</strong></p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">spacegroup_type</span> <span class="o">=</span> <span class="n">get_spacegroup_type</span><span class="p">(</span><span class="n">hall_number</span><span class="p">)</span>
 </pre></div>
