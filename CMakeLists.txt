@@ -56,3 +56,11 @@ install(TARGETS symspg_static ARCHIVE DESTINATION ${PROJECT_SOURCE_DIR}/lib)
 
 # Header file
 install(FILES ${PROJECT_SOURCE_DIR}/src/spglib.h DESTINATION ${PROJECT_SOURCE_DIR}/include)
+
+# make check
+enable_testing()
+add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
+set(CMAKE_CTEST_COMMAND ctest -V)
+add_executable(spglibtest EXCLUDE_FROM_ALL ${PROJECT_SOURCE_DIR}/src/test.c ${SOURCES})
+add_test(spglibtest spglibtest)
+add_dependencies(check spglibtest)

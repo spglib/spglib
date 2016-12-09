@@ -43,7 +43,6 @@ typedef struct {
   Cell *cell;
   int *mapping_table;
   int size;
-  double (*t_mat)[3]; /* 3x3 matrix */
   double tolerance;
   double angle_tolerance;
 } Primitive;

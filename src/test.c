@@ -27,6 +27,7 @@ static int test_spg_get_ir_reciprocal_mesh(void);
 static int test_spg_get_stabilized_reciprocal_mesh(void);
 static int test_spg_relocate_BZ_grid_address(void);
 static int test_spg_get_error_message(void);
+static int test_spg_get_primitive_symmetry(void);
 static int show_spg_dataset(double lattice[3][3],
 			    const double origin_shift[3],
 			    double position[][3],
@@ -58,6 +59,7 @@ int main(void)
     test_spg_get_stabilized_reciprocal_mesh,
     test_spg_relocate_BZ_grid_address,
     test_spg_get_error_message,
+    test_spg_get_primitive_symmetry,
     NULL};
 
   int i, result;
@@ -67,12 +69,30 @@ int main(void)
       break;
     } else {
       result = (funcs[i])();
+      fflush(stdout);
     }
     if (result) {
       return 1;
     }
   }
 
+  return 0;
+}
+
+static int test_spg_get_primitive_symmetry(void)
+{
+  double lattice[3][3] = {{4, 0, 0}, {0, 4, 0}, {0, 0, 4}};
+  double position[][3] = {
+    {0, 0, 0},
+    {0.5, 0.5, 0.5}
+  };
+  int types[] = {1, 1};
+  int num_atom = 2;
+  double symprec = 1e-5;
+  
+  /* lattice, position, and types are overwirtten. */
+  printf("*** spg_get_primitive_symmetry ***:\n");
+  spg_get_primitive_symmetry(lattice, position, types, num_atom, symprec);
   return 0;
 }
 

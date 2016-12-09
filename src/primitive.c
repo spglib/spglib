@@ -66,12 +66,19 @@ static int get_primitive_lattice_vectors(double prim_lattice[3][3],
                                          const Cell * cell,
                                          const double symprec);
 static VecDBL * get_translation_candidates(const VecDBL * pure_trans);
+static VecDBL * collect_pure_translations(const Symmetry *symmetry);
+static int get_primitive_in_translation_space(double t_mat[3][3],
+                                              const VecDBL *pure_trans,
+                                              const int symmetry_size,
+                                              const double symprec);
+static Symmetry * collect_primitive_symmetry(const Symmetry *symmetry,
+                                             const int primsym_size);
 
 /* return NULL if failed */
 Primitive * prm_alloc_primitive(const int size)
 {
   Primitive *primitive;
-  int i, j;
+  int i;
 
   primitive = NULL;
 
@@ -86,26 +93,10 @@ Primitive * prm_alloc_primitive(const int size)
   primitive->tolerance = 0;
   primitive->angle_tolerance = -1.0;
 
-  if ((primitive->t_mat = (double (*)[3]) malloc(sizeof(double[3]) * 3)) ==
-      NULL) {
-    warning_print("spglib: Memory could not be allocated.");
-    free(primitive);
-    primitive = NULL;
-    return NULL;
-  }
-
-  for (i = 0; i < 3; i++) {
-    for (j = 0; j < 3; j++) {
-      primitive->t_mat[i][j] = 0;
-    }
-  }
-
   if (size > 0) {
     if ((primitive->mapping_table = (int*) malloc(sizeof(int) * size)) == NULL) {
       warning_print("spglib: Memory could not be allocated ");
       warning_print("(Primitive, line %d, %s).\n", __LINE__, __FILE__);
-      free(primitive->t_mat);
-      primitive->t_mat = NULL;
       free(primitive);
       primitive = NULL;
       return NULL;
@@ -127,11 +118,6 @@ void prm_free_primitive(Primitive * primitive)
       primitive->mapping_table = NULL;
     }
 
-    if (primitive->t_mat != NULL) {
-      free(primitive->t_mat);
-      primitive->t_mat = NULL;
-    }
-
     if (primitive->cell != NULL) {
       cel_free_cell(primitive->cell);
       primitive->cell = NULL;
@@ -151,51 +137,67 @@ Primitive * prm_get_primitive(const Cell * cell,
 Symmetry * prm_get_primitive_symmetry(const Symmetry *symmetry,
 				      const double symprec)
 {
-  int i, j, num_pure_trans;
-  VecDBL * pure_trans;
-  Primitive * primitive;
-  Cell * cell;
-  static int identity[3][3] = {{ 1, 0, 0 },
-			       { 0, 1, 0 },
-			       { 0, 0, 1 }};
-  num_pure_trans = 0;
+  int i, primsym_size;
+  VecDBL *pure_trans;
+  Symmetry *prim_symmetry;
+  double t_mat[3][3], t_mat_inv[3][3], tmp_mat[3][3];
+
   pure_trans = NULL;
+  prim_symmetry = NULL;
 
-  if ((pure_trans = mat_alloc_VecDBL(symmetry->size)) == NULL) {
+  if ((pure_trans = collect_pure_translations(symmetry)) == NULL) {
     return NULL;
   }
+  primsym_size = symmetry->size / pure_trans->size;
 
-  for (i = 0; i < symmetry->size; i++) {
-    if (mat_check_identity_matrix_i3(symmetry->rot[i], identity)) {
-      mat_copy_vector_d3(pure_trans->vec[num_pure_trans], symmetry->trans[i]);
-      num_pure_trans++;
-    }
-  }
-
-  if ((cell = cel_alloc_cell(num_pure_trans)) == NULL) {
+  /* t_mat: T=(Lp^-1.L) where L is identity matrix. */
+  if (get_primitive_in_translation_space
+      (t_mat_inv, pure_trans, symmetry->size, symprec) == 0) {
     mat_free_VecDBL(pure_trans);
+    pure_trans = NULL;
     return NULL;
-  }
-
-  for (i = 0; i < num_pure_trans; i++) {
-    for (j = 0; j < 3; j++) {
-      cell->position[i][j] = pure_trans->vec[i][j];
-    }
   }
 
   mat_free_VecDBL(pure_trans);
+  pure_trans = NULL;
 
-  for (i = 0; i < 3; i++) {
-    for (j = 0; j < 3; j++) {
-      if (i == j) {
-	cell->lattice[i][j] = 4;
-      } else {
-	cell->lattice[i][j] = 0;
-      }
-    }
+  if (!mat_inverse_matrix_d3(t_mat, t_mat_inv, symprec)) {
+    return NULL;
   }
 
-  primitive = get_primitive(cell, symprec, -1.0);
+  /* Collect operations for primitive cell from operations in 'symmetry' */
+  if ((prim_symmetry = collect_primitive_symmetry(symmetry, primsym_size)) ==
+      NULL) {
+    return NULL;
+  }
+
+  /* Overwrite prim_symmetry by R_p = TRT^-1, t_p = T.t */
+  for (i = 0; i < prim_symmetry->size; i++) {
+    mat_multiply_matrix_di3(tmp_mat, t_mat, prim_symmetry->rot[i]);
+    mat_multiply_matrix_d3(tmp_mat, tmp_mat, t_mat_inv);
+    mat_cast_matrix_3d_to_3i(prim_symmetry->rot[i], tmp_mat);
+    mat_multiply_matrix_vector_d3(prim_symmetry->trans[i],
+                                  t_mat, prim_symmetry->trans[i]);
+  }
+
+#ifdef SPGDEBUG
+  int j;
+  for (i = 0; i < prim_symmetry->size; i++) {
+    fprintf(stderr, "--- %d ---\n", i + 1);
+    for (j = 0; j < 3; j++) {
+      fprintf(stderr, "%d %d %d\n",
+              prim_symmetry->rot[i][j][0],
+              prim_symmetry->rot[i][j][1],
+              prim_symmetry->rot[i][j][2]);
+    }
+    fprintf(stderr, "%f %f %f\n",
+            prim_symmetry->trans[i][0],
+            prim_symmetry->trans[i][1],
+            prim_symmetry->trans[i][2]);
+  }
+#endif
+
+  return prim_symmetry;
 }
 
 /* Return NULL if failed */
@@ -205,7 +207,6 @@ static Primitive * get_primitive(const Cell * cell,
 {
   int i, attempt;
   double tolerance;
-  double inv_lat[3][3];
   Primitive *primitive;
   VecDBL * pure_trans;
 
@@ -261,8 +262,6 @@ static Primitive * get_primitive(const Cell * cell,
  found:
   primitive->tolerance = tolerance;
   primitive->angle_tolerance = angle_tolerance;
-  mat_inverse_matrix_d3(inv_lat, cell->lattice, 0);
-  mat_multiply_matrix_d3(primitive->t_mat, primitive->cell->lattice, inv_lat);
   mat_free_VecDBL(pure_trans);
   pure_trans = NULL;
   return primitive;
@@ -549,4 +548,148 @@ static VecDBL * get_translation_candidates(const VecDBL * pure_trans)
   }
 
   return vectors;
+}
+
+static VecDBL * collect_pure_translations(const Symmetry *symmetry)
+{
+  int i, num_pure_trans;
+  VecDBL *pure_trans;
+  VecDBL *ret_pure_trans;
+  static int identity[3][3] = {{ 1, 0, 0 },
+			       { 0, 1, 0 },
+			       { 0, 0, 1 }};
+  num_pure_trans = 0;
+  pure_trans = NULL;
+  ret_pure_trans = NULL;
+
+  if ((pure_trans = mat_alloc_VecDBL(symmetry->size)) == NULL) {
+    return NULL;
+  }
+
+  for (i = 0; i < symmetry->size; i++) {
+    if (mat_check_identity_matrix_i3(symmetry->rot[i], identity)) {
+      mat_copy_vector_d3(pure_trans->vec[num_pure_trans], symmetry->trans[i]);
+      num_pure_trans++;
+    }
+  }
+
+  if ((ret_pure_trans = mat_alloc_VecDBL(num_pure_trans)) == NULL) {
+    mat_free_VecDBL(pure_trans);
+    pure_trans = NULL;
+    return NULL;
+  }
+
+  for (i = 0; i < num_pure_trans; i++) {
+    mat_copy_vector_d3(ret_pure_trans->vec[i], pure_trans->vec[i]);
+  }
+    
+  mat_free_VecDBL(pure_trans);
+  pure_trans = NULL;
+
+  return ret_pure_trans;
+}
+
+static int get_primitive_in_translation_space(double t_mat_inv[3][3],
+                                              const VecDBL *pure_trans,
+                                              const int symmetry_size,
+                                              const double symprec)
+{
+  int i, j, primsym_size;
+  Primitive *primitive;
+  Cell *cell;
+
+  cell = NULL;
+  primitive = NULL;
+
+  if ((cell = cel_alloc_cell(pure_trans->size)) == NULL) {
+    return 0;
+  }
+
+  primsym_size = symmetry_size / pure_trans->size;
+  if (symmetry_size != primsym_size * pure_trans->size) {
+    cel_free_cell(cell);
+    cell = NULL;
+    return 0;
+  }
+
+  for (i = 0; i < pure_trans->size; i++) {
+    cell->types[i] = 1;
+    for (j = 0; j < 3; j++) {
+      cell->position[i][j] = pure_trans->vec[i][j];
+    }
+  }
+
+  for (i = 0; i < 3; i++) {
+    for (j = 0; j < 3; j++) {
+      if (i == j) {
+	cell->lattice[i][j] = 1;
+      } else {
+	cell->lattice[i][j] = 0;
+      }
+    }
+  }
+
+  fprintf(stderr, "in get_primitive_translation_space\n");
+
+  primitive = get_primitive(cell, symprec, -1.0);
+  cel_free_cell(cell);
+  cell = NULL;
+
+  if (primitive->cell->size != 1) {
+    prm_free_primitive(primitive);
+    primitive = NULL;
+    return 0;
+  }
+
+  mat_copy_matrix_d3(t_mat_inv, primitive->cell->lattice);
+  prm_free_primitive(primitive);
+  primitive = NULL;
+
+  return 1;
+}
+
+static Symmetry * collect_primitive_symmetry(const Symmetry *symmetry,
+                                             const int primsym_size)
+{
+  int i, j, num_psym, is_found;
+  Symmetry *prim_symmetry;
+
+  prim_symmetry = NULL;
+
+  prim_symmetry = sym_alloc_symmetry(primsym_size);
+  num_psym = 1;
+  mat_copy_matrix_i3(prim_symmetry->rot[0], symmetry->rot[0]);
+  mat_copy_vector_d3(prim_symmetry->trans[0], symmetry->trans[0]);
+  for (i = 1; i < symmetry->size; i++) {
+    is_found = 1;
+    for (j = 0; j < num_psym; j++) {
+      if (mat_check_identity_matrix_i3(prim_symmetry->rot[j], symmetry->rot[i]))
+      {
+        is_found = 0;
+        break;
+      }
+    }
+    if (is_found) {
+      if (num_psym == primsym_size) {
+        sym_free_symmetry(prim_symmetry);
+        prim_symmetry = NULL;
+        break;
+      }
+      mat_copy_matrix_i3(prim_symmetry->rot[num_psym], symmetry->rot[i]);
+      mat_copy_vector_d3(prim_symmetry->trans[num_psym], symmetry->trans[i]);
+      num_psym++;
+    }
+  }
+
+  if (prim_symmetry == NULL) {
+    return NULL;
+  }
+
+  if (num_psym != primsym_size) {
+    sym_free_symmetry(prim_symmetry);
+    prim_symmetry = NULL;
+    return NULL;
+  }
+
+  return prim_symmetry;
 }
