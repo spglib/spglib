@@ -37,6 +37,7 @@
 
 #include "cell.h"
 #include "mathfunc.h"
+#include "symmetry.h"
 
 typedef struct {
   Cell *cell;
@@ -52,4 +53,6 @@ void prm_free_primitive(Primitive * primitive);
 Primitive * prm_get_primitive(const Cell * cell,
                               const double symprec,
                               const double angle_tolerance);
+Symmetry * prm_get_primitive_symmetry(const Symmetry *symmetry,
+				      const double symprec);
 #endif

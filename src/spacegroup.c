@@ -349,6 +349,23 @@ Primitive * spa_get_spacegroup(Spacegroup * spacegroup,
   return primitive;
 }
 
+Spacegroup spa_search_spacegroup_with_symmetry(const Cell * primitive,
+					       const Symmetry *symmetry,
+					       const double symprec,
+					       const double angle_tolerance)
+{
+
+  Spacegroup spacegroup;
+
+  spacegroup = search_spacegroup_with_symmetry(primitive,
+					       spacegroup_to_hall_number,
+					       230,
+					       symmetry,
+					       symprec,
+					       angle_tolerance);
+
+  return spacegroup;
+}
 /* Return spacegroup.number = 0 if failed */
 Spacegroup spa_get_spacegroup_with_hall_number(const Primitive * primitive,
                                                const int hall_number)

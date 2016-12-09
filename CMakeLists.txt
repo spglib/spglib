@@ -1,10 +1,12 @@
 cmake_minimum_required(VERSION 2.4)
+project(spglib C)
 set(CMAKE_MACOSX_RPATH 1)
 set(CMAKE_C_FLAGS_RELEASE "-Wall -O2")
-set(CMAKE_C_FLAGS_DEBUG "-g")
-set(CMAKE_BUILD_TYPE Release)
-
-project(spglib C)
+set(CMAKE_C_FLAGS_DEBUG "-g -DSPGDEBUG ")
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release)
+endif(NOT CMAKE_BUILD_TYPE)
+message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 
 # Version numbers
 file(READ ${PROJECT_SOURCE_DIR}/src/version.h version_file)

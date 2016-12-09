@@ -148,6 +148,56 @@ Primitive * prm_get_primitive(const Cell * cell,
   return get_primitive(cell, symprec, angle_tolerance);
 }
 
+Symmetry * prm_get_primitive_symmetry(const Symmetry *symmetry,
+				      const double symprec)
+{
+  int i, j, num_pure_trans;
+  VecDBL * pure_trans;
+  Primitive * primitive;
+  Cell * cell;
+  static int identity[3][3] = {{ 1, 0, 0 },
+			       { 0, 1, 0 },
+			       { 0, 0, 1 }};
+  num_pure_trans = 0;
+  pure_trans = NULL;
+
+  if ((pure_trans = mat_alloc_VecDBL(symmetry->size)) == NULL) {
+    return NULL;
+  }
+
+  for (i = 0; i < symmetry->size; i++) {
+    if (mat_check_identity_matrix_i3(symmetry->rot[i], identity)) {
+      mat_copy_vector_d3(pure_trans->vec[num_pure_trans], symmetry->trans[i]);
+      num_pure_trans++;
+    }
+  }
+
+  if ((cell = cel_alloc_cell(num_pure_trans)) == NULL) {
+    mat_free_VecDBL(pure_trans);
+    return NULL;
+  }
+
+  for (i = 0; i < num_pure_trans; i++) {
+    for (j = 0; j < 3; j++) {
+      cell->position[i][j] = pure_trans->vec[i][j];
+    }
+  }
+
+  mat_free_VecDBL(pure_trans);
+
+  for (i = 0; i < 3; i++) {
+    for (j = 0; j < 3; j++) {
+      if (i == j) {
+	cell->lattice[i][j] = 4;
+      } else {
+	cell->lattice[i][j] = 0;
+      }
+    }
+  }
+
+  primitive = get_primitive(cell, symprec, -1.0);
+}
+
 /* Return NULL if failed */
 static Primitive * get_primitive(const Cell * cell,
 				 const double symprec,
