@@ -228,6 +228,15 @@ def get_spacegroup(cell, symprec=1e-5, angle_tolerance=-1.0, symbol_type=0):
     else:
         return "%s (%d)" % (spg_type['international_short'], dataset['number'])
 
+def get_hall_number_from_symmetry(rotations, translations, symprec=1e-5):
+    """Hall number is obtained from a set of symmetry operations.
+
+    If it fails, None is returned.
+    """
+
+    hall_number = spg.hall_number_from_symmetry(rotations, translations, symprec)
+    return hall_number
+
 def get_spacegroup_type(hall_number):
     """Translate Hall number to space group type information.
 

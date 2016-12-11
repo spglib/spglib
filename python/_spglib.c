@@ -52,6 +52,8 @@ static PyObject * py_refine_cell(PyObject *self, PyObject *args);
 static PyObject * py_get_symmetry(PyObject *self, PyObject *args);
 static PyObject *
 py_get_symmetry_with_collinear_spin(PyObject *self, PyObject *args);
+static PyObject *
+py_get_hall_number_from_symmetry(PyObject *self, PyObject *args);
 static PyObject * py_find_primitive(PyObject *self, PyObject *args);
 static PyObject *
 py_get_grid_point_from_address(PyObject *self, PyObject *args);
@@ -100,6 +102,8 @@ static PyMethodDef _spglib_methods[] = {
   {"symmetry", py_get_symmetry, METH_VARARGS, "Symmetry operations"},
   {"symmetry_with_collinear_spin", py_get_symmetry_with_collinear_spin,
    METH_VARARGS, "Symmetry operations with collinear spin magnetic moments"},
+  {"hall_number_from_symmetry", py_get_hall_number_from_symmetry,
+   METH_VARARGS, "Space group type is searched from symmetry operations."},
   {"primitive", py_find_primitive, METH_VARARGS,
    "Find primitive cell in the input cell"},
   {"grid_point_from_address", py_get_grid_point_from_address, METH_VARARGS,
@@ -690,6 +694,37 @@ static PyObject * py_get_symmetry_with_collinear_spin(PyObject *self,
                                                    symprec,
                                                    angle_tolerance);
   return PyLong_FromLong((long) num_sym);
+}
+
+static PyObject *
+py_get_hall_number_from_symmetry(PyObject *self, PyObject *args)
+{
+  double symprec;
+  PyArrayObject* rotation;
+  PyArrayObject* translation;
+
+  int (*rot)[3][3];
+  double (*trans)[3];
+  int num_sym;
+  int hall_number;
+
+  if (!PyArg_ParseTuple(args, "OOd",
+			&rotation,
+			&translation,
+			&symprec)) {
+    return NULL;
+  }
+
+  rot = (int(*)[3][3])PyArray_DATA(rotation);
+  trans = (double(*)[3])PyArray_DATA(translation);
+  num_sym = PyArray_DIMS(rotation)[0];
+
+  hall_number = spg_get_hall_number_from_symmetry(rot,
+                                              trans,
+                                              num_sym,
+                                              symprec);
+
+  return PyLong_FromLong((long) hall_number);
 }
 
 static PyObject * py_get_grid_point_from_address(PyObject *self, PyObject *args)

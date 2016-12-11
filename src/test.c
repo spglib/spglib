@@ -27,11 +27,13 @@ static int test_spg_get_ir_reciprocal_mesh(void);
 static int test_spg_get_stabilized_reciprocal_mesh(void);
 static int test_spg_relocate_BZ_grid_address(void);
 static int test_spg_get_error_message(void);
+static int test_spg_get_hall_number_from_symmetry(void);
 static int show_spg_dataset(double lattice[3][3],
 			    const double origin_shift[3],
 			    double position[][3],
 			    const int num_atom,
 			    const int types[]);
+static void show_spacegroup_type(const SpglibSpacegroupType spgtype);
 static void show_cell(double lattice[3][3],
 		      double position[][3],
 		      const int types[],
@@ -58,6 +60,7 @@ int main(void)
     test_spg_get_stabilized_reciprocal_mesh,
     test_spg_relocate_BZ_grid_address,
     test_spg_get_error_message,
+    test_spg_get_hall_number_from_symmetry,
     NULL};
 
   int i, result;
@@ -67,6 +70,7 @@ int main(void)
       break;
     } else {
       result = (funcs[i])();
+      fflush(stdout);
     }
     if (result) {
       return 1;
@@ -74,6 +78,49 @@ int main(void)
   }
 
   return 0;
+}
+
+static int test_spg_get_hall_number_from_symmetry(void)
+{
+  double lattice[3][3] = {{4, 0, 0}, {0, 4, 0}, {0, 0, 4}};
+  double position[][3] = {
+    {0, 0, 0},
+    {0.5, 0.5, 0.5}
+  };
+  int types[] = {1, 1};
+  int num_atom = 2;
+  double symprec = 1e-5;
+
+  int hall_number;
+  SpglibSpacegroupType spgtype;
+  SpglibDataset *dataset;
+
+  printf("*** spg_get_hall_number_from_symmetry ***:\n");
+  if ((dataset = spg_get_dataset(lattice,
+                                 position,
+                                 types,
+                                 num_atom,
+                                 symprec)) == NULL) {
+    return 0;
+  }
+  printf("hall_number = %d is found by spg_get_dataset.\n", dataset->hall_number);
+  hall_number = spg_get_hall_number_from_symmetry(dataset->rotations,
+                                                  dataset->translations,
+                                                  dataset->n_operations,
+                                                  symprec);
+  printf("hall_number = %d is found by spg_get_hall_number_from_symmetry.\n",
+         hall_number);
+  if (hall_number == dataset->hall_number) {
+    spgtype = spg_get_spacegroup_type(hall_number);
+    if (spgtype.number) {
+      show_spacegroup_type(spgtype);
+      return 0;
+    } else {
+      return 1;
+    }
+  } else {
+    return 0;
+  }
 }
 
 static int test_spg_find_primitive_BCC(void)
@@ -411,18 +458,9 @@ static int test_spg_get_spacegroup_type(void)
   SpglibSpacegroupType spgtype;
   spgtype = spg_get_spacegroup_type(446);
 
+  printf("*** spg_get_spacegroup_type ***:\n");
   if (spgtype.number) {
-    printf("*** spg_get_spacegroup_type ***:\n");
-    printf("Number:            %d\n", spgtype.number);
-    printf("International:     %s\n", spgtype.international_short);
-    printf("International:     %s\n", spgtype.international_full);
-    printf("International:     %s\n", spgtype.international);
-    printf("Schoenflies:       %s\n", spgtype.schoenflies);
-    printf("Hall symbol:       %s\n", spgtype.hall_symbol);
-    printf("Point group intl:  %s\n", spgtype.pointgroup_international);
-    printf("Point group Schoe: %s\n", spgtype.pointgroup_schoenflies);
-    printf("Arithmetic cc num. %d\n", spgtype.arithmetic_crystal_class_number);
-    printf("Arithmetic cc sym. %s\n", spgtype.arithmetic_crystal_class_symbol);
+    show_spacegroup_type(spgtype);
     return 0;
   } else {
     return 1;
@@ -825,6 +863,37 @@ static int test_spg_relocate_BZ_grid_address(void)
   }
 }
 
+static int test_spg_get_error_message(void)
+{
+  double lattice[3][3] = {{4, 0, 0}, {0, 4, 0}, {0, 0, 4}};
+  double position[][3] = {
+    {0, 0, 0},
+    {0.5, 0.5, 0.5},
+    {0.5, 0.5, 0.5}
+  };
+  int types[] = {1, 1, 1};
+  int num_atom = 3, num_primitive_atom;
+  double symprec = 1e-5;
+  SpglibError error;
+  
+  
+  /* lattice, position, and types are overwirtten. */
+  printf("*** Example of spg_get_error_message ***:\n");
+  num_primitive_atom = spg_find_primitive(lattice, position, types, num_atom, symprec);
+  if (num_primitive_atom == 0) {
+    printf("Primitive cell was not found.\n");
+    error = spg_get_error_code();
+    printf("%s\n", spg_get_error_message(error));
+    if (error == SPGLIB_SUCCESS) {
+      return 1;
+    } else {
+      return 0;
+    }
+  } else {
+    return 1;
+  }
+}
+
 static int show_spg_dataset(double lattice[3][3],
 			    const double origin_shift[3],
 			    double position[][3],
@@ -899,35 +968,18 @@ static int show_spg_dataset(double lattice[3][3],
   }
 }
 
-static int test_spg_get_error_message(void)
+static void show_spacegroup_type(const SpglibSpacegroupType spgtype)
 {
-  double lattice[3][3] = {{4, 0, 0}, {0, 4, 0}, {0, 0, 4}};
-  double position[][3] = {
-    {0, 0, 0},
-    {0.5, 0.5, 0.5},
-    {0.5, 0.5, 0.5}
-  };
-  int types[] = {1, 1, 1};
-  int num_atom = 3, num_primitive_atom;
-  double symprec = 1e-5;
-  SpglibError error;
-  
-  
-  /* lattice, position, and types are overwirtten. */
-  printf("*** Example of spg_get_error_message ***:\n");
-  num_primitive_atom = spg_find_primitive(lattice, position, types, num_atom, symprec);
-  if (num_primitive_atom == 0) {
-    printf("Primitive cell was not found.\n");
-    error = spg_get_error_code();
-    printf("%s\n", spg_get_error_message(error));
-    if (error == SPGLIB_SUCCESS) {
-      return 1;
-    } else {
-      return 0;
-    }
-  } else {
-    return 1;
-  }
+  printf("Number:            %d\n", spgtype.number);
+  printf("International:     %s\n", spgtype.international_short);
+  printf("International:     %s\n", spgtype.international_full);
+  printf("International:     %s\n", spgtype.international);
+  printf("Schoenflies:       %s\n", spgtype.schoenflies);
+  printf("Hall symbol:       %s\n", spgtype.hall_symbol);
+  printf("Point group intl:  %s\n", spgtype.pointgroup_international);
+  printf("Point group Schoe: %s\n", spgtype.pointgroup_schoenflies);
+  printf("Arithmetic cc num. %d\n", spgtype.arithmetic_crystal_class_number);
+  printf("Arithmetic cc sym. %s\n", spgtype.arithmetic_crystal_class_symbol);
 }
 
 static void show_cell(double lattice[3][3],
