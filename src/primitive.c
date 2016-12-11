@@ -629,8 +629,6 @@ static int get_primitive_in_translation_space(double t_mat_inv[3][3],
     }
   }
 
-  fprintf(stderr, "in get_primitive_translation_space\n");
-
   primitive = get_primitive(cell, symprec, -1.0);
   cel_free_cell(cell);
   cell = NULL;

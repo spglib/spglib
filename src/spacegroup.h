@@ -70,10 +70,8 @@ Primitive * spa_get_spacegroup(Spacegroup * spacegroup,
                                const Cell * cell,
                                const double symprec,
                                const double angle_tolerance);
-Spacegroup spa_search_spacegroup_with_symmetry(const Cell * primitive,
-					       const Symmetry *symmetry,
-					       const double symprec,
-					       const double angle_tolerance);
+Spacegroup spa_search_spacegroup_with_symmetry(const Symmetry *symmetry,
+					       const double symprec);
 Spacegroup spa_get_spacegroup_with_hall_number(const Primitive * primitive,
                                                const int hall_number);
 Cell * spa_transform_to_primitive(const Cell * cell,

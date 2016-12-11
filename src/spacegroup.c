@@ -317,7 +317,7 @@ Primitive * spa_get_spacegroup(Spacegroup * spacegroup,
 
   for (attempt = 0; attempt < NUM_ATTEMPT; attempt++) {
     if ((primitive = prm_get_primitive(cell, tolerance, angle_tolerance)) ==
-	NULL) {
+        NULL) {
       goto cont;
     }
 
@@ -349,23 +349,27 @@ Primitive * spa_get_spacegroup(Spacegroup * spacegroup,
   return primitive;
 }
 
-Spacegroup spa_search_spacegroup_with_symmetry(const Cell * primitive,
-					       const Symmetry *symmetry,
-					       const double symprec,
-					       const double angle_tolerance)
+Spacegroup spa_search_spacegroup_with_symmetry(const Symmetry *symmetry,
+                                               const double symprec)
 {
-
+  int i;
   Spacegroup spacegroup;
+  Cell *primitive;
 
+  primitive = cel_alloc_cell(1);
+  mat_copy_matrix_d3(primitive->lattice, identity);
+  for (i = 0; i < 3; i++) {
+    primitive->position[0][i] = 0;
+  }
   spacegroup = search_spacegroup_with_symmetry(primitive,
-					       spacegroup_to_hall_number,
-					       230,
-					       symmetry,
-					       symprec,
-					       angle_tolerance);
-
+                                               spacegroup_to_hall_number,
+                                               230,
+                                               symmetry,
+                                               symprec,
+                                               -1.0);
   return spacegroup;
 }
+
 /* Return spacegroup.number = 0 if failed */
 Spacegroup spa_get_spacegroup_with_hall_number(const Primitive * primitive,
                                                const int hall_number)
@@ -386,7 +390,7 @@ Spacegroup spa_get_spacegroup_with_hall_number(const Primitive * primitive,
                                  candidate,
                                  num_candidates,
                                  primitive->tolerance,
-				 primitive->angle_tolerance);
+                                 primitive->angle_tolerance);
   if (spacegroup.number > 0) {
     goto ret;
   }
@@ -479,7 +483,7 @@ static Spacegroup search_spacegroup(const Cell * primitive,
                                                num_candidates,
                                                symmetry,
                                                symprec,
-					       angle_tolerance);
+                                               angle_tolerance);
   sym_free_symmetry(symmetry);
   symmetry = NULL;
 
@@ -493,7 +497,7 @@ static Spacegroup search_spacegroup_with_symmetry(const Cell * primitive,
                                                   const int num_candidates,
                                                   const Symmetry *symmetry,
                                                   const double symprec,
-						  const double angle_tolerance)
+                                                  const double angle_tolerance)
 {
   int hall_number;
   double conv_lattice[3][3];
@@ -520,7 +524,7 @@ static Spacegroup search_spacegroup_with_symmetry(const Cell * primitive,
                                              primitive,
                                              symmetry,
                                              symprec,
-					     angle_tolerance);
+                                             angle_tolerance);
   spacegroup = get_spacegroup(hall_number, origin_shift, conv_lattice);
 
  ret:
@@ -601,9 +605,9 @@ static int iterative_search_hall_number(double origin_shift[3],
 
     tolerance *= REDUCE_RATE;
     sym_reduced = sym_reduce_operation(primitive,
-				       symmetry,
-				       tolerance,
-				       angle_tolerance);
+                                       symmetry,
+                                       tolerance,
+                                       angle_tolerance);
     hall_number = search_hall_number(origin_shift,
                                      conv_lattice,
                                      candidates,

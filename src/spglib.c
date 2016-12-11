@@ -436,41 +436,35 @@ int spgat_get_symmetry_with_collinear_spin(int rotation[][3][3],
 					  angle_tolerance);
 }
 
-int spg_get_primitive_symmetry(SPGCONST double lattice[3][3],
-                               SPGCONST double position[][3],
-                               const int types[],
-                               const int num_atom,
-                               const double symprec)
+int spg_get_hall_number_from_symmetry(SPGCONST int rotation[][3][3],
+                                      SPGCONST double translation[][3],
+                                      const int num_operations,
+                                      const double symprec)
 {
   int i;
-  SpglibDataset *dataset;
   Symmetry *symmetry;
   Symmetry *prim_symmetry;
+  Spacegroup spacegroup;
 
-  dataset = NULL;
   symmetry = NULL;
   prim_symmetry = NULL;
 
-  if ((dataset = get_dataset(lattice,
-                             position,
-                             types,
-                             num_atom,
-                             0,
-                             symprec,
-			     -1.0)) == NULL) {
-    return 0;
+  symmetry = sym_alloc_symmetry(num_operations);
+  for (i = 0; i < num_operations; i++) {
+    mat_copy_matrix_i3(symmetry->rot[i], rotation[i]);
+    mat_copy_vector_d3(symmetry->trans[i], translation[i]);
   }
-
-  symmetry = sym_alloc_symmetry(dataset->n_operations);
-  for (i = 0; i < dataset->n_operations; i++) {
-    mat_copy_matrix_i3(symmetry->rot[i], dataset->rotations[i]);
-    mat_copy_vector_d3(symmetry->trans[i], dataset->translations[i]);
-  }
-  spg_free_dataset(dataset);
 
   prim_symmetry = prm_get_primitive_symmetry(symmetry, symprec);
+  spacegroup = spa_search_spacegroup_with_symmetry(prim_symmetry, symprec);
 
-  return 0;
+  if (spacegroup.hall_number) {
+    spglib_error_code = SPGLIB_SUCCESS;
+    return spacegroup.hall_number;
+  } else {
+    spglib_error_code = SPGERR_SPACEGROUP_SEARCH_FAILED;
+    return 0;
+  }
 }
 
 /* Return 0 if failed */
