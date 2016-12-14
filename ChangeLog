@@ -1,3 +1,13 @@
+2016-12-14  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.9.9
+
+	* src/kpoint.c:
+
+	'get_ir_reciprocal_mesh' was supporsed to work with mesh numbers
+	that are consistent with symmetry. Now this function somehow
+	supports when mesh numbers are symmetrically broken.
+
 2016-12-09  Atsushi Togo  <atz.togo@gmail.com>
 
 	* src/symmetry.c:
