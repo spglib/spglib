@@ -21,8 +21,8 @@ It is also possible to install spglib for python via the following
 package distribution services or from building using setup.py.
 
 The following pip and conda packages are made and maintained by
-`Paweł T. Jochym <https://github.com/jochym>`_, which is of great help to keeping spglib handy and
-useful.
+`Paweł T. Jochym <https://github.com/jochym>`_, which is of great help
+to keeping spglib handy and useful.
 
 Using pip
 ^^^^^^^^^
