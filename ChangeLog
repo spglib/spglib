@@ -1,3 +1,12 @@
+2016-12-09  Atsushi Togo  <atz.togo@gmail.com>
+
+	* src/symmetry.c:
+
+	static variable of 'angle_tolerance', 'sym_set_angle_tolerance',
+	'sym_get_angle_tolerance' were removed toward letting it
+	thread-safe. Now 'angle_tolerance' is passed as an argument to
+	many functions in spglib.
+
 2016-11-02  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.9.8
