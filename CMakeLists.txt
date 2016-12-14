@@ -1,10 +1,12 @@
 cmake_minimum_required(VERSION 2.4)
+project(spglib C)
 set(CMAKE_MACOSX_RPATH 1)
 set(CMAKE_C_FLAGS_RELEASE "-Wall -O2")
-set(CMAKE_C_FLAGS_DEBUG "-g")
-set(CMAKE_BUILD_TYPE Release)
-
-project(spglib C)
+set(CMAKE_C_FLAGS_DEBUG "-g -DSPGDEBUG ")
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release)
+endif(NOT CMAKE_BUILD_TYPE)
+message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 
 # Version numbers
 file(READ ${PROJECT_SOURCE_DIR}/src/version.h version_file)
@@ -54,3 +56,11 @@ install(TARGETS symspg_static ARCHIVE DESTINATION ${PROJECT_SOURCE_DIR}/lib)
 
 # Header file
 install(FILES ${PROJECT_SOURCE_DIR}/src/spglib.h DESTINATION ${PROJECT_SOURCE_DIR}/include)
+
+# make check
+enable_testing()
+add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
+set(CMAKE_CTEST_COMMAND ctest -V)
+add_executable(spglibtest EXCLUDE_FROM_ALL ${PROJECT_SOURCE_DIR}/src/test.c ${SOURCES})
+add_test(spglibtest spglibtest)
+add_dependencies(check spglibtest)

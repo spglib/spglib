@@ -10,23 +10,27 @@ Spglib for Python
 Installation
 -------------
 
-Source codes, examples, and the test are downloaded `SourceForge
-<https://sourceforge.net/project/showfiles.php?group_id=215020>`_ or
-`GitHub
-<https://github.com/atztogo/spglib/releases>`_.
+The source code is downloaded at
+https://github.com/atztogo/spglib/releases . 
+But minor updates are not included in this package. If you want the
+latest version, you can git-clone the spglib repository::
 
-Using package distribution service
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   % git clone https://github.com/atztogo/spglib.git
 
-These packages are made and maintained by Paweł T. Jochym.
+It is also possible to install spglib for python via the following
+package distribution services or from building using setup.py.
+
+The following pip and conda packages are made and maintained by
+`Paweł T. Jochym <https://github.com/jochym>`_, which is of great help
+to keeping spglib handy and useful.
 
 Using pip
-~~~~~~~~~
+^^^^^^^^^
 
 Numpy is required before the python-spglib installation. The command to
 install spglib is::
 
-   % pip install spglib
+   % pip install --user spglib
 
 If you see the error message like below in the installation process::
 
@@ -36,24 +40,22 @@ development tools for building python module are additionally
 necessary and are installed using OS's package management system,
 e.g.,::
 
-   sudo apt-get install python-dev
+   % sudo apt-get install python-dev
 
+If your installation by pip failed, you may need to
+upgrade setuptools, e.g., by::
+
+   % pip install --upgrade --user setuptools
 
 Using conda
-~~~~~~~~~~~~
+^^^^^^^^^^^
 
-Conda is another choice for Linux (64bit) users::
+Conda is another choice::
 
-   % conda install -c atztogo spglib
-
-Currently conda packages for the other OS, e.g., Mac and windows, are
-not prepared by the main developers of spglib, but the following
-channel may be used::
-
-   % conda install -c materials pymatgen spglib
+   % conda install -c conda-forge spglib
 
 Building using setup.py
-^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^
 
 To manually install python-spglib using ``setup.py``, python header
 files (python-dev), C-compiler (e.g., gcc, clang), and numpy are
@@ -70,6 +72,12 @@ follows:
    
    - https://docs.python.org/2/install/#alternate-installation-the-user-scheme
    - https://docs.python.org/3/install/#alternate-installation-the-user-scheme
+
+If your installation by setup.py failed, you may need to upgrade
+setuptools, e.g., by::
+
+   % pip install --upgrade --user setuptools
+
 
 Test
 -----
@@ -324,14 +332,18 @@ is shown in the spglib (C-API) document.
 * ``number``: International space group number
 * ``international``: International short symbol
 * ``hall``: Hall symbol
-* ``hall_number``: Hall number. Can be used in :ref:`py_method_get_symmetry_from_database` and :ref:`py_method_get_spacegroup_type`
+* ``hall_number``: Hall number. This number is used in
+  :ref:`py_method_get_symmetry_from_database` and
+  :ref:`py_method_get_spacegroup_type`.
 * ``choice``: Centring, origin, basis vector setting
-* ``transformation_matrix``: Transformation matrix from lattice of input cell to Bravais lattice :math:`L^{bravais} = L^{original} * T`
+* ``transformation_matrix``: Transformation matrix from lattice of
+  input cell to Bravais lattice :math:`L^{bravais} = L^{original} * T`
 * ``origin shift``: Origin shift choice in the setting of Bravais lattice
 * ``wyckoffs``: Wyckoff letters
 * ``equivalent_atoms``: Mapping table to equivalent atoms
 * ``rotations`` and ``translations``: Rotation matrices and
-  translation vectors. See :ref:`py_method_get_symmetry` for more details
+  translation vectors. See :ref:`py_method_get_symmetry` for more
+  details.
 * ``pointgroup``: Symbol of the crystallographic point group in
   the Hermann–Mauguin notation.
 * ``std_lattice``, ``std_positions``, ``std_types``: Standardized
@@ -344,7 +356,10 @@ is shown in the spglib (C-API) document.
    * ``pointgrouop_number``: Serial number of the crystallographic point
      group, which refers list of space groups (Seto’s web site)
 
-When the search failed, ``None`` is returned.
+When the search failed, ``None`` is returned. See more details of the
+keys at :ref:`api_struct_spglibdataset`.
+
+.. _py_method_get_symmetry_from_database:
 
 ``get_symmetry_from_database``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -360,6 +375,8 @@ translation parts are accessed by the keys ``rotations`` and
 found at :ref:`api_spg_get_dataset_spacegroup_type`.
 
 When something wrong happened, ``None`` is returned.
+
+.. _py_method_get_spacegroup_type:
 
 ``get_spacegroup_type``
 ^^^^^^^^^^^^^^^^^^^^^^^^
