@@ -89,6 +89,7 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
                                    const int hall_number,
                                    const double symprec,
                                    const double angle_tolerance);
+static SpglibDataset * init_dataset(void);
 static int set_dataset(SpglibDataset * dataset,
                        const Cell * cell,
                        const Cell * primitive,
@@ -1009,7 +1010,6 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
   int attempt;
   double tolerance;
   Spacegroup spacegroup;
-  SpacegroupType spacegroup_type;
   SpglibDataset *dataset;
   Cell *cell;
   Primitive *primitive;
@@ -1019,9 +1019,89 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
   cell = NULL;
   primitive = NULL;
 
+  if ((dataset = init_dataset()) == NULL) {
+    goto not_found;
+  }
+
+  if ((cell = cel_alloc_cell(num_atom)) == NULL) {
+    free(dataset);
+    dataset = NULL;
+    goto not_found;
+  }
+
+  cel_set_cell(cell, lattice, position, types);
+  if (cel_any_overlap_with_same_type(cell, symprec)) {
+    cel_free_cell(cell);
+    cell = NULL;
+    free(dataset);
+    dataset = NULL;
+    goto atoms_too_close;
+  }
+
+  tolerance = symprec;
+  for (attempt = 0; attempt < NUM_ATTEMPT; attempt++) {
+    if ((primitive = spa_get_spacegroup(&spacegroup,
+					cell,
+                                        hall_number,
+					tolerance,
+					angle_tolerance))
+        == NULL) {
+      cel_free_cell(cell);
+      cell = NULL;
+      free(dataset);
+      dataset = NULL;
+      goto not_found;
+    }
+
+    if (spacegroup.number > 0) {
+      if (set_dataset(dataset,
+                      cell,
+                      primitive->cell,
+                      &spacegroup,
+                      primitive->mapping_table,
+                      primitive->tolerance)) {
+        goto found;
+      } else {
+        tolerance *= REDUCE_RATE;
+      }
+    }
+
+    prm_free_primitive(primitive);
+    primitive = NULL;
+  }
+
+  cel_free_cell(cell);
+  cell = NULL;
+  free(dataset);
+  dataset = NULL;
+
+ not_found:
+  spglib_error_code = SPGERR_SPACEGROUP_SEARCH_FAILED;
+  return NULL;
+
+ atoms_too_close:
+  spglib_error_code = SPGERR_ATOMS_TOO_CLOSE;
+  return NULL;
+
+ found:
+  prm_free_primitive(primitive);
+  primitive = NULL;
+  cel_free_cell(cell);
+  cell = NULL;
+
+  spglib_error_code = SPGLIB_SUCCESS;
+  return dataset;
+}
+
+static SpglibDataset * init_dataset(void)
+{
+  SpglibDataset *dataset;
+
+  dataset = NULL;
+
   if ((dataset = (SpglibDataset*) malloc(sizeof(SpglibDataset))) == NULL) {
     warning_print("spglib: Memory could not be allocated.");
-    goto not_found;
+    return NULL;
   }
 
   dataset->spacegroup_number = 0;
@@ -1044,94 +1124,6 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
   /* dataset->pointgroup_number = 0; */
   strcpy(dataset->pointgroup_symbol, "");
 
-  if ((cell = cel_alloc_cell(num_atom)) == NULL) {
-    free(dataset);
-    dataset = NULL;
-    goto not_found;
-  }
-
-  cel_set_cell(cell, lattice, position, types);
-  if (cel_any_overlap_with_same_type(cell, symprec)) {
-    cel_free_cell(cell);
-    cell = NULL;
-    free(dataset);
-    dataset = NULL;
-    goto atoms_too_close;
-  }
-
-  tolerance = symprec;
-  for (attempt = 0; attempt < NUM_ATTEMPT; attempt++) {
-    if ((primitive = spa_get_spacegroup(&spacegroup,
-					cell,
-					tolerance,
-					angle_tolerance))
-        == NULL) {
-      cel_free_cell(cell);
-      cell = NULL;
-      free(dataset);
-      dataset = NULL;
-      goto not_found;
-    }
-
-    if (spacegroup.number > 0) {
-      /* With hall_number > 0, specific choice is searched. */
-      if (hall_number > 0) {
-        spacegroup_type = spgdb_get_spacegroup_type(hall_number);
-        if (spacegroup.number == spacegroup_type.number) {
-          spacegroup = spa_get_spacegroup_with_hall_number(primitive,
-                                                           hall_number);
-        } else {
-          prm_free_primitive(primitive);
-          primitive = NULL;
-          goto err;
-        }
-
-        if (spacegroup.number == 0) {
-          prm_free_primitive(primitive);
-          primitive = NULL;
-          goto err;
-        }
-      }
-
-      if (spacegroup.number > 0) {
-        if (set_dataset(dataset,
-                        cell,
-                        primitive->cell,
-                        &spacegroup,
-                        primitive->mapping_table,
-                        primitive->tolerance)) {
-          goto found;
-        } else {
-          tolerance *= REDUCE_RATE;
-        }
-      }
-    }
-
-    prm_free_primitive(primitive);
-    primitive = NULL;
-  }
-
- err:
-  cel_free_cell(cell);
-  cell = NULL;
-  free(dataset);
-  dataset = NULL;
-
- not_found:
-  spglib_error_code = SPGERR_SPACEGROUP_SEARCH_FAILED;
-  return NULL;
-
- atoms_too_close:
-  spglib_error_code = SPGERR_ATOMS_TOO_CLOSE;
-  return NULL;
-
- found:
-  prm_free_primitive(primitive);
-  primitive = NULL;
-  cel_free_cell(cell);
-  cell = NULL;
-
-  spglib_error_code = SPGLIB_SUCCESS;
   return dataset;
 }
 
@@ -1685,6 +1677,7 @@ static int get_international(char symbol[11],
 
   if ((primitive = spa_get_spacegroup(&spacegroup,
 				      cell,
+                                      0,
 				      symprec,
 				      angle_tolerance)) == NULL) {
     cel_free_cell(cell);
@@ -1735,6 +1728,7 @@ static int get_schoenflies(char symbol[7],
 
   if ((primitive = spa_get_spacegroup(&spacegroup,
 				      cell,
+                                      0,
 				      symprec,
 				      angle_tolerance)) == NULL) {
     cel_free_cell(cell);
