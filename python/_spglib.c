@@ -208,7 +208,7 @@ static PyObject * py_get_version(PyObject *self, PyObject *args)
 
 static PyObject * py_get_dataset(PyObject *self, PyObject *args)
 {
-  int i, j, k, n;
+  int hall_number;
   double symprec, angle_tolerance;
   SpglibDataset *dataset;
   PyArrayObject* lattice;
@@ -217,15 +217,17 @@ static PyObject * py_get_dataset(PyObject *self, PyObject *args)
   PyObject *array, *vec, *mat, *rot, *trans, *wyckoffs, *equiv_atoms;
   PyObject *std_lattice, *std_types, *std_positions;
 
+  int i, j, k, n;
   double (*lat)[3];
   double (*pos)[3];
   int num_atom;
   int* typat;
 
-  if (!PyArg_ParseTuple(args, "OOOdd",
+  if (!PyArg_ParseTuple(args, "OOOidd",
 			&lattice,
 			&position,
 			&atom_type,
+                        &hall_number,
 			&symprec,
 			&angle_tolerance)) {
     return NULL;
@@ -236,12 +238,13 @@ static PyObject * py_get_dataset(PyObject *self, PyObject *args)
   num_atom = PyArray_DIMS(position)[0];
   typat = (int*)PyArray_DATA(atom_type);
 
-  if ((dataset = spgat_get_dataset(lat,
-				   pos,
-				   typat,
-				   num_atom,
-				   symprec,
-				   angle_tolerance)) == NULL) {
+  if ((dataset = spgat_get_dataset_with_hall_number(lat,
+                                                    pos,
+                                                    typat,
+                                                    num_atom,
+                                                    hall_number,
+                                                    symprec,
+                                                    angle_tolerance)) == NULL) {
     Py_RETURN_NONE;
   }
 

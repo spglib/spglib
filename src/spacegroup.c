@@ -302,16 +302,26 @@ static Centering get_base_center(SPGCONST int transform_mat[3][3]);
 /* NULL is returned if failed */
 Primitive * spa_get_spacegroup(Spacegroup * spacegroup,
                                const Cell * cell,
+                               const int hall_number,
                                const double symprec,
                                const double angle_tolerance)
 {
   int attempt;
+  int candidate[1];
   double tolerance;
   Primitive *primitive;
 
   debug_print("spa_get_spacegroup (tolerance = %f):\n", symprec);
 
   primitive = NULL;
+
+  if (hall_number < 0 || hall_number > 530) {
+    return NULL;
+  }
+
+  if (hall_number > 0) {
+    candidate[0] = hall_number;
+  }
 
   tolerance = symprec;
 
@@ -321,11 +331,20 @@ Primitive * spa_get_spacegroup(Spacegroup * spacegroup,
       goto cont;
     }
 
-    *spacegroup = search_spacegroup(primitive->cell,
-                                    spacegroup_to_hall_number,
-                                    230,
-                                    primitive->tolerance,
-                                    primitive->angle_tolerance);
+    if (hall_number) {
+      *spacegroup = search_spacegroup(primitive->cell,
+                                      candidate,
+                                      1,
+                                      primitive->tolerance,
+                                      primitive->angle_tolerance);
+    } else {
+      *spacegroup = search_spacegroup(primitive->cell,
+                                      spacegroup_to_hall_number,
+                                      230,
+                                      primitive->tolerance,
+                                      primitive->angle_tolerance);
+    }
+
     if (spacegroup->number > 0) {
       break;
     } else {
@@ -367,39 +386,6 @@ Spacegroup spa_search_spacegroup_with_symmetry(const Symmetry *symmetry,
                                                symmetry,
                                                symprec,
                                                -1.0);
-  return spacegroup;
-}
-
-/* Return spacegroup.number = 0 if failed */
-Spacegroup spa_get_spacegroup_with_hall_number(const Primitive * primitive,
-                                               const int hall_number)
-{
-  int num_candidates;
-  int candidate[1];
-  Spacegroup spacegroup;
-
-  spacegroup.number = 0;
-
-  if (hall_number < 1 || hall_number > 530) {
-    goto err;
-  }
-
-  num_candidates = 1;
-  candidate[0] = hall_number;
-  spacegroup = search_spacegroup(primitive->cell,
-                                 candidate,
-                                 num_candidates,
-                                 primitive->tolerance,
-                                 primitive->angle_tolerance);
-  if (spacegroup.number > 0) {
-    goto ret;
-  }
-
- err:
-  warning_print("spglib: Space group with the input choice could not be found ");
-  warning_print("(line %d, %s).\n", __LINE__, __FILE__);
-
- ret:
   return spacegroup;
 }
 
@@ -957,12 +943,9 @@ static int match_hall_symbol_db(double origin_shift[3],
           hall_number == 452 ||
           hall_number == 458 ||
           hall_number == 460) {
-        mat_multiply_matrix_d3(changed_lattice,
-                               lattice,
-                               hR_to_hP);
-        if ((changed_symmetry = get_conventional_symmetry(hR_to_hP,
-                                                          R_CENTER,
-                                                          symmetry)) == NULL) {
+        mat_multiply_matrix_d3(changed_lattice, lattice, hR_to_hP);
+        if ((changed_symmetry =
+             get_conventional_symmetry(hR_to_hP, R_CENTER, symmetry)) == NULL) {
           goto err;
         }
 
@@ -978,7 +961,17 @@ static int match_hall_symbol_db(double origin_shift[3],
           mat_copy_matrix_d3(lattice, changed_lattice);
           return 1;
         }
+      } else {
+        if (hal_match_hall_symbol_db(origin_shift,
+                                     lattice,
+                                     hall_number,
+                                     PRIMITIVE,
+                                     symmetry,
+                                     symprec)) {
+          return 1;
+        }
       }
+      break;
     }
     /* Do not break for other trigonal cases */
   default: /* HEXA, TETRA, TRICLI and rest of TRIGO */
