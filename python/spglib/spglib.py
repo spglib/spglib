@@ -115,12 +115,17 @@ def get_symmetry(cell, symprec=1e-5, angle_tolerance=-1.0):
                                              dtype='double', order='C'),
                     'equivalent_atoms': equivalent_atoms}
 
-def get_symmetry_dataset(cell, symprec=1e-5, angle_tolerance=-1.0):
+def get_symmetry_dataset(cell,
+                         hall_number=0,
+                         symprec=1e-5,
+                         angle_tolerance=-1.0):
     """Search symmetry dataset from an input cell.
 
     Args:
         cell, symprec, angle_tolerance:
             See the docstring of get_symmetry.
+        hall_number: If a serial number of Hall symbol (>0) is given,
+                     the database corresponding to the Hall symbol is made.
 
     Return:
         A dictionary is returned.
@@ -160,6 +165,12 @@ def get_symmetry_dataset(cell, symprec=1e-5, angle_tolerance=-1.0):
     if lattice is None:
         return None
 
+    spg_ds = spg.dataset(lattice, positions, numbers, hall_number,
+                         symprec, angle_tolerance)
+    if spg_ds is None:
+        _set_error_message()
+        return None
+
     keys = ('number',
             'hall_number',
             'international',
@@ -176,11 +187,6 @@ def get_symmetry_dataset(cell, symprec=1e-5, angle_tolerance=-1.0):
             'std_positions',
             # 'pointgroup_number',
             'pointgroup')
-    spg_ds = spg.dataset(lattice, positions, numbers, symprec, angle_tolerance)
-    if spg_ds is None:
-        _set_error_message()
-        return None
-
     dataset = {}
     for key, data in zip(keys, spg_ds):
         dataset[key] = data
