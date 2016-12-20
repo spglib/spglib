@@ -116,9 +116,9 @@ def get_symmetry(cell, symprec=1e-5, angle_tolerance=-1.0):
                     'equivalent_atoms': equivalent_atoms}
 
 def get_symmetry_dataset(cell,
-                         hall_number=0,
                          symprec=1e-5,
-                         angle_tolerance=-1.0):
+                         angle_tolerance=-1.0,
+                         hall_number=0):
     """Search symmetry dataset from an input cell.
 
     Args:
