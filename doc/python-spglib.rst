@@ -129,6 +129,8 @@ Examples are found in `examples
 <https://github.com/atztogo/spglib/tree/master/python/examples>`_
 directory.
 
+.. _py_variables:
+
 Variables
 ----------
 
@@ -325,7 +327,32 @@ is shown in the spglib (C-API) document.
 
 ::
 
-    dataset = get_symmetry_dataset(cell, symprec=1e-5)
+    dataset = get_symmetry_dataset(cell, symprec=1e-5, angle_tolerance=-1.0, hall_number=0)
+
+The arguments are:
+
+* ``cell`` and ``symprec``: See :ref:`py_variables`.
+* ``angle_tolerance``: An experimental argument that controls angle
+  tolerance between basis vectors. Normally it is not recommended to use
+  this argument. See a bit more detail at
+  :ref:`variables_angle_tolerance`.
+* ``hall_number`` (see the definition of this number at
+  :ref:`api_spg_get_dataset_spacegroup_type`): The argument to
+  constrain the space-group-type search only for the Hall symbol
+  corresponding to it. The mapping from Hall symbols to a
+  space-group-type is the many-to-one mapping. Without specifying this
+  option (i.e., in the case of ``hall_number=0``), always the first one
+  (the smallest serial number corresponding to the space-group-type in
+  `list of space groups (Seto's web site)
+  <http://pmsl.planet.sci.kobe-u.ac.jp/~seto/?page_id=37&lang=en>`_)
+  among possible choices and settings is chosen as default. This
+  argument is useful when the other choice (or settting) is
+  expected to be hooked. This affects to the obtained values of ``international``,
+  ``hall``, ``hall_number``, ``choice``, ``transformation_matrix``,
+  ``origin shift``, ``wyckoffs``, ``std_lattice``, ``std_positions``,
+  and ``std_types``, but not to ``rotations`` and ``translations`` since
+  the later set is defined with respect to the basis vectors of user's
+  input (the ``cell`` argument).
 
 ``dataset`` is a dictionary. The keys are:
 
