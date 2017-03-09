@@ -18,7 +18,8 @@
         VERSION:     '1.9.9',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
@@ -30,7 +31,6 @@
     <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="spglib 1.9.9 documentation" href="index.html" />
     <link rel="next" title="Fortran and Ruby interfaces" href="interface.html" />
     <link rel="prev" title="Variables" href="variable.html" />
 <meta charset='utf-8'>
@@ -420,11 +420,12 @@ considering this freedome. In ASE Atoms-class object, this is not supported.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">lattice</span><span class="p">,</span> <span class="n">scaled_positions</span><span class="p">,</span> <span class="n">numbers</span> <span class="o">=</span> <span class="n">refine_cell</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Bravais lattice (3x3 numpy array), atomic scaled positions (a numpy
-array of [number_of_atoms,3]), and atomic numbers (a 1D numpy array)
-that are symmetrized following space group type are returned. When the
-search failed, <code class="docutils literal"><span class="pre">None</span></code> is returned.</p>
-<p>The detailed control of standardization of unit cell may be done using
+<p>Standardized crystal structure is obtained as a tuple of lattice (a 3x3
+numpy array), atomic scaled positions (a numpy array of
+[number_of_atoms,3]), and atomic numbers (a 1D numpy array) that are
+symmetrized following space group type. When the search
+failed, <code class="docutils literal"><span class="pre">None</span></code> is returned.</p>
+<p>The detailed control of standardization of unit cell is achieved using
 <code class="docutils literal"><span class="pre">standardize_cell</span></code>.</p>
 </div>
 <div class="section" id="find-primitive">
@@ -433,7 +434,7 @@ search failed, <code class="docutils literal"><span class="pre">None</span></cod
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">lattice</span><span class="p">,</span> <span class="n">scaled_positions</span><span class="p">,</span> <span class="n">numbers</span> <span class="o">=</span> <span class="n">find_primitive</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>When a primitive cell is found, lattice parameters (3x3 numpy array),
+<p>When a primitive cell is found, lattice parameters (a 3x3 numpy array),
 scaled positions (a numpy array of [number_of_atoms,3]), and atomic
 numbers (a 1D numpy array) is returned. When the search failed,
 <code class="docutils literal"><span class="pre">None</span></code> is returned.</p>
@@ -493,9 +494,8 @@ input (the <code class="docutils literal"><span class="pre">cell</span></code> a
 <a class="reference internal" href="#py-method-get-symmetry-from-database"><span class="std std-ref">get_symmetry_from_database</span></a> and
 <a class="reference internal" href="#py-method-get-spacegroup-type"><span class="std std-ref">get_spacegroup_type</span></a>.</li>
 <li><code class="docutils literal"><span class="pre">choice</span></code>: Centring, origin, basis vector setting</li>
-<li><code class="docutils literal"><span class="pre">transformation_matrix</span></code>: Transformation matrix from lattice of
-input cell to Bravais lattice <img class="math" src="_images/math/c7bd18635fe81e8ffc040afc7aaf4b8ead77b592.png" alt="L^{bravais} = L^{original} * T"/></li>
-<li><code class="docutils literal"><span class="pre">origin</span> <span class="pre">shift</span></code>: Origin shift choice in the setting of Bravais lattice</li>
+<li><code class="docutils literal"><span class="pre">transformation_matrix</span></code>: See the detail at <a class="reference internal" href="api.html#api-origin-shift-and-transformation"><span class="std std-ref">Origin shift and lattice transformation</span></a>.</li>
+<li><code class="docutils literal"><span class="pre">origin</span> <span class="pre">shift</span></code>: See the detail at <a class="reference internal" href="api.html#api-origin-shift-and-transformation"><span class="std std-ref">Origin shift and lattice transformation</span></a>.</li>
 <li><code class="docutils literal"><span class="pre">wyckoffs</span></code>: Wyckoff letters</li>
 <li><code class="docutils literal"><span class="pre">equivalent_atoms</span></code>: Mapping table to equivalent atoms</li>
 <li><code class="docutils literal"><span class="pre">rotations</span></code> and <code class="docutils literal"><span class="pre">translations</span></code>: Rotation matrices and
@@ -689,14 +689,14 @@ the irreducible k-point indices that are obtained by</p>
         <br/>
         
 <div id="sourcelink">
-  <a href="_sources/python-spglib.txt"
+  <a href="_sources/python-spglib.rst.txt"
      rel="nofollow">Source</a>
 </div>
       
     </p>
     <p>
         &copy; Copyright 2009, Atsushi Togo.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.9.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.<br/>
     </p>
   </div>
 </footer>

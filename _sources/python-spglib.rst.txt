@@ -276,12 +276,13 @@ considering this freedome. In ASE Atoms-class object, this is not supported.
 
     lattice, scaled_positions, numbers = refine_cell(cell, symprec=1e-5)
 
-Bravais lattice (3x3 numpy array), atomic scaled positions (a numpy
-array of [number_of_atoms,3]), and atomic numbers (a 1D numpy array)
-that are symmetrized following space group type are returned. When the
-search failed, ``None`` is returned.
+Standardized crystal structure is obtained as a tuple of lattice (a 3x3
+numpy array), atomic scaled positions (a numpy array of
+[number_of_atoms,3]), and atomic numbers (a 1D numpy array) that are
+symmetrized following space group type. When the search
+failed, ``None`` is returned.
 
-The detailed control of standardization of unit cell may be done using
+The detailed control of standardization of unit cell is achieved using
 ``standardize_cell``.
 
 ``find_primitive``
@@ -293,7 +294,7 @@ The detailed control of standardization of unit cell may be done using
 
    lattice, scaled_positions, numbers = find_primitive(cell, symprec=1e-5)
 
-When a primitive cell is found, lattice parameters (3x3 numpy array),
+When a primitive cell is found, lattice parameters (a 3x3 numpy array),
 scaled positions (a numpy array of [number_of_atoms,3]), and atomic
 numbers (a 1D numpy array) is returned. When the search failed,
 ``None`` is returned.
@@ -363,9 +364,8 @@ The arguments are:
   :ref:`py_method_get_symmetry_from_database` and
   :ref:`py_method_get_spacegroup_type`.
 * ``choice``: Centring, origin, basis vector setting
-* ``transformation_matrix``: Transformation matrix from lattice of
-  input cell to Bravais lattice :math:`L^{bravais} = L^{original} * T`
-* ``origin shift``: Origin shift choice in the setting of Bravais lattice
+* ``transformation_matrix``: See the detail at :ref:`api_origin_shift_and_transformation`.
+* ``origin shift``: See the detail at :ref:`api_origin_shift_and_transformation`.
 * ``wyckoffs``: Wyckoff letters
 * ``equivalent_atoms``: Mapping table to equivalent atoms
 * ``rotations`` and ``translations``: Rotation matrices and

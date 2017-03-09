@@ -18,7 +18,8 @@
         VERSION:     '1.9.9',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
@@ -30,7 +31,6 @@
     <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="spglib 1.9.9 documentation" href="index.html" />
     <link rel="next" title="Variables" href="variable.html" />
     <link rel="prev" title="How to install spglib C-API" href="install.html" />
 <meta charset='utf-8'>
@@ -490,7 +490,7 @@ to indices of symmetrically independent atoms, where the list index
 corresponds to atomic index of the input crystal structure.</p>
 </div>
 <div class="section" id="origin-shift-and-lattice-transformation">
-<h4><a class="toc-backref" href="#id17">Origin shift and lattice transformation</a><a class="headerlink" href="#origin-shift-and-lattice-transformation" title="Permalink to this headline">¶</a></h4>
+<span id="api-origin-shift-and-transformation"></span><h4><a class="toc-backref" href="#id17">Origin shift and lattice transformation</a><a class="headerlink" href="#origin-shift-and-lattice-transformation" title="Permalink to this headline">¶</a></h4>
 <p><strong>Changed in version 1.8.1</strong></p>
 <p><code class="docutils literal"><span class="pre">transformation_matrix</span></code> and <code class="docutils literal"><span class="pre">origin_shift</span></code> are obtained as a
 result of space-group-type matching under a set of unique axis,
@@ -788,14 +788,14 @@ are returned as the return value.</p>
         <br/>
         
 <div id="sourcelink">
-  <a href="_sources/api.txt"
+  <a href="_sources/api.rst.txt"
      rel="nofollow">Source</a>
 </div>
       
     </p>
     <p>
         &copy; Copyright 2009, Atsushi Togo.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.9.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.<br/>
     </p>
   </div>
 </footer>
