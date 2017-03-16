@@ -92,6 +92,8 @@ distortion between lattice vectors is converted to a length and
 compared with this distance tolerance. If the explicit angle tolerance
 is expected, see ``angle_tolerance``.
 
+.. _variables_angle_tolerance:
+
 ``angle_tolerance``
 --------------------
 
@@ -113,6 +115,6 @@ functions are prepared as follows
    spgat_refine_cell
 
 These functions are called by the same way with an additional argument
-of 'const double angle_tolerance' in degrees. By specifying a negative
+of ``const double angle_tolerance`` in degrees. By specifying a negative
 value, the behavior becomes the same as usual functions. The default
 value of ``angle_tolerance`` is a negative value.

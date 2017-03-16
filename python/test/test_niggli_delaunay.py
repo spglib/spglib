@@ -49,7 +49,8 @@ class TestNiggliDelaunay(unittest.TestCase):
             T = np.dot(np.linalg.inv(reference_lattice.T), input_lattice.T)
             self.assertTrue(np.allclose(T, np.rint(T)))
             self.assertTrue(
-                np.allclose(reduced_lattice, reference_lattice),
+                np.allclose(self._metric_tensor(reduced_lattice),
+                            self._metric_tensor(reference_lattice)),
                 msg="\n".join(
                     ["# %d" % (i + 1),
                      "Input lattice",
@@ -80,6 +81,20 @@ class TestNiggliDelaunay(unittest.TestCase):
         for v in lattice:
             print(" ".join(["%20.16f" % x for x in v]))        
 
+    def _metric_tensor(self, lattice):
+        """
+        Args:
+            lattice: Lattice parameters in the form of
+                [[a_x, a_y, a_z],
+                 [b_x, b_y, b_z],
+                 [c_x, c_y, c_z]]
+        Returns:
+            Metric tensor:
+                [[a.a, a.b, a.c],
+                 [b.a, b.b, b.c],
+                 [c.a, c.b, c.c]]
+        """
+        return np.dot(lattice, np.transpose(lattice))
 
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(TestNiggliDelaunay)
