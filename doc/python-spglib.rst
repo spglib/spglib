@@ -129,6 +129,8 @@ Examples are found in `examples
 <https://github.com/atztogo/spglib/tree/master/python/examples>`_
 directory.
 
+.. _py_variables:
+
 Variables
 ----------
 
@@ -274,12 +276,13 @@ considering this freedome. In ASE Atoms-class object, this is not supported.
 
     lattice, scaled_positions, numbers = refine_cell(cell, symprec=1e-5)
 
-Bravais lattice (3x3 numpy array), atomic scaled positions (a numpy
-array of [number_of_atoms,3]), and atomic numbers (a 1D numpy array)
-that are symmetrized following space group type are returned. When the
-search failed, ``None`` is returned.
+Standardized crystal structure is obtained as a tuple of lattice (a 3x3
+numpy array), atomic scaled positions (a numpy array of
+[number_of_atoms,3]), and atomic numbers (a 1D numpy array) that are
+symmetrized following space group type. When the search
+failed, ``None`` is returned.
 
-The detailed control of standardization of unit cell may be done using
+The detailed control of standardization of unit cell is achieved using
 ``standardize_cell``.
 
 ``find_primitive``
@@ -291,7 +294,7 @@ The detailed control of standardization of unit cell may be done using
 
    lattice, scaled_positions, numbers = find_primitive(cell, symprec=1e-5)
 
-When a primitive cell is found, lattice parameters (3x3 numpy array),
+When a primitive cell is found, lattice parameters (a 3x3 numpy array),
 scaled positions (a numpy array of [number_of_atoms,3]), and atomic
 numbers (a 1D numpy array) is returned. When the search failed,
 ``None`` is returned.
@@ -325,7 +328,32 @@ is shown in the spglib (C-API) document.
 
 ::
 
-    dataset = get_symmetry_dataset(cell, symprec=1e-5)
+    dataset = get_symmetry_dataset(cell, symprec=1e-5, angle_tolerance=-1.0, hall_number=0)
+
+The arguments are:
+
+* ``cell`` and ``symprec``: See :ref:`py_variables`.
+* ``angle_tolerance``: An experimental argument that controls angle
+  tolerance between basis vectors. Normally it is not recommended to use
+  this argument. See a bit more detail at
+  :ref:`variables_angle_tolerance`.
+* ``hall_number`` (see the definition of this number at
+  :ref:`api_spg_get_dataset_spacegroup_type`): The argument to
+  constrain the space-group-type search only for the Hall symbol
+  corresponding to it. The mapping from Hall symbols to a
+  space-group-type is the many-to-one mapping. Without specifying this
+  option (i.e., in the case of ``hall_number=0``), always the first one
+  (the smallest serial number corresponding to the space-group-type in
+  `list of space groups (Seto's web site)
+  <http://pmsl.planet.sci.kobe-u.ac.jp/~seto/?page_id=37&lang=en>`_)
+  among possible choices and settings is chosen as default. This
+  argument is useful when the other choice (or settting) is
+  expected to be hooked. This affects to the obtained values of ``international``,
+  ``hall``, ``hall_number``, ``choice``, ``transformation_matrix``,
+  ``origin shift``, ``wyckoffs``, ``std_lattice``, ``std_positions``,
+  and ``std_types``, but not to ``rotations`` and ``translations`` since
+  the later set is defined with respect to the basis vectors of user's
+  input (the ``cell`` argument).
 
 ``dataset`` is a dictionary. The keys are:
 
@@ -336,9 +364,8 @@ is shown in the spglib (C-API) document.
   :ref:`py_method_get_symmetry_from_database` and
   :ref:`py_method_get_spacegroup_type`.
 * ``choice``: Centring, origin, basis vector setting
-* ``transformation_matrix``: Transformation matrix from lattice of
-  input cell to Bravais lattice :math:`L^{bravais} = L^{original} * T`
-* ``origin shift``: Origin shift choice in the setting of Bravais lattice
+* ``transformation_matrix``: See the detail at :ref:`api_origin_shift_and_transformation`.
+* ``origin shift``: See the detail at :ref:`api_origin_shift_and_transformation`.
 * ``wyckoffs``: Wyckoff letters
 * ``equivalent_atoms``: Mapping table to equivalent atoms
 * ``rotations`` and ``translations``: Rotation matrices and

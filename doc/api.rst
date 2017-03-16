@@ -361,6 +361,8 @@ respectively. Number of elements in ``wyckoffs`` is same as
 to indices of symmetrically independent atoms, where the list index
 corresponds to atomic index of the input crystal structure.
 
+.. _api_origin_shift_and_transformation:
+
 Origin shift and lattice transformation
 """"""""""""""""""""""""""""""""""""""""
 
