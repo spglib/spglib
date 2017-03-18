@@ -87,18 +87,11 @@ static int delaunay_reduce(double red_lattice[3][3],
 			   const double symprec)
 {
   int i, j;
-  double volume, sum;
+  double volume;
   double basis[4][3];
 
   get_exteneded_basis(basis, lattice);
   
-  sum = 0;
-  for (i = 0; i < 4; i++) {
-    for (j = 0; j < 3; j++) {
-      sum += basis[i][j] * basis[i][j];
-    }
-  }
-
   while (1) {
     if (delaunay_reduce_basis(basis, symprec)) {
       break;
@@ -114,7 +107,7 @@ static int delaunay_reduce(double red_lattice[3][3],
   }
 
   volume = mat_get_determinant_d3(red_lattice);
-  if (mat_Dabs(volume) < symprec) {
+  if (mat_Dabs(volume) < symprec * symprec) {
     warning_print("spglib: Minimum lattice has no volume (line %d, %s).\n", __LINE__, __FILE__);
     goto err;
   }
@@ -138,6 +131,7 @@ static void get_delaunay_shortest_vectors(double basis[4][3],
 					  const double symprec)
 {
   int i, j;
+  double symprec2;
   double tmpmat[3][3], b[7][3], tmpvec[3];
   
   /* Search in the set {b1, b2, b3, b4, b1+b2, b2+b3, b3+b1} */
@@ -157,10 +151,12 @@ static void get_delaunay_shortest_vectors(double basis[4][3],
     b[6][i] = basis[2][i] + basis[0][i];
   }
   
+  symprec2 = symprec * symprec;
+
   /* Bubble sort */
   for (i = 0; i < 6; i++) {
     for (j = 0; j < 6; j++) {
-      if (mat_norm_squared_d3(b[j]) > mat_norm_squared_d3(b[j+1])) {
+      if (mat_norm_squared_d3(b[j]) > mat_norm_squared_d3(b[j+1]) + symprec2) {
 	mat_copy_vector_d3(tmpvec, b[j]);
 	mat_copy_vector_d3(b[j], b[j+1]);
 	mat_copy_vector_d3(b[j+1], tmpvec);
@@ -174,7 +170,7 @@ static void get_delaunay_shortest_vectors(double basis[4][3],
       tmpmat[j][1] = b[1][j];
       tmpmat[j][2] = b[i][j];
     }
-    if (mat_Dabs(mat_get_determinant_d3(tmpmat)) > symprec) {
+    if (mat_Dabs(mat_get_determinant_d3(tmpmat)) > symprec2) {
       for (j = 0; j < 3; j++) {
 	basis[0][j] = b[0][j];
 	basis[1][j] = b[1][j];
@@ -189,7 +185,9 @@ static int delaunay_reduce_basis(double basis[4][3],
 				 const double symprec)
 {
   int i, j, k, l;
-  double dot_product;
+  double dot_product, symprec2;
+
+  symprec2 = symprec * symprec;
 
   for (i = 0; i < 4; i++) {
     for (j = i+1; j < 4; j++) {
@@ -197,7 +195,7 @@ static int delaunay_reduce_basis(double basis[4][3],
       for (k = 0; k < 3; k++) {
 	dot_product += basis[i][k] * basis[j][k];
       }
-      if (dot_product > symprec) {
+      if (dot_product > symprec2) {
 	for (k = 0; k < 4; k++) {
 	  if (! (k == i || k == j)) {
 	    for (l = 0; l < 3; l++) {
@@ -281,7 +279,7 @@ static int delaunay_reduce_2D(double red_lattice[3][3],
   }
 
   volume = mat_get_determinant_d3(red_lattice);
-  if (mat_Dabs(volume) < symprec) {
+  if (mat_Dabs(volume) < symprec * symprec) {
     warning_print("spglib: Minimum lattice has no volume (line %d, %s).\n", __LINE__, __FILE__);
     goto err;
   }
@@ -302,7 +300,9 @@ static int delaunay_reduce_basis_2D(double basis[3][3],
 				    const double symprec)
 {
   int i, j, k, l;
-  double dot_product;
+  double dot_product, symprec2;
+
+  symprec2 = symprec * symprec;
 
   for (i = 0; i < 3; i++) {
     for (j = i + 1; j < 3; j++) {
@@ -310,7 +310,7 @@ static int delaunay_reduce_basis_2D(double basis[3][3],
       for (k = 0; k < 3; k++) {
 	dot_product += basis[i][k] * basis[j][k];
       }
-      if (dot_product > symprec) {
+      if (dot_product > symprec2) {
 	for (k = 0; k < 3; k++) {
 	  if (! (k == i || k == j)) {
 	    for (l = 0; l < 3; l++) {
@@ -369,7 +369,7 @@ static void get_delaunay_shortest_vectors_2D(double basis[3][3],
     for (j = 0; j < 3; j++) {
       tmpmat[j][2] = b[i][j];
     }
-    if (mat_Dabs(mat_get_determinant_d3(tmpmat)) > symprec) {
+    if (mat_Dabs(mat_get_determinant_d3(tmpmat)) > symprec * symprec) {
       for (j = 0; j < 3; j++) {
 	basis[0][j] = b[0][j];
 	basis[1][j] = b[i][j];
