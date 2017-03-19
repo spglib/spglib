@@ -61,7 +61,9 @@ class TestNiggliDelaunay(unittest.TestCase):
                      " angles: %s" % np.array(get_angles(reference_lattice)),
                      "Reduced lattice",
                      "%s" % reduced_lattice,
-                     " angles: %s" % np.array(get_angles(reduced_lattice))]))
+                     " angles: %s" % np.array(get_angles(reduced_lattice)),
+                     self._str_lattice(reduced_lattice)]))
+            
 
     def _read_file(self, filename):
         all_lattices = []
@@ -78,8 +80,15 @@ class TestNiggliDelaunay(unittest.TestCase):
 
     def _show_lattice(self, i, lattice):
         print("# %d" % (i + 1))
+        print(self._str_lattice(lattice))
+        # for v in lattice:
+        #     print(" ".join(["%20.16f" % x for x in v]))        
+
+    def _str_lattice(self, lattice):
+        lines = []
         for v in lattice:
-            print(" ".join(["%20.16f" % x for x in v]))        
+            lines.append(" ".join(["%20.16f" % x for x in v]))
+        return "\n".join(lines)
 
     def _metric_tensor(self, lattice):
         """
