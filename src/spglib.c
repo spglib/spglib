@@ -1608,34 +1608,22 @@ static int get_standardized_cell(double lattice[3][3],
     goto err;
   }
 
-  if (to_primitive) {
-    if ((centering = get_centering(dataset->hall_number)) == CENTERING_ERROR) {
-      goto err;
-    }
-  } else {
-    centering = PRIMITIVE;
+  if ((centering = get_centering(dataset->hall_number)) == CENTERING_ERROR) {
+    goto err;
   }
 
-  if (dataset->n_std_atoms > num_atom && !to_primitive) {
-    std_cell = ref_get_refined_cell(lattice,
-                                    position,
-                                    types,
-                                    num_atom,
-                                    dataset->transformation_matrix,
-                                    symprec);
-  } else {
-    if ((cell = cel_alloc_cell(num_atom)) == NULL) {
-      spg_free_dataset(dataset);
-      dataset = NULL;
-      goto err;
-    }
-
-    cel_set_cell(cell, lattice, position, types);
-    std_cell = spa_transform_to_primitive(cell,
-                                          dataset->transformation_matrix,
-                                          centering,
-                                          symprec);
+  if ((cell = cel_alloc_cell(num_atom)) == NULL) {
+    spg_free_dataset(dataset);
+    dataset = NULL;
+    goto err;
   }
+
+  cel_set_cell(cell, lattice, position, types);
+  std_cell = spa_transform_to_primitive(cell,
+					dataset->transformation_matrix,
+					centering,
+					symprec);
+
   spg_free_dataset(dataset);
   dataset = NULL;
   cel_free_cell(cell);
