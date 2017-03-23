@@ -1208,8 +1208,25 @@ static int set_dataset(SpglibDataset * dataset,
                                            symmetry,
                                            mapping_table,
                                            tolerance)) == NULL) {
+
+    warning_print("spglib: ref_get_Wyckoff_positions failed.");
+    warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
+
     goto err;
   }
+
+  debug_print("Refined cell after ref_get_Wyckoff_positions\n");
+  debug_print(" (line %d, %s).\n", __LINE__, __FILE__);
+  debug_print_matrix_d3(bravais->lattice);
+#ifdef SPGDEBUG
+  for (i = 0; i < bravais->size; i++) {
+    printf("%d: %f %f %f\n",
+           bravais->types[i],
+           bravais->position[i][0],
+           bravais->position[i][1],
+           bravais->position[i][2]);
+  }
+#endif
 
   dataset->n_std_atoms = bravais->size;
   mat_copy_matrix_d3(dataset->std_lattice, bravais->lattice);
@@ -1599,17 +1616,28 @@ static int get_standardized_cell(double lattice[3][3],
     centering = PRIMITIVE;
   }
 
-  if ((cell = cel_alloc_cell(num_atom)) == NULL) {
-    spg_free_dataset(dataset);
-    goto err;
-  }
+  if (dataset->n_std_atoms > num_atom && !to_primitive) {
+    std_cell = ref_get_refined_cell(lattice,
+                                    position,
+                                    types,
+                                    num_atom,
+                                    dataset->transformation_matrix,
+                                    symprec);
+  } else {
+    if ((cell = cel_alloc_cell(num_atom)) == NULL) {
+      spg_free_dataset(dataset);
+      dataset = NULL;
+      goto err;
+    }
 
-  cel_set_cell(cell, lattice, position, types);
-  std_cell = spa_transform_to_primitive(cell,
-                                        dataset->transformation_matrix,
-                                        centering,
-                                        symprec);
+    cel_set_cell(cell, lattice, position, types);
+    std_cell = spa_transform_to_primitive(cell,
+                                          dataset->transformation_matrix,
+                                          centering,
+                                          symprec);
+  }
   spg_free_dataset(dataset);
+  dataset = NULL;
   cel_free_cell(cell);
   cell = NULL;
 

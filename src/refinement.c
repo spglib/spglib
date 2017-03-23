@@ -180,6 +180,91 @@ Cell * ref_get_Wyckoff_positions(int * wyckoffs,
                                symprec);
 }
 
+Cell * ref_get_refined_cell(SPGCONST double lattice[3][3],
+                            SPGCONST double position[][3],
+                            const int types[],
+                            const int num_atom,
+                            SPGCONST double t_mat[3][3],
+                            const double symprec)
+{
+  Cell *cell, *std_cell;
+  int i, j, k, l, m, count, multi;
+  int frame[3];
+  int inv_t_mat_int[3][3];
+  int * mapping_table;
+  double std_lattice[3][3], inv_t_mat[3][3];
+
+  debug_print("ref_get_refined_cell\n");
+
+  cell = NULL;
+  std_cell = NULL;
+  mapping_table = NULL;
+
+  if (! mat_inverse_matrix_d3(inv_t_mat, t_mat, symprec)) {
+    goto ret;
+  }
+  mat_cast_matrix_3d_to_3i(inv_t_mat_int, inv_t_mat);
+  get_surrounding_frame(frame, inv_t_mat_int);
+  multi = frame[0] * frame[1] * frame[2];
+
+  if ((cell = cel_alloc_cell(num_atom * multi)) == NULL) {
+    goto ret;
+  }
+
+  printf("%d %d %d\n", frame[0], frame[1], frame[2]);
+
+  count = 0;
+  for (i = 0; i < frame[0]; i++) {
+    for (j = 0; j < frame[1]; j++) {
+      for (k = 0; k < frame[2]; k++) {
+        for (l = 0; l < num_atom; l++) {
+          for (m = 0; m < 3; m++) {
+            cell->position[count][m] = position[l][m] / frame[m];
+          }
+          cell->types[count] = types[l];
+          count++;
+        }
+      }
+    }
+  }
+
+  for (i = 0; i < 3; i++) {
+    for (j = 0; j < 3; j++) {
+      cell->lattice[j][i] = lattice[j][i] * frame[i];
+    }
+  }
+
+  if ((mapping_table = (int*) malloc(sizeof(int) * num_atom * multi)) == NULL) {
+    warning_print("spglib: Memory could not be allocated ");
+    cel_free_cell(cell);
+    cell = NULL;
+    goto ret;
+  }
+
+  mat_multiply_matrix_d3(std_lattice, lattice, inv_t_mat);
+  debug_print_matrix_d3(t_mat);
+  debug_print_matrix_d3(inv_t_mat);
+  debug_print_matrix_i3(inv_t_mat_int);
+  debug_print_matrix_d3(lattice);
+  debug_print_matrix_d3(std_lattice);
+  debug_print_matrix_d3(cell->lattice);
+  std_cell = cel_trim_cell(mapping_table, std_lattice, cell, symprec);
+
+  if (std_cell == NULL) {
+    printf("null\n");
+  } else {
+    printf("%d\n", std_cell->size);
+  }
+
+  cel_free_cell(cell);
+  cell = NULL;
+  free(mapping_table);
+  mapping_table = NULL;
+
+ret:
+  return std_cell;
+}
+
 Cell * get_Wyckoff_positions(int * wyckoffs,
                              int * equiv_atoms,
                              const Cell * primitive,
@@ -220,6 +305,10 @@ Cell * get_Wyckoff_positions(int * wyckoffs,
         spacegroup,
         primitive,
         symprec)) == NULL) {
+
+    warning_print("spglib: get_bravais_exact_positions_and_lattice failed.");
+    warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
+
     goto ret;
   }
 
@@ -244,6 +333,10 @@ Cell * get_Wyckoff_positions(int * wyckoffs,
                              equiv_atoms_bravais,
                              mapping_table) == 0) {
       cel_free_cell(bravais);
+
+      warning_print("spglib: set_equivalent_atoms failed.");
+      warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
+
       bravais = NULL;
     }
   }
@@ -325,6 +418,8 @@ get_bravais_exact_positions_and_lattice(int * wyckoffs,
                                                  symprec)) == NULL) {
     sym_free_symmetry(conv_sym);
     conv_sym = NULL;
+    warning_print("spglib: ssm_get_exact_positions failed.");
+    warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
     goto err;
   }
 

@@ -260,6 +260,8 @@ static Cell * trim_cell(int * mapping_table,
   VecDBL * position;
   int *overlap_table;
 
+  debug_print("trim_cell\n");
+
   position = NULL;
   overlap_table = NULL;
   trimmed_cell = NULL;
@@ -279,6 +281,8 @@ static Cell * trim_cell(int * mapping_table,
   if ((position = translate_atoms_in_trimmed_lattice(cell,
                                                      trimmed_lattice))
       == NULL) {
+    warning_print("spglib: translate_atoms_in_trimmed_lattice failed.\n");
+    warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
     cel_free_cell(trimmed_cell);
     trimmed_cell = NULL;
     goto err;
@@ -291,6 +295,8 @@ static Cell * trim_cell(int * mapping_table,
                                          cell->types,
                                          trimmed_cell,
                                          symprec)) == NULL) {
+    warning_print("spglib: get_overlap_table failed.\n");
+    warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
     mat_free_VecDBL(position);
     position = NULL;
     cel_free_cell(trimmed_cell);

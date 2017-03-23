@@ -53,5 +53,11 @@ Cell * ref_get_Wyckoff_positions(int * wyckoffs,
                                  const Symmetry * symmetry,
                                  const int * mapping_table,
                                  const double symprec);
+Cell * ref_get_refined_cell(SPGCONST double lattice[3][3],
+                            SPGCONST double position[][3],
+                            const int types[],
+                            const int num_atom,
+                            SPGCONST double t_mat[3][3],
+                            const double symprec);
 
 #endif
