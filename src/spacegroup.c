@@ -297,6 +297,8 @@ static Centering get_centering(double correction_mat[3][3],
                                SPGCONST int transform_mat[3][3],
                                const Laue laue);
 static Centering get_base_center(SPGCONST int transform_mat[3][3]);
+static int get_centering_shifts(double shift[3][3],
+				const Centering centering);
 
 
 /* NULL is returned if failed */
@@ -402,7 +404,9 @@ Cell * spa_transform_to_primitive(const Cell * cell,
   mapping_table = NULL;
   primitive = NULL;
 
-  mat_inverse_matrix_d3(tmat_inv, trans_mat, 0);
+  if (!mat_inverse_matrix_d3(tmat_inv, trans_mat, symprec)) {
+    goto err;
+  }
 
   switch (centering) {
   case PRIMITIVE:
@@ -442,6 +446,96 @@ Cell * spa_transform_to_primitive(const Cell * cell,
 
  err:
   return NULL;
+}
+
+/* Return NULL if failed */
+Cell * spa_transform_from_primitive(const Cell * primitive,
+				    const Centering centering,
+				    const double symprec)
+{
+  int multi, i, j, k, count;
+  int *mapping_table;
+  double tmat[3][3], inv_tmat[3][3], shift[3][3];
+  Cell *std_cell, *trimmed_cell;
+
+  mapping_table = NULL;
+  trimmed_cell = NULL;
+  std_cell = NULL;
+
+  switch (centering) {
+  case PRIMITIVE:
+    break;
+  case A_FACE:
+    mat_copy_matrix_d3(tmat, A_mat);
+    mat_inverse_matrix_d3(inv_tmat, A_mat, 0);
+    break;
+  case C_FACE:
+    mat_copy_matrix_d3(tmat, C_mat);
+    mat_inverse_matrix_d3(inv_tmat, C_mat, 0);
+    break;
+  case FACE:
+    mat_copy_matrix_d3(tmat, F_mat);
+    mat_inverse_matrix_d3(inv_tmat, F_mat, 0);
+    break;
+  case BODY:
+    mat_copy_matrix_d3(tmat, I_mat);
+    mat_inverse_matrix_d3(inv_tmat, I_mat, 0);
+    break;
+  case R_CENTER:
+    mat_copy_matrix_d3(tmat, R_mat);
+    mat_inverse_matrix_d3(inv_tmat, R_mat, 0);
+    break;
+  default:
+    goto ret;
+  }
+
+  multi = get_centering_shifts(shift, centering);
+
+  if ((mapping_table = (int*) malloc(sizeof(int) * primitive->size * multi))
+      == NULL) {
+    warning_print("spglib: Memory could not be allocated ");
+    goto ret;
+  }
+
+  if ((std_cell = cel_alloc_cell(primitive->size * multi)) == NULL) {
+    free(mapping_table);
+    mapping_table = NULL;
+    goto ret;
+  }
+
+  mat_multiply_matrix_d3(std_cell->lattice, primitive->lattice, inv_tmat);
+
+  count = 0;
+  for (i = 0; i < primitive->size; i++) {
+    mat_multiply_matrix_vector_d3(std_cell->position[count],
+				  tmat,
+				  primitive->position[i]);
+    std_cell->types[count] = primitive->types[i];
+    for (j = 0; j < multi - 1; j++) {
+      mat_copy_vector_d3(std_cell->position[count + j + 1],
+			 std_cell->position[count]);
+    }
+    count++;
+    for (j = 0; j < multi - 1; j++) {
+      std_cell->types[count] = primitive->types[i];
+      for (k = 0; k < 3; k++) {
+	std_cell->position[count][k] += shift[j][k];
+      }
+      count++;
+    }
+  }
+
+  trimmed_cell = cel_trim_cell(mapping_table,
+			       std_cell->lattice,
+			       std_cell,
+			       symprec);
+  cel_free_cell(std_cell);
+  std_cell = NULL;
+  free(mapping_table);
+  mapping_table = NULL;
+
+ ret:
+  return trimmed_cell;
 }
 
 /* Return spacegroup.number = 0 if failed */
@@ -1140,7 +1234,7 @@ static Symmetry * get_conventional_symmetry(SPGCONST double transform_mat[3][3],
                                             const Symmetry *primitive_sym)
 {
   int i, j, k, multi, size;
-  double inv_tmat[3][3], shift[4][3];
+  double inv_tmat[3][3], shift[3][3];
   double symmetry_rot_d3[3][3], primitive_sym_rot_d3[3][3];
   Symmetry *symmetry;
 
@@ -1194,37 +1288,7 @@ static Symmetry * get_conventional_symmetry(SPGCONST double transform_mat[3][3],
   multi = 1;
 
   if (centering != PRIMITIVE) {
-    if (centering != FACE && centering != R_CENTER) {
-      for (i = 0; i < 3; i++) { shift[0][i] = 0.5; } /* BASE */
-      if (centering == A_FACE) { shift[0][0] = 0; }
-      if (centering == B_FACE) { shift[0][1] = 0; }
-      if (centering == C_FACE) { shift[0][2] = 0; }
-      multi = 2;
-    }
-
-    if (centering == R_CENTER) {
-      shift[0][0] = 2. / 3;
-      shift[0][1] = 1. / 3;
-      shift[0][2] = 1. / 3;
-      shift[1][0] = 1. / 3;
-      shift[1][1] = 2. / 3;
-      shift[1][2] = 2. / 3;
-      multi = 3;
-    }
-
-    if (centering == FACE) {
-      shift[0][0] = 0;
-      shift[0][1] = 0.5;
-      shift[0][2] = 0.5;
-      shift[1][0] = 0.5;
-      shift[1][1] = 0;
-      shift[1][2] = 0.5;
-      shift[2][0] = 0.5;
-      shift[2][1] = 0.5;
-      shift[2][2] = 0;
-      multi = 4;
-    }
-
+    multi = get_centering_shifts(shift, centering);
     for (i = 0; i < multi - 1; i++) {
       for (j = 0; j < size; j++) {
         mat_copy_matrix_i3(symmetry->rot[(i+1) * size + j],
@@ -1371,4 +1435,52 @@ static Centering get_base_center(SPGCONST int transform_mat[3][3])
 
  end:
   return centering;
+}
+
+static int get_centering_shifts(double shift[3][3],
+				const Centering centering)
+{
+  int i, j, multi;
+
+  multi = 1;
+  for (i = 0; i < 3; i++) {
+    for (j = 0; j < 3; j++) {
+      shift[i][j] = 0;
+    }
+  }    
+
+  if (centering != PRIMITIVE) {
+    if (centering != FACE && centering != R_CENTER) {
+      for (i = 0; i < 3; i++) { shift[0][i] = 0.5; } /* BASE */
+      if (centering == A_FACE) { shift[0][0] = 0; }
+      if (centering == B_FACE) { shift[0][1] = 0; }
+      if (centering == C_FACE) { shift[0][2] = 0; }
+      multi = 2;
+    }
+
+    if (centering == R_CENTER) {
+      shift[0][0] = 2. / 3;
+      shift[0][1] = 1. / 3;
+      shift[0][2] = 1. / 3;
+      shift[1][0] = 1. / 3;
+      shift[1][1] = 2. / 3;
+      shift[1][2] = 2. / 3;
+      multi = 3;
+    }
+
+    if (centering == FACE) {
+      shift[0][0] = 0;
+      shift[0][1] = 0.5;
+      shift[0][2] = 0.5;
+      shift[1][0] = 0.5;
+      shift[1][1] = 0;
+      shift[1][2] = 0.5;
+      shift[2][0] = 0.5;
+      shift[2][1] = 0.5;
+      shift[2][2] = 0;
+      multi = 4;
+    }
+  }
+
+  return multi;
 }

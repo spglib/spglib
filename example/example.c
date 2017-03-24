@@ -9,6 +9,7 @@ static void test_spg_get_multiplicity(void);
 static void test_spg_find_primitive_BCC(void);
 static void test_spg_find_primitive_corundum(void);
 static void test_spg_standardize_cell_BCC(void);
+static void test_spg_standardize_cell_BCC_prim(void);
 static void test_spg_standardize_cell_corundum(void);
 static int sub_spg_standardize_cell(double lattice[3][3],
 				    double position[][3],
@@ -42,6 +43,7 @@ int main(void)
   test_spg_find_primitive_BCC();
   test_spg_find_primitive_corundum();
   test_spg_standardize_cell_BCC();
+  test_spg_standardize_cell_BCC_prim();
   test_spg_standardize_cell_corundum();
   test_spg_get_multiplicity();
   test_spg_get_symmetry();
@@ -177,7 +179,34 @@ static void test_spg_standardize_cell_BCC(void)
   double symprec = 1e-1;
   
   /* lattice, position, and types are overwirtten. */
-  printf("*** Example of spg_standardize_cell (BCC unitcell --> primitive) ***:\n");
+  printf("*** Example of spg_standardize_cell (BCC unitcell) ***:\n");
+  printf("------------------------------------------------------\n");
+  for (j = 0; j < 2; j++) {
+    for (k = 0; k < 2; k++) {
+      sub_spg_standardize_cell(lattice,
+			       position,
+			       types,
+			       num_atom,
+			       symprec,
+			       j,
+			       k);
+      printf("------------------------------------------------------\n");
+    }
+  }
+}
+
+static void test_spg_standardize_cell_BCC_prim(void)
+{
+  double lattice[3][3] = {{-2.01, 2, 2}, {2, -2.02, 2}, {2, 2, -2.03}};
+  double position[][3] = {
+    {0.002, 0, 0},
+  };
+  int types[] = {1};
+  int i, j, k, num_atom = 1, num_primitive_atom;
+  double symprec = 1e-1;
+  
+  /* lattice, position, and types are overwirtten. */
+  printf("*** Example of spg_standardize_cell (BCC primitive) ***:\n");
   printf("------------------------------------------------------\n");
   for (j = 0; j < 2; j++) {
     for (k = 0; k < 2; k++) {
