@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 from spglib import (get_symmetry_dataset, refine_cell, find_primitive,
-                    get_spacegroup_type, get_symmetry)
+                    get_spacegroup_type, get_symmetry, standardize_cell)
 from vasp import read_vasp
 from os import listdir
 
@@ -78,6 +78,71 @@ class TestSpglib(unittest.TestCase):
                 self.assertEqual(dataset['pointgroup'],
                                  spg_type['pointgroup_schoenflies'],
                                  msg=("%s" % fname))
+
+    def test_standardize_cell(self):
+        for fname in self._filenames:
+            spgnum = int(fname.split('-')[1])
+            cell = read_vasp("./data/%s" % fname)
+            if 'distorted' in fname:
+                std_cell = standardize_cell(cell,
+                                            to_primitive=False,
+                                            no_idealize=True,
+                                            symprec=1e-1)
+                dataset = get_symmetry_dataset(std_cell, symprec=1e-1)
+            else:
+                std_cell = standardize_cell(cell,
+                                            to_primitive=False,
+                                            no_idealize=True,
+                                            symprec=1e-5)
+                dataset = get_symmetry_dataset(std_cell, symprec=1e-5)
+            self.assertEqual(dataset['number'], spgnum,
+                             msg=("%s" % fname))
+
+    def test_standardize_cell_from_primitive(self):
+        for fname in self._filenames:
+            spgnum = int(fname.split('-')[1])
+            cell = read_vasp("./data/%s" % fname)
+            if 'distorted' in fname:
+                prim_cell = standardize_cell(cell,
+                                             to_primitive=True,
+                                             no_idealize=True,
+                                             symprec=1e-1)
+                std_cell = standardize_cell(prim_cell,
+                                            to_primitive=False,
+                                            no_idealize=True,
+                                            symprec=1e-1)
+                dataset = get_symmetry_dataset(std_cell, symprec=1e-1)
+            else:
+                prim_cell = standardize_cell(cell,
+                                             to_primitive=True,
+                                             no_idealize=True,
+                                             symprec=1e-5)
+                std_cell = standardize_cell(prim_cell,
+                                            to_primitive=False,
+                                            no_idealize=True,
+                                            symprec=1e-5)
+                dataset = get_symmetry_dataset(std_cell, symprec=1e-5)
+            self.assertEqual(dataset['number'], spgnum,
+                             msg=("%s" % fname))
+
+    def test_standardize_cell_to_primitive(self):
+        for fname in self._filenames:
+            spgnum = int(fname.split('-')[1])
+            cell = read_vasp("./data/%s" % fname)
+            if 'distorted' in fname:
+                prim_cell = standardize_cell(cell,
+                                             to_primitive=True,
+                                             no_idealize=True,
+                                             symprec=1e-1)
+                dataset = get_symmetry_dataset(prim_cell, symprec=1e-1)
+            else:
+                prim_cell = standardize_cell(cell,
+                                             to_primitive=True,
+                                             no_idealize=True,
+                                             symprec=1e-5)
+                dataset = get_symmetry_dataset(prim_cell, symprec=1e-5)
+            self.assertEqual(dataset['number'], spgnum,
+                             msg=("%s" % fname))
 
     def test_refine_cell(self):
         for fname in self._filenames:
