@@ -1208,8 +1208,25 @@ static int set_dataset(SpglibDataset * dataset,
                                            symmetry,
                                            mapping_table,
                                            tolerance)) == NULL) {
+
+    warning_print("spglib: ref_get_Wyckoff_positions failed.");
+    warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
+
     goto err;
   }
+
+  debug_print("Refined cell after ref_get_Wyckoff_positions\n");
+  debug_print(" (line %d, %s).\n", __LINE__, __FILE__);
+  debug_print_matrix_d3(bravais->lattice);
+#ifdef SPGDEBUG
+  for (i = 0; i < bravais->size; i++) {
+    printf("%d: %f %f %f\n",
+           bravais->types[i],
+           bravais->position[i][0],
+           bravais->position[i][1],
+           bravais->position[i][2]);
+  }
+#endif
 
   dataset->n_std_atoms = bravais->size;
   mat_copy_matrix_d3(dataset->std_lattice, bravais->lattice);
@@ -1571,15 +1588,16 @@ static int get_standardized_cell(double lattice[3][3],
                                  const double symprec,
                                  const double angle_tolerance)
 {
-  int num_std_atom;
+  int num_std_atom, num_prim_atom;
   SpglibDataset *dataset;
-  Cell *std_cell, *cell;
+  Cell *std_cell, *cell, *primitive;
   Centering centering;
 
   num_std_atom = 0;
   dataset = NULL;
   std_cell = NULL;
   cell = NULL;
+  primitive = NULL;
 
   if ((dataset = get_dataset(lattice,
                              position,
@@ -1591,27 +1609,43 @@ static int get_standardized_cell(double lattice[3][3],
     goto err;
   }
 
-  if (to_primitive) {
-    if ((centering = get_centering(dataset->hall_number)) == CENTERING_ERROR) {
-      goto err;
-    }
-  } else {
-    centering = PRIMITIVE;
+  if ((centering = get_centering(dataset->hall_number)) == CENTERING_ERROR) {
+    goto err;
   }
 
   if ((cell = cel_alloc_cell(num_atom)) == NULL) {
     spg_free_dataset(dataset);
+    dataset = NULL;
     goto err;
   }
 
   cel_set_cell(cell, lattice, position, types);
-  std_cell = spa_transform_to_primitive(cell,
-                                        dataset->transformation_matrix,
-                                        centering,
-                                        symprec);
+  primitive = spa_transform_to_primitive(cell,
+					 dataset->transformation_matrix,
+					 centering,
+					 symprec);
   spg_free_dataset(dataset);
+  dataset = NULL;
   cel_free_cell(cell);
   cell = NULL;
+
+  if (primitive == NULL) {
+    goto err;
+  }
+
+  if (to_primitive || centering == PRIMITIVE) {
+    set_cell(lattice, position, types, primitive);
+    num_prim_atom = primitive->size;
+    cel_free_cell(primitive);
+    primitive = NULL;
+    return num_prim_atom;
+  }
+
+  std_cell = spa_transform_from_primitive(primitive,
+					  centering,
+					  symprec);
+  cel_free_cell(primitive);
+  primitive = NULL;
 
   if (std_cell == NULL) {
     goto err;
@@ -1619,10 +1653,8 @@ static int get_standardized_cell(double lattice[3][3],
 
   set_cell(lattice, position, types, std_cell);
   num_std_atom = std_cell->size;
-
   cel_free_cell(std_cell);
   std_cell = NULL;
-
   return num_std_atom;
 
  err:

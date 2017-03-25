@@ -77,6 +77,8 @@ Cell * spa_transform_to_primitive(const Cell * cell,
                                   SPGCONST double trans_mat[3][3],
                                   const Centering centering,
                                   const double symprec);
-
+Cell * spa_transform_from_primitive(const Cell * primitive,
+				    const Centering centering,
+				    const double symprec);
 
 #endif
