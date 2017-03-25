@@ -32,6 +32,7 @@
 /* ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE */
 /* POSSIBILITY OF SUCH DAMAGE. */
 
+#include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include "cell.h"
@@ -176,7 +177,7 @@ int cel_is_overlap(const double a[3],
   }
 
   mat_multiply_matrix_vector_d3(v_diff, lattice, v_diff);
-  if (mat_norm_squared_d3(v_diff) < symprec * symprec) {
+  if (sqrt(mat_norm_squared_d3(v_diff)) < symprec) {
     return 1;
   } else {
     return 0;
