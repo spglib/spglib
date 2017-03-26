@@ -132,12 +132,14 @@ static int standardize_cell(double lattice[3][3],
                             double position[][3],
                             int types[],
                             const int num_atom,
+                            const int num_array_size,
                             const double symprec,
                             const double angle_tolerance);
 static int get_standardized_cell(double lattice[3][3],
                                  double position[][3],
                                  int types[],
                                  const int num_atom,
+                                 const int num_array_size,
                                  const int to_primitive,
                                  const double symprec,
                                  const double angle_tolerance);
@@ -702,6 +704,7 @@ int spgat_standardize_cell(double lattice[3][3],
                                    position,
                                    types,
                                    num_atom,
+                                   0,
                                    1,
                                    symprec,
 				   angle_tolerance);
@@ -720,6 +723,7 @@ int spgat_standardize_cell(double lattice[3][3],
                                    types,
                                    num_atom,
                                    0,
+                                   0,
                                    symprec,
 				   angle_tolerance);
     } else {
@@ -727,6 +731,7 @@ int spgat_standardize_cell(double lattice[3][3],
                               position,
                               types,
                               num_atom,
+                              0,
                               symprec,
 			      angle_tolerance);
     }
@@ -775,6 +780,7 @@ int spg_refine_cell(double lattice[3][3],
                           position,
                           types,
                           num_atom,
+                          0,
                           symprec,
 			  -1.0);
 }
@@ -791,6 +797,7 @@ int spgat_refine_cell(double lattice[3][3],
                           position,
                           types,
                           num_atom,
+                          0,
                           symprec,
 			  angle_tolerance);
 }
@@ -1548,6 +1555,7 @@ static int standardize_cell(double lattice[3][3],
                             double position[][3],
                             int types[],
                             const int num_atom,
+                            const int num_array_size,
                             const double symprec,
                             const double angle_tolerance)
 {
@@ -1564,11 +1572,16 @@ static int standardize_cell(double lattice[3][3],
                              0,
                              symprec,
 			     angle_tolerance)) == NULL) {
-    return 0;
+    goto err;
+  }
+
+  if (num_array_size > 0) {
+    if (num_atom < dataset->n_std_atoms) {
+      goto array_size_shortage_err;
+    }
   }
 
   n_std_atoms = dataset->n_std_atoms;
-
   mat_copy_matrix_d3(lattice, dataset->std_lattice);
   for (i = 0; i < dataset->n_std_atoms; i++) {
     types[i] = dataset->std_types[i];
@@ -1578,12 +1591,21 @@ static int standardize_cell(double lattice[3][3],
   spg_free_dataset(dataset);
 
   return n_std_atoms;
+
+err:
+  spglib_error_code = SPGERR_CELL_STANDARDIZATION_FAILED;
+  return 0;
+
+array_size_shortage_err:
+  spglib_error_code = SPGERR_ARRAY_SIZE_SHORTAGE;
+  return 0;
 }
 
 static int get_standardized_cell(double lattice[3][3],
                                  double position[][3],
                                  int types[],
                                  const int num_atom,
+                                 const int num_array_size,
                                  const int to_primitive,
                                  const double symprec,
                                  const double angle_tolerance)
@@ -1620,10 +1642,14 @@ static int get_standardized_cell(double lattice[3][3],
   }
 
   cel_set_cell(cell, lattice, position, types);
-  primitive = spa_transform_to_primitive(cell,
-					 dataset->transformation_matrix,
-					 centering,
-					 symprec);
+  if ((primitive = spa_transform_to_primitive(cell,
+                                              dataset->transformation_matrix,
+                                              centering,
+                                              symprec)) == NULL) {
+    warning_print("spglib: spa_transform_to_primitive failed.");
+    warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
+  }
+
   spg_free_dataset(dataset);
   dataset = NULL;
   cel_free_cell(cell);
@@ -1641,9 +1667,11 @@ static int get_standardized_cell(double lattice[3][3],
     return num_prim_atom;
   }
 
-  std_cell = spa_transform_from_primitive(primitive,
-					  centering,
-					  symprec);
+  if ((std_cell = spa_transform_from_primitive(primitive, centering, symprec))
+      == NULL) {
+    warning_print("spglib: spa_transform_from_primitive failed.");
+    warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
+  }
   cel_free_cell(primitive);
   primitive = NULL;
 
@@ -1651,14 +1679,26 @@ static int get_standardized_cell(double lattice[3][3],
     goto err;
   }
 
-  set_cell(lattice, position, types, std_cell);
+  if (num_array_size > 0) {
+    if (num_array_size < std_cell->size) {
+      cel_free_cell(std_cell);
+      std_cell = NULL;
+      goto array_size_shortage_err;
+    }
+  }
+
   num_std_atom = std_cell->size;
+  set_cell(lattice, position, types, std_cell);
   cel_free_cell(std_cell);
   std_cell = NULL;
   return num_std_atom;
 
- err:
+err:
   spglib_error_code = SPGERR_CELL_STANDARDIZATION_FAILED;
+  return 0;
+
+array_size_shortage_err:
+  spglib_error_code = SPGERR_ARRAY_SIZE_SHORTAGE;
   return 0;
 }
 
