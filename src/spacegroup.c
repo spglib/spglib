@@ -437,7 +437,11 @@ Cell * spa_transform_to_primitive(const Cell * cell,
   }
 
   mat_multiply_matrix_d3(prim_lat, cell->lattice, tmat);
-  primitive = cel_trim_cell(mapping_table, prim_lat, cell, symprec);
+  if ((primitive = cel_trim_cell(mapping_table, prim_lat, cell, symprec))
+      == NULL) {
+    warning_print("spglib: cel_trim_cell failed.");
+    warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
+  }
 
   free(mapping_table);
   mapping_table = NULL;
