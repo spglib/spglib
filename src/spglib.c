@@ -644,7 +644,7 @@ SpglibSpacegroupType spg_get_spacegroup_type(const int hall_number)
   spglibtype.arithmetic_crystal_class_number = 0;
   strcpy(spglibtype.arithmetic_crystal_class_symbol, "");
 
-  if (0 < hall_number || hall_number < 531) {
+  if (0 < hall_number && hall_number < 531) {
     spgtype = spgdb_get_spacegroup_type(hall_number);
     spglibtype.number = spgtype.number;
     strcpy(spglibtype.schoenflies, spgtype.schoenflies);
