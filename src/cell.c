@@ -272,11 +272,13 @@ static Cell * trim_cell(int * mapping_table,
 
   /* Check if cell->size is dividable by ratio */
   if ((cell->size / ratio) * ratio != cell->size) {
-    return NULL;
+    warning_print("spglib: atom number ratio is inconsistent.\n");
+    warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
+    goto err;
   }
 
   if ((trimmed_cell = cel_alloc_cell(cell->size / ratio)) == NULL) {
-    return NULL;
+    goto err;
   }
 
   if ((position = translate_atoms_in_trimmed_lattice(cell,
