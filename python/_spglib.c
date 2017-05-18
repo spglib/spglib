@@ -215,7 +215,7 @@ static PyObject * py_get_dataset(PyObject *self, PyObject *args)
   PyArrayObject* position;
   PyArrayObject* atom_type;
   PyObject *array, *vec, *mat, *rot, *trans, *wyckoffs, *equiv_atoms;
-  PyObject *std_lattice, *std_types, *std_positions;
+  PyObject *mapping_to_primitive, *std_lattice, *std_types, *std_positions;
 
   int i, j, k, n;
   double (*lat)[3];
@@ -248,7 +248,7 @@ static PyObject * py_get_dataset(PyObject *self, PyObject *args)
     Py_RETURN_NONE;
   }
 
-  array = PyList_New(15);
+  array = PyList_New(16);
   n = 0;
 
   /* Space group number, international symbol, hall symbol */
@@ -314,13 +314,20 @@ static PyObject * py_get_dataset(PyObject *self, PyObject *args)
   /* Wyckoff letters, Equivalent atoms */
   wyckoffs = PyList_New(dataset->n_atoms);
   equiv_atoms = PyList_New(dataset->n_atoms);
+  mapping_to_primitive = PyList_New(dataset->n_atoms);
   for (i = 0; i < dataset->n_atoms; i++) {
-    PyList_SetItem(wyckoffs, i, PyLong_FromLong((long) dataset->wyckoffs[i]));
-    PyList_SetItem(equiv_atoms, i, PyLong_FromLong((long) dataset->equivalent_atoms[i]));
+    PyList_SetItem(wyckoffs, i,
+                   PyLong_FromLong((long) dataset->wyckoffs[i]));
+    PyList_SetItem(equiv_atoms, i,
+                   PyLong_FromLong((long) dataset->equivalent_atoms[i]));
+    PyList_SetItem(mapping_to_primitive, i,
+                   PyLong_FromLong((long) dataset->mapping_to_primitive[i]));
   }
   PyList_SetItem(array, n, wyckoffs);
   n++;
   PyList_SetItem(array, n, equiv_atoms);
+  n++;
+  PyList_SetItem(array, n, mapping_to_primitive);
   n++;
 
   std_lattice = PyList_New(3);

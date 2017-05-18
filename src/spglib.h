@@ -117,6 +117,7 @@ typedef struct {
   int n_atoms;
   int *wyckoffs;
   int *equivalent_atoms;
+  int *mapping_to_primitive;
   int n_std_atoms;
   double std_lattice[3][3];
   int *std_types;
