@@ -151,6 +151,10 @@ def get_symmetry_dataset(cell,
                 [(r,t) for r, t in zip(rotations, translations)]
         wyckoffs:
             List of characters: Wyckoff letters
+        equivalent_atoms:
+            Symmetrically equivalent atoms
+        mapping_to_primitive:
+            Atom index mapping to corresponding atom index in primivie cell
         std_lattice, std_positions, std_types:
             3x3 float matrix, Nx3 float vectors, list of int:
                 Standardized unit cell
@@ -182,6 +186,7 @@ def get_symmetry_dataset(cell,
             'translations',
             'wyckoffs',
             'equivalent_atoms',
+            'mapping_to_primitive',
             'std_lattice',
             'std_types',
             'std_positions',
@@ -205,6 +210,8 @@ def get_symmetry_dataset(cell,
     dataset['wyckoffs'] = [letters[x] for x in dataset['wyckoffs']]
     dataset['equivalent_atoms'] = np.array(dataset['equivalent_atoms'],
                                            dtype='intc')
+    dataset['mapping_to_primitive'] = np.array(dataset['mapping_to_primitive'],
+                                               dtype='intc')
     dataset['std_lattice'] = np.array(np.transpose(dataset['std_lattice']),
                                       dtype='double', order='C')
     dataset['std_types'] = np.array(dataset['std_types'], dtype='intc')
