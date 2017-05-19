@@ -392,16 +392,15 @@ Spacegroup spa_search_spacegroup_with_symmetry(const Symmetry *symmetry,
 }
 
 /* Return NULL if failed */
-Cell * spa_transform_to_primitive(const Cell * cell,
+Cell * spa_transform_to_primitive(int * mapping_table,
+                                  const Cell * cell,
                                   SPGCONST double trans_mat[3][3],
                                   const Centering centering,
                                   const double symprec)
 {
-  int * mapping_table;
   double tmat[3][3], tmat_inv[3][3], prim_lat[3][3];
   Cell * primitive;
 
-  mapping_table = NULL;
   primitive = NULL;
 
   if (!mat_inverse_matrix_d3(tmat_inv, trans_mat, symprec)) {
@@ -431,20 +430,12 @@ Cell * spa_transform_to_primitive(const Cell * cell,
     goto err;
   }
 
-  if ((mapping_table = (int*) malloc(sizeof(int) * cell->size)) == NULL) {
-    warning_print("spglib: Memory could not be allocated ");
-    goto err;
-  }
-
   mat_multiply_matrix_d3(prim_lat, cell->lattice, tmat);
   if ((primitive = cel_trim_cell(mapping_table, prim_lat, cell, symprec))
       == NULL) {
     warning_print("spglib: cel_trim_cell failed.");
     warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
   }
-
-  free(mapping_table);
-  mapping_table = NULL;
 
   return primitive;
 
