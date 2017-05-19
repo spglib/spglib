@@ -154,10 +154,12 @@ def get_symmetry_dataset(cell,
         equivalent_atoms:
             Symmetrically equivalent atoms
         mapping_to_primitive:
-            Atom index mapping to corresponding atom index in primivie cell
+            Original cell atom index mapping to primivie cell atom index
         std_lattice, std_positions, std_types:
             3x3 float matrix, Nx3 float vectors, list of int:
                 Standardized unit cell
+        std_mapping_to_primitive:
+            Std-cell atom index mapping to primivie cell atom index
         pointgroup:
             str: Pointgroup symbol
 
@@ -190,6 +192,7 @@ def get_symmetry_dataset(cell,
             'std_lattice',
             'std_types',
             'std_positions',
+            'std_mapping_to_primitive',
             # 'pointgroup_number',
             'pointgroup')
     dataset = {}
@@ -217,6 +220,8 @@ def get_symmetry_dataset(cell,
     dataset['std_types'] = np.array(dataset['std_types'], dtype='intc')
     dataset['std_positions'] = np.array(dataset['std_positions'],
                                         dtype='double', order='C')
+    dataset['std_mapping_to_primitive'] = np.array(
+        dataset['std_mapping_to_primitive'], dtype='intc')
     dataset['pointgroup'] = dataset['pointgroup'].strip()
 
     _set_error_message()

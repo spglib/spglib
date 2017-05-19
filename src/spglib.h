@@ -122,6 +122,7 @@ typedef struct {
   double std_lattice[3][3];
   int *std_types;
   double (*std_positions)[3];
+  int *std_mapping_to_primitive;
   /* int pointgroup_number; */
   char pointgroup_symbol[6];
 } SpglibDataset;
