@@ -448,7 +448,7 @@ Cell * spa_transform_from_primitive(const Cell * primitive,
 				    const Centering centering,
 				    const double symprec)
 {
-  int multi, i, j, k, count;
+  int multi, i, j, k, num_atom;
   int *mapping_table;
   double tmat[3][3], inv_tmat[3][3], shift[3][3];
   Cell *std_cell, *trimmed_cell;
@@ -500,23 +500,24 @@ Cell * spa_transform_from_primitive(const Cell * primitive,
 
   mat_multiply_matrix_d3(std_cell->lattice, primitive->lattice, inv_tmat);
 
-  count = 0;
+  num_atom = 0;
   for (i = 0; i < primitive->size; i++) {
-    mat_multiply_matrix_vector_d3(std_cell->position[count],
+    mat_multiply_matrix_vector_d3(std_cell->position[num_atom],
 				  tmat,
 				  primitive->position[i]);
-    std_cell->types[count] = primitive->types[i];
-    for (j = 0; j < multi - 1; j++) {
-      mat_copy_vector_d3(std_cell->position[count + j + 1],
-			 std_cell->position[count]);
-    }
-    count++;
-    for (j = 0; j < multi - 1; j++) {
-      std_cell->types[count] = primitive->types[i];
+    std_cell->types[num_atom] = primitive->types[i];
+    num_atom++;
+  }
+
+  for (i = 0; i < multi - 1; i++) {
+    for (j = 0; j < primitive->size; j++) {
+      mat_copy_vector_d3(std_cell->position[num_atom],
+			 std_cell->position[j]);
       for (k = 0; k < 3; k++) {
-	std_cell->position[count][k] += shift[j][k];
+	std_cell->position[num_atom][k] += shift[i][k];
       }
-      count++;
+      std_cell->types[num_atom] = std_cell->types[j];
+      num_atom++;
     }
   }
 

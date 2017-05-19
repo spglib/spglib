@@ -323,6 +323,8 @@ void spg_free_dataset(SpglibDataset *dataset)
     dataset->wyckoffs = NULL;
     free(dataset->equivalent_atoms);
     dataset->equivalent_atoms = NULL;
+    free(dataset->mapping_to_primitive);
+    dataset->mapping_to_primitive = NULL;
     dataset->n_atoms = 0;
   }
 
@@ -331,6 +333,8 @@ void spg_free_dataset(SpglibDataset *dataset)
     dataset->std_positions = NULL;
     free(dataset->std_types);
     dataset->std_types = NULL;
+    free(dataset->std_mapping_to_primitive);
+    dataset->std_mapping_to_primitive = NULL;
     dataset->n_std_atoms = 0;
   }
 
@@ -1126,6 +1130,7 @@ static SpglibDataset * init_dataset(void)
   dataset->n_std_atoms = 0;
   dataset->std_positions = NULL;
   dataset->std_types = NULL;
+  dataset->std_mapping_to_primitive = NULL;
   /* dataset->pointgroup_number = 0; */
   strcpy(dataset->pointgroup_symbol, "");
 
@@ -1198,15 +1203,13 @@ static int set_dataset(SpglibDataset * dataset,
   }
 
   if ((dataset->equivalent_atoms =
-       (int*) malloc(sizeof(int) * dataset->n_atoms))
-      == NULL) {
+       (int*) malloc(sizeof(int) * dataset->n_atoms)) == NULL) {
     warning_print("spglib: Memory could not be allocated.");
     goto err;
   }
 
   if ((dataset->mapping_to_primitive =
-       (int*) malloc(sizeof(int) * dataset->n_atoms))
-      == NULL) {
+       (int*) malloc(sizeof(int) * dataset->n_atoms)) == NULL) {
     warning_print("spglib: Memory could not be allocated.");
     goto err;
   }
@@ -1259,6 +1262,12 @@ static int set_dataset(SpglibDataset * dataset,
     goto err;
   }
 
+  if ((dataset->std_mapping_to_primitive =
+       (int*) malloc(sizeof(int) * dataset->n_std_atoms)) == NULL) {
+    warning_print("spglib: Memory could not be allocated.");
+    goto err;
+  }
+
   for (i = 0; i < dataset->n_std_atoms; i++) {
     mat_copy_vector_d3(dataset->std_positions[i], bravais->position[i]);
     dataset->std_types[i] = bravais->types[i];
@@ -1279,6 +1288,10 @@ static int set_dataset(SpglibDataset * dataset,
   if (dataset->std_positions != NULL) {
     free(dataset->std_positions);
     dataset->std_positions = NULL;
+  }
+  if (dataset->std_mapping_to_primitive != NULL) {
+    free(dataset->std_mapping_to_primitive);
+    dataset->std_mapping_to_primitive = NULL;
   }
   if (bravais != NULL) {
     cel_free_cell(bravais);
