@@ -1238,6 +1238,18 @@ static int set_dataset(SpglibDataset * dataset,
     goto err;
   }
 
+
+  for (i = 0; i < primitive->cell->size; i++) {
+    /* This is an assertion. */
+    if (std_mapping_to_primitive[i] != i) {
+      warning_print("spglib: ref_get_Wyckoff_positions failed.");
+      warning_print("Unexpected atom index mapping of bravais (%d != %d).\n",
+                    std_mapping_to_primitive[i], i);
+      warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
+      goto err;
+    }
+  }
+
   debug_print("Refined cell after ref_get_Wyckoff_positions\n");
   debug_print(" (line %d, %s).\n", __LINE__, __FILE__);
   debug_print_matrix_d3(bravais->lattice);
@@ -1304,6 +1316,10 @@ static int set_dataset(SpglibDataset * dataset,
   if (dataset->std_mapping_to_primitive != NULL) {
     free(dataset->std_mapping_to_primitive);
     dataset->std_mapping_to_primitive = NULL;
+  }
+  if (std_mapping_to_primitive != NULL) {
+    free(std_mapping_to_primitive);
+    std_mapping_to_primitive = NULL;
   }
   if (bravais != NULL) {
     cel_free_cell(bravais);
@@ -1529,7 +1545,7 @@ static int standardize_primitive(double lattice[3][3],
                                  const double symprec,
                                  const double angle_tolerance)
 {
-  int num_prim_atom;
+  int i, num_prim_atom;
   int *mapping_table;
   Centering centering;
   SpglibDataset *dataset;
@@ -1587,6 +1603,22 @@ static int standardize_primitive(double lattice[3][3],
                                          identity,
                                          centering,
                                          symprec);
+
+  for (i = 0; i < primitive->size; i++) {
+    /* This is an assertion. */
+    if (mapping_table[i] != i) {
+      warning_print("spglib: spa_transform_to_primitive failed.");
+      warning_print("Unexpected atom index mapping to primitive (%d != %d).\n",
+                    mapping_table[i], i);
+      warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
+      free(mapping_table);
+      mapping_table = NULL;
+      cel_free_cell(bravais);
+      bravais = NULL;
+      goto err;
+    }
+  }
+
   free(mapping_table);
   mapping_table = NULL;
   cel_free_cell(bravais);
@@ -1669,7 +1701,7 @@ static int get_standardized_cell(double lattice[3][3],
                                  const double symprec,
                                  const double angle_tolerance)
 {
-  int num_std_atom, num_prim_atom;
+  int i, num_std_atom, num_prim_atom;
   int *mapping_table;
   SpglibDataset *dataset;
   Cell *std_cell, *cell, *primitive;
@@ -1720,6 +1752,23 @@ static int get_standardized_cell(double lattice[3][3],
                                               symprec)) == NULL) {
     warning_print("spglib: spa_transform_to_primitive failed.");
     warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
+  }
+
+  for (i = 0; i < cell->size; i++) {
+    /* This is an assertion. */
+    if (mapping_table[i] != dataset->mapping_to_primitive[i]) {
+      warning_print("spglib: spa_transform_to_primitive failed.");
+      warning_print("Unexpected atom index mapping to primitive (%d != %d).\n",
+                    mapping_table[i], dataset->mapping_to_primitive[i]);
+      warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
+      free(mapping_table);
+      mapping_table = NULL;
+      cel_free_cell(cell);
+      cell = NULL;
+      spg_free_dataset(dataset);
+      dataset = NULL;
+      goto err;
+    }
   }
 
   free(mapping_table);
