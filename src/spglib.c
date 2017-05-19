@@ -1145,11 +1145,13 @@ static int set_dataset(SpglibDataset * dataset,
                        const double tolerance)
 {
   int i;
+  int *std_mapping_to_primitive;
   double inv_lat[3][3];
   Cell *bravais;
   Symmetry *symmetry;
   Pointgroup pointgroup;
 
+  std_mapping_to_primitive = NULL;
   bravais = NULL;
   symmetry = NULL;
 
@@ -1214,8 +1216,15 @@ static int set_dataset(SpglibDataset * dataset,
     goto err;
   }
 
+  if ((std_mapping_to_primitive =
+       (int*) malloc(sizeof(int) * primitive->cell->size * 4)) == NULL) {
+    warning_print("spglib: Memory could not be allocated.");
+    goto err;
+  }
+
   if ((bravais = ref_get_Wyckoff_positions(dataset->wyckoffs,
                                            dataset->equivalent_atoms,
+                                           std_mapping_to_primitive,
                                            primitive->cell,
                                            cell,
                                            spacegroup,
@@ -1271,8 +1280,11 @@ static int set_dataset(SpglibDataset * dataset,
   for (i = 0; i < dataset->n_std_atoms; i++) {
     mat_copy_vector_d3(dataset->std_positions[i], bravais->position[i]);
     dataset->std_types[i] = bravais->types[i];
+    dataset->std_mapping_to_primitive[i] = std_mapping_to_primitive[i];
   }
 
+  free(std_mapping_to_primitive);
+  std_mapping_to_primitive = NULL;
   cel_free_cell(bravais);
   bravais = NULL;
   sym_free_symmetry(symmetry);
