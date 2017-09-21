@@ -4,16 +4,16 @@ cache: apt
 
 matrix:
   include:
-  - python: '2.7'
-    sudo: required
+  - sudo: required
     services:
     - docker
+    python: '2.7'
     env: DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
          DOCKER_DEPLOY=true
-  - python: '2.7'
-    sudo: required
+  - sudo: required
     services:
     - docker
+    python: '2.7'
     env: DOCKER_IMAGE=quay.io/pypa/manylinux1_i686
          PRE_CMD=linux32
          DOCKER_DEPLOY=true
