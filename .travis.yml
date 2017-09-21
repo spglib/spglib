@@ -25,6 +25,7 @@ matrix:
 
 before_install:
 - if [[ "$DOCKER_DEPLOY" == "false" ]]; then
+    export TRAVIS_PYTHON_VERSION=`python --version |& awk '{print $2}'|awk -F'.' '{print $1"."$2}'`
     bash travis/before_install.sh;
     export PATH="$HOME/miniconda/bin:$PATH";
   else
