@@ -33,7 +33,7 @@ before_install:
   - conda update --yes conda
 
 install:
-  - conda install --yes python=$TRAVIS_PYTHON_VERSION pip wheel numpy
+  - conda install --yes python=$TRAVIS_PYTHON_VERSION pip numpy
   - aclocal
   - autoheader
   - libtoolize
