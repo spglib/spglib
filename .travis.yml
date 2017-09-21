@@ -21,7 +21,7 @@ before_install:
   - conda update --yes conda
 
 install:
-  - conda install --yes python=$TRAVIS_PYTHON_VERSION pip numpy
+  - conda install --yes python=$TRAVIS_PYTHON_VERSION pip wheel numpy
   - aclocal
   - autoheader
   - libtoolize
@@ -47,7 +47,7 @@ script:
 deploy:
   # testing pypi
   - provider: pypi
-    server: https://testpypi.python.org/pypi
+    server: https://test.pypi.org/legacy/
     skip_cleanup: true
     distributions: "sdist bdist_wheel"
     user: atztogo
