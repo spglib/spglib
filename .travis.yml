@@ -43,7 +43,7 @@ deploy:
     - provider: pypi
       server: https://testpypi.python.org/pypi
       skip_cleanup: true
-      distributions: sdist
+      distributions: "sdist bdist_wheel"
       user: atztogo
       password:
           secure: "uqsoPpQNbie297e1iDPOHUVqM1HPHeZjIuAutWvVjZF6TpaksDhPNkK9sIE9Wh4sAVLi1wUCtjlMYjC7ElS94tsHwj6+tyxvQtrDmGUWRdf6BjFFZ6CdKBxMJwBQTryCScQGxR81NVlKAzKgZkdrhAxr93kDWmG0thYQrDQO8ihgfxgZUDnZnwarZCiUxwCsT/5VyUv6aRL+epXOUdlPZL2ypiRPlu+9zgwP348OCseh8EtlSLp0uv+K6qOMDVfjQeaEVl0CQIfbkIFMIxPB7xxBNn8pG1aMFJOks6QKo4dq0QhW5eCacPVy/WIQyZ96DNub+zcpFboCIIyWdLO7VFMhyp4PnsqbiTpHLPmImFLWuzaTvCc58Q/QRGRJ3+68kByX/eBWoWgBJED9uX+fSCumfUak+Q9UcVVy/+uh8DJmKlCEWBevk5mVb9evgmLDvpo4q9Vk2U3xv4Cj511PH9JJzcVa3YgznUzLbL93NbSBzlO1/sWYjVp32mPQNekQzOlXCMhqBKkqCIk0Y0INtUNx7v7cA13iEM+QudQQ/sJvCRScNSztYa++W274wo5QxOQeZf5RS8sXzu9bvNvJRpFWsAkyebGVmab597hGgjdVtRMiuaq72+sy45ZCDSSSx0rlEbj6QhYNaSjEqutRBoddTHp7JY1ZT6PKGa/iWPA="
