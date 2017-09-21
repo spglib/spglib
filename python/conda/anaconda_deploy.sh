@@ -5,7 +5,7 @@ export TKN=$2
 export GIT_BRANCH=$3
 
 conda install conda-build anaconda-client --yes
-conda build conda --no-anaconda-upload
+conda build conda --no-anaconda-upload --no-remove-work-dir
 TRG=`conda build conda --output |sed -e 's/--/-*-/'`
 echo "Uploading: $TRG"
 anaconda --token $TKN upload --label $LBL $TRG

@@ -3,81 +3,87 @@ sudo: false
 dist: trusty
 
 python:
-- '2.7'
-- '3.5'
+  - '2.7'
+  - '3.5'
+  - '3.6'
 
 cache: apt
 
 before_install:
-    - wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
-    - bash miniconda.sh -b -p $HOME/miniconda
-    - export PATH="$HOME/miniconda/bin:$PATH"
-    - conda update --yes conda
+  - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
+      wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh;
+    else
+      wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
+    fi
+  - echo $TRAVIS_PYTHON_VERSION
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - export PATH="$HOME/miniconda/bin:$PATH"
+  - conda update --yes conda
 
 install:
-    - conda install --yes python=$TRAVIS_PYTHON_VERSION pip numpy anaconda-client anaconda-build
-    - aclocal
-    - autoheader
-    - libtoolize
-    - touch INSTALL NEWS README AUTHORS
-    - automake -acf
-    - autoconf
-    - ./configure
-    - make check # test in C
-    - cd python
-    - pwd
-    - git branch -v
-    - git describe --tags --dirty
-    - ./get_nanoversion.sh
-    - cat __nanoversion__.txt
-    - ln -s ../src .
-    - python setup.py install 
+  - conda install --yes python=$TRAVIS_PYTHON_VERSION pip numpy anaconda-client anaconda-build
+  - aclocal
+  - autoheader
+  - libtoolize
+  - touch INSTALL NEWS README AUTHORS
+  - automake -acf
+  - autoconf
+  - ./configure
+  - make check # test in C
+  - cd python
+  - pwd
+  - git branch -v
+  - git describe --tags --dirty
+  - ./get_nanoversion.sh
+  - cat __nanoversion__.txt
+  - ln -s ../src .
+  - python setup.py install 
 
 script:
-    - cd test
-    - python -m unittest discover -b
-    - cd ..
+  - cd test
+  - python -m unittest discover -b
+  - cd ..
 
 deploy:
-    # testing pypi
-    - provider: pypi
-      server: https://testpypi.python.org/pypi
-      skip_cleanup: true
-      distributions: "sdist bdist_wheel"
-      user: atztogo
-      password:
-          secure: "uqsoPpQNbie297e1iDPOHUVqM1HPHeZjIuAutWvVjZF6TpaksDhPNkK9sIE9Wh4sAVLi1wUCtjlMYjC7ElS94tsHwj6+tyxvQtrDmGUWRdf6BjFFZ6CdKBxMJwBQTryCScQGxR81NVlKAzKgZkdrhAxr93kDWmG0thYQrDQO8ihgfxgZUDnZnwarZCiUxwCsT/5VyUv6aRL+epXOUdlPZL2ypiRPlu+9zgwP348OCseh8EtlSLp0uv+K6qOMDVfjQeaEVl0CQIfbkIFMIxPB7xxBNn8pG1aMFJOks6QKo4dq0QhW5eCacPVy/WIQyZ96DNub+zcpFboCIIyWdLO7VFMhyp4PnsqbiTpHLPmImFLWuzaTvCc58Q/QRGRJ3+68kByX/eBWoWgBJED9uX+fSCumfUak+Q9UcVVy/+uh8DJmKlCEWBevk5mVb9evgmLDvpo4q9Vk2U3xv4Cj511PH9JJzcVa3YgznUzLbL93NbSBzlO1/sWYjVp32mPQNekQzOlXCMhqBKkqCIk0Y0INtUNx7v7cA13iEM+QudQQ/sJvCRScNSztYa++W274wo5QxOQeZf5RS8sXzu9bvNvJRpFWsAkyebGVmab597hGgjdVtRMiuaq72+sy45ZCDSSSx0rlEbj6QhYNaSjEqutRBoddTHp7JY1ZT6PKGa/iWPA="
-      on:
-        repo: atztogo/spglib
-        branch: rc
-        tags: false
+  # testing pypi
+  - provider: pypi
+    server: https://testpypi.python.org/pypi
+    skip_cleanup: true
+    distributions: "sdist bdist_wheel"
+    user: atztogo
+    password:
+      secure: "uqsoPpQNbie297e1iDPOHUVqM1HPHeZjIuAutWvVjZF6TpaksDhPNkK9sIE9Wh4sAVLi1wUCtjlMYjC7ElS94tsHwj6+tyxvQtrDmGUWRdf6BjFFZ6CdKBxMJwBQTryCScQGxR81NVlKAzKgZkdrhAxr93kDWmG0thYQrDQO8ihgfxgZUDnZnwarZCiUxwCsT/5VyUv6aRL+epXOUdlPZL2ypiRPlu+9zgwP348OCseh8EtlSLp0uv+K6qOMDVfjQeaEVl0CQIfbkIFMIxPB7xxBNn8pG1aMFJOks6QKo4dq0QhW5eCacPVy/WIQyZ96DNub+zcpFboCIIyWdLO7VFMhyp4PnsqbiTpHLPmImFLWuzaTvCc58Q/QRGRJ3+68kByX/eBWoWgBJED9uX+fSCumfUak+Q9UcVVy/+uh8DJmKlCEWBevk5mVb9evgmLDvpo4q9Vk2U3xv4Cj511PH9JJzcVa3YgznUzLbL93NbSBzlO1/sWYjVp32mPQNekQzOlXCMhqBKkqCIk0Y0INtUNx7v7cA13iEM+QudQQ/sJvCRScNSztYa++W274wo5QxOQeZf5RS8sXzu9bvNvJRpFWsAkyebGVmab597hGgjdVtRMiuaq72+sy45ZCDSSSx0rlEbj6QhYNaSjEqutRBoddTHp7JY1ZT6PKGa/iWPA="
+    on:
+      repo: atztogo/spglib
+      branch: rc
+      tags: false
     
-    # testing conda
-    - provider: script
-      skip_cleanup: true
-      script: conda/anaconda_deploy.sh rc $ANACONDA_TOKEN $TRAVIS_BRANCH
-      on:
-        repo: atztogo/spglib
-        branch: rc
-        tags: false
+  # testing conda
+  - provider: script
+    skip_cleanup: true
+    script: conda/anaconda_deploy.sh rc $ANACONDA_TOKEN $TRAVIS_BRANCH
+    on:
+      repo: atztogo/spglib
+      branch: rc
+      tags: false
 
-    # production pypi
-    - provider: pypi
-      skip_cleanup: true
-      distributions: sdist
-      user: atztogo
-      password:
-          secure: "sjUxbFSrhflB/NqMwcJCmalmQRX1EN4zgsK2YyY93JEk16aep+5pRyV87Q3Q54L19PGOkTqOrGyvUhwxTHUweo87F2DM1gd695bg0rROcquvhwWxlTuhMhMoUGSxDljgKbEeTvLikFd91JX2Rr/deIZLog/c3z/m55MbgHqGoyR5p1twxqLoUcJHznM8Mnn/KTauVHVQKG/6sVQr/h9AhRB8qI5VRCcrnDqAWoePqkgibWjEKchx/lmgW4TiB15IIvmIVgMxNwUa2q91Lqn3AhZDOcB/TST34yZCx8j1TpLJgAtB8+aRnTdmtfhnPWN8gebVuHJni+EQYsq4sIOiRzsU5qHkCzmW2x6I/kcTTYWYW4KybKorWQcypotTkyDoSfFuhZ93kyMy6QXBdV0/3xskBAbA++Mc93u6KaNMDnBGLb9PoeIT6R6YRNnwDAYBSlJ8lMZoNwVKrPhxI11r15eAK/4NamUHSLORBJWYKw1Z1Ko5wjkMXTSC4y7rC5UD+wrgZCfhB7WBLvatGBA3oD83dmEzMl3zA3wyaegDqHbEzKIFCGX5/eKrVN91hQrvlFkVYwf7YHAcNTvplZi0EGotfuZVsyhHiYSXRrMdF16g/NyZwunMEydafsbbwQatLxMhCMufX+5B1bk8VsmM0QDI9EV3rdvC7vgpnO5KPpY="
-      on:
-        repo: atztogo/spglib
-        branch: master
-        tags: false
+  # production pypi
+  - provider: pypi
+    skip_cleanup: true
+    distributions: sdist
+    user: atztogo
+    password:
+        secure: "sjUxbFSrhflB/NqMwcJCmalmQRX1EN4zgsK2YyY93JEk16aep+5pRyV87Q3Q54L19PGOkTqOrGyvUhwxTHUweo87F2DM1gd695bg0rROcquvhwWxlTuhMhMoUGSxDljgKbEeTvLikFd91JX2Rr/deIZLog/c3z/m55MbgHqGoyR5p1twxqLoUcJHznM8Mnn/KTauVHVQKG/6sVQr/h9AhRB8qI5VRCcrnDqAWoePqkgibWjEKchx/lmgW4TiB15IIvmIVgMxNwUa2q91Lqn3AhZDOcB/TST34yZCx8j1TpLJgAtB8+aRnTdmtfhnPWN8gebVuHJni+EQYsq4sIOiRzsU5qHkCzmW2x6I/kcTTYWYW4KybKorWQcypotTkyDoSfFuhZ93kyMy6QXBdV0/3xskBAbA++Mc93u6KaNMDnBGLb9PoeIT6R6YRNnwDAYBSlJ8lMZoNwVKrPhxI11r15eAK/4NamUHSLORBJWYKw1Z1Ko5wjkMXTSC4y7rC5UD+wrgZCfhB7WBLvatGBA3oD83dmEzMl3zA3wyaegDqHbEzKIFCGX5/eKrVN91hQrvlFkVYwf7YHAcNTvplZi0EGotfuZVsyhHiYSXRrMdF16g/NyZwunMEydafsbbwQatLxMhCMufX+5B1bk8VsmM0QDI9EV3rdvC7vgpnO5KPpY="
+    on:
+      repo: atztogo/spglib
+      branch: master
+      tags: false
 
-    # production anaconda
-    - provider: script
-      skip_cleanup: true
-      script: conda/anaconda_deploy.sh main $ANACONDA_TOKEN $TRAVIS_BRANCH
-      on:
-        repo: atztogo/spglib
-        branch: master
-        tags: false
+  # production anaconda
+  - provider: script
+    skip_cleanup: true
+    script: conda/anaconda_deploy.sh main $ANACONDA_TOKEN $TRAVIS_BRANCH
+    on:
+      repo: atztogo/spglib
+      branch: master
+      tags: false
