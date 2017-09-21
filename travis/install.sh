@@ -1,7 +1,6 @@
 #!/bin/bash
 set -e -x
 
-export PATH="$HOME/miniconda/bin:$PATH"
 conda install --yes python=$TRAVIS_PYTHON_VERSION pip numpy
 aclocal
 autoheader

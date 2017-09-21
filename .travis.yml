@@ -28,6 +28,7 @@ matrix:
 
 before_install:
   - bash travis/before_install.sh
+  - export PATH="$HOME/miniconda/bin:$PATH"
 
 install:
   - if [[ "$DOCKER_DEPLOY" == "true" ]]; then
