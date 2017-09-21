@@ -16,16 +16,18 @@ matrix:
   - python: '2.7'
     sudo: false
     env: DOCKER_DEPLOY=false
+         TRAVIS_PYTHON_VERSION=2.7'
   - python: '3.5'
     sudo: false
     env: DOCKER_DEPLOY=false
+         TRAVIS_PYTHON_VERSION=3.5'
   - python: '3.6'
     sudo: false
     env: DOCKER_DEPLOY=false
+         TRAVIS_PYTHON_VERSION=3.6'
 
 before_install:
 - if [[ "$DOCKER_DEPLOY" == "false" ]]; then
-    export TRAVIS_PYTHON_VERSION=`python --version |& awk '{print $2}'|awk -F'.' '{print $1"."$2}'`;
     bash travis/before_install.sh;
     export PATH="$HOME/miniconda/bin:$PATH";
   else
