@@ -1,6 +1,6 @@
-language: python
-dist: trusty
 sudo: required
+language: python
+#dist: trusty
 cache: apt
 
 matrix:
