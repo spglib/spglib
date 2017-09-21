@@ -6,15 +6,6 @@ cache: apt
 matrix:
   include:
   - python: '2.7'
-    sudo: false
-    env: DOCKER_DEPLOY=false
-  - python: '3.5'
-    sudo: false
-    env: DOCKER_DEPLOY=false
-  - python: '3.6'
-    sudo: false
-    env: DOCKER_DEPLOY=false
-  - python: '2.7'
     sudo: required
     services:
     - docker
@@ -27,6 +18,15 @@ matrix:
     env: DOCKER_IMAGE=quay.io/pypa/manylinux1_i686
          PRE_CMD=linux32
          DOCKER_DEPLOY=true
+  - python: '2.7'
+    sudo: false
+    env: DOCKER_DEPLOY=false
+  - python: '3.5'
+    sudo: false
+    env: DOCKER_DEPLOY=false
+  - python: '3.6'
+    sudo: false
+    env: DOCKER_DEPLOY=false
 
 before_install:
 - if [[ "$DOCKER_DEPLOY" == "false" ]]; then
