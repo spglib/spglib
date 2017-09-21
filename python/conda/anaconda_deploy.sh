@@ -9,8 +9,7 @@ sed s/version_from_shell/`git describe --tags --dirty | sed -e 's/-\(.*\)-g.*/+\
 mv meta.tmp.yaml meta.yaml
 cd ..
 conda install conda-build anaconda-client --yes
-conda build conda --no-anaconda-upload --no-remove-work-dir
+conda build conda --no-anaconda-upload
 TRG=`conda build conda --output |sed -e 's/--/-*-/'`
 echo "Uploading: $TRG"
 anaconda --token $TKN upload --label $LBL $TRG
-
