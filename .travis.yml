@@ -1,7 +1,3 @@
-language: python
-dist: trusty
-cache: apt
-
 matrix:
   include:
   - sudo: required
