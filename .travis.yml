@@ -1,27 +1,27 @@
 matrix:
   include:
-  - sudo: required
-    services:
-    - docker
-    python: '2.7'
-    env: DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
-         DOCKER_DEPLOY=true
-  - sudo: required
-    services:
-    - docker
-    python: '2.7'
-    env: DOCKER_IMAGE=quay.io/pypa/manylinux1_i686
-         PRE_CMD=linux32
-         DOCKER_DEPLOY=true
   # - python: '2.7'
-  #   sudo: false
-  #   env: DOCKER_DEPLOY=false
-  # - python: '3.5'
-  #   sudo: false
-  #   env: DOCKER_DEPLOY=false
-  # - python: '3.6'
-  #   sudo: false
-  #   env: DOCKER_DEPLOY=false
+  #   sudo: required
+  #   services:
+  #   - docker
+  #   env: DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
+  #        DOCKER_DEPLOY=true
+  # - python: '2.7'
+  #   sudo: required
+  #   services:
+  #   - docker
+  #   env: DOCKER_IMAGE=quay.io/pypa/manylinux1_i686
+  #        PRE_CMD=linux32
+  #        DOCKER_DEPLOY=true
+  - python: '2.7'
+    sudo: false
+    env: DOCKER_DEPLOY=false
+  - python: '3.5'
+    sudo: false
+    env: DOCKER_DEPLOY=false
+  - python: '3.6'
+    sudo: false
+    env: DOCKER_DEPLOY=false
 
 before_install:
 - if [[ "$DOCKER_DEPLOY" == "false" ]]; then
