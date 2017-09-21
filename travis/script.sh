@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e -x
 
-cd test
+cd python/test
 python -m unittest discover -b
-cd ..
+cd ../..
