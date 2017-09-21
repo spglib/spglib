@@ -27,18 +27,18 @@ before_install:
 - if [[ "$DOCKER_DEPLOY" == "false" ]]; then
     bash travis/before_install.sh;
     export PATH="$HOME/miniconda/bin:$PATH";
+  else
+    docker run --rm -v `pwd`:/io $DOCKER_IMAGE $PRE_CMD /io/travis/build-wheels.sh;
+    docker pull $DOCKER_IMAGE;
   fi
 
 install:
-- if [[ "$DOCKER_DEPLOY" == "true" ]]; then
-    docker pull $DOCKER_IMAGE;
-  else
+- if [[ "$DOCKER_DEPLOY" == "false" ]]; then
     bash travis/install.sh;
   fi
 
 script:
 - if [[ "$DOCKER_DEPLOY" == "true" ]]; then
-    docker run --rm -v `pwd`:/io $DOCKER_IMAGE $PRE_CMD /io/travis/build-wheels.sh;
     ls wheelhouse/;
   else
     bash travis/script.sh;
