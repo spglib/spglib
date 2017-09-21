@@ -21,7 +21,7 @@ before_install:
   - conda update --yes conda
 
 install:
-  - conda install --yes python=$TRAVIS_PYTHON_VERSION pip numpy anaconda-client anaconda-build
+  - conda install --yes python=$TRAVIS_PYTHON_VERSION pip numpy
   - aclocal
   - autoheader
   - libtoolize
