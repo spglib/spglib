@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e -x
 
-conda install --yes python=$TRAVIS_PYTHON_VERSION pip numpy
+conda install --yes python="$TRAVIS_PYTHON_VERSION" pip numpy
 aclocal
 autoheader
 libtoolize
