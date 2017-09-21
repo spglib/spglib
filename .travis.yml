@@ -2,24 +2,27 @@ language: python
 sudo: false
 dist: trusty
 
-python:
-  - '2.7'
-  - '3.5'
-  - '3.6'
-
 cache: apt
 
 matrix:
   include:
+  - python: '2.7'
+    env: DOCKER_DEPLOY=false
+  - python: '3.5'
+    env: DOCKER_DEPLOY=false
+  - python: '3.6'
+    env: DOCKER_DEPLOY=false
   - sudo: required
     services:
     - docker
     env: DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
+         DOCKER_DEPLOY=true
   - sudo: required
     services:
     - docker
     env: DOCKER_IMAGE=quay.io/pypa/manylinux1_i686
          PRE_CMD=linux32
+         DOCKER_DEPLOY=true
 
 before_install:
   - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
@@ -33,32 +36,19 @@ before_install:
   - conda update --yes conda
 
 install:
-  - conda install --yes python=$TRAVIS_PYTHON_VERSION pip numpy
-  - aclocal
-  - autoheader
-  - libtoolize
-  - touch INSTALL NEWS README AUTHORS
-  - automake -acf
-  - autoconf
-  - ./configure
-  - make check # test in C
-  - cd python
-  - pwd
-  - git branch -v
-  - git describe --tags --dirty
-  - ./get_nanoversion.sh
-  - cat __nanoversion__.txt
-  - ln -s ../src .
-  - python setup.py install 
-  - cd ..
-  - docker pull $DOCKER_IMAGE
+  - if [[ "$DOCKER_DEPLOY" == "true" ]]; then
+      docker pull $DOCKER_IMAGE;
+    else
+      bash ./travis/install.sh;
+    fi
 
 script:
-  - cd test
-  - python -m unittest discover -b
-  - cd ..
-  - docker run --rm -v `pwd`:/io $DOCKER_IMAGE $PRE_CMD /io/travis/build-wheels.sh
-  - ls wheelhouse/
+  - if [[ "$DOCKER_DEPLOY" == "true" ]]; then
+      docker run --rm -v `pwd`:/io $DOCKER_IMAGE $PRE_CMD /io/travis/build-wheels.sh;
+      ls wheelhouse/;
+    else
+      bash ./travis/script.sh
+    fi
 
 deploy:
   # testing pypi
