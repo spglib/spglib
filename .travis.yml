@@ -1,16 +1,17 @@
 language: python
-sudo: false
 dist: trusty
-
 cache: apt
 
 matrix:
   include:
   - python: '2.7'
+    sudo: false
     env: DOCKER_DEPLOY=false
   - python: '3.5'
+    sudo: false
     env: DOCKER_DEPLOY=false
   - python: '3.6'
+    sudo: false
     env: DOCKER_DEPLOY=false
   - python: '2.7'
     sudo: required
