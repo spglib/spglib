@@ -2,21 +2,23 @@
 set -e -x
 
 # Install a system package required by our library
-yum install -y numpy
+# yum install -y numpy
 
 ls /opt/python
-ls -a
 
 # Compile wheels
 for PYBIN in /opt/python/cp27*/bin; do
+    "${PYBIN}/pip" install numpy
     "${PYBIN}/pip" wheel /io/ -w wheelhouse/
 done
 
 for PYBIN in /opt/python/cp35*/bin; do
+    "${PYBIN}/pip" install numpy
     "${PYBIN}/pip" wheel /io/ -w wheelhouse/
 done
 
 for PYBIN in /opt/python/cp36*/bin; do
+    "${PYBIN}/pip" install numpy
     "${PYBIN}/pip" wheel /io/ -w wheelhouse/
 done
 
