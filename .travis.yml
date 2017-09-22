@@ -36,6 +36,7 @@ install:
 - if [[ "$DOCKER_DEPLOY" == "false" ]]; then
     bash travis/install.sh;
   else
+    pip install numpy twine;
     docker pull $DOCKER_IMAGE;
   fi
 
@@ -53,7 +54,6 @@ script:
     cp wheelhouse/spglib* dist/;
     ls dist/;
     cd ..;
-    pip install numpy twine;
   fi
 
 before_deploy:
