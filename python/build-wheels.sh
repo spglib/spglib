@@ -28,6 +28,14 @@ for whl in wheelhouse/*.whl; do
 done
 
 # Install packages and test
-for PYBIN in /opt/python/*/bin/; do
-    "${PYBIN}/pip" install python-manylinux-demo --no-index -f /io/wheelhouse
+for PYBIN in /opt/python/cp27*/bin/; do
+    "${PYBIN}/pip" install spglib --no-index -f /io/wheelhouse
+done
+
+for PYBIN in /opt/python/cp35*/bin/; do
+    "${PYBIN}/pip" install spglib --no-index -f /io/wheelhouse
+done
+
+for PYBIN in /opt/python/cp36*/bin/; do
+    "${PYBIN}/pip" install spglib --no-index -f /io/wheelhouse
 done
