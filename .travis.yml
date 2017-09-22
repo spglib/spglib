@@ -65,7 +65,8 @@ deploy:
     repo: atztogo/spglib
     branch: rc
     tags: false
-    
+    condition: "$DOCKER_DEPLOY = false"
+
 # testing conda
 - provider: script
   skip_cleanup: true
@@ -74,6 +75,7 @@ deploy:
     repo: atztogo/spglib
     branch: rc
     tags: false
+    condition: "$DOCKER_DEPLOY = false"
 
 # production pypi
 - provider: pypi
@@ -86,6 +88,7 @@ deploy:
     repo: atztogo/spglib
     branch: master
     tags: false
+    condition: "$DOCKER_DEPLOY = false"
 
 # production anaconda
 - provider: script
@@ -95,6 +98,7 @@ deploy:
     repo: atztogo/spglib
     branch: master
     tags: false
+    condition: "$DOCKER_DEPLOY = false"
 
 after_deploy:
 - cd ..
