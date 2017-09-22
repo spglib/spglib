@@ -215,7 +215,8 @@ static PyObject * py_get_dataset(PyObject *self, PyObject *args)
   PyArrayObject* position;
   PyArrayObject* atom_type;
   PyObject *array, *vec, *mat, *rot, *trans, *wyckoffs, *equiv_atoms;
-  PyObject *std_lattice, *std_types, *std_positions;
+  PyObject *mapping_to_primitive;
+  PyObject *std_lattice, *std_types, *std_positions, *std_mapping_to_primitive;
 
   int i, j, k, n;
   double (*lat)[3];
@@ -248,7 +249,7 @@ static PyObject * py_get_dataset(PyObject *self, PyObject *args)
     Py_RETURN_NONE;
   }
 
-  array = PyList_New(15);
+  array = PyList_New(17);
   n = 0;
 
   /* Space group number, international symbol, hall symbol */
@@ -314,13 +315,20 @@ static PyObject * py_get_dataset(PyObject *self, PyObject *args)
   /* Wyckoff letters, Equivalent atoms */
   wyckoffs = PyList_New(dataset->n_atoms);
   equiv_atoms = PyList_New(dataset->n_atoms);
+  mapping_to_primitive = PyList_New(dataset->n_atoms);
   for (i = 0; i < dataset->n_atoms; i++) {
-    PyList_SetItem(wyckoffs, i, PyLong_FromLong((long) dataset->wyckoffs[i]));
-    PyList_SetItem(equiv_atoms, i, PyLong_FromLong((long) dataset->equivalent_atoms[i]));
+    PyList_SetItem(wyckoffs, i,
+                   PyLong_FromLong((long) dataset->wyckoffs[i]));
+    PyList_SetItem(equiv_atoms, i,
+                   PyLong_FromLong((long) dataset->equivalent_atoms[i]));
+    PyList_SetItem(mapping_to_primitive, i,
+                   PyLong_FromLong((long) dataset->mapping_to_primitive[i]));
   }
   PyList_SetItem(array, n, wyckoffs);
   n++;
   PyList_SetItem(array, n, equiv_atoms);
+  n++;
+  PyList_SetItem(array, n, mapping_to_primitive);
   n++;
 
   std_lattice = PyList_New(3);
@@ -337,6 +345,7 @@ static PyObject * py_get_dataset(PyObject *self, PyObject *args)
   /* Standardized unit cell */
   std_types = PyList_New(dataset->n_std_atoms);
   std_positions = PyList_New(dataset->n_std_atoms);
+  std_mapping_to_primitive = PyList_New(dataset->n_std_atoms);
   for (i = 0; i < dataset->n_std_atoms; i++) {
     vec = PyList_New(3);
     for (j = 0; j < 3; j++) {
@@ -344,10 +353,14 @@ static PyObject * py_get_dataset(PyObject *self, PyObject *args)
     }
     PyList_SetItem(std_types, i, PyLong_FromLong((long) dataset->std_types[i]));
     PyList_SetItem(std_positions, i, vec);
+    PyList_SetItem(std_mapping_to_primitive, i,
+                   PyLong_FromLong((long) dataset->std_mapping_to_primitive[i]));
   }
   PyList_SetItem(array, n, std_types);
   n++;
   PyList_SetItem(array, n, std_positions);
+  n++;
+  PyList_SetItem(array, n, std_mapping_to_primitive);
   n++;
 
   /* Point group */

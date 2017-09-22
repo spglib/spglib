@@ -1,5 +1,6 @@
 package:
   name: spglib
+  version: version_from_shell
 # Manual version string. We use git describe in buildsh for version numbers.
 #  version: {{ environ.get('GIT_DESCRIBE_TAG', '') }}
 
@@ -41,6 +42,11 @@ requirements:
     - numpy
 
 test:
+  source_files:
+    - python/test
+  requires:
+    - python
+    - numpy
   # Python imports
   imports:
     - spglib
