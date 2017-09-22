@@ -46,7 +46,7 @@ script:
     cd python;
     docker run --rm -v `pwd`:/io $DOCKER_IMAGE $PRE_CMD /io/travis/build-wheels.sh;
     ls wheelhouse/;
-    cd ..
+    cd ..;
   fi
 
 before_deploy:
