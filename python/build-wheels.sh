@@ -5,7 +5,7 @@ set -e -x
 yum install -y numpy
 
 ls /opt/python
-ln -s ../src .
+ls -a
 
 # Compile wheels
 for PYBIN in /opt/python/cp27*/bin; do
