@@ -1,11 +1,11 @@
 matrix:
   include:
-  # - python: '2.7'
-  #   sudo: required
-  #   services:
-  #   - docker
-  #   env: DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
-  #        DOCKER_DEPLOY=true
+  - python: '2.7'
+    sudo: required
+    services:
+    - docker
+    env: DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
+         DOCKER_DEPLOY=true
   # - python: '2.7'
   #   sudo: required
   #   services:
@@ -13,26 +13,28 @@ matrix:
   #   env: DOCKER_IMAGE=quay.io/pypa/manylinux1_i686
   #        PRE_CMD=linux32
   #        DOCKER_DEPLOY=true
-  - python: '2.7'
-    sudo: false
-    env: DOCKER_DEPLOY=false
-         TRAVIS_PYTHON_VERSION=2.7'
-  - python: '3.5'
-    sudo: false
-    env: DOCKER_DEPLOY=false
-         TRAVIS_PYTHON_VERSION=3.5'
-  - python: '3.6'
-    sudo: false
-    env: DOCKER_DEPLOY=false
-         TRAVIS_PYTHON_VERSION=3.6'
+  # - python: '2.7'
+  #   sudo: false
+  #   env: DOCKER_DEPLOY=false
+  #        TRAVIS_PYTHON_VERSION=2.7'
+  # - python: '3.5'
+  #   sudo: false
+  #   env: DOCKER_DEPLOY=false
+  #        TRAVIS_PYTHON_VERSION=3.5'
+  # - python: '3.6'
+  #   sudo: false
+  #   env: DOCKER_DEPLOY=false
+  #        TRAVIS_PYTHON_VERSION=3.6'
 
 before_install:
 - if [[ "$DOCKER_DEPLOY" == "false" ]]; then
     bash travis/before_install.sh;
     export PATH="$HOME/miniconda/bin:$PATH";
   else
+    cd python
     docker pull $DOCKER_IMAGE;
     docker run --rm -v `pwd`:/io $DOCKER_IMAGE $PRE_CMD /io/travis/build-wheels.sh;
+    cd ..
   fi
 
 install:
