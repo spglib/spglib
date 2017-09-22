@@ -3,10 +3,14 @@ set -e -x
 
 # Install a system package required by our library
 yum install -y numpy
+ls /opt/python
 
 # Compile wheels
-for PYBIN in /opt/python/*/bin; do
-    "${PYBIN}/pip" install -U urllib3
+for PYBIN in /opt/python/cp27*/bin; do
+    "${PYBIN}/pip" wheel /io/ -w wheelhouse/
+done
+
+for PYBIN in /opt/python/cp35*/bin; do
     "${PYBIN}/pip" wheel /io/ -w wheelhouse/
 done
 
