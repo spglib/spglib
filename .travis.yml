@@ -51,8 +51,8 @@ script:
     mkdir dist;
     cp wheelhouse/spglib* dist/;
     ./get_nanoversion.sh;
-    pip install numpy twine
     cd ..;
+    pip install numpy twine;
   fi
 
 before_deploy:
