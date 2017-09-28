@@ -6,7 +6,7 @@ matrix:
     - docker
     env: DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
          DOCKER_DEPLOY=true
-         TRAVIS_PYTHON_VERSION=2.7'
+         TRAVIS_PYTHON_VERSION='2.7'
   - python: '2.7'
     sudo: required
     services:
@@ -14,19 +14,19 @@ matrix:
     env: DOCKER_IMAGE=quay.io/pypa/manylinux1_i686
          PRE_CMD=linux32
          DOCKER_DEPLOY=true
-         TRAVIS_PYTHON_VERSION=2.7'
+         TRAVIS_PYTHON_VERSION='2.7'
   - python: '2.7'
     sudo: false
     env: DOCKER_DEPLOY=false
-         TRAVIS_PYTHON_VERSION=2.7'
+         TRAVIS_PYTHON_VERSION='2.7'
   - python: '3.5'
     sudo: false
     env: DOCKER_DEPLOY=false
-         TRAVIS_PYTHON_VERSION=3.5'
+         TRAVIS_PYTHON_VERSION='3.5'
   - python: '3.6'
     sudo: false
     env: DOCKER_DEPLOY=false
-         TRAVIS_PYTHON_VERSION=3.6'
+         TRAVIS_PYTHON_VERSION='3.6'
 
 before_install:
 - bash travis/before_install.sh;
