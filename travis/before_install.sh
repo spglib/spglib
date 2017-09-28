@@ -9,5 +9,5 @@ fi
 echo $TRAVIS_PYTHON_VERSION
 bash miniconda.sh -b -p $HOME/miniconda
 export PATH="$HOME/miniconda/bin:$PATH"
-conda update --yes conda
+# conda update --yes conda
 conda install --yes python="$TRAVIS_PYTHON_VERSION" pip numpy
