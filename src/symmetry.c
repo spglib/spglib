@@ -435,7 +435,8 @@ static VecDBL * get_translation(SPGCONST int rot[3][3],
   mat_multiply_matrix_vector_id3(origin, rot, cell->position[min_atom_index]);
 
 #ifdef _OPENMP
-  if (cell->size < NUM_ATOMS_CRITERION_FOR_OPENMP) {
+  if (cell->size < NUM_ATOMS_CRITERION_FOR_OPENMP || is_identity) {
+    /* In this case, OpenMP multithreading is not used. */
     num_trans = search_translation_part(is_found,
 					cell,
 					rot,
@@ -447,6 +448,7 @@ static VecDBL * get_translation(SPGCONST int rot[3][3],
       goto ret;
     }
   } else {
+    /* In this case, OpenMP multithreading is used. */
     /* Collect indices of atoms with the type where the minimum number */
     /* of atoms belong. */
     if ((min_type_atoms = (int*) malloc(sizeof(int)*cell->size)) == NULL) {
