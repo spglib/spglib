@@ -19,10 +19,6 @@ matrix:
     sudo: false
     env: DOCKER_DEPLOY=false
          TRAVIS_PYTHON_VERSION='2.7'
-  - python: '3.5'
-    sudo: false
-    env: DOCKER_DEPLOY=false
-         TRAVIS_PYTHON_VERSION='3.5'
   - python: '3.6'
     sudo: false
     env: DOCKER_DEPLOY=false
