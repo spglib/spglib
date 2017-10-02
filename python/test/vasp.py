@@ -34,9 +34,19 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import numpy as np
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 
 def read_vasp(filename):
     lines = open(filename).readlines()
+    return _get_cell(lines)
+
+def read_vasp_from_strings(strings):
+    return _get_cell(StringIO(strings).readlines())
+
+def _get_cell(lines):
     line1 = [x for x in lines[0].split()]
     if _is_exist_symbols(line1):
         symbols = line1
