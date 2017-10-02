@@ -1,3 +1,16 @@
+2017-10-02  Atsushi Togo  <atz.togo@gmail.com>
+
+
+	* Version 1.9.10
+
+	Many minor fixes and updates after many months from v1.9.9.
+
+	* src/symmetry.c (search_pure_translations):
+
+	Pure translation search is made faster using a property of
+	group, which is significantly effective for supercells with large
+	multiplicity.
+
 2016-12-14  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.9.9
