@@ -5,7 +5,6 @@ except ImportError:
     from io import StringIO
 import numpy as np
 from spglib import niggli_reduce, delaunay_reduce
-from vasp import read_vasp
 
 def get_lattice_parameters(lattice):
     return np.sqrt(np.dot(lattice, lattice.T).diagonal())
@@ -22,7 +21,7 @@ class TestNiggliDelaunay(unittest.TestCase):
         self._input_lattices = self._read_file("lattices.dat")
         self._niggli_lattices = self._read_file("niggli_lattices.dat")
         self._delaunay_lattices = self._read_file("delaunay_lattices.dat")
-    
+
     def tearDown(self):
         pass
 
@@ -32,7 +31,7 @@ class TestNiggliDelaunay(unittest.TestCase):
             self.assertTrue((angles > 90 - 1e-3).all() or
                             (angles < 90 + 1e-3).all(),
                             msg=("%d %s" % (i + 1, angles)))
-    
+
     def test_niggli_reduce(self):
         self._reduce(niggli_reduce, self._niggli_lattices)
 
@@ -63,7 +62,7 @@ class TestNiggliDelaunay(unittest.TestCase):
                      "%s" % reduced_lattice,
                      " angles: %s" % np.array(get_angles(reduced_lattice)),
                      self._str_lattice(reduced_lattice)]))
-            
+
 
     def _read_file(self, filename):
         all_lattices = []
@@ -82,7 +81,7 @@ class TestNiggliDelaunay(unittest.TestCase):
         print("# %d" % (i + 1))
         print(self._str_lattice(lattice))
         # for v in lattice:
-        #     print(" ".join(["%20.16f" % x for x in v]))        
+        #     print(" ".join(["%20.16f" % x for x in v]))
 
     def _str_lattice(self, lattice):
         lines = []

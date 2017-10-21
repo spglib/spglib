@@ -298,7 +298,7 @@ static Centering get_centering(double correction_mat[3][3],
                                const Laue laue);
 static Centering get_base_center(SPGCONST int transform_mat[3][3]);
 static int get_centering_shifts(double shift[3][3],
-				const Centering centering);
+                                const Centering centering);
 
 
 /* NULL is returned if failed */
@@ -445,8 +445,8 @@ Cell * spa_transform_to_primitive(int * mapping_table,
 
 /* Return NULL if failed */
 Cell * spa_transform_from_primitive(const Cell * primitive,
-				    const Centering centering,
-				    const double symprec)
+                                    const Centering centering,
+                                    const double symprec)
 {
   int multi, i, j, k, num_atom;
   int *mapping_table;
@@ -503,8 +503,8 @@ Cell * spa_transform_from_primitive(const Cell * primitive,
   num_atom = 0;
   for (i = 0; i < primitive->size; i++) {
     mat_multiply_matrix_vector_d3(std_cell->position[num_atom],
-				  tmat,
-				  primitive->position[i]);
+                                  tmat,
+                                  primitive->position[i]);
     std_cell->types[num_atom] = primitive->types[i];
     num_atom++;
   }
@@ -512,9 +512,9 @@ Cell * spa_transform_from_primitive(const Cell * primitive,
   for (i = 0; i < multi - 1; i++) {
     for (j = 0; j < primitive->size; j++) {
       mat_copy_vector_d3(std_cell->position[num_atom],
-			 std_cell->position[j]);
+                         std_cell->position[j]);
       for (k = 0; k < 3; k++) {
-	std_cell->position[num_atom][k] += shift[i][k];
+        std_cell->position[num_atom][k] += shift[i][k];
       }
       std_cell->types[num_atom] = std_cell->types[j];
       num_atom++;
@@ -522,9 +522,9 @@ Cell * spa_transform_from_primitive(const Cell * primitive,
   }
 
   trimmed_cell = cel_trim_cell(mapping_table,
-			       std_cell->lattice,
-			       std_cell,
-			       symprec);
+                               std_cell->lattice,
+                               std_cell,
+                               symprec);
   cel_free_cell(std_cell);
   std_cell = NULL;
   free(mapping_table);
@@ -1434,7 +1434,7 @@ static Centering get_base_center(SPGCONST int transform_mat[3][3])
 }
 
 static int get_centering_shifts(double shift[3][3],
-				const Centering centering)
+                                const Centering centering)
 {
   int i, j, multi;
 
@@ -1443,7 +1443,7 @@ static int get_centering_shifts(double shift[3][3],
     for (j = 0; j < 3; j++) {
       shift[i][j] = 0;
     }
-  }    
+  }
 
   if (centering != PRIMITIVE) {
     if (centering != FACE && centering != R_CENTER) {
