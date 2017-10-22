@@ -3,16 +3,7 @@ import numpy as np
 from spglib import get_symmetry_dataset, get_hall_number_from_symmetry
 from vasp import read_vasp
 from os import listdir
-
-dirnames = ('cubic',
-            'hexagonal',
-            'monoclinic',
-            'orthorhombic',
-            'tetragonal',
-            'triclinic',
-            'trigonal',
-            'distorted',
-            'virtual_structure')
+from test_spglib import dirnames
 
 class TestGetHallNumberFromSymmetry(unittest.TestCase):
 

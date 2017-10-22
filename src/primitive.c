@@ -46,8 +46,8 @@
 #define NUM_ATTEMPT 20
 
 static Primitive * get_primitive(const Cell * cell,
-				 const double symprec,
-				 const double angle_tolerance);
+                                 const double symprec,
+                                 const double angle_tolerance);
 static Cell * get_cell_with_smallest_lattice(const Cell * cell,
                                              const double symprec);
 static Cell * get_primitive_cell(int * mapping_table,
@@ -128,14 +128,14 @@ void prm_free_primitive(Primitive * primitive)
 
 /* Return NULL if failed */
 Primitive * prm_get_primitive(const Cell * cell,
-			      const double symprec,
-			      const double angle_tolerance)
+                              const double symprec,
+                              const double angle_tolerance)
 {
   return get_primitive(cell, symprec, angle_tolerance);
 }
 
 Symmetry * prm_get_primitive_symmetry(const Symmetry *symmetry,
-				      const double symprec)
+                                      const double symprec)
 {
   int i, primsym_size;
   VecDBL *pure_trans;
@@ -202,8 +202,8 @@ Symmetry * prm_get_primitive_symmetry(const Symmetry *symmetry,
 
 /* Return NULL if failed */
 static Primitive * get_primitive(const Cell * cell,
-				 const double symprec,
-				 const double angle_tolerance)
+                                 const double symprec,
+                                 const double angle_tolerance)
 {
   int i, attempt;
   double tolerance;
@@ -239,7 +239,7 @@ static Primitive * get_primitive(const Cell * cell,
                                                 cell,
                                                 pure_trans,
                                                 tolerance,
-						angle_tolerance)) != NULL) {
+                                                angle_tolerance)) != NULL) {
         goto found;
       }
     }
@@ -325,7 +325,7 @@ static Cell * get_primitive_cell(int * mapping_table,
                                                   cell,
                                                   pure_trans,
                                                   symprec,
-						  angle_tolerance);
+                                                  angle_tolerance);
   if (! multi) {
     goto not_found;
   }
@@ -418,7 +418,7 @@ static int get_primitive_lattice_vectors_iterative(double prim_lattice[3][3],
       pure_trans_reduced = sym_reduce_pure_translation(cell,
                                                        tmp_vec,
                                                        tolerance,
-						       angle_tolerance);
+                                                       angle_tolerance);
 
       mat_free_VecDBL(tmp_vec);
       tmp_vec = NULL;
@@ -556,8 +556,8 @@ static VecDBL * collect_pure_translations(const Symmetry *symmetry)
   VecDBL *pure_trans;
   VecDBL *ret_pure_trans;
   static int identity[3][3] = {{ 1, 0, 0 },
-			       { 0, 1, 0 },
-			       { 0, 0, 1 }};
+                               { 0, 1, 0 },
+                               { 0, 0, 1 }};
   num_pure_trans = 0;
   pure_trans = NULL;
   ret_pure_trans = NULL;
@@ -582,7 +582,7 @@ static VecDBL * collect_pure_translations(const Symmetry *symmetry)
   for (i = 0; i < num_pure_trans; i++) {
     mat_copy_vector_d3(ret_pure_trans->vec[i], pure_trans->vec[i]);
   }
-    
+
   mat_free_VecDBL(pure_trans);
   pure_trans = NULL;
 
@@ -622,9 +622,9 @@ static int get_primitive_in_translation_space(double t_mat_inv[3][3],
   for (i = 0; i < 3; i++) {
     for (j = 0; j < 3; j++) {
       if (i == j) {
-	cell->lattice[i][j] = 1;
+        cell->lattice[i][j] = 1;
       } else {
-	cell->lattice[i][j] = 0;
+        cell->lattice[i][j] = 0;
       }
     }
   }

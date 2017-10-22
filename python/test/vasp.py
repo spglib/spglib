@@ -69,7 +69,7 @@ def _get_cell(lines):
         line_at = 7
 
     numbers = _expand_symbols(num_atoms, symbols)
-    
+
     if lines[line_at][0].lower() == 's':
         line_at += 1
 
@@ -102,7 +102,7 @@ def _expand_symbols(num_atoms, symbols=None):
                 if not s in symbol_map:
                     is_symbols = False
                     break
-    
+
     if is_symbols:
         for s, num in zip(symbols, num_atoms):
             expanded_symbols += [symbol_map[s],] * num

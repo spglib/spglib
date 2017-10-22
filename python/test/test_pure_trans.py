@@ -2,7 +2,6 @@ import unittest
 import numpy as np
 from spglib import get_symmetry
 from vasp import read_vasp_from_strings
-from os import listdir
 
 Al222 = """Al
    1.0
