@@ -5,9 +5,10 @@ Download
 ---------
 
 The source code is downloaded at
-https://github.com/atztogo/spglib/releases . 
-But minor updates are not included in this package. If you want the
-latest version, you can git-clone the spglib repository::
+https://github.com/atztogo/spglib/archive/master.zip or you can
+git-clone the spglib repository by
+
+::
 
    % git clone https://github.com/atztogo/spglib.git
 
