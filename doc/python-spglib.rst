@@ -11,7 +11,7 @@ Installation
 -------------
 
 The source code is downloaded at
-https://github.com/atztogo/spglib/releases . 
+https://github.com/atztogo/spglib/releases .
 But minor updates are not included in this package. If you want the
 latest version, you can git-clone the spglib repository::
 
@@ -69,7 +69,7 @@ follows:
 
    Document about where spglib is installed is found at the
    links below:
-   
+
    - https://docs.python.org/2/install/#alternate-installation-the-user-scheme
    - https://docs.python.org/3/install/#alternate-installation-the-user-scheme
 
@@ -90,10 +90,10 @@ directory. Got to this directory and run this script. It will be like below::
    test_get_symmetry (__main__.TestSpglib) ... ok
    test_get_symmetry_dataset (__main__.TestSpglib) ... ok
    test_refine_cell (__main__.TestSpglib) ... ok
-   
+
    ----------------------------------------------------------------------
    Ran 4 tests in 13.147s
-   
+
    OK
 
 How to import spglib module
@@ -103,7 +103,7 @@ How to import spglib module
 
 For versions 1.9.x or later::
 
-   import spglib     
+   import spglib
 
 For versions 1.8.x or before::
 
@@ -114,7 +114,7 @@ If the version is not sure::
    try:
        import spglib as spg
    except ImportError:
-       from pyspglib import spglib as spg   
+       from pyspglib import spglib as spg
 
 Version number
 --------------
@@ -140,13 +140,7 @@ Crystal structure (``cell``)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 A crystal structure is given by a **tuple**. This tuple format is
-supported at version 1.9.1 or later. Optionally, an **ASE Atoms-like
-object** is also supported. An alternative Atoms class (`atoms.py
-<https://github.com/atztogo/spglib/blob/master/python/examples/atoms.py>`_)
-that contains minimum set of methods is prepared in the `examples
-<https://github.com/atztogo/spglib/tree/master/python/examples>`_
-directory. When using ASE Atoms-like object, ``get_symmetry`` with
-collinear polarizations is not supported.
+supported at version 1.9.1 or later.
 
 The tuple format is shown as follows. There are three or four elements
 in the tuple: ``cell = (lattice, positions, numbers)`` or ``cell =
@@ -175,10 +169,34 @@ as a list of N floating point values.
    numbers = [n_1, n_2, n_3, ...]
    magmoms = [m_1, m_2, m_3, ...]  # Only works with get_symmetry
 
+Version 1.9.5 or later: The methods that use the crsytal strcutre
+will return ``None`` when a crystal structure is not properly given.
 
-**Version 1.9.5 or later**:
-When a crystal structure is not properly given, the methods that use
-the crsytal strcutre will return ``None``.
+ASE Atoms-like input is deprecated.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In the previous versions, ASE Atoms-like input was supported, but it
+is deprecated. It is recommended to use the above tuple-style input
+for the future support. ``DeprecationWarning`` is issued at version
+1.10.0 or later.
+
+The reason to make this feature deprecated is that ASE Atoms class is
+too huge and users may expect spglib can understand its full
+feature. However spglib actually collects only the following values
+from the ASE Atoms-class instance::
+
+   lattice = np.array(cell.get_cell().T, dtype='double', order='C')
+   positions = np.array(cell.get_scaled_positions(), dtype='double', order='C')
+   numbers = np.array(cell.get_atomic_numbers(), dtype='intc')
+   magmoms = None
+
+Nevertheless the ASE Atoms-like input will be accepted for a while.
+An alternative Atoms class (`atoms.py
+<https://github.com/atztogo/spglib/blob/master/python/examples/atoms.py>`_)
+that contains minimum set of methods is prepared in the `examples
+<https://github.com/atztogo/spglib/tree/master/python/examples>`_
+directory. ``get_symmetry`` with collinear polarizations is not
+supported when ASE Atoms-class instance.
 
 Symmetry tolerance (``symprec``)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -355,7 +373,9 @@ The arguments are:
   the later set is defined with respect to the basis vectors of user's
   input (the ``cell`` argument).
 
-``dataset`` is a dictionary. The keys are:
+``dataset`` is a dictionary. Short explanations of the values of the
+keys are shown below. More the detail may be found at
+:ref:`api_struct_spglibdataset`.
 
 * ``number``: International space group number
 * ``international``: International short symbol
@@ -364,10 +384,13 @@ The arguments are:
   :ref:`py_method_get_symmetry_from_database` and
   :ref:`py_method_get_spacegroup_type`.
 * ``choice``: Centring, origin, basis vector setting
-* ``transformation_matrix``: See the detail at :ref:`api_origin_shift_and_transformation`.
-* ``origin shift``: See the detail at :ref:`api_origin_shift_and_transformation`.
+* ``transformation_matrix``: See the detail at
+  :ref:`api_origin_shift_and_transformation`.
+* ``origin shift``: See the detail at
+  :ref:`api_origin_shift_and_transformation`.
 * ``wyckoffs``: Wyckoff letters
 * ``equivalent_atoms``: Mapping table to equivalent atoms
+* ``mapping_to_primitive``: Mapping table to atoms in the primitive cell
 * ``rotations`` and ``translations``: Rotation matrices and
   translation vectors. See :ref:`py_method_get_symmetry` for more
   details.
@@ -377,14 +400,16 @@ The arguments are:
   crystal structure corresponding to a Hall symbol found. These are
   equivalently given in the array formats of ``lattice``,
   ``positions``, and ``numbers`` presented at
-  :ref:`py_variables_crystal_structure`, respectively.
+  :ref:`py_variables_crystal_structure`,
+  respectively.
+* ``std_mapping_to_primitive``: Mapping table from atoms in the
+  standardized crystal structure to the atoms in the primitive cell.
 
 ..
    * ``pointgrouop_number``: Serial number of the crystallographic point
      group, which refers list of space groups (Seto’s web site)
 
-When the search failed, ``None`` is returned. See more details of the
-keys at :ref:`api_struct_spglibdataset`.
+When the search failed, ``None`` is returned.
 
 .. _py_method_get_symmetry_from_database:
 
@@ -537,7 +562,7 @@ An example is shown below::
 
    import numpy as np
    import spglib
-   
+
    lattice = np.array([[0.0, 0.5, 0.5],
                        [0.5, 0.0, 0.5],
                        [0.5, 0.5, 0.0]]) * 5.4
@@ -547,29 +572,50 @@ An example is shown below::
    cell = (lattice, positions, numbers)
    print(spglib.get_spacegroup(cell, symprec=1e-5))
    mesh = [8, 8, 8]
-   
+
    #
    # Gamma centre mesh
    #
    mapping, grid = spglib.get_ir_reciprocal_mesh(mesh, cell, is_shift=[0, 0, 0])
-   
+
    # All k-points and mapping to ir-grid points
    for i, (ir_gp_id, gp) in enumerate(zip(mapping, grid)):
        print("%3d ->%3d %s" % (i, ir_gp_id, gp.astype(float) / mesh))
-   
+
    # Irreducible k-points
    print("Number of ir-kpoints: %d" % len(np.unique(mapping)))
    print(grid[np.unique(mapping)] / np.array(mesh, dtype=float))
-   
+
    #
    # With shift
    #
    mapping, grid = spglib.get_ir_reciprocal_mesh(mesh, cell, is_shift=[1, 1, 1])
-   
+
    # All k-points and mapping to ir-grid points
    for i, (ir_gp_id, gp) in enumerate(zip(mapping, grid)):
        print("%3d ->%3d %s" % (i, ir_gp_id, (gp + [0.5, 0.5, 0.5]) / mesh))
-   
+
    # Irreducible k-points
    print("Number of ir-kpoints: %d" % len(np.unique(mapping)))
    print((grid[np.unique(mapping)] + [0.5, 0.5, 0.5]) / mesh)
+
+``get_hall_number_from_symmetry``
+--------------------------------------
+
+**experimental**
+
+``hall_number`` is obtained from the set of symmetry operations.  The
+definition of ``hall_number`` is found at
+:ref:`api_spg_get_dataset_spacegroup_type` and the corresponding
+space-group-type information is obtained through
+:ref:`py_method_get_spacegroup_type`.
+
+This is expected to work well for the set of symmetry operations whose
+distortion is small. The aim of making this feature is to find
+space-group-type for the set of symmetry operations given by the other
+source than spglib. ``symprec`` is in the length of the fractional
+coordinates and should be small like ``1e-5``.
+
+::
+
+   get_hall_number_from_symmetry(rotations, translations, symprec=1e-5)
