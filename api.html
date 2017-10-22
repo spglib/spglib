@@ -1,21 +1,15 @@
 <!DOCTYPE html>
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>C-APIs &#8212; spglib 1.9.9 documentation</title>
-    
-    <link rel="stylesheet" href="_static/basic.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/bootswatch-3.3.6/cosmo/bootstrap.min.css" type="text/css" />
+    <title>C-APIs &#8212; spglib 1.10.0 documentation</title>
     <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
-    
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.9.9',
+        VERSION:     '1.10.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -25,6 +19,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
     <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
     <script type="text/javascript" src="_static/bootstrap-3.3.6/js/bootstrap.min.js"></script>
@@ -39,7 +34,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 
   </head>
-  <body role="document">
+  <body>
 
   <div id="navbar" class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -52,7 +47,7 @@
         </button>
         <a class="navbar-brand" href="index.html">
           spglib</a>
-        <span class="navbar-text navbar-version pull-left"><b>1.9.9</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>1.10.0</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -118,6 +113,7 @@
 <li><a class="reference internal" href="#spg-delaunay-reduce"><code class="docutils literal"><span class="pre">spg_delaunay_reduce</span></code></a></li>
 <li><a class="reference internal" href="#spg-get-ir-reciprocal-mesh"><code class="docutils literal"><span class="pre">spg_get_ir_reciprocal_mesh</span></code></a></li>
 <li><a class="reference internal" href="#spg-get-stabilized-reciprocal-mesh"><code class="docutils literal"><span class="pre">spg_get_stabilized_reciprocal_mesh</span></code></a></li>
+<li><a class="reference internal" href="#spg-get-hall-number-from-symmetry"><code class="docutils literal"><span class="pre">spg_get_hall_number_from_symmetry</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -184,6 +180,7 @@
 <li><a class="reference internal" href="#spg-delaunay-reduce" id="id26"><code class="docutils literal"><span class="pre">spg_delaunay_reduce</span></code></a></li>
 <li><a class="reference internal" href="#spg-get-ir-reciprocal-mesh" id="id27"><code class="docutils literal"><span class="pre">spg_get_ir_reciprocal_mesh</span></code></a></li>
 <li><a class="reference internal" href="#spg-get-stabilized-reciprocal-mesh" id="id28"><code class="docutils literal"><span class="pre">spg_get_stabilized_reciprocal_mesh</span></code></a></li>
+<li><a class="reference internal" href="#spg-get-hall-number-from-symmetry" id="id29"><code class="docutils literal"><span class="pre">spg_get_hall_number_from_symmetry</span></code></a></li>
 </ul>
 </div>
 <div class="section" id="spg-get-major-version-spg-get-minor-version-spg-get-micro-version">
@@ -255,8 +252,8 @@ i.e., these have to be used together.</p>
 lattice that break crsytallographic point group, the crystallographic
 symmetry operations are searched with this broken symmetry, i.e., at
 most the crystallographic point group found in this case is the point
-group of the lattice. For example, this happens for the <img class="math" src="_images/math/8bc1a4cfc1d5810344ce0ff24affedf58e9d745e.png" alt="2\times
-1\times 1"/> supercell of a conventional cubic unit cell. This may not
+group of the lattice. For example, this happens for the <span class="math">\(2\times
+1\times 1\)</span> supercell of a conventional cubic unit cell. This may not
 be understandable in crystallographic sense, but is practically useful
 treatment for research in computational materials science.</p>
 <div class="line-block">
@@ -417,7 +414,7 @@ or cell choice), <code class="docutils literal"><span class="pre">spg_get_datase
 </div>
 <p>where <code class="docutils literal"><span class="pre">hall_number</span></code> is used to specify the choice. The possible
 choices and those serial numbers are found at <a class="reference external" href="http://pmsl.planet.sci.kobe-u.ac.jp/~seto/?page_id=37&amp;lang=en">list of space groups
-(Seto&#8217;s web site)</a>.
+(Seto’s web site)</a>.
 The crystal structure has to possess the space-group type of the Hall
 symbol. If the symmetry search fails or the specified <code class="docutils literal"><span class="pre">hall_number</span></code>
 is not in the list of Hall symbols for the space group type of the
@@ -428,8 +425,9 @@ structure is set 0.</p>
 </div>
 <div class="section" id="dataset">
 <span id="api-struct-spglibdataset"></span><h3><a class="toc-backref" href="#id13">Dataset</a><a class="headerlink" href="#dataset" title="Permalink to this headline">¶</a></h3>
-<p><strong>At version 1.9.4, SpglibDataset was modified.</strong> The member name
-<code class="docutils literal"><span class="pre">setting</span></code> is changed to <code class="docutils literal"><span class="pre">choice</span></code> and <code class="docutils literal"><span class="pre">pointgroup_number</span></code> is removed.</p>
+<p><strong>At version 1.9.4, SpglibDataset was modified.</strong> The member
+name <code class="docutils literal"><span class="pre">setting</span></code> is changed to <code class="docutils literal"><span class="pre">choice</span></code> and <code class="docutils literal"><span class="pre">pointgroup_number</span></code> is
+removed.</p>
 <p>The dataset is accessible through the C-structure given by</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">typedef</span> <span class="n">struct</span> <span class="p">{</span>
   <span class="nb">int</span> <span class="n">spacegroup_number</span><span class="p">;</span>
@@ -445,15 +443,17 @@ structure is set 0.</p>
   <span class="nb">int</span> <span class="n">n_atoms</span><span class="p">;</span>
   <span class="nb">int</span> <span class="o">*</span><span class="n">wyckoffs</span><span class="p">;</span>
   <span class="nb">int</span> <span class="o">*</span><span class="n">equivalent_atoms</span><span class="p">;</span>
+  <span class="nb">int</span> <span class="o">*</span><span class="n">mapping_to_primitive</span><span class="p">;</span>
   <span class="nb">int</span> <span class="n">n_std_atoms</span><span class="p">;</span>             <span class="o">/*</span> <span class="n">n_brv_atoms</span> <span class="n">before</span> <span class="n">version</span> <span class="mf">1.8</span><span class="o">.</span><span class="mi">1</span> <span class="o">*/</span>
   <span class="n">double</span> <span class="n">std_lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">];</span>    <span class="o">/*</span> <span class="n">brv_lattice</span> <span class="n">before</span> <span class="n">version</span> <span class="mf">1.8</span><span class="o">.</span><span class="mi">1</span> <span class="o">*/</span>
   <span class="nb">int</span> <span class="o">*</span><span class="n">std_types</span><span class="p">;</span>              <span class="o">/*</span> <span class="n">brv_types</span> <span class="n">before</span> <span class="n">version</span> <span class="mf">1.8</span><span class="o">.</span><span class="mi">1</span> <span class="o">*/</span>
   <span class="n">double</span> <span class="p">(</span><span class="o">*</span><span class="n">std_positions</span><span class="p">)[</span><span class="mi">3</span><span class="p">];</span>  <span class="o">/*</span> <span class="n">brv_positions</span> <span class="n">before</span> <span class="n">version</span> <span class="mf">1.8</span><span class="o">.</span><span class="mi">1</span> <span class="o">*/</span>
+  <span class="nb">int</span> <span class="o">*</span><span class="n">std_mapping_to_primitive</span><span class="p">;</span>
   <span class="n">char</span> <span class="n">pointgroup_symbol</span><span class="p">[</span><span class="mi">6</span><span class="p">];</span>
 <span class="p">}</span> <span class="n">SpglibDataset</span><span class="p">;</span>
 </pre></div>
 </div>
-<p>In <strong>versions before 1.8.1</strong>, the member names of <code class="docutils literal"><span class="pre">n_std_atoms</span></code>,
+<p><strong>At versions before 1.8.1</strong>, the member names of <code class="docutils literal"><span class="pre">n_std_atoms</span></code>,
 <code class="docutils literal"><span class="pre">std_lattice</span></code>, <code class="docutils literal"><span class="pre">std_types</span></code>, and <code class="docutils literal"><span class="pre">std_positions</span></code> were
 <code class="docutils literal"><span class="pre">n_brv_atoms</span></code>, <code class="docutils literal"><span class="pre">brv_lattice</span></code>, <code class="docutils literal"><span class="pre">brv_types</span></code>, and
 <code class="docutils literal"><span class="pre">brv_positions</span></code>, respectively.</p>
@@ -462,7 +462,7 @@ structure is set 0.</p>
 <p><code class="docutils literal"><span class="pre">spacegroup_number</span></code> is the space group type number defined in
 International Tables for Crystallography (ITA). <code class="docutils literal"><span class="pre">hall_number</span></code> is the
 serial number between 1 and 530 which are found at <a class="reference external" href="http://pmsl.planet.sci.kobe-u.ac.jp/~seto/?page_id=37&amp;lang=en">list of space
-groups (Seto&#8217;s web site)</a>.
+groups (Seto’s web site)</a>.
 The (full) Hermann–Mauguin notation of space group type is given by
 <code class="docutils literal"><span class="pre">international_symbol</span></code>. The Hall symbol is stored in
 <code class="docutils literal"><span class="pre">hall_symbol</span></code>. The information on unique axis,
@@ -472,9 +472,9 @@ setting or cell choices is found in <code class="docutils literal"><span class="
 <h4><a class="toc-backref" href="#id15">Symmetry operations</a><a class="headerlink" href="#symmetry-operations" title="Permalink to this headline">¶</a></h4>
 <p>The symmetry operations of the input unit cell are stored in
 <code class="docutils literal"><span class="pre">rotations</span></code> and <code class="docutils literal"><span class="pre">translations</span></code>. A crystallographic symmetry
-operation <img class="math" src="_images/math/786eb812e3cd6ba56b46c832c6b5a36d9f5cceca.png" alt="(\boldsymbol{W}, \boldsymbol{w})"/> is made from a pair
-of rotation <img class="math" src="_images/math/6f8be34a0c115c996c30497181b62df699065218.png" alt="\boldsymbol{W}"/> and translation
-<img class="math" src="_images/math/02d3e028612d7bc1888b46a573529b070f4a7d90.png" alt="\boldsymbol{w}"/> parts with the same index. Number of symmetry
+operation <span class="math">\((\boldsymbol{W}, \boldsymbol{w})\)</span> is made from a pair
+of rotation <span class="math">\(\boldsymbol{W}\)</span> and translation
+<span class="math">\(\boldsymbol{w}\)</span> parts with the same index. Number of symmetry
 operations is given as <code class="docutils literal"><span class="pre">n_operations</span></code>. The detailed explanation of
 the values is found at <a class="reference internal" href="#api-spg-get-symmetry"><span class="std std-ref">spg_get_symmetry</span></a>.</p>
 </div>
@@ -483,11 +483,17 @@ the values is found at <a class="reference internal" href="#api-spg-get-symmetry
 <p><code class="docutils literal"><span class="pre">n_atoms</span></code> is the number of atoms of the input unit
 cell. <code class="docutils literal"><span class="pre">wyckoffs</span></code> gives Wyckoff letters that are assigned to atomic
 positions of the input unit cell. The numbers of 0, 1, 2,
-<img class="math" src="_images/math/a9548bba5127a44b1701b9508c8eeaf04875357f.png" alt="\ldots"/>, correspond to the a, b, c, <img class="math" src="_images/math/a9548bba5127a44b1701b9508c8eeaf04875357f.png" alt="\ldots"/>,
+<span class="math">\(\ldots\)</span>, correspond to the a, b, c, <span class="math">\(\ldots\)</span>,
 respectively. Number of elements in <code class="docutils literal"><span class="pre">wyckoffs</span></code> is same as
 <code class="docutils literal"><span class="pre">n_atoms</span></code>. <code class="docutils literal"><span class="pre">equivalent_atoms</span></code> is a list of atomic indices that map
 to indices of symmetrically independent atoms, where the list index
 corresponds to atomic index of the input crystal structure.</p>
+<p>In version 1.10 or later, <code class="docutils literal"><span class="pre">mapping_to_primitive</span></code> is available. This
+gives a list of atomic indices in the primitive cell of the input
+crystal structure, where the same number presents the same atom in the
+primitive cell. By collective the atoms having the same number, a set
+of relative lattice points in the the input crystal structure is
+obtained.</p>
 </div>
 <div class="section" id="origin-shift-and-lattice-transformation">
 <span id="api-origin-shift-and-transformation"></span><h4><a class="toc-backref" href="#id17">Origin shift and lattice transformation</a><a class="headerlink" href="#origin-shift-and-lattice-transformation" title="Permalink to this headline">¶</a></h4>
@@ -499,37 +505,37 @@ point coordinates have to be standardized to compare with the database
 of symmetry operations. The basis vectors are transformed to those of
 a standardized unit cell. Atomic point coordinates are shifted so that
 symmetry operations have the standard
-origin. <code class="docutils literal"><span class="pre">transformation_matrix</span></code> (<img class="math" src="_images/math/11372e1621caf3cb29d878b3ba20f222815fa1d7.png" alt="\boldsymbol{P}"/>) is the
+origin. <code class="docutils literal"><span class="pre">transformation_matrix</span></code> (<span class="math">\(\boldsymbol{P}\)</span>) is the
 matrix to transform the input basis vectors to the standardized basis
 vectors, wihch is represented as</p>
 <div class="math">
-<p><img src="_images/math/7a1f7f9cc64e674466b660a327ebd0054641487b.png" alt="( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
-= ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )  \boldsymbol{P}"/></p>
-</div><p>where <img class="math" src="_images/math/8aabbcc6dbed7661ff37c5611c70dca8a10bed2f.png" alt="\mathbf{a}"/>, <img class="math" src="_images/math/c426364a800b8b3ac0709d5582365e0711316e4c.png" alt="\mathbf{b}"/>, and <img class="math" src="_images/math/86c5269f5d1ecdd2c651815e55e2d19febcb5ad4.png" alt="\mathbf{c}"/>
+\[( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
+= ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )  \boldsymbol{P}\]</div>
+<p>where <span class="math">\(\mathbf{a}\)</span>, <span class="math">\(\mathbf{b}\)</span>, and <span class="math">\(\mathbf{c}\)</span>
 are the input (original) basis vectors, and
-<img class="math" src="_images/math/13ed07bb0748127183a15e315e7f6bd84ad74602.png" alt="\mathbf{a}_\mathrm{s}"/>, <img class="math" src="_images/math/d67346cdefa9b5c1e989a0c85a73d05e101ff7d0.png" alt="\mathbf{b}_\mathrm{s}"/>, and
-<img class="math" src="_images/math/503f0669c3cf22890cba4f4caa8c8edae84a1b4d.png" alt="\mathbf{c}_\mathrm{s}"/> are the standardized basis vectors. The
-<code class="docutils literal"><span class="pre">origin_shift</span></code> (<img class="math" src="_images/math/657e613e83ca363f0421d6539dda62c095014272.png" alt="\boldsymbol{p}"/>) is the vector from the
+<span class="math">\(\mathbf{a}_\mathrm{s}\)</span>, <span class="math">\(\mathbf{b}_\mathrm{s}\)</span>, and
+<span class="math">\(\mathbf{c}_\mathrm{s}\)</span> are the standardized basis vectors. The
+<code class="docutils literal"><span class="pre">origin_shift</span></code> (<span class="math">\(\boldsymbol{p}\)</span>) is the vector from the
 origin of the standardized coordinate system to the origin of the
 input (original) coordinate system measured in the standardized
 coordinate system. The atomic point shift is measured from the
 standardized unit cell (conventional unit cell) to the original unit
 cell measured in the coordinates of the standardized unit cell. An
-atomic point in the original unit cell <img class="math" src="_images/math/1fb53a6e43d7ce3b8f6b9680713299ee42199ead.png" alt="\boldsymbol{x}"/> (input
+atomic point in the original unit cell <span class="math">\(\boldsymbol{x}\)</span> (input
 data) is mapped to that in the standardized unit cell
-<img class="math" src="_images/math/ee623e42573ce3396c9ee36c932a4b52fdad6767.png" alt="\boldsymbol{x}_\mathrm{s}"/> by</p>
+<span class="math">\(\boldsymbol{x}_\mathrm{s}\)</span> by</p>
 <div class="math">
-<p><img src="_images/math/45065c0f8603b0e6e1460ddec648ca040fbf0843.png" alt="\boldsymbol{x}_\mathrm{s} = \boldsymbol{P}\boldsymbol{x} +
-\boldsymbol{p} \;\;(\mathrm{mod}\; \mathbf{1})."/></p>
-</div><p>In <strong>versions 1.7.x and 1.8 or before</strong>, <code class="docutils literal"><span class="pre">transformation_matrix</span></code> and
+\[\boldsymbol{x}_\mathrm{s} = \boldsymbol{P}\boldsymbol{x} +
+\boldsymbol{p} \;\;(\mathrm{mod}\; \mathbf{1}).\]</div>
+<p>In <strong>versions 1.7.x and 1.8 or before</strong>, <code class="docutils literal"><span class="pre">transformation_matrix</span></code> and
 <code class="docutils literal"><span class="pre">origin_shift</span></code> are defined as follows:</p>
 <div class="math">
-<p><img src="_images/math/75e11bf20dd3fd246684881cd0da35ea12493ecb.png" alt="( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
+\[( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
 \mathbf{c}_\mathrm{s} ) = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c}
 ) \boldsymbol{P} \;\; \text{and} \;\; \boldsymbol{x}_\mathrm{s} =
 \boldsymbol{P}^{-1}\boldsymbol{x} - \boldsymbol{p}
-\;\;(\mathrm{mod}\; \mathbf{1}),"/></p>
-</div><p>respectively.</p>
+\;\;(\mathrm{mod}\; \mathbf{1}),\]</div>
+<p>respectively.</p>
 </div>
 <div class="section" id="standardized-crystal-structure">
 <h4><a class="toc-backref" href="#id18">Standardized crystal structure</a><a class="headerlink" href="#standardized-crystal-structure" title="Permalink to this headline">¶</a></h4>
@@ -537,16 +543,22 @@ data) is mapped to that in the standardized unit cell
 <p>The standardized crystal structure corresponding to a Hall symbol is
 stored in <code class="docutils literal"><span class="pre">n_std_atoms</span></code>, <code class="docutils literal"><span class="pre">std_lattice</span></code>, <code class="docutils literal"><span class="pre">std_types</span></code>, and
 <code class="docutils literal"><span class="pre">std_positions</span></code>.</p>
-<p>In <strong>versions 1.7.x and 1.8 or before</strong>, the variable names of the
+<p><strong>At versions 1.7.x and 1.8 or before</strong>, the variable names of the
 members corresponding to those above are <code class="docutils literal"><span class="pre">n_brv_atoms</span></code>,
 <code class="docutils literal"><span class="pre">brv_lattice</span></code>, <code class="docutils literal"><span class="pre">brv_types</span></code>, and <code class="docutils literal"><span class="pre">brv_positions</span></code>, respectively.</p>
+<p><strong>At versions 1.10 or later</strong>, <code class="docutils literal"><span class="pre">std_mapping_to_primitive</span></code> is
+available. This gives a list of atomic indices in the primitive cell
+of the standardized crystal structure, where the same number presents
+the same atom in the primitive cell. By collective the atoms having
+the same number, a set of relative lattice points in the the
+standardized crystal structure is obtained.</p>
 </div>
 <div class="section" id="crystallographic-point-group">
 <h4><a class="toc-backref" href="#id19">Crystallographic point group</a><a class="headerlink" href="#crystallographic-point-group" title="Permalink to this headline">¶</a></h4>
 <p><strong>New in version 1.8.1</strong></p>
 <p><code class="docutils literal"><span class="pre">pointgroup_number</span></code> is the serial number of the crystallographic
 point group, which refers <a class="reference external" href="http://pmsl.planet.sci.kobe-u.ac.jp/~seto/?page_id=37&amp;lang=en">list of space
-groups (Seto&#8217;s web site)</a>.
+groups (Seto’s web site)</a>.
 <code class="docutils literal"><span class="pre">pointgroup_symbol</span></code> is the symbol of the crystallographic point
 group in the Hermann–Mauguin notation.</p>
 <div class="line-block">
@@ -567,8 +579,8 @@ freed by calling <code class="docutils literal"><span class="pre">spg_free_datas
 </div>
 </div>
 <div class="section" id="spg-get-spacegroup-type">
-<h2><a class="toc-backref" href="#id21"><code class="docutils literal"><span class="pre">spg_get_spacegroup_type</span></code></a><a class="headerlink" href="#spg-get-spacegroup-type" title="Permalink to this headline">¶</a></h2>
-<p><strong>Changed at version 1.9.4: Some members are added and the member name &#8216;setting&#8217; is changed to &#8216;choice&#8217;.</strong></p>
+<span id="api-spg-spacegroup-type"></span><h2><a class="toc-backref" href="#id21"><code class="docutils literal"><span class="pre">spg_get_spacegroup_type</span></code></a><a class="headerlink" href="#spg-get-spacegroup-type" title="Permalink to this headline">¶</a></h2>
+<p><strong>Changed at version 1.9.4: Some members are added and the member name ‘setting’ is changed to ‘choice’.</strong></p>
 <p>This function allows to directly access to the space-group-type
 database in spglib (spg_database.c). To specify the space group type
 with a specific choice, <code class="docutils literal"><span class="pre">hall_number</span></code> is used. The definition of
@@ -666,13 +678,13 @@ it failed.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">spg_niggli_reduce</span><span class="p">(</span><span class="n">double</span> <span class="n">lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span> <span class="n">const</span> <span class="n">double</span> <span class="n">symprec</span><span class="p">);</span>
 </pre></div>
 </div>
-<p>The transformation from original basis vectors <img class="math" src="_images/math/f5bd92e98c15a359f34917f65e5bf619a4dd92f5.png" alt="( \mathbf{a}
-\; \mathbf{b} \; \mathbf{c} )"/> to final basis vectors <img class="math" src="_images/math/a09173cdcfe8fd456339e01d0be62a9759f3e2ad.png" alt="(
-\mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )"/> is achieved by linear
+<p>The transformation from original basis vectors <span class="math">\(( \mathbf{a}
+\; \mathbf{b} \; \mathbf{c} )\)</span> to final basis vectors <span class="math">\((
+\mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )\)</span> is achieved by linear
 combination of basis vectors with integer coefficients without
 rotating coordinates. Therefore the transformation matrix is obtained
-by <img class="math" src="_images/math/7d57856af16da2748657aa5db236e404dd74d828.png" alt="\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
-( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}"/> and the matrix
+by <span class="math">\(\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
+( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}\)</span> and the matrix
 elements have to be almost integers.</p>
 <div class="line-block">
 <div class="line"><br /></div>
@@ -686,13 +698,13 @@ returned if it failed.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">spg_delaunay_reduce</span><span class="p">(</span><span class="n">double</span> <span class="n">lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span> <span class="n">const</span> <span class="n">double</span> <span class="n">symprec</span><span class="p">);</span>
 </pre></div>
 </div>
-<p>The transformation from original basis vectors <img class="math" src="_images/math/f5bd92e98c15a359f34917f65e5bf619a4dd92f5.png" alt="( \mathbf{a}
-\; \mathbf{b} \; \mathbf{c} )"/> to final basis vectors <img class="math" src="_images/math/a09173cdcfe8fd456339e01d0be62a9759f3e2ad.png" alt="(
-\mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )"/> is achieved by linear
+<p>The transformation from original basis vectors <span class="math">\(( \mathbf{a}
+\; \mathbf{b} \; \mathbf{c} )\)</span> to final basis vectors <span class="math">\((
+\mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )\)</span> is achieved by linear
 combination of basis vectors with integer coefficients without
 rotating coordinates. Therefore the transformation matrix is obtained
-by <img class="math" src="_images/math/7d57856af16da2748657aa5db236e404dd74d828.png" alt="\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
-( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}"/> and the matrix
+by <span class="math">\(\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
+( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}\)</span> and the matrix
 elements have to be almost integers.</p>
 </div>
 <div class="section" id="spg-get-ir-reciprocal-mesh">
@@ -772,6 +784,29 @@ are returned as the return value.</p>
 <p>This function can be used to obtain all mesh grid points by setting
 <code class="docutils literal"><span class="pre">num_rot</span> <span class="pre">=</span> <span class="pre">1</span></code>, <code class="docutils literal"><span class="pre">rotations</span> <span class="pre">=</span> <span class="pre">{{1,</span> <span class="pre">0,</span> <span class="pre">0},</span> <span class="pre">{0,</span> <span class="pre">1,</span> <span class="pre">0},</span> <span class="pre">{0,</span> <span class="pre">0,</span> <span class="pre">1}}</span></code>,
 <code class="docutils literal"><span class="pre">num_q</span> <span class="pre">=</span> <span class="pre">1</span></code>, and <code class="docutils literal"><span class="pre">qpoints</span> <span class="pre">=</span> <span class="pre">{0,</span> <span class="pre">0,</span> <span class="pre">0}</span></code>.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="spg-get-hall-number-from-symmetry">
+<h2><a class="toc-backref" href="#id29"><code class="docutils literal"><span class="pre">spg_get_hall_number_from_symmetry</span></code></a><a class="headerlink" href="#spg-get-hall-number-from-symmetry" title="Permalink to this headline">¶</a></h2>
+<p><strong>experimental</strong></p>
+<p><code class="docutils literal"><span class="pre">hall_number</span></code> is obtained from the set of symmetry operations.  The
+definition of <code class="docutils literal"><span class="pre">hall_number</span></code> is found at
+<a class="reference internal" href="#api-spg-get-dataset-spacegroup-type"><span class="std std-ref">Space group type</span></a> and the corresponding
+space-group-type information is obtained through
+<a class="reference internal" href="#api-spg-spacegroup-type"><span class="std std-ref">spg_get_spacegroup_type</span></a>.</p>
+<p>This is expected to work well for the set of symmetry operations whose
+distortion is small. The aim of making this feature is to find
+space-group-type for the set of symmetry operations given by the other
+source than spglib. <code class="docutils literal"><span class="pre">symprec</span></code> is in the length of the fractional
+coordinates and should be small like <code class="docutils literal"><span class="pre">1e-5</span></code>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">spg_get_hall_number_from_symmetry</span><span class="p">(</span><span class="n">SPGCONST</span> <span class="nb">int</span> <span class="n">rotation</span><span class="p">[][</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span>
+                                      <span class="n">SPGCONST</span> <span class="n">double</span> <span class="n">translation</span><span class="p">[][</span><span class="mi">3</span><span class="p">],</span>
+                                      <span class="n">const</span> <span class="nb">int</span> <span class="n">num_operations</span><span class="p">,</span>
+                                      <span class="n">const</span> <span class="n">double</span> <span class="n">symprec</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 </div>
 
@@ -795,7 +830,7 @@ are returned as the return value.</p>
     </p>
     <p>
         &copy; Copyright 2009, Atsushi Togo.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.<br/>
     </p>
   </div>
 </footer>
