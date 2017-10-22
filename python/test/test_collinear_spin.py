@@ -1,8 +1,6 @@
 import unittest
 import numpy as np
 from spglib import get_symmetry
-from vasp import read_vasp
-from os import listdir
 
 class TestGetSymmetry(unittest.TestCase):
 

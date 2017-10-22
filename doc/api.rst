@@ -53,7 +53,7 @@ The usage is as follows::
    SpglibError error;
    error = spg_get_error_code();
    printf("%s\n", spg_get_error_message(error));
-   
+
 |
 
 .. _api_spg_get_symmetry:
@@ -68,13 +68,13 @@ supercells. 0 is returned if it failed.
 ::
 
   int spg_get_symmetry(int rotation[][3][3],
-  		       double translation[][3],
-  		       const int max_size,
-		       const double lattice[3][3],
-  		       const double position[][3],
-		       const int types[],
-  		       const int num_atom,
-		       const double symprec);
+                       double translation[][3],
+                       const int max_size,
+                       const double lattice[3][3],
+                       const double position[][3],
+                       const int types[],
+                       const int num_atom,
+                       const double symprec);
 
 The operations are stored in ``rotation`` and ``translation``. The
 number of operations is return as the return value. Rotations and
@@ -106,7 +106,7 @@ it failed.
                             const double lattice[3][3],
                             const double position[][3],
                             const int types[],
-			    const int num_atom,
+                            const int num_atom,
                             const double symprec);
 
 
@@ -189,8 +189,8 @@ failed.
   int spg_find_primitive(double lattice[3][3],
                          double position[][3],
                          int types[],
-			 const int num_atom,
-			 const double symprec);
+                         const int num_atom,
+                         const double symprec);
 
 ``lattice``, ``position``, and ``types`` are overwritten. Number of
 atoms in the found primitive cell is returned.
@@ -210,10 +210,10 @@ chosen, etc. 0 is returned if it failed.
 ::
 
   int spg_refine_cell(double lattice[3][3],
-		      double position[][3],
-		      int types[],
-		      const int num_atom,
- 		      const double symprec);
+                      double position[][3],
+                      int types[],
+                      const int num_atom,
+                      const double symprec);
 
 The calculated standardized lattice and atomic positions overwrites
 ``lattice``, ``position``, and ``types``. The number of atoms in the
@@ -264,11 +264,11 @@ or cell choice), ``spg_get_dataset_with_hall_number`` is used.
 ::
 
    SpglibDataset * spg_get_dataset_with_hall_number(SPGCONST double lattice[3][3],
-						    SPGCONST double position[][3],
-						    const int types[],
-						    const int num_atom,
-						    const int hall_number,
-						    const double symprec)
+                                                    SPGCONST double position[][3],
+                                                    const int types[],
+                                                    const int num_atom,
+                                                    const int hall_number,
+                                                    const double symprec)
 
 where ``hall_number`` is used to specify the choice. The possible
 choices and those serial numbers are found at `list of space groups
@@ -288,8 +288,9 @@ Finally, its allocated memory space must be freed by calling
 Dataset
 ^^^^^^^^
 
-**At version 1.9.4, SpglibDataset was modified.** The member name
-``setting`` is changed to ``choice`` and ``pointgroup_number`` is removed.
+**At version 1.9.4, SpglibDataset was modified.** The member
+name ``setting`` is changed to ``choice`` and ``pointgroup_number`` is
+removed.
 
 The dataset is accessible through the C-structure given by
 
@@ -309,14 +310,16 @@ The dataset is accessible through the C-structure given by
      int n_atoms;
      int *wyckoffs;
      int *equivalent_atoms;
+     int *mapping_to_primitive;
      int n_std_atoms;             /* n_brv_atoms before version 1.8.1 */
      double std_lattice[3][3];    /* brv_lattice before version 1.8.1 */
      int *std_types;              /* brv_types before version 1.8.1 */
      double (*std_positions)[3];  /* brv_positions before version 1.8.1 */
+     int *std_mapping_to_primitive;
      char pointgroup_symbol[6];
    } SpglibDataset;
 
-In **versions before 1.8.1**, the member names of ``n_std_atoms``,
+**At versions before 1.8.1**, the member names of ``n_std_atoms``,
 ``std_lattice``, ``std_types``, and ``std_positions`` were
 ``n_brv_atoms``, ``brv_lattice``, ``brv_types``, and
 ``brv_positions``, respectively.
@@ -360,6 +363,13 @@ respectively. Number of elements in ``wyckoffs`` is same as
 ``n_atoms``. ``equivalent_atoms`` is a list of atomic indices that map
 to indices of symmetrically independent atoms, where the list index
 corresponds to atomic index of the input crystal structure.
+
+In version 1.10 or later, ``mapping_to_primitive`` is available. This
+gives a list of atomic indices in the primitive cell of the input
+crystal structure, where the same number presents the same atom in the
+primitive cell. By collective the atoms having the same number, a set
+of relative lattice points in the the input crystal structure is
+obtained.
 
 .. _api_origin_shift_and_transformation:
 
@@ -425,9 +435,16 @@ The standardized crystal structure corresponding to a Hall symbol is
 stored in ``n_std_atoms``, ``std_lattice``, ``std_types``, and
 ``std_positions``.
 
-In **versions 1.7.x and 1.8 or before**, the variable names of the
+**At versions 1.7.x and 1.8 or before**, the variable names of the
 members corresponding to those above are ``n_brv_atoms``,
 ``brv_lattice``, ``brv_types``, and ``brv_positions``, respectively.
+
+**At versions 1.10 or later**, ``std_mapping_to_primitive`` is
+available. This gives a list of atomic indices in the primitive cell
+of the standardized crystal structure, where the same number presents
+the same atom in the primitive cell. By collective the atoms having
+the same number, a set of relative lattice points in the the
+standardized crystal structure is obtained.
 
 Crystallographic point group
 """""""""""""""""""""""""""""
@@ -454,6 +471,8 @@ freed by calling ``spg_free_dataset``.
   void spg_free_dataset(SpglibDataset *dataset);
 
 |
+
+.. _api_spg_spacegroup_type:
 
 ``spg_get_spacegroup_type``
 -----------------------------
@@ -504,8 +523,8 @@ failed.
 ::
 
    int spg_get_symmetry_from_database(int rotations[192][3][3],
-				      double translations[192][3],
-				      const int hall_number);
+                                      double translations[192][3],
+                                      const int hall_number);
 
 The returned value is the number of space group operations. The space
 group operations are stored in ``rotations`` and ``translations``.
@@ -521,10 +540,10 @@ returned when it failed.
 ::
 
   int spg_get_multiplicity(const double lattice[3][3],
-  			   const double position[][3],
-  			   const int types[],
-			   const int num_atom,
-  			   const double symprec);
+                           const double position[][3],
+                           const int types[],
+                           const int num_atom,
+                           const double symprec);
 
 This function may be used in advance to allocate memoery space for
 symmetry operations.
@@ -545,7 +564,7 @@ for the definition ``equivalent_atoms``. 0 is returned when it failed.
 
   int spg_get_symmetry_with_collinear_spin(int rotation[][3][3],
                                            double translation[][3],
-					   int equivalent_atoms[],
+                                           int equivalent_atoms[],
                                            const int max_size,
                                            SPGCONST double lattice[3][3],
                                            SPGCONST double position[][3],
@@ -685,3 +704,29 @@ are returned as the return value.
 This function can be used to obtain all mesh grid points by setting
 ``num_rot = 1``, ``rotations = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}}``,
 ``num_q = 1``, and ``qpoints = {0, 0, 0}``.
+
+|
+
+``spg_get_hall_number_from_symmetry``
+--------------------------------------
+
+**experimental**
+
+``hall_number`` is obtained from the set of symmetry operations.  The
+definition of ``hall_number`` is found at
+:ref:`api_spg_get_dataset_spacegroup_type` and the corresponding
+space-group-type information is obtained through
+:ref:`api_spg_spacegroup_type`.
+
+This is expected to work well for the set of symmetry operations whose
+distortion is small. The aim of making this feature is to find
+space-group-type for the set of symmetry operations given by the other
+source than spglib. ``symprec`` is in the length of the fractional
+coordinates and should be small like ``1e-5``.
+
+::
+
+   int spg_get_hall_number_from_symmetry(SPGCONST int rotation[][3][3],
+                                         SPGCONST double translation[][3],
+                                         const int num_operations,
+                                         const double symprec)

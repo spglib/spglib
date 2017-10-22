@@ -67,11 +67,11 @@ def get_symmetry(cell, symprec=1e-5, angle_tolerance=-1.0):
                 is used to judge symmetry.
 
     Return:
-        dictionary: Rotation parts and translation parts.
+        A dictionary: Rotation parts and translation parts. Dictionary keys:
+            'rotations': Gives the numpy 'intc' array of the rotation matrices.
+            'translations': Gives the numpy 'double' array of fractional
+                translations with respect to a, b, c axes.
 
-        'rotations': Gives the numpy 'intc' array of the rotation matrices.
-        'translations': Gives the numpy 'double' array of fractional
-            translations with respect to a, b, c axes.
     """
     _set_no_error()
 
@@ -128,42 +128,33 @@ def get_symmetry_dataset(cell,
                      the database corresponding to the Hall symbol is made.
 
     Return:
-        A dictionary is returned.
-
-        number:
-            int: International space group number
-        international:
-            str: International symbol
-        hall:
-            str: Hall symbol
-        choice:
-            str: Centring, origin, basis vector setting
-        transformation_matrix:
-            3x3 float matrix:
+        A dictionary is returned. Dictionary keys:
+            number (int): International space group number
+            international (str): International symbol
+            hall (str): Hall symbol
+            choice (str): Centring, origin, basis vector setting
+            transformation_matrix (3x3 float):
                 Transformation matrix from input lattice to standardized lattice
                 L^original = L^standardized * Tmat
-        origin shift:
-            float vecotr: Origin shift from standardized to input origin
-        rotations, translations:
-            3x3 int matrix, float vector:
+            origin shift (3 float):
+                Origin shift from standardized to input origin
+            rotations (3x3 int), translations (float vector):
                 Rotation matrices and translation vectors. Space group
                 operations are obtained by
                 [(r,t) for r, t in zip(rotations, translations)]
-        wyckoffs:
-            List of characters: Wyckoff letters
-        equivalent_atoms:
-            Symmetrically equivalent atoms
-        mapping_to_primitive:
-            Original cell atom index mapping to primivie cell atom index
-        std_lattice, std_positions, std_types:
-            3x3 float matrix, Nx3 float vectors, list of int:
-                Standardized unit cell
-        std_mapping_to_primitive:
-            Std-cell atom index mapping to primivie cell atom index
-        pointgroup:
-            str: Pointgroup symbol
+            wyckoffs (n char): Wyckoff letters
+            equivalent_atoms (n int): Symmetrically equivalent atoms
+            mapping_to_primitive (n int):
+                Original cell atom index mapping to primivie cell atom index
+            Standardized unit cell:
+                std_lattice (3x3 float), std_positions (Nx3 float),
+                std_types (N int)
+            std_mapping_to_primitive (m int):
+                Std-cell atom index mapping to primivie cell atom index
+            pointgroup (str): Pointgroup symbol
 
         If it fails, None is returned.
+
     """
     _set_no_error()
 
@@ -252,7 +243,9 @@ def get_hall_number_from_symmetry(rotations, translations, symprec=1e-5):
     If it fails, None is returned.
     """
 
-    hall_number = spg.hall_number_from_symmetry(rotations, translations, symprec)
+    r = np.array(rotations, dtype='intc', order='C')
+    t = np.array(translations, dtype='double', order='C')
+    hall_number = spg.hall_number_from_symmetry(r, t, symprec)
     return hall_number
 
 def get_spacegroup_type(hall_number):
@@ -493,7 +486,7 @@ def get_ir_reciprocal_mesh(mesh,
         is_time_reversal:
             bool: Time reversal symmetry is included or not.
 
-    Return:
+    Returns:
         mapping_table:
             int array (N,): Grid point mapping table to ir-gird-points
         grid_address:
@@ -544,7 +537,7 @@ def get_stabilized_reciprocal_mesh(mesh,
             float array (N ,3) or (3,):
                 Stabilizer(s) in the fractional coordinates.
 
-    Return:
+    Returns:
         mapping_table:
             int array (N,): Grid point mapping table to ir-gird-points
         grid_address:
@@ -739,6 +732,8 @@ def _expand_cell(cell):
         else:
             magmoms = None
     else:
+        import warnings
+        warnings.warn("ASE Atoms-like input is deprecated.", DeprecationWarning)
         lattice = np.array(cell.get_cell().T, dtype='double', order='C')
         positions = np.array(cell.get_scaled_positions(),
                              dtype='double', order='C')
