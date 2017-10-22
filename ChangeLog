@@ -1,5 +1,14 @@
-2017-10-02  Atsushi Togo  <atz.togo@gmail.com>
+2017-10-22  Atsushi Togo  <atz.togo@gmail.com>
 
+	* Version 1.10.0
+
+	'mapping_to_primitive' and 'std_mapping_to_primitive' in the
+	spglib dataset are put available on the spglib
+	document. 'spg_get_hall_number_from_symmetry' function
+	('get_hall_number_from_symmetry' method for python) is also
+	available on the spglib document.
+
+2017-10-02  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.9.10
 
