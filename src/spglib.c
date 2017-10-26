@@ -94,7 +94,7 @@ static int set_dataset(SpglibDataset * dataset,
                        const Cell * cell,
                        const Primitive * primitive,
                        SPGCONST Spacegroup * spacegroup,
-                       const double tolerance);
+                       ExactStructure *exstr);
 static int get_symmetry_from_dataset(int rotation[][3][3],
                                      double translation[][3],
                                      const int max_size,
@@ -1022,11 +1022,13 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
   SpglibDataset *dataset;
   Cell *cell;
   Primitive *primitive;
+  ExactStructure *exstr;
 
   spacegroup.number = 0;
   dataset = NULL;
   cell = NULL;
   primitive = NULL;
+  exstr = NULL;
 
   if ((dataset = init_dataset()) == NULL) {
     goto not_found;
@@ -1063,17 +1065,28 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
     }
 
     if (spacegroup.number > 0) {
-      if (set_dataset(dataset,
-                      cell,
-                      primitive,
-                      &spacegroup,
-                      primitive->tolerance)) {
-        goto found;
+      if ((exstr = ref_get_exact_structure_and_symmetry(
+             primitive->cell,
+             cell,
+             &spacegroup,
+             primitive->mapping_table,
+             primitive->tolerance)) == NULL) {
+        warning_print("spglib: ref_get_exact_structure_and_symmetry failed.");
+        warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
       } else {
-        tolerance *= REDUCE_RATE;
+        if (set_dataset(dataset,
+                        cell,
+                        primitive,
+                        &spacegroup,
+                        exstr)) {
+          goto found;
+        }
       }
+      tolerance *= REDUCE_RATE;
     }
 
+    ref_free_exact_structure(exstr);
+    exstr = NULL;
     prm_free_primitive(primitive);
     primitive = NULL;
   }
@@ -1092,6 +1105,8 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
   return NULL;
 
  found:
+  ref_free_exact_structure(exstr);
+  exstr = NULL;
   prm_free_primitive(primitive);
   primitive = NULL;
   cel_free_cell(cell);
@@ -1142,57 +1157,11 @@ static int set_dataset(SpglibDataset * dataset,
                        const Cell * cell,
                        const Primitive * primitive,
                        SPGCONST Spacegroup * spacegroup,
-                       const double tolerance)
+                       ExactStructure *exstr)
 {
   int i;
-  int *std_mapping_to_primitive, *wyckoffs, *equivalent_atoms;
   double inv_lat[3][3];
-  Cell *bravais;
-  Symmetry *symmetry;
   Pointgroup pointgroup;
-
-  wyckoffs = NULL;
-  equivalent_atoms = NULL;
-  std_mapping_to_primitive = NULL;
-  bravais = NULL;
-  symmetry = NULL;
-
-  if ((symmetry = ref_get_refined_symmetry_operations(cell,
-                                                      primitive->cell,
-                                                      spacegroup,
-                                                      tolerance)) == NULL) {
-    return 0;
-  }
-
-  if ((wyckoffs = (int*) malloc(sizeof(int) * cell->size)) == NULL) {
-    warning_print("spglib: Memory could not be allocated.");
-    goto err;
-  }
-
-  if ((equivalent_atoms = (int*) malloc(sizeof(int) * cell->size)) == NULL) {
-    warning_print("spglib: Memory could not be allocated.");
-    goto err;
-  }
-
-  if ((std_mapping_to_primitive =
-       (int*) malloc(sizeof(int) * primitive->cell->size * 4)) == NULL) {
-    warning_print("spglib: Memory could not be allocated.");
-    goto err;
-  }
-
-  if ((bravais = ref_get_Wyckoff_positions(wyckoffs,
-                                           equivalent_atoms,
-                                           std_mapping_to_primitive,
-                                           primitive->cell,
-                                           cell,
-                                           spacegroup,
-                                           symmetry,
-                                           primitive->mapping_table,
-                                           tolerance)) == NULL) {
-    warning_print("spglib: ref_get_Wyckoff_positions failed.");
-    warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
-    goto err;
-  }
 
   /* Spacegroup type, transformation matrix, origin shift */
   dataset->n_atoms = cell->size;
@@ -1206,7 +1175,7 @@ static int set_dataset(SpglibDataset * dataset,
                          inv_lat, cell->lattice);
   mat_copy_vector_d3(dataset->origin_shift, spacegroup->origin_shift);
 
-  dataset->n_operations = symmetry->size;
+  dataset->n_operations = exstr->symmetry->size;
 
   if ((dataset->rotations =
        (int (*)[3][3]) malloc(sizeof(int[3][3]) * dataset->n_operations))
@@ -1222,13 +1191,10 @@ static int set_dataset(SpglibDataset * dataset,
     goto err;
   }
 
-  for (i = 0; i < symmetry->size; i++) {
-    mat_copy_matrix_i3(dataset->rotations[i], symmetry->rot[i]);
-    mat_copy_vector_d3(dataset->translations[i], symmetry->trans[i]);
+  for (i = 0; i < exstr->symmetry->size; i++) {
+    mat_copy_matrix_i3(dataset->rotations[i], exstr->symmetry->rot[i]);
+    mat_copy_vector_d3(dataset->translations[i], exstr->symmetry->trans[i]);
   }
-
-  sym_free_symmetry(symmetry);
-  symmetry = NULL;
 
   /* Wyckoff positions */
   if ((dataset->wyckoffs = (int*) malloc(sizeof(int) * dataset->n_atoms))
@@ -1244,14 +1210,9 @@ static int set_dataset(SpglibDataset * dataset,
   }
 
   for (i = 0; i < dataset->n_atoms; i++) {
-    dataset->wyckoffs[i] = wyckoffs[i];
-    dataset->equivalent_atoms[i] = equivalent_atoms[i];
+    dataset->wyckoffs[i] = exstr->wyckoffs[i];
+    dataset->equivalent_atoms[i] = exstr->equivalent_atoms[i];
   }
-
-  free(wyckoffs);
-  wyckoffs = NULL;
-  free(equivalent_atoms);
-  equivalent_atoms = NULL;
 
   if ((dataset->mapping_to_primitive =
        (int*) malloc(sizeof(int) * dataset->n_atoms)) == NULL) {
@@ -1261,14 +1222,14 @@ static int set_dataset(SpglibDataset * dataset,
 
   debug_print("Refined cell after ref_get_Wyckoff_positions\n");
   debug_print(" (line %d, %s).\n", __LINE__, __FILE__);
-  debug_print_matrix_d3(bravais->lattice);
+  debug_print_matrix_d3(exstr->bravais->lattice);
 #ifdef SPGDEBUG
   for (i = 0; i < bravais->size; i++) {
     printf("%d: %f %f %f\n",
-           bravais->types[i],
-           bravais->position[i][0],
-           bravais->position[i][1],
-           bravais->position[i][2]);
+           exstr->bravais->types[i],
+           exstr->bravais->position[i][0],
+           exstr->bravais->position[i][1],
+           exstr->bravais->position[i][2]);
   }
 #endif
 
@@ -1276,8 +1237,8 @@ static int set_dataset(SpglibDataset * dataset,
     dataset->mapping_to_primitive[i] = primitive->mapping_table[i];
   }
 
-  dataset->n_std_atoms = bravais->size;
-  mat_copy_matrix_d3(dataset->std_lattice, bravais->lattice);
+  dataset->n_std_atoms = exstr->bravais->size;
+  mat_copy_matrix_d3(dataset->std_lattice, exstr->bravais->lattice);
 
   if ((dataset->std_positions =
        (double (*)[3]) malloc(sizeof(double[3]) * dataset->n_std_atoms))
@@ -1299,15 +1260,10 @@ static int set_dataset(SpglibDataset * dataset,
   }
 
   for (i = 0; i < dataset->n_std_atoms; i++) {
-    mat_copy_vector_d3(dataset->std_positions[i], bravais->position[i]);
-    dataset->std_types[i] = bravais->types[i];
-    dataset->std_mapping_to_primitive[i] = std_mapping_to_primitive[i];
+    mat_copy_vector_d3(dataset->std_positions[i], exstr->bravais->position[i]);
+    dataset->std_types[i] = exstr->bravais->types[i];
+    dataset->std_mapping_to_primitive[i] = exstr->std_mapping_to_primitive[i];
   }
-
-  free(std_mapping_to_primitive);
-  std_mapping_to_primitive = NULL;
-  cel_free_cell(bravais);
-  bravais = NULL;
 
   /* dataset->pointgroup_number = spacegroup->pointgroup_number; */
   pointgroup = ptg_get_pointgroup(spacegroup->pointgroup_number);
@@ -1316,29 +1272,9 @@ static int set_dataset(SpglibDataset * dataset,
   return 1;
 
  err:
-  if (wyckoffs != NULL) {
-    free(wyckoffs);
-    wyckoffs = NULL;
-  }
-  if (equivalent_atoms != NULL) {
-    free(equivalent_atoms);
-    equivalent_atoms = NULL;
-  }
   if (dataset->std_positions != NULL) {
     free(dataset->std_positions);
     dataset->std_positions = NULL;
-  }
-  if (std_mapping_to_primitive != NULL) {
-    free(std_mapping_to_primitive);
-    std_mapping_to_primitive = NULL;
-  }
-  if (bravais != NULL) {
-    cel_free_cell(bravais);
-    bravais = NULL;
-  }
-  if (symmetry != NULL) {
-    sym_free_symmetry(symmetry);
-    symmetry = NULL;
   }
   if (dataset->std_mapping_to_primitive != NULL) {
     free(dataset->std_mapping_to_primitive);
