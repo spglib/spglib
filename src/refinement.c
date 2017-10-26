@@ -176,7 +176,6 @@ ref_get_exact_structure_and_symmetry(const Cell * primitive,
     goto err;
   }
 
-
   if ((wyckoffs = (int*) malloc(sizeof(int) * cell->size)) == NULL) {
     warning_print("spglib: Memory could not be allocated.");
     goto err;

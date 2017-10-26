@@ -39,6 +39,7 @@
 #include "cell.h"
 #include "debug.h"
 #include "delaunay.h"
+#include "determination.h"
 #include "kgrid.h"
 #include "kpoint.h"
 #include "mathfunc.h"
@@ -1051,7 +1052,7 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
 
   tolerance = symprec;
   for (attempt = 0; attempt < NUM_ATTEMPT; attempt++) {
-    if ((primitive = spa_get_spacegroup(&spacegroup,
+    if ((primitive = det_get_spacegroup(&spacegroup,
                                         cell,
                                         hall_number,
                                         tolerance,
@@ -1821,7 +1822,7 @@ static int get_international(char symbol[11],
 
   cel_set_cell(cell, lattice, position, types);
 
-  if ((primitive = spa_get_spacegroup(&spacegroup,
+  if ((primitive = det_get_spacegroup(&spacegroup,
                                       cell,
                                       0,
                                       symprec,
@@ -1872,7 +1873,7 @@ static int get_schoenflies(char symbol[7],
 
   cel_set_cell(cell, lattice, position, types);
 
-  if ((primitive = spa_get_spacegroup(&spacegroup,
+  if ((primitive = det_get_spacegroup(&spacegroup,
                                       cell,
                                       0,
                                       symprec,

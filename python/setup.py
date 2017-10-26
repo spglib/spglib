@@ -45,11 +45,12 @@ import sysconfig
 config_var = sysconfig.get_config_var("CFLAGS")
 if config_var is not None and "-Werror=declaration-after-statement" in config_var:
     os.environ['CFLAGS'] = config_var.replace(
-        "-Werror=declaration-after-statement", "")    
+        "-Werror=declaration-after-statement", "")
 
 sources = ['arithmetic.c',
            'cell.c',
            'delaunay.c',
+           'determination.c',
            'hall_symbol.c',
            'kgrid.c',
            'kpoint.c',
@@ -76,7 +77,7 @@ if not use_setuptools:
     include_dirs += get_numpy_include_dirs()
 
 for i,s in enumerate(sources):
-    sources[i] = "%s/%s" % (source_dir, s) 
+    sources[i] = "%s/%s" % (source_dir, s)
 
 extra_compile_args = []
 extra_link_args = []
