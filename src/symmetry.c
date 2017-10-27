@@ -92,7 +92,8 @@ static Symmetry * get_operations(const Cell *primitive,
 static Symmetry * reduce_operation(const Cell * primitive,
                                    const Symmetry * symmetry,
                                    const double symprec,
-                                   const double angle_symprec);
+                                   const double angle_symprec,
+                                   const int is_pure_trans);
 static int search_translation_part(int atoms_found[],
                                    const Cell * cell,
                                    SPGCONST int rot[3][3],
@@ -200,7 +201,7 @@ Symmetry * sym_reduce_operation(const Cell * primitive,
                                 const double symprec,
                                 const double angle_tolerance)
 {
-  return reduce_operation(primitive, symmetry, symprec, angle_tolerance);
+  return reduce_operation(primitive, symmetry, symprec, angle_tolerance, 0);
 }
 
 /* Return NULL if failed */
@@ -226,7 +227,8 @@ VecDBL * sym_get_pure_translation(const Cell *cell,
     debug_print("  sym_get_pure_translation: pure_trans->size = %d\n", multi);
   } else {
     ;
-    warning_print("spglib: Finding pure translation failed (line %d, %s).\n", __LINE__, __FILE__);
+    warning_print("spglib: Finding pure translation failed (line %d, %s).\n",
+                  __LINE__, __FILE__);
     warning_print("        cell->size %d, multi %d\n", cell->size, multi);
   }
 
@@ -259,7 +261,7 @@ VecDBL * sym_reduce_pure_translation(const Cell * cell,
   }
 
   if ((symmetry_reduced =
-       reduce_operation(cell, symmetry, symprec, angle_tolerance)) == NULL) {
+       reduce_operation(cell, symmetry, symprec, angle_tolerance, 1)) == NULL) {
     sym_free_symmetry(symmetry);
     symmetry = NULL;
     return NULL;
@@ -324,7 +326,8 @@ static Symmetry * get_operations(const Cell *primitive,
 static Symmetry * reduce_operation(const Cell * primitive,
                                    const Symmetry * symmetry,
                                    const double symprec,
-                                   const double angle_symprec)
+                                   const double angle_symprec,
+                                   const int is_pure_trans)
 {
   int i, j, num_sym;
   Symmetry * sym_reduced;
@@ -338,11 +341,16 @@ static Symmetry * reduce_operation(const Cell * primitive,
   rot = NULL;
   trans = NULL;
 
-  point_symmetry = get_lattice_symmetry(primitive->lattice,
-                                        symprec,
-                                        angle_symprec);
-  if (point_symmetry.size == 0) {
-    return NULL;
+  if (is_pure_trans) {
+    point_symmetry.size = 1;
+    mat_copy_matrix_i3(point_symmetry.rot[0], identity);
+  } else {
+    point_symmetry = get_lattice_symmetry(primitive->lattice,
+                                          symprec,
+                                          angle_symprec);
+    if (point_symmetry.size == 0) {
+      return NULL;
+    }
   }
 
   if ((rot = mat_alloc_MatINT(symmetry->size)) == NULL) {
