@@ -3,13 +3,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Spglib for Python &#8212; spglib 1.10.0 documentation</title>
+    
+    <title>Spglib for Python &#8212; spglib 1.10.1 documentation</title>
+    
     <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.10.0',
+        VERSION:     '1.10.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -19,10 +22,10 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
     <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
-    <script type="text/javascript" src="_static/bootstrap-3.3.6/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -47,7 +50,7 @@
         </button>
         <a class="navbar-brand" href="index.html">
           spglib</a>
-        <span class="navbar-text navbar-version pull-left"><b>1.10.0</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>1.10.1</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -112,12 +115,12 @@
 <li><a class="reference internal" href="#get-symmetry-dataset"><code class="docutils literal"><span class="pre">get_symmetry_dataset</span></code></a></li>
 <li><a class="reference internal" href="#get-symmetry-from-database"><code class="docutils literal"><span class="pre">get_symmetry_from_database</span></code></a></li>
 <li><a class="reference internal" href="#get-spacegroup-type"><code class="docutils literal"><span class="pre">get_spacegroup_type</span></code></a></li>
+<li><a class="reference internal" href="#get-hall-number-from-symmetry"><code class="docutils literal"><span class="pre">get_hall_number_from_symmetry</span></code></a></li>
 <li><a class="reference internal" href="#niggli-reduce"><code class="docutils literal"><span class="pre">niggli_reduce</span></code></a></li>
 <li><a class="reference internal" href="#delaunay-reduce"><code class="docutils literal"><span class="pre">delaunay_reduce</span></code></a></li>
 <li><a class="reference internal" href="#get-ir-reciprocal-mesh"><code class="docutils literal"><span class="pre">get_ir_reciprocal_mesh</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#get-hall-number-from-symmetry"><code class="docutils literal"><span class="pre">get_hall_number_from_symmetry</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -179,12 +182,12 @@
 <li><a class="reference internal" href="#get-symmetry-dataset" id="id21"><code class="docutils literal"><span class="pre">get_symmetry_dataset</span></code></a></li>
 <li><a class="reference internal" href="#get-symmetry-from-database" id="id22"><code class="docutils literal"><span class="pre">get_symmetry_from_database</span></code></a></li>
 <li><a class="reference internal" href="#get-spacegroup-type" id="id23"><code class="docutils literal"><span class="pre">get_spacegroup_type</span></code></a></li>
-<li><a class="reference internal" href="#niggli-reduce" id="id24"><code class="docutils literal"><span class="pre">niggli_reduce</span></code></a></li>
-<li><a class="reference internal" href="#delaunay-reduce" id="id25"><code class="docutils literal"><span class="pre">delaunay_reduce</span></code></a></li>
-<li><a class="reference internal" href="#get-ir-reciprocal-mesh" id="id26"><code class="docutils literal"><span class="pre">get_ir_reciprocal_mesh</span></code></a></li>
+<li><a class="reference internal" href="#get-hall-number-from-symmetry" id="id24"><code class="docutils literal"><span class="pre">get_hall_number_from_symmetry</span></code></a></li>
+<li><a class="reference internal" href="#niggli-reduce" id="id25"><code class="docutils literal"><span class="pre">niggli_reduce</span></code></a></li>
+<li><a class="reference internal" href="#delaunay-reduce" id="id26"><code class="docutils literal"><span class="pre">delaunay_reduce</span></code></a></li>
+<li><a class="reference internal" href="#get-ir-reciprocal-mesh" id="id27"><code class="docutils literal"><span class="pre">get_ir_reciprocal_mesh</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#get-hall-number-from-symmetry" id="id27"><code class="docutils literal"><span class="pre">get_hall_number_from_symmetry</span></code></a></li>
 </ul>
 </div>
 <div class="section" id="installation">
@@ -581,8 +584,25 @@ dictionary is as follows:</p>
 <code class="docutils literal"><span class="pre">dataset['pointgroup_symbol']</span></code> of <code class="docutils literal"><span class="pre">get_symmetry_dataset</span></code>.</p>
 <p>When something wrong happened, <code class="docutils literal"><span class="pre">None</span></code> is returned.</p>
 </div>
+<div class="section" id="get-hall-number-from-symmetry">
+<h3><a class="toc-backref" href="#id24"><code class="docutils literal"><span class="pre">get_hall_number_from_symmetry</span></code></a><a class="headerlink" href="#get-hall-number-from-symmetry" title="Permalink to this headline">¶</a></h3>
+<p><strong>experimental</strong></p>
+<p><code class="docutils literal"><span class="pre">hall_number</span></code> is obtained from the set of symmetry operations.  The
+definition of <code class="docutils literal"><span class="pre">hall_number</span></code> is found at
+<a class="reference internal" href="api.html#api-spg-get-dataset-spacegroup-type"><span class="std std-ref">Space group type</span></a> and the corresponding
+space-group-type information is obtained through
+<a class="reference internal" href="#py-method-get-spacegroup-type"><span class="std std-ref">get_spacegroup_type</span></a>.</p>
+<p>This is expected to work well for the set of symmetry operations whose
+distortion is small. The aim of making this feature is to find
+space-group-type for the set of symmetry operations given by the other
+source than spglib. <code class="docutils literal"><span class="pre">symprec</span></code> is in the length of the fractional
+coordinates and should be small like <code class="docutils literal"><span class="pre">1e-5</span></code>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">get_hall_number_from_symmetry</span><span class="p">(</span><span class="n">rotations</span><span class="p">,</span> <span class="n">translations</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="niggli-reduce">
-<h3><a class="toc-backref" href="#id24"><code class="docutils literal"><span class="pre">niggli_reduce</span></code></a><a class="headerlink" href="#niggli-reduce" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id25"><code class="docutils literal"><span class="pre">niggli_reduce</span></code></a><a class="headerlink" href="#niggli-reduce" title="Permalink to this headline">¶</a></h3>
 <p><strong>New at version 1.9.4</strong></p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">niggli_lattice</span> <span class="o">=</span> <span class="n">niggli_reduce</span><span class="p">(</span><span class="n">lattice</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
 </pre></div>
@@ -609,7 +629,7 @@ by <span class="math">\(\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c
 elements have to be almost integers.</p>
 </div>
 <div class="section" id="delaunay-reduce">
-<h3><a class="toc-backref" href="#id25"><code class="docutils literal"><span class="pre">delaunay_reduce</span></code></a><a class="headerlink" href="#delaunay-reduce" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id26"><code class="docutils literal"><span class="pre">delaunay_reduce</span></code></a><a class="headerlink" href="#delaunay-reduce" title="Permalink to this headline">¶</a></h3>
 <p><strong>New at version 1.9.4</strong></p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">delaunay_lattice</span> <span class="o">=</span> <span class="n">delaunay_reduce</span><span class="p">(</span><span class="n">lattice</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
 </pre></div>
@@ -635,7 +655,7 @@ by <span class="math">\(\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c
 elements have to be almost integers.</p>
 </div>
 <div class="section" id="get-ir-reciprocal-mesh">
-<h3><a class="toc-backref" href="#id26"><code class="docutils literal"><span class="pre">get_ir_reciprocal_mesh</span></code></a><a class="headerlink" href="#get-ir-reciprocal-mesh" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id27"><code class="docutils literal"><span class="pre">get_ir_reciprocal_mesh</span></code></a><a class="headerlink" href="#get-ir-reciprocal-mesh" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">mapping</span><span class="p">,</span> <span class="n">grid</span> <span class="o">=</span> <span class="n">get_ir_reciprocal_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">cell</span><span class="p">,</span> <span class="n">is_shift</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
 </pre></div>
 </div>
@@ -698,23 +718,6 @@ the irreducible k-point indices that are obtained by</p>
 </div>
 </div>
 </div>
-<div class="section" id="get-hall-number-from-symmetry">
-<h2><a class="toc-backref" href="#id27"><code class="docutils literal"><span class="pre">get_hall_number_from_symmetry</span></code></a><a class="headerlink" href="#get-hall-number-from-symmetry" title="Permalink to this headline">¶</a></h2>
-<p><strong>experimental</strong></p>
-<p><code class="docutils literal"><span class="pre">hall_number</span></code> is obtained from the set of symmetry operations.  The
-definition of <code class="docutils literal"><span class="pre">hall_number</span></code> is found at
-<a class="reference internal" href="api.html#api-spg-get-dataset-spacegroup-type"><span class="std std-ref">Space group type</span></a> and the corresponding
-space-group-type information is obtained through
-<a class="reference internal" href="#py-method-get-spacegroup-type"><span class="std std-ref">get_spacegroup_type</span></a>.</p>
-<p>This is expected to work well for the set of symmetry operations whose
-distortion is small. The aim of making this feature is to find
-space-group-type for the set of symmetry operations given by the other
-source than spglib. <code class="docutils literal"><span class="pre">symprec</span></code> is in the length of the fractional
-coordinates and should be small like <code class="docutils literal"><span class="pre">1e-5</span></code>.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">get_hall_number_from_symmetry</span><span class="p">(</span><span class="n">rotations</span><span class="p">,</span> <span class="n">translations</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
 </div>
 
 
@@ -737,7 +740,7 @@ coordinates and should be small like <code class="docutils literal"><span class=
     </p>
     <p>
         &copy; Copyright 2009, Atsushi Togo.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.<br/>
     </p>
   </div>
 </footer>
