@@ -149,51 +149,135 @@ static SPGCONST int identity[3][3] = {
   { 0, 0, 1},
 };
 
+/* Return NULL if failed */
+ExactStructure *
+ref_get_exact_structure_and_symmetry(const Cell * primitive,
+                                     const Cell * cell,
+                                     SPGCONST Spacegroup * spacegroup,
+                                     const int * mapping_table,
+                                     const double symprec)
+{
+  int *std_mapping_to_primitive, *wyckoffs, *equivalent_atoms;
+  Cell *bravais;
+  Symmetry *symmetry;
+  ExactStructure *exact_structure;
+
+  std_mapping_to_primitive = NULL;
+  wyckoffs = NULL;
+  equivalent_atoms = NULL;
+  bravais = NULL;
+  symmetry = NULL;
+  exact_structure = NULL;
+
+  if ((symmetry = get_refined_symmetry_operations(cell,
+                                                  primitive,
+                                                  spacegroup,
+                                                  symprec)) == NULL) {
+    goto err;
+  }
+
+  if ((wyckoffs = (int*) malloc(sizeof(int) * cell->size)) == NULL) {
+    warning_print("spglib: Memory could not be allocated.");
+    goto err;
+  }
+
+  if ((equivalent_atoms = (int*) malloc(sizeof(int) * cell->size)) == NULL) {
+    warning_print("spglib: Memory could not be allocated.");
+    goto err;
+  }
+
+  if ((std_mapping_to_primitive =
+       (int*) malloc(sizeof(int) * primitive->size * 4)) == NULL) {
+    warning_print("spglib: Memory could not be allocated.");
+    goto err;
+  }
+
+  if ((bravais = get_Wyckoff_positions(wyckoffs,
+                                       equivalent_atoms,
+                                       std_mapping_to_primitive,
+                                       primitive,
+                                       cell,
+                                       spacegroup,
+                                       symmetry,
+                                       mapping_table,
+                                       symprec)) == NULL) {
+    sym_free_symmetry(symmetry);
+    symmetry = NULL;
+    goto err;
+  }
+
+  if ((exact_structure = (ExactStructure*)
+       malloc(sizeof(ExactStructure))) == NULL) {
+    warning_print("spglib: Memory could not be allocated.");
+    sym_free_symmetry(symmetry);
+    symmetry = NULL;
+    cel_free_cell(bravais);
+    bravais = NULL;
+    goto err;
+  }
+
+  exact_structure->bravais = bravais;
+  exact_structure->symmetry = symmetry;
+  exact_structure->wyckoffs = wyckoffs;
+  exact_structure->equivalent_atoms = equivalent_atoms;
+  exact_structure->std_mapping_to_primitive = std_mapping_to_primitive;
+
+  return exact_structure;
+
+err:
+  if (wyckoffs != NULL) {
+    free(wyckoffs);
+    wyckoffs = NULL;
+  }
+  if (equivalent_atoms != NULL) {
+    free(equivalent_atoms);
+    equivalent_atoms = NULL;
+  }
+  if (std_mapping_to_primitive != NULL) {
+    free(std_mapping_to_primitive);
+    std_mapping_to_primitive = NULL;
+  }
+
+  return NULL;
+}
+
+void ref_free_exact_structure(ExactStructure *exstr)
+{
+  if (exstr != NULL) {
+    if (exstr->symmetry != NULL) {
+      sym_free_symmetry(exstr->symmetry);
+      exstr->symmetry = NULL;
+    }
+    if (exstr->bravais != NULL) {
+      cel_free_cell(exstr->bravais);
+      exstr->bravais = NULL;
+    }
+    if (exstr->wyckoffs != NULL) {
+      free(exstr->wyckoffs);
+      exstr->wyckoffs = NULL;
+    }
+    if (exstr->equivalent_atoms != NULL) {
+      free(exstr->equivalent_atoms);
+      exstr->equivalent_atoms = NULL;
+    }
+    if (exstr->std_mapping_to_primitive != NULL) {
+      free(exstr->std_mapping_to_primitive);
+      exstr->std_mapping_to_primitive = NULL;
+    }
+    free(exstr);
+  }
+}
 
 /* Return NULL if failed */
-Symmetry *
-ref_get_refined_symmetry_operations(const Cell * cell,
+static Cell * get_Wyckoff_positions(int * wyckoffs,
+                                    int * equiv_atoms,
+                                    int * std_mapping_to_primitive,
                                     const Cell * primitive,
+                                    const Cell * cell,
                                     SPGCONST Spacegroup * spacegroup,
+                                    const Symmetry * symmetry,
+                                    const int * mapping_table,
                                     const double symprec)
-{
-  return get_refined_symmetry_operations(cell,
-                                         primitive,
-                                         spacegroup,
-                                         symprec);
-}
-
-/* Return NULL if failed */
-Cell * ref_get_Wyckoff_positions(int * wyckoffs,
-                                 int * equiv_atoms,
-                                 int * std_mapping_to_primitive,
-                                 const Cell * primitive,
-                                 const Cell * cell,
-                                 SPGCONST Spacegroup * spacegroup,
-                                 const Symmetry * symmetry,
-                                 const int * mapping_table,
-                                 const double symprec)
-{
-  return get_Wyckoff_positions(wyckoffs,
-                               equiv_atoms,
-                               std_mapping_to_primitive,
-                               primitive,
-                               cell,
-                               spacegroup,
-                               symmetry,
-                               mapping_table,
-                               symprec);
-}
-
-Cell * get_Wyckoff_positions(int * wyckoffs,
-                             int * equiv_atoms,
-                             int * std_mapping_to_primitive,
-                             const Cell * primitive,
-                             const Cell * cell,
-                             SPGCONST Spacegroup * spacegroup,
-                             const Symmetry * symmetry,
-                             const int * mapping_table,
-                             const double symprec)
 {
   Cell *bravais;
   int i, num_prim_sym;

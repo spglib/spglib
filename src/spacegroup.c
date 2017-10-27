@@ -227,11 +227,6 @@ static double F_mat[3][3] = {{    0, 1./2, 1./2 },
                              { 1./2,    0, 1./2 },
                              { 1./2, 1./2,    0 }};
 
-static Spacegroup search_spacegroup(const Cell * primitive,
-                                    const int candidates[],
-                                    const int num_candidates,
-                                    const double symprec,
-                                    const double angle_tolerance);
 static Spacegroup search_spacegroup_with_symmetry(const Cell * primitive,
                                                   const int candidates[],
                                                   const int num_candidates,
@@ -301,74 +296,53 @@ static int get_centering_shifts(double shift[3][3],
                                 const Centering centering);
 
 
-/* NULL is returned if failed */
-Primitive * spa_get_spacegroup(Spacegroup * spacegroup,
-                               const Cell * cell,
-                               const int hall_number,
-                               const double symprec,
-                               const double angle_tolerance)
+/* Return spacegroup.number = 0 if failed */
+Spacegroup spa_search_spacegroup(const Cell * primitive,
+                                 const int hall_number,
+                                 const double symprec,
+                                 const double angle_tolerance)
 {
-  int attempt;
+  Spacegroup spacegroup;
+  Symmetry *symmetry;
   int candidate[1];
-  double tolerance;
-  Primitive *primitive;
 
-  debug_print("spa_get_spacegroup (tolerance = %f):\n", symprec);
+  debug_print("search_spacegroup (tolerance = %f):\n", symprec);
 
-  primitive = NULL;
+  symmetry = NULL;
+  spacegroup.number = 0;
 
-  if (hall_number < 0 || hall_number > 530) {
-    return NULL;
+  if ((symmetry = sym_get_operation(primitive, symprec, angle_tolerance)) ==
+      NULL) {
+    goto ret;
   }
 
   if (hall_number > 0) {
     candidate[0] = hall_number;
   }
 
-  tolerance = symprec;
-
-  for (attempt = 0; attempt < NUM_ATTEMPT; attempt++) {
-    if ((primitive = prm_get_primitive(cell, tolerance, angle_tolerance)) ==
-        NULL) {
-      goto cont;
-    }
-
-    if (hall_number) {
-      *spacegroup = search_spacegroup(primitive->cell,
-                                      candidate,
-                                      1,
-                                      primitive->tolerance,
-                                      primitive->angle_tolerance);
-    } else {
-      *spacegroup = search_spacegroup(primitive->cell,
-                                      spacegroup_to_hall_number,
-                                      230,
-                                      primitive->tolerance,
-                                      primitive->angle_tolerance);
-    }
-
-    if (spacegroup->number > 0) {
-      break;
-    } else {
-      prm_free_primitive(primitive);
-      primitive = NULL;
-    }
-
-  cont:
-    warning_print("spglib: Attempt %d tolerance = %f failed.",
-                  attempt, tolerance);
-    warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
-
-    tolerance *= REDUCE_RATE;
+  if (hall_number) {
+    spacegroup = search_spacegroup_with_symmetry(primitive,
+                                                 candidate,
+                                                 1,
+                                                 symmetry,
+                                                 symprec,
+                                                 angle_tolerance);
+  } else {
+    spacegroup = search_spacegroup_with_symmetry(primitive,
+                                                 spacegroup_to_hall_number,
+                                                 230,
+                                                 symmetry,
+                                                 symprec,
+                                                 angle_tolerance);
   }
 
-  if (primitive == NULL) {
-    warning_print("spglib: Space group could not be found ");
-    warning_print("(line %d, %s).\n", __LINE__, __FILE__);
-  }
+  sym_free_symmetry(symmetry);
+  symmetry = NULL;
 
-  return primitive;
+ ret:
+  return spacegroup;
 }
+
 
 Spacegroup spa_search_spacegroup_with_symmetry(const Symmetry *symmetry,
                                                const double symprec)
@@ -532,39 +506,6 @@ Cell * spa_transform_from_primitive(const Cell * primitive,
 
  ret:
   return trimmed_cell;
-}
-
-/* Return spacegroup.number = 0 if failed */
-static Spacegroup search_spacegroup(const Cell * primitive,
-                                    const int candidates[],
-                                    const int num_candidates,
-                                    const double symprec,
-                                    const double angle_tolerance)
-{
-  Spacegroup spacegroup;
-  Symmetry *symmetry;
-
-  debug_print("search_spacegroup (tolerance = %f):\n", symprec);
-
-  symmetry = NULL;
-  spacegroup.number = 0;
-
-  if ((symmetry = sym_get_operation(primitive, symprec, angle_tolerance)) ==
-      NULL) {
-    goto ret;
-  }
-
-  spacegroup = search_spacegroup_with_symmetry(primitive,
-                                               candidates,
-                                               num_candidates,
-                                               symmetry,
-                                               symprec,
-                                               angle_tolerance);
-  sym_free_symmetry(symmetry);
-  symmetry = NULL;
-
- ret:
-  return spacegroup;
 }
 
 /* Return spacegroup.number = 0 if failed */
