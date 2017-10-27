@@ -222,32 +222,29 @@ static Primitive * get_primitive(const Cell * cell,
   tolerance = symprec;
   for (attempt = 0; attempt < NUM_ATTEMPT; attempt++) {
     debug_print("get_primitive (attempt = %d):\n", attempt);
-    if ((pure_trans = sym_get_pure_translation(cell, tolerance)) == NULL) {
-      goto cont;
-    }
-
-    if (pure_trans->size == 1) {
-      if ((primitive->cell = get_cell_with_smallest_lattice(cell, tolerance))
-          != NULL) {
-        for (i = 0; i < cell->size; i++) {
-          primitive->mapping_table[i] = i;
+    if ((pure_trans = sym_get_pure_translation(cell, tolerance)) != NULL) {
+      if (pure_trans->size == 1) {
+        if ((primitive->cell = get_cell_with_smallest_lattice(cell, tolerance))
+            != NULL) {
+          for (i = 0; i < cell->size; i++) {
+            primitive->mapping_table[i] = i;
+          }
+          goto found;
         }
-        goto found;
-      }
-    } else {
-      if ((primitive->cell = get_primitive_cell(primitive->mapping_table,
-                                                cell,
-                                                pure_trans,
-                                                tolerance,
-                                                angle_tolerance)) != NULL) {
-        goto found;
+      } else {
+        if ((primitive->cell = get_primitive_cell(primitive->mapping_table,
+                                                  cell,
+                                                  pure_trans,
+                                                  tolerance,
+                                                  angle_tolerance)) != NULL) {
+          goto found;
+        }
       }
     }
 
     mat_free_VecDBL(pure_trans);
     pure_trans = NULL;
 
-  cont:
     tolerance *= REDUCE_RATE;
     warning_print("spglib: Reduce tolerance to %f ", tolerance);
     warning_print("(line %d, %s).\n", __LINE__, __FILE__);

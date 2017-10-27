@@ -469,6 +469,27 @@ Here ``spacegroup_type['international_short']`` is equivalent to
 
 When something wrong happened, ``None`` is returned.
 
+``get_hall_number_from_symmetry``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+**experimental**
+
+``hall_number`` is obtained from the set of symmetry operations.  The
+definition of ``hall_number`` is found at
+:ref:`api_spg_get_dataset_spacegroup_type` and the corresponding
+space-group-type information is obtained through
+:ref:`py_method_get_spacegroup_type`.
+
+This is expected to work well for the set of symmetry operations whose
+distortion is small. The aim of making this feature is to find
+space-group-type for the set of symmetry operations given by the other
+source than spglib. ``symprec`` is in the length of the fractional
+coordinates and should be small like ``1e-5``.
+
+::
+
+   get_hall_number_from_symmetry(rotations, translations, symprec=1e-5)
+
 ``niggli_reduce``
 ^^^^^^^^^^^^^^^^^^
 
@@ -598,24 +619,3 @@ An example is shown below::
    # Irreducible k-points
    print("Number of ir-kpoints: %d" % len(np.unique(mapping)))
    print((grid[np.unique(mapping)] + [0.5, 0.5, 0.5]) / mesh)
-
-``get_hall_number_from_symmetry``
---------------------------------------
-
-**experimental**
-
-``hall_number`` is obtained from the set of symmetry operations.  The
-definition of ``hall_number`` is found at
-:ref:`api_spg_get_dataset_spacegroup_type` and the corresponding
-space-group-type information is obtained through
-:ref:`py_method_get_spacegroup_type`.
-
-This is expected to work well for the set of symmetry operations whose
-distortion is small. The aim of making this feature is to find
-space-group-type for the set of symmetry operations given by the other
-source than spglib. ``symprec`` is in the length of the fractional
-coordinates and should be small like ``1e-5``.
-
-::
-
-   get_hall_number_from_symmetry(rotations, translations, symprec=1e-5)
