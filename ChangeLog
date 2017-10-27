@@ -1,3 +1,18 @@
+2017-10-27  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.10.1
+
+	* src/spglib.c (get_dataset):
+
+	A large refactoring was made to replace the outer-most iteration
+	loop of symmetry search algorithm to a new file 'determination.c'.
+
+	* src/spglib.c (spg_get_schoenflies,spg_get_international):
+
+	These routines had accessed directly to a function close to
+	spacegroup.c. Now these are replaced by passing through
+	'get_dataset'.
+
 2017-10-22  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.10.0
