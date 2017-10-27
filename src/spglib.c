@@ -54,9 +54,6 @@
 #include "symmetry.h"
 #include "version.h"
 
-#define REDUCE_RATE 0.9
-#define NUM_ATTEMPT 10
-
 /*-------*/
 /* error */
 /*-------*/
