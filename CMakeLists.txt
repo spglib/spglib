@@ -25,6 +25,7 @@ set(SOURCES ${PROJECT_SOURCE_DIR}/src/arithmetic.c
             ${PROJECT_SOURCE_DIR}/src/cell.c
             ${PROJECT_SOURCE_DIR}/src/debug.c
             ${PROJECT_SOURCE_DIR}/src/delaunay.c
+            ${PROJECT_SOURCE_DIR}/src/determination.c
             ${PROJECT_SOURCE_DIR}/src/hall_symbol.c
             ${PROJECT_SOURCE_DIR}/src/kgrid.c
             ${PROJECT_SOURCE_DIR}/src/kpoint.c

@@ -120,7 +120,7 @@ and also as a number (return value). 0 is returned if it failed.
 
 ::
 
-  int spg_get_schoenflies(char symbol[10],
+  int spg_get_schoenflies(char symbol[7],
                           const double lattice[3][3],
                           const double position[][3],
                           const int types[],
