@@ -45,11 +45,11 @@
 #define REDUCE_RATE 0.95
 #define NUM_ATTEMPT 20
 
-static int get_spacegroup(DataContainer * container,
-                          const Cell * cell,
-                          const int hall_number,
-                          const double symprec,
-                          const double angle_tolerance);
+static int get_spacegroup_and_primitive(DataContainer * container,
+                                        const Cell * cell,
+                                        const int hall_number,
+                                        const double symprec,
+                                        const double angle_tolerance);
 DataContainer * det_determine_all(const Cell * cell,
                                   const int hall_number,
                                   const double symprec,
@@ -80,11 +80,11 @@ DataContainer * det_determine_all(const Cell * cell,
 
   tolerance = symprec;
   for (attempt = 0; attempt < NUM_ATTEMPT_OUTER; attempt++) {
-    if (get_spacegroup(container,
-                       cell,
-                       hall_number,
-                       tolerance,
-                       angle_tolerance)) {
+    if (get_spacegroup_and_primitive(container,
+                                     cell,
+                                     hall_number,
+                                     tolerance,
+                                     angle_tolerance)) {
       if (container->spacegroup->number > 0) {
         if ((container->exact_structure = ref_get_exact_structure_and_symmetry(
                container->primitive->cell,
@@ -114,16 +114,16 @@ found:
 }
 
 /* NULL is returned if failed */
-static int get_spacegroup(DataContainer * container,
-                          const Cell * cell,
-                          const int hall_number,
-                          const double symprec,
-                          const double angle_tolerance)
+static int get_spacegroup_and_primitive(DataContainer * container,
+                                        const Cell * cell,
+                                        const int hall_number,
+                                        const double symprec,
+                                        const double angle_tolerance)
 {
   int attempt;
   double tolerance;
 
-  debug_print("spa_get_spacegroup (tolerance = %f):\n", symprec);
+  debug_print("get_spacegroup_and_primitive (tolerance = %f):\n", symprec);
 
   if (hall_number < 0 || hall_number > 530) {
     return 0;

@@ -47,8 +47,6 @@
 
 #include "debug.h"
 
-#define REDUCE_RATE 0.95
-
 static Cell * get_Wyckoff_positions(int * wyckoffs,
                                     int * equiv_atoms,
                                     int * std_mapping_to_primitive,
