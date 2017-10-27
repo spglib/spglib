@@ -40,49 +40,115 @@
 
 #include "debug.h"
 
+#define REDUCE_RATE_OUTER 0.9
+#define NUM_ATTEMPT_OUTER 10
 #define REDUCE_RATE 0.95
 #define NUM_ATTEMPT 20
 
-/* NULL is returned if failed */
-Primitive * det_get_spacegroup(Spacegroup * spacegroup,
-                               const Cell * cell,
-                               const int hall_number,
-                               const double symprec,
-                               const double angle_tolerance)
+static int get_spacegroup(DataContainer * container,
+                          const Cell * cell,
+                          const int hall_number,
+                          const double symprec,
+                          const double angle_tolerance);
+DataContainer * det_determine_all(const Cell * cell,
+                                  const int hall_number,
+                                  const double symprec,
+                                  const double angle_tolerance)
 {
   int attempt;
   double tolerance;
-  Primitive *primitive;
+  DataContainer *container;
+
+  container = NULL;
+
+  if ((container = (DataContainer*) malloc(sizeof(DataContainer))) == NULL) {
+    warning_print("spglib: Memory could not be allocated.");
+    return NULL;
+  }
+
+  container->primitive = NULL;
+  container->spacegroup = NULL;
+  container->exact_structure = NULL;
+
+  if ((container->spacegroup = (Spacegroup*) malloc(sizeof(Spacegroup)))
+      == NULL) {
+    warning_print("spglib: Memory could not be allocated.");
+    det_free_container(container);
+    container = NULL;
+    return NULL;
+  }
+
+  tolerance = symprec;
+  for (attempt = 0; attempt < NUM_ATTEMPT_OUTER; attempt++) {
+    if (get_spacegroup(container,
+                       cell,
+                       hall_number,
+                       tolerance,
+                       angle_tolerance)) {
+      if (container->spacegroup->number > 0) {
+        if ((container->exact_structure = ref_get_exact_structure_and_symmetry(
+               container->primitive->cell,
+               cell,
+               container->spacegroup,
+               container->primitive->mapping_table,
+               container->primitive->tolerance)) == NULL) {
+          warning_print("spglib: ref_get_exact_structure_and_symmetry failed.");
+          warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
+        } else {
+          goto found;
+        }
+      }
+      ref_free_exact_structure(container->exact_structure);
+      container->exact_structure = NULL;
+    }
+    tolerance *= REDUCE_RATE_OUTER;
+    prm_free_primitive(container->primitive);
+    container->primitive = NULL;
+  }
+
+  det_free_container(container);
+  return NULL;
+
+found:
+  return container;
+}
+
+/* NULL is returned if failed */
+static int get_spacegroup(DataContainer * container,
+                          const Cell * cell,
+                          const int hall_number,
+                          const double symprec,
+                          const double angle_tolerance)
+{
+  int attempt;
+  double tolerance;
 
   debug_print("spa_get_spacegroup (tolerance = %f):\n", symprec);
 
-  primitive = NULL;
-
   if (hall_number < 0 || hall_number > 530) {
-    return NULL;
+    return 0;
   }
 
   tolerance = symprec;
 
   for (attempt = 0; attempt < NUM_ATTEMPT; attempt++) {
-    if ((primitive = prm_get_primitive(cell, tolerance, angle_tolerance)) ==
-        NULL) {
-      goto cont;
+    if ((container->primitive = prm_get_primitive(cell,
+                                                  tolerance,
+                                                  angle_tolerance)) != NULL) {
+      *(container->spacegroup) = spa_search_spacegroup(
+        container->primitive->cell,
+        hall_number,
+        container->primitive->tolerance,
+        container->primitive->angle_tolerance);
+
+      if (container->spacegroup->number > 0) {
+        goto found;
+      }
+
+      prm_free_primitive(container->primitive);
+      container->primitive = NULL;
     }
 
-    *spacegroup = spa_search_spacegroup(primitive->cell,
-                                        hall_number,
-                                        primitive->tolerance,
-                                        primitive->angle_tolerance);
-
-    if (spacegroup->number > 0) {
-      break;
-    } else {
-      prm_free_primitive(primitive);
-      primitive = NULL;
-    }
-
-  cont:
     warning_print("spglib: Attempt %d tolerance = %f failed.",
                   attempt, tolerance);
     warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
@@ -90,10 +156,27 @@ Primitive * det_get_spacegroup(Spacegroup * spacegroup,
     tolerance *= REDUCE_RATE;
   }
 
-  if (primitive == NULL) {
-    warning_print("spglib: Space group could not be found ");
-    warning_print("(line %d, %s).\n", __LINE__, __FILE__);
-  }
+  return 0;
 
-  return primitive;
+found:
+  return 1;
+}
+
+void det_free_container(DataContainer * container)
+{
+  if (container != NULL) {
+    if (container->spacegroup != NULL) {
+      free(container->spacegroup);
+      container->spacegroup = NULL;
+    }
+    if (container->primitive != NULL) {
+      prm_free_primitive(container->primitive);
+      container->primitive = NULL;
+    }
+    if (container->exact_structure != NULL) {
+      ref_free_exact_structure(container->exact_structure);
+      container->exact_structure = NULL;
+    }
+    free(container);
+  }
 }

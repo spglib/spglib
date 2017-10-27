@@ -1017,19 +1017,13 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
                                    const double symprec,
                                    const double angle_tolerance)
 {
-  int attempt;
-  double tolerance;
-  Spacegroup spacegroup;
   SpglibDataset *dataset;
   Cell *cell;
-  Primitive *primitive;
-  ExactStructure *exstr;
+  DataContainer *container;
 
-  spacegroup.number = 0;
   dataset = NULL;
   cell = NULL;
-  primitive = NULL;
-  exstr = NULL;
+  container = NULL;
 
   if ((dataset = init_dataset()) == NULL) {
     goto not_found;
@@ -1050,46 +1044,18 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
     goto atoms_too_close;
   }
 
-  tolerance = symprec;
-  for (attempt = 0; attempt < NUM_ATTEMPT; attempt++) {
-    if ((primitive = det_get_spacegroup(&spacegroup,
-                                        cell,
-                                        hall_number,
-                                        tolerance,
-                                        angle_tolerance))
-        == NULL) {
-      cel_free_cell(cell);
-      cell = NULL;
-      free(dataset);
-      dataset = NULL;
-      goto not_found;
+  if ((container = det_determine_all(cell,
+                                     hall_number,
+                                     symprec,
+                                     angle_tolerance))
+      != NULL) {
+    if (set_dataset(dataset,
+                    cell,
+                    container->primitive,
+                    container->spacegroup,
+                    container->exact_structure)) {
+      goto found;
     }
-
-    if (spacegroup.number > 0) {
-      if ((exstr = ref_get_exact_structure_and_symmetry(
-             primitive->cell,
-             cell,
-             &spacegroup,
-             primitive->mapping_table,
-             primitive->tolerance)) == NULL) {
-        warning_print("spglib: ref_get_exact_structure_and_symmetry failed.");
-        warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
-      } else {
-        if (set_dataset(dataset,
-                        cell,
-                        primitive,
-                        &spacegroup,
-                        exstr)) {
-          goto found;
-        }
-      }
-      tolerance *= REDUCE_RATE;
-    }
-
-    ref_free_exact_structure(exstr);
-    exstr = NULL;
-    prm_free_primitive(primitive);
-    primitive = NULL;
   }
 
   cel_free_cell(cell);
@@ -1106,10 +1072,7 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
   return NULL;
 
  found:
-  ref_free_exact_structure(exstr);
-  exstr = NULL;
-  prm_free_primitive(primitive);
-  primitive = NULL;
+  det_free_container(container);
   cel_free_cell(cell);
   cell = NULL;
 
@@ -1808,43 +1771,34 @@ static int get_international(char symbol[11],
                              const double symprec,
                              const double angle_tolerance)
 {
-  Cell *cell;
-  Primitive *primitive;
-  Spacegroup spacegroup;
+  SpglibDataset *dataset;
+  int number;
 
-  cell = NULL;
-  primitive = NULL;
-  spacegroup.number = 0;
+  dataset = NULL;
 
-  if ((cell = cel_alloc_cell(num_atom)) == NULL) {
+  if ((dataset = get_dataset(lattice,
+                             position,
+                             types,
+                             num_atom,
+                             0,
+                             symprec,
+                             angle_tolerance)) == NULL) {
     goto err;
   }
 
-  cel_set_cell(cell, lattice, position, types);
-
-  if ((primitive = det_get_spacegroup(&spacegroup,
-                                      cell,
-                                      0,
-                                      symprec,
-                                      angle_tolerance)) == NULL) {
-    cel_free_cell(cell);
-    cell = NULL;
-    goto err;
-  }
-
-  prm_free_primitive(primitive);
-  primitive = NULL;
-  cel_free_cell(cell);
-  cell = NULL;
-
-  if (spacegroup.number > 0) {
-    strcpy(symbol, spacegroup.international_short);
+  if (dataset->spacegroup_number > 0) {
+    number = dataset->spacegroup_number;
+    strcpy(symbol, dataset->international_symbol);
+    spg_free_dataset(dataset);
+    dataset = NULL;
   } else {
+    spg_free_dataset(dataset);
+    dataset = NULL;
     goto err;
   }
 
   spglib_error_code = SPGLIB_SUCCESS;
-  return spacegroup.number;
+  return number;
 
  err:
   spglib_error_code = SPGERR_SPACEGROUP_SEARCH_FAILED;
@@ -1859,48 +1813,40 @@ static int get_schoenflies(char symbol[7],
                            const double symprec,
                            const double angle_tolerance)
 {
-  Cell *cell;
-  Primitive *primitive;
-  Spacegroup spacegroup;
+  SpglibDataset *dataset;
+  SpglibSpacegroupType spgtype;
+  int number;
 
-  cell = NULL;
-  primitive = NULL;
-  spacegroup.number = 0;
+  dataset = NULL;
 
-  if ((cell = cel_alloc_cell(num_atom)) == NULL) {
+  if ((dataset = get_dataset(lattice,
+                             position,
+                             types,
+                             num_atom,
+                             0,
+                             symprec,
+                             angle_tolerance)) == NULL) {
     goto err;
   }
 
-  cel_set_cell(cell, lattice, position, types);
-
-  if ((primitive = det_get_spacegroup(&spacegroup,
-                                      cell,
-                                      0,
-                                      symprec,
-                                      angle_tolerance)) == NULL) {
-    cel_free_cell(cell);
-    cell = NULL;
-    goto err;
-  }
-
-  prm_free_primitive(primitive);
-  primitive = NULL;
-  cel_free_cell(cell);
-  cell = NULL;
-
-  if (spacegroup.number > 0) {
-    strcpy(symbol, spacegroup.schoenflies);
+  if (dataset->spacegroup_number > 0) {
+    number = dataset->spacegroup_number;
+    spgtype = spg_get_spacegroup_type(dataset->hall_number);
+    strcpy(symbol, spgtype.schoenflies);
+    spg_free_dataset(dataset);
+    dataset = NULL;
   } else {
+    spg_free_dataset(dataset);
+    dataset = NULL;
     goto err;
   }
 
   spglib_error_code = SPGLIB_SUCCESS;
-  return spacegroup.number;
+  return number;
 
  err:
   spglib_error_code = SPGERR_SPACEGROUP_SEARCH_FAILED;
   return 0;
-
 }
 
 

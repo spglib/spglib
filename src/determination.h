@@ -44,12 +44,12 @@ typedef struct {
   Primitive *primitive;
   Spacegroup *spacegroup;
   ExactStructure *exact_structure;
-} DeterminedValues;
+} DataContainer;
 
-Primitive * det_get_spacegroup(Spacegroup * spacegroup,
-                               const Cell * cell,
-                               const int hall_number,
-                               const double symprec,
-                               const double angle_tolerance);
+DataContainer * det_determine_all(const Cell * cell,
+                                  const int hall_number,
+                                  const double symprec,
+                                  const double angle_tolerance);
+void det_free_container(DataContainer * container);
 
 #endif
