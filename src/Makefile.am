@@ -1,10 +1,11 @@
-lib_LTLIBRARIES = libsymspg.la 
+lib_LTLIBRARIES = libsymspg.la
 
 spglib_c = \
 arithmetic.c \
 cell.c \
 debug.c \
 delaunay.c \
+determination.c \
 hall_symbol.c \
 kgrid.c \
 kpoint.c \
@@ -26,6 +27,7 @@ arithmetic.h \
 cell.h \
 debug.h \
 delaunay.h \
+determination.h \
 hall_symbol.h \
 kgrid.h \
 kpoint.h \
