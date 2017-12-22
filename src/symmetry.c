@@ -39,6 +39,7 @@
 #include "delaunay.h"
 #include "mathfunc.h"
 #include "symmetry.h"
+#include "permutation.h"
 
 #include "debug.h"
 
@@ -416,6 +417,7 @@ static VecDBL * get_translation(SPGCONST int rot[3][3],
   trans = NULL;
 
 #ifdef _OPENMP
+  int is_error, is_overlap;
   int num_min_type_atoms;
   int *min_type_atoms;
   double vec[3];
@@ -452,7 +454,7 @@ static VecDBL * get_translation(SPGCONST int rot[3][3],
                                         origin,
                                         symprec,
                                         is_identity);
-    if (num_trans == 0) {
+    if (num_trans == -1 || num_trans == 0) {
       goto ret;
     }
   } else {
@@ -471,22 +473,31 @@ static VecDBL * get_translation(SPGCONST int rot[3][3],
         num_min_type_atoms++;
       }
     }
-#pragma omp parallel for private(j, vec)
+
+    is_error = 0;
+#pragma omp parallel for private(j, vec, is_overlap)
     for (i = 0; i < num_min_type_atoms; i++) {
       for (j = 0; j < 3; j++) {
         vec[j] = cell->position[min_type_atoms[i]][j] - origin[j];
       }
-      if (is_overlap_all_atoms(vec,
-                               rot,
-                               cell,
-                               symprec,
-                               is_identity)) {
+      is_overlap = is_overlap_all_atoms(vec,
+                                        rot,
+                                        cell,
+                                        symprec,
+                                        is_identity);
+      if (is_overlap == -1) {
+        is_error = 1;
+      } else if (is_overlap) {
         is_found[min_type_atoms[i]] = 1;
       }
     }
 
     free(min_type_atoms);
     min_type_atoms = NULL;
+
+    if (is_error) {
+      goto ret;
+    }
 
     for (i = 0; i < cell->size; i++) {
       num_trans += is_found[i];
@@ -500,7 +511,7 @@ static VecDBL * get_translation(SPGCONST int rot[3][3],
                                       origin,
                                       symprec,
                                       is_identity);
-  if (num_trans == 0) {
+  if (num_trans == -1 || num_trans == 0) {
     goto ret;
   }
 #endif
@@ -527,6 +538,7 @@ static VecDBL * get_translation(SPGCONST int rot[3][3],
   return trans;
 }
 
+/* Returns -1 on failure. */
 static int search_translation_part(int atoms_found[],
                                    const Cell * cell,
                                    SPGCONST int rot[3][3],
@@ -535,8 +547,13 @@ static int search_translation_part(int atoms_found[],
                                    const double symprec,
                                    const int is_identity)
 {
-  int i, j, num_trans;
+  int i, j, num_trans, is_overlap;
   double trans[3];
+  PermFinder * searcher;
+
+  if ((searcher = perm_finder_init(cell)) == NULL) {
+    return -1;
+  }
 
   num_trans = 0;
 
@@ -552,11 +569,15 @@ static int search_translation_part(int atoms_found[],
     for (j = 0; j < 3; j++) {
       trans[j] = cell->position[i][j] - origin[j];
     }
-    if (is_overlap_all_atoms(trans,
-                             rot,
-                             cell,
-                             symprec,
-                             is_identity)) {
+
+    is_overlap = perm_finder_check_total_overlap(searcher,
+                                                 trans,
+                                                 rot,
+                                                 symprec,
+                                                 is_identity);
+    if (is_overlap == -1) {
+      goto err;
+    } else if (is_overlap) {
       atoms_found[i] = 1;
       num_trans++;
       if (is_identity) {
@@ -568,7 +589,12 @@ static int search_translation_part(int atoms_found[],
     }
   }
 
+  perm_finder_free(searcher);
   return num_trans;
+
+ err:
+  perm_finder_free(searcher);
+  return -1;
 }
 
 static int search_pure_translations(int atoms_found[],
@@ -627,55 +653,33 @@ static int search_pure_translations(int atoms_found[],
   return num_trans;
 }
 
+/* Thoroughly confirms that a given symmetry operation is a symmetry. */
+/* This is a convenient wrapper around perm_finder_check_total_overlap. */
+/* -1: Error.  0: Not a symmetry.  1: Is a symmetry. */
 static int is_overlap_all_atoms(const double trans[3],
                                 SPGCONST int rot[3][3],
                                 const Cell * cell,
                                 const double symprec,
                                 const int is_identity)
 {
-  int i, j, k, is_found;
-  double pos_rot[3], d_frac[3], d[3];
+  PermFinder * searcher;
+  int result;
 
-  for (i = 0; i < cell->size; i++) {
-    if (is_identity) { /* Identity matrix is treated as special for speed-up. */
-      for (j = 0; j < 3; j++) {
-        pos_rot[j] = cell->position[i][j] + trans[j];
-      }
-    } else {
-      mat_multiply_matrix_vector_id3(pos_rot,
-                                     rot,
-                                     cell->position[i]);
-      for (j = 0; j < 3; j++) {
-        pos_rot[j] += trans[j];
-      }
-    }
+  searcher = NULL;
 
-    is_found = 0;
-    for (j = 0; j < cell->size; j++) {
-      if (cell->types[i] == cell->types[j]) {
-        /* here cel_is_overlap can be used, but for the tuning */
-        /* purpose, write it again */
-        for (k = 0; k < 3; k++) {
-          d_frac[k] = pos_rot[k] - cell->position[j][k];
-          d_frac[k] -= mat_Nint(d_frac[k]);
-        }
-        mat_multiply_matrix_vector_d3(d, cell->lattice, d_frac);
-        if (sqrt(d[0] * d[0] + d[1] * d[1] + d[2] * d[2]) < symprec) {
-          is_found = 1;
-          break;
-        }
-      }
-    }
-
-    if (! is_found) {
-      goto not_found;
-    }
+  if ((searcher = perm_finder_init(cell)) == NULL) {
+    return -1;
   }
 
-  return 1;  /* found */
+  result = perm_finder_check_total_overlap(searcher,
+                                           trans,
+                                           rot,
+                                           symprec,
+                                           is_identity);
 
- not_found:
-  return 0;
+  perm_finder_free(searcher);
+
+  return result;
 }
 
 static int get_index_with_least_atoms(const Cell *cell)
@@ -969,3 +973,4 @@ static void set_axes(int axes[3][3],
   for (i = 0; i < 3; i++) {axes[i][1] = relative_axes[a2][i]; }
   for (i = 0; i < 3; i++) {axes[i][2] = relative_axes[a3][i]; }
 }
+
