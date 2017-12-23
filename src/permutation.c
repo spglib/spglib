@@ -332,6 +332,60 @@ static int argsort_by_lattice_point_distance(int * perm,
                       size);
 }
 
+/* Tests if an operator COULD be a symmetry of the cell, */
+/* without the cost of sorting the rotated positions. */
+/* It only inspects a few atoms. */
+/* 0:  Not a symmetry.   1. Possible symmetry. */
+static int perm_finder_check_possible_overlap(PermFinder *searcher,
+                                              const double test_trans[3],
+                                              SPGCONST int rot[3][3],
+                                              const double symprec)
+{
+  double pos_rot[3];
+  int i, i_test, k, max_search_num, search_num;
+  int type_rot, is_found;
+
+  max_search_num = 3;
+  search_num = searcher->size <= max_search_num ? searcher->size
+                                                : max_search_num;
+
+  /* Check a few rotated positions. */
+  /* (this could be optimized by focusing on the min_atom_type) */
+  for (i_test = 0; i_test < search_num; i_test++) {
+
+    type_rot = searcher->types_sorted[i_test];
+    mat_multiply_matrix_vector_id3(pos_rot, rot, searcher->pos_sorted[i_test]);
+    for (k = 0; k < 3; k++) {
+      pos_rot[k] += test_trans[k];
+    }
+
+    /* Brute-force search for the rotated position. */
+    /* (this could be optimized by saving the sorted ValueWithIndex data */
+    /*  for the original Cell and using it to binary search for lower and */
+    /*  upper bounds on 'i'. For now though, brute force is good enough) */
+    is_found = 0;
+    for (i = 0; i < searcher->size; i++) {
+      if (cel_is_overlap_with_same_type(pos_rot,
+                                        searcher->pos_sorted[i],
+                                        type_rot,
+                                        searcher->types_sorted[i],
+                                        searcher->lattice,
+                                        symprec)) {
+        is_found = 1;
+        break;
+      }
+    }
+
+    /* The rotated position is not in the structure! */
+    /* This symmetry operator is therefore clearly invalid. */
+    if (!is_found) {
+      return 0;
+    }
+  }
+
+  return 1;
+}
+
 /* Uses a PermFinder to efficiently--but thoroughly--confirm that a given symmetry operator */
 /* is a symmetry of the cell. If you need to test many symmetry operators on the same cell, */
 /* you can create one PermFinder from the Cell and call this function many times. */
@@ -342,6 +396,15 @@ int perm_finder_check_total_overlap(PermFinder *searcher,
                                     const double symprec,
                                     const int is_identity)
 {
+  /* Check a few atoms by brute force before continuing. */
+  /* This may allow us to avoid the sorting step for many incorrect translations. */
+  if (!perm_finder_check_possible_overlap(searcher,
+                                          test_trans,
+                                          rot,
+                                          symprec)) {
+    return 0;
+  }
+
   /* Perform the brute force search for a permutation between sorted data, */
   /* but don't bother recording it; just return success or failure. */
   return perm_finder_find_perm(NULL, /* Don't write the perm anywhere */
