@@ -31,6 +31,7 @@ set(SOURCES ${PROJECT_SOURCE_DIR}/src/arithmetic.c
             ${PROJECT_SOURCE_DIR}/src/kpoint.c
             ${PROJECT_SOURCE_DIR}/src/mathfunc.c
             ${PROJECT_SOURCE_DIR}/src/niggli.c
+            ${PROJECT_SOURCE_DIR}/src/permutation.c
             ${PROJECT_SOURCE_DIR}/src/pointgroup.c
             ${PROJECT_SOURCE_DIR}/src/primitive.c
             ${PROJECT_SOURCE_DIR}/src/refinement.c
