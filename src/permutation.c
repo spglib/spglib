@@ -61,6 +61,8 @@ static int find_perm_near_identity(int *perm,
                                    SPGCONST double lattice[3][3],
                                    SPGCONST double (*pos_original)[3],
                                    SPGCONST double (*pos_rotated)[3],
+                                   const int types_original[],
+                                   const int types_rotated[],
                                    int num_pos,
                                    double symprec);
 
@@ -466,6 +468,8 @@ int perm_finder_find_perm(int * perm, /* can be NULL to write nothing */
                                tester->lattice,
                                tester->pos_sorted, /* pos_original */
                                tester->pos_temp_2, /* pos_rotated */
+                               tester->types_sorted, /* types_original */
+                               tester->types_sorted, /* types_original */
                                tester->size,
                                symprec)) {
     return 0;
@@ -500,12 +504,13 @@ static int find_perm_near_identity(int *perm,
                                    SPGCONST double lattice[3][3],
                                    SPGCONST double (*pos_original)[3],
                                    SPGCONST double (*pos_rotated)[3],
+                                   const int types_original[],
+                                   const int types_rotated[],
                                    const int num_pos,
                                    const double symprec)
 {
-  int i, k, i_orig, i_rot;
+  int i, i_orig, i_rot;
   int search_start;
-  double diff_frac[3], diff_cart[3];
 
   /* perm[i] = index of position in pos_original that overlaps with pos_rotated[i] */
   for (i = 0; i < num_pos; i++) {
@@ -527,13 +532,12 @@ static int find_perm_near_identity(int *perm,
         continue;
       }
 
-      for (k = 0; k < 3; k++) {
-        diff_frac[k] = pos_original[i_orig][k] - pos_rotated[i_rot][k];
-        diff_frac[k] -= mat_Nint(diff_frac[k]);
-      }
-      mat_multiply_matrix_vector_d3(diff_cart, lattice, diff_frac);
-
-      if (sqrt(mat_norm_squared_d3(diff_cart)) < symprec) {
+      if (cel_is_overlap_with_same_type(pos_original[i_orig],
+                                        pos_rotated[i_rot],
+                                        types_original[i_orig],
+                                        types_rotated[i_rot],
+                                        lattice,
+                                        symprec)) {
         perm[i_rot] = i_orig;
         break;
       }
