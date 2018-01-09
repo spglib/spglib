@@ -416,15 +416,6 @@ static VecDBL * get_translation(SPGCONST int rot[3][3],
   is_found = NULL;
   trans = NULL;
 
-#ifdef _OPENMP
-  int is_error, is_overlap;
-  int num_min_type_atoms;
-  int *min_type_atoms;
-  double vec[3];
-
-  min_type_atoms = NULL;
-#endif
-
   if ((is_found = (int*) malloc(sizeof(int)*cell->size)) == NULL) {
     warning_print("spglib: Memory could not be allocated ");
     return NULL;
@@ -444,66 +435,6 @@ static VecDBL * get_translation(SPGCONST int rot[3][3],
   /* Set min_atom_index as the origin to measure the distance between atoms. */
   mat_multiply_matrix_vector_id3(origin, rot, cell->position[min_atom_index]);
 
-#ifdef _OPENMP
-  if (cell->size < NUM_ATOMS_CRITERION_FOR_OPENMP || is_identity) {
-    /* In this case, OpenMP multithreading is not used. */
-    num_trans = search_translation_part(is_found,
-                                        cell,
-                                        rot,
-                                        min_atom_index,
-                                        origin,
-                                        symprec,
-                                        is_identity);
-    if (num_trans == -1 || num_trans == 0) {
-      goto ret;
-    }
-  } else {
-    /* In this case, OpenMP multithreading is used. */
-    /* Collect indices of atoms with the type where the minimum number */
-    /* of atoms belong. */
-    if ((min_type_atoms = (int*) malloc(sizeof(int)*cell->size)) == NULL) {
-      warning_print("spglib: Memory could not be allocated ");
-      goto ret;
-    }
-
-    num_min_type_atoms = 0;
-    for (i = 0; i < cell->size; i++) {
-      if (cell->types[i] == cell->types[min_atom_index]) {
-        min_type_atoms[num_min_type_atoms] = i;
-        num_min_type_atoms++;
-      }
-    }
-
-    is_error = 0;
-#pragma omp parallel for private(j, vec, is_overlap)
-    for (i = 0; i < num_min_type_atoms; i++) {
-      for (j = 0; j < 3; j++) {
-        vec[j] = cell->position[min_type_atoms[i]][j] - origin[j];
-      }
-      is_overlap = is_overlap_all_atoms(vec,
-                                        rot,
-                                        cell,
-                                        symprec,
-                                        is_identity);
-      if (is_overlap == -1) {
-        is_error = 1;
-      } else if (is_overlap) {
-        is_found[min_type_atoms[i]] = 1;
-      }
-    }
-
-    free(min_type_atoms);
-    min_type_atoms = NULL;
-
-    if (is_error) {
-      goto ret;
-    }
-
-    for (i = 0; i < cell->size; i++) {
-      num_trans += is_found[i];
-    }
-  }
-#else
   num_trans = search_translation_part(is_found,
                                       cell,
                                       rot,
@@ -514,7 +445,6 @@ static VecDBL * get_translation(SPGCONST int rot[3][3],
   if (num_trans == -1 || num_trans == 0) {
     goto ret;
   }
-#endif
 
   if ((trans = mat_alloc_VecDBL(num_trans)) == NULL) {
     goto ret;
@@ -550,6 +480,8 @@ static int search_translation_part(int atoms_found[],
   int i, j, num_trans, is_overlap;
   double trans[3];
   PermFinder * searcher;
+
+  searcher = NULL;
 
   if ((searcher = perm_finder_init(cell)) == NULL) {
     return -1;
@@ -590,10 +522,12 @@ static int search_translation_part(int atoms_found[],
   }
 
   perm_finder_free(searcher);
+  searcher = NULL;
   return num_trans;
 
  err:
   perm_finder_free(searcher);
+  searcher = NULL;
   return -1;
 }
 
@@ -678,6 +612,7 @@ static int is_overlap_all_atoms(const double trans[3],
                                            is_identity);
 
   perm_finder_free(searcher);
+  searcher = NULL;
 
   return result;
 }
@@ -973,4 +908,3 @@ static void set_axes(int axes[3][3],
   for (i = 0; i < 3; i++) {axes[i][1] = relative_axes[a2][i]; }
   for (i = 0; i < 3; i++) {axes[i][2] = relative_axes[a3][i]; }
 }
-

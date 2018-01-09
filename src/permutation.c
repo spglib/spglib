@@ -35,10 +35,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <math.h>
 
 #include "permutation.h"
 #include "mathfunc.h"
-#include "math.h"
 #include "debug.h"
 
 /* 'a++' generalized to an arbitrary increment. */
@@ -68,41 +68,46 @@ static int find_perm_near_identity(int *perm,
 
 /* Helper type used to get sorted indices of values. */
 typedef struct {
-	double value;
-	int type;
-	int index;
+        double value;
+        int type;
+        int index;
 } ValueWithIndex;
 
 static int ValueWithIndex_comparator(const void *pa, const void *pb)
 {
-    int cmp;
-    ValueWithIndex a, b;
+  int cmp;
+  ValueWithIndex a, b;
 
-    a = *((ValueWithIndex*) pa);
-    b = *((ValueWithIndex*) pb);
+  a = *((ValueWithIndex*) pa);
+  b = *((ValueWithIndex*) pb);
 
-    /* order by atom type, then by value */
-    cmp = (b.type < a.type) - (a.type < b.type);
-    if (!cmp)
-        cmp = (b.value < a.value) - (a.value < b.value);
+  /* order by atom type, then by value */
+  cmp = (b.type < a.type) - (a.type < b.type);
+  if (!cmp) {
+    cmp = (b.value < a.value) - (a.value < b.value);
+  }
 
-    return cmp;
+  return cmp;
 }
 
+/* Can this be local? */
 void* perm_argsort_work_malloc(int n)
 {
-    ValueWithIndex *work;
+  ValueWithIndex *work;
 
-    if ((work = (ValueWithIndex*)(malloc(sizeof(ValueWithIndex) * n))) == NULL) {
-        warning_print("spglib: Memory could not be allocated for argsort workspace.");
-        return NULL;
-    }
-    return work;
+  work = NULL;
+
+  if ((work = (ValueWithIndex*)(malloc(sizeof(ValueWithIndex) * n))) == NULL) {
+    warning_print("spglib: Memory could not be allocated for argsort workspace.");
+    return NULL;
+  }
+  return work;
 }
 
+/* Can this be local? */
 void perm_argsort_work_free(void *work)
 {
-    free(work);
+  free(work);
 }
 
 /* Compute a permutation that sorts values first by atom type, */
@@ -110,66 +115,71 @@ void perm_argsort_work_free(void *work)
 /* to have the same type. */
 /* */
 /* Returns 0 on failure. */
+/* Can this be local? */
 int perm_argsort(int *perm,
                  const int *types,
                  const double *values,
                  void *provided_work,
                  const int n)
 {
-    int i;
-    ValueWithIndex *work;
+  int i;
+  ValueWithIndex *work;
 
-    if (provided_work) {
-        work = (ValueWithIndex *) provided_work;
-    } else if ((work = perm_argsort_work_malloc(n)) == NULL) {
-        return 0;
-    }
+  work = NULL;
 
-    /* Make array of all data for each value. */
-    for (i = 0; i < n; i++) {
-        work[i].value = values[i];
-        work[i].index = i;
-        work[i].type = types ? types[i] : 0;
-    }
+  if (provided_work) {
+    work = (ValueWithIndex *) provided_work;
+  } else if ((work = perm_argsort_work_malloc(n)) == NULL) {
+    return 0;
+  }
 
-    /* Sort by type and value. */
-    qsort(work, n, sizeof(ValueWithIndex), &ValueWithIndex_comparator);
+  /* Make array of all data for each value. */
+  for (i = 0; i < n; i++) {
+    work[i].value = values[i];
+    work[i].index = i;
+    work[i].type = types ? types[i] : 0;
+  }
 
-    /* Retrieve indices.  This is the permutation. */
-    for (i = 0; i < n; i++) {
-        perm[i] = work[i].index;
-    }
+  /* Sort by type and value. */
+  qsort(work, n, sizeof(ValueWithIndex), &ValueWithIndex_comparator);
 
-    if (!provided_work) {
-        perm_argsort_work_free(work);
-        work = NULL;
-    }
+  /* Retrieve indices.  This is the permutation. */
+  for (i = 0; i < n; i++) {
+    perm[i] = work[i].index;
+  }
 
-    return 1;
+  if (!provided_work) {
+    perm_argsort_work_free(work);
+    work = NULL;
+  }
+
+  return 1;
 }
 
 /* Permute an array. */
 /* data_out and data_in MUST NOT ALIAS. */
+/* Can this be local? */
 void perm_permute(void *data_out,
                   const void *data_in,
                   const int *perm,
                   const int value_size,
                   const int n)
 {
-	int i;
-	const void *read;
+  int i;
+  const void *read;
   void *write;
 
-	for (i = 0; i < n; i++) {
-		read = data_in + perm[i] * value_size;
-		write = data_out + i * value_size;
-		memcpy(write, read, value_size);
-	}
+  for (i = 0; i < n; i++) {
+    read = data_in + perm[i] * value_size;
+    write = data_out + i * value_size;
+    memcpy(write, read, value_size);
+  }
 }
 
 /* Construct the permutation that is equivalent to permuting by 'first', */
 /* then permuting by 'second'. */
 /* 'out' MUST NOT ALIAS with either 'first' or 'second'. */
+/* Can this be local? */
 void perm_compose(int *out,
                   const int *first,
                   const int *second,
@@ -180,13 +190,15 @@ void perm_compose(int *out,
 
 /* Compute the inverse of 'perm'. */
 /* 'perm' and 'out' MUST NOT ALIAS. */
+/* Can this be local? */
 void perm_inverse(int *out,
                   const int *perm,
                   const int n)
 {
   int i;
-  for (i = 0; i < n; i++)
+  for (i = 0; i < n; i++) {
     out[perm[i]] = i;
+  }
 }
 
 /* ***************************************** */
@@ -223,12 +235,15 @@ static PermFinder* perm_finder_alloc(int size)
   if ((searcher->blob = malloc(blob_size)) == NULL) {
     warning_print("spglib: Memory could not be allocated for searcher.");
     free(searcher);
+    searcher = NULL;
     return NULL;
   }
 
   if ((searcher->argsort_work = perm_argsort_work_malloc(size)) == NULL) {
     free(searcher->blob);
+    searcher->blob = NULL;
     free(searcher);
+    searcher = NULL;
     return NULL;
   }
 
@@ -421,6 +436,7 @@ int perm_finder_check_total_overlap(PermFinder *searcher,
 /* -1: Error */
 /* 0: The rotation is not a symmetry operator. (perm is not written) */
 /* 1: The rotation is a symmetry operator. (perm was written if not NULL) */
+/* Can this be local? */
 int perm_finder_find_perm(int * perm, /* can be NULL to write nothing */
                           PermFinder *tester,
                           const double test_trans[3],
@@ -430,6 +446,8 @@ int perm_finder_find_perm(int * perm, /* can be NULL to write nothing */
 {
   double pos_rot[3], *ppos_rot;
   int i, k;
+
+  ppos_rot = NULL;
 
   /* Write rotated positions to 'pos_temp_1' */
   for (i = 0; i < tester->size; i++) {
