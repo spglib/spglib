@@ -11,7 +11,7 @@ kgrid.c \
 kpoint.c \
 mathfunc.c \
 niggli.c \
-permutation.c \
+overlap.c \
 pointgroup.c \
 primitive.c \
 refinement.c \
@@ -34,7 +34,7 @@ kgrid.h \
 kpoint.h \
 mathfunc.h \
 niggli.h \
-permutation.h \
+overlap.h \
 pointgroup.h \
 primitive.h \
 refinement.h \

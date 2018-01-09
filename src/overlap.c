@@ -37,7 +37,7 @@
 #include <stdio.h>
 #include <math.h>
 
-#include "permutation.h"
+#include "overlap.h"
 #include "mathfunc.h"
 #include "debug.h"
 
@@ -47,11 +47,26 @@
 #define SPG_POST_INCREMENT(a, b) (a += (b), a - (b))
 #endif
 
-static void perm_permute(void *data_out,
-                         const void *data_in,
-                         const int *perm,
-                         int value_size,
-                         int n);
+/* Note: data_out and data_in MUST NOT ALIAS. */
+static void permute(void *data_out,
+                    const void *data_in,
+                    const int *perm,
+                    int value_size,
+                    int n);
+
+static void permute_int(int *data_out,
+                        const int *data_in,
+                        const int *perm,
+                        const int n) {
+  permute(data_out, data_in, perm, sizeof(int), n);
+}
+
+static void permute_double_3(double (*data_out)[3],
+                             SPGCONST double (*data_in)[3],
+                             const int *perm,
+                             const int n) {
+  permute(data_out, data_in, perm, sizeof(double[3]), n);
+}
 
 static int argsort_by_lattice_point_distance(int * perm,
                                              SPGCONST double lattice[3][3],
@@ -61,7 +76,7 @@ static int argsort_by_lattice_point_distance(int * perm,
                                              void *argsort_work,
                                              int size);
 
-static PermFinder* perm_finder_alloc(int size);
+static OverlapChecker* overlap_checker_alloc(int size);
 
 static int check_total_overlap_for_sorted(SPGCONST double lattice[3][3],
                                           SPGCONST double (*pos_original)[3],
@@ -71,21 +86,8 @@ static int check_total_overlap_for_sorted(SPGCONST double lattice[3][3],
                                           int num_pos,
                                           double symprec);
 
-/* Note: data_out and data_in MUST NOT ALIAS. */
-static void perm_permute_int(int *data_out,
-                                    const int *data_in,
-                                    const int *perm,
-                                    const int n) {
-  perm_permute(data_out, data_in, perm, sizeof(int), n);
-}
-
-/* Note: data_out and data_in MUST NOT ALIAS. */
-static void perm_permute_double_3(double (*data_out)[3],
-                                         SPGCONST double (*data_in)[3],
-                                         const int *perm,
-                                         const int n) {
-  perm_permute(data_out, data_in, perm, sizeof(double[3]), n);
-}
+/* ------------------------------------- */
+/*          arg-sorting                  */
 
 /* Helper type used to get sorted indices of values. */
 typedef struct {
@@ -134,7 +136,6 @@ static void perm_argsort_work_free(void *work)
 /* to have the same type. */
 /* */
 /* Returns 0 on failure. */
-/* Can this be local? */
 static int perm_argsort(int *perm,
                         const int *types,
                         const double *values,
@@ -177,11 +178,11 @@ static int perm_argsort(int *perm,
 
 /* Permute an array. */
 /* data_out and data_in MUST NOT ALIAS. */
-static void perm_permute(void *data_out,
-                         const void *data_in,
-                         const int *perm,
-                         const int value_size,
-                         const int n)
+static void permute(void *data_out,
+                    const void *data_in,
+                    const int *perm,
+                    int value_size,
+                    int n)
 {
   int i;
   const void *read;
@@ -195,16 +196,16 @@ static void perm_permute(void *data_out,
 }
 
 /* ***************************************** */
-/*             Perm finder                   */
+/*             OverlapChecker                */
 
-static PermFinder* perm_finder_alloc(int size)
+static OverlapChecker* overlap_checker_alloc(int size)
 {
   int offset_pos_temp_1, offset_pos_temp_2, offset_distance_temp;
   int offset_perm_temp, offset_pos_sorted, offset_types_sorted, offset_lattice;
   int offset, blob_size;
 
-  PermFinder * searcher;
-  searcher = NULL;
+  OverlapChecker * checker;
+  checker = NULL;
 
   offset = 0;
   offset_pos_temp_1 = SPG_POST_INCREMENT(offset, size * sizeof(double[3]));
@@ -216,90 +217,90 @@ static PermFinder* perm_finder_alloc(int size)
   offset_types_sorted =  SPG_POST_INCREMENT(offset, size * sizeof(int));
   blob_size = offset;
 
-  if ((searcher = (PermFinder*)malloc(sizeof(PermFinder))) == NULL) {
-    warning_print("spglib: Memory could not be allocated for searcher.");
+  if ((checker = (OverlapChecker*)malloc(sizeof(OverlapChecker))) == NULL) {
+    warning_print("spglib: Memory could not be allocated for checker.");
     return NULL;
   }
 
-  if ((searcher->blob = malloc(blob_size)) == NULL) {
-    warning_print("spglib: Memory could not be allocated for searcher.");
-    free(searcher);
-    searcher = NULL;
+  if ((checker->blob = malloc(blob_size)) == NULL) {
+    warning_print("spglib: Memory could not be allocated for checker.");
+    free(checker);
+    checker = NULL;
     return NULL;
   }
 
-  if ((searcher->argsort_work = perm_argsort_work_malloc(size)) == NULL) {
-    free(searcher->blob);
-    searcher->blob = NULL;
-    free(searcher);
-    searcher = NULL;
+  if ((checker->argsort_work = perm_argsort_work_malloc(size)) == NULL) {
+    free(checker->blob);
+    checker->blob = NULL;
+    free(checker);
+    checker = NULL;
     return NULL;
   }
 
-  searcher->size = size;
-  searcher->pos_temp_1 = (double (*)[3])(searcher->blob + offset_pos_temp_1);
-  searcher->pos_temp_2 = (double (*)[3])(searcher->blob + offset_pos_temp_2);
-  searcher->distance_temp = (double *)(searcher->blob + offset_distance_temp);
-  searcher->perm_temp = (int *)(searcher->blob + offset_perm_temp);
-  searcher->lattice = (double (*)[3])(searcher->blob + offset_lattice);
-  searcher->pos_sorted  = (double (*)[3])(searcher->blob + offset_pos_sorted);
-  searcher->types_sorted = (int *)(searcher->blob + offset_types_sorted);
+  checker->size = size;
+  checker->pos_temp_1 = (double (*)[3])(checker->blob + offset_pos_temp_1);
+  checker->pos_temp_2 = (double (*)[3])(checker->blob + offset_pos_temp_2);
+  checker->distance_temp = (double *)(checker->blob + offset_distance_temp);
+  checker->perm_temp = (int *)(checker->blob + offset_perm_temp);
+  checker->lattice = (double (*)[3])(checker->blob + offset_lattice);
+  checker->pos_sorted  = (double (*)[3])(checker->blob + offset_pos_sorted);
+  checker->types_sorted = (int *)(checker->blob + offset_types_sorted);
 
-  return searcher;
+  return checker;
 }
 
-void perm_finder_free(PermFinder *tester)
+void overlap_checker_free(OverlapChecker *checker)
 {
-  if (tester != NULL) {
-    if (tester->argsort_work != NULL) {
-      free(tester->argsort_work);
-      tester->argsort_work = NULL;
+  if (checker != NULL) {
+    if (checker->argsort_work != NULL) {
+      free(checker->argsort_work);
+      checker->argsort_work = NULL;
     }
-    if (tester->blob != NULL) {
-      free(tester->blob);
-      tester->blob = NULL;
+    if (checker->blob != NULL) {
+      free(checker->blob);
+      checker->blob = NULL;
     }
-    free(tester);
+    free(checker);
   }
 }
 
-PermFinder* perm_finder_init(const Cell *cell)
+OverlapChecker* overlap_checker_init(const Cell *cell)
 {
-  PermFinder * searcher;
-  searcher = NULL;
+  OverlapChecker * checker;
+  checker = NULL;
 
   /* Allocate */
-  if ((searcher = perm_finder_alloc(cell->size)) == NULL) {
+  if ((checker = overlap_checker_alloc(cell->size)) == NULL) {
     return NULL;
   }
 
-  mat_copy_matrix_d3(searcher->lattice, cell->lattice);
+  mat_copy_matrix_d3(checker->lattice, cell->lattice);
 
   /* Get the permutation that sorts the original cell. */
-  if (!argsort_by_lattice_point_distance(searcher->perm_temp,
+  if (!argsort_by_lattice_point_distance(checker->perm_temp,
                                          cell->lattice,
                                          cell->position,
                                          cell->types,
-                                         searcher->distance_temp,
-                                         searcher->argsort_work,
-                                         searcher->size)) {
-    perm_finder_free(searcher);
+                                         checker->distance_temp,
+                                         checker->argsort_work,
+                                         checker->size)) {
+    overlap_checker_free(checker);
     return NULL;
   }
 
   /* Use the perm to sort the cell. */
-  /* (This is saved for as long as the PermFinder lives.) */
-  perm_permute_double_3(searcher->pos_sorted,
-                        cell->position,
-                        searcher->perm_temp,
-                        cell->size);
-
-  perm_permute_int(searcher->types_sorted,
-                   cell->types,
-                   searcher->perm_temp,
+  /* The sorted cell is saved for as long as the OverlapChecker lives. */
+  permute_double_3(checker->pos_sorted,
+                   cell->position,
+                   checker->perm_temp,
                    cell->size);
 
-  return searcher;
+  permute_int(checker->types_sorted,
+              cell->types,
+              checker->perm_temp,
+              cell->size);
+
+  return checker;
 }
 
 static int argsort_by_lattice_point_distance(int * perm,
@@ -338,25 +339,25 @@ static int argsort_by_lattice_point_distance(int * perm,
 /* without the cost of sorting the rotated positions. */
 /* It only inspects a few atoms. */
 /* 0:  Not a symmetry.   1. Possible symmetry. */
-static int perm_finder_check_possible_overlap(PermFinder *searcher,
-                                              const double test_trans[3],
-                                              SPGCONST int rot[3][3],
-                                              const double symprec)
+static int check_possible_overlap(OverlapChecker *checker,
+                                  const double test_trans[3],
+                                  SPGCONST int rot[3][3],
+                                  const double symprec)
 {
   double pos_rot[3];
   int i, i_test, k, max_search_num, search_num;
   int type_rot, is_found;
 
   max_search_num = 3;
-  search_num = searcher->size <= max_search_num ? searcher->size
+  search_num = checker->size <= max_search_num ? checker->size
                                                 : max_search_num;
 
   /* Check a few rotated positions. */
   /* (this could be optimized by focusing on the min_atom_type) */
   for (i_test = 0; i_test < search_num; i_test++) {
 
-    type_rot = searcher->types_sorted[i_test];
-    mat_multiply_matrix_vector_id3(pos_rot, rot, searcher->pos_sorted[i_test]);
+    type_rot = checker->types_sorted[i_test];
+    mat_multiply_matrix_vector_id3(pos_rot, rot, checker->pos_sorted[i_test]);
     for (k = 0; k < 3; k++) {
       pos_rot[k] += test_trans[k];
     }
@@ -366,12 +367,12 @@ static int perm_finder_check_possible_overlap(PermFinder *searcher,
     /*  for the original Cell and using it to binary search for lower and */
     /*  upper bounds on 'i'. For now though, brute force is good enough) */
     is_found = 0;
-    for (i = 0; i < searcher->size; i++) {
+    for (i = 0; i < checker->size; i++) {
       if (cel_is_overlap_with_same_type(pos_rot,
-                                        searcher->pos_sorted[i],
+                                        checker->pos_sorted[i],
                                         type_rot,
-                                        searcher->types_sorted[i],
-                                        searcher->lattice,
+                                        checker->types_sorted[i],
+                                        checker->lattice,
                                         symprec)) {
         is_found = 1;
         break;
@@ -388,68 +389,68 @@ static int perm_finder_check_possible_overlap(PermFinder *searcher,
   return 1;
 }
 
-/* Uses a PermFinder to efficiently--but thoroughly--confirm that a given symmetry operator */
+/* Uses a OverlapChecker to efficiently--but thoroughly--confirm that a given symmetry operator */
 /* is a symmetry of the cell. If you need to test many symmetry operators on the same cell, */
-/* you can create one PermFinder from the Cell and call this function many times. */
+/* you can create one OverlapChecker from the Cell and call this function many times. */
 /* -1: Error.  0:  Not a symmetry.   1. Is a symmetry. */
-int perm_finder_check_total_overlap(PermFinder *searcher,
-                                    const double test_trans[3],
-                                    int rot[3][3],
-                                    const double symprec,
-                                    const int is_identity)
+int check_total_overlap(OverlapChecker *checker,
+                        const double test_trans[3],
+                        int rot[3][3],
+                        const double symprec,
+                        const int is_identity)
 {
   int i, k, check;
 
   /* Check a few atoms by brute force before continuing. */
-  /* This may allow us to avoid the sorting step for many incorrect translations. */
-  if (!perm_finder_check_possible_overlap(searcher,
-                                          test_trans,
-                                          rot,
-                                          symprec)) {
+  /* For bad translations, this can be much cheaper than sorting. */
+  if (!check_possible_overlap(checker,
+                              test_trans,
+                              rot,
+                              symprec)) {
     return 0;
   }
 
   /* Write rotated positions to 'pos_temp_1' */
-  for (i = 0; i < searcher->size; i++) {
+  for (i = 0; i < checker->size; i++) {
     if (is_identity) {
       for (k = 0; k < 3; k++) {
-        searcher->pos_temp_1[i][k] = searcher->pos_sorted[i][k];
+        checker->pos_temp_1[i][k] = checker->pos_sorted[i][k];
       }
     } else {
-      mat_multiply_matrix_vector_id3(searcher->pos_temp_1[i],
+      mat_multiply_matrix_vector_id3(checker->pos_temp_1[i],
                                      rot,
-                                     searcher->pos_sorted[i]);
+                                     checker->pos_sorted[i]);
     }
 
     for (k = 0; k < 3; k++) {
-      searcher->pos_temp_1[i][k] += test_trans[k];
+      checker->pos_temp_1[i][k] += test_trans[k];
     }
   }
 
   /* Get permutation that sorts these positions. */
-  if (!argsort_by_lattice_point_distance(searcher->perm_temp,
-                                         searcher->lattice,
-                                         searcher->pos_temp_1,
-                                         searcher->types_sorted,
-                                         searcher->distance_temp,
-                                         searcher->argsort_work,
-                                         searcher->size)) {
+  if (!argsort_by_lattice_point_distance(checker->perm_temp,
+                                         checker->lattice,
+                                         checker->pos_temp_1,
+                                         checker->types_sorted,
+                                         checker->distance_temp,
+                                         checker->argsort_work,
+                                         checker->size)) {
     return -1;
   }
 
   /* Use the permutation to sort them. Write to 'pos_temp_2'. */
-  perm_permute_double_3(searcher->pos_temp_2,
-                        searcher->pos_temp_1,
-                        searcher->perm_temp,
-                        searcher->size);
+  permute_double_3(checker->pos_temp_2,
+                   checker->pos_temp_1,
+                   checker->perm_temp,
+                   checker->size);
 
   /* Do optimized check for overlap between sorted coordinates. */
-  check = check_total_overlap_for_sorted(searcher->lattice,
-                                         searcher->pos_sorted, /* pos_original */
-                                         searcher->pos_temp_2, /* pos_rotated */
-                                         searcher->types_sorted, /* types_original */
-                                         searcher->types_sorted, /* types_original */
-                                         searcher->size,
+  check = check_total_overlap_for_sorted(checker->lattice,
+                                         checker->pos_sorted, /* pos_original */
+                                         checker->pos_temp_2, /* pos_rotated */
+                                         checker->types_sorted, /* types_original */
+                                         checker->types_sorted, /* types_original */
+                                         checker->size,
                                          symprec);
   if (check == -1) {
     /* Error! */
@@ -477,6 +478,7 @@ static int check_total_overlap_for_sorted(SPGCONST double lattice[3][3],
   found = NULL;
 
   if ((found = (int *)malloc(num_pos * sizeof(int))) == NULL) {
+    warning_print("spglib: Memory could not be allocated");
     return -1;
   }
 

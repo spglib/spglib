@@ -35,7 +35,7 @@
 #include "mathfunc.h"
 #include "cell.h"
 
-/* Contains pre-allocated memory and precomputed data for perm_finder_check_total_overlap. */
+/* Contains pre-allocated memory and precomputed data for check_total_overlap. */
 typedef struct {
     int size;
 
@@ -55,14 +55,14 @@ typedef struct {
     double (*lattice)[3];
     double (*pos_sorted)[3];
     int * types_sorted;
-} PermFinder;
+} OverlapChecker;
 
-PermFinder* perm_finder_init(const Cell * cell);
+OverlapChecker* overlap_checker_init(const Cell *cell);
 
-int perm_finder_check_total_overlap(PermFinder * searcher,
-                                    const double test_trans[3],
-                                    SPGCONST int rot[3][3],
-                                    double symprec,
-                                    int is_identity);
+int check_total_overlap(OverlapChecker *checker,
+                        const double test_trans[3],
+                        int rot[3][3],
+                        double symprec,
+                        int is_identity);
 
-void perm_finder_free(PermFinder *tester);
+void overlap_checker_free(OverlapChecker *checker);

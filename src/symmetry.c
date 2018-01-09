@@ -39,7 +39,7 @@
 #include "delaunay.h"
 #include "mathfunc.h"
 #include "symmetry.h"
-#include "permutation.h"
+#include "overlap.h"
 
 #include "debug.h"
 
@@ -479,11 +479,11 @@ static int search_translation_part(int atoms_found[],
 {
   int i, j, num_trans, is_overlap;
   double trans[3];
-  PermFinder * searcher;
+  OverlapChecker * checker;
 
-  searcher = NULL;
+  checker = NULL;
 
-  if ((searcher = perm_finder_init(cell)) == NULL) {
+  if ((checker = overlap_checker_init(cell)) == NULL) {
     return -1;
   }
 
@@ -502,11 +502,11 @@ static int search_translation_part(int atoms_found[],
       trans[j] = cell->position[i][j] - origin[j];
     }
 
-    is_overlap = perm_finder_check_total_overlap(searcher,
-                                                 trans,
-                                                 rot,
-                                                 symprec,
-                                                 is_identity);
+    is_overlap = check_total_overlap(checker,
+                                     trans,
+                                     rot,
+                                     symprec,
+                                     is_identity);
     if (is_overlap == -1) {
       goto err;
     } else if (is_overlap) {
@@ -521,13 +521,13 @@ static int search_translation_part(int atoms_found[],
     }
   }
 
-  perm_finder_free(searcher);
-  searcher = NULL;
+  overlap_checker_free(checker);
+  checker = NULL;
   return num_trans;
 
  err:
-  perm_finder_free(searcher);
-  searcher = NULL;
+  overlap_checker_free(checker);
+  checker = NULL;
   return -1;
 }
 
@@ -588,7 +588,7 @@ static int search_pure_translations(int atoms_found[],
 }
 
 /* Thoroughly confirms that a given symmetry operation is a symmetry. */
-/* This is a convenient wrapper around perm_finder_check_total_overlap. */
+/* This is a convenient wrapper around check_total_overlap. */
 /* -1: Error.  0: Not a symmetry.  1: Is a symmetry. */
 static int is_overlap_all_atoms(const double trans[3],
                                 SPGCONST int rot[3][3],
@@ -596,23 +596,23 @@ static int is_overlap_all_atoms(const double trans[3],
                                 const double symprec,
                                 const int is_identity)
 {
-  PermFinder * searcher;
+  OverlapChecker * checker;
   int result;
 
-  searcher = NULL;
+  checker = NULL;
 
-  if ((searcher = perm_finder_init(cell)) == NULL) {
+  if ((checker = overlap_checker_init(cell)) == NULL) {
     return -1;
   }
 
-  result = perm_finder_check_total_overlap(searcher,
-                                           trans,
-                                           rot,
-                                           symprec,
-                                           is_identity);
+  result = check_total_overlap(checker,
+                               trans,
+                               rot,
+                               symprec,
+                               is_identity);
 
-  perm_finder_free(searcher);
-  searcher = NULL;
+  overlap_checker_free(checker);
+  checker = NULL;
 
   return result;
 }
