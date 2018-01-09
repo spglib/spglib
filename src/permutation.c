@@ -63,14 +63,13 @@ static int argsort_by_lattice_point_distance(int * perm,
 
 static PermFinder* perm_finder_alloc(int size);
 
-static int find_perm_near_identity(int *perm,
-                                   SPGCONST double lattice[3][3],
-                                   SPGCONST double (*pos_original)[3],
-                                   SPGCONST double (*pos_rotated)[3],
-                                   const int types_original[],
-                                   const int types_rotated[],
-                                   int num_pos,
-                                   double symprec);
+static int check_total_overlap_for_sorted(SPGCONST double lattice[3][3],
+                                          SPGCONST double (*pos_original)[3],
+                                          SPGCONST double (*pos_rotated)[3],
+                                          const int types_original[],
+                                          const int types_rotated[],
+                                          int num_pos,
+                                          double symprec);
 
 /* Note: data_out and data_in MUST NOT ALIAS. */
 static void perm_permute_int(int *data_out,
@@ -399,7 +398,7 @@ int perm_finder_check_total_overlap(PermFinder *searcher,
                                     const double symprec,
                                     const int is_identity)
 {
-  int i, k;
+  int i, k, check;
 
   /* Check a few atoms by brute force before continuing. */
   /* This may allow us to avoid the sorting step for many incorrect translations. */
@@ -444,52 +443,60 @@ int perm_finder_check_total_overlap(PermFinder *searcher,
                         searcher->perm_temp,
                         searcher->size);
 
-  /* Compute perm between sorted coordinates. */
-  if (!find_perm_near_identity(searcher->perm_temp,
-                               searcher->lattice,
-                               searcher->pos_sorted, /* pos_original */
-                               searcher->pos_temp_2, /* pos_rotated */
-                               searcher->types_sorted, /* types_original */
-                               searcher->types_sorted, /* types_original */
-                               searcher->size,
-                               symprec)) {
-    return 0;
+  /* Do optimized check for overlap between sorted coordinates. */
+  check = check_total_overlap_for_sorted(searcher->lattice,
+                                         searcher->pos_sorted, /* pos_original */
+                                         searcher->pos_temp_2, /* pos_rotated */
+                                         searcher->types_sorted, /* types_original */
+                                         searcher->types_sorted, /* types_original */
+                                         searcher->size,
+                                         symprec);
+  if (check == -1) {
+    /* Error! */
+    return -1;
   }
 
-  return 1;
+  return check;
 }
 
 /* Optimized for the case where the max difference in index */
 /* between pos_original and pos_rotated is small. */
-static int find_perm_near_identity(int *perm,
-                                   SPGCONST double lattice[3][3],
-                                   SPGCONST double (*pos_original)[3],
-                                   SPGCONST double (*pos_rotated)[3],
-                                   const int types_original[],
-                                   const int types_rotated[],
-                                   const int num_pos,
-                                   const double symprec)
+/* -1: Error.  0: False.  1:  True. */
+static int check_total_overlap_for_sorted(SPGCONST double lattice[3][3],
+                                          SPGCONST double (*pos_original)[3],
+                                          SPGCONST double (*pos_rotated)[3],
+                                          const int types_original[],
+                                          const int types_rotated[],
+                                          const int num_pos,
+                                          const double symprec)
 {
+  int * found;
   int i, i_orig, i_rot;
   int search_start;
 
-  /* perm[i] = index of position in pos_original that overlaps with pos_rotated[i] */
+  found = NULL;
+
+  if ((found = (int *)malloc(num_pos * sizeof(int))) == NULL) {
+    return -1;
+  }
+
+  /* found[i] = 1 if pos_rotated[i] has been found in pos_original */
   for (i = 0; i < num_pos; i++) {
-    perm[i] = -1;
+    found[i] = 0;
   }
 
   search_start = 0;
   for (i_orig = 0; i_orig < num_pos; i_orig++) {
 
     /* Permanently skip positions filled near the beginning. */
-    while (perm[search_start] >= 0) {
+    while (found[search_start]) {
       search_start++;
     }
 
     for (i_rot = search_start; i_rot < num_pos; i_rot++) {
 
       /* Skip any filled positions that aren't near the beginning. */
-      if (perm[i_rot] >= 0) {
+      if (found[i_rot]) {
         continue;
       }
 
@@ -499,18 +506,21 @@ static int find_perm_near_identity(int *perm,
                                         types_rotated[i_rot],
                                         lattice,
                                         symprec)) {
-        perm[i_rot] = i_orig;
+        found[i_rot] = 1;
         break;
       }
     }
 
     if (i_rot == num_pos) {
       /* We never hit the 'break'. */
-      /* Failure; a position in pos_rotated does not */
-      /* overlap with any position in pos_original. */
+      /* Failure; a position in pos_original does not */
+      /* overlap with any position in pos_rotated. */
       return 0;
     }
   }
+
+  free(found);
+  found = NULL;
 
   /* Success */
   return 1;
