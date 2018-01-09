@@ -47,6 +47,12 @@
 #define SPG_POST_INCREMENT(a, b) (a += (b), a - (b))
 #endif
 
+static void perm_permute(void *data_out,
+                         const void *data_in,
+                         const int *perm,
+                         int value_size,
+                         int n);
+
 static int argsort_by_lattice_point_distance(int * perm,
                                              SPGCONST double lattice[3][3],
                                              SPGCONST double (* positions)[3],
@@ -65,6 +71,22 @@ static int find_perm_near_identity(int *perm,
                                    const int types_rotated[],
                                    int num_pos,
                                    double symprec);
+
+/* Note: data_out and data_in MUST NOT ALIAS. */
+static void perm_permute_int(int *data_out,
+                                    const int *data_in,
+                                    const int *perm,
+                                    const int n) {
+  perm_permute(data_out, data_in, perm, sizeof(int), n);
+}
+
+/* Note: data_out and data_in MUST NOT ALIAS. */
+static void perm_permute_double_3(double (*data_out)[3],
+                                         SPGCONST double (*data_in)[3],
+                                         const int *perm,
+                                         const int n) {
+  perm_permute(data_out, data_in, perm, sizeof(double[3]), n);
+}
 
 /* Helper type used to get sorted indices of values. */
 typedef struct {
@@ -90,8 +112,7 @@ static int ValueWithIndex_comparator(const void *pa, const void *pb)
   return cmp;
 }
 
-/* Can this be local? */
-void* perm_argsort_work_malloc(int n)
+static void* perm_argsort_work_malloc(int n)
 {
   ValueWithIndex *work;
 
@@ -104,8 +125,7 @@ void* perm_argsort_work_malloc(int n)
   return work;
 }
 
-/* Can this be local? */
-void perm_argsort_work_free(void *work)
+static void perm_argsort_work_free(void *work)
 {
   free(work);
 }
@@ -116,11 +136,11 @@ void perm_argsort_work_free(void *work)
 /* */
 /* Returns 0 on failure. */
 /* Can this be local? */
-int perm_argsort(int *perm,
-                 const int *types,
-                 const double *values,
-                 void *provided_work,
-                 const int n)
+static int perm_argsort(int *perm,
+                        const int *types,
+                        const double *values,
+                        void *provided_work,
+                        const int n)
 {
   int i;
   ValueWithIndex *work;
@@ -158,12 +178,11 @@ int perm_argsort(int *perm,
 
 /* Permute an array. */
 /* data_out and data_in MUST NOT ALIAS. */
-/* Can this be local? */
-void perm_permute(void *data_out,
-                  const void *data_in,
-                  const int *perm,
-                  const int value_size,
-                  const int n)
+static void perm_permute(void *data_out,
+                         const void *data_in,
+                         const int *perm,
+                         const int value_size,
+                         const int n)
 {
   int i;
   const void *read;
@@ -176,39 +195,13 @@ void perm_permute(void *data_out,
   }
 }
 
-/* Construct the permutation that is equivalent to permuting by 'first', */
-/* then permuting by 'second'. */
-/* 'out' MUST NOT ALIAS with either 'first' or 'second'. */
-/* Can this be local? */
-void perm_compose(int *out,
-                  const int *first,
-                  const int *second,
-                  const int n) {
-  perm_permute_int(out, first, second, n);
-}
-
-
-/* Compute the inverse of 'perm'. */
-/* 'perm' and 'out' MUST NOT ALIAS. */
-/* Can this be local? */
-void perm_inverse(int *out,
-                  const int *perm,
-                  const int n)
-{
-  int i;
-  for (i = 0; i < n; i++) {
-    out[perm[i]] = i;
-  }
-}
-
 /* ***************************************** */
 /*             Perm finder                   */
 
 static PermFinder* perm_finder_alloc(int size)
 {
   int offset_pos_temp_1, offset_pos_temp_2, offset_distance_temp;
-  int offset_perm_orig, offset_perm_rot, offset_perm_temp_1, offset_perm_temp_2;
-  int offset_pos_sorted, offset_types_sorted, offset_lattice;
+  int offset_perm_temp, offset_pos_sorted, offset_types_sorted, offset_lattice;
   int offset, blob_size;
 
   PermFinder * searcher;
@@ -218,10 +211,7 @@ static PermFinder* perm_finder_alloc(int size)
   offset_pos_temp_1 = SPG_POST_INCREMENT(offset, size * sizeof(double[3]));
   offset_pos_temp_2 = SPG_POST_INCREMENT(offset, size * sizeof(double[3]));
   offset_distance_temp = SPG_POST_INCREMENT(offset, size * sizeof(double));
-  offset_perm_orig = SPG_POST_INCREMENT(offset, size * sizeof(int));
-  offset_perm_rot = SPG_POST_INCREMENT(offset, size * sizeof(int));
-  offset_perm_temp_1 = SPG_POST_INCREMENT(offset, size * sizeof(int));
-  offset_perm_temp_2 = SPG_POST_INCREMENT(offset, size * sizeof(int));
+  offset_perm_temp = SPG_POST_INCREMENT(offset, size * sizeof(int));
   offset_lattice = SPG_POST_INCREMENT(offset, 9 * sizeof(double));
   offset_pos_sorted = SPG_POST_INCREMENT(offset, size * sizeof(double[3]));
   offset_types_sorted =  SPG_POST_INCREMENT(offset, size * sizeof(int));
@@ -251,10 +241,7 @@ static PermFinder* perm_finder_alloc(int size)
   searcher->pos_temp_1 = (double (*)[3])(searcher->blob + offset_pos_temp_1);
   searcher->pos_temp_2 = (double (*)[3])(searcher->blob + offset_pos_temp_2);
   searcher->distance_temp = (double *)(searcher->blob + offset_distance_temp);
-  searcher->perm_orig = (int *)(searcher->blob + offset_perm_orig);
-  searcher->perm_rot = (int *)(searcher->blob + offset_perm_rot);
-  searcher->perm_temp_1 = (int *)(searcher->blob + offset_perm_temp_1);
-  searcher->perm_temp_2 = (int *)(searcher->blob + offset_perm_temp_2);
+  searcher->perm_temp = (int *)(searcher->blob + offset_perm_temp);
   searcher->lattice = (double (*)[3])(searcher->blob + offset_lattice);
   searcher->pos_sorted  = (double (*)[3])(searcher->blob + offset_pos_sorted);
   searcher->types_sorted = (int *)(searcher->blob + offset_types_sorted);
@@ -290,8 +277,7 @@ PermFinder* perm_finder_init(const Cell *cell)
   mat_copy_matrix_d3(searcher->lattice, cell->lattice);
 
   /* Get the permutation that sorts the original cell. */
-  /* (This is saved for as long as the PermFinder lives.) */
-  if (!argsort_by_lattice_point_distance(searcher->perm_orig,
+  if (!argsort_by_lattice_point_distance(searcher->perm_temp,
                                          cell->lattice,
                                          cell->position,
                                          cell->types,
@@ -302,16 +288,16 @@ PermFinder* perm_finder_init(const Cell *cell)
     return NULL;
   }
 
-  /* Write the sorted cell data. */
+  /* Use the perm to sort the cell. */
   /* (This is saved for as long as the PermFinder lives.) */
   perm_permute_double_3(searcher->pos_sorted,
                         cell->position,
-                        searcher->perm_orig,
+                        searcher->perm_temp,
                         cell->size);
 
   perm_permute_int(searcher->types_sorted,
                    cell->types,
-                   searcher->perm_orig,
+                   searcher->perm_temp,
                    cell->size);
 
   return searcher;
@@ -413,6 +399,8 @@ int perm_finder_check_total_overlap(PermFinder *searcher,
                                     const double symprec,
                                     const int is_identity)
 {
+  int i, k;
+
   /* Check a few atoms by brute force before continuing. */
   /* This may allow us to avoid the sorting step for many incorrect translations. */
   if (!perm_finder_check_possible_overlap(searcher,
@@ -422,95 +410,50 @@ int perm_finder_check_total_overlap(PermFinder *searcher,
     return 0;
   }
 
-  /* Perform the brute force search for a permutation between sorted data, */
-  /* but don't bother recording it; just return success or failure. */
-  return perm_finder_find_perm(NULL, /* Don't write the perm anywhere */
-                               searcher,
-                               test_trans,
-                               rot,
-                               symprec,
-                               is_identity);
-}
-
-/* Common implementation for check_total_overlap and find_perm. */
-/* -1: Error */
-/* 0: The rotation is not a symmetry operator. (perm is not written) */
-/* 1: The rotation is a symmetry operator. (perm was written if not NULL) */
-/* Can this be local? */
-int perm_finder_find_perm(int * perm, /* can be NULL to write nothing */
-                          PermFinder *tester,
-                          const double test_trans[3],
-                          SPGCONST int rot[3][3],
-                          const double symprec,
-                          const int is_identity)
-{
-  double pos_rot[3], *ppos_rot;
-  int i, k;
-
-  ppos_rot = NULL;
-
   /* Write rotated positions to 'pos_temp_1' */
-  for (i = 0; i < tester->size; i++) {
+  for (i = 0; i < searcher->size; i++) {
     if (is_identity) {
-      ppos_rot = tester->pos_sorted[i];
+      for (k = 0; k < 3; k++) {
+        searcher->pos_temp_1[i][k] = searcher->pos_sorted[i][k];
+      }
     } else {
-      mat_multiply_matrix_vector_id3(pos_rot, rot, tester->pos_sorted[i]);
-      ppos_rot = (double*)&pos_rot;
+      mat_multiply_matrix_vector_id3(searcher->pos_temp_1[i],
+                                     rot,
+                                     searcher->pos_sorted[i]);
     }
 
     for (k = 0; k < 3; k++) {
-      tester->pos_temp_1[i][k] = ppos_rot[k] + test_trans[k];
+      searcher->pos_temp_1[i][k] += test_trans[k];
     }
   }
 
   /* Get permutation that sorts these positions. */
-  /* (Stored in 'perm_rot' until the end of this function call) */
-  if (!argsort_by_lattice_point_distance(tester->perm_rot,
-                                         tester->lattice,
-                                         tester->pos_temp_1,
-                                         tester->types_sorted,
-                                         tester->distance_temp,
-                                         tester->argsort_work,
-                                         tester->size)) {
+  if (!argsort_by_lattice_point_distance(searcher->perm_temp,
+                                         searcher->lattice,
+                                         searcher->pos_temp_1,
+                                         searcher->types_sorted,
+                                         searcher->distance_temp,
+                                         searcher->argsort_work,
+                                         searcher->size)) {
     return -1;
   }
 
-  /* Write sorted positions to 'pos_temp_2'. */
-  perm_permute_double_3(tester->pos_temp_2,
-                        tester->pos_temp_1,
-                        tester->perm_rot,
-                        tester->size);
+  /* Use the permutation to sort them. Write to 'pos_temp_2'. */
+  perm_permute_double_3(searcher->pos_temp_2,
+                        searcher->pos_temp_1,
+                        searcher->perm_temp,
+                        searcher->size);
 
   /* Compute perm between sorted coordinates. */
-  if (!find_perm_near_identity(tester->perm_temp_1,
-                               tester->lattice,
-                               tester->pos_sorted, /* pos_original */
-                               tester->pos_temp_2, /* pos_rotated */
-                               tester->types_sorted, /* types_original */
-                               tester->types_sorted, /* types_original */
-                               tester->size,
+  if (!find_perm_near_identity(searcher->perm_temp,
+                               searcher->lattice,
+                               searcher->pos_sorted, /* pos_original */
+                               searcher->pos_temp_2, /* pos_rotated */
+                               searcher->types_sorted, /* types_original */
+                               searcher->types_sorted, /* types_original */
+                               searcher->size,
                                symprec)) {
     return 0;
-  }
-
-  if (perm != NULL) {
-    /* Compute total permutation. */
-    /* It is the result of applying the following four permutations in order: */
-    /*  - 'perm_orig' (the perm that sorted the original cell) */
-    /*  - 'perm_temp_1' (the perm between the sorted coords) */
-    /*  - 'inv(perm_rot)' (the perm that undoes the sorting of the rotated cell) */
-    /*  - 'inv(perm_orig)' */
-    /* The last inverse perm is because the rotated positions that we wrote to 'pos_temp_1' */
-    /* were constructed from the sorted original positions rather than their original order. */
-    perm_compose(tester->perm_temp_2, tester->perm_orig, tester->perm_temp_1, tester->size);
-
-    /* NOTE: perm_temp_1 is reused for (perm_orig . perm_rot) ... */
-    perm_compose(tester->perm_temp_1, tester->perm_orig, tester->perm_rot, tester->size);
-
-    /* NOTE: perm_rot is reused for inv(perm_orig . perm_rot) ... */
-    perm_inverse(tester->perm_rot, tester->perm_temp_1, tester->size);
-
-    perm_compose(perm, tester->perm_temp_2, tester->perm_rot, tester->size);
   }
 
   return 1;
