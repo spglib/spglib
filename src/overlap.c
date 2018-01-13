@@ -57,16 +57,29 @@ static void permute(void *data_out,
 static void permute_int(int *data_out,
                         const int *data_in,
                         const int *perm,
-                        const int n) {
-  permute(data_out, data_in, perm, sizeof(int), n);
-}
+                        const int n);
 
 static void permute_double_3(double (*data_out)[3],
                              SPGCONST double (*data_in)[3],
                              const int *perm,
-                             const int n) {
-  permute(data_out, data_in, perm, sizeof(double[3]), n);
-}
+                             const int n);
+
+static int ValueWithIndex_comparator(const void *pa, const void *pb);
+
+static void* perm_argsort_work_malloc(int n);
+
+static void perm_argsort_work_free(void *work);
+
+static int perm_argsort(int *perm,
+                        const int *types,
+                        const double *values,
+                        void *provided_work,
+                        const int n);
+
+static int check_possible_overlap(OverlapChecker *checker,
+                                  const double test_trans[3],
+                                  SPGCONST int rot[3][3],
+                                  const double symprec);
 
 static int argsort_by_lattice_point_distance(int * perm,
                                              SPGCONST double lattice[3][3],
@@ -91,10 +104,136 @@ static int check_total_overlap_for_sorted(SPGCONST double lattice[3][3],
 
 /* Helper type used to get sorted indices of values. */
 typedef struct {
-        double value;
-        int type;
-        int index;
+  double value;
+  int type;
+  int index;
 } ValueWithIndex;
+
+
+void ovl_overlap_checker_free(OverlapChecker *checker)
+{
+  if (checker != NULL) {
+    if (checker->argsort_work != NULL) {
+      free(checker->argsort_work);
+      checker->argsort_work = NULL;
+    }
+    if (checker->blob != NULL) {
+      free(checker->blob);
+      checker->blob = NULL;
+    }
+    free(checker);
+  }
+}
+
+OverlapChecker* ovl_overlap_checker_init(const Cell *cell)
+{
+  OverlapChecker * checker;
+  checker = NULL;
+
+  /* Allocate */
+  if ((checker = overlap_checker_alloc(cell->size)) == NULL) {
+    return NULL;
+  }
+
+  mat_copy_matrix_d3(checker->lattice, cell->lattice);
+
+  /* Get the permutation that sorts the original cell. */
+  if (!argsort_by_lattice_point_distance(checker->perm_temp,
+                                         cell->lattice,
+                                         cell->position,
+                                         cell->types,
+                                         checker->distance_temp,
+                                         checker->argsort_work,
+                                         checker->size)) {
+    ovl_overlap_checker_free(checker);
+    return NULL;
+  }
+
+  /* Use the perm to sort the cell. */
+  /* The sorted cell is saved for as long as the OverlapChecker lives. */
+  permute_double_3(checker->pos_sorted,
+                   cell->position,
+                   checker->perm_temp,
+                   cell->size);
+
+  permute_int(checker->types_sorted,
+              cell->types,
+              checker->perm_temp,
+              cell->size);
+
+  return checker;
+}
+
+/* Uses a OverlapChecker to efficiently--but thoroughly--confirm that a given symmetry operator */
+/* is a symmetry of the cell. If you need to test many symmetry operators on the same cell, */
+/* you can create one OverlapChecker from the Cell and call this function many times. */
+/* -1: Error.  0:  Not a symmetry.   1. Is a symmetry. */
+int ovl_check_total_overlap(OverlapChecker *checker,
+                            const double test_trans[3],
+                            int rot[3][3],
+                            const double symprec,
+                            const int is_identity)
+{
+  int i, k, check;
+
+  /* Check a few atoms by brute force before continuing. */
+  /* For bad translations, this can be much cheaper than sorting. */
+  if (!check_possible_overlap(checker,
+                              test_trans,
+                              rot,
+                              symprec)) {
+    return 0;
+  }
+
+  /* Write rotated positions to 'pos_temp_1' */
+  for (i = 0; i < checker->size; i++) {
+    if (is_identity) {
+      for (k = 0; k < 3; k++) {
+        checker->pos_temp_1[i][k] = checker->pos_sorted[i][k];
+      }
+    } else {
+      mat_multiply_matrix_vector_id3(checker->pos_temp_1[i],
+                                     rot,
+                                     checker->pos_sorted[i]);
+    }
+
+    for (k = 0; k < 3; k++) {
+      checker->pos_temp_1[i][k] += test_trans[k];
+    }
+  }
+
+  /* Get permutation that sorts these positions. */
+  if (!argsort_by_lattice_point_distance(checker->perm_temp,
+                                         checker->lattice,
+                                         checker->pos_temp_1,
+                                         checker->types_sorted,
+                                         checker->distance_temp,
+                                         checker->argsort_work,
+                                         checker->size)) {
+    return -1;
+  }
+
+  /* Use the permutation to sort them. Write to 'pos_temp_2'. */
+  permute_double_3(checker->pos_temp_2,
+                   checker->pos_temp_1,
+                   checker->perm_temp,
+                   checker->size);
+
+  /* Do optimized check for overlap between sorted coordinates. */
+  check = check_total_overlap_for_sorted(checker->lattice,
+                                         checker->pos_sorted, /* pos_original */
+                                         checker->pos_temp_2, /* pos_rotated */
+                                         checker->types_sorted, /* types_original */
+                                         checker->types_sorted, /* types_original */
+                                         checker->size,
+                                         symprec);
+  if (check == -1) {
+    /* Error! */
+    return -1;
+  }
+
+  return check;
+}
 
 static int ValueWithIndex_comparator(const void *pa, const void *pb)
 {
@@ -198,6 +337,21 @@ static void permute(void *data_out,
 /* ***************************************** */
 /*             OverlapChecker                */
 
+static void permute_int(int *data_out,
+                        const int *data_in,
+                        const int *perm,
+                        const int n) {
+  permute(data_out, data_in, perm, sizeof(int), n);
+}
+
+static void permute_double_3(double (*data_out)[3],
+                             SPGCONST double (*data_in)[3],
+                             const int *perm,
+                             const int n) {
+  permute(data_out, data_in, perm, sizeof(double[3]), n);
+}
+
+
 static OverlapChecker* overlap_checker_alloc(int size)
 {
   int offset_pos_temp_1, offset_pos_temp_2, offset_distance_temp;
@@ -245,60 +399,6 @@ static OverlapChecker* overlap_checker_alloc(int size)
   checker->lattice = (double (*)[3])(checker->blob + offset_lattice);
   checker->pos_sorted  = (double (*)[3])(checker->blob + offset_pos_sorted);
   checker->types_sorted = (int *)(checker->blob + offset_types_sorted);
-
-  return checker;
-}
-
-void overlap_checker_free(OverlapChecker *checker)
-{
-  if (checker != NULL) {
-    if (checker->argsort_work != NULL) {
-      free(checker->argsort_work);
-      checker->argsort_work = NULL;
-    }
-    if (checker->blob != NULL) {
-      free(checker->blob);
-      checker->blob = NULL;
-    }
-    free(checker);
-  }
-}
-
-OverlapChecker* overlap_checker_init(const Cell *cell)
-{
-  OverlapChecker * checker;
-  checker = NULL;
-
-  /* Allocate */
-  if ((checker = overlap_checker_alloc(cell->size)) == NULL) {
-    return NULL;
-  }
-
-  mat_copy_matrix_d3(checker->lattice, cell->lattice);
-
-  /* Get the permutation that sorts the original cell. */
-  if (!argsort_by_lattice_point_distance(checker->perm_temp,
-                                         cell->lattice,
-                                         cell->position,
-                                         cell->types,
-                                         checker->distance_temp,
-                                         checker->argsort_work,
-                                         checker->size)) {
-    overlap_checker_free(checker);
-    return NULL;
-  }
-
-  /* Use the perm to sort the cell. */
-  /* The sorted cell is saved for as long as the OverlapChecker lives. */
-  permute_double_3(checker->pos_sorted,
-                   cell->position,
-                   checker->perm_temp,
-                   cell->size);
-
-  permute_int(checker->types_sorted,
-              cell->types,
-              checker->perm_temp,
-              cell->size);
 
   return checker;
 }
@@ -387,77 +487,6 @@ static int check_possible_overlap(OverlapChecker *checker,
   }
 
   return 1;
-}
-
-/* Uses a OverlapChecker to efficiently--but thoroughly--confirm that a given symmetry operator */
-/* is a symmetry of the cell. If you need to test many symmetry operators on the same cell, */
-/* you can create one OverlapChecker from the Cell and call this function many times. */
-/* -1: Error.  0:  Not a symmetry.   1. Is a symmetry. */
-int check_total_overlap(OverlapChecker *checker,
-                        const double test_trans[3],
-                        int rot[3][3],
-                        const double symprec,
-                        const int is_identity)
-{
-  int i, k, check;
-
-  /* Check a few atoms by brute force before continuing. */
-  /* For bad translations, this can be much cheaper than sorting. */
-  if (!check_possible_overlap(checker,
-                              test_trans,
-                              rot,
-                              symprec)) {
-    return 0;
-  }
-
-  /* Write rotated positions to 'pos_temp_1' */
-  for (i = 0; i < checker->size; i++) {
-    if (is_identity) {
-      for (k = 0; k < 3; k++) {
-        checker->pos_temp_1[i][k] = checker->pos_sorted[i][k];
-      }
-    } else {
-      mat_multiply_matrix_vector_id3(checker->pos_temp_1[i],
-                                     rot,
-                                     checker->pos_sorted[i]);
-    }
-
-    for (k = 0; k < 3; k++) {
-      checker->pos_temp_1[i][k] += test_trans[k];
-    }
-  }
-
-  /* Get permutation that sorts these positions. */
-  if (!argsort_by_lattice_point_distance(checker->perm_temp,
-                                         checker->lattice,
-                                         checker->pos_temp_1,
-                                         checker->types_sorted,
-                                         checker->distance_temp,
-                                         checker->argsort_work,
-                                         checker->size)) {
-    return -1;
-  }
-
-  /* Use the permutation to sort them. Write to 'pos_temp_2'. */
-  permute_double_3(checker->pos_temp_2,
-                   checker->pos_temp_1,
-                   checker->perm_temp,
-                   checker->size);
-
-  /* Do optimized check for overlap between sorted coordinates. */
-  check = check_total_overlap_for_sorted(checker->lattice,
-                                         checker->pos_sorted, /* pos_original */
-                                         checker->pos_temp_2, /* pos_rotated */
-                                         checker->types_sorted, /* types_original */
-                                         checker->types_sorted, /* types_original */
-                                         checker->size,
-                                         symprec);
-  if (check == -1) {
-    /* Error! */
-    return -1;
-  }
-
-  return check;
 }
 
 /* Optimized for the case where the max difference in index */

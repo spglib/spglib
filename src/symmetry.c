@@ -483,7 +483,7 @@ static int search_translation_part(int atoms_found[],
 
   checker = NULL;
 
-  if ((checker = overlap_checker_init(cell)) == NULL) {
+  if ((checker = ovl_overlap_checker_init(cell)) == NULL) {
     return -1;
   }
 
@@ -502,11 +502,11 @@ static int search_translation_part(int atoms_found[],
       trans[j] = cell->position[i][j] - origin[j];
     }
 
-    is_overlap = check_total_overlap(checker,
-                                     trans,
-                                     rot,
-                                     symprec,
-                                     is_identity);
+    is_overlap = ovl_check_total_overlap(checker,
+                                         trans,
+                                         rot,
+                                         symprec,
+                                         is_identity);
     if (is_overlap == -1) {
       goto err;
     } else if (is_overlap) {
@@ -521,12 +521,12 @@ static int search_translation_part(int atoms_found[],
     }
   }
 
-  overlap_checker_free(checker);
+  ovl_overlap_checker_free(checker);
   checker = NULL;
   return num_trans;
 
  err:
-  overlap_checker_free(checker);
+  ovl_overlap_checker_free(checker);
   checker = NULL;
   return -1;
 }
@@ -588,7 +588,7 @@ static int search_pure_translations(int atoms_found[],
 }
 
 /* Thoroughly confirms that a given symmetry operation is a symmetry. */
-/* This is a convenient wrapper around check_total_overlap. */
+/* This is a convenient wrapper around ovl_check_total_overlap. */
 /* -1: Error.  0: Not a symmetry.  1: Is a symmetry. */
 static int is_overlap_all_atoms(const double trans[3],
                                 SPGCONST int rot[3][3],
@@ -601,17 +601,17 @@ static int is_overlap_all_atoms(const double trans[3],
 
   checker = NULL;
 
-  if ((checker = overlap_checker_init(cell)) == NULL) {
+  if ((checker = ovl_overlap_checker_init(cell)) == NULL) {
     return -1;
   }
 
-  result = check_total_overlap(checker,
-                               trans,
-                               rot,
-                               symprec,
-                               is_identity);
+  result = ovl_check_total_overlap(checker,
+                                   trans,
+                                   rot,
+                                   symprec,
+                                   is_identity);
 
-  overlap_checker_free(checker);
+  ovl_overlap_checker_free(checker);
   checker = NULL;
 
   return result;
