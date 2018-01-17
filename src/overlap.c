@@ -328,8 +328,8 @@ static void permute(void *data_out,
   void *write;
 
   for (i = 0; i < n; i++) {
-    read = data_in + perm[i] * value_size;
-    write = data_out + i * value_size;
+    read = (void *)((char *)data_in + perm[i] * value_size);
+    write = (void *)((char *)data_out + i * value_size);
     memcpy(write, read, value_size);
   }
 }
@@ -357,10 +357,14 @@ static OverlapChecker* overlap_checker_alloc(int size)
   int offset_pos_temp_1, offset_pos_temp_2, offset_distance_temp;
   int offset_perm_temp, offset_pos_sorted, offset_types_sorted, offset_lattice;
   int offset, blob_size;
-
+  char * chr_blob;
   OverlapChecker * checker;
+
+  chr_blob = NULL;
   checker = NULL;
 
+  /* checker->blob is going to contain lots of things. */
+  /* Compute its total size and the number of bytes before each thing. */
   offset = 0;
   offset_pos_temp_1 = SPG_POST_INCREMENT(offset, size * sizeof(double[3]));
   offset_pos_temp_2 = SPG_POST_INCREMENT(offset, size * sizeof(double[3]));
@@ -392,13 +396,18 @@ static OverlapChecker* overlap_checker_alloc(int size)
   }
 
   checker->size = size;
-  checker->pos_temp_1 = (double (*)[3])(checker->blob + offset_pos_temp_1);
-  checker->pos_temp_2 = (double (*)[3])(checker->blob + offset_pos_temp_2);
-  checker->distance_temp = (double *)(checker->blob + offset_distance_temp);
-  checker->perm_temp = (int *)(checker->blob + offset_perm_temp);
-  checker->lattice = (double (*)[3])(checker->blob + offset_lattice);
-  checker->pos_sorted  = (double (*)[3])(checker->blob + offset_pos_sorted);
-  checker->types_sorted = (int *)(checker->blob + offset_types_sorted);
+
+  /* Create the pointers to the things contained in checker->blob. */
+  /* The C spec doesn't allow arithmetic directly on 'void *', */
+  /* so a 'char *' is used. */
+  chr_blob = (char *)checker->blob;
+  checker->pos_temp_1 = (double (*)[3])(chr_blob + offset_pos_temp_1);
+  checker->pos_temp_2 = (double (*)[3])(chr_blob + offset_pos_temp_2);
+  checker->distance_temp = (double *)(chr_blob + offset_distance_temp);
+  checker->perm_temp = (int *)(chr_blob + offset_perm_temp);
+  checker->lattice = (double (*)[3])(chr_blob + offset_lattice);
+  checker->pos_sorted  = (double (*)[3])(chr_blob + offset_pos_sorted);
+  checker->types_sorted = (int *)(chr_blob + offset_types_sorted);
 
   return checker;
 }

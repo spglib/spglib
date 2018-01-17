@@ -37,6 +37,7 @@
 
 /* Contains pre-allocated memory and precomputed data for check_total_overlap. */
 typedef struct {
+  /* Number of atoms. */
   int size;
 
   /* Pre-allocated memory for various things. */
