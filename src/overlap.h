@@ -37,6 +37,7 @@
 
 /* Contains pre-allocated memory and precomputed data for check_total_overlap. */
 typedef struct {
+  /* Number of atoms. */
   int size;
 
   /* Pre-allocated memory for various things. */
@@ -60,9 +61,9 @@ typedef struct {
 OverlapChecker* ovl_overlap_checker_init(const Cell *cell);
 
 int ovl_check_total_overlap(OverlapChecker *checker,
-                        const double test_trans[3],
-                        int rot[3][3],
-                        double symprec,
-                        int is_identity);
+                            const double test_trans[3],
+                            int rot[3][3],
+                            const double symprec,
+                            const int is_identity);
 
 void ovl_overlap_checker_free(OverlapChecker *checker);
