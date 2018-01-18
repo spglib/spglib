@@ -87,7 +87,7 @@ static int argsort_by_lattice_point_distance(int * perm,
                                              const int * types,
                                              double * distance_temp,
                                              void *argsort_work,
-                                             int size);
+                                             const int size);
 
 static OverlapChecker* overlap_checker_alloc(int size);
 
@@ -96,8 +96,8 @@ static int check_total_overlap_for_sorted(SPGCONST double lattice[3][3],
                                           SPGCONST double (*pos_rotated)[3],
                                           const int types_original[],
                                           const int types_rotated[],
-                                          int num_pos,
-                                          double symprec);
+                                          const int num_pos,
+                                          const double symprec);
 
 /* ------------------------------------- */
 /*          arg-sorting                  */
