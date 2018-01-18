@@ -1,3 +1,14 @@
+2018-01-13  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.10.2
+
+	* src/overlap.c:
+
+	New algorithm to search translation part of space group operation
+	is implmented by Michael Lamparski to improving the search speed
+	especially for large unit cell systems. For this, new files
+	'overlap.*' are added and so the version number is incremented.
+
 2017-12-13  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.10.2
