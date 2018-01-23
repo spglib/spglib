@@ -1359,9 +1359,15 @@ static Centering get_base_center(SPGCONST int transform_mat[3][3])
   }
 
   /* body center */
-  if (abs(transform_mat[0][0]) +
-      abs(transform_mat[0][1]) +
-      abs(transform_mat[0][2]) == 2) {
+  if ((abs(transform_mat[0][0]) +
+       abs(transform_mat[0][1]) +
+       abs(transform_mat[0][2]) == 2) &&
+      (abs(transform_mat[1][0]) +
+       abs(transform_mat[1][1]) +
+       abs(transform_mat[1][2]) == 2) &&
+      (abs(transform_mat[2][0]) +
+       abs(transform_mat[2][1]) +
+       abs(transform_mat[2][2]) == 2)) {
     centering = BODY;
     goto end;
   }
