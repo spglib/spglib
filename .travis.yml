@@ -34,6 +34,7 @@ before_install:
   bash miniconda.sh -b -p $HOME/miniconda;
   export PATH="$HOME/miniconda/bin:$PATH";
   conda update --yes conda;
+  conda update --all --yes;
   conda install --no-update-deps --yes python="$TRAVIS_PYTHON_VERSION" pip numpy;
   export PATH="$HOME/miniconda/bin:$PATH";
   cd python;
