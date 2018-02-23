@@ -95,6 +95,7 @@ deploy:
     branch: rc
     tags: false
     condition: "$DOCKER_DEPLOY = false"
+    python: 2.7
 
 - provider: pypi
   server: https://test.pypi.org/legacy/
@@ -130,6 +131,7 @@ deploy:
     branch: master
     tags: false
     condition: "$DOCKER_DEPLOY = false"
+    python: 2.7
 
 - provider: pypi
   skip_cleanup: true
