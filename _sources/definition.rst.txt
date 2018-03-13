@@ -89,7 +89,7 @@ Cartesian coordinates is obtained by
 
    \mathbf{x} = (\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{x}.
 
-or 
+or
 
 .. math::
 
@@ -138,7 +138,7 @@ the origin of the arbitrary system :math:`\boldsymbol{O}`,
 Origin shift **doesn't** move a crystal in Cartesian coordinates, but
 just changes the origin to measure the coordinates of atomic points.
 
-   
+
 A change of basis is described by the combination of the
 transformation matrix and the origin shift denoted by
 :math:`(\boldsymbol{P}, \boldsymbol{p})` where first the
@@ -157,7 +157,7 @@ or equivalently,
 
   \boldsymbol{x} = \boldsymbol{P}^{-1}\boldsymbol{x}_\mathrm{s} -
   \boldsymbol{P}^{-1}\boldsymbol{p}.
-  
+
 
 A graphical example is shown below.
 
@@ -172,11 +172,10 @@ In this example,
 
 .. math::
 
-   \renewcommand*{\arraystretch}{1.4}
    \boldsymbol{P} = \begin{pmatrix}
    \frac{1}{2} & \frac{1}{2} & 0 \\
    \frac{\bar{1}}{2} & \frac{1}{2} & 0 \\
-   0 & 0 & 1 
+   0 & 0 & 1
    \end{pmatrix}.
 
 
@@ -224,33 +223,31 @@ as follows:
 
 .. math::
 
-   \renewcommand*{\arraystretch}{1.4}
-   \boldsymbol{P}_\mathrm{A} = 
+   \boldsymbol{P}_\mathrm{A} =
    \begin{pmatrix}
    1 & 0 & 0 \\
    0 & \frac{1}{2} & \frac{\bar{1}}{2} \\
    0 & \frac{1}{2} & \frac{{1}}{2}
    \end{pmatrix},
-   \renewcommand*{\arraystretch}{1.4}
-   \boldsymbol{P}_\mathrm{C} = 
+   \boldsymbol{P}_\mathrm{C} =
    \begin{pmatrix}
    \frac{1}{2} & \frac{{1}}{2} & 0 \\
    \frac{\bar{1}}{2} & \frac{1}{2} & 0\\
    0 & 0 & 1
    \end{pmatrix},
-   \boldsymbol{P}_\mathrm{R} = 
+   \boldsymbol{P}_\mathrm{R} =
    \begin{pmatrix}
    \frac{2}{3} & \frac{\bar{1}}{3} & \frac{\bar{1}}{3} \\
    \frac{1}{3} & \frac{{1}}{3} & \frac{\bar{2}}{3} \\
    \frac{1}{3} & \frac{{1}}{3} & \frac{{1}}{3}
    \end{pmatrix},
-   \boldsymbol{P}_\mathrm{I} = 
+   \boldsymbol{P}_\mathrm{I} =
    \begin{pmatrix}
    \frac{\bar{1}}{2} & \frac{{1}}{2} & \frac{{1}}{2} \\
    \frac{{1}}{2} & \frac{\bar{1}}{2} & \frac{{1}}{2} \\
    \frac{{1}}{2} & \frac{{1}}{2} & \frac{\bar{1}}{2}
    \end{pmatrix},
-   \boldsymbol{P}_\mathrm{F} = 
+   \boldsymbol{P}_\mathrm{F} =
    \begin{pmatrix}
    0 & \frac{{1}}{2} & \frac{{1}}{2} \\
    \frac{{1}}{2} & 0 & \frac{{1}}{2} \\
