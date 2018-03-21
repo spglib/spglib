@@ -555,6 +555,8 @@ static int check_total_overlap_for_sorted(SPGCONST double lattice[3][3],
       /* We never hit the 'break'. */
       /* Failure; a position in pos_original does not */
       /* overlap with any position in pos_rotated. */
+      free(found);
+      found = NULL;
       return 0;
     }
   }
