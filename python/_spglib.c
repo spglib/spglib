@@ -107,7 +107,7 @@ static PyMethodDef _spglib_methods[] = {
   {"primitive", py_find_primitive, METH_VARARGS,
    "Find primitive cell in the input cell"},
   {"grid_point_from_address", py_get_grid_point_from_address, METH_VARARGS,
-   "Translate grid adress to grid point index"},
+   "Translate grid address to grid point index"},
   {"ir_reciprocal_mesh", py_get_ir_reciprocal_mesh, METH_VARARGS,
    "Reciprocal mesh points with map"},
   {"stabilized_reciprocal_mesh", py_get_stabilized_reciprocal_mesh, METH_VARARGS,
