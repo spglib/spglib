@@ -185,13 +185,16 @@ too huge and users may expect spglib can understand its full
 feature. However spglib actually collects only the following values
 from the ASE Atoms-class instance::
 
-   lattice = np.array(cell.get_cell().T, dtype='double', order='C')
-   positions = np.array(cell.get_scaled_positions(), dtype='double', order='C')
-   numbers = np.array(cell.get_atomic_numbers(), dtype='intc')
+   lattice = cell.get_cell()
+   positions = cell.get_scaled_positions()
+   numbers = cell.get_atomic_numbers()
    magmoms = None
 
-Nevertheless the ASE Atoms-like input will be accepted for a while.
-An alternative Atoms class (`atoms.py
+for which the corresponding code is written out of API and it is found
+at `here
+<https://github.com/atztogo/spglib/blob/e0851894ccdad1abb87d519b228d056128b56806/python/spglib/spglib.py#L737-L741>`_. Nevertheless
+the ASE Atoms-like input will be accepted for a while.  An alternative
+Atoms class (`atoms.py
 <https://github.com/atztogo/spglib/blob/master/python/examples/atoms.py>`_)
 that contains minimum set of methods is prepared in the `examples
 <https://github.com/atztogo/spglib/tree/master/python/examples>`_
