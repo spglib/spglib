@@ -129,7 +129,7 @@ if use_setuptools:
           version=version,
           cmdclass={'build_ext': build_ext},
           setup_requires=['numpy', 'setuptools>=18.0'],
-          license='BSD',
+          license='BSD-3-Clause',
           description='This is the spglib module.',
           long_description=open('README.rst', 'rb').read().decode('utf-8'),
           long_description_content_type='text/x-rst',
