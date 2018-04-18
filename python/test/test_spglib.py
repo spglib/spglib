@@ -46,7 +46,7 @@ class TestSpglib(unittest.TestCase):
         self._filenames = []
         for d in dirnames:
             self._filenames += ["%s/%s" % (d, fname)
-                                for fname in listdir("./data/%s" % d)]
+                                for fname in listdir("./test/data/%s" % d)]
 
     def tearDown(self):
         pass
@@ -54,7 +54,7 @@ class TestSpglib(unittest.TestCase):
     def test_get_symmetry_dataset(self):
         for fname in self._filenames:
             spgnum = int(fname.split('-')[1])
-            cell = read_vasp("./data/%s" % fname)
+            cell = read_vasp("./test/data/%s" % fname)
 
             if 'distorted' in fname:
                 symprec = 1e-1
@@ -82,7 +82,7 @@ class TestSpglib(unittest.TestCase):
     def test_standardize_cell(self):
         for fname in self._filenames:
             spgnum = int(fname.split('-')[1])
-            cell = read_vasp("./data/%s" % fname)
+            cell = read_vasp("./test/data/%s" % fname)
             if 'distorted' in fname:
                 std_cell = standardize_cell(cell,
                                             to_primitive=False,
@@ -101,7 +101,7 @@ class TestSpglib(unittest.TestCase):
     def test_standardize_cell_from_primitive(self):
         for fname in self._filenames:
             spgnum = int(fname.split('-')[1])
-            cell = read_vasp("./data/%s" % fname)
+            cell = read_vasp("./test/data/%s" % fname)
             if 'distorted' in fname:
                 prim_cell = standardize_cell(cell,
                                              to_primitive=True,
@@ -128,7 +128,7 @@ class TestSpglib(unittest.TestCase):
     def test_standardize_cell_to_primitive(self):
         for fname in self._filenames:
             spgnum = int(fname.split('-')[1])
-            cell = read_vasp("./data/%s" % fname)
+            cell = read_vasp("./test/data/%s" % fname)
             if 'distorted' in fname:
                 prim_cell = standardize_cell(cell,
                                              to_primitive=True,
@@ -147,7 +147,7 @@ class TestSpglib(unittest.TestCase):
     def test_refine_cell(self):
         for fname in self._filenames:
             spgnum = int(fname.split('-')[1])
-            cell = read_vasp("./data/%s" % fname)
+            cell = read_vasp("./test/data/%s" % fname)
             if 'distorted' in fname:
                 dataset_orig = get_symmetry_dataset(cell, symprec=1e-1)
             else:
@@ -162,7 +162,7 @@ class TestSpglib(unittest.TestCase):
     def test_find_primitive(self):
         for fname in self._filenames:
             spgnum = int(fname.split('-')[1])
-            cell = read_vasp("./data/%s" % fname)
+            cell = read_vasp("./test/data/%s" % fname)
             if 'distorted' in fname:
                 dataset = get_symmetry_dataset(cell, symprec=1e-1)
                 primitive = find_primitive(cell, symprec=1e-1)
@@ -190,7 +190,7 @@ class TestSpglib(unittest.TestCase):
     def test_get_symmetry(self):
         for fname in self._filenames:
             spgnum = int(fname.split('-')[1])
-            cell = read_vasp("./data/%s" % fname)
+            cell = read_vasp("./test/data/%s" % fname)
             if 'distorted' in fname:
                 num_sym_dataset = len(
                     get_symmetry_dataset(cell, symprec=1e-1)['rotations'])

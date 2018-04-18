@@ -11,7 +11,7 @@ class TestGetHallNumberFromSymmetry(unittest.TestCase):
         self._filenames = []
         for d in dirnames:
             self._filenames += ["%s/%s" % (d, fname)
-                                for fname in listdir("./data/%s" % d)]
+                                for fname in listdir("./test/data/%s" % d)]
 
     def tearDown(self):
         pass
@@ -19,7 +19,7 @@ class TestGetHallNumberFromSymmetry(unittest.TestCase):
     def test_get_hall_number_from_symmetry(self):
         for fname in self._filenames:
             spgnum = int(fname.split('-')[1])
-            cell = read_vasp("./data/%s" % fname)
+            cell = read_vasp("./test/data/%s" % fname)
             if 'distorted' in fname:
                 dataset = get_symmetry_dataset(cell, symprec=1e-1)
                 hall_number = get_hall_number_from_symmetry(
