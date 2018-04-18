@@ -64,9 +64,9 @@ install:
 
 script:
 - if [[ "$DOCKER_DEPLOY" == "false" ]]; then
-    cd python/test;
-    python -m unittest discover -b;
-    cd ../..;
+    cd python;
+    python setup.py test;
+    cd ..;
   else
     cd python;
     cp -a ../src .;
