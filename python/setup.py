@@ -146,7 +146,10 @@ if use_setuptools:
 else:
     setup(name='spglib',
           version=version,
+          license='BSD-3-Clause',
           description='This is the spglib module.',
+          long_description=open('README.rst', 'rb').read().decode('utf-8'),
+          long_description_content_type='text/x-rst',
           author='Atsushi Togo',
           author_email='atz.togo@gmail.com',
           url='http://atztogo.github.io/spglib/',
