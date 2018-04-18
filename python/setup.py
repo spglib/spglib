@@ -140,7 +140,9 @@ if use_setuptools:
           install_requires=['numpy'],
           provides=['spglib'],
           platforms=['all'],
-          ext_modules=[extension])
+          ext_modules=[extension],
+          test_suite='nose.collector',
+          tests_require=['nose'])
 else:
     setup(name='spglib',
           version=version,
@@ -152,4 +154,6 @@ else:
           requires=['numpy'],
           provides=['spglib'],
           platforms=['all'],
-          ext_modules=[extension])
+          ext_modules=[extension],
+          test_suite='nose.collector',
+          tests_require=['nose'])

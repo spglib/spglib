@@ -18,9 +18,9 @@ def get_angles(lattice):
 
 class TestNiggliDelaunay(unittest.TestCase):
     def setUp(self):
-        self._input_lattices = self._read_file("lattices.dat")
-        self._niggli_lattices = self._read_file("niggli_lattices.dat")
-        self._delaunay_lattices = self._read_file("delaunay_lattices.dat")
+        self._input_lattices = self._read_file("test/lattices.dat")
+        self._niggli_lattices = self._read_file("test/niggli_lattices.dat")
+        self._delaunay_lattices = self._read_file("test/delaunay_lattices.dat")
 
     def tearDown(self):
         pass
