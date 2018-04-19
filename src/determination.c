@@ -43,20 +43,21 @@
 #define REDUCE_RATE_OUTER 0.9
 #define NUM_ATTEMPT_OUTER 10
 #define REDUCE_RATE 0.95
+#define ANGLE_REDUCE_RATE 0.95
 #define NUM_ATTEMPT 20
 
 static int get_spacegroup_and_primitive(DataContainer * container,
                                         const Cell * cell,
                                         const int hall_number,
                                         const double symprec,
-                                        const double angle_tolerance);
+                                        const double angle_symprec);
 DataContainer * det_determine_all(const Cell * cell,
                                   const int hall_number,
                                   const double symprec,
-                                  const double angle_tolerance)
+                                  const double angle_symprec)
 {
   int attempt;
-  double tolerance;
+  double tolerance, angle_tolerance;
   DataContainer *container;
 
   container = NULL;
@@ -79,6 +80,7 @@ DataContainer * det_determine_all(const Cell * cell,
   }
 
   tolerance = symprec;
+  angle_tolerance = angle_symprec;
   for (attempt = 0; attempt < NUM_ATTEMPT_OUTER; attempt++) {
     if (get_spacegroup_and_primitive(container,
                                      cell,
@@ -102,6 +104,7 @@ DataContainer * det_determine_all(const Cell * cell,
       container->exact_structure = NULL;
     }
     tolerance *= REDUCE_RATE_OUTER;
+    angle_tolerance *= ANGLE_REDUCE_RATE;
     prm_free_primitive(container->primitive);
     container->primitive = NULL;
   }
@@ -118,10 +121,10 @@ static int get_spacegroup_and_primitive(DataContainer * container,
                                         const Cell * cell,
                                         const int hall_number,
                                         const double symprec,
-                                        const double angle_tolerance)
+                                        const double angle_symprec)
 {
   int attempt;
-  double tolerance;
+  double tolerance, angle_tolerance;
 
   debug_print("get_spacegroup_and_primitive (tolerance = %f):\n", symprec);
 
@@ -130,6 +133,7 @@ static int get_spacegroup_and_primitive(DataContainer * container,
   }
 
   tolerance = symprec;
+  angle_tolerance = angle_symprec;
 
   for (attempt = 0; attempt < NUM_ATTEMPT; attempt++) {
     if ((container->primitive = prm_get_primitive(cell,
@@ -154,6 +158,7 @@ static int get_spacegroup_and_primitive(DataContainer * container,
     warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
 
     tolerance *= REDUCE_RATE;
+    angle_tolerance *= ANGLE_REDUCE_RATE;
   }
 
   return 0;
