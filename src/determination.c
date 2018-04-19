@@ -57,7 +57,7 @@ DataContainer * det_determine_all(const Cell * cell,
                                   const double angle_symprec)
 {
   int attempt;
-  double tolerance, angle_tolerance;
+  double tolerance;
   DataContainer *container;
 
   container = NULL;
@@ -80,13 +80,12 @@ DataContainer * det_determine_all(const Cell * cell,
   }
 
   tolerance = symprec;
-  angle_tolerance = angle_symprec;
   for (attempt = 0; attempt < NUM_ATTEMPT_OUTER; attempt++) {
     if (get_spacegroup_and_primitive(container,
                                      cell,
                                      hall_number,
                                      tolerance,
-                                     angle_tolerance)) {
+                                     angle_symprec)) {
       if (container->spacegroup->number > 0) {
         if ((container->exact_structure = ref_get_exact_structure_and_symmetry(
                container->primitive->cell,
@@ -104,7 +103,6 @@ DataContainer * det_determine_all(const Cell * cell,
       container->exact_structure = NULL;
     }
     tolerance *= REDUCE_RATE_OUTER;
-    angle_tolerance *= ANGLE_REDUCE_RATE;
     prm_free_primitive(container->primitive);
     container->primitive = NULL;
   }
@@ -158,7 +156,9 @@ static int get_spacegroup_and_primitive(DataContainer * container,
     warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
 
     tolerance *= REDUCE_RATE;
-    angle_tolerance *= ANGLE_REDUCE_RATE;
+    if (angle_tolerance > 0) {
+      angle_tolerance *= ANGLE_REDUCE_RATE;
+    }
   }
 
   return 0;
