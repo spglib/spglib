@@ -120,7 +120,7 @@ static int check_total_overlap_for_sorted(SPGCONST double lattice[3][3],
  * As an aside, yes, significant performance is lost
  * for large structures if these functions aren't inlined. */
 
-static OVL_INLINE double cartesian_norm_sq(SPGCONST double lat[3][3],
+static OVL_INLINE double cartesian_norm(SPGCONST double lat[3][3],
                                            const double v[3])
 {
   double temp[3];
@@ -128,9 +128,9 @@ static OVL_INLINE double cartesian_norm_sq(SPGCONST double lat[3][3],
   temp[1] = lat[1][0] * v[0] + lat[1][1] * v[1] + lat[1][2] * v[2];
   temp[2] = lat[2][0] * v[0] + lat[2][1] * v[1] + lat[2][2] * v[2];
 
-  return temp[0] * temp[0] +
-         temp[1] * temp[1] +
-         temp[2] * temp[2];
+  return sqrt(temp[0] * temp[0] +
+              temp[1] * temp[1] +
+              temp[2] * temp[2]);
 }
 
 static OVL_INLINE int Nint(const double a)
@@ -155,7 +155,7 @@ static OVL_INLINE int has_overlap(const double a[3],
   v_diff[1] -= Nint(v_diff[1]);
   v_diff[2] -= Nint(v_diff[2]);
 
-  if (cartesian_norm_sq(lattice, v_diff) < (symprec * symprec)) {
+  if (cartesian_norm(lattice, v_diff) <= symprec) {
     return 1;
   } else {
     return 0;
