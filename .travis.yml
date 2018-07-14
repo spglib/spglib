@@ -107,7 +107,7 @@ deploy:
     repo: atztogo/spglib
     branch: rc
     tags: false
-    condition: "$DOCKER_DEPLOY = manylinux1_x86_64"
+    if: "env(DOCKER_DEPLOY) = manylinux1_x86_64"
 
 - provider: pypi
   server: https://test.pypi.org/legacy/
@@ -119,7 +119,7 @@ deploy:
     repo: atztogo/spglib
     branch: rc
     tags: false
-    condition: "$DOCKER_DEPLOY = manylinux1_i686"
+    condition: "env(DOCKER_DEPLOY) = manylinux1_i686"
 
 # testing conda
 - provider: script
@@ -129,7 +129,7 @@ deploy:
     repo: atztogo/spglib
     branch: rc
     tags: false
-    condition: "$DOCKER_DEPLOY = false"
+    condition: "env(DOCKER_DEPLOY) = false"
 
 # production pypi
 # - provider: pypi
