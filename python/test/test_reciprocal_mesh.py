@@ -1,3 +1,4 @@
+import os
 import unittest
 try:
     from StringIO import StringIO
@@ -6,9 +7,10 @@ except ImportError:
 import numpy as np
 from spglib import (get_ir_reciprocal_mesh,
                     get_stabilized_reciprocal_mesh,
-                    get_symmetry_dataset,
-                    get_symmetry_from_database)
+                    get_symmetry_dataset)
 from vasp import read_vasp
+
+data_dir = os.path.dirname(os.path.abspath(__file__))
 
 result_ir_rec_mesh = ("""   0    0   0   0
    1    1   0   0
@@ -230,6 +232,7 @@ result_ir_rec_mesh_distortion = ("""  0    0   0   0
    2    1  -1   0
    1   -1  -1   0""")
 
+
 class TestReciprocalMesh(unittest.TestCase):
 
     def setUp(self):
@@ -239,11 +242,13 @@ class TestReciprocalMesh(unittest.TestCase):
         pass
 
     def test_get_ir_reciprocal_mesh(self):
-        file_and_mesh = (["cubic/POSCAR-217", [4, 4, 4]],
-                         ["hexagonal/POSCAR-182", [4, 4, 2]])
+        file_and_mesh = (
+            [os.path.join(data_dir, "data", "cubic", "POSCAR-217"), [4, 4, 4]],
+            [os.path.join(data_dir, "data", "hexagonal", "POSCAR-182"),
+             [4, 4, 2]])
         i = 0
         for fname, mesh in file_and_mesh:
-            cell = read_vasp("./test/data/%s" % fname)
+            cell = read_vasp(fname)
             ir_rec_mesh = get_ir_reciprocal_mesh(mesh, cell)
             (mapping_table, grid_address) = ir_rec_mesh
             # for gp, ga in zip(mapping_table, grid_address):
@@ -255,11 +260,13 @@ class TestReciprocalMesh(unittest.TestCase):
             i += 1
 
     def test_get_stabilized_reciprocal_mesh(self):
-        file_and_mesh = (["cubic/POSCAR-217", [4, 4, 4]],
-                         ["hexagonal/POSCAR-182", [4, 4, 2]])
+        file_and_mesh = (
+            [os.path.join(data_dir, "data", "cubic", "POSCAR-217"), [4, 4, 4]],
+            [os.path.join(data_dir, "data", "hexagonal", "POSCAR-182"),
+             [4, 4, 2]])
         i = 0
         for fname, mesh in file_and_mesh:
-            cell = read_vasp("./test/data/%s" % fname)
+            cell = read_vasp(fname)
             rotations = get_symmetry_dataset(cell)['rotations']
             ir_rec_mesh = get_stabilized_reciprocal_mesh(mesh, rotations)
             (mapping_table, grid_address) = ir_rec_mesh
@@ -269,12 +276,14 @@ class TestReciprocalMesh(unittest.TestCase):
             i += 1
 
     def test_get_ir_reciprocal_mesh_distortion(self):
-        file_and_mesh = (["cubic/POSCAR-217", [3, 4, 4]],
-                         ["hexagonal/POSCAR-182", [3, 5, 1]])
+        file_and_mesh = (
+            [os.path.join(data_dir, "data", "cubic", "POSCAR-217"), [3, 4, 4]],
+            [os.path.join(data_dir, "data", "hexagonal", "POSCAR-182"),
+             [3, 5, 1]])
         i = 0
         for is_shift in ([0, 0, 0], [0, 1, 0]):
             for fname, mesh in file_and_mesh:
-                cell = read_vasp("./test/data/%s" % fname)
+                cell = read_vasp(fname)
                 ir_rec_mesh = get_ir_reciprocal_mesh(mesh, cell,
                                                      is_shift=is_shift)
                 (mapping_table, grid_address) = ir_rec_mesh

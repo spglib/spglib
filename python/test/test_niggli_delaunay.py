@@ -1,26 +1,31 @@
+import os
 import unittest
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
 import numpy as np
 from spglib import niggli_reduce, delaunay_reduce
+
+
+data_dir = os.path.dirname(os.path.abspath(__file__))
+
 
 def get_lattice_parameters(lattice):
     return np.sqrt(np.dot(lattice, lattice.T).diagonal())
 
+
 def get_angles(lattice):
     a, b, c = get_lattice_parameters(lattice)
-    alpha = np.arccos(np.vdot(lattice[1,:], lattice[2,:]) / b / c)
-    beta  = np.arccos(np.vdot(lattice[2,:], lattice[0,:]) / c / a)
-    gamma = np.arccos(np.vdot(lattice[0,:], lattice[1,:]) / a / b)
+    alpha = np.arccos(np.vdot(lattice[1, :], lattice[2, :]) / b / c)
+    beta = np.arccos(np.vdot(lattice[2, :], lattice[0, :]) / c / a)
+    gamma = np.arccos(np.vdot(lattice[0, :], lattice[1, :]) / a / b)
     return np.array([alpha, beta, gamma]) / np.pi * 180
 
 class TestNiggliDelaunay(unittest.TestCase):
     def setUp(self):
-        self._input_lattices = self._read_file("test/lattices.dat")
-        self._niggli_lattices = self._read_file("test/niggli_lattices.dat")
-        self._delaunay_lattices = self._read_file("test/delaunay_lattices.dat")
+        self._input_lattices = self._read_file(
+            os.path.join(data_dir, "lattices.dat"))
+        self._niggli_lattices = self._read_file(
+            os.path.join(data_dir, "niggli_lattices.dat"))
+        self._delaunay_lattices = self._read_file(
+            os.path.join(data_dir, "delaunay_lattices.dat"))
 
     def tearDown(self):
         pass
@@ -63,7 +68,6 @@ class TestNiggliDelaunay(unittest.TestCase):
                      " angles: %s" % np.array(get_angles(reduced_lattice)),
                      self._str_lattice(reduced_lattice)]))
 
-
     def _read_file(self, filename):
         all_lattices = []
         with open(filename) as f:
@@ -103,6 +107,7 @@ class TestNiggliDelaunay(unittest.TestCase):
                  [c.a, c.b, c.c]]
         """
         return np.dot(lattice, np.transpose(lattice))
+
 
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(TestNiggliDelaunay)

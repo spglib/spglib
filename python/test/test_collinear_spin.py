@@ -1,6 +1,6 @@
 import unittest
-import numpy as np
 from spglib import get_symmetry
+
 
 class TestGetSymmetry(unittest.TestCase):
 
@@ -34,6 +34,7 @@ class TestGetSymmetry(unittest.TestCase):
         sym = get_symmetry(self._cell)
         self.assertEqual(48, len(sym['rotations']))
         self.assertTrue((sym['equivalent_atoms'] == [0, 1]).all())
+
 
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(TestGetSymmetry)
