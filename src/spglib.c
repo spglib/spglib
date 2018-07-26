@@ -444,10 +444,9 @@ int spg_get_hall_number_from_symmetry(SPGCONST int rotation[][3][3],
                                       const int num_operations,
                                       const double symprec)
 {
-  int i;
+  int i, hall_number;
   Symmetry *symmetry;
   Symmetry *prim_symmetry;
-  Spacegroup spacegroup;
 
   symmetry = NULL;
   prim_symmetry = NULL;
@@ -459,11 +458,11 @@ int spg_get_hall_number_from_symmetry(SPGCONST int rotation[][3][3],
   }
 
   prim_symmetry = prm_get_primitive_symmetry(symmetry, symprec);
-  spacegroup = spa_search_spacegroup_with_symmetry(prim_symmetry, symprec);
+  hall_number = spa_search_spacegroup_with_symmetry(prim_symmetry, symprec);
 
-  if (spacegroup.hall_number) {
+  if (hall_number) {
     spglib_error_code = SPGLIB_SUCCESS;
-    return spacegroup.hall_number;
+    return hall_number;
   } else {
     spglib_error_code = SPGERR_SPACEGROUP_SEARCH_FAILED;
     return 0;
@@ -1070,6 +1069,7 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
 
  found:
   det_free_container(container);
+  container = NULL;
   cel_free_cell(cell);
   cell = NULL;
 
