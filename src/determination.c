@@ -151,6 +151,9 @@ static DataContainer * get_spacegroup_and_primitive(const Cell * cell,
     }
   }
 
+  det_free_container(container);
+  container = NULL;
+
   return NULL;
 
 found:
