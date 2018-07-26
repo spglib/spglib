@@ -114,14 +114,6 @@ static DataContainer * get_spacegroup_and_primitive(const Cell * cell,
   container->spacegroup = NULL;
   container->exact_structure = NULL;
 
-  if ((container->spacegroup = (Spacegroup*) malloc(sizeof(Spacegroup)))
-      == NULL) {
-    warning_print("spglib: Memory could not be allocated.");
-    det_free_container(container);
-    container = NULL;
-    return NULL;
-  }
-
   tolerance = symprec;
   angle_tolerance = angle_symprec;
 
