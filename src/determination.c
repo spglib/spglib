@@ -61,6 +61,10 @@ DataContainer * det_determine_all(const Cell * cell,
 
   container = NULL;
 
+  if (hall_number < 0 || hall_number > 530) {
+    return NULL;
+  }
+
   tolerance = symprec;
   for (attempt = 0; attempt < NUM_ATTEMPT_OUTER; attempt++) {
     if ((container = get_spacegroup_and_primitive(cell,
@@ -100,10 +104,6 @@ static DataContainer * get_spacegroup_and_primitive(const Cell * cell,
   debug_print("get_spacegroup_and_primitive (tolerance = %f):\n", symprec);
 
   container = NULL;
-
-  if (hall_number < 0 || hall_number > 530) {
-    return NULL;
-  }
 
   if ((container = (DataContainer*) malloc(sizeof(DataContainer))) == NULL) {
     warning_print("spglib: Memory could not be allocated.");
