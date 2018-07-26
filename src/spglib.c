@@ -1050,8 +1050,14 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
                     container->primitive,
                     container->spacegroup,
                     container->exact_structure)) {
+      det_free_container(container);
+      container = NULL;
+      cel_free_cell(cell);
+      cell = NULL;
       goto found;
     }
+    det_free_container(container);
+    container = NULL;
   }
 
   cel_free_cell(cell);
@@ -1068,10 +1074,6 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
   return NULL;
 
  found:
-  det_free_container(container);
-  container = NULL;
-  cel_free_cell(cell);
-  cell = NULL;
 
   spglib_error_code = SPGLIB_SUCCESS;
   return dataset;
