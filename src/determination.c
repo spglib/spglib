@@ -72,22 +72,16 @@ DataContainer * det_determine_all(const Cell * cell,
              cell,
              container->spacegroup,
              container->primitive->mapping_table,
-             container->primitive->tolerance)) == NULL) {
-        warning_print("spglib: ref_get_exact_structure_and_symmetry failed.");
-        warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
-      } else {
+             container->primitive->tolerance)) != NULL) {
         goto found;
       }
-      ref_free_exact_structure(container->exact_structure);
-      container->exact_structure = NULL;
+      warning_print("spglib: ref_get_exact_structure_and_symmetry failed.");
+      warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
+      det_free_container(container);
+      container = NULL;
     }
     tolerance *= REDUCE_RATE_OUTER;
-    prm_free_primitive(container->primitive);
-    container->primitive = NULL;
   }
-
-  det_free_container(container);
-  container = NULL;
 
 found:
   return container;
