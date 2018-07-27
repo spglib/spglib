@@ -7,7 +7,7 @@
     <title>Spglib for Python &#8212; spglib 1.10.1 documentation</title>
     <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
@@ -307,7 +307,7 @@ in the tuple: <code class="docutils literal notranslate"><span class="pre">cell<
 <span class="pre">(lattice,</span> <span class="pre">positions,</span> <span class="pre">numbers,</span> <span class="pre">magmoms)</span></code> where <code class="docutils literal notranslate"><span class="pre">magmoms</span></code> represents
 collinear polarizations on atoms and is optional.</p>
 <p>Lattice parameters <code class="docutils literal notranslate"><span class="pre">lattice</span></code> are given by a 3x3 matrix with floating
-point values, where <span class="math notranslate">\(\mathbf{a}, \mathbf{b}, \mathbf{c}\)</span> are
+point values, where <span class="math notranslate nohighlight">\(\mathbf{a}, \mathbf{b}, \mathbf{c}\)</span> are
 given as rows, which results in the transpose of the definition for
 C-API (<a class="reference internal" href="variable.html#variables-lattice"><span class="std std-ref">lattice</span></a>). Fractional atomic positions
 <code class="docutils literal notranslate"><span class="pre">positions</span></code> are given by a Nx3 matrix with floating point values,
@@ -371,8 +371,9 @@ supported when ASE Atoms-class instance.</p>
 <div class="section" id="get-error-message">
 <h3><a class="toc-backref" href="#id15"><code class="docutils literal notranslate"><span class="pre">get_error_message</span></code></a><a class="headerlink" href="#get-error-message" title="Permalink to this headline">¶</a></h3>
 <p><strong>New in version 1.9.5</strong></p>
-<p>This method may be used to see why spglib failed though error handling
-in spglib is not very sophisticated.</p>
+<p><strong>Be careful. This method is not thread safe, i.e., only safely usable
+when calling one spglib method per process.</strong></p>
+<p>This method is used to see roughly why spglib failed.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">error_message</span> <span class="o">=</span> <span class="n">get_error_message</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -609,12 +610,12 @@ zero or not and if two basis vectors are orthogonal by the value of
 dot product being close to zero or not.  The detail is shown at
 <a class="reference external" href="https://atztogo.github.io/niggli/">https://atztogo.github.io/niggli/</a>.</p>
 <p>When the search failed, <code class="docutils literal notranslate"><span class="pre">None</span></code> is returned.</p>
-<p>The transformation from original basis vectors <span class="math notranslate">\(( \mathbf{a}
-\; \mathbf{b} \; \mathbf{c} )\)</span> to final baiss vectors <span class="math notranslate">\((
+<p>The transformation from original basis vectors <span class="math notranslate nohighlight">\(( \mathbf{a}
+\; \mathbf{b} \; \mathbf{c} )\)</span> to final baiss vectors <span class="math notranslate nohighlight">\((
 \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )\)</span> is achieved by linear
 combination of basis vectors with integer coefficients without
 rotating coordinates. Therefore the transformation matrix is obtained
-by <span class="math notranslate">\(\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
+by <span class="math notranslate nohighlight">\(\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
 ( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}\)</span> and the matrix
 elements have to be almost integers.</p>
 </div>
@@ -635,12 +636,12 @@ used as the criterion if volume is close to zero or not and if two
 basis vectors are orthogonal by the value of dot product being close
 to zero or not.</p>
 <p>When the search failed, <code class="docutils literal notranslate"><span class="pre">None</span></code> is returned.</p>
-<p>The transformation from original basis vectors <span class="math notranslate">\(( \mathbf{a}
-\; \mathbf{b} \; \mathbf{c} )\)</span> to final basis vectors <span class="math notranslate">\((
+<p>The transformation from original basis vectors <span class="math notranslate nohighlight">\(( \mathbf{a}
+\; \mathbf{b} \; \mathbf{c} )\)</span> to final basis vectors <span class="math notranslate nohighlight">\((
 \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )\)</span> is achieved by linear
 combination of basis vectors with integer coefficients without
 rotating coordinates. Therefore the transformation matrix is obtained
-by <span class="math notranslate">\(\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
+by <span class="math notranslate nohighlight">\(\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
 ( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}\)</span> and the matrix
 elements have to be almost integers.</p>
 </div>
@@ -730,7 +731,7 @@ the irreducible k-point indices that are obtained by</p>
     </p>
     <p>
         &copy; Copyright 2009, Atsushi Togo.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.1.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.<br/>
     </p>
   </div>
 </footer>

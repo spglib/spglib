@@ -7,7 +7,7 @@
     <title>C-APIs &#8212; spglib 1.10.1 documentation</title>
     <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
@@ -186,8 +186,9 @@ integers that correspond to spglib version [major].[minor].[micro].</p>
 <div class="section" id="spg-get-error-code-and-spg-get-error-message">
 <h2><a class="toc-backref" href="#id4"><code class="docutils literal notranslate"><span class="pre">spg_get_error_code</span></code> and <code class="docutils literal notranslate"><span class="pre">spg_get_error_message</span></code></a><a class="headerlink" href="#spg-get-error-code-and-spg-get-error-message" title="Permalink to this headline">¶</a></h2>
 <p><strong>New in version 1.9.5</strong></p>
-<p>These methods may be used to see why spglib failed though error handling
-in spglib is not very sophisticated.</p>
+<p><strong>Be careful. These are not thread safe, i.e., only safely usable
+when calling one spglib function per process.</strong></p>
+<p>These functions is used to see roughly why spglib failed.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SpglibError</span> <span class="n">spg_get_error_code</span><span class="p">(</span><span class="n">void</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -243,7 +244,7 @@ i.e., these have to be used together.</p>
 lattice that break crsytallographic point group, the crystallographic
 symmetry operations are searched with this broken symmetry, i.e., at
 most the crystallographic point group found in this case is the point
-group of the lattice. For example, this happens for the <span class="math notranslate">\(2\times
+group of the lattice. For example, this happens for the <span class="math notranslate nohighlight">\(2\times
 1\times 1\)</span> supercell of a conventional cubic unit cell. This may not
 be understandable in crystallographic sense, but is practically useful
 treatment for research in computational materials science.</p>
@@ -463,9 +464,9 @@ setting or cell choices is found in <code class="docutils literal notranslate"><
 <h4><a class="toc-backref" href="#id15">Symmetry operations</a><a class="headerlink" href="#symmetry-operations" title="Permalink to this headline">¶</a></h4>
 <p>The symmetry operations of the input unit cell are stored in
 <code class="docutils literal notranslate"><span class="pre">rotations</span></code> and <code class="docutils literal notranslate"><span class="pre">translations</span></code>. A crystallographic symmetry
-operation <span class="math notranslate">\((\boldsymbol{W}, \boldsymbol{w})\)</span> is made from a pair
-of rotation <span class="math notranslate">\(\boldsymbol{W}\)</span> and translation
-<span class="math notranslate">\(\boldsymbol{w}\)</span> parts with the same index. Number of symmetry
+operation <span class="math notranslate nohighlight">\((\boldsymbol{W}, \boldsymbol{w})\)</span> is made from a pair
+of rotation <span class="math notranslate nohighlight">\(\boldsymbol{W}\)</span> and translation
+<span class="math notranslate nohighlight">\(\boldsymbol{w}\)</span> parts with the same index. Number of symmetry
 operations is given as <code class="docutils literal notranslate"><span class="pre">n_operations</span></code>. The detailed explanation of
 the values is found at <a class="reference internal" href="#api-spg-get-symmetry"><span class="std std-ref">spg_get_symmetry</span></a>.</p>
 </div>
@@ -474,7 +475,7 @@ the values is found at <a class="reference internal" href="#api-spg-get-symmetry
 <p><code class="docutils literal notranslate"><span class="pre">n_atoms</span></code> is the number of atoms of the input unit
 cell. <code class="docutils literal notranslate"><span class="pre">wyckoffs</span></code> gives Wyckoff letters that are assigned to atomic
 positions of the input unit cell. The numbers of 0, 1, 2,
-<span class="math notranslate">\(\ldots\)</span>, correspond to the a, b, c, <span class="math notranslate">\(\ldots\)</span>,
+<span class="math notranslate nohighlight">\(\ldots\)</span>, correspond to the a, b, c, <span class="math notranslate nohighlight">\(\ldots\)</span>,
 respectively. Number of elements in <code class="docutils literal notranslate"><span class="pre">wyckoffs</span></code> is same as
 <code class="docutils literal notranslate"><span class="pre">n_atoms</span></code>. <code class="docutils literal notranslate"><span class="pre">equivalent_atoms</span></code> is a list of atomic indices that map
 to indices of symmetrically independent atoms, where the list index
@@ -496,31 +497,31 @@ point coordinates have to be standardized to compare with the database
 of symmetry operations. The basis vectors are transformed to those of
 a standardized unit cell. Atomic point coordinates are shifted so that
 symmetry operations have the standard
-origin. <code class="docutils literal notranslate"><span class="pre">transformation_matrix</span></code> (<span class="math notranslate">\(\boldsymbol{P}\)</span>) is the
+origin. <code class="docutils literal notranslate"><span class="pre">transformation_matrix</span></code> (<span class="math notranslate nohighlight">\(\boldsymbol{P}\)</span>) is the
 matrix to transform the input basis vectors to the standardized basis
 vectors, wihch is represented as</p>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
 = ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )  \boldsymbol{P}\]</div>
-<p>where <span class="math notranslate">\(\mathbf{a}\)</span>, <span class="math notranslate">\(\mathbf{b}\)</span>, and <span class="math notranslate">\(\mathbf{c}\)</span>
+<p>where <span class="math notranslate nohighlight">\(\mathbf{a}\)</span>, <span class="math notranslate nohighlight">\(\mathbf{b}\)</span>, and <span class="math notranslate nohighlight">\(\mathbf{c}\)</span>
 are the input (original) basis vectors, and
-<span class="math notranslate">\(\mathbf{a}_\mathrm{s}\)</span>, <span class="math notranslate">\(\mathbf{b}_\mathrm{s}\)</span>, and
-<span class="math notranslate">\(\mathbf{c}_\mathrm{s}\)</span> are the standardized basis vectors. The
-<code class="docutils literal notranslate"><span class="pre">origin_shift</span></code> (<span class="math notranslate">\(\boldsymbol{p}\)</span>) is the vector from the
+<span class="math notranslate nohighlight">\(\mathbf{a}_\mathrm{s}\)</span>, <span class="math notranslate nohighlight">\(\mathbf{b}_\mathrm{s}\)</span>, and
+<span class="math notranslate nohighlight">\(\mathbf{c}_\mathrm{s}\)</span> are the standardized basis vectors. The
+<code class="docutils literal notranslate"><span class="pre">origin_shift</span></code> (<span class="math notranslate nohighlight">\(\boldsymbol{p}\)</span>) is the vector from the
 origin of the standardized coordinate system to the origin of the
 input (original) coordinate system measured in the standardized
 coordinate system. The atomic point shift is measured from the
 standardized unit cell (conventional unit cell) to the original unit
 cell measured in the coordinates of the standardized unit cell. An
-atomic point in the original unit cell <span class="math notranslate">\(\boldsymbol{x}\)</span> (input
+atomic point in the original unit cell <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span> (input
 data) is mapped to that in the standardized unit cell
-<span class="math notranslate">\(\boldsymbol{x}_\mathrm{s}\)</span> by</p>
-<div class="math notranslate">
+<span class="math notranslate nohighlight">\(\boldsymbol{x}_\mathrm{s}\)</span> by</p>
+<div class="math notranslate nohighlight">
 \[\boldsymbol{x}_\mathrm{s} = \boldsymbol{P}\boldsymbol{x} +
 \boldsymbol{p} \;\;(\mathrm{mod}\; \mathbf{1}).\]</div>
 <p>In <strong>versions 1.7.x and 1.8 or before</strong>, <code class="docutils literal notranslate"><span class="pre">transformation_matrix</span></code> and
 <code class="docutils literal notranslate"><span class="pre">origin_shift</span></code> are defined as follows:</p>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
 \mathbf{c}_\mathrm{s} ) = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c}
 ) \boldsymbol{P} \;\; \text{and} \;\; \boldsymbol{x}_\mathrm{s} =
@@ -669,12 +670,12 @@ it failed.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">spg_niggli_reduce</span><span class="p">(</span><span class="n">double</span> <span class="n">lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span> <span class="n">const</span> <span class="n">double</span> <span class="n">symprec</span><span class="p">);</span>
 </pre></div>
 </div>
-<p>The transformation from original basis vectors <span class="math notranslate">\(( \mathbf{a}
-\; \mathbf{b} \; \mathbf{c} )\)</span> to final basis vectors <span class="math notranslate">\((
+<p>The transformation from original basis vectors <span class="math notranslate nohighlight">\(( \mathbf{a}
+\; \mathbf{b} \; \mathbf{c} )\)</span> to final basis vectors <span class="math notranslate nohighlight">\((
 \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )\)</span> is achieved by linear
 combination of basis vectors with integer coefficients without
 rotating coordinates. Therefore the transformation matrix is obtained
-by <span class="math notranslate">\(\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
+by <span class="math notranslate nohighlight">\(\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
 ( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}\)</span> and the matrix
 elements have to be almost integers.</p>
 <div class="line-block">
@@ -689,12 +690,12 @@ returned if it failed.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">spg_delaunay_reduce</span><span class="p">(</span><span class="n">double</span> <span class="n">lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span> <span class="n">const</span> <span class="n">double</span> <span class="n">symprec</span><span class="p">);</span>
 </pre></div>
 </div>
-<p>The transformation from original basis vectors <span class="math notranslate">\(( \mathbf{a}
-\; \mathbf{b} \; \mathbf{c} )\)</span> to final basis vectors <span class="math notranslate">\((
+<p>The transformation from original basis vectors <span class="math notranslate nohighlight">\(( \mathbf{a}
+\; \mathbf{b} \; \mathbf{c} )\)</span> to final basis vectors <span class="math notranslate nohighlight">\((
 \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )\)</span> is achieved by linear
 combination of basis vectors with integer coefficients without
 rotating coordinates. Therefore the transformation matrix is obtained
-by <span class="math notranslate">\(\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
+by <span class="math notranslate nohighlight">\(\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
 ( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}\)</span> and the matrix
 elements have to be almost integers.</p>
 </div>
@@ -821,7 +822,7 @@ coordinates and should be small like <code class="docutils literal notranslate">
     </p>
     <p>
         &copy; Copyright 2009, Atsushi Togo.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.1.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.<br/>
     </p>
   </div>
 </footer>
