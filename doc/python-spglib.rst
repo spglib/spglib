@@ -227,8 +227,10 @@ This returns version number of spglib by tuple with three numbers.
 
 **New in version 1.9.5**
 
-This method may be used to see why spglib failed though error handling
-in spglib is not very sophisticated.
+**Be careful. This method is not thread safe, i.e., only safely usable
+when calling one spglib method per process.**
+
+This method is used to see roughly why spglib failed.
 
 ::
 

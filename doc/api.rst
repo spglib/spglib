@@ -20,8 +20,10 @@ integers that correspond to spglib version [major].[minor].[micro].
 
 **New in version 1.9.5**
 
-These methods may be used to see why spglib failed though error handling
-in spglib is not very sophisticated.
+**Be careful. These are not thread safe, i.e., only safely usable
+when calling one spglib function per process.**
+
+These functions is used to see roughly why spglib failed.
 
 ::
 
