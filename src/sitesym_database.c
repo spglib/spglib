@@ -789,7 +789,7 @@ static const int coordinates_first[] =
     158056444,    610537,     64201, 472984312, 158056312,
     164343937,     45562, };
 
-static const int num_sitesym[] =
+static const int multiplicities[] =
   {   0,
       1,   2,   1,   1,   1,   1,   1,   1,   1,   1,
       2,   1,   1,   1,   1,   2,   1,   1,   1,   1,
@@ -1175,7 +1175,7 @@ int ssmdb_get_coordinate(int rot[3][3],
     trans[i] = ((double) trans_int[i]) / 24;
   }
 
-  return num_sitesym[index];
+  return multiplicities[index];
 }
 
 void ssmdb_get_wyckoff_indices(int indices[2], const int index)
