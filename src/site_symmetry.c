@@ -341,6 +341,11 @@ static int get_Wyckoff_notation(const double position[3],
   for (i = 0; i < indices_wyc[1]; i++) {
     /* (rot, trans) gives the first element of each Wyckoff position */
     /* of the 'Coordinates' in ITA */
+    /* Example: (x,1/4,1/2)      */
+    /* rot         trans         */
+    /* [1, 0, 0]   [0, 1/4, 1/2] */
+    /* [0, 0, 0]                 */
+    /* [0, 0, 0]                 */
     multiplicity = ssmdb_get_coordinate(rot, trans, i + indices_wyc[0]);
     /* Effectively this iteration runs over all 'Coordinates' of each */
     /* Wyckoff position, i.e., works as looking for the first element. */
