@@ -119,8 +119,7 @@ static int search_equivalent_atom(const int atom_index,
                                   const Symmetry *symmetry,
                                   const double symprec);
 static Symmetry *
-recover_symmetry_in_original_cell(const int frame[3],
-                                  const Symmetry *prim_sym,
+recover_symmetry_in_original_cell(const Symmetry *prim_sym,
                                   SPGCONST int t_mat[3][3],
                                   SPGCONST double lattice[3][3],
                                   const int multiplicity,
@@ -792,7 +791,6 @@ get_refined_symmetry_operations(const Cell * cell,
                                 const double symprec)
 {
   int t_mat_int[3][3];
-  int frame[3];
   double inv_prim_lat[3][3], t_mat[3][3];
   Symmetry *conv_sym, *prim_sym, *symmetry;
 
@@ -823,10 +821,8 @@ get_refined_symmetry_operations(const Cell * cell,
   /* Input cell symmetry from primitive symmetry */
   mat_multiply_matrix_d3(t_mat, inv_prim_lat, cell->lattice);
   mat_cast_matrix_3d_to_3i(t_mat_int, t_mat);
-  get_surrounding_frame(frame, t_mat_int);
 
-  symmetry = recover_symmetry_in_original_cell(frame,
-                                               prim_sym,
+  symmetry = recover_symmetry_in_original_cell(prim_sym,
                                                t_mat_int,
                                                cell->lattice,
                                                cell->size / primitive->size,
@@ -1070,14 +1066,14 @@ static void get_corners(int corners[3][8],
 }
 
 static Symmetry *
-recover_symmetry_in_original_cell(const int frame[3],
-                                  const Symmetry *prim_sym,
+recover_symmetry_in_original_cell(const Symmetry *prim_sym,
                                   SPGCONST int t_mat[3][3],
                                   SPGCONST double lattice[3][3],
                                   const int multiplicity,
                                   const double symprec)
 {
   Symmetry *symmetry, *t_sym;
+  int frame[3];
   double inv_tmat[3][3], tmp_mat[3][3];
   VecDBL *pure_trans, *lattice_trans;
 
@@ -1086,6 +1082,7 @@ recover_symmetry_in_original_cell(const int frame[3],
   pure_trans = NULL;
   lattice_trans = NULL;
 
+  get_surrounding_frame(frame, t_mat);
   mat_cast_matrix_3i_to_3d(tmp_mat, t_mat);
   mat_inverse_matrix_d3(inv_tmat, tmp_mat, 0);
 
