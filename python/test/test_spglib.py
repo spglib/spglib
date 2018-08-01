@@ -46,9 +46,12 @@ class TestSpglib(unittest.TestCase):
 
     def setUp(self):
         self._filenames = []
+        self._spgnum_ref = []
         for d in dirnames:
             dirname = os.path.join(data_dir, "data", d)
             filenames = os.listdir(dirname)
+            self._spgnum_ref += [int(fname.split('-')[1])
+                                 for fname in filenames]
             self._filenames += [os.path.join(dirname, fname)
                                 for fname in filenames]
 
@@ -56,8 +59,7 @@ class TestSpglib(unittest.TestCase):
         pass
 
     def test_get_symmetry_dataset(self):
-        for fname in self._filenames:
-            spgnum = int(fname.split('-')[1])
+        for fname, spgnum in zip(self._filenames, self._spgnum_ref):
             cell = read_vasp(fname)
 
             if 'distorted' in fname:
@@ -84,8 +86,7 @@ class TestSpglib(unittest.TestCase):
                                  msg=("%s" % fname))
 
     def test_standardize_cell(self):
-        for fname in self._filenames:
-            spgnum = int(fname.split('-')[1])
+        for fname, spgnum in zip(self._filenames, self._spgnum_ref):
             cell = read_vasp(fname)
             if 'distorted' in fname:
                 std_cell = standardize_cell(cell,
@@ -103,8 +104,7 @@ class TestSpglib(unittest.TestCase):
                              msg=("%s" % fname))
 
     def test_standardize_cell_from_primitive(self):
-        for fname in self._filenames:
-            spgnum = int(fname.split('-')[1])
+        for fname, spgnum in zip(self._filenames, self._spgnum_ref):
             cell = read_vasp(fname)
             if 'distorted' in fname:
                 prim_cell = standardize_cell(cell,
@@ -130,8 +130,7 @@ class TestSpglib(unittest.TestCase):
                              msg=("%s" % fname))
 
     def test_standardize_cell_to_primitive(self):
-        for fname in self._filenames:
-            spgnum = int(fname.split('-')[1])
+        for fname, spgnum in zip(self._filenames, self._spgnum_ref):
             cell = read_vasp(fname)
             if 'distorted' in fname:
                 prim_cell = standardize_cell(cell,
@@ -149,8 +148,7 @@ class TestSpglib(unittest.TestCase):
                              msg=("%s" % fname))
 
     def test_refine_cell(self):
-        for fname in self._filenames:
-            spgnum = int(fname.split('-')[1])
+        for fname, spgnum in zip(self._filenames, self._spgnum_ref):
             cell = read_vasp(fname)
             if 'distorted' in fname:
                 dataset_orig = get_symmetry_dataset(cell, symprec=1e-1)
