@@ -1,6 +1,15 @@
+2018-08-01  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.10.4
+
+	Collection of minor fixes.
+	A text on spglib algorithm is prepared for this version. This
+	text will be available soon at arXiv. To be consistent between
+	text and code, the code refactoring was made.
+
 2018-01-13  Atsushi Togo  <atz.togo@gmail.com>
 
-	* Version 1.10.2
+	* Version 1.10.3
 
 	* src/overlap.c:
 
