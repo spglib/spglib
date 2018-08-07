@@ -1,8 +1,10 @@
+.. _interfaces:
+
 Fortran and Ruby interfaces
 ============================
 
-It is expected that Fortran and Ruby interfaces work at a certain
-level but not as goog as Python interface.
+The Fortran and Ruby interfaces are expected to work at a certain
+level but not supported as well as the Python interface.
 
 Ruby interface
 ---------------
@@ -22,7 +24,7 @@ Some more options are shown with ``--help`` option::
 
    ruby symPoscar.rb --help
 
-The way to compile the ruby module is explained in 
+The way to compile the ruby module is explained in
 `ruby/README <https://github.com/atztogo/spglib/blob/master/ruby/README>`_.
 
 Fortran interface
