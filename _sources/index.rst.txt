@@ -2,28 +2,33 @@ Spglib
 ======
 
 Spglib is a library for finding and handling crystal symmetries
-written in C.
-
-Spglib for python is found at :ref:`python_spglib`.
-
-Version history is summarized in `ChangeLog
+written in C. There are the :ref:`python <python_spglib>`,
+:ref:`fortran, and ruby <interfaces>` interfaces.
+Version history is found at `ChangeLog
 <https://github.com/atztogo/spglib/blob/master/ChangeLog>`_.
 
-News
------
+The detailed algorithm of spglib is describted the following text:
 
-* SpglibDataset is slightly modified at version 1.9.4. This may hit
-  some users.
+* ":math:`\texttt{Spglib}`: a software library for crystal symmetry search",
+  Atsushi Togo and Isao Tanaka,
+  https://arxiv.org/abs/1808.01590 (written at version 1.10.4)
 
-* Python module pyspglib is renamed to spglib in version 1.9.0.
+..
+   News
+   -----
 
-  In versions 1.8.x or before, the python wrapper (pyspglib) was
-  considered as a special extention of spglib and separately maintained,
-  but in version 1.9.x and later, it starts to be a part of spglib as a
-  usual extension, and this python wrapper will be maintained to work
-  following every update of c-spglib. The package name is changed from
-  pyspglib to spglib. Following this change, the way to import python
-  spglib module is changed and it is written in :ref:`python_spglib`.
+   * SpglibDataset is slightly modified at version 1.9.4. This may hit
+     some users.
+
+   * Python module pyspglib is renamed to spglib in version 1.9.0.
+
+     In versions 1.8.x or before, the python wrapper (pyspglib) was
+     considered as a special extention of spglib and separately maintained,
+     but in version 1.9.x and later, it starts to be a part of spglib as a
+     usual extension, and this python wrapper will be maintained to work
+     following every update of c-spglib. The package name is changed from
+     pyspglib to spglib. Following this change, the way to import python
+     spglib module is changed and it is written in :ref:`python_spglib`.
 
 Features
 ----------
@@ -48,23 +53,24 @@ Documentation
    interface
    definition
 
-References
-----------
+..
+   References
+   ----------
 
-General materials
+   General materials
 
-* International tables for crystallography volumes A, B, C
-* Online dictionary of crystallography:
-  http://reference.iucr.org/dictionary/
-* Symmetry relationships between crystal structures by Ulrich Muller,
-  Oxford university press (2013)
+   * International tables for crystallography volumes A, B, C
+   * Online dictionary of crystallography:
+     http://reference.iucr.org/dictionary/
+   * Symmetry relationships between crystal structures by Ulrich Muller,
+     Oxford university press (2013)
 
-Specific algorithms
+   Specific algorithms
 
-* Space-group type determination: R. W. Grosse-Kunstleve, Acta Cryst.,
-  A55, 383-395 (1999)
-* Crystal refinement: R. W. Grosse-Kunstleve and P. D. Adams, Acta
-  Cryst., A58, 60-65 (2002)
+   * Space-group type determination: R. W. Grosse-Kunstleve, Acta Cryst.,
+     A55, 383-395 (1999)
+   * Crystal refinement: R. W. Grosse-Kunstleve and P. D. Adams, Acta
+     Cryst., A58, 60-65 (2002)
 
 Mailing list
 -------------
@@ -77,14 +83,14 @@ https://lists.sourceforge.net/lists/listinfo/spglib-users
 For more information
 ---------------------
 
-* Repository: https://github.com/atztogo/spglib 
-* License: New BSD after version 1.0.beta-1. The older versions are under GPLv2.
+* Repository: https://github.com/atztogo/spglib
+* License: New BSD after version 1.0.beta-1
 * Contact: atz.togo@gmail.com
 * Authour: Atsushi Togo
 
 Acknowledgments
 ----------------
 
-Spglib project acknowledges Yusuke Seto for the Crystallographic
-database, Dimitar Pashov for the fortran interface, Paweł T. Jochym
-for Python packages.
+Spglib project acknowledges Paweł T. Jochym for deployment and
+packaging, Yusuke Seto for the Crystallographic database, and Dimitar
+Pashov for the fortran interface.

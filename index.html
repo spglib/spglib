@@ -4,7 +4,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Spglib &#8212; spglib 1.10.1 documentation</title>
+    <title>Spglib &#8212; spglib 1.10.4 documentation</title>
     <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -37,7 +37,7 @@
         </button>
         <a class="navbar-brand" href="#">
           spglib</a>
-        <span class="navbar-text navbar-version pull-left"><b>1.10.1</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>1.10.4</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -73,10 +73,8 @@
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
 <li><a class="reference internal" href="#">Spglib</a><ul>
-<li><a class="reference internal" href="#news">News</a></li>
 <li><a class="reference internal" href="#features">Features</a></li>
 <li><a class="reference internal" href="#documentation">Documentation</a></li>
-<li><a class="reference internal" href="#references">References</a></li>
 <li><a class="reference internal" href="#mailing-list">Mailing list</a></li>
 <li><a class="reference internal" href="#for-more-information">For more information</a></li>
 <li><a class="reference internal" href="#acknowledgments">Acknowledgments</a></li>
@@ -114,26 +112,15 @@
   <div class="section" id="spglib">
 <h1>Spglib<a class="headerlink" href="#spglib" title="Permalink to this headline">¶</a></h1>
 <p>Spglib is a library for finding and handling crystal symmetries
-written in C.</p>
-<p>Spglib for python is found at <a class="reference internal" href="python-spglib.html#python-spglib"><span class="std std-ref">Spglib for Python</span></a>.</p>
-<p>Version history is summarized in <a class="reference external" href="https://github.com/atztogo/spglib/blob/master/ChangeLog">ChangeLog</a>.</p>
-<div class="section" id="news">
-<h2>News<a class="headerlink" href="#news" title="Permalink to this headline">¶</a></h2>
-<ul>
-<li><p class="first">SpglibDataset is slightly modified at version 1.9.4. This may hit
-some users.</p>
-</li>
-<li><p class="first">Python module pyspglib is renamed to spglib in version 1.9.0.</p>
-<p>In versions 1.8.x or before, the python wrapper (pyspglib) was
-considered as a special extention of spglib and separately maintained,
-but in version 1.9.x and later, it starts to be a part of spglib as a
-usual extension, and this python wrapper will be maintained to work
-following every update of c-spglib. The package name is changed from
-pyspglib to spglib. Following this change, the way to import python
-spglib module is changed and it is written in <a class="reference internal" href="python-spglib.html#python-spglib"><span class="std std-ref">Spglib for Python</span></a>.</p>
-</li>
+written in C. There are the <a class="reference internal" href="python-spglib.html#python-spglib"><span class="std std-ref">python</span></a>,
+<a class="reference internal" href="interface.html#interfaces"><span class="std std-ref">fortran, and ruby</span></a> interfaces.
+Version history is found at <a class="reference external" href="https://github.com/atztogo/spglib/blob/master/ChangeLog">ChangeLog</a>.</p>
+<p>The detailed algorithm of spglib is describted the following text:</p>
+<ul class="simple">
+<li>“<span class="math notranslate nohighlight">\(\texttt{Spglib}\)</span>: a software library for crystal symmetry search”,
+Atsushi Togo and Isao Tanaka,
+<a class="reference external" href="https://arxiv.org/abs/1808.01590">https://arxiv.org/abs/1808.01590</a> (written at version 1.10.4)</li>
 </ul>
-</div>
 <div class="section" id="features">
 <h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
@@ -158,24 +145,6 @@ spglib module is changed and it is written in <a class="reference internal" href
 </ul>
 </div>
 </div>
-<div class="section" id="references">
-<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
-<p>General materials</p>
-<ul class="simple">
-<li>International tables for crystallography volumes A, B, C</li>
-<li>Online dictionary of crystallography:
-<a class="reference external" href="http://reference.iucr.org/dictionary/">http://reference.iucr.org/dictionary/</a></li>
-<li>Symmetry relationships between crystal structures by Ulrich Muller,
-Oxford university press (2013)</li>
-</ul>
-<p>Specific algorithms</p>
-<ul class="simple">
-<li>Space-group type determination: R. W. Grosse-Kunstleve, Acta Cryst.,
-A55, 383-395 (1999)</li>
-<li>Crystal refinement: R. W. Grosse-Kunstleve and P. D. Adams, Acta
-Cryst., A58, 60-65 (2002)</li>
-</ul>
-</div>
 <div class="section" id="mailing-list">
 <h2>Mailing list<a class="headerlink" href="#mailing-list" title="Permalink to this headline">¶</a></h2>
 <p>For questions, bug reports, and comments, please visit following
@@ -186,16 +155,16 @@ mailing list:</p>
 <h2>For more information<a class="headerlink" href="#for-more-information" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li>Repository: <a class="reference external" href="https://github.com/atztogo/spglib">https://github.com/atztogo/spglib</a></li>
-<li>License: New BSD after version 1.0.beta-1. The older versions are under GPLv2.</li>
+<li>License: New BSD after version 1.0.beta-1</li>
 <li>Contact: <a class="reference external" href="mailto:atz&#46;togo&#37;&#52;&#48;gmail&#46;com">atz<span>&#46;</span>togo<span>&#64;</span>gmail<span>&#46;</span>com</a></li>
 <li>Authour: Atsushi Togo</li>
 </ul>
 </div>
 <div class="section" id="acknowledgments">
 <h2>Acknowledgments<a class="headerlink" href="#acknowledgments" title="Permalink to this headline">¶</a></h2>
-<p>Spglib project acknowledges Yusuke Seto for the Crystallographic
-database, Dimitar Pashov for the fortran interface, Paweł T. Jochym
-for Python packages.</p>
+<p>Spglib project acknowledges Paweł T. Jochym for deployment and
+packaging, Yusuke Seto for the Crystallographic database, and Dimitar
+Pashov for the fortran interface.</p>
 </div>
 </div>
 
