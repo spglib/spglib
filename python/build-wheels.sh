@@ -3,7 +3,6 @@ set -e -x
 
 # Install a system package required by our library
 yum install -y numpy
-# yum install -y libgfortran
 
 ls /opt/python
 
@@ -28,6 +27,8 @@ ls wheelhouse/*.whl
 for whl in wheelhouse/spglib*.whl; do
     auditwheel repair "$whl" -w /io/wheelhouse/
 done
+
+cp wheelhouse/numpy*whl /io/wheelhouse/
 
 # Install packages and test
 for PYBIN in /opt/python/cp27*/bin/; do
