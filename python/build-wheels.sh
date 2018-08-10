@@ -25,7 +25,7 @@ done
 
 # Bundle external shared libraries into the wheels
 ls wheelhouse/*.whl
-for whl in wheelhouse/*.whl; do
+for whl in wheelhouse/spglib*.whl; do
     auditwheel repair "$whl" -w /io/wheelhouse/
 done
 
