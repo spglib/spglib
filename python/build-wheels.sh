@@ -24,6 +24,7 @@ for PYBIN in /opt/python/cp36*/bin; do
 done
 
 # Bundle external shared libraries into the wheels
+ls wheelhouse/*.whl
 for whl in wheelhouse/*.whl; do
     auditwheel repair "$whl" -w /io/wheelhouse/
 done
