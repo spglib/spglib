@@ -426,7 +426,9 @@ In **versions 1.7.x and 1.8 or before**, ``transformation_matrix`` and
    \boldsymbol{P}^{-1}\boldsymbol{x} - \boldsymbol{p}
    \;\;(\mathrm{mod}\; \mathbf{1}),
 
-respectively.
+respectively. Transformation of :math:`( \mathbf{a}_\mathrm{s} \;
+\mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )` to a primitive cell
+basis vectors is explained at :ref:`def_standardized_primitive_cell`.
 
 Standardized crystal structure
 """""""""""""""""""""""""""""""
@@ -453,10 +455,11 @@ Crystallographic point group
 
 **New in version 1.8.1**
 
-``pointgroup_number`` is the serial number of the crystallographic
-point group, which refers `list of space
-groups (Seto's web site)
-<http://pmsl.planet.sci.kobe-u.ac.jp/~seto/?page_id=37&lang=en>`_.
+.. ``pointgroup_number`` is the serial number of the crystallographic
+   point group, which refers `list of space
+   groups (Seto's web site)
+   <http://pmsl.planet.sci.kobe-u.ac.jp/~seto/?page_id=37&lang=en>`_.
+
 ``pointgroup_symbol`` is the symbol of the crystallographic point
 group in the Hermann–Mauguin notation.
 
