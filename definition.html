@@ -11,7 +11,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
     <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
     <script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
@@ -74,10 +74,10 @@
       aria-labelledby="dLabelLocalToc"><ul>
 <li><a class="reference internal" href="#">Definitions and conventions</a><ul>
 <li><a class="reference internal" href="#references">References</a></li>
-<li><a class="reference internal" href="#basis-vectors-or">Basis vectors <span class="math notranslate nohighlight">\((\mathbf{a}, \mathbf{b}, \mathbf{c})\)</span> or <span class="math notranslate nohighlight">\((\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)\)</span></a></li>
-<li><a class="reference internal" href="#atomic-point-coordinates">Atomic point coordinates <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span></a></li>
-<li><a class="reference internal" href="#symmetry-operation">Symmetry operation <span class="math notranslate nohighlight">\((\boldsymbol{W}, \boldsymbol{w})\)</span></a></li>
-<li><a class="reference internal" href="#transformation-matrix-and-origin-shift">Transformation matrix <span class="math notranslate nohighlight">\(\boldsymbol{P}\)</span> and origin shift <span class="math notranslate nohighlight">\(\boldsymbol{p}\)</span></a></li>
+<li><a class="reference internal" href="#basis-vectors-mathbf-a-mathbf-b-mathbf-c-or-mathbf-a-1-mathbf-a-2-mathbf-a-3">Basis vectors <span class="math notranslate nohighlight">\((\mathbf{a}, \mathbf{b}, \mathbf{c})\)</span> or <span class="math notranslate nohighlight">\((\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)\)</span></a></li>
+<li><a class="reference internal" href="#atomic-point-coordinates-boldsymbol-x">Atomic point coordinates <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span></a></li>
+<li><a class="reference internal" href="#symmetry-operation-boldsymbol-w-boldsymbol-w">Symmetry operation <span class="math notranslate nohighlight">\((\boldsymbol{W}, \boldsymbol{w})\)</span></a></li>
+<li><a class="reference internal" href="#transformation-matrix-boldsymbol-p-and-origin-shift-boldsymbol-p">Transformation matrix <span class="math notranslate nohighlight">\(\boldsymbol{P}\)</span> and origin shift <span class="math notranslate nohighlight">\(\boldsymbol{p}\)</span></a></li>
 <li><a class="reference internal" href="#conventions-of-standardized-unit-cell">Conventions of standardized unit cell</a><ul>
 <li><a class="reference internal" href="#choice-of-basis-vectors">Choice of basis vectors</a></li>
 <li><a class="reference internal" href="#transformation-to-the-primitive-cell">Transformation to the primitive cell</a></li>
@@ -132,10 +132,10 @@ in the previous versions.</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><a class="reference internal" href="#references" id="id1">References</a></li>
-<li><a class="reference internal" href="#basis-vectors-or" id="id2">Basis vectors <span class="math notranslate nohighlight">\((\mathbf{a}, \mathbf{b}, \mathbf{c})\)</span> or <span class="math notranslate nohighlight">\((\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)\)</span></a></li>
-<li><a class="reference internal" href="#atomic-point-coordinates" id="id3">Atomic point coordinates <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span></a></li>
-<li><a class="reference internal" href="#symmetry-operation" id="id4">Symmetry operation <span class="math notranslate nohighlight">\((\boldsymbol{W}, \boldsymbol{w})\)</span></a></li>
-<li><a class="reference internal" href="#transformation-matrix-and-origin-shift" id="id5">Transformation matrix <span class="math notranslate nohighlight">\(\boldsymbol{P}\)</span> and origin shift <span class="math notranslate nohighlight">\(\boldsymbol{p}\)</span></a></li>
+<li><a class="reference internal" href="#basis-vectors-mathbf-a-mathbf-b-mathbf-c-or-mathbf-a-1-mathbf-a-2-mathbf-a-3" id="id2">Basis vectors <span class="math notranslate nohighlight">\((\mathbf{a}, \mathbf{b}, \mathbf{c})\)</span> or <span class="math notranslate nohighlight">\((\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)\)</span></a></li>
+<li><a class="reference internal" href="#atomic-point-coordinates-boldsymbol-x" id="id3">Atomic point coordinates <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span></a></li>
+<li><a class="reference internal" href="#symmetry-operation-boldsymbol-w-boldsymbol-w" id="id4">Symmetry operation <span class="math notranslate nohighlight">\((\boldsymbol{W}, \boldsymbol{w})\)</span></a></li>
+<li><a class="reference internal" href="#transformation-matrix-boldsymbol-p-and-origin-shift-boldsymbol-p" id="id5">Transformation matrix <span class="math notranslate nohighlight">\(\boldsymbol{P}\)</span> and origin shift <span class="math notranslate nohighlight">\(\boldsymbol{p}\)</span></a></li>
 <li><a class="reference internal" href="#conventions-of-standardized-unit-cell" id="id6">Conventions of standardized unit cell</a><ul>
 <li><a class="reference internal" href="#choice-of-basis-vectors" id="id7">Choice of basis vectors</a></li>
 <li><a class="reference internal" href="#transformation-to-the-primitive-cell" id="id8">Transformation to the primitive cell</a></li>
@@ -171,8 +171,8 @@ crystal-structure data”, Acta Cryst. A
 Cryst. A <strong>37</strong>, 517-525 (1981) [<a class="reference external" href="https://doi.org/10.1107/S0567739481001228">doi1</a>]</li>
 </ul>
 </div>
-<div class="section" id="basis-vectors-or">
-<h2><a class="toc-backref" href="#id2">Basis vectors <span class="math notranslate nohighlight">\((\mathbf{a}, \mathbf{b}, \mathbf{c})\)</span> or <span class="math notranslate nohighlight">\((\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)\)</span></a><a class="headerlink" href="#basis-vectors-or" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="basis-vectors-mathbf-a-mathbf-b-mathbf-c-or-mathbf-a-1-mathbf-a-2-mathbf-a-3">
+<h2><a class="toc-backref" href="#id2">Basis vectors <span class="math notranslate nohighlight">\((\mathbf{a}, \mathbf{b}, \mathbf{c})\)</span> or <span class="math notranslate nohighlight">\((\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)\)</span></a><a class="headerlink" href="#basis-vectors-mathbf-a-mathbf-b-mathbf-c-or-mathbf-a-1-mathbf-a-2-mathbf-a-3" title="Permalink to this headline">¶</a></h2>
 <p>In spglib, basis vectors are represented by three column vectors:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\mathbf{a}= \begin{pmatrix}
@@ -194,8 +194,8 @@ c_z \\
 <span class="math notranslate nohighlight">\((\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)\)</span> is used instead of
 <span class="math notranslate nohighlight">\((\mathbf{a}, \mathbf{b}, \mathbf{c})\)</span>.</p>
 </div>
-<div class="section" id="atomic-point-coordinates">
-<h2><a class="toc-backref" href="#id3">Atomic point coordinates <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span></a><a class="headerlink" href="#atomic-point-coordinates" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="atomic-point-coordinates-boldsymbol-x">
+<h2><a class="toc-backref" href="#id3">Atomic point coordinates <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span></a><a class="headerlink" href="#atomic-point-coordinates-boldsymbol-x" title="Permalink to this headline">¶</a></h2>
 <p>Coordinates of an atomic point <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span> are represented
 as three fractional values relative to basis vectors as follows,</p>
 <div class="math notranslate nohighlight">
@@ -212,8 +212,8 @@ Cartesian coordinates is obtained by</p>
 <div class="math notranslate nohighlight">
 \[\mathbf{x} = \sum_i x_i \mathbf{a}_i.\]</div>
 </div>
-<div class="section" id="symmetry-operation">
-<h2><a class="toc-backref" href="#id4">Symmetry operation <span class="math notranslate nohighlight">\((\boldsymbol{W}, \boldsymbol{w})\)</span></a><a class="headerlink" href="#symmetry-operation" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="symmetry-operation-boldsymbol-w-boldsymbol-w">
+<h2><a class="toc-backref" href="#id4">Symmetry operation <span class="math notranslate nohighlight">\((\boldsymbol{W}, \boldsymbol{w})\)</span></a><a class="headerlink" href="#symmetry-operation-boldsymbol-w-boldsymbol-w" title="Permalink to this headline">¶</a></h2>
 <p>A symmetry operation consists of a pair of the rotation part
 <span class="math notranslate nohighlight">\(\boldsymbol{W}\)</span> and translation part <span class="math notranslate nohighlight">\(\boldsymbol{w}\)</span>,
 and is represented as <span class="math notranslate nohighlight">\((\boldsymbol{W}, \boldsymbol{w})\)</span> in the
@@ -222,8 +222,8 @@ spglib document. The symmetry operation transfers <span class="math notranslate 
 <div class="math notranslate nohighlight">
 \[\tilde{\boldsymbol{x}} = \boldsymbol{W}\boldsymbol{x} + \boldsymbol{w}.\]</div>
 </div>
-<div class="section" id="transformation-matrix-and-origin-shift">
-<h2><a class="toc-backref" href="#id5">Transformation matrix <span class="math notranslate nohighlight">\(\boldsymbol{P}\)</span> and origin shift <span class="math notranslate nohighlight">\(\boldsymbol{p}\)</span></a><a class="headerlink" href="#transformation-matrix-and-origin-shift" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="transformation-matrix-boldsymbol-p-and-origin-shift-boldsymbol-p">
+<h2><a class="toc-backref" href="#id5">Transformation matrix <span class="math notranslate nohighlight">\(\boldsymbol{P}\)</span> and origin shift <span class="math notranslate nohighlight">\(\boldsymbol{p}\)</span></a><a class="headerlink" href="#transformation-matrix-boldsymbol-p-and-origin-shift-boldsymbol-p" title="Permalink to this headline">¶</a></h2>
 <p>The transformation matrix <span class="math notranslate nohighlight">\(\boldsymbol{P}\)</span> changes choice of
 basis vectors as follows</p>
 <div class="math notranslate nohighlight">
@@ -453,7 +453,7 @@ are placed by angles <span class="math notranslate nohighlight">\(120^\circ\)</s
     </p>
     <p>
         &copy; Copyright 2009, Atsushi Togo.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.<br/>
     </p>
   </div>
 </footer>

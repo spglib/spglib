@@ -11,7 +11,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
     <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
     <script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
@@ -141,41 +141,41 @@
 <div class="contents local topic" id="list-of-c-apis">
 <p class="topic-title first">List of C-APIs</p>
 <ul class="simple">
-<li><a class="reference internal" href="#spg-get-major-version-spg-get-minor-version-spg-get-micro-version" id="id3"><code class="docutils literal notranslate"><span class="pre">spg_get_major_version</span></code>, <code class="docutils literal notranslate"><span class="pre">spg_get_minor_version</span></code>, <code class="docutils literal notranslate"><span class="pre">spg_get_micro_version</span></code></a></li>
-<li><a class="reference internal" href="#spg-get-error-code-and-spg-get-error-message" id="id4"><code class="docutils literal notranslate"><span class="pre">spg_get_error_code</span></code> and <code class="docutils literal notranslate"><span class="pre">spg_get_error_message</span></code></a></li>
-<li><a class="reference internal" href="#spg-get-symmetry" id="id5"><code class="docutils literal notranslate"><span class="pre">spg_get_symmetry</span></code></a></li>
-<li><a class="reference internal" href="#spg-get-international" id="id6"><code class="docutils literal notranslate"><span class="pre">spg_get_international</span></code></a></li>
-<li><a class="reference internal" href="#spg-get-schoenflies" id="id7"><code class="docutils literal notranslate"><span class="pre">spg_get_schoenflies</span></code></a></li>
-<li><a class="reference internal" href="#spg-standardize-cell" id="id8"><code class="docutils literal notranslate"><span class="pre">spg_standardize_cell</span></code></a></li>
-<li><a class="reference internal" href="#spg-find-primitive" id="id9"><code class="docutils literal notranslate"><span class="pre">spg_find_primitive</span></code></a></li>
-<li><a class="reference internal" href="#spg-refine-cell" id="id10"><code class="docutils literal notranslate"><span class="pre">spg_refine_cell</span></code></a></li>
-<li><a class="reference internal" href="#spg-get-dataset-and-spg-get-dataset-with-hall-number" id="id11"><code class="docutils literal notranslate"><span class="pre">spg_get_dataset</span></code> and <code class="docutils literal notranslate"><span class="pre">spg_get_dataset_with_hall_number</span></code></a><ul>
-<li><a class="reference internal" href="#usage" id="id12">Usage</a></li>
-<li><a class="reference internal" href="#dataset" id="id13">Dataset</a><ul>
-<li><a class="reference internal" href="#space-group-type" id="id14">Space group type</a></li>
-<li><a class="reference internal" href="#symmetry-operations" id="id15">Symmetry operations</a></li>
-<li><a class="reference internal" href="#site-symmetry" id="id16">Site symmetry</a></li>
-<li><a class="reference internal" href="#origin-shift-and-lattice-transformation" id="id17">Origin shift and lattice transformation</a></li>
-<li><a class="reference internal" href="#standardized-crystal-structure" id="id18">Standardized crystal structure</a></li>
-<li><a class="reference internal" href="#crystallographic-point-group" id="id19">Crystallographic point group</a></li>
+<li><a class="reference internal" href="#spg-get-major-version-spg-get-minor-version-spg-get-micro-version" id="id2"><code class="docutils literal notranslate"><span class="pre">spg_get_major_version</span></code>, <code class="docutils literal notranslate"><span class="pre">spg_get_minor_version</span></code>, <code class="docutils literal notranslate"><span class="pre">spg_get_micro_version</span></code></a></li>
+<li><a class="reference internal" href="#spg-get-error-code-and-spg-get-error-message" id="id3"><code class="docutils literal notranslate"><span class="pre">spg_get_error_code</span></code> and <code class="docutils literal notranslate"><span class="pre">spg_get_error_message</span></code></a></li>
+<li><a class="reference internal" href="#spg-get-symmetry" id="id4"><code class="docutils literal notranslate"><span class="pre">spg_get_symmetry</span></code></a></li>
+<li><a class="reference internal" href="#spg-get-international" id="id5"><code class="docutils literal notranslate"><span class="pre">spg_get_international</span></code></a></li>
+<li><a class="reference internal" href="#spg-get-schoenflies" id="id6"><code class="docutils literal notranslate"><span class="pre">spg_get_schoenflies</span></code></a></li>
+<li><a class="reference internal" href="#spg-standardize-cell" id="id7"><code class="docutils literal notranslate"><span class="pre">spg_standardize_cell</span></code></a></li>
+<li><a class="reference internal" href="#spg-find-primitive" id="id8"><code class="docutils literal notranslate"><span class="pre">spg_find_primitive</span></code></a></li>
+<li><a class="reference internal" href="#spg-refine-cell" id="id9"><code class="docutils literal notranslate"><span class="pre">spg_refine_cell</span></code></a></li>
+<li><a class="reference internal" href="#spg-get-dataset-and-spg-get-dataset-with-hall-number" id="id10"><code class="docutils literal notranslate"><span class="pre">spg_get_dataset</span></code> and <code class="docutils literal notranslate"><span class="pre">spg_get_dataset_with_hall_number</span></code></a><ul>
+<li><a class="reference internal" href="#usage" id="id11">Usage</a></li>
+<li><a class="reference internal" href="#dataset" id="id12">Dataset</a><ul>
+<li><a class="reference internal" href="#space-group-type" id="id13">Space group type</a></li>
+<li><a class="reference internal" href="#symmetry-operations" id="id14">Symmetry operations</a></li>
+<li><a class="reference internal" href="#site-symmetry" id="id15">Site symmetry</a></li>
+<li><a class="reference internal" href="#origin-shift-and-lattice-transformation" id="id16">Origin shift and lattice transformation</a></li>
+<li><a class="reference internal" href="#standardized-crystal-structure" id="id17">Standardized crystal structure</a></li>
+<li><a class="reference internal" href="#crystallographic-point-group" id="id18">Crystallographic point group</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#spg-free-dataset" id="id20"><code class="docutils literal notranslate"><span class="pre">spg_free_dataset</span></code></a></li>
-<li><a class="reference internal" href="#spg-get-spacegroup-type" id="id21"><code class="docutils literal notranslate"><span class="pre">spg_get_spacegroup_type</span></code></a></li>
-<li><a class="reference internal" href="#spg-get-symmetry-from-database" id="id22"><code class="docutils literal notranslate"><span class="pre">spg_get_symmetry_from_database</span></code></a></li>
-<li><a class="reference internal" href="#spg-get-multiplicity" id="id23"><code class="docutils literal notranslate"><span class="pre">spg_get_multiplicity</span></code></a></li>
-<li><a class="reference internal" href="#spg-get-symmetry-with-collinear-spin" id="id24"><code class="docutils literal notranslate"><span class="pre">spg_get_symmetry_with_collinear_spin</span></code></a></li>
-<li><a class="reference internal" href="#spg-niggli-reduce" id="id25"><code class="docutils literal notranslate"><span class="pre">spg_niggli_reduce</span></code></a></li>
-<li><a class="reference internal" href="#spg-delaunay-reduce" id="id26"><code class="docutils literal notranslate"><span class="pre">spg_delaunay_reduce</span></code></a></li>
-<li><a class="reference internal" href="#spg-get-ir-reciprocal-mesh" id="id27"><code class="docutils literal notranslate"><span class="pre">spg_get_ir_reciprocal_mesh</span></code></a></li>
-<li><a class="reference internal" href="#spg-get-stabilized-reciprocal-mesh" id="id28"><code class="docutils literal notranslate"><span class="pre">spg_get_stabilized_reciprocal_mesh</span></code></a></li>
-<li><a class="reference internal" href="#spg-get-hall-number-from-symmetry" id="id29"><code class="docutils literal notranslate"><span class="pre">spg_get_hall_number_from_symmetry</span></code></a></li>
+<li><a class="reference internal" href="#spg-free-dataset" id="id19"><code class="docutils literal notranslate"><span class="pre">spg_free_dataset</span></code></a></li>
+<li><a class="reference internal" href="#spg-get-spacegroup-type" id="id20"><code class="docutils literal notranslate"><span class="pre">spg_get_spacegroup_type</span></code></a></li>
+<li><a class="reference internal" href="#spg-get-symmetry-from-database" id="id21"><code class="docutils literal notranslate"><span class="pre">spg_get_symmetry_from_database</span></code></a></li>
+<li><a class="reference internal" href="#spg-get-multiplicity" id="id22"><code class="docutils literal notranslate"><span class="pre">spg_get_multiplicity</span></code></a></li>
+<li><a class="reference internal" href="#spg-get-symmetry-with-collinear-spin" id="id23"><code class="docutils literal notranslate"><span class="pre">spg_get_symmetry_with_collinear_spin</span></code></a></li>
+<li><a class="reference internal" href="#spg-niggli-reduce" id="id24"><code class="docutils literal notranslate"><span class="pre">spg_niggli_reduce</span></code></a></li>
+<li><a class="reference internal" href="#spg-delaunay-reduce" id="id25"><code class="docutils literal notranslate"><span class="pre">spg_delaunay_reduce</span></code></a></li>
+<li><a class="reference internal" href="#spg-get-ir-reciprocal-mesh" id="id26"><code class="docutils literal notranslate"><span class="pre">spg_get_ir_reciprocal_mesh</span></code></a></li>
+<li><a class="reference internal" href="#spg-get-stabilized-reciprocal-mesh" id="id27"><code class="docutils literal notranslate"><span class="pre">spg_get_stabilized_reciprocal_mesh</span></code></a></li>
+<li><a class="reference internal" href="#spg-get-hall-number-from-symmetry" id="id28"><code class="docutils literal notranslate"><span class="pre">spg_get_hall_number_from_symmetry</span></code></a></li>
 </ul>
 </div>
 <div class="section" id="spg-get-major-version-spg-get-minor-version-spg-get-micro-version">
-<h2><a class="toc-backref" href="#id3"><code class="docutils literal notranslate"><span class="pre">spg_get_major_version</span></code>, <code class="docutils literal notranslate"><span class="pre">spg_get_minor_version</span></code>, <code class="docutils literal notranslate"><span class="pre">spg_get_micro_version</span></code></a><a class="headerlink" href="#spg-get-major-version-spg-get-minor-version-spg-get-micro-version" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id2"><code class="docutils literal notranslate"><span class="pre">spg_get_major_version</span></code>, <code class="docutils literal notranslate"><span class="pre">spg_get_minor_version</span></code>, <code class="docutils literal notranslate"><span class="pre">spg_get_micro_version</span></code></a><a class="headerlink" href="#spg-get-major-version-spg-get-minor-version-spg-get-micro-version" title="Permalink to this headline">¶</a></h2>
 <p><strong>New in version 1.8.3</strong></p>
 <p>Version number of spglib is obtained. These three functions return
 integers that correspond to spglib version [major].[minor].[micro].</p>
@@ -184,7 +184,7 @@ integers that correspond to spglib version [major].[minor].[micro].</p>
 </div>
 </div>
 <div class="section" id="spg-get-error-code-and-spg-get-error-message">
-<h2><a class="toc-backref" href="#id4"><code class="docutils literal notranslate"><span class="pre">spg_get_error_code</span></code> and <code class="docutils literal notranslate"><span class="pre">spg_get_error_message</span></code></a><a class="headerlink" href="#spg-get-error-code-and-spg-get-error-message" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id3"><code class="docutils literal notranslate"><span class="pre">spg_get_error_code</span></code> and <code class="docutils literal notranslate"><span class="pre">spg_get_error_message</span></code></a><a class="headerlink" href="#spg-get-error-code-and-spg-get-error-message" title="Permalink to this headline">¶</a></h2>
 <p><strong>New in version 1.9.5</strong></p>
 <p><strong>Be careful. These are not thread safe, i.e., only safely usable
 when calling one spglib function per process.</strong></p>
@@ -221,7 +221,7 @@ when calling one spglib function per process.</strong></p>
 </div>
 </div>
 <div class="section" id="spg-get-symmetry">
-<span id="api-spg-get-symmetry"></span><h2><a class="toc-backref" href="#id5"><code class="docutils literal notranslate"><span class="pre">spg_get_symmetry</span></code></a><a class="headerlink" href="#spg-get-symmetry" title="Permalink to this headline">¶</a></h2>
+<span id="api-spg-get-symmetry"></span><h2><a class="toc-backref" href="#id4"><code class="docutils literal notranslate"><span class="pre">spg_get_symmetry</span></code></a><a class="headerlink" href="#spg-get-symmetry" title="Permalink to this headline">¶</a></h2>
 <p>This function finds a set of representative symmetry operations for
 primitive cells or its extension with lattice translations for
 supercells. 0 is returned if it failed.</p>
@@ -253,7 +253,7 @@ treatment for research in computational materials science.</p>
 </div>
 </div>
 <div class="section" id="spg-get-international">
-<h2><a class="toc-backref" href="#id6"><code class="docutils literal notranslate"><span class="pre">spg_get_international</span></code></a><a class="headerlink" href="#spg-get-international" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id5"><code class="docutils literal notranslate"><span class="pre">spg_get_international</span></code></a><a class="headerlink" href="#spg-get-international" title="Permalink to this headline">¶</a></h2>
 <p>Space group type is found and returned in international table symbol
 to <code class="docutils literal notranslate"><span class="pre">symbol</span></code> and also as a number (return value). 0 is returned if
 it failed.</p>
@@ -270,7 +270,7 @@ it failed.</p>
 </div>
 </div>
 <div class="section" id="spg-get-schoenflies">
-<h2><a class="toc-backref" href="#id7"><code class="docutils literal notranslate"><span class="pre">spg_get_schoenflies</span></code></a><a class="headerlink" href="#spg-get-schoenflies" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id6"><code class="docutils literal notranslate"><span class="pre">spg_get_schoenflies</span></code></a><a class="headerlink" href="#spg-get-schoenflies" title="Permalink to this headline">¶</a></h2>
 <p>Space group type is found and returned in schoenflies to <code class="docutils literal notranslate"><span class="pre">symbol</span></code>
 and also as a number (return value). 0 is returned if it failed.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">spg_get_schoenflies</span><span class="p">(</span><span class="n">char</span> <span class="n">symbol</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span>
@@ -286,7 +286,7 @@ and also as a number (return value). 0 is returned if it failed.</p>
 </div>
 </div>
 <div class="section" id="spg-standardize-cell">
-<h2><a class="toc-backref" href="#id8"><code class="docutils literal notranslate"><span class="pre">spg_standardize_cell</span></code></a><a class="headerlink" href="#spg-standardize-cell" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id7"><code class="docutils literal notranslate"><span class="pre">spg_standardize_cell</span></code></a><a class="headerlink" href="#spg-standardize-cell" title="Permalink to this headline">¶</a></h2>
 <p>The standardized unit cell (see <a class="reference internal" href="definition.html#def-standardized-unit-cell"><span class="std std-ref">Conventions of standardized unit cell</span></a>) is
 generated from an input unit cell structure and its space group type
 determined about a symmetry search tolerance. Usually
@@ -325,7 +325,7 @@ fixed.</p>
 </div>
 </div>
 <div class="section" id="spg-find-primitive">
-<h2><a class="toc-backref" href="#id9"><code class="docutils literal notranslate"><span class="pre">spg_find_primitive</span></code></a><a class="headerlink" href="#spg-find-primitive" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id8"><code class="docutils literal notranslate"><span class="pre">spg_find_primitive</span></code></a><a class="headerlink" href="#spg-find-primitive" title="Permalink to this headline">¶</a></h2>
 <p><strong>Behavior is changed. This function is now a shortcut of</strong>
 <code class="docutils literal notranslate"><span class="pre">spg_standardize_cell</span></code> <strong>with</strong>
 <code class="docutils literal notranslate"><span class="pre">to_primitive=1</span></code> <strong>and</strong> <code class="docutils literal notranslate"><span class="pre">no_idealize=0</span></code>.</p>
@@ -345,7 +345,7 @@ atoms in the found primitive cell is returned.</p>
 </div>
 </div>
 <div class="section" id="spg-refine-cell">
-<h2><a class="toc-backref" href="#id10"><code class="docutils literal notranslate"><span class="pre">spg_refine_cell</span></code></a><a class="headerlink" href="#spg-refine-cell" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id9"><code class="docutils literal notranslate"><span class="pre">spg_refine_cell</span></code></a><a class="headerlink" href="#spg-refine-cell" title="Permalink to this headline">¶</a></h2>
 <p><strong>This function exists for backward compatibility since it is same as</strong> <code class="docutils literal notranslate"><span class="pre">spg_standardize_cell</span></code> <strong>with</strong> <code class="docutils literal notranslate"><span class="pre">to_primitive=0</span></code> <strong>and</strong> <code class="docutils literal notranslate"><span class="pre">leave_distorted=0</span></code>.</p>
 <p>The standardized crystal structure is obtained from a non-standard
 crystal structure which may be slightly distorted within a symmetry
@@ -372,7 +372,7 @@ those required for the input unit cell in general.</p>
 </div>
 </div>
 <div class="section" id="spg-get-dataset-and-spg-get-dataset-with-hall-number">
-<span id="api-spg-get-dataset"></span><h2><a class="toc-backref" href="#id11"><code class="docutils literal notranslate"><span class="pre">spg_get_dataset</span></code> and <code class="docutils literal notranslate"><span class="pre">spg_get_dataset_with_hall_number</span></code></a><a class="headerlink" href="#spg-get-dataset-and-spg-get-dataset-with-hall-number" title="Permalink to this headline">¶</a></h2>
+<span id="api-spg-get-dataset"></span><h2><a class="toc-backref" href="#id10"><code class="docutils literal notranslate"><span class="pre">spg_get_dataset</span></code> and <code class="docutils literal notranslate"><span class="pre">spg_get_dataset_with_hall_number</span></code></a><a class="headerlink" href="#spg-get-dataset-and-spg-get-dataset-with-hall-number" title="Permalink to this headline">¶</a></h2>
 <p><strong>Changed in version 1.8.1</strong></p>
 <p>For an input unit cell structure, symmetry operations of the crystal
 are searched. Then they are compared with the crsytallographic
@@ -381,7 +381,7 @@ returned as the <code class="docutils literal notranslate"><span class="pre">Spg
 choice of setting of basis vectors in spglib is explained in the
 manuscript found at <a class="reference external" href="http://arxiv.org/abs/1506.01455">http://arxiv.org/abs/1506.01455</a>.</p>
 <div class="section" id="usage">
-<h3><a class="toc-backref" href="#id12">Usage</a><a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id11">Usage</a><a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h3>
 <p>Dataset corresponding to the space group type in the standard setting
 is obtained by <code class="docutils literal notranslate"><span class="pre">spg_get_dataset</span></code>. If this symmetry search fails,
 <code class="docutils literal notranslate"><span class="pre">NULL</span></code> is returned in version 1.8.1 or later (spacegroup_number = 0
@@ -416,7 +416,7 @@ structure is set 0.</p>
 <code class="docutils literal notranslate"><span class="pre">spg_free_dataset</span></code>.</p>
 </div>
 <div class="section" id="dataset">
-<span id="api-struct-spglibdataset"></span><h3><a class="toc-backref" href="#id13">Dataset</a><a class="headerlink" href="#dataset" title="Permalink to this headline">¶</a></h3>
+<span id="api-struct-spglibdataset"></span><h3><a class="toc-backref" href="#id12">Dataset</a><a class="headerlink" href="#dataset" title="Permalink to this headline">¶</a></h3>
 <p><strong>At version 1.9.4, SpglibDataset was modified.</strong> The member
 name <code class="docutils literal notranslate"><span class="pre">setting</span></code> is changed to <code class="docutils literal notranslate"><span class="pre">choice</span></code> and <code class="docutils literal notranslate"><span class="pre">pointgroup_number</span></code> is
 removed.</p>
@@ -450,7 +450,7 @@ removed.</p>
 <code class="docutils literal notranslate"><span class="pre">n_brv_atoms</span></code>, <code class="docutils literal notranslate"><span class="pre">brv_lattice</span></code>, <code class="docutils literal notranslate"><span class="pre">brv_types</span></code>, and
 <code class="docutils literal notranslate"><span class="pre">brv_positions</span></code>, respectively.</p>
 <div class="section" id="space-group-type">
-<span id="api-spg-get-dataset-spacegroup-type"></span><h4><a class="toc-backref" href="#id14">Space group type</a><a class="headerlink" href="#space-group-type" title="Permalink to this headline">¶</a></h4>
+<span id="api-spg-get-dataset-spacegroup-type"></span><h4><a class="toc-backref" href="#id13">Space group type</a><a class="headerlink" href="#space-group-type" title="Permalink to this headline">¶</a></h4>
 <p><code class="docutils literal notranslate"><span class="pre">spacegroup_number</span></code> is the space group type number defined in
 International Tables for Crystallography (ITA). <code class="docutils literal notranslate"><span class="pre">hall_number</span></code> is the
 serial number between 1 and 530 which are found at <a class="reference external" href="http://pmsl.planet.sci.kobe-u.ac.jp/~seto/?page_id=37&amp;lang=en">list of space
@@ -461,7 +461,7 @@ The (full) Hermann–Mauguin notation of space group type is given by
 setting or cell choices is found in <code class="docutils literal notranslate"><span class="pre">choice</span></code>.</p>
 </div>
 <div class="section" id="symmetry-operations">
-<h4><a class="toc-backref" href="#id15">Symmetry operations</a><a class="headerlink" href="#symmetry-operations" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id14">Symmetry operations</a><a class="headerlink" href="#symmetry-operations" title="Permalink to this headline">¶</a></h4>
 <p>The symmetry operations of the input unit cell are stored in
 <code class="docutils literal notranslate"><span class="pre">rotations</span></code> and <code class="docutils literal notranslate"><span class="pre">translations</span></code>. A crystallographic symmetry
 operation <span class="math notranslate nohighlight">\((\boldsymbol{W}, \boldsymbol{w})\)</span> is made from a pair
@@ -471,7 +471,7 @@ operations is given as <code class="docutils literal notranslate"><span class="p
 the values is found at <a class="reference internal" href="#api-spg-get-symmetry"><span class="std std-ref">spg_get_symmetry</span></a>.</p>
 </div>
 <div class="section" id="site-symmetry">
-<span id="api-spg-get-dataset-site-symmetry"></span><h4><a class="toc-backref" href="#id16">Site symmetry</a><a class="headerlink" href="#site-symmetry" title="Permalink to this headline">¶</a></h4>
+<span id="api-spg-get-dataset-site-symmetry"></span><h4><a class="toc-backref" href="#id15">Site symmetry</a><a class="headerlink" href="#site-symmetry" title="Permalink to this headline">¶</a></h4>
 <p><code class="docutils literal notranslate"><span class="pre">n_atoms</span></code> is the number of atoms of the input unit
 cell. <code class="docutils literal notranslate"><span class="pre">wyckoffs</span></code> gives Wyckoff letters that are assigned to atomic
 positions of the input unit cell. The numbers of 0, 1, 2,
@@ -488,7 +488,7 @@ of relative lattice points in the the input crystal structure is
 obtained.</p>
 </div>
 <div class="section" id="origin-shift-and-lattice-transformation">
-<span id="api-origin-shift-and-transformation"></span><h4><a class="toc-backref" href="#id17">Origin shift and lattice transformation</a><a class="headerlink" href="#origin-shift-and-lattice-transformation" title="Permalink to this headline">¶</a></h4>
+<span id="api-origin-shift-and-transformation"></span><h4><a class="toc-backref" href="#id16">Origin shift and lattice transformation</a><a class="headerlink" href="#origin-shift-and-lattice-transformation" title="Permalink to this headline">¶</a></h4>
 <p><strong>Changed in version 1.8.1</strong></p>
 <p><code class="docutils literal notranslate"><span class="pre">transformation_matrix</span></code> and <code class="docutils literal notranslate"><span class="pre">origin_shift</span></code> are obtained as a
 result of space-group-type matching under a set of unique axis,
@@ -527,10 +527,12 @@ data) is mapped to that in the standardized unit cell
 ) \boldsymbol{P} \;\; \text{and} \;\; \boldsymbol{x}_\mathrm{s} =
 \boldsymbol{P}^{-1}\boldsymbol{x} - \boldsymbol{p}
 \;\;(\mathrm{mod}\; \mathbf{1}),\]</div>
-<p>respectively.</p>
+<p>respectively. Transformation of <span class="math notranslate nohighlight">\(( \mathbf{a}_\mathrm{s} \;
+\mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )\)</span> to a primitive cell
+basis vectors is explained at <a class="reference internal" href="definition.html#def-standardized-primitive-cell"><span class="std std-ref">Transformation to the primitive cell</span></a>.</p>
 </div>
 <div class="section" id="standardized-crystal-structure">
-<h4><a class="toc-backref" href="#id18">Standardized crystal structure</a><a class="headerlink" href="#standardized-crystal-structure" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id17">Standardized crystal structure</a><a class="headerlink" href="#standardized-crystal-structure" title="Permalink to this headline">¶</a></h4>
 <p><strong>Changed in version 1.8.1</strong></p>
 <p>The standardized crystal structure corresponding to a Hall symbol is
 stored in <code class="docutils literal notranslate"><span class="pre">n_std_atoms</span></code>, <code class="docutils literal notranslate"><span class="pre">std_lattice</span></code>, <code class="docutils literal notranslate"><span class="pre">std_types</span></code>, and
@@ -546,12 +548,9 @@ the same number, a set of relative lattice points in the the
 standardized crystal structure is obtained.</p>
 </div>
 <div class="section" id="crystallographic-point-group">
-<h4><a class="toc-backref" href="#id19">Crystallographic point group</a><a class="headerlink" href="#crystallographic-point-group" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id18">Crystallographic point group</a><a class="headerlink" href="#crystallographic-point-group" title="Permalink to this headline">¶</a></h4>
 <p><strong>New in version 1.8.1</strong></p>
-<p><code class="docutils literal notranslate"><span class="pre">pointgroup_number</span></code> is the serial number of the crystallographic
-point group, which refers <a class="reference external" href="http://pmsl.planet.sci.kobe-u.ac.jp/~seto/?page_id=37&amp;lang=en">list of space
-groups (Seto’s web site)</a>.
-<code class="docutils literal notranslate"><span class="pre">pointgroup_symbol</span></code> is the symbol of the crystallographic point
+<p><code class="docutils literal notranslate"><span class="pre">pointgroup_symbol</span></code> is the symbol of the crystallographic point
 group in the Hermann–Mauguin notation.</p>
 <div class="line-block">
 <div class="line"><br /></div>
@@ -560,7 +559,7 @@ group in the Hermann–Mauguin notation.</p>
 </div>
 </div>
 <div class="section" id="spg-free-dataset">
-<h2><a class="toc-backref" href="#id20"><code class="docutils literal notranslate"><span class="pre">spg_free_dataset</span></code></a><a class="headerlink" href="#spg-free-dataset" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id19"><code class="docutils literal notranslate"><span class="pre">spg_free_dataset</span></code></a><a class="headerlink" href="#spg-free-dataset" title="Permalink to this headline">¶</a></h2>
 <p>Allocated memoery space of the C-structure of <code class="docutils literal notranslate"><span class="pre">SpglibDataset</span></code> is
 freed by calling <code class="docutils literal notranslate"><span class="pre">spg_free_dataset</span></code>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">void</span> <span class="n">spg_free_dataset</span><span class="p">(</span><span class="n">SpglibDataset</span> <span class="o">*</span><span class="n">dataset</span><span class="p">);</span>
@@ -571,7 +570,7 @@ freed by calling <code class="docutils literal notranslate"><span class="pre">sp
 </div>
 </div>
 <div class="section" id="spg-get-spacegroup-type">
-<span id="api-spg-spacegroup-type"></span><h2><a class="toc-backref" href="#id21"><code class="docutils literal notranslate"><span class="pre">spg_get_spacegroup_type</span></code></a><a class="headerlink" href="#spg-get-spacegroup-type" title="Permalink to this headline">¶</a></h2>
+<span id="api-spg-spacegroup-type"></span><h2><a class="toc-backref" href="#id20"><code class="docutils literal notranslate"><span class="pre">spg_get_spacegroup_type</span></code></a><a class="headerlink" href="#spg-get-spacegroup-type" title="Permalink to this headline">¶</a></h2>
 <p><strong>Changed at version 1.9.4: Some members are added and the member name ‘setting’ is changed to ‘choice’.</strong></p>
 <p>This function allows to directly access to the space-group-type
 database in spglib (spg_database.c). To specify the space group type
@@ -603,7 +602,7 @@ with a specific choice, <code class="docutils literal notranslate"><span class="
 </div>
 </div>
 <div class="section" id="spg-get-symmetry-from-database">
-<h2><a class="toc-backref" href="#id22"><code class="docutils literal notranslate"><span class="pre">spg_get_symmetry_from_database</span></code></a><a class="headerlink" href="#spg-get-symmetry-from-database" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id21"><code class="docutils literal notranslate"><span class="pre">spg_get_symmetry_from_database</span></code></a><a class="headerlink" href="#spg-get-symmetry-from-database" title="Permalink to this headline">¶</a></h2>
 <p>This function allows to directly access to the space group operations
 in the spglib database (spg_database.c). To specify the space group
 type with a specific choice, <code class="docutils literal notranslate"><span class="pre">hall_number</span></code> is used. The definition
@@ -622,7 +621,7 @@ group operations are stored in <code class="docutils literal notranslate"><span 
 </div>
 </div>
 <div class="section" id="spg-get-multiplicity">
-<h2><a class="toc-backref" href="#id23"><code class="docutils literal notranslate"><span class="pre">spg_get_multiplicity</span></code></a><a class="headerlink" href="#spg-get-multiplicity" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id22"><code class="docutils literal notranslate"><span class="pre">spg_get_multiplicity</span></code></a><a class="headerlink" href="#spg-get-multiplicity" title="Permalink to this headline">¶</a></h2>
 <p>This function returns exact number of symmetry operations. 0 is
 returned when it failed.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">spg_get_multiplicity</span><span class="p">(</span><span class="n">const</span> <span class="n">double</span> <span class="n">lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span>
@@ -639,7 +638,7 @@ symmetry operations.</p>
 </div>
 </div>
 <div class="section" id="spg-get-symmetry-with-collinear-spin">
-<h2><a class="toc-backref" href="#id24"><code class="docutils literal notranslate"><span class="pre">spg_get_symmetry_with_collinear_spin</span></code></a><a class="headerlink" href="#spg-get-symmetry-with-collinear-spin" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id23"><code class="docutils literal notranslate"><span class="pre">spg_get_symmetry_with_collinear_spin</span></code></a><a class="headerlink" href="#spg-get-symmetry-with-collinear-spin" title="Permalink to this headline">¶</a></h2>
 <p>This function finds symmetry operations with collinear polarizations
 (spins) on atoms. Except for the argument of <code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">double</span> <span class="pre">spins[]</span></code>,
 the usage is basically the same as <code class="docutils literal notranslate"><span class="pre">spg_get_symmetry</span></code>, but as an
@@ -663,7 +662,7 @@ for the definition <code class="docutils literal notranslate"><span class="pre">
 </div>
 </div>
 <div class="section" id="spg-niggli-reduce">
-<h2><a class="toc-backref" href="#id25"><code class="docutils literal notranslate"><span class="pre">spg_niggli_reduce</span></code></a><a class="headerlink" href="#spg-niggli-reduce" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id24"><code class="docutils literal notranslate"><span class="pre">spg_niggli_reduce</span></code></a><a class="headerlink" href="#spg-niggli-reduce" title="Permalink to this headline">¶</a></h2>
 <p>Niggli reduction is applied to input basis vectors <code class="docutils literal notranslate"><span class="pre">lattice</span></code> and the
 reduced basis vectors are overwritten to <code class="docutils literal notranslate"><span class="pre">lattice</span></code>. 0 is returned if
 it failed.</p>
@@ -683,7 +682,7 @@ elements have to be almost integers.</p>
 </div>
 </div>
 <div class="section" id="spg-delaunay-reduce">
-<h2><a class="toc-backref" href="#id26"><code class="docutils literal notranslate"><span class="pre">spg_delaunay_reduce</span></code></a><a class="headerlink" href="#spg-delaunay-reduce" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id25"><code class="docutils literal notranslate"><span class="pre">spg_delaunay_reduce</span></code></a><a class="headerlink" href="#spg-delaunay-reduce" title="Permalink to this headline">¶</a></h2>
 <p>Delaunay reduction is applied to input basis vectors <code class="docutils literal notranslate"><span class="pre">lattice</span></code> and
 the reduced basis vectors are overwritten to <code class="docutils literal notranslate"><span class="pre">lattice</span></code>. 0 is
 returned if it failed.</p>
@@ -700,7 +699,7 @@ by <span class="math notranslate nohighlight">\(\boldsymbol{P} = ( \mathbf{a} \;
 elements have to be almost integers.</p>
 </div>
 <div class="section" id="spg-get-ir-reciprocal-mesh">
-<h2><a class="toc-backref" href="#id27"><code class="docutils literal notranslate"><span class="pre">spg_get_ir_reciprocal_mesh</span></code></a><a class="headerlink" href="#spg-get-ir-reciprocal-mesh" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id26"><code class="docutils literal notranslate"><span class="pre">spg_get_ir_reciprocal_mesh</span></code></a><a class="headerlink" href="#spg-get-ir-reciprocal-mesh" title="Permalink to this headline">¶</a></h2>
 <p>Irreducible reciprocal grid points are searched from uniform mesh grid
 points specified by <code class="docutils literal notranslate"><span class="pre">mesh</span></code> and <code class="docutils literal notranslate"><span class="pre">is_shift</span></code>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">spg_get_ir_reciprocal_mesh</span><span class="p">(</span><span class="nb">int</span> <span class="n">grid_address</span><span class="p">[][</span><span class="mi">3</span><span class="p">],</span>
@@ -752,7 +751,7 @@ grid point index is recovered by <code class="docutils literal notranslate"><spa
 </div>
 </div>
 <div class="section" id="spg-get-stabilized-reciprocal-mesh">
-<h2><a class="toc-backref" href="#id28"><code class="docutils literal notranslate"><span class="pre">spg_get_stabilized_reciprocal_mesh</span></code></a><a class="headerlink" href="#spg-get-stabilized-reciprocal-mesh" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id27"><code class="docutils literal notranslate"><span class="pre">spg_get_stabilized_reciprocal_mesh</span></code></a><a class="headerlink" href="#spg-get-stabilized-reciprocal-mesh" title="Permalink to this headline">¶</a></h2>
 <p>The irreducible k-points are searched from unique k-point mesh grids
 from direct (real space) basis vectors and a set of rotation parts of
 symmetry operations in direct space with one or multiple
@@ -781,7 +780,7 @@ are returned as the return value.</p>
 </div>
 </div>
 <div class="section" id="spg-get-hall-number-from-symmetry">
-<h2><a class="toc-backref" href="#id29"><code class="docutils literal notranslate"><span class="pre">spg_get_hall_number_from_symmetry</span></code></a><a class="headerlink" href="#spg-get-hall-number-from-symmetry" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id28"><code class="docutils literal notranslate"><span class="pre">spg_get_hall_number_from_symmetry</span></code></a><a class="headerlink" href="#spg-get-hall-number-from-symmetry" title="Permalink to this headline">¶</a></h2>
 <p><strong>experimental</strong></p>
 <p><code class="docutils literal notranslate"><span class="pre">hall_number</span></code> is obtained from the set of symmetry operations.  The
 definition of <code class="docutils literal notranslate"><span class="pre">hall_number</span></code> is found at
@@ -822,7 +821,7 @@ coordinates and should be small like <code class="docutils literal notranslate">
     </p>
     <p>
         &copy; Copyright 2009, Atsushi Togo.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.<br/>
     </p>
   </div>
 </footer>
