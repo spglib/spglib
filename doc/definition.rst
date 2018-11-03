@@ -108,6 +108,8 @@ spglib document. The symmetry operation transfers :math:`\boldsymbol{x}` to
 
   \tilde{\boldsymbol{x}} = \boldsymbol{W}\boldsymbol{x} + \boldsymbol{w}.
 
+.. _def_transformation_and_origin_shift:
+
 Transformation matrix :math:`\boldsymbol{P}` and origin shift :math:`\boldsymbol{p}`
 -------------------------------------------------------------------------------------
 
@@ -184,6 +186,12 @@ In this example,
 Conventions of standardized unit cell
 --------------------------------------
 
+The standardization in spglib is achieved by :ref:`a change of basis
+transformation <def_transformation_and_origin_shift>` and
+possibly :ref:`idealization <def_idealize_cell>` including a rigid
+rotation in Cartesian coordinates. The later is made to remove
+distortion.
+
 Choice of basis vectors
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -191,12 +199,14 @@ Using the APIs ``spg_get_dataset``,
 ``spg_get_dataset_with_hall_number``, or ``spg_standardize_cell``, the
 starndardized unit cell is obtained. The "starndardized unit cell" in
 this document means that the (conventional) unit cell structure is
-standardized by the crystal symmetry and lengths of basis vectors.
-Crystals are categorized by Hall symbols in 530 different types in
-terms of 230 space group types, unique axes, settings, and cell
-choices. Moreover in spglib, lengths of basis vectors are used to
-choose the order of :math:`(\mathbf{a}, \mathbf{b}, \mathbf{c})` if
-the order can not be determined only by the symmetrical conventions.
+standardized by the crystal symmetry and lengths of basis
+vectors. This standardization in spglib is not unique, but upto
+generators of Euclidean normalizer. Crystals are categorized by Hall
+symbols in 530 different types in terms of 230 space group types,
+unique axes, settings, and cell choices. Moreover in spglib, lengths
+of basis vectors are used to choose the order of :math:`(\mathbf{a},
+\mathbf{b}, \mathbf{c})` if the order can not be determined only by
+the symmetrical conventions.
 
 .. _def_standardized_primitive_cell:
 
@@ -358,3 +368,286 @@ Cubic lattice
 - :math:`\mathbf{a}` is set along :math:`+x` direction of Cartesian coordinates.
 - :math:`\mathbf{b}` is set along :math:`+y` direction of Cartesian coordinates.
 - :math:`\mathbf{c}` is set along :math:`+z` direction of Cartesian coordinates.
+
+
+Example: Crystallographic choice and rigid rotation
+---------------------------------------------------
+
+The following example of a python script gives a crystal structure of
+Br whose space group type is *Cmce*. The basis vectors
+:math:`(\mathbf{a}, \mathbf{b}, \mathbf{c})` are fixed by the symmetry
+crystal in the standardization. The C-centrng determines the c-axis,
+and *m* and *c* operations in *Cmce* fix which directions a- and
+b-axes should be with respect to each other axis. This is the first
+one choice appearing in the list of Hall symbols among 6 different
+choices for this space group type.
+
+::
+
+   import spglib
+
+   # Mind that the a, b, c axes are given in row vectors here,
+   # but the formulation above is given for the column vectors.
+   lattice = [[7.17851431, 0, 0],  # a
+              [0, 3.99943947, 0],  # b
+              [0, 0, 8.57154746]]  # c
+   points = [[0.0, 0.84688439, 0.1203133],
+             [0.0, 0.65311561, 0.6203133],
+             [0.0, 0.34688439, 0.3796867],
+             [0.0, 0.15311561, 0.8796867],
+             [0.5, 0.34688439, 0.1203133],
+             [0.5, 0.15311561, 0.6203133],
+             [0.5, 0.84688439, 0.3796867],
+             [0.5, 0.65311561, 0.8796867]]
+   numbers = [8,] * len(points)
+   cell = (lattice, points, numbers)
+   dataset = spglib.get_symmetry_dataset(cell)
+   print("Space group type: %s (%d)"
+         % (dataset['international'], dataset['number']))
+   print("Transformation matrix:")
+   for x in dataset['transformation_matrix']:
+       print("  %2d %2d %2d" % tuple(x))
+
+This python script is saved in the file ``example.py``. Then we get
+
+::
+
+   % python example.py
+   Space group type: Cmce (64)
+   Transformation matrix:
+     -1  0  0
+      0 -1  0
+      0  0  1
+   Origin shift: 0.000000 0.000000 0.000000
+
+The transformation matrix is not the identity matrix. The basis
+vectors were changed during the symmetry search. However this doesn't
+alter the crystallographic choices. Next, we swap a- and c-axes.
+
+::
+
+   import spglib
+
+   # Mind that the a, b, c axes are given in row vectors here,
+   # but the formulation above is given for the column vectors.
+   lattice = [[8.57154746, 0, 0],  # a
+              [0, 3.99943947, 0],  # b
+              [0, 0, 7.17851431]]  # c
+   points = [[0.1203133, 0.84688439, 0.0],
+             [0.6203133, 0.65311561, 0.0],
+             [0.3796867, 0.34688439, 0.0],
+             [0.8796867, 0.15311561, 0.0],
+             [0.1203133, 0.34688439, 0.5],
+             [0.6203133, 0.15311561, 0.5],
+             [0.3796867, 0.84688439, 0.5],
+             [0.8796867, 0.65311561, 0.5]]
+   numbers = [8,] * len(points)
+   cell = (lattice, points, numbers)
+   dataset = spglib.get_symmetry_dataset(cell)
+   print("Space group type: %s (%d)"
+         % (dataset['international'], dataset['number']))
+   print("Transformation matrix:")
+   for x in dataset['transformation_matrix']:
+       print("  %2d %2d %2d" % tuple(x))
+   print("Origin shift: %f %f %f" % tuple(dataset['origin_shift']))
+
+By this,
+
+::
+
+   % python spglib-example2.py
+   Space group type: Cmce (64)
+   Transformation matrix:
+      0  0  1
+      0  1  0
+     -1  0  0
+   Origin shift: 0.000000 0.000000 0.000000
+
+We get a non-identity transformation matrix, which want to transform
+back to the original (above) crystal structure by swapping a- and
+c-axes to follow the first crystallographic choice. The transformation
+back of the basis vectors is achieved by the first equation at
+:ref:`Transformation matrix P and origin shift p
+<def_transformation_and_origin_shift>`. Next, we try to rotate rigidly
+the crystal structure in Cartesian coordinates from the first one::
+
+   import spglib
+
+   # Mind that the a, b, c axes are given in row vectors here,
+   # but the formulation above is given for the column vectors.
+   lattice = [[5.0759761474456697, 5.0759761474456697, 0],  # a
+              [-2.8280307701821314, 2.8280307701821314, 0],  # b
+              [0, 0, 8.57154746]]  # c
+   points = [[0.0, 0.84688439, 0.1203133],
+             [0.0, 0.65311561, 0.6203133],
+             [0.0, 0.34688439, 0.3796867],
+             [0.0, 0.15311561, 0.8796867],
+             [0.5, 0.34688439, 0.1203133],
+             [0.5, 0.15311561, 0.6203133],
+             [0.5, 0.84688439, 0.3796867],
+             [0.5, 0.65311561, 0.8796867]]
+   numbers = [8,] * len(points)
+   cell = (lattice, points, numbers)
+   dataset = spglib.get_symmetry_dataset(cell)
+   print("Space group type: %s (%d)"
+         % (dataset['international'], dataset['number']))
+   print("Transformation matrix:")
+   for x in dataset['transformation_matrix']:
+       print("  %2d %2d %2d" % tuple(x))
+   print("Origin shift: %f %f %f" % tuple(dataset['origin_shift']))
+
+and
+
+::
+
+   % python spglib-example3.py
+   Space group type: Cmce (64)
+   Transformation matrix:
+     -1  0  0
+      0 -1  0
+      0  0  1
+   Origin shift: 0.500000 0.000000 0.000000
+
+Now the result is same as the first one. The origin shift is different
+but it does change only the order of atoms, so effectively it does
+nothing. The transformation is kept unchanged even the crystal
+structure is rotated in Cartesian coordinates.
+
+Example: Transformation to a primitive cell
+--------------------------------------------
+
+There are infinite number of choices of primitive cell. The
+transformation from a primitive cell basis vectors to the other is
+always done by an integer matrix because any lattice points can be
+generated by the linear combination of the three primitive basis
+vectors.
+
+When we have a non-primitive cell basis vectors as given in the above
+example::
+
+   lattice = [[7.17851431, 0, 0],  # a
+              [0, 3.99943947, 0],  # b
+              [0, 0, 8.57154746]]  # c
+
+This has the C-centring, so it must be transformed to a primitive
+cell. A possible transformation is shown at
+:ref:`def_standardized_primitive_cell`, which is
+:math:`\boldsymbol{P}_\mathrm{C}`. With the following script::
+
+   import numpy as np
+   lattice = [[7.17851431, 0, 0],  # a
+              [0, 3.99943947, 0],  # b
+              [0, 0, 8.57154746]]  # c
+   Pc = [[0.5, 0.5, 0],
+         [-0.5, 0.5, 0],
+         [0, 0, 1]]
+   print(np.dot(np.transpose(lattice), Pc).T)  # given in row vectors
+
+we get the primitive cell basis vectors (shown in row vectors)::
+
+   [[ 3.58925715 -1.99971973  0.        ]
+    [ 3.58925715  1.99971973  0.        ]
+    [ 0.          0.          8.57154746]]
+
+``find_primitive`` gives a primitive cell that is obtained by
+transforming standardized and idealized crystal structure to the
+primitive cell using the transformation matrix. Therefore by this
+script::
+
+   import spglib
+
+   lattice = [[7.17851431, 0, 0],
+              [0, 3.99943947, 0],
+              [0, 0, 8.57154746]]
+   points = [[0.0, 0.84688439, 0.1203133],
+             [0.0, 0.65311561, 0.6203133],
+             [0.0, 0.34688439, 0.3796867],
+             [0.0, 0.15311561, 0.8796867],
+             [0.5, 0.34688439, 0.1203133],
+             [0.5, 0.15311561, 0.6203133],
+             [0.5, 0.84688439, 0.3796867],
+             [0.5, 0.65311561, 0.8796867]]
+   numbers = [8,] * len(points)
+   cell = (lattice, points, numbers)
+
+   primitive_cell = spglib.find_primitive(cell)
+   print(primitive_cell[0])
+
+we get::
+
+   [[ 3.58925715 -1.99971973  0.        ]
+    [ 3.58925715  1.99971973  0.        ]
+    [ 0.          0.          8.57154746]]
+
+This is same as what we manually obtained above.
+Even when the basis vectors are rigidly rotated as::
+
+   lattice = [[5.0759761474456697, 5.0759761474456697, 0],
+              [-2.8280307701821314, 2.8280307701821314, 0],
+              [0, 0, 8.57154746]]
+
+the relationship of a, b, c axes is unchanged. Therefore the same
+transformation matrix to the primitive cell can be used. Then we get::
+
+   [[3.95200346 1.12397269 0.        ]
+    [1.12397269 3.95200346 0.        ]
+    [0.         0.         8.57154746]]
+
+However applying ``find_primitive`` rigidly rotates automatically and
+so the following script doesn't give this basis vectors::
+
+   import spglib
+
+   lattice = [[5.0759761474456697, 5.0759761474456697, 0],
+              [-2.8280307701821314, 2.8280307701821314, 0],
+              [0, 0, 8.57154746]]
+   points = [[0.0, 0.84688439, 0.1203133],
+             [0.0, 0.65311561, 0.6203133],
+             [0.0, 0.34688439, 0.3796867],
+             [0.0, 0.15311561, 0.8796867],
+             [0.5, 0.34688439, 0.1203133],
+             [0.5, 0.15311561, 0.6203133],
+             [0.5, 0.84688439, 0.3796867],
+             [0.5, 0.65311561, 0.8796867]]
+   numbers = [8,] * len(points)
+   cell = (lattice, points, numbers)
+
+   primitive_cell = spglib.find_primitive(cell)
+   print(primitive_cell[0])
+
+but gives those with respect to the idealized ones::
+
+   [[ 3.58925715 -1.99971973  0.        ]
+    [ 3.58925715  1.99971973  0.        ]
+    [ 0.          0.          8.57154746]]
+
+To obtain the rotated primitive cell basis vectors, we can use
+``standardize_cell`` as shown below::
+
+   import spglib
+
+   lattice = [[5.0759761474456697, 5.0759761474456697, 0],
+              [-2.8280307701821314, 2.8280307701821314, 0],
+              [0, 0, 8.57154746]]
+   points = [[0.0, 0.84688439, 0.1203133],
+             [0.0, 0.65311561, 0.6203133],
+             [0.0, 0.34688439, 0.3796867],
+             [0.0, 0.15311561, 0.8796867],
+             [0.5, 0.34688439, 0.1203133],
+             [0.5, 0.15311561, 0.6203133],
+             [0.5, 0.84688439, 0.3796867],
+             [0.5, 0.65311561, 0.8796867]]
+   numbers = [8,] * len(points)
+   cell = (lattice, points, numbers)
+   primitive_cell = spglib.standardize_cell(cell, to_primitive=1, no_idealize=1)
+   print(primitive_cell[0])
+
+then we get::
+
+   [[-3.95200346 -1.12397269  0.        ]
+    [-1.12397269 -3.95200346  0.        ]
+    [ 0.          0.          8.57154746]]
+
+which is equivalent to that we get manually. However using
+``standardize_cell``, distortion is not removed for the distorted
+crystal structure.

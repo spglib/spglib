@@ -202,7 +202,9 @@ atoms in the found primitive cell is returned.
 ``spg_refine_cell``
 --------------------
 
-**This function exists for backward compatibility since it is same as** ``spg_standardize_cell`` **with** ``to_primitive=0`` **and** ``leave_distorted=0``.
+**This function exists for backward compatibility since it is same
+as** ``spg_standardize_cell`` **with** ``to_primitive=0`` **and**
+``no_idealize=0``.
 
 The standardized crystal structure is obtained from a non-standard
 crystal structure which may be slightly distorted within a symmetry
