@@ -391,7 +391,7 @@ This function finds symmetry operations with collinear polarizations
 (spins) on atoms. Except for the argument of ``const double spins[]``,
 the usage is basically the same as ``spg_get_symmetry``, but as an
 output, ``equivalent_atoms`` are obtained. The size of this array is
-the same of ``num_atom``. See :ref:`api_spg_get_dataset_site_symmetry`
+the same of ``num_atom``. See :ref:`dataset_spg_get_dataset_site_symmetry`
 for the definition ``equivalent_atoms``. 0 is returned when it failed.
 
 ::
