@@ -251,7 +251,7 @@ returned as the ``SpglibDataset`` structure as a dataset. The default
 choice of setting of basis vectors in spglib is explained in the
 manuscript found at http://arxiv.org/abs/1506.01455.
 
-The detail of the dataset is given at :ref:`api_struct_spglibdataset`.
+The detail of the dataset is given at :ref:`spglib_dataset`.
 
 Dataset corresponding to the space group type in the standard setting
 is obtained by ``spg_get_dataset``. If this symmetry search fails,
@@ -317,7 +317,7 @@ This function allows to directly access to the space-group-type
 database in spglib (spg_database.c). To specify the space group type
 with a specific choice, ``hall_number`` is used. The definition of
 ``hall_number`` is found at
-:ref:`api_spg_get_dataset_spacegroup_type`.
+:ref:`dataset_spg_get_dataset_spacegroup_type`.
 ``number = 0`` is returned when it failed.
 
 ::
@@ -351,7 +351,7 @@ This function allows to directly access to the space group operations
 in the spglib database (spg_database.c). To specify the space group
 type with a specific choice, ``hall_number`` is used. The definition
 of ``hall_number`` is found at
-:ref:`api_spg_get_dataset_spacegroup_type`. 0 is returned when it
+:ref:`dataset_spg_get_dataset_spacegroup_type`. 0 is returned when it
 failed.
 
 ::
@@ -548,7 +548,7 @@ This function can be used to obtain all mesh grid points by setting
 
 ``hall_number`` is obtained from the set of symmetry operations.  The
 definition of ``hall_number`` is found at
-:ref:`api_spg_get_dataset_spacegroup_type` and the corresponding
+:ref:`dataset_spg_get_dataset_spacegroup_type` and the corresponding
 space-group-type information is obtained through
 :ref:`api_spg_spacegroup_type`.
 

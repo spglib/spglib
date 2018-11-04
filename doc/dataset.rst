@@ -1,4 +1,4 @@
-.. _api_struct_spglibdataset:
+.. _spglib_dataset:
 
 Spglib dataset
 ===============
@@ -38,7 +38,7 @@ The dataset is accessible through the C-structure given by
      char pointgroup_symbol[6];
    } SpglibDataset;
 
-.. _api_spg_get_dataset_spacegroup_type:
+.. _dataset_spg_get_dataset_spacegroup_type:
 
 Space group type
 ----------------
@@ -83,7 +83,7 @@ of rotation :math:`\boldsymbol{W}` and translation
 operations is given as ``n_operations``. The detailed explanation of
 the values is found at :ref:`api_spg_get_symmetry`.
 
-.. _api_spg_get_dataset_site_symmetry:
+.. _dataset_spg_get_dataset_site_symmetry:
 
 Wyckoff positions and symmetrically equivalent atoms
 -----------------------------------------------------
@@ -126,7 +126,7 @@ primitive cell. By collective the atoms having the same number, a set
 of relative lattice points in the the input crystal structure is
 obtained.
 
-.. _api_origin_shift_and_transformation:
+.. _dataset_origin_shift_and_transformation:
 
 Transformation matrix and origin shift
 ---------------------------------------
@@ -156,6 +156,8 @@ the current definition as follows:
    ) \boldsymbol{P} \;\; \text{and} \;\; \boldsymbol{x}_\mathrm{s} =
    \boldsymbol{P}^{-1}\boldsymbol{x} - \boldsymbol{p}
    \;\;(\mathrm{mod}\; \mathbf{1}).
+
+.. _dataset_idealized_cell:
 
 Standardized crystal structure after idealization
 --------------------------------------------------
