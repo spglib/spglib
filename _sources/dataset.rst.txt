@@ -1,4 +1,4 @@
-.. _api_struct_spglibdataset:
+.. _spglib_dataset:
 
 Spglib dataset
 ===============
@@ -38,7 +38,7 @@ The dataset is accessible through the C-structure given by
      char pointgroup_symbol[6];
    } SpglibDataset;
 
-.. _api_spg_get_dataset_spacegroup_type:
+.. _dataset_spg_get_dataset_spacegroup_type:
 
 Space group type
 ----------------
@@ -83,7 +83,7 @@ of rotation :math:`\boldsymbol{W}` and translation
 operations is given as ``n_operations``. The detailed explanation of
 the values is found at :ref:`api_spg_get_symmetry`.
 
-.. _api_spg_get_dataset_site_symmetry:
+.. _dataset_spg_get_dataset_site_symmetry:
 
 Wyckoff positions and symmetrically equivalent atoms
 -----------------------------------------------------
@@ -126,7 +126,7 @@ primitive cell. By collective the atoms having the same number, a set
 of relative lattice points in the the input crystal structure is
 obtained.
 
-.. _api_origin_shift_and_transformation:
+.. _dataset_origin_shift_and_transformation:
 
 Transformation matrix and origin shift
 ---------------------------------------
@@ -157,24 +157,35 @@ the current definition as follows:
    \boldsymbol{P}^{-1}\boldsymbol{x} - \boldsymbol{p}
    \;\;(\mathrm{mod}\; \mathbf{1}).
 
+.. _dataset_idealized_cell:
+
 Standardized crystal structure after idealization
 --------------------------------------------------
+
+``n_std_atoms``, ``std_lattice``, ``std_types``, and ``std_positions``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The standardized crystal structure after :ref:`idealization
 <def_idealize_cell>` corresponding to a Hall symbol is stored in
 ``n_std_atoms``, ``std_lattice``, ``std_types``, and
-``std_positions``.
-
-**At versions 1.10 or later**, ``std_mapping_to_primitive`` is
-available. This gives a list of atomic indices in the primitive cell
-of the standardized crystal structure, where the same number presents
-the same atom in the primitive cell. By collective the atoms having
-the same number, a set of relative lattice points in the the
-standardized crystal structure is obtained.
+``std_positions``. These output usually contains the rotation in Cartesian
+coordinates and rearrangement of the order atoms with respect to the
+input unit cell.
 
 **At versions 1.7.x and 1.8 or before**, the variable names of the
 members corresponding to those above are ``n_brv_atoms``,
 ``brv_lattice``, ``brv_types``, and ``brv_positions``, respectively.
+
+``std_mapping_to_primitive``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This is available **at versions 1.10 or later**. This gives a list of
+atomic indices in the primitive cell of the standardized crystal
+structure, where the same number presents the same atom in the
+primitive cell. By collective the atoms having the same number, a set
+of relative lattice points in the the standardized crystal structure
+is obtained.
+
 
 Crystallographic point group
 -----------------------------

@@ -56,6 +56,7 @@
       aria-labelledby="dLabelGlobalToc"><ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="install.html">How to install spglib C-API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">C-APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dataset.html">Spglib dataset</a></li>
 <li class="toctree-l1"><a class="reference internal" href="variable.html">Variables</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Python interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="interface.html">Fortran and Ruby interfaces</a></li>
@@ -480,7 +481,7 @@ tolerance between basis vectors. Normally it is not recommended to use
 this argument. See a bit more detail at
 <a class="reference internal" href="variable.html#variables-angle-tolerance"><span class="std std-ref">angle_tolerance</span></a>.</li>
 <li><code class="docutils literal notranslate"><span class="pre">hall_number</span></code> (see the definition of this number at
-<a class="reference internal" href="api.html#api-spg-get-dataset-spacegroup-type"><span class="std std-ref">Space group type</span></a>): The argument to
+<a class="reference internal" href="dataset.html#dataset-spg-get-dataset-spacegroup-type"><span class="std std-ref">Space group type</span></a>): The argument to
 constrain the space-group-type search only for the Hall symbol
 corresponding to it. The mapping from Hall symbols to a
 space-group-type is the many-to-one mapping. Without specifying this
@@ -498,7 +499,7 @@ input (the <code class="docutils literal notranslate"><span class="pre">cell</sp
 </ul>
 <p><code class="docutils literal notranslate"><span class="pre">dataset</span></code> is a dictionary. Short explanations of the values of the
 keys are shown below. More the detail may be found at
-<a class="reference internal" href="api.html#api-struct-spglibdataset"><span class="std std-ref">Dataset</span></a>.</p>
+<a class="reference internal" href="dataset.html#spglib-dataset"><span class="std std-ref">Spglib dataset</span></a>.</p>
 <ul class="simple">
 <li><code class="docutils literal notranslate"><span class="pre">number</span></code>: International space group number</li>
 <li><code class="docutils literal notranslate"><span class="pre">international</span></code>: International short symbol</li>
@@ -508,9 +509,9 @@ keys are shown below. More the detail may be found at
 <a class="reference internal" href="#py-method-get-spacegroup-type"><span class="std std-ref">get_spacegroup_type</span></a>.</li>
 <li><code class="docutils literal notranslate"><span class="pre">choice</span></code>: Centring, origin, basis vector setting</li>
 <li><code class="docutils literal notranslate"><span class="pre">transformation_matrix</span></code>: See the detail at
-<a class="reference internal" href="api.html#api-origin-shift-and-transformation"><span class="std std-ref">Origin shift and lattice transformation</span></a>.</li>
+<a class="reference internal" href="dataset.html#dataset-origin-shift-and-transformation"><span class="std std-ref">Transformation matrix and origin shift</span></a>.</li>
 <li><code class="docutils literal notranslate"><span class="pre">origin</span> <span class="pre">shift</span></code>: See the detail at
-<a class="reference internal" href="api.html#api-origin-shift-and-transformation"><span class="std std-ref">Origin shift and lattice transformation</span></a>.</li>
+<a class="reference internal" href="dataset.html#dataset-origin-shift-and-transformation"><span class="std std-ref">Transformation matrix and origin shift</span></a>.</li>
 <li><code class="docutils literal notranslate"><span class="pre">wyckoffs</span></code>: Wyckoff letters</li>
 <li><code class="docutils literal notranslate"><span class="pre">equivalent_atoms</span></code>: Mapping table to equivalent atoms</li>
 <li><code class="docutils literal notranslate"><span class="pre">mapping_to_primitive</span></code>: Mapping table to atoms in the primitive cell</li>
@@ -539,7 +540,7 @@ standardized crystal structure to the atoms in the primitive cell.</li>
 <code class="docutils literal notranslate"><span class="pre">hall_number</span></code> is returned by a dictionary where rotation parts and
 translation parts are accessed by the keys <code class="docutils literal notranslate"><span class="pre">rotations</span></code> and
 <code class="docutils literal notranslate"><span class="pre">translations</span></code>, respectively. The definition of <code class="docutils literal notranslate"><span class="pre">hall_number</span></code> is
-found at <a class="reference internal" href="api.html#api-spg-get-dataset-spacegroup-type"><span class="std std-ref">Space group type</span></a>.</p>
+found at <a class="reference internal" href="dataset.html#dataset-spg-get-dataset-spacegroup-type"><span class="std std-ref">Space group type</span></a>.</p>
 <p>When something wrong happened, <code class="docutils literal notranslate"><span class="pre">None</span></code> is returned.</p>
 </div>
 <div class="section" id="get-spacegroup-type">
@@ -552,7 +553,7 @@ found at <a class="reference internal" href="api.html#api-spg-get-dataset-spaceg
 database in spglib (spg_database.c). A dictionary is returned. To
 specify the space group type with a specific choice, <code class="docutils literal notranslate"><span class="pre">hall_number</span></code>
 is used. The definition of <code class="docutils literal notranslate"><span class="pre">hall_number</span></code> is found at
-<a class="reference internal" href="api.html#api-spg-get-dataset-spacegroup-type"><span class="std std-ref">Space group type</span></a>. The keys of the returned
+<a class="reference internal" href="dataset.html#dataset-spg-get-dataset-spacegroup-type"><span class="std std-ref">Space group type</span></a>. The keys of the returned
 dictionary is as follows:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">number</span>
 <span class="n">international_short</span>
@@ -580,7 +581,7 @@ dictionary is as follows:</p>
 <p><strong>experimental</strong></p>
 <p><code class="docutils literal notranslate"><span class="pre">hall_number</span></code> is obtained from the set of symmetry operations.  The
 definition of <code class="docutils literal notranslate"><span class="pre">hall_number</span></code> is found at
-<a class="reference internal" href="api.html#api-spg-get-dataset-spacegroup-type"><span class="std std-ref">Space group type</span></a> and the corresponding
+<a class="reference internal" href="dataset.html#dataset-spg-get-dataset-spacegroup-type"><span class="std std-ref">Space group type</span></a> and the corresponding
 space-group-type information is obtained through
 <a class="reference internal" href="#py-method-get-spacegroup-type"><span class="std std-ref">get_spacegroup_type</span></a>.</p>
 <p>This is expected to work well for the set of symmetry operations whose

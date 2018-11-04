@@ -101,6 +101,7 @@
 <li><a class="reference internal" href="#examples">Examples</a><ul>
 <li><a class="reference internal" href="#crystallographic-choice-and-rigid-rotation">Crystallographic choice and rigid rotation</a></li>
 <li><a class="reference internal" href="#transformation-to-a-primitive-cell">Transformation to a primitive cell</a></li>
+<li><a class="reference internal" href="#computing-rigid-rotation-coming-from-idealization">Computing rigid rotation coming from idealization</a></li>
 </ul>
 </li>
 </ul>
@@ -159,6 +160,7 @@ in the previous versions.</p>
 <li><a class="reference internal" href="#examples" id="id13">Examples</a><ul>
 <li><a class="reference internal" href="#crystallographic-choice-and-rigid-rotation" id="id14">Crystallographic choice and rigid rotation</a></li>
 <li><a class="reference internal" href="#transformation-to-a-primitive-cell" id="id15">Transformation to a primitive cell</a></li>
+<li><a class="reference internal" href="#computing-rigid-rotation-coming-from-idealization" id="id16">Computing rigid rotation coming from idealization</a></li>
 </ul>
 </li>
 </ul>
@@ -304,8 +306,8 @@ another point by</p>
 represented with respect to the same basis vectors <span class="math notranslate nohighlight">\((\mathbf{a},
 \mathbf{b}, \mathbf{c})\)</span>. Equivalently the rotation is achieved by
 rotating the basis vectors:</p>
-<div class="math notranslate nohighlight">
-\[(\tilde{\mathbf{a}}, \tilde{\mathbf{b}}, \tilde{\mathbf{c}}) =
+<div class="math notranslate nohighlight" id="equation-rotation-matrix">
+<span class="eqno">(10)<a class="headerlink" href="#equation-rotation-matrix" title="Permalink to this equation">¶</a></span>\[(\tilde{\mathbf{a}}, \tilde{\mathbf{b}}, \tilde{\mathbf{c}}) =
 (\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{W}\]</div>
 <p>with keeping the representation of the atomic point coordinates
 <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span> because</p>
@@ -336,10 +338,10 @@ rotating the basis vectors:</p>
 <div class="section" id="spglib-conventions-of-standardized-unit-cell">
 <span id="def-standardized-unit-cell"></span><h2><a class="toc-backref" href="#id9">Spglib conventions of standardized unit cell</a><a class="headerlink" href="#spglib-conventions-of-standardized-unit-cell" title="Permalink to this headline">¶</a></h2>
 <p>The standardization in spglib is achieved by <a class="reference internal" href="#def-transformation-and-origin-shift"><span class="std std-ref">a change of basis
-transformation</span></a> and
-possibly <a class="reference internal" href="#def-idealize-cell"><span class="std std-ref">idealization</span></a> including a rigid
-rotation in Cartesian coordinates. The later is made to remove
-distortion.</p>
+transformation</span></a>. If
+<a class="reference internal" href="#def-idealize-cell"><span class="std std-ref">idealization</span></a> as shown below is further
+applied, the crystal can be rigidly rotated in Cartesian
+coordinates.</p>
 <div class="section" id="choice-of-basis-vectors">
 <h3><a class="toc-backref" href="#id10">Choice of basis vectors</a><a class="headerlink" href="#choice-of-basis-vectors" title="Permalink to this headline">¶</a></h3>
 <p>Using the APIs <code class="docutils literal notranslate"><span class="pre">spg_get_dataset</span></code>,
@@ -362,7 +364,7 @@ types available, base centrings of A and C, rhombohedral (R), body centred
 (I), and face centred (F). The transformation is applied to the
 standardized unit cell by</p>
 <div class="math notranslate nohighlight" id="equation-transformation-to-primitive">
-<span class="eqno">(10)<a class="headerlink" href="#equation-transformation-to-primitive" title="Permalink to this equation">¶</a></span>\[( \mathbf{a}_\mathrm{p} \; \mathbf{b}_\mathrm{p} \; \mathbf{c}_\mathrm{p} )
+<span class="eqno">(11)<a class="headerlink" href="#equation-transformation-to-primitive" title="Permalink to this equation">¶</a></span>\[( \mathbf{a}_\mathrm{p} \; \mathbf{b}_\mathrm{p} \; \mathbf{c}_\mathrm{p} )
 = ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
 \mathbf{c}_\mathrm{s} )  \boldsymbol{P}_\mathrm{c},\]</div>
 <p>where <span class="math notranslate nohighlight">\(\mathbf{a}_\mathrm{p}\)</span>, <span class="math notranslate nohighlight">\(\mathbf{b}_\mathrm{p}\)</span>,
@@ -773,6 +775,94 @@ so the following script doesn’t give this basis vectors:</p>
 <p>which is equivalent to that we get manually. However using
 <code class="docutils literal notranslate"><span class="pre">standardize_cell</span></code>, distortion is not removed for the distorted
 crystal structure.</p>
+</div>
+<div class="section" id="computing-rigid-rotation-coming-from-idealization">
+<h3><a class="toc-backref" href="#id16">Computing rigid rotation coming from idealization</a><a class="headerlink" href="#computing-rigid-rotation-coming-from-idealization" title="Permalink to this headline">¶</a></h3>
+<p>In the following script, the transformation matrix obtained
+(<span class="math notranslate nohighlight">\(\boldsymbol{P}\)</span>) is not an identity matrix but the basis
+vectors obtained from the spglib dataset (see
+<a class="reference internal" href="dataset.html#dataset-idealized-cell"><span class="std std-ref">Standardized crystal structure after idealization</span></a>) are almost the same as those of the
+input unit cell. By</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">spglib</span>
+
+<span class="c1"># Mind that the a, b, c axes are given in row vectors here,</span>
+<span class="c1"># but the formulation above is given for the column vectors.</span>
+<span class="n">lattice</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">7.17851431</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>  <span class="c1"># a</span>
+           <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">3.99943947</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>  <span class="c1"># b</span>
+           <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">8.57154746</span><span class="p">]]</span>  <span class="c1"># c</span>
+<span class="n">points</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.84688439</span><span class="p">,</span> <span class="mf">0.1203133</span><span class="p">],</span>
+          <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.65311561</span><span class="p">,</span> <span class="mf">0.6203133</span><span class="p">],</span>
+          <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.34688439</span><span class="p">,</span> <span class="mf">0.3796867</span><span class="p">],</span>
+          <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.15311561</span><span class="p">,</span> <span class="mf">0.8796867</span><span class="p">],</span>
+          <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.34688439</span><span class="p">,</span> <span class="mf">0.1203133</span><span class="p">],</span>
+          <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.15311561</span><span class="p">,</span> <span class="mf">0.6203133</span><span class="p">],</span>
+          <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.84688439</span><span class="p">,</span> <span class="mf">0.3796867</span><span class="p">],</span>
+          <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.65311561</span><span class="p">,</span> <span class="mf">0.8796867</span><span class="p">]]</span>
+<span class="n">numbers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">8</span><span class="p">,]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+<span class="n">cell</span> <span class="o">=</span> <span class="p">(</span><span class="n">lattice</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">numbers</span><span class="p">)</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">spglib</span><span class="o">.</span><span class="n">get_symmetry_dataset</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Space group type: </span><span class="si">%s</span><span class="s2"> (</span><span class="si">%d</span><span class="s2">)&quot;</span>
+      <span class="o">%</span> <span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;international&#39;</span><span class="p">],</span> <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;number&#39;</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Transformation matrix:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;transformation_matrix&#39;</span><span class="p">]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  </span><span class="si">%2d</span><span class="s2"> </span><span class="si">%2d</span><span class="s2"> </span><span class="si">%2d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;std_lattice_after_idealization:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;std_lattice&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>we get</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Space</span> <span class="n">group</span> <span class="nb">type</span><span class="p">:</span> <span class="n">Cmce</span> <span class="p">(</span><span class="mi">64</span><span class="p">)</span>
+<span class="n">Transformation</span> <span class="n">matrix</span><span class="p">:</span>
+  <span class="o">-</span><span class="mi">1</span>  <span class="mi">0</span>  <span class="mi">0</span>
+   <span class="mi">0</span> <span class="o">-</span><span class="mi">1</span>  <span class="mi">0</span>
+   <span class="mi">0</span>  <span class="mi">0</span>  <span class="mi">1</span>
+<span class="n">std_lattice_after_idealization</span><span class="p">:</span>
+<span class="p">[[</span> <span class="mf">7.17851431</span>  <span class="mf">0.</span>          <span class="mf">0.</span>        <span class="p">]</span>
+ <span class="p">[</span> <span class="mf">0.</span>          <span class="mf">3.99943947</span>  <span class="mf">0.</span>        <span class="p">]</span>
+ <span class="p">[</span> <span class="mf">0.</span>          <span class="mf">0.</span>          <span class="mf">8.57154746</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>From Eq. <a class="reference internal" href="#equation-transformation-matrix">(6)</a>, the standardized basis vectors
+<strong>before</strong> idealization is obtained by (after <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">numpy</span> <span class="pre">as</span> <span class="pre">np</span></code>)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">std_lattice_before_idealization</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">lattice</span><span class="p">),</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;transformation_matrix&#39;</span><span class="p">]))</span><span class="o">.</span><span class="n">T</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">std_lattice_before_idealization</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>which is (in row vectors)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[[</span><span class="o">-</span><span class="mf">7.17851431</span>  <span class="mf">0.</span>          <span class="mf">0.</span>        <span class="p">]</span>
+ <span class="p">[</span> <span class="mf">0.</span>         <span class="o">-</span><span class="mf">3.99943947</span>  <span class="mf">0.</span>        <span class="p">]</span>
+ <span class="p">[</span> <span class="mf">0.</span>          <span class="mf">0.</span>          <span class="mf">8.57154746</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>This means that the crystal is rigidly rotated. The rotation matrix
+<span class="math notranslate nohighlight">\(\boldsymbol{R}\)</span> is obtained similarly by
+Eq. <a class="reference internal" href="#equation-rotation-matrix">(10)</a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">std_lattice_before_idealization</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
+           <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;std_lattice&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">R</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>which shows</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[[</span><span class="o">-</span><span class="mf">1.</span>  <span class="mf">0.</span>  <span class="mf">0.</span><span class="p">]</span>
+ <span class="p">[</span> <span class="mf">0.</span> <span class="o">-</span><span class="mf">1.</span>  <span class="mf">0.</span><span class="p">]</span>
+ <span class="p">[</span> <span class="mf">0.</span>  <span class="mf">0.</span>  <span class="mf">1.</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>The difference between this rotation matrix and the rotation part of
+the space group operation is that the former can be any continuous
+rigid rotation (i.e., ideally orthogonal matrix when without
+distortion)  but the later is limited to be one of the space group
+operations that the crystal has.</p>
+<p>In summary</p>
+<div class="math notranslate nohighlight">
+\[( \mathbf{a} \; \mathbf{b} \; \mathbf{c} ) \boldsymbol{P}^{-1}
+\boldsymbol{R} = ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s}
+\; \mathbf{c}_\mathrm{s} ).\]</div>
+<p>The atomic point coordinates are simply obtained by
+Eq. <a class="reference internal" href="#equation-change-of-basis-1">(8)</a> since only the transformation matrix
+changes them.</p>
 </div>
 </div>
 </div>

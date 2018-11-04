@@ -361,7 +361,7 @@ The arguments are:
   this argument. See a bit more detail at
   :ref:`variables_angle_tolerance`.
 * ``hall_number`` (see the definition of this number at
-  :ref:`api_spg_get_dataset_spacegroup_type`): The argument to
+  :ref:`dataset_spg_get_dataset_spacegroup_type`): The argument to
   constrain the space-group-type search only for the Hall symbol
   corresponding to it. The mapping from Hall symbols to a
   space-group-type is the many-to-one mapping. Without specifying this
@@ -380,7 +380,7 @@ The arguments are:
 
 ``dataset`` is a dictionary. Short explanations of the values of the
 keys are shown below. More the detail may be found at
-:ref:`api_struct_spglibdataset`.
+:ref:`spglib_dataset`.
 
 * ``number``: International space group number
 * ``international``: International short symbol
@@ -390,9 +390,9 @@ keys are shown below. More the detail may be found at
   :ref:`py_method_get_spacegroup_type`.
 * ``choice``: Centring, origin, basis vector setting
 * ``transformation_matrix``: See the detail at
-  :ref:`api_origin_shift_and_transformation`.
+  :ref:`dataset_origin_shift_and_transformation`.
 * ``origin shift``: See the detail at
-  :ref:`api_origin_shift_and_transformation`.
+  :ref:`dataset_origin_shift_and_transformation`.
 * ``wyckoffs``: Wyckoff letters
 * ``equivalent_atoms``: Mapping table to equivalent atoms
 * ``mapping_to_primitive``: Mapping table to atoms in the primitive cell
@@ -429,7 +429,7 @@ A set of crystallographic symmetry operations corresponding to
 ``hall_number`` is returned by a dictionary where rotation parts and
 translation parts are accessed by the keys ``rotations`` and
 ``translations``, respectively. The definition of ``hall_number`` is
-found at :ref:`api_spg_get_dataset_spacegroup_type`.
+found at :ref:`dataset_spg_get_dataset_spacegroup_type`.
 
 When something wrong happened, ``None`` is returned.
 
@@ -448,7 +448,7 @@ This function allows to directly access to the space-group-type
 database in spglib (spg_database.c). A dictionary is returned. To
 specify the space group type with a specific choice, ``hall_number``
 is used. The definition of ``hall_number`` is found at
-:ref:`api_spg_get_dataset_spacegroup_type`. The keys of the returned
+:ref:`dataset_spg_get_dataset_spacegroup_type`. The keys of the returned
 dictionary is as follows:
 
 ::
@@ -481,7 +481,7 @@ When something wrong happened, ``None`` is returned.
 
 ``hall_number`` is obtained from the set of symmetry operations.  The
 definition of ``hall_number`` is found at
-:ref:`api_spg_get_dataset_spacegroup_type` and the corresponding
+:ref:`dataset_spg_get_dataset_spacegroup_type` and the corresponding
 space-group-type information is obtained through
 :ref:`py_method_get_spacegroup_type`.
 

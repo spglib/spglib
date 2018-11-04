@@ -291,11 +291,14 @@ atomic point coordinates and types are overwritten in <code class="docutils lite
 <code class="docutils literal notranslate"><span class="pre">position</span></code> and <code class="docutils literal notranslate"><span class="pre">types</span></code> than the those size of the input unit cell
 is required to store a standardized unit cell with face centring found
 in the case that the input unit cell is a primitive cell.</p>
-<p><code class="docutils literal notranslate"><span class="pre">no_idealize=1</span></code> disables to idealize lengths and angles of basis
-vectors and positions of atoms according to crystal symmetry. The
-detail of the idealization (<code class="docutils literal notranslate"><span class="pre">no_idealize=0</span></code>) is written at
-<a class="reference internal" href="definition.html#def-idealize-cell"><span class="std std-ref">Idealization of unit cell structure</span></a>. <code class="docutils literal notranslate"><span class="pre">no_idealize=1</span></code> may be used when we want to
-leave basis vectors and atomic positions in Cartesianl coordinates
+<p><code class="docutils literal notranslate"><span class="pre">no_idealize=0</span></code> is used to idealize the lengths and angles of basis
+vectors with adjusting the positions of atoms to nearest exact
+positions according to crystal symmetry. However the crystal can be
+rotated in Cartesian coordinates by the idealization of the basis
+vectors.  <code class="docutils literal notranslate"><span class="pre">no_idealize=1</span></code> disables this. The detail of the
+idealization (<code class="docutils literal notranslate"><span class="pre">no_idealize=0</span></code>) is written at
+<a class="reference internal" href="definition.html#def-idealize-cell"><span class="std std-ref">Idealization of unit cell structure</span></a>. <code class="docutils literal notranslate"><span class="pre">no_idealize=1</span></code> may be useful when we want
+to leave basis vectors and atomic positions in Cartesianl coordinates
 fixed.</p>
 <div class="line-block">
 <div class="line"><br /></div>
@@ -316,7 +319,10 @@ failed.</p>
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">lattice</span></code>, <code class="docutils literal notranslate"><span class="pre">position</span></code>, and <code class="docutils literal notranslate"><span class="pre">types</span></code> are overwritten. Number of
-atoms in the found primitive cell is returned.</p>
+atoms in the found primitive cell is returned. The crystal can be
+rotated by this function. To avoid this, please use
+<code class="docutils literal notranslate"><span class="pre">spg_standardize_cell</span></code> with <code class="docutils literal notranslate"><span class="pre">to_primitive=1</span></code> and <code class="docutils literal notranslate"><span class="pre">no_idealize=1</span></code>
+although the crystal structure is not idealized.</p>
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
@@ -359,7 +365,7 @@ database and the space group type is determined. The result is
 returned as the <code class="docutils literal notranslate"><span class="pre">SpglibDataset</span></code> structure as a dataset. The default
 choice of setting of basis vectors in spglib is explained in the
 manuscript found at <a class="reference external" href="http://arxiv.org/abs/1506.01455">http://arxiv.org/abs/1506.01455</a>.</p>
-<p>The detail of the dataset is given at <a class="reference internal" href="dataset.html#api-struct-spglibdataset"><span class="std std-ref">Spglib dataset</span></a>.</p>
+<p>The detail of the dataset is given at <a class="reference internal" href="dataset.html#spglib-dataset"><span class="std std-ref">Spglib dataset</span></a>.</p>
 <p>Dataset corresponding to the space group type in the standard setting
 is obtained by <code class="docutils literal notranslate"><span class="pre">spg_get_dataset</span></code>. If this symmetry search fails,
 <code class="docutils literal notranslate"><span class="pre">NULL</span></code> is returned in version 1.8.1 or later (spacegroup_number = 0
@@ -414,7 +420,7 @@ freed by calling <code class="docutils literal notranslate"><span class="pre">sp
 database in spglib (spg_database.c). To specify the space group type
 with a specific choice, <code class="docutils literal notranslate"><span class="pre">hall_number</span></code> is used. The definition of
 <code class="docutils literal notranslate"><span class="pre">hall_number</span></code> is found at
-<a class="reference internal" href="dataset.html#api-spg-get-dataset-spacegroup-type"><span class="std std-ref">Space group type</span></a>.
+<a class="reference internal" href="dataset.html#dataset-spg-get-dataset-spacegroup-type"><span class="std std-ref">Space group type</span></a>.
 <code class="docutils literal notranslate"><span class="pre">number</span> <span class="pre">=</span> <span class="pre">0</span></code> is returned when it failed.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SpglibSpacegroupType</span> <span class="n">spg_get_spacegroup_type</span><span class="p">(</span><span class="n">const</span> <span class="nb">int</span> <span class="n">hall_number</span><span class="p">)</span>
 </pre></div>
@@ -445,7 +451,7 @@ with a specific choice, <code class="docutils literal notranslate"><span class="
 in the spglib database (spg_database.c). To specify the space group
 type with a specific choice, <code class="docutils literal notranslate"><span class="pre">hall_number</span></code> is used. The definition
 of <code class="docutils literal notranslate"><span class="pre">hall_number</span></code> is found at
-<a class="reference internal" href="dataset.html#api-spg-get-dataset-spacegroup-type"><span class="std std-ref">Space group type</span></a>. 0 is returned when it
+<a class="reference internal" href="dataset.html#dataset-spg-get-dataset-spacegroup-type"><span class="std std-ref">Space group type</span></a>. 0 is returned when it
 failed.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">spg_get_symmetry_from_database</span><span class="p">(</span><span class="nb">int</span> <span class="n">rotations</span><span class="p">[</span><span class="mi">192</span><span class="p">][</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span>
                                    <span class="n">double</span> <span class="n">translations</span><span class="p">[</span><span class="mi">192</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span>
@@ -622,7 +628,7 @@ are returned as the return value.</p>
 <p><strong>experimental</strong></p>
 <p><code class="docutils literal notranslate"><span class="pre">hall_number</span></code> is obtained from the set of symmetry operations.  The
 definition of <code class="docutils literal notranslate"><span class="pre">hall_number</span></code> is found at
-<a class="reference internal" href="dataset.html#api-spg-get-dataset-spacegroup-type"><span class="std std-ref">Space group type</span></a> and the corresponding
+<a class="reference internal" href="dataset.html#dataset-spg-get-dataset-spacegroup-type"><span class="std std-ref">Space group type</span></a> and the corresponding
 space-group-type information is obtained through
 <a class="reference internal" href="#api-spg-spacegroup-type"><span class="std std-ref">spg_get_spacegroup_type</span></a>.</p>
 <p>This is expected to work well for the set of symmetry operations whose
