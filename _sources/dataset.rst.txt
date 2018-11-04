@@ -66,8 +66,12 @@ The (full) Hermann–Mauguin notation of space group type is given by .
 ``hall_symbol``
 ^^^^^^^^^^^^^^^^
 
-The Hall symbol is stored in . The information on unique axis, setting
-or cell choices is found in ``choice``.
+The Hall symbol is stored here.
+
+``choice``
+^^^^^^^^^^^
+
+The information on unique axis, setting or cell choices.
 
 Symmetry operations
 --------------------

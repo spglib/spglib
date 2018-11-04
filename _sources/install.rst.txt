@@ -23,17 +23,18 @@ Compiling using cmake
      % tar xvfz spglib-1.9.8.tar.gz
      % cd spglib-1.9.8
 
-   The current directory is ``PROJECT_SOURCE_DIR``.
+2. Build and install in ``_build`` directory by
 
-2. Create a directory for the build::
+   ::
 
-     % mkdir _build; cd _build
-     % cmake ..
+     % mkdir _build && _build
+     % cmake -DCMAKE_INSTALL_PREFIX="" ..
      % make
-     % make install
+     % make DESTDIR=/some/where install
 
-3. The libraries are installed at ``PROJECT_SOURCE_DIR/lib`` and the
-   header file is installed at ``PROJECT_SOURCE_DIR/include``.
+   The libraries are installed at ``/some/where/lib`` and the
+   header file is installed at ``/some/where/include``.
+
 
 Compiling using configure script
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -59,20 +60,6 @@ Compiling using configure script
 
 3. The libraries are installed at ``INSTALLATION_LOCATION/lib`` or found in
    ``src/.libs`` if you don't run ``make install``.
-
-OpenMP
-^^^^^^^
-
-Bottle neck of symmetry operation search may be eased using the OpenMP
-threading. In the case of gcc (> 4.2), set the following environment
-variables before running configure script::
-
-   % export LIBS='-lgomp'
-   % export CFLAGS='-fopenmp'
-
-Overhead of threading is relatively large when the number of atoms is
-small. Therefore the threading is activated when the number of atoms
->= 1000.
 
 Usage
 ------

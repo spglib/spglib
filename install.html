@@ -56,6 +56,7 @@
       aria-labelledby="dLabelGlobalToc"><ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">How to install spglib C-API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">C-APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dataset.html">Spglib dataset</a></li>
 <li class="toctree-l1"><a class="reference internal" href="variable.html">Variables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="python-spglib.html">Python interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="interface.html">Fortran and Ruby interfaces</a></li>
@@ -78,7 +79,6 @@
 <li><a class="reference internal" href="#install">Install</a><ul>
 <li><a class="reference internal" href="#compiling-using-cmake">Compiling using cmake</a></li>
 <li><a class="reference internal" href="#compiling-using-configure-script">Compiling using configure script</a></li>
-<li><a class="reference internal" href="#openmp">OpenMP</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#usage">Usage</a></li>
@@ -135,18 +135,16 @@ git-clone the spglib repository by</p>
 <span class="o">%</span> <span class="n">cd</span> <span class="n">spglib</span><span class="o">-</span><span class="mf">1.9</span><span class="o">.</span><span class="mi">8</span>
 </pre></div>
 </div>
-<p>The current directory is <code class="docutils literal notranslate"><span class="pre">PROJECT_SOURCE_DIR</span></code>.</p>
 </li>
-<li><p class="first">Create a directory for the build:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">mkdir</span> <span class="n">_build</span><span class="p">;</span> <span class="n">cd</span> <span class="n">_build</span>
-<span class="o">%</span> <span class="n">cmake</span> <span class="o">..</span>
+<li><p class="first">Build and install in <code class="docutils literal notranslate"><span class="pre">_build</span></code> directory by</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">mkdir</span> <span class="n">_build</span> <span class="o">&amp;&amp;</span> <span class="n">_build</span>
+<span class="o">%</span> <span class="n">cmake</span> <span class="o">-</span><span class="n">DCMAKE_INSTALL_PREFIX</span><span class="o">=</span><span class="s2">&quot;&quot;</span> <span class="o">..</span>
 <span class="o">%</span> <span class="n">make</span>
-<span class="o">%</span> <span class="n">make</span> <span class="n">install</span>
+<span class="o">%</span> <span class="n">make</span> <span class="n">DESTDIR</span><span class="o">=/</span><span class="n">some</span><span class="o">/</span><span class="n">where</span> <span class="n">install</span>
 </pre></div>
 </div>
-</li>
-<li><p class="first">The libraries are installed at <code class="docutils literal notranslate"><span class="pre">PROJECT_SOURCE_DIR/lib</span></code> and the
-header file is installed at <code class="docutils literal notranslate"><span class="pre">PROJECT_SOURCE_DIR/include</span></code>.</p>
+<p>The libraries are installed at <code class="docutils literal notranslate"><span class="pre">/some/where/lib</span></code> and the
+header file is installed at <code class="docutils literal notranslate"><span class="pre">/some/where/include</span></code>.</p>
 </li>
 </ol>
 </div>
@@ -177,19 +175,6 @@ autotools and libtool as follows:</p>
 <code class="docutils literal notranslate"><span class="pre">src/.libs</span></code> if you don’t run <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code>.</p>
 </li>
 </ol>
-</div>
-<div class="section" id="openmp">
-<h3>OpenMP<a class="headerlink" href="#openmp" title="Permalink to this headline">¶</a></h3>
-<p>Bottle neck of symmetry operation search may be eased using the OpenMP
-threading. In the case of gcc (&gt; 4.2), set the following environment
-variables before running configure script:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">export</span> <span class="n">LIBS</span><span class="o">=</span><span class="s1">&#39;-lgomp&#39;</span>
-<span class="o">%</span> <span class="n">export</span> <span class="n">CFLAGS</span><span class="o">=</span><span class="s1">&#39;-fopenmp&#39;</span>
-</pre></div>
-</div>
-<p>Overhead of threading is relatively large when the number of atoms is
-small. Therefore the threading is activated when the number of atoms
-&gt;= 1000.</p>
 </div>
 </div>
 <div class="section" id="usage">
