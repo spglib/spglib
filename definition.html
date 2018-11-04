@@ -55,6 +55,7 @@
       aria-labelledby="dLabelGlobalToc"><ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="install.html">How to install spglib C-API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">C-APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dataset.html">Spglib dataset</a></li>
 <li class="toctree-l1"><a class="reference internal" href="variable.html">Variables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="python-spglib.html">Python interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="interface.html">Fortran and Ruby interfaces</a></li>
@@ -74,11 +75,14 @@
       aria-labelledby="dLabelLocalToc"><ul>
 <li><a class="reference internal" href="#">Definitions and conventions</a><ul>
 <li><a class="reference internal" href="#references">References</a></li>
+<li><a class="reference internal" href="#space-group-operation-and-change-of-basis">Space group operation and change of basis</a><ul>
 <li><a class="reference internal" href="#basis-vectors-mathbf-a-mathbf-b-mathbf-c-or-mathbf-a-1-mathbf-a-2-mathbf-a-3">Basis vectors <span class="math notranslate nohighlight">\((\mathbf{a}, \mathbf{b}, \mathbf{c})\)</span> or <span class="math notranslate nohighlight">\((\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)\)</span></a></li>
 <li><a class="reference internal" href="#atomic-point-coordinates-boldsymbol-x">Atomic point coordinates <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span></a></li>
 <li><a class="reference internal" href="#symmetry-operation-boldsymbol-w-boldsymbol-w">Symmetry operation <span class="math notranslate nohighlight">\((\boldsymbol{W}, \boldsymbol{w})\)</span></a></li>
 <li><a class="reference internal" href="#transformation-matrix-boldsymbol-p-and-origin-shift-boldsymbol-p">Transformation matrix <span class="math notranslate nohighlight">\(\boldsymbol{P}\)</span> and origin shift <span class="math notranslate nohighlight">\(\boldsymbol{p}\)</span></a></li>
-<li><a class="reference internal" href="#conventions-of-standardized-unit-cell">Conventions of standardized unit cell</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#spglib-conventions-of-standardized-unit-cell">Spglib conventions of standardized unit cell</a><ul>
 <li><a class="reference internal" href="#choice-of-basis-vectors">Choice of basis vectors</a></li>
 <li><a class="reference internal" href="#transformation-to-the-primitive-cell">Transformation to the primitive cell</a></li>
 <li><a class="reference internal" href="#def-idealize-cell">Idealization of unit cell structure</a><ul>
@@ -93,8 +97,11 @@
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#example-crystallographic-choice-and-rigid-rotation">Example: Crystallographic choice and rigid rotation</a></li>
-<li><a class="reference internal" href="#example-transformation-to-a-primitive-cell">Example: Transformation to a primitive cell</a></li>
+<li><a class="reference internal" href="#examples">Examples</a><ul>
+<li><a class="reference internal" href="#crystallographic-choice-and-rigid-rotation">Crystallographic choice and rigid rotation</a></li>
+<li><a class="reference internal" href="#transformation-to-a-primitive-cell">Transformation to a primitive cell</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -127,33 +134,39 @@
     <div class="col-md-12 content">
       
   <div class="section" id="definitions-and-conventions">
-<h1>Definitions and conventions<a class="headerlink" href="#definitions-and-conventions" title="Permalink to this headline">¶</a></h1>
+<span id="id1"></span><h1>Definitions and conventions<a class="headerlink" href="#definitions-and-conventions" title="Permalink to this headline">¶</a></h1>
 <p>Information in this page is valid for spglib 1.8.1 or later. The
 definitions of transformation matrix and origin shift were different
 in the previous versions.</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
-<li><a class="reference internal" href="#references" id="id1">References</a></li>
-<li><a class="reference internal" href="#basis-vectors-mathbf-a-mathbf-b-mathbf-c-or-mathbf-a-1-mathbf-a-2-mathbf-a-3" id="id2">Basis vectors <span class="math notranslate nohighlight">\((\mathbf{a}, \mathbf{b}, \mathbf{c})\)</span> or <span class="math notranslate nohighlight">\((\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)\)</span></a></li>
-<li><a class="reference internal" href="#atomic-point-coordinates-boldsymbol-x" id="id3">Atomic point coordinates <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span></a></li>
-<li><a class="reference internal" href="#symmetry-operation-boldsymbol-w-boldsymbol-w" id="id4">Symmetry operation <span class="math notranslate nohighlight">\((\boldsymbol{W}, \boldsymbol{w})\)</span></a></li>
-<li><a class="reference internal" href="#transformation-matrix-boldsymbol-p-and-origin-shift-boldsymbol-p" id="id5">Transformation matrix <span class="math notranslate nohighlight">\(\boldsymbol{P}\)</span> and origin shift <span class="math notranslate nohighlight">\(\boldsymbol{p}\)</span></a></li>
-<li><a class="reference internal" href="#conventions-of-standardized-unit-cell" id="id6">Conventions of standardized unit cell</a><ul>
-<li><a class="reference internal" href="#choice-of-basis-vectors" id="id7">Choice of basis vectors</a></li>
-<li><a class="reference internal" href="#transformation-to-the-primitive-cell" id="id8">Transformation to the primitive cell</a></li>
-<li><a class="reference internal" href="#def-idealize-cell" id="id9">Idealization of unit cell structure</a></li>
+<li><a class="reference internal" href="#references" id="id2">References</a></li>
+<li><a class="reference internal" href="#space-group-operation-and-change-of-basis" id="id3">Space group operation and change of basis</a><ul>
+<li><a class="reference internal" href="#basis-vectors-mathbf-a-mathbf-b-mathbf-c-or-mathbf-a-1-mathbf-a-2-mathbf-a-3" id="id4">Basis vectors <span class="math notranslate nohighlight">\((\mathbf{a}, \mathbf{b}, \mathbf{c})\)</span> or <span class="math notranslate nohighlight">\((\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)\)</span></a></li>
+<li><a class="reference internal" href="#atomic-point-coordinates-boldsymbol-x" id="id5">Atomic point coordinates <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span></a></li>
+<li><a class="reference internal" href="#symmetry-operation-boldsymbol-w-boldsymbol-w" id="id6">Symmetry operation <span class="math notranslate nohighlight">\((\boldsymbol{W}, \boldsymbol{w})\)</span></a></li>
+<li><a class="reference internal" href="#transformation-matrix-boldsymbol-p-and-origin-shift-boldsymbol-p" id="id7">Transformation matrix <span class="math notranslate nohighlight">\(\boldsymbol{P}\)</span> and origin shift <span class="math notranslate nohighlight">\(\boldsymbol{p}\)</span></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#example-crystallographic-choice-and-rigid-rotation" id="id10">Example: Crystallographic choice and rigid rotation</a></li>
-<li><a class="reference internal" href="#example-transformation-to-a-primitive-cell" id="id11">Example: Transformation to a primitive cell</a></li>
+<li><a class="reference internal" href="#spglib-conventions-of-standardized-unit-cell" id="id8">Spglib conventions of standardized unit cell</a><ul>
+<li><a class="reference internal" href="#choice-of-basis-vectors" id="id9">Choice of basis vectors</a></li>
+<li><a class="reference internal" href="#transformation-to-the-primitive-cell" id="id10">Transformation to the primitive cell</a></li>
+<li><a class="reference internal" href="#def-idealize-cell" id="id11">Idealization of unit cell structure</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#examples" id="id12">Examples</a><ul>
+<li><a class="reference internal" href="#crystallographic-choice-and-rigid-rotation" id="id13">Crystallographic choice and rigid rotation</a></li>
+<li><a class="reference internal" href="#transformation-to-a-primitive-cell" id="id14">Transformation to a primitive cell</a></li>
+</ul>
+</li>
 </ul>
 </div>
 <div class="section" id="references">
-<h2><a class="toc-backref" href="#id1">References</a><a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id2">References</a><a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
 <p>Some references about crystallographic definitions and conventions are
 shown below. Though spglib may not follow them fully, it doesn’t mean
-spglib doesn’t respect them, rather it is due to the lack of
-understanding by the author of spglib.</p>
+spglib doesn’t respect them, rather it is due to spglib-author’s lack of
+understanding the crystallography ashamedly.</p>
 <ul class="simple">
 <li><a class="reference external" href="http://it.iucr.org/">International Tables for Crystallography</a>.</li>
 <li><a class="reference external" href="http://www.cryst.ehu.es/">Bilbao Crystallographic Server</a>. The
@@ -175,11 +188,13 @@ crystal-structure data”, Acta Cryst. A
 Cryst. A <strong>37</strong>, 517-525 (1981) [<a class="reference external" href="https://doi.org/10.1107/S0567739481001228">doi1</a>]</li>
 </ul>
 </div>
+<div class="section" id="space-group-operation-and-change-of-basis">
+<h2><a class="toc-backref" href="#id3">Space group operation and change of basis</a><a class="headerlink" href="#space-group-operation-and-change-of-basis" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="basis-vectors-mathbf-a-mathbf-b-mathbf-c-or-mathbf-a-1-mathbf-a-2-mathbf-a-3">
-<h2><a class="toc-backref" href="#id2">Basis vectors <span class="math notranslate nohighlight">\((\mathbf{a}, \mathbf{b}, \mathbf{c})\)</span> or <span class="math notranslate nohighlight">\((\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)\)</span></a><a class="headerlink" href="#basis-vectors-mathbf-a-mathbf-b-mathbf-c-or-mathbf-a-1-mathbf-a-2-mathbf-a-3" title="Permalink to this headline">¶</a></h2>
+<h3><a class="toc-backref" href="#id4">Basis vectors <span class="math notranslate nohighlight">\((\mathbf{a}, \mathbf{b}, \mathbf{c})\)</span> or <span class="math notranslate nohighlight">\((\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)\)</span></a><a class="headerlink" href="#basis-vectors-mathbf-a-mathbf-b-mathbf-c-or-mathbf-a-1-mathbf-a-2-mathbf-a-3" title="Permalink to this headline">¶</a></h3>
 <p>In spglib, basis vectors are represented by three column vectors:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\mathbf{a}= \begin{pmatrix}
+<div class="math notranslate nohighlight" id="equation-basis-vectors">
+<span class="eqno">(1)<a class="headerlink" href="#equation-basis-vectors" title="Permalink to this equation">¶</a></span>\[\begin{split}\mathbf{a}= \begin{pmatrix}
 a_x \\
 a_y \\
 a_z \\
@@ -199,39 +214,39 @@ c_z \\
 <span class="math notranslate nohighlight">\((\mathbf{a}, \mathbf{b}, \mathbf{c})\)</span>.</p>
 </div>
 <div class="section" id="atomic-point-coordinates-boldsymbol-x">
-<h2><a class="toc-backref" href="#id3">Atomic point coordinates <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span></a><a class="headerlink" href="#atomic-point-coordinates-boldsymbol-x" title="Permalink to this headline">¶</a></h2>
+<h3><a class="toc-backref" href="#id5">Atomic point coordinates <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span></a><a class="headerlink" href="#atomic-point-coordinates-boldsymbol-x" title="Permalink to this headline">¶</a></h3>
 <p>Coordinates of an atomic point <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span> are represented
 as three fractional values relative to basis vectors as follows,</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\boldsymbol{x}= \begin{pmatrix}
+<div class="math notranslate nohighlight" id="equation-coordinate-triplet">
+<span class="eqno">(2)<a class="headerlink" href="#equation-coordinate-triplet" title="Permalink to this equation">¶</a></span>\[\begin{split}\boldsymbol{x}= \begin{pmatrix}
 x_1 \\
 x_2 \\
 x_3 \\
 \end{pmatrix},\end{split}\]</div>
 <p>where <span class="math notranslate nohighlight">\(0 \le x_i &lt; 1\)</span>. A position vector <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> in
 Cartesian coordinates is obtained by</p>
-<div class="math notranslate nohighlight">
-\[\mathbf{x} = (\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{x}.\]</div>
+<div class="math notranslate nohighlight" id="equation-position-vector-1">
+<span class="eqno">(3)<a class="headerlink" href="#equation-position-vector-1" title="Permalink to this equation">¶</a></span>\[\mathbf{x} = (\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{x}.\]</div>
 <p>or</p>
-<div class="math notranslate nohighlight">
-\[\mathbf{x} = \sum_i x_i \mathbf{a}_i.\]</div>
+<div class="math notranslate nohighlight" id="equation-position-vector-2">
+<span class="eqno">(4)<a class="headerlink" href="#equation-position-vector-2" title="Permalink to this equation">¶</a></span>\[\mathbf{x} = \sum_i x_i \mathbf{a}_i.\]</div>
 </div>
 <div class="section" id="symmetry-operation-boldsymbol-w-boldsymbol-w">
-<h2><a class="toc-backref" href="#id4">Symmetry operation <span class="math notranslate nohighlight">\((\boldsymbol{W}, \boldsymbol{w})\)</span></a><a class="headerlink" href="#symmetry-operation-boldsymbol-w-boldsymbol-w" title="Permalink to this headline">¶</a></h2>
+<h3><a class="toc-backref" href="#id6">Symmetry operation <span class="math notranslate nohighlight">\((\boldsymbol{W}, \boldsymbol{w})\)</span></a><a class="headerlink" href="#symmetry-operation-boldsymbol-w-boldsymbol-w" title="Permalink to this headline">¶</a></h3>
 <p>A symmetry operation consists of a pair of the rotation part
 <span class="math notranslate nohighlight">\(\boldsymbol{W}\)</span> and translation part <span class="math notranslate nohighlight">\(\boldsymbol{w}\)</span>,
 and is represented as <span class="math notranslate nohighlight">\((\boldsymbol{W}, \boldsymbol{w})\)</span> in the
 spglib document. The symmetry operation transfers <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span> to
 <span class="math notranslate nohighlight">\(\tilde{\boldsymbol{x}}\)</span> as follows:</p>
-<div class="math notranslate nohighlight">
-\[\tilde{\boldsymbol{x}} = \boldsymbol{W}\boldsymbol{x} + \boldsymbol{w}.\]</div>
+<div class="math notranslate nohighlight" id="equation-space-group-operation">
+<span class="eqno">(5)<a class="headerlink" href="#equation-space-group-operation" title="Permalink to this equation">¶</a></span>\[\tilde{\boldsymbol{x}} = \boldsymbol{W}\boldsymbol{x} + \boldsymbol{w}.\]</div>
 </div>
 <div class="section" id="transformation-matrix-boldsymbol-p-and-origin-shift-boldsymbol-p">
-<span id="def-transformation-and-origin-shift"></span><h2><a class="toc-backref" href="#id5">Transformation matrix <span class="math notranslate nohighlight">\(\boldsymbol{P}\)</span> and origin shift <span class="math notranslate nohighlight">\(\boldsymbol{p}\)</span></a><a class="headerlink" href="#transformation-matrix-boldsymbol-p-and-origin-shift-boldsymbol-p" title="Permalink to this headline">¶</a></h2>
+<span id="def-transformation-and-origin-shift"></span><h3><a class="toc-backref" href="#id7">Transformation matrix <span class="math notranslate nohighlight">\(\boldsymbol{P}\)</span> and origin shift <span class="math notranslate nohighlight">\(\boldsymbol{p}\)</span></a><a class="headerlink" href="#transformation-matrix-boldsymbol-p-and-origin-shift-boldsymbol-p" title="Permalink to this headline">¶</a></h3>
 <p>The transformation matrix <span class="math notranslate nohighlight">\(\boldsymbol{P}\)</span> changes choice of
 basis vectors as follows</p>
-<div class="math notranslate nohighlight">
-\[( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
+<div class="math notranslate nohighlight" id="equation-transformation-matrix">
+<span class="eqno">(6)<a class="headerlink" href="#equation-transformation-matrix" title="Permalink to this equation">¶</a></span>\[( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
 = ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
 \mathbf{c}_\mathrm{s} )  \boldsymbol{P},\]</div>
 <p>where <span class="math notranslate nohighlight">\(( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )\)</span> and <span class="math notranslate nohighlight">\((
@@ -243,8 +258,8 @@ changes the choices of basis vectors.</p>
 <p>The origin shift <span class="math notranslate nohighlight">\(\boldsymbol{p}\)</span> gives the vector from the
 origin of the standardized system <span class="math notranslate nohighlight">\(\boldsymbol{O}_\mathrm{s}\)</span> to
 the origin of the arbitrary system <span class="math notranslate nohighlight">\(\boldsymbol{O}\)</span>,</p>
-<div class="math notranslate nohighlight">
-\[\boldsymbol{p} = \boldsymbol{O} - \boldsymbol{O}_\mathrm{s}.\]</div>
+<div class="math notranslate nohighlight" id="equation-origin-shift">
+<span class="eqno">(7)<a class="headerlink" href="#equation-origin-shift" title="Permalink to this equation">¶</a></span>\[\boldsymbol{p} = \boldsymbol{O} - \boldsymbol{O}_\mathrm{s}.\]</div>
 <p>Origin shift <strong>doesn’t</strong> move a crystal in Cartesian coordinates, but
 just changes the origin to measure the coordinates of atomic points.</p>
 <p>A change of basis is described by the combination of the
@@ -253,12 +268,12 @@ transformation matrix and the origin shift denoted by
 transformation matrix is applied and then origin shift. The points in
 the standardized system <span class="math notranslate nohighlight">\(\boldsymbol{x}_\mathrm{s}\)</span> and
 arbitrary system <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span> are related by</p>
-<div class="math notranslate nohighlight">
-\[\boldsymbol{x}_\mathrm{s} = \boldsymbol{P}\boldsymbol{x} +
+<div class="math notranslate nohighlight" id="equation-change-of-basis-1">
+<span class="eqno">(8)<a class="headerlink" href="#equation-change-of-basis-1" title="Permalink to this equation">¶</a></span>\[\boldsymbol{x}_\mathrm{s} = \boldsymbol{P}\boldsymbol{x} +
 \boldsymbol{p},\]</div>
 <p>or equivalently,</p>
-<div class="math notranslate nohighlight">
-\[\boldsymbol{x} = \boldsymbol{P}^{-1}\boldsymbol{x}_\mathrm{s} -
+<div class="math notranslate nohighlight" id="equation-change-of-basis-2">
+<span class="eqno">(9)<a class="headerlink" href="#equation-change-of-basis-2" title="Permalink to this equation">¶</a></span>\[\boldsymbol{x} = \boldsymbol{P}^{-1}\boldsymbol{x}_\mathrm{s} -
 \boldsymbol{P}^{-1}\boldsymbol{p}.\]</div>
 <p>A graphical example is shown below.</p>
 <p><a class="reference internal" href="_images/change-of-basis.png"><img alt="cob" src="_images/change-of-basis.png" style="width: 20%;" /></a></p>
@@ -271,36 +286,37 @@ arbitrary system <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</
 0 &amp; 0 &amp; 1
 \end{pmatrix}.\end{split}\]</div>
 </div>
-<div class="section" id="conventions-of-standardized-unit-cell">
-<span id="def-standardized-unit-cell"></span><h2><a class="toc-backref" href="#id6">Conventions of standardized unit cell</a><a class="headerlink" href="#conventions-of-standardized-unit-cell" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="spglib-conventions-of-standardized-unit-cell">
+<span id="def-standardized-unit-cell"></span><h2><a class="toc-backref" href="#id8">Spglib conventions of standardized unit cell</a><a class="headerlink" href="#spglib-conventions-of-standardized-unit-cell" title="Permalink to this headline">¶</a></h2>
 <p>The standardization in spglib is achieved by <a class="reference internal" href="#def-transformation-and-origin-shift"><span class="std std-ref">a change of basis
 transformation</span></a> and
 possibly <a class="reference internal" href="#def-idealize-cell"><span class="std std-ref">idealization</span></a> including a rigid
 rotation in Cartesian coordinates. The later is made to remove
 distortion.</p>
 <div class="section" id="choice-of-basis-vectors">
-<h3><a class="toc-backref" href="#id7">Choice of basis vectors</a><a class="headerlink" href="#choice-of-basis-vectors" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id9">Choice of basis vectors</a><a class="headerlink" href="#choice-of-basis-vectors" title="Permalink to this headline">¶</a></h3>
 <p>Using the APIs <code class="docutils literal notranslate"><span class="pre">spg_get_dataset</span></code>,
 <code class="docutils literal notranslate"><span class="pre">spg_get_dataset_with_hall_number</span></code>, or <code class="docutils literal notranslate"><span class="pre">spg_standardize_cell</span></code>, the
 starndardized unit cell is obtained. The “starndardized unit cell” in
 this document means that the (conventional) unit cell structure is
 standardized by the crystal symmetry and lengths of basis
-vectors. This standardization in spglib is not unique, but upto
-generators of Euclidean normalizer. Crystals are categorized by Hall
-symbols in 530 different types in terms of 230 space group types,
-unique axes, settings, and cell choices. Moreover in spglib, lengths
-of basis vectors are used to choose the order of <span class="math notranslate nohighlight">\((\mathbf{a},
-\mathbf{b}, \mathbf{c})\)</span> if the order can not be determined only by
-the symmetrical conventions.</p>
+vectors. This standardization in spglib is not unique, but upto space
+group operations and generators of Euclidean normalizer. Crystals are
+categorized by Hall symbols in 530 different types in terms of 230
+space group types, unique axes, settings, and cell choices. Moreover
+in spglib, lengths of basis vectors are used to choose the order of
+<span class="math notranslate nohighlight">\((\mathbf{a}, \mathbf{b}, \mathbf{c})\)</span> if the order can not be
+determined only by the symmetrical conventions.</p>
 </div>
 <div class="section" id="transformation-to-the-primitive-cell">
-<span id="def-standardized-primitive-cell"></span><h3><a class="toc-backref" href="#id8">Transformation to the primitive cell</a><a class="headerlink" href="#transformation-to-the-primitive-cell" title="Permalink to this headline">¶</a></h3>
+<span id="def-standardized-primitive-cell"></span><h3><a class="toc-backref" href="#id10">Transformation to the primitive cell</a><a class="headerlink" href="#transformation-to-the-primitive-cell" title="Permalink to this headline">¶</a></h3>
 <p>In the standardized unit cells, there are five different centring
 types available, base centrings of A and C, rhombohedral (R), body centred
 (I), and face centred (F). The transformation is applied to the
 standardized unit cell by</p>
-<div class="math notranslate nohighlight">
-\[( \mathbf{a}_\mathrm{p} \; \mathbf{b}_\mathrm{p} \; \mathbf{c}_\mathrm{p} )
+<div class="math notranslate nohighlight" id="equation-transformation-to-primitive">
+<span class="eqno">(10)<a class="headerlink" href="#equation-transformation-to-primitive" title="Permalink to this equation">¶</a></span>\[( \mathbf{a}_\mathrm{p} \; \mathbf{b}_\mathrm{p} \; \mathbf{c}_\mathrm{p} )
 = ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
 \mathbf{c}_\mathrm{s} )  \boldsymbol{P}_\mathrm{c},\]</div>
 <p>where <span class="math notranslate nohighlight">\(\mathbf{a}_\mathrm{p}\)</span>, <span class="math notranslate nohighlight">\(\mathbf{b}_\mathrm{p}\)</span>,
@@ -344,7 +360,7 @@ as follows:</p>
 <span class="math notranslate nohighlight">\(\boldsymbol{P}_\mathrm{R}\)</span> is applied.</p>
 </div>
 <div class="section" id="def-idealize-cell">
-<span id="idealization-of-unit-cell-structure"></span><h3><a class="toc-backref" href="#id9">Idealization of unit cell structure</a><a class="headerlink" href="#def-idealize-cell" title="Permalink to this headline">¶</a></h3>
+<span id="idealization-of-unit-cell-structure"></span><h3><a class="toc-backref" href="#id11">Idealization of unit cell structure</a><a class="headerlink" href="#def-idealize-cell" title="Permalink to this headline">¶</a></h3>
 <p>Spglib allows tolerance parameters to match a slightly distorted unit
 cell structure to a space group type with some higher symmetry. Using
 obtained symmetry operations, the distortion is removed to idealize
@@ -442,8 +458,10 @@ are placed by angles <span class="math notranslate nohighlight">\(120^\circ\)</s
 </div>
 </div>
 </div>
-<div class="section" id="example-crystallographic-choice-and-rigid-rotation">
-<h2><a class="toc-backref" href="#id10">Example: Crystallographic choice and rigid rotation</a><a class="headerlink" href="#example-crystallographic-choice-and-rigid-rotation" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="examples">
+<h2><a class="toc-backref" href="#id12">Examples</a><a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="crystallographic-choice-and-rigid-rotation">
+<h3><a class="toc-backref" href="#id13">Crystallographic choice and rigid rotation</a><a class="headerlink" href="#crystallographic-choice-and-rigid-rotation" title="Permalink to this headline">¶</a></h3>
 <p>The following example of a python script gives a crystal structure of
 Br whose space group type is <em>Cmce</em>. The basis vectors
 <span class="math notranslate nohighlight">\((\mathbf{a}, \mathbf{b}, \mathbf{c})\)</span> are fixed by the symmetry
@@ -573,13 +591,13 @@ but it does change only the order of atoms, so effectively it does
 nothing. The transformation is kept unchanged even the crystal
 structure is rotated in Cartesian coordinates.</p>
 </div>
-<div class="section" id="example-transformation-to-a-primitive-cell">
-<h2><a class="toc-backref" href="#id11">Example: Transformation to a primitive cell</a><a class="headerlink" href="#example-transformation-to-a-primitive-cell" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="transformation-to-a-primitive-cell">
+<h3><a class="toc-backref" href="#id14">Transformation to a primitive cell</a><a class="headerlink" href="#transformation-to-a-primitive-cell" title="Permalink to this headline">¶</a></h3>
 <p>There are infinite number of choices of primitive cell. The
-transformation from a primitive cell basis vectors to the other is
-always done by an integer matrix because any lattice points can be
-generated by the linear combination of the three primitive basis
-vectors.</p>
+transformation from a primitive cell basis vectors to the other
+primitive cell basis vectors is always done by an integer matrix
+because any lattice points can be generated by the linear combination
+of the three primitive basis vectors.</p>
 <p>When we have a non-primitive cell basis vectors as given in the above
 example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">lattice</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">7.17851431</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>  <span class="c1"># a</span>
@@ -709,6 +727,7 @@ so the following script doesn’t give this basis vectors:</p>
 <p>which is equivalent to that we get manually. However using
 <code class="docutils literal notranslate"><span class="pre">standardize_cell</span></code>, distortion is not removed for the distorted
 crystal structure.</p>
+</div>
 </div>
 </div>
 

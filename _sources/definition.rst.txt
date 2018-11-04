@@ -1,3 +1,5 @@
+.. _definitions_and_conventions:
+
 Definitions and conventions
 ============================
 
@@ -15,8 +17,8 @@ References
 
 Some references about crystallographic definitions and conventions are
 shown below. Though spglib may not follow them fully, it doesn't mean
-spglib doesn't respect them, rather it is due to the lack of
-understanding by the author of spglib.
+spglib doesn't respect them, rather it is due to spglib-author's lack of
+understanding the crystallography ashamedly.
 
 * `International Tables for Crystallography <http://it.iucr.org/>`_.
 * `Bilbao Crystallographic Server <http://www.cryst.ehu.es/>`_. The
@@ -41,12 +43,16 @@ understanding by the author of spglib.
   Cryst. A **37**, 517-525 (1981) [`doi1
   <https://doi.org/10.1107/S0567739481001228>`_]
 
+Space group operation and change of basis
+------------------------------------------
+
 Basis vectors :math:`(\mathbf{a}, \mathbf{b}, \mathbf{c})` or :math:`(\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)`
-------------------------------------------------------------------------------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 In spglib, basis vectors are represented by three column vectors:
 
 .. math::
+   :label: basis_vectors
 
    \mathbf{a}= \begin{pmatrix}
    a_x \\
@@ -69,12 +75,13 @@ in Cartesian coordinates. Depending on the situation,
 :math:`(\mathbf{a}, \mathbf{b}, \mathbf{c})`.
 
 Atomic point coordinates :math:`\boldsymbol{x}`
------------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Coordinates of an atomic point :math:`\boldsymbol{x}` are represented
 as three fractional values relative to basis vectors as follows,
 
 .. math::
+   :label: coordinate_triplet
 
    \boldsymbol{x}= \begin{pmatrix}
    x_1 \\
@@ -86,17 +93,19 @@ where :math:`0 \le x_i < 1`. A position vector :math:`\mathbf{x}` in
 Cartesian coordinates is obtained by
 
 .. math::
+   :label: position_vector_1
 
    \mathbf{x} = (\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{x}.
 
 or
 
 .. math::
+   :label: position_vector_2
 
    \mathbf{x} = \sum_i x_i \mathbf{a}_i.
 
 Symmetry operation :math:`(\boldsymbol{W}, \boldsymbol{w})`
------------------------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 A symmetry operation consists of a pair of the rotation part
 :math:`\boldsymbol{W}` and translation part :math:`\boldsymbol{w}`,
@@ -105,18 +114,20 @@ spglib document. The symmetry operation transfers :math:`\boldsymbol{x}` to
 :math:`\tilde{\boldsymbol{x}}` as follows:
 
 .. math::
+   :label: space_group_operation
 
-  \tilde{\boldsymbol{x}} = \boldsymbol{W}\boldsymbol{x} + \boldsymbol{w}.
+   \tilde{\boldsymbol{x}} = \boldsymbol{W}\boldsymbol{x} + \boldsymbol{w}.
 
 .. _def_transformation_and_origin_shift:
 
 Transformation matrix :math:`\boldsymbol{P}` and origin shift :math:`\boldsymbol{p}`
--------------------------------------------------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The transformation matrix :math:`\boldsymbol{P}` changes choice of
 basis vectors as follows
 
 .. math::
+   :label: transformation_matrix
 
    ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
    = ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
@@ -134,6 +145,7 @@ origin of the standardized system :math:`\boldsymbol{O}_\mathrm{s}` to
 the origin of the arbitrary system :math:`\boldsymbol{O}`,
 
 .. math::
+   :label: origin_shift
 
    \boldsymbol{p} = \boldsymbol{O} - \boldsymbol{O}_\mathrm{s}.
 
@@ -149,16 +161,18 @@ the standardized system :math:`\boldsymbol{x}_\mathrm{s}` and
 arbitrary system :math:`\boldsymbol{x}` are related by
 
 .. math::
+   :label: change_of_basis_1
 
-  \boldsymbol{x}_\mathrm{s} = \boldsymbol{P}\boldsymbol{x} +
-  \boldsymbol{p},
+   \boldsymbol{x}_\mathrm{s} = \boldsymbol{P}\boldsymbol{x} +
+   \boldsymbol{p},
 
 or equivalently,
 
 .. math::
+   :label: change_of_basis_2
 
-  \boldsymbol{x} = \boldsymbol{P}^{-1}\boldsymbol{x}_\mathrm{s} -
-  \boldsymbol{P}^{-1}\boldsymbol{p}.
+   \boldsymbol{x} = \boldsymbol{P}^{-1}\boldsymbol{x}_\mathrm{s} -
+   \boldsymbol{P}^{-1}\boldsymbol{p}.
 
 
 A graphical example is shown below.
@@ -183,8 +197,8 @@ In this example,
 
 .. _def_standardized_unit_cell:
 
-Conventions of standardized unit cell
---------------------------------------
+Spglib conventions of standardized unit cell
+---------------------------------------------
 
 The standardization in spglib is achieved by :ref:`a change of basis
 transformation <def_transformation_and_origin_shift>` and
@@ -200,13 +214,13 @@ Using the APIs ``spg_get_dataset``,
 starndardized unit cell is obtained. The "starndardized unit cell" in
 this document means that the (conventional) unit cell structure is
 standardized by the crystal symmetry and lengths of basis
-vectors. This standardization in spglib is not unique, but upto
-generators of Euclidean normalizer. Crystals are categorized by Hall
-symbols in 530 different types in terms of 230 space group types,
-unique axes, settings, and cell choices. Moreover in spglib, lengths
-of basis vectors are used to choose the order of :math:`(\mathbf{a},
-\mathbf{b}, \mathbf{c})` if the order can not be determined only by
-the symmetrical conventions.
+vectors. This standardization in spglib is not unique, but upto space
+group operations and generators of Euclidean normalizer. Crystals are
+categorized by Hall symbols in 530 different types in terms of 230
+space group types, unique axes, settings, and cell choices. Moreover
+in spglib, lengths of basis vectors are used to choose the order of
+:math:`(\mathbf{a}, \mathbf{b}, \mathbf{c})` if the order can not be
+determined only by the symmetrical conventions.
 
 .. _def_standardized_primitive_cell:
 
@@ -219,6 +233,7 @@ types available, base centrings of A and C, rhombohedral (R), body centred
 standardized unit cell by
 
 .. math::
+   :label: transformation_to_primitive
 
    ( \mathbf{a}_\mathrm{p} \; \mathbf{b}_\mathrm{p} \; \mathbf{c}_\mathrm{p} )
    = ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
@@ -370,8 +385,11 @@ Cubic lattice
 - :math:`\mathbf{c}` is set along :math:`+z` direction of Cartesian coordinates.
 
 
-Example: Crystallographic choice and rigid rotation
----------------------------------------------------
+Examples
+--------
+
+Crystallographic choice and rigid rotation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The following example of a python script gives a crystal structure of
 Br whose space group type is *Cmce*. The basis vectors
@@ -513,14 +531,14 @@ but it does change only the order of atoms, so effectively it does
 nothing. The transformation is kept unchanged even the crystal
 structure is rotated in Cartesian coordinates.
 
-Example: Transformation to a primitive cell
---------------------------------------------
+Transformation to a primitive cell
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 There are infinite number of choices of primitive cell. The
-transformation from a primitive cell basis vectors to the other is
-always done by an integer matrix because any lattice points can be
-generated by the linear combination of the three primitive basis
-vectors.
+transformation from a primitive cell basis vectors to the other
+primitive cell basis vectors is always done by an integer matrix
+because any lattice points can be generated by the linear combination
+of the three primitive basis vectors.
 
 When we have a non-primitive cell basis vectors as given in the above
 example::
