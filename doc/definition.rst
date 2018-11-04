@@ -136,7 +136,10 @@ basis vectors as follows
 where :math:`( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )` and :math:`(
 \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
 \mathbf{c}_\mathrm{s} )` are the basis vectors of an arbitrary system
-and of a starndardized system, respectively. Transformation matrix
+and of a starndardized system, respectively. In general, the
+transformation matrix is not limited for the transformation from the
+standardized system, but can be used in between any systems possibly
+transformed. It has to be emphasized that the transformation matrix
 **doesn't** rotate a crystal in Cartesian coordinates, but just
 changes the choices of basis vectors.
 
@@ -193,6 +196,69 @@ In this example,
    \frac{\bar{1}}{2} & \frac{1}{2} & 0 \\
    0 & 0 & 1
    \end{pmatrix}.
+
+Difference between rotation and transformation matrices
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+A rotation matrix rotates (or mirrors, inverts) the crystal body with
+respect to origin. A transformation matrix changes the choice of the
+basis vectors, but does not rotate the crystal body.
+
+A space group operation having no translation part sends an atom to
+another point by
+
+.. math::
+
+   \tilde{\boldsymbol{x}} = \boldsymbol{W}\boldsymbol{x},
+
+where :math:`\tilde{\boldsymbol{x}}` and :math:`\boldsymbol{x}` are
+represented with respect to the same basis vectors :math:`(\mathbf{a},
+\mathbf{b}, \mathbf{c})`. Equivalently the rotation is achieved by
+rotating the basis vectors:
+
+.. math::
+
+   (\tilde{\mathbf{a}}, \tilde{\mathbf{b}}, \tilde{\mathbf{c}}) =
+   (\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{W}
+
+with keeping the representation of the atomic point coordinates
+:math:`\boldsymbol{x}` because
+
+.. math::
+
+   \tilde{\mathbf{x}} = (\mathbf{a}, \mathbf{b}, \mathbf{c}) \tilde{\boldsymbol{x}}
+   = (\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{W}
+   \boldsymbol{x}
+   = (\tilde{\mathbf{a}}, \tilde{\mathbf{b}}, \tilde{\mathbf{c}})
+   \boldsymbol{x}.
+
+The transformation matrix changes the choice of the basis vectors as:
+
+.. math::
+
+   (\mathbf{a}', \mathbf{b}', \mathbf{c}') = (\mathbf{a}, \mathbf{b},
+   \mathbf{c}) \boldsymbol{P}.
+
+The atomic position vector is not altered by this transformation, i.e.,
+
+.. math::
+
+   (\mathbf{a}', \mathbf{b}', \mathbf{c}') \boldsymbol{x}' =
+   (\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{x}.
+
+However the representation of the atomic point coordinates changes as follows:
+
+.. math::
+
+   \boldsymbol{P} \boldsymbol{x}' = \boldsymbol{x}.
+
+because
+
+.. math::
+
+   (\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{P} \boldsymbol{x}'
+   = (\mathbf{a}', \mathbf{b}', \mathbf{c}') \boldsymbol{x}' =
+   (\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{x}.
 
 
 .. _def_standardized_unit_cell:
