@@ -80,6 +80,7 @@
 <li><a class="reference internal" href="#atomic-point-coordinates-boldsymbol-x">Atomic point coordinates <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span></a></li>
 <li><a class="reference internal" href="#symmetry-operation-boldsymbol-w-boldsymbol-w">Symmetry operation <span class="math notranslate nohighlight">\((\boldsymbol{W}, \boldsymbol{w})\)</span></a></li>
 <li><a class="reference internal" href="#transformation-matrix-boldsymbol-p-and-origin-shift-boldsymbol-p">Transformation matrix <span class="math notranslate nohighlight">\(\boldsymbol{P}\)</span> and origin shift <span class="math notranslate nohighlight">\(\boldsymbol{p}\)</span></a></li>
+<li><a class="reference internal" href="#difference-between-rotation-and-transformation-matrices">Difference between rotation and transformation matrices</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#spglib-conventions-of-standardized-unit-cell">Spglib conventions of standardized unit cell</a><ul>
@@ -146,17 +147,18 @@ in the previous versions.</p>
 <li><a class="reference internal" href="#atomic-point-coordinates-boldsymbol-x" id="id5">Atomic point coordinates <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span></a></li>
 <li><a class="reference internal" href="#symmetry-operation-boldsymbol-w-boldsymbol-w" id="id6">Symmetry operation <span class="math notranslate nohighlight">\((\boldsymbol{W}, \boldsymbol{w})\)</span></a></li>
 <li><a class="reference internal" href="#transformation-matrix-boldsymbol-p-and-origin-shift-boldsymbol-p" id="id7">Transformation matrix <span class="math notranslate nohighlight">\(\boldsymbol{P}\)</span> and origin shift <span class="math notranslate nohighlight">\(\boldsymbol{p}\)</span></a></li>
+<li><a class="reference internal" href="#difference-between-rotation-and-transformation-matrices" id="id8">Difference between rotation and transformation matrices</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#spglib-conventions-of-standardized-unit-cell" id="id8">Spglib conventions of standardized unit cell</a><ul>
-<li><a class="reference internal" href="#choice-of-basis-vectors" id="id9">Choice of basis vectors</a></li>
-<li><a class="reference internal" href="#transformation-to-the-primitive-cell" id="id10">Transformation to the primitive cell</a></li>
-<li><a class="reference internal" href="#def-idealize-cell" id="id11">Idealization of unit cell structure</a></li>
+<li><a class="reference internal" href="#spglib-conventions-of-standardized-unit-cell" id="id9">Spglib conventions of standardized unit cell</a><ul>
+<li><a class="reference internal" href="#choice-of-basis-vectors" id="id10">Choice of basis vectors</a></li>
+<li><a class="reference internal" href="#transformation-to-the-primitive-cell" id="id11">Transformation to the primitive cell</a></li>
+<li><a class="reference internal" href="#def-idealize-cell" id="id12">Idealization of unit cell structure</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#examples" id="id12">Examples</a><ul>
-<li><a class="reference internal" href="#crystallographic-choice-and-rigid-rotation" id="id13">Crystallographic choice and rigid rotation</a></li>
-<li><a class="reference internal" href="#transformation-to-a-primitive-cell" id="id14">Transformation to a primitive cell</a></li>
+<li><a class="reference internal" href="#examples" id="id13">Examples</a><ul>
+<li><a class="reference internal" href="#crystallographic-choice-and-rigid-rotation" id="id14">Crystallographic choice and rigid rotation</a></li>
+<li><a class="reference internal" href="#transformation-to-a-primitive-cell" id="id15">Transformation to a primitive cell</a></li>
 </ul>
 </li>
 </ul>
@@ -252,7 +254,10 @@ basis vectors as follows</p>
 <p>where <span class="math notranslate nohighlight">\(( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )\)</span> and <span class="math notranslate nohighlight">\((
 \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
 \mathbf{c}_\mathrm{s} )\)</span> are the basis vectors of an arbitrary system
-and of a starndardized system, respectively. Transformation matrix
+and of a starndardized system, respectively. In general, the
+transformation matrix is not limited for the transformation from the
+standardized system, but can be used in between any systems possibly
+transformed. It has to be emphasized that the transformation matrix
 <strong>doesn’t</strong> rotate a crystal in Cartesian coordinates, but just
 changes the choices of basis vectors.</p>
 <p>The origin shift <span class="math notranslate nohighlight">\(\boldsymbol{p}\)</span> gives the vector from the
@@ -286,16 +291,57 @@ arbitrary system <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</
 0 &amp; 0 &amp; 1
 \end{pmatrix}.\end{split}\]</div>
 </div>
+<div class="section" id="difference-between-rotation-and-transformation-matrices">
+<h3><a class="toc-backref" href="#id8">Difference between rotation and transformation matrices</a><a class="headerlink" href="#difference-between-rotation-and-transformation-matrices" title="Permalink to this headline">¶</a></h3>
+<p>A rotation matrix rotates (or mirrors, inverts) the crystal body with
+respect to origin. A transformation matrix changes the choice of the
+basis vectors, but does not rotate the crystal body.</p>
+<p>A space group operation having no translation part sends an atom to
+another point by</p>
+<div class="math notranslate nohighlight">
+\[\tilde{\boldsymbol{x}} = \boldsymbol{W}\boldsymbol{x},\]</div>
+<p>where <span class="math notranslate nohighlight">\(\tilde{\boldsymbol{x}}\)</span> and <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span> are
+represented with respect to the same basis vectors <span class="math notranslate nohighlight">\((\mathbf{a},
+\mathbf{b}, \mathbf{c})\)</span>. Equivalently the rotation is achieved by
+rotating the basis vectors:</p>
+<div class="math notranslate nohighlight">
+\[(\tilde{\mathbf{a}}, \tilde{\mathbf{b}}, \tilde{\mathbf{c}}) =
+(\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{W}\]</div>
+<p>with keeping the representation of the atomic point coordinates
+<span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span> because</p>
+<div class="math notranslate nohighlight">
+\[\tilde{\mathbf{x}} = (\mathbf{a}, \mathbf{b}, \mathbf{c}) \tilde{\boldsymbol{x}}
+= (\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{W}
+\boldsymbol{x}
+= (\tilde{\mathbf{a}}, \tilde{\mathbf{b}}, \tilde{\mathbf{c}})
+\boldsymbol{x}.\]</div>
+<p>The transformation matrix changes the choice of the basis vectors as:</p>
+<div class="math notranslate nohighlight">
+\[(\mathbf{a}', \mathbf{b}', \mathbf{c}') = (\mathbf{a}, \mathbf{b},
+\mathbf{c}) \boldsymbol{P}.\]</div>
+<p>The atomic position vector is not altered by this transformation, i.e.,</p>
+<div class="math notranslate nohighlight">
+\[(\mathbf{a}', \mathbf{b}', \mathbf{c}') \boldsymbol{x}' =
+(\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{x}.\]</div>
+<p>However the representation of the atomic point coordinates changes as follows:</p>
+<div class="math notranslate nohighlight">
+\[\boldsymbol{P} \boldsymbol{x}' = \boldsymbol{x}.\]</div>
+<p>because</p>
+<div class="math notranslate nohighlight">
+\[(\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{P} \boldsymbol{x}'
+= (\mathbf{a}', \mathbf{b}', \mathbf{c}') \boldsymbol{x}' =
+(\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{x}.\]</div>
+</div>
 </div>
 <div class="section" id="spglib-conventions-of-standardized-unit-cell">
-<span id="def-standardized-unit-cell"></span><h2><a class="toc-backref" href="#id8">Spglib conventions of standardized unit cell</a><a class="headerlink" href="#spglib-conventions-of-standardized-unit-cell" title="Permalink to this headline">¶</a></h2>
+<span id="def-standardized-unit-cell"></span><h2><a class="toc-backref" href="#id9">Spglib conventions of standardized unit cell</a><a class="headerlink" href="#spglib-conventions-of-standardized-unit-cell" title="Permalink to this headline">¶</a></h2>
 <p>The standardization in spglib is achieved by <a class="reference internal" href="#def-transformation-and-origin-shift"><span class="std std-ref">a change of basis
 transformation</span></a> and
 possibly <a class="reference internal" href="#def-idealize-cell"><span class="std std-ref">idealization</span></a> including a rigid
 rotation in Cartesian coordinates. The later is made to remove
 distortion.</p>
 <div class="section" id="choice-of-basis-vectors">
-<h3><a class="toc-backref" href="#id9">Choice of basis vectors</a><a class="headerlink" href="#choice-of-basis-vectors" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id10">Choice of basis vectors</a><a class="headerlink" href="#choice-of-basis-vectors" title="Permalink to this headline">¶</a></h3>
 <p>Using the APIs <code class="docutils literal notranslate"><span class="pre">spg_get_dataset</span></code>,
 <code class="docutils literal notranslate"><span class="pre">spg_get_dataset_with_hall_number</span></code>, or <code class="docutils literal notranslate"><span class="pre">spg_standardize_cell</span></code>, the
 starndardized unit cell is obtained. The “starndardized unit cell” in
@@ -310,7 +356,7 @@ in spglib, lengths of basis vectors are used to choose the order of
 determined only by the symmetrical conventions.</p>
 </div>
 <div class="section" id="transformation-to-the-primitive-cell">
-<span id="def-standardized-primitive-cell"></span><h3><a class="toc-backref" href="#id10">Transformation to the primitive cell</a><a class="headerlink" href="#transformation-to-the-primitive-cell" title="Permalink to this headline">¶</a></h3>
+<span id="def-standardized-primitive-cell"></span><h3><a class="toc-backref" href="#id11">Transformation to the primitive cell</a><a class="headerlink" href="#transformation-to-the-primitive-cell" title="Permalink to this headline">¶</a></h3>
 <p>In the standardized unit cells, there are five different centring
 types available, base centrings of A and C, rhombohedral (R), body centred
 (I), and face centred (F). The transformation is applied to the
@@ -360,7 +406,7 @@ as follows:</p>
 <span class="math notranslate nohighlight">\(\boldsymbol{P}_\mathrm{R}\)</span> is applied.</p>
 </div>
 <div class="section" id="def-idealize-cell">
-<span id="idealization-of-unit-cell-structure"></span><h3><a class="toc-backref" href="#id11">Idealization of unit cell structure</a><a class="headerlink" href="#def-idealize-cell" title="Permalink to this headline">¶</a></h3>
+<span id="idealization-of-unit-cell-structure"></span><h3><a class="toc-backref" href="#id12">Idealization of unit cell structure</a><a class="headerlink" href="#def-idealize-cell" title="Permalink to this headline">¶</a></h3>
 <p>Spglib allows tolerance parameters to match a slightly distorted unit
 cell structure to a space group type with some higher symmetry. Using
 obtained symmetry operations, the distortion is removed to idealize
@@ -459,9 +505,9 @@ are placed by angles <span class="math notranslate nohighlight">\(120^\circ\)</s
 </div>
 </div>
 <div class="section" id="examples">
-<h2><a class="toc-backref" href="#id12">Examples</a><a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id13">Examples</a><a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="crystallographic-choice-and-rigid-rotation">
-<h3><a class="toc-backref" href="#id13">Crystallographic choice and rigid rotation</a><a class="headerlink" href="#crystallographic-choice-and-rigid-rotation" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id14">Crystallographic choice and rigid rotation</a><a class="headerlink" href="#crystallographic-choice-and-rigid-rotation" title="Permalink to this headline">¶</a></h3>
 <p>The following example of a python script gives a crystal structure of
 Br whose space group type is <em>Cmce</em>. The basis vectors
 <span class="math notranslate nohighlight">\((\mathbf{a}, \mathbf{b}, \mathbf{c})\)</span> are fixed by the symmetry
@@ -592,7 +638,7 @@ nothing. The transformation is kept unchanged even the crystal
 structure is rotated in Cartesian coordinates.</p>
 </div>
 <div class="section" id="transformation-to-a-primitive-cell">
-<h3><a class="toc-backref" href="#id14">Transformation to a primitive cell</a><a class="headerlink" href="#transformation-to-a-primitive-cell" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id15">Transformation to a primitive cell</a><a class="headerlink" href="#transformation-to-a-primitive-cell" title="Permalink to this headline">¶</a></h3>
 <p>There are infinite number of choices of primitive cell. The
 transformation from a primitive cell basis vectors to the other
 primitive cell basis vectors is always done by an integer matrix
