@@ -160,21 +160,30 @@ the current definition as follows:
 Standardized crystal structure after idealization
 --------------------------------------------------
 
+``n_std_atoms``, ``std_lattice``, ``std_types``, and ``std_positions``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 The standardized crystal structure after :ref:`idealization
 <def_idealize_cell>` corresponding to a Hall symbol is stored in
 ``n_std_atoms``, ``std_lattice``, ``std_types``, and
-``std_positions``.
-
-**At versions 1.10 or later**, ``std_mapping_to_primitive`` is
-available. This gives a list of atomic indices in the primitive cell
-of the standardized crystal structure, where the same number presents
-the same atom in the primitive cell. By collective the atoms having
-the same number, a set of relative lattice points in the the
-standardized crystal structure is obtained.
+``std_positions``. These output usually contains the rotation in Cartesian
+coordinates and rearrangement of the order atoms with respect to the
+input unit cell.
 
 **At versions 1.7.x and 1.8 or before**, the variable names of the
 members corresponding to those above are ``n_brv_atoms``,
 ``brv_lattice``, ``brv_types``, and ``brv_positions``, respectively.
+
+``std_mapping_to_primitive``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This is available **at versions 1.10 or later**. This gives a list of
+atomic indices in the primitive cell of the standardized crystal
+structure, where the same number presents the same atom in the
+primitive cell. By collective the atoms having the same number, a set
+of relative lattice points in the the standardized crystal structure
+is obtained.
+
 
 Crystallographic point group
 -----------------------------

@@ -267,10 +267,10 @@ Spglib conventions of standardized unit cell
 ---------------------------------------------
 
 The standardization in spglib is achieved by :ref:`a change of basis
-transformation <def_transformation_and_origin_shift>` and
-possibly :ref:`idealization <def_idealize_cell>` including a rigid
-rotation in Cartesian coordinates. The later is made to remove
-distortion.
+transformation <def_transformation_and_origin_shift>`. If
+:ref:`idealization <def_idealize_cell>` as shown below is further
+applied, the crystal can be rigidly rotated in Cartesian
+coordinates.
 
 Choice of basis vectors
 ^^^^^^^^^^^^^^^^^^^^^^^^

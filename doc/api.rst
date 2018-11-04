@@ -167,11 +167,14 @@ atomic point coordinates and types are overwritten in ``lattice``,
 is required to store a standardized unit cell with face centring found
 in the case that the input unit cell is a primitive cell.
 
-``no_idealize=1`` disables to idealize lengths and angles of basis
-vectors and positions of atoms according to crystal symmetry. The
-detail of the idealization (``no_idealize=0``) is written at
-:ref:`def_idealize_cell`. ``no_idealize=1`` may be used when we want to
-leave basis vectors and atomic positions in Cartesianl coordinates
+``no_idealize=0`` is used to idealize the lengths and angles of basis
+vectors with adjusting the positions of atoms to nearest exact
+positions according to crystal symmetry. However the crystal can be
+rotated in Cartesian coordinates by the idealization of the basis
+vectors.  ``no_idealize=1`` disables this. The detail of the
+idealization (``no_idealize=0``) is written at
+:ref:`def_idealize_cell`. ``no_idealize=1`` may be useful when we want
+to leave basis vectors and atomic positions in Cartesianl coordinates
 fixed.
 
 |
@@ -195,7 +198,10 @@ failed.
                          const double symprec);
 
 ``lattice``, ``position``, and ``types`` are overwritten. Number of
-atoms in the found primitive cell is returned.
+atoms in the found primitive cell is returned. The crystal can be
+rotated by this function. To avoid this, please use
+``spg_standardize_cell`` with ``to_primitive=1`` and ``no_idealize=1``
+although the crystal structure is not idealized.
 
 |
 
