@@ -50,6 +50,7 @@ static DataContainer * get_spacegroup_and_primitive(const Cell * cell,
                                                     const int hall_number,
                                                     const double symprec,
                                                     const double angle_symprec);
+
 DataContainer * det_determine_all(const Cell * cell,
                                   const int hall_number,
                                   const double symprec,
@@ -72,9 +73,9 @@ DataContainer * det_determine_all(const Cell * cell,
                                                   tolerance,
                                                   angle_symprec)) != NULL) {
       if ((container->exact_structure = ref_get_exact_structure_and_symmetry(
+             container->spacegroup,
              container->primitive->cell,
              cell,
-             container->spacegroup,
              container->primitive->mapping_table,
              container->primitive->tolerance)) != NULL) {
         goto found;
@@ -89,6 +90,25 @@ DataContainer * det_determine_all(const Cell * cell,
 
 found:
   return container;
+}
+
+void det_free_container(DataContainer * container)
+{
+  if (container != NULL) {
+    if (container->spacegroup != NULL) {
+      free(container->spacegroup);
+      container->spacegroup = NULL;
+    }
+    if (container->primitive != NULL) {
+      prm_free_primitive(container->primitive);
+      container->primitive = NULL;
+    }
+    if (container->exact_structure != NULL) {
+      ref_free_exact_structure(container->exact_structure);
+      container->exact_structure = NULL;
+    }
+    free(container);
+  }
 }
 
 /* NULL is returned if failed */
@@ -150,23 +170,4 @@ static DataContainer * get_spacegroup_and_primitive(const Cell * cell,
 
 found:
   return container;
-}
-
-void det_free_container(DataContainer * container)
-{
-  if (container != NULL) {
-    if (container->spacegroup != NULL) {
-      free(container->spacegroup);
-      container->spacegroup = NULL;
-    }
-    if (container->primitive != NULL) {
-      prm_free_primitive(container->primitive);
-      container->primitive = NULL;
-    }
-    if (container->exact_structure != NULL) {
-      ref_free_exact_structure(container->exact_structure);
-      container->exact_structure = NULL;
-    }
-    free(container);
-  }
 }
