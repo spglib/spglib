@@ -1,4 +1,5 @@
 import unittest
+import numpy as np
 from spglib import (get_symmetry_dataset, find_primitive,
                     get_spacegroup_type, get_symmetry, standardize_cell)
 from vasp import read_vasp
@@ -89,17 +90,15 @@ class TestSpglib(unittest.TestCase):
         for fname, spgnum in zip(self._filenames, self._spgnum_ref):
             cell = read_vasp(fname)
             if 'distorted' in fname:
-                std_cell = standardize_cell(cell,
-                                            to_primitive=False,
-                                            no_idealize=True,
-                                            symprec=1e-1)
-                dataset = get_symmetry_dataset(std_cell, symprec=1e-1)
+                symprec = 1e-1
             else:
-                std_cell = standardize_cell(cell,
-                                            to_primitive=False,
-                                            no_idealize=True,
-                                            symprec=1e-5)
-                dataset = get_symmetry_dataset(std_cell, symprec=1e-5)
+                symprec = 1e-5
+
+            std_cell = standardize_cell(cell,
+                                        to_primitive=False,
+                                        no_idealize=True,
+                                        symprec=symprec)
+            dataset = get_symmetry_dataset(std_cell, symprec=symprec)
             self.assertEqual(dataset['number'], spgnum,
                              msg=("%s" % fname))
 
@@ -107,25 +106,19 @@ class TestSpglib(unittest.TestCase):
         for fname, spgnum in zip(self._filenames, self._spgnum_ref):
             cell = read_vasp(fname)
             if 'distorted' in fname:
-                prim_cell = standardize_cell(cell,
-                                             to_primitive=True,
-                                             no_idealize=True,
-                                             symprec=1e-1)
-                std_cell = standardize_cell(prim_cell,
-                                            to_primitive=False,
-                                            no_idealize=True,
-                                            symprec=1e-1)
-                dataset = get_symmetry_dataset(std_cell, symprec=1e-1)
+                symprec = 1e-1
             else:
-                prim_cell = standardize_cell(cell,
-                                             to_primitive=True,
-                                             no_idealize=True,
-                                             symprec=1e-5)
-                std_cell = standardize_cell(prim_cell,
-                                            to_primitive=False,
-                                            no_idealize=True,
-                                            symprec=1e-5)
-                dataset = get_symmetry_dataset(std_cell, symprec=1e-5)
+                symprec = 1e-5
+
+            prim_cell = standardize_cell(cell,
+                                         to_primitive=True,
+                                         no_idealize=True,
+                                         symprec=symprec)
+            std_cell = standardize_cell(prim_cell,
+                                        to_primitive=False,
+                                        no_idealize=True,
+                                        symprec=symprec)
+            dataset = get_symmetry_dataset(std_cell, symprec=symprec)
             self.assertEqual(dataset['number'], spgnum,
                              msg=("%s" % fname))
 
@@ -133,17 +126,15 @@ class TestSpglib(unittest.TestCase):
         for fname, spgnum in zip(self._filenames, self._spgnum_ref):
             cell = read_vasp(fname)
             if 'distorted' in fname:
-                prim_cell = standardize_cell(cell,
-                                             to_primitive=True,
-                                             no_idealize=True,
-                                             symprec=1e-1)
-                dataset = get_symmetry_dataset(prim_cell, symprec=1e-1)
+                symprec = 1e-1
             else:
-                prim_cell = standardize_cell(cell,
-                                             to_primitive=True,
-                                             no_idealize=True,
-                                             symprec=1e-5)
-                dataset = get_symmetry_dataset(prim_cell, symprec=1e-5)
+                symprec = 1e-5
+
+            prim_cell = standardize_cell(cell,
+                                         to_primitive=True,
+                                         no_idealize=True,
+                                         symprec=symprec)
+            dataset = get_symmetry_dataset(prim_cell, symprec=symprec)
             self.assertEqual(dataset['number'], spgnum,
                              msg=("%s" % fname))
 
@@ -165,11 +156,13 @@ class TestSpglib(unittest.TestCase):
         for fname in self._filenames:
             cell = read_vasp(fname)
             if 'distorted' in fname:
-                dataset = get_symmetry_dataset(cell, symprec=1e-1)
-                primitive = find_primitive(cell, symprec=1e-1)
+                symprec = 1e-1
             else:
-                dataset = get_symmetry_dataset(cell, symprec=1e-5)
-                primitive = find_primitive(cell, symprec=1e-5)
+                symprec = 1e-5
+
+            dataset = get_symmetry_dataset(cell, symprec=symprec)
+            primitive = find_primitive(cell, symprec=symprec)
+
             spg_type = get_spacegroup_type(dataset['hall_number'])
             c = spg_type['international_short'][0]
             if c in ['A', 'B', 'C', 'I']:
@@ -192,15 +185,41 @@ class TestSpglib(unittest.TestCase):
         for fname in self._filenames:
             cell = read_vasp(fname)
             if 'distorted' in fname:
-                num_sym_dataset = len(
-                    get_symmetry_dataset(cell, symprec=1e-1)['rotations'])
-                num_sym = len(get_symmetry(cell, symprec=1e-1)['rotations'])
+                symprec = 1e-1
             else:
-                num_sym_dataset = len(
-                    get_symmetry_dataset(cell, symprec=1e-5)['rotations'])
-                num_sym = len(get_symmetry(cell, symprec=1e-5)['rotations'])
+                symprec = 1e-5
+
+            num_sym_dataset = len(
+                get_symmetry_dataset(cell, symprec=symprec)['rotations'])
+            num_sym = len(get_symmetry(cell, symprec=symprec)['rotations'])
             self.assertEqual(num_sym_dataset, num_sym)
 
+    def test_change_of_basis(self):
+        for fname in self._filenames:
+            cell = read_vasp(fname)
+            if 'distorted' in fname:
+                symprec = 1e-1
+            else:
+                symprec = 1e-5
+
+            dataset = get_symmetry_dataset(cell, symprec=symprec)
+            std_lat = dataset['std_lattice']
+            std_pos = dataset['std_positions']
+            tmat = dataset['transformation_matrix']
+            orig_shift = dataset['origin_shift']
+            lat = np.dot(cell[0].T, np.linalg.inv(tmat))
+            pos = np.dot(cell[1], tmat.T) + orig_shift
+            self._compare(lat, pos, std_lat, std_pos, 2 * symprec)
+
+    def _compare(self, lat, pos, std_lat, std_pos, symprec):
+        for p in pos:
+            diff = std_pos - p
+            diff -= np.rint(diff)
+            diff = np.dot(diff, lat.T)
+            delta = np.sqrt((diff ** 2).sum(axis=1))
+            indices = np.where(delta < symprec)[0]
+            self.assertEqual(len(indices), 1,
+                             msg=("multi: %s %s" % (p, indices)))
 
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(TestSpglib)

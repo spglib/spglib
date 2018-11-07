@@ -48,9 +48,9 @@ typedef struct {
 } ExactStructure;
 
 ExactStructure *
-ref_get_exact_structure_and_symmetry(const Cell * primitive,
+ref_get_exact_structure_and_symmetry(Spacegroup * spacegroup,
+                                     const Cell * primitive,
                                      const Cell * cell,
-                                     SPGCONST Spacegroup * spacegroup,
                                      const int * mapping_table,
                                      const double symprec);
 void ref_free_exact_structure(ExactStructure *exstr);

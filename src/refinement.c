@@ -139,7 +139,11 @@ get_symmetry_in_original_cell(SPGCONST int t_mat[3][3],
 static Symmetry *
 copy_symmetry_upon_lattice_points(const VecDBL *pure_trans,
                                   const Symmetry *t_sym);
-
+static void find_similar_bravais_lattice(double bravais_lattice[3][3],
+                                         double origin_shift[3],
+                                         const Symmetry *symmetry,
+                                         SPGCONST double std_lattice[3][3],
+                                         SPGCONST double orig_lattice[3][3]);
 
 static SPGCONST int identity[3][3] = {
   { 1, 0, 0},
@@ -149,13 +153,14 @@ static SPGCONST int identity[3][3] = {
 
 /* Return NULL if failed */
 ExactStructure *
-ref_get_exact_structure_and_symmetry(const Cell * primitive,
+ref_get_exact_structure_and_symmetry(Spacegroup * spacegroup,
+                                     const Cell * primitive,
                                      const Cell * cell,
-                                     SPGCONST Spacegroup * spacegroup,
                                      const int * mapping_table,
                                      const double symprec)
 {
   int *std_mapping_to_primitive, *wyckoffs, *equivalent_atoms;
+  double std_lattice[3][3];
   Cell *bravais;
   Symmetry *symmetry;
   ExactStructure *exact_structure;
@@ -173,6 +178,15 @@ ref_get_exact_structure_and_symmetry(const Cell * primitive,
                                                   symprec)) == NULL) {
     goto err;
   }
+
+  get_conventional_lattice(std_lattice, spacegroup);
+  /* spacegroup->bravais_lattice is overwirten. */
+  /* spacegroup->origin_shift is overwirten. */
+  find_similar_bravais_lattice(spacegroup->bravais_lattice,
+                               spacegroup->origin_shift,
+                               symmetry,
+                               std_lattice,
+                               cell->lattice);
 
   if ((wyckoffs = (int*) malloc(sizeof(int) * cell->size)) == NULL) {
     warning_print("spglib: Memory could not be allocated.");
@@ -1308,4 +1322,56 @@ copy_symmetry_upon_lattice_points(const VecDBL *pure_trans,
   }
 
   return symmetry;
+}
+
+static void find_similar_bravais_lattice(double bravais_lattice[3][3],
+                                         double origin_shift[3],
+                                         const Symmetry *symmetry,
+                                         SPGCONST double std_lattice[3][3],
+                                         SPGCONST double orig_lattice[3][3])
+{
+  int i, j, k;
+  double min_length2, length2, diff;
+  double tmat[3][3], inv_tmat[3][3], tmp_mat[3][3];
+  double brv_dot_tmat[3][3], rot_lat[3][3];
+
+  mat_inverse_matrix_d3(tmp_mat, bravais_lattice, 0);
+  mat_multiply_matrix_d3(tmat, tmp_mat, orig_lattice); /* P: tmat */
+  mat_inverse_matrix_d3(inv_tmat, tmat, 0);
+  mat_multiply_matrix_d3(brv_dot_tmat, bravais_lattice, tmat);
+
+  min_length2 = 0;
+  for (i = 0; i < 3; i++) {
+    for (j = 0; j < 3; j++) {
+      min_length2 += bravais_lattice[i][j] * bravais_lattice[i][j];
+    }
+  }
+
+  /* For no best match */
+  mat_copy_matrix_d3(rot_lat, bravais_lattice);
+
+  for (i = 0; i < symmetry->size; i++) {
+    /* (a,b,c) PRP^-1 */
+    mat_multiply_matrix_di3(tmp_mat, brv_dot_tmat, symmetry->rot[i]);
+    mat_multiply_matrix_d3(tmp_mat, tmp_mat, inv_tmat);
+    length2 = 0;
+    for (j = 0; j < 3; j++) {
+      for (k = 0; k < 3; k++) {
+        diff = tmp_mat[j][k] - std_lattice[j][k];
+        length2 += diff * diff;
+      }
+    }
+    if (length2 < min_length2) {
+      mat_copy_matrix_d3(rot_lat, tmp_mat);
+      min_length2 = length2;
+    }
+  }
+
+  mat_inverse_matrix_d3(tmp_mat, rot_lat, 0);
+  mat_multiply_matrix_d3(tmp_mat, tmp_mat, bravais_lattice);
+  mat_multiply_matrix_vector_d3(origin_shift, tmp_mat, origin_shift);
+  for (i = 0; i < 3; i++) {
+    origin_shift[i] = mat_Dmod1(origin_shift[i]);
+  }
+  mat_copy_matrix_d3(bravais_lattice, rot_lat);
 }
