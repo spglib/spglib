@@ -484,7 +484,7 @@ choices for this space group type.
              [0.5, 0.15311561, 0.6203133],
              [0.5, 0.84688439, 0.3796867],
              [0.5, 0.65311561, 0.8796867]]
-   numbers = [8,] * len(points)
+   numbers = [35,] * len(points)
    cell = (lattice, points, numbers)
    dataset = spglib.get_symmetry_dataset(cell)
    print("Space group type: %s (%d)"
@@ -492,6 +492,7 @@ choices for this space group type.
    print("Transformation matrix:")
    for x in dataset['transformation_matrix']:
        print("  %2d %2d %2d" % tuple(x))
+   print("Origin shift: %f %f %f" % tuple(dataset['origin_shift']))
 
 This python script is saved in the file ``example.py``. Then we get
 
@@ -500,14 +501,12 @@ This python script is saved in the file ``example.py``. Then we get
    % python example.py
    Space group type: Cmce (64)
    Transformation matrix:
-     -1  0  0
-      0 -1  0
+      1  0  0
+      0  1  0
       0  0  1
    Origin shift: 0.000000 0.000000 0.000000
 
-The transformation matrix is not the identity matrix. The basis
-vectors were changed during the symmetry search. However this doesn't
-alter the crystallographic choices. Next, we swap a- and c-axes.
+No rotation was introduced in the idealization. Next, we swap a- and c-axes.
 
 ::
 
@@ -526,7 +525,7 @@ alter the crystallographic choices. Next, we swap a- and c-axes.
              [0.6203133, 0.15311561, 0.5],
              [0.3796867, 0.84688439, 0.5],
              [0.8796867, 0.65311561, 0.5]]
-   numbers = [8,] * len(points)
+   numbers = [35,] * len(points)
    cell = (lattice, points, numbers)
    dataset = spglib.get_symmetry_dataset(cell)
    print("Space group type: %s (%d)"
@@ -548,13 +547,12 @@ By this,
      -1  0  0
    Origin shift: 0.000000 0.000000 0.000000
 
-We get a non-identity transformation matrix, which want to transform
+We get a non-identity transformation matrix, which wants to transform
 back to the original (above) crystal structure by swapping a- and
-c-axes to follow the first crystallographic choice. The transformation
-back of the basis vectors is achieved by the first equation at
-:ref:`Transformation matrix P and origin shift p
-<def_transformation_and_origin_shift>`. Next, we try to rotate rigidly
-the crystal structure in Cartesian coordinates from the first one::
+c-axes. The transformation back of the basis vectors is achieved by
+Eq. :eq:`transformation_matrix`. Next, we try to rotate rigidly the
+crystal structure by :math:`45^\circ` around c-axis in Cartesian
+coordinates from the first one::
 
    import spglib
 
@@ -571,7 +569,7 @@ the crystal structure in Cartesian coordinates from the first one::
              [0.5, 0.15311561, 0.6203133],
              [0.5, 0.84688439, 0.3796867],
              [0.5, 0.65311561, 0.8796867]]
-   numbers = [8,] * len(points)
+   numbers = [35,] * len(points)
    cell = (lattice, points, numbers)
    dataset = spglib.get_symmetry_dataset(cell)
    print("Space group type: %s (%d)"
@@ -588,15 +586,15 @@ and
    % python spglib-example3.py
    Space group type: Cmce (64)
    Transformation matrix:
-     -1  0  0
-      0 -1  0
+      1  0  0
+      0  1  0
       0  0  1
    Origin shift: 0.500000 0.000000 0.000000
 
-Now the result is same as the first one. The origin shift is different
-but it does change only the order of atoms, so effectively it does
-nothing. The transformation is kept unchanged even the crystal
-structure is rotated in Cartesian coordinates.
+The transformation matrix is kept unchanged even though the crystal
+structure is rotated in Cartesian coordinates. The origin shift is
+different but it changes only the order of atoms, so effectively it
+does nothing.
 
 Transformation to a primitive cell
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -729,50 +727,48 @@ To obtain the rotated primitive cell basis vectors, we can use
 
 then we get::
 
-   [[-3.95200346 -1.12397269  0.        ]
-    [-1.12397269 -3.95200346  0.        ]
-    [ 0.          0.          8.57154746]]
+   [[3.95200346 1.12397269 0.        ]
+    [1.12397269 3.95200346 0.        ]
+    [0.         0.         8.57154746]]
 
 which is equivalent to that we get manually. However using
 ``standardize_cell``, distortion is not removed for the distorted
 crystal structure.
 
-Computing rigid rotation coming from idealization
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Computing rigid rotation introduced by idealization
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-In the following script, the transformation matrix obtained
-(:math:`\boldsymbol{P}`) is not an identity matrix but the basis
-vectors obtained from the spglib dataset (see
-:ref:`dataset_idealized_cell`) are almost the same as those of the
-input unit cell. By
+In spglib, rigid rotation is purposely introduced in the idealization
+step though this is unlikely as a crystallographic operation.
 
-::
+The crystal structure in the following script is the same as shown
+above, which is the one :math:`45^\circ` rotated around c-axis::
 
-   import spglib
+    import spglib
 
-   # Mind that the a, b, c axes are given in row vectors here,
-   # but the formulation above is given for the column vectors.
-   lattice = [[7.17851431, 0, 0],  # a
-              [0, 3.99943947, 0],  # b
-              [0, 0, 8.57154746]]  # c
-   points = [[0.0, 0.84688439, 0.1203133],
-             [0.0, 0.65311561, 0.6203133],
-             [0.0, 0.34688439, 0.3796867],
-             [0.0, 0.15311561, 0.8796867],
-             [0.5, 0.34688439, 0.1203133],
-             [0.5, 0.15311561, 0.6203133],
-             [0.5, 0.84688439, 0.3796867],
-             [0.5, 0.65311561, 0.8796867]]
-   numbers = [8,] * len(points)
-   cell = (lattice, points, numbers)
-   dataset = spglib.get_symmetry_dataset(cell)
-   print("Space group type: %s (%d)"
-         % (dataset['international'], dataset['number']))
-   print("Transformation matrix:")
-   for x in dataset['transformation_matrix']:
-       print("  %2d %2d %2d" % tuple(x))
-   print("std_lattice_after_idealization:")
-   print(dataset['std_lattice'])
+    # Mind that the a, b, c axes are given in row vectors here,
+    # but the formulation above is given for the column vectors.
+    lattice = [[5.0759761474456697, 5.0759761474456697, 0],  # a
+               [-2.8280307701821314, 2.8280307701821314, 0],  # b
+               [0, 0, 8.57154746]]  # c
+    points = [[0.0, 0.84688439, 0.1203133],
+              [0.0, 0.65311561, 0.6203133],
+              [0.0, 0.34688439, 0.3796867],
+              [0.0, 0.15311561, 0.8796867],
+              [0.5, 0.34688439, 0.1203133],
+              [0.5, 0.15311561, 0.6203133],
+              [0.5, 0.84688439, 0.3796867],
+              [0.5, 0.65311561, 0.8796867]]
+    numbers = [35,] * len(points)
+    cell = (lattice, points, numbers)
+    dataset = spglib.get_symmetry_dataset(cell)
+    print("Space group type: %s (%d)"
+          % (dataset['international'], dataset['number']))
+    print("Transformation matrix:")
+    for x in dataset['transformation_matrix']:
+        print("  %2d %2d %2d" % tuple(x))
+    print("std_lattice_after_idealization:")
+    print(dataset['std_lattice'])
 
 we get
 
@@ -780,16 +776,17 @@ we get
 
    Space group type: Cmce (64)
    Transformation matrix:
-     -1  0  0
-      0 -1  0
+      1  0  0
+      0  1  0
       0  0  1
    std_lattice_after_idealization:
-   [[ 7.17851431  0.          0.        ]
-    [ 0.          3.99943947  0.        ]
-    [ 0.          0.          8.57154746]]
+   [[7.17851431 0.         0.        ]
+    [0.         3.99943947 0.        ]
+    [0.         0.         8.57154746]]
 
 From Eq. :eq:`transformation_matrix`, the standardized basis vectors
-**before** idealization is obtained by (after ``import numpy as np``)
+**before** idealization :math:`( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s}
+\; \mathbf{c}_\mathrm{s} )` is obtained by (after ``import numpy as np``)
 
 ::
 
@@ -802,41 +799,62 @@ which is (in row vectors)
 
 ::
 
-   [[-7.17851431  0.          0.        ]
-    [ 0.         -3.99943947  0.        ]
+   [[ 5.07597615  5.07597615  0.        ]
+    [-2.82803077  2.82803077  0.        ]
     [ 0.          0.          8.57154746]]
 
-This means that the crystal is rigidly rotated. The rotation matrix
-:math:`\boldsymbol{R}` is obtained similarly by
-Eq. :eq:`rotation_matrix`::
+This is different from the standardized basis vectors **after**
+idealization :math:`( \bar{\mathbf{a}}_\mathrm{s} \;
+\bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )`.  Unless
+this crystal strucutre is distorted from the crystal structure that
+has the ideal symmetry, this means that the crystal was rotated
+rigidly in the idealization step by
 
-   R = np.dot(np.linalg.inv(std_lattice_before_idealization).T,
-              dataset['std_lattice'].T)
-   print(R)
+.. math::
 
-which shows
+   ( \bar{\mathbf{a}}_\mathrm{s} \;
+   \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )
+   = \boldsymbol{R} ( \mathbf{a}_\mathrm{s} \;
+   \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} ).
+
+where :math:`\boldsymbol{R}` is the rotation
+matrix. This is computed by
 
 ::
 
-   [[-1.  0.  0.]
-    [ 0. -1.  0.]
-    [ 0.  0.  1.]]
+   R = np.dot(dataset['std_lattice'].T,
+              np.linalg.inv(std_lattice_before_idealization.T))
+   print(R)
 
-The difference between this rotation matrix and the rotation part of
-the space group operation is that the former can be any continuous
-rigid rotation (i.e., ideally orthogonal matrix when without
-distortion)  but the later is limited to be one of the space group
-operations that the crystal has.
+and we get
 
-In summary
+::
+
+   [[ 0.70710678  0.70710678  0.        ]
+    [-0.70710678  0.70710678  0.        ]
+    [ 0.          0.          1.        ]]
+
+This equals to
+
+.. math::
+
+   \begin{pmatrix}
+   \cos\theta & -\sin\theta & 0 \\
+   \sin\theta & \cos\theta & 0 \\
+   0 & 0 & 1
+   \end{pmatrix},
+
+with :math:`\theta = -\pi/4` and :math:`\det(\boldsymbol{R})=1` when
+no distortion. In summary
 
 .. math::
 
 
-   ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} ) \boldsymbol{P}^{-1}
-   \boldsymbol{R} = ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s}
-   \; \mathbf{c}_\mathrm{s} ).
+   ( \bar{\mathbf{a}}_\mathrm{s} \;
+   \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )  \boldsymbol{P}
+   = \boldsymbol{R} ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} ).
 
-The atomic point coordinates are simply obtained by
-Eq. :eq:`change_of_basis_1` since only the transformation matrix
-changes them.
+The atomic point coordinates in :math:`( \bar{\mathbf{a}}_\mathrm{s}
+\; \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )`
+are simply obtained by Eq. :eq:`change_of_basis_1` since the
+rotation doesn't affect them.
