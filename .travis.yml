@@ -111,7 +111,7 @@ deploy:
 
 
 # production pypi
-- provider: pypie
+- provider: pypi
   skip_cleanup: true
   skip_existing: true
   user: atztogo
