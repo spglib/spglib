@@ -67,12 +67,6 @@ install:
       cp wheelhouse/spglib* dist/;
       ls dist/;
       cd ..;
-      if [[ "$DOCKER_DEPLOY" == "manylinux1_x86_64" ]]; then
-        cd python;
-        ln -s ../src .;
-        python setup.py install;
-        cd ..;
-      fi
     fi
   fi
 
