@@ -35,14 +35,18 @@
 from . import _spglib as spg
 import numpy as np
 
+
 class SpglibError(object):
     message = "no error"
 
+
 spglib_error = SpglibError()
+
 
 def get_version():
     _set_no_error()
     return tuple(spg.version())
+
 
 def get_symmetry(cell, symprec=1e-5, angle_tolerance=-1.0):
     """This gives crystal symmetry operations from a crystal structure.
@@ -115,6 +119,7 @@ def get_symmetry(cell, symprec=1e-5, angle_tolerance=-1.0):
                                              dtype='double', order='C'),
                     'equivalent_atoms': equivalent_atoms}
 
+
 def get_symmetry_dataset(cell,
                          symprec=1e-5,
                          angle_tolerance=-1.0,
@@ -134,8 +139,9 @@ def get_symmetry_dataset(cell,
             hall (str): Hall symbol
             choice (str): Centring, origin, basis vector setting
             transformation_matrix (3x3 float):
-                Transformation matrix from input lattice to standardized lattice
-                L^original = L^standardized * Tmat
+                Transformation matrix from input lattice to standardized
+                lattice:
+                    L^original = L^standardized * Tmat
             origin shift (3 float):
                 Origin shift from standardized to input origin
             rotations (3x3 int), translations (float vector):
@@ -146,11 +152,15 @@ def get_symmetry_dataset(cell,
             equivalent_atoms (n int): Symmetrically equivalent atoms
             mapping_to_primitive (n int):
                 Original cell atom index mapping to primivie cell atom index
-            Standardized unit cell:
-                std_lattice (3x3 float), std_positions (Nx3 float),
-                std_types (N int)
+            Idealized standardized unit cell:
+                std_lattice (3x3 float, row vectors),
+                std_positions (Nx3 float), std_types (N int)
+            std_rotation_matrix:
+                Rigid rotation matrix to rotate from standardized basis
+                vectors to idealized standardized basis vectors
+                    L^idealized = R * L^standardized
             std_mapping_to_primitive (m int):
-                Std-cell atom index mapping to primivie cell atom index
+                std_positions index mapping to those of primivie cell atoms
             pointgroup (str): Pointgroup symbol
 
         If it fails, None is returned.
@@ -183,6 +193,7 @@ def get_symmetry_dataset(cell,
             'std_lattice',
             'std_types',
             'std_positions',
+            'std_rotation_matrix',
             'std_mapping_to_primitive',
             # 'pointgroup_number',
             'pointgroup')
@@ -211,12 +222,15 @@ def get_symmetry_dataset(cell,
     dataset['std_types'] = np.array(dataset['std_types'], dtype='intc')
     dataset['std_positions'] = np.array(dataset['std_positions'],
                                         dtype='double', order='C')
+    dataset['std_rotation_matrix'] = np.array(dataset['std_rotation_matrix'],
+                                              dtype='double', order='C')
     dataset['std_mapping_to_primitive'] = np.array(
         dataset['std_mapping_to_primitive'], dtype='intc')
     dataset['pointgroup'] = dataset['pointgroup'].strip()
 
     _set_error_message()
     return dataset
+
 
 def get_spacegroup(cell, symprec=1e-5, angle_tolerance=-1.0, symbol_type=0):
     """Return space group in international table symbol and number as a string.
@@ -237,6 +251,7 @@ def get_spacegroup(cell, symprec=1e-5, angle_tolerance=-1.0, symbol_type=0):
     else:
         return "%s (%d)" % (spg_type['international_short'], dataset['number'])
 
+
 def get_hall_number_from_symmetry(rotations, translations, symprec=1e-5):
     """Hall number is obtained from a set of symmetry operations.
 
@@ -247,6 +262,7 @@ def get_hall_number_from_symmetry(rotations, translations, symprec=1e-5):
     t = np.array(translations, dtype='double', order='C')
     hall_number = spg.hall_number_from_symmetry(r, t, symprec)
     return hall_number
+
 
 def get_spacegroup_type(hall_number):
     """Translate Hall number to space group type information.
@@ -277,6 +293,7 @@ def get_spacegroup_type(hall_number):
         return spg_type
     else:
         return None
+
 
 def get_pointgroup(rotations):
     """Return point group in international table symbol and number.
@@ -321,6 +338,7 @@ def get_pointgroup(rotations):
     pointgroup = spg.pointgroup(np.array(rotations, dtype='intc', order='C'))
     _set_error_message()
     return pointgroup
+
 
 def standardize_cell(cell,
                      to_primitive=False,
@@ -372,6 +390,7 @@ def standardize_cell(cell,
     else:
         return None
 
+
 def refine_cell(cell, symprec=1e-5, angle_tolerance=-1.0):
     """Return refined cell.
 
@@ -406,6 +425,7 @@ def refine_cell(cell, symprec=1e-5, angle_tolerance=-1.0):
     else:
         return None
 
+
 def find_primitive(cell, symprec=1e-5, angle_tolerance=-1.0):
     """Primitive cell is searched in the input cell.
 
@@ -432,6 +452,7 @@ def find_primitive(cell, symprec=1e-5, angle_tolerance=-1.0):
     else:
         return None
 
+
 def get_symmetry_from_database(hall_number):
     """Return symmetry operations corresponding to a Hall symbol.
 
@@ -454,6 +475,7 @@ def get_symmetry_from_database(hall_number):
                 np.array(rotations[:num_sym], dtype='intc', order='C'),
                 'translations':
                 np.array(translations[:num_sym], dtype='double', order='C')}
+
 
 ############
 # k-points #
@@ -516,6 +538,7 @@ def get_ir_reciprocal_mesh(mesh,
     else:
         return None
 
+
 def get_stabilized_reciprocal_mesh(mesh,
                                    rotations,
                                    is_shift=None,
@@ -568,6 +591,7 @@ def get_stabilized_reciprocal_mesh(mesh,
     else:
         return None
 
+
 def get_grid_points_by_rotations(address_orig,
                                  reciprocal_rotations,
                                  mesh,
@@ -586,6 +610,7 @@ def get_grid_points_by_rotations(address_orig,
         np.array(is_shift, dtype='intc'))
 
     return rot_grid_points
+
 
 def get_BZ_grid_points_by_rotations(address_orig,
                                     reciprocal_rotations,
@@ -608,9 +633,10 @@ def get_BZ_grid_points_by_rotations(address_orig,
 
     return rot_grid_points
 
+
 def relocate_BZ_grid_address(grid_address,
                              mesh,
-                             reciprocal_lattice, # column vectors
+                             reciprocal_lattice,  # column vectors
                              is_shift=np.zeros(3, dtype='intc')):
     """Grid addresses are relocated inside Brillouin zone.
     Number of ir-grid-points inside Brillouin zone is returned.
@@ -651,6 +677,7 @@ def relocate_BZ_grid_address(grid_address,
 
     return bz_grid_address[:num_bz_ir], bz_map
 
+
 def delaunay_reduce(lattice, eps=1e-5):
     """Run Delaunay reduction
 
@@ -685,6 +712,7 @@ def delaunay_reduce(lattice, eps=1e-5):
         return np.array(np.transpose(delaunay_lattice),
                         dtype='double', order='C')
 
+
 def niggli_reduce(lattice, eps=1e-5):
     """Run Niggli reduction
 
@@ -717,10 +745,13 @@ def niggli_reduce(lattice, eps=1e-5):
     if result == 0:
         return None
     else:
-        return np.array(np.transpose(niggli_lattice), dtype='double', order='C')
+        return np.array(np.transpose(niggli_lattice),
+                        dtype='double', order='C')
+
 
 def get_error_message():
     return spglib_error.message
+
 
 def _expand_cell(cell):
     if isinstance(cell, tuple):
@@ -733,7 +764,8 @@ def _expand_cell(cell):
             magmoms = None
     else:
         import warnings
-        warnings.warn("ASE Atoms-like input is deprecated.", DeprecationWarning)
+        warnings.warn("ASE Atoms-like input is deprecated.",
+                      DeprecationWarning)
         lattice = np.array(cell.get_cell().T, dtype='double', order='C')
         positions = np.array(cell.get_scaled_positions(),
                              dtype='double', order='C')
@@ -744,6 +776,7 @@ def _expand_cell(cell):
         return (lattice, positions, numbers, magmoms)
     else:
         return (None, None, None, None)
+
 
 def _check(lattice, positions, numbers, magmoms):
     if lattice.shape != (3, 3):
@@ -763,8 +796,10 @@ def _check(lattice, positions, numbers, magmoms):
             return False
     return True
 
+
 def _set_error_message():
     spglib_error.message = spg.error_message()
+
 
 def _set_no_error():
     spglib_error.message = "no error"

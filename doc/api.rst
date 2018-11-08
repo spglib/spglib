@@ -167,11 +167,14 @@ atomic point coordinates and types are overwritten in ``lattice``,
 is required to store a standardized unit cell with face centring found
 in the case that the input unit cell is a primitive cell.
 
-``no_idealize=1`` disables to idealize lengths and angles of basis
-vectors and positions of atoms according to crystal symmetry. The
-detail of the idealization (``no_idealize=0``) is written at
-:ref:`def_idealize_cell`. ``no_idealize=1`` may be used when we want to
-leave basis vectors and atomic positions in Cartesianl coordinates
+``no_idealize=0`` is used to idealize the lengths and angles of basis
+vectors with adjusting the positions of atoms to nearest exact
+positions according to crystal symmetry. However the crystal can be
+rotated in Cartesian coordinates by the idealization of the basis
+vectors.  ``no_idealize=1`` disables this. The detail of the
+idealization (``no_idealize=0``) is written at
+:ref:`def_idealize_cell`. ``no_idealize=1`` may be useful when we want
+to leave basis vectors and atomic positions in Cartesianl coordinates
 fixed.
 
 |
@@ -195,14 +198,19 @@ failed.
                          const double symprec);
 
 ``lattice``, ``position``, and ``types`` are overwritten. Number of
-atoms in the found primitive cell is returned.
+atoms in the found primitive cell is returned. The crystal can be
+rotated by this function. To avoid this, please use
+``spg_standardize_cell`` with ``to_primitive=1`` and ``no_idealize=1``
+although the crystal structure is not idealized.
 
 |
 
 ``spg_refine_cell``
 --------------------
 
-**This function exists for backward compatibility since it is same as** ``spg_standardize_cell`` **with** ``to_primitive=0`` **and** ``leave_distorted=0``.
+**This function exists for backward compatibility since it is same
+as** ``spg_standardize_cell`` **with** ``to_primitive=0`` **and**
+``no_idealize=0``.
 
 The standardized crystal structure is obtained from a non-standard
 crystal structure which may be slightly distorted within a symmetry
@@ -243,8 +251,7 @@ returned as the ``SpglibDataset`` structure as a dataset. The default
 choice of setting of basis vectors in spglib is explained in the
 manuscript found at http://arxiv.org/abs/1506.01455.
 
-Usage
-^^^^^^
+The detail of the dataset is given at :ref:`spglib_dataset`.
 
 Dataset corresponding to the space group type in the standard setting
 is obtained by ``spg_get_dataset``. If this symmetry search fails,
@@ -285,181 +292,6 @@ structure is set 0.
 Finally, its allocated memory space must be freed by calling
 ``spg_free_dataset``.
 
-.. _api_struct_spglibdataset:
-
-Dataset
-^^^^^^^^
-
-**At version 1.9.4, SpglibDataset was modified.** The member
-name ``setting`` is changed to ``choice`` and ``pointgroup_number`` is
-removed.
-
-The dataset is accessible through the C-structure given by
-
-::
-
-   typedef struct {
-     int spacegroup_number;
-     int hall_number;
-     char international_symbol[11];
-     char hall_symbol[17];
-     char choice[6];
-     double transformation_matrix[3][3];
-     double origin_shift[3];
-     int n_operations;
-     int (*rotations)[3][3];
-     double (*translations)[3];
-     int n_atoms;
-     int *wyckoffs;
-     int *equivalent_atoms;
-     int *mapping_to_primitive;
-     int n_std_atoms;             /* n_brv_atoms before version 1.8.1 */
-     double std_lattice[3][3];    /* brv_lattice before version 1.8.1 */
-     int *std_types;              /* brv_types before version 1.8.1 */
-     double (*std_positions)[3];  /* brv_positions before version 1.8.1 */
-     int *std_mapping_to_primitive;
-     char pointgroup_symbol[6];
-   } SpglibDataset;
-
-**At versions before 1.8.1**, the member names of ``n_std_atoms``,
-``std_lattice``, ``std_types``, and ``std_positions`` were
-``n_brv_atoms``, ``brv_lattice``, ``brv_types``, and
-``brv_positions``, respectively.
-
-.. _api_spg_get_dataset_spacegroup_type:
-
-Space group type
-"""""""""""""""""
-
-``spacegroup_number`` is the space group type number defined in
-International Tables for Crystallography (ITA). ``hall_number`` is the
-serial number between 1 and 530 which are found at `list of space
-groups (Seto's web site)
-<http://pmsl.planet.sci.kobe-u.ac.jp/~seto/?page_id=37&lang=en>`_.
-The (full) Hermann–Mauguin notation of space group type is given by
-``international_symbol``. The Hall symbol is stored in
-``hall_symbol``. The information on unique axis,
-setting or cell choices is found in ``choice``.
-
-Symmetry operations
-"""""""""""""""""""""""
-
-The symmetry operations of the input unit cell are stored in
-``rotations`` and ``translations``. A crystallographic symmetry
-operation :math:`(\boldsymbol{W}, \boldsymbol{w})` is made from a pair
-of rotation :math:`\boldsymbol{W}` and translation
-:math:`\boldsymbol{w}` parts with the same index. Number of symmetry
-operations is given as ``n_operations``. The detailed explanation of
-the values is found at :ref:`api_spg_get_symmetry`.
-
-.. _api_spg_get_dataset_site_symmetry:
-
-Site symmetry
-""""""""""""""
-
-``n_atoms`` is the number of atoms of the input unit
-cell. ``wyckoffs`` gives Wyckoff letters that are assigned to atomic
-positions of the input unit cell. The numbers of 0, 1, 2,
-:math:`\ldots`, correspond to the a, b, c, :math:`\ldots`,
-respectively. Number of elements in ``wyckoffs`` is same as
-``n_atoms``. ``equivalent_atoms`` is a list of atomic indices that map
-to indices of symmetrically independent atoms, where the list index
-corresponds to atomic index of the input crystal structure.
-
-In version 1.10 or later, ``mapping_to_primitive`` is available. This
-gives a list of atomic indices in the primitive cell of the input
-crystal structure, where the same number presents the same atom in the
-primitive cell. By collective the atoms having the same number, a set
-of relative lattice points in the the input crystal structure is
-obtained.
-
-.. _api_origin_shift_and_transformation:
-
-Origin shift and lattice transformation
-""""""""""""""""""""""""""""""""""""""""
-
-**Changed in version 1.8.1**
-
-``transformation_matrix`` and ``origin_shift`` are obtained as a
-result of space-group-type matching under a set of unique axis,
-setting and cell choices. In this matching, basis vectors and atomic
-point coordinates have to be standardized to compare with the database
-of symmetry operations. The basis vectors are transformed to those of
-a standardized unit cell. Atomic point coordinates are shifted so that
-symmetry operations have the standard
-origin. ``transformation_matrix`` (:math:`\boldsymbol{P}`) is the
-matrix to transform the input basis vectors to the standardized basis
-vectors, wihch is represented as
-
-.. math::
-
-   ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
-   = ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )  \boldsymbol{P}
-
-where :math:`\mathbf{a}`, :math:`\mathbf{b}`, and :math:`\mathbf{c}`
-are the input (original) basis vectors, and
-:math:`\mathbf{a}_\mathrm{s}`, :math:`\mathbf{b}_\mathrm{s}`, and
-:math:`\mathbf{c}_\mathrm{s}` are the standardized basis vectors. The
-``origin_shift`` (:math:`\boldsymbol{p}`) is the vector from the
-origin of the standardized coordinate system to the origin of the
-input (original) coordinate system measured in the standardized
-coordinate system. The atomic point shift is measured from the
-standardized unit cell (conventional unit cell) to the original unit
-cell measured in the coordinates of the standardized unit cell. An
-atomic point in the original unit cell :math:`\boldsymbol{x}` (input
-data) is mapped to that in the standardized unit cell
-:math:`\boldsymbol{x}_\mathrm{s}` by
-
-.. math::
-
-   \boldsymbol{x}_\mathrm{s} = \boldsymbol{P}\boldsymbol{x} +
-   \boldsymbol{p} \;\;(\mathrm{mod}\; \mathbf{1}).
-
-In **versions 1.7.x and 1.8 or before**, ``transformation_matrix`` and
-``origin_shift`` are defined as follows:
-
-.. math::
-
-   ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
-   \mathbf{c}_\mathrm{s} ) = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c}
-   ) \boldsymbol{P} \;\; \text{and} \;\; \boldsymbol{x}_\mathrm{s} =
-   \boldsymbol{P}^{-1}\boldsymbol{x} - \boldsymbol{p}
-   \;\;(\mathrm{mod}\; \mathbf{1}),
-
-respectively.
-
-Standardized crystal structure
-"""""""""""""""""""""""""""""""
-
-**Changed in version 1.8.1**
-
-The standardized crystal structure corresponding to a Hall symbol is
-stored in ``n_std_atoms``, ``std_lattice``, ``std_types``, and
-``std_positions``.
-
-**At versions 1.7.x and 1.8 or before**, the variable names of the
-members corresponding to those above are ``n_brv_atoms``,
-``brv_lattice``, ``brv_types``, and ``brv_positions``, respectively.
-
-**At versions 1.10 or later**, ``std_mapping_to_primitive`` is
-available. This gives a list of atomic indices in the primitive cell
-of the standardized crystal structure, where the same number presents
-the same atom in the primitive cell. By collective the atoms having
-the same number, a set of relative lattice points in the the
-standardized crystal structure is obtained.
-
-Crystallographic point group
-"""""""""""""""""""""""""""""
-
-**New in version 1.8.1**
-
-``pointgroup_number`` is the serial number of the crystallographic
-point group, which refers `list of space
-groups (Seto's web site)
-<http://pmsl.planet.sci.kobe-u.ac.jp/~seto/?page_id=37&lang=en>`_.
-``pointgroup_symbol`` is the symbol of the crystallographic point
-group in the Hermann–Mauguin notation.
-
 |
 
 ``spg_free_dataset``
@@ -485,7 +317,7 @@ This function allows to directly access to the space-group-type
 database in spglib (spg_database.c). To specify the space group type
 with a specific choice, ``hall_number`` is used. The definition of
 ``hall_number`` is found at
-:ref:`api_spg_get_dataset_spacegroup_type`.
+:ref:`dataset_spg_get_dataset_spacegroup_type`.
 ``number = 0`` is returned when it failed.
 
 ::
@@ -519,7 +351,7 @@ This function allows to directly access to the space group operations
 in the spglib database (spg_database.c). To specify the space group
 type with a specific choice, ``hall_number`` is used. The definition
 of ``hall_number`` is found at
-:ref:`api_spg_get_dataset_spacegroup_type`. 0 is returned when it
+:ref:`dataset_spg_get_dataset_spacegroup_type`. 0 is returned when it
 failed.
 
 ::
@@ -559,7 +391,7 @@ This function finds symmetry operations with collinear polarizations
 (spins) on atoms. Except for the argument of ``const double spins[]``,
 the usage is basically the same as ``spg_get_symmetry``, but as an
 output, ``equivalent_atoms`` are obtained. The size of this array is
-the same of ``num_atom``. See :ref:`api_spg_get_dataset_site_symmetry`
+the same of ``num_atom``. See :ref:`dataset_spg_get_dataset_site_symmetry`
 for the definition ``equivalent_atoms``. 0 is returned when it failed.
 
 ::
@@ -716,7 +548,7 @@ This function can be used to obtain all mesh grid points by setting
 
 ``hall_number`` is obtained from the set of symmetry operations.  The
 definition of ``hall_number`` is found at
-:ref:`api_spg_get_dataset_spacegroup_type` and the corresponding
+:ref:`dataset_spg_get_dataset_spacegroup_type` and the corresponding
 space-group-type information is obtained through
 :ref:`api_spg_spacegroup_type`.
 

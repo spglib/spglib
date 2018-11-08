@@ -1081,6 +1081,7 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
 
 static SpglibDataset * init_dataset(void)
 {
+  int i, j;
   SpglibDataset *dataset;
 
   dataset = NULL;
@@ -1108,6 +1109,11 @@ static SpglibDataset * init_dataset(void)
   dataset->n_std_atoms = 0;
   dataset->std_positions = NULL;
   dataset->std_types = NULL;
+  for (i = 0; i < 3; i++) {
+    for (j = 0; j < 3; j++) {
+      dataset->std_rotation_matrix[i][j] = 0;
+    }
+  }
   dataset->std_mapping_to_primitive = NULL;
   /* dataset->pointgroup_number = 0; */
   strcpy(dataset->pointgroup_symbol, "");
@@ -1227,6 +1233,7 @@ static int set_dataset(SpglibDataset * dataset,
     dataset->std_types[i] = exstr->bravais->types[i];
     dataset->std_mapping_to_primitive[i] = exstr->std_mapping_to_primitive[i];
   }
+  mat_copy_matrix_d3(dataset->std_rotation_matrix, exstr->rotation);
 
   /* dataset->pointgroup_number = spacegroup->pointgroup_number; */
   pointgroup = ptg_get_pointgroup(spacegroup->pointgroup_number);
@@ -1349,6 +1356,9 @@ static int get_symmetry_with_collinear_spin(int rotation[][3][3],
 
   cel_set_cell(cell, lattice, position, types);
 
+#ifdef SPGTEST
+  sym_nonspin = sym_get_operation(cell, symprec, angle_tolerance);
+#else
   if ((dataset = get_dataset(lattice,
                              position,
                              types,
@@ -1375,6 +1385,7 @@ static int get_symmetry_with_collinear_spin(int rotation[][3][3],
   }
   spg_free_dataset(dataset);
   dataset = NULL;
+#endif
 
   if ((symmetry = spn_get_collinear_operations(equivalent_atoms,
                                                sym_nonspin,
