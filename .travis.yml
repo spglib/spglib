@@ -67,12 +67,6 @@ install:
       cp wheelhouse/spglib* dist/;
       ls dist/;
       cd ..;
-      if [[ "$DOCKER_DEPLOY" == "manylinux1_x86_64" ]]; then
-        cd python;
-        ln -s ../src .;
-        python setup.py install;
-        cd ..;
-      fi
     fi
   fi
 
@@ -93,6 +87,7 @@ deploy:
 # testing pypi
 - provider: pypi
   server: https://test.pypi.org/legacy/
+  skip_existing: true
   skip_cleanup: true
   user: atztogo
   password:
@@ -101,21 +96,24 @@ deploy:
     repo: atztogo/spglib
     branch: rc
     tags: false
-    if: env(DOCKER_DEPLOY) IN ("manylinux1_x86_64", "manylinux1_i686")
+    condition: "$DOCKER_DEPLOY == manylinux1_x86_64 || $DOCKER_DEPLOY == manylinux1_i686"
 
 # testing conda
 - provider: script
   skip_cleanup: true
+  skip_existing: true
   script: conda/anaconda_deploy.sh rc $ANACONDA_TOKEN $TRAVIS_BRANCH
   on:
     repo: atztogo/spglib
     branch: rc
     tags: false
-    if: env(DOCKER_DEPLOY) = false
+    condition: "$DOCKER_DEPLOY == false"
+
 
 # production pypi
-- provider: pypi
+- provider: pypie
   skip_cleanup: true
+  skip_existing: true
   user: atztogo
   password:
       secure: "sjUxbFSrhflB/NqMwcJCmalmQRX1EN4zgsK2YyY93JEk16aep+5pRyV87Q3Q54L19PGOkTqOrGyvUhwxTHUweo87F2DM1gd695bg0rROcquvhwWxlTuhMhMoUGSxDljgKbEeTvLikFd91JX2Rr/deIZLog/c3z/m55MbgHqGoyR5p1twxqLoUcJHznM8Mnn/KTauVHVQKG/6sVQr/h9AhRB8qI5VRCcrnDqAWoePqkgibWjEKchx/lmgW4TiB15IIvmIVgMxNwUa2q91Lqn3AhZDOcB/TST34yZCx8j1TpLJgAtB8+aRnTdmtfhnPWN8gebVuHJni+EQYsq4sIOiRzsU5qHkCzmW2x6I/kcTTYWYW4KybKorWQcypotTkyDoSfFuhZ93kyMy6QXBdV0/3xskBAbA++Mc93u6KaNMDnBGLb9PoeIT6R6YRNnwDAYBSlJ8lMZoNwVKrPhxI11r15eAK/4NamUHSLORBJWYKw1Z1Ko5wjkMXTSC4y7rC5UD+wrgZCfhB7WBLvatGBA3oD83dmEzMl3zA3wyaegDqHbEzKIFCGX5/eKrVN91hQrvlFkVYwf7YHAcNTvplZi0EGotfuZVsyhHiYSXRrMdF16g/NyZwunMEydafsbbwQatLxMhCMufX+5B1bk8VsmM0QDI9EV3rdvC7vgpnO5KPpY="
@@ -123,17 +121,18 @@ deploy:
     repo: atztogo/spglib
     branch: master
     tags: false
-    if: env(DOCKER_DEPLOY) IN ("manylinux1_x86_64", "manylinux1_i686")
+    condition: "$DOCKER_DEPLOY == manylinux1_x86_64 || $DOCKER_DEPLOY == manylinux1_i686"
 
 # production anaconda
 - provider: script
   skip_cleanup: true
+  skip_existing: true
   script: conda/anaconda_deploy.sh main $ANACONDA_TOKEN $TRAVIS_BRANCH
   on:
     repo: atztogo/spglib
     branch: master
     tags: false
-    if: env(DOCKER_DEPLOY) = false
+    condition: "$DOCKER_DEPLOY == false"
 
 after_deploy:
 - cd ..
