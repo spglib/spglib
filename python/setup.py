@@ -114,17 +114,17 @@ if os.path.isfile("__nanoversion__.txt"):
             for line in nv:
                 nanoversion = int(line.strip())
                 break
-        except ValueError :
+        except ValueError:
             nanoversion = 0
-        if nanoversion:
-            version_nums.append(nanoversion)
+version_nums.append(nanoversion)
 
 if None in version_nums:
     print("Failed to get version number in setup.py.")
     raise
 
 version = ".".join(["%d" % n for n in version_nums[:3]])
-version += "-%d" % version_nums[3]
+if len(version_nums) > 3:
+    version += "-%d" % version_nums[3]
 if use_setuptools:
     setup(name='spglib',
           version=version,

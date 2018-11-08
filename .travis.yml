@@ -46,14 +46,6 @@ before_install:
 
 install:
 - if [[ "$DOCKER_DEPLOY" == "false" ]]; then
-    aclocal;
-    autoheader;
-    libtoolize;
-    touch INSTALL NEWS README AUTHORS;
-    automake -acf;
-    autoconf;
-    ./configure;
-    make check;
     cd python;
     ln -s ../src .;
     python setup.py install ;
