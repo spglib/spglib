@@ -55,8 +55,11 @@ before_install:
       conda install --no-update-deps --yes python="$TRAVIS_PYTHON_VERSION" pip numpy;
     fi
   fi
+- pwd
+
 
 install:
+- pwd
 - if [[ "$DOCKER_DEPLOY" != "false" ]]; then
     if [[ "$TRAVIS_BRANCH" == "rc" ]] || [[ "$TRAVIS_BRANCH" == "master" ]]; then
       docker pull $DOCKER_IMAGE;
@@ -72,15 +75,18 @@ install:
   fi
 
 script:
+- pwd
 - if [[ "$DOCKER_DEPLOY" == "false" ]]; then
-    cd python;
     if [[ "$TRAVIS_BRANCH" != "rc" || "$TRAVIS_BRANCH" != "master" ]]; then
+      cd python;
       python setup.py test;
+      cd ..;
     else
+      cd python;
       ln -s ../src .;
       python setup.py install;
+      cd ..;
     fi
-    cd ..;
   fi
 
 before_deploy:
