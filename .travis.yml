@@ -45,7 +45,7 @@ install:
   fi
 
 script:
-- if [[ "$TRAVIS_BRANCH" != "rc" ]] || [[ "$TRAVIS_BRANCH" != "master" ]]; then
+- if [[ ("$TRAVIS_BRANCH" != "rc" || "$TRAVIS_BRANCH" != "master") && "$DOCKER_DEPLOY" == "false" || ("$TRAVIS_BRANCH" == "rc" || "$TRAVIS_BRANCH" == "master") && "$DOCKER_DEPLOY" != "false" ]]; then
     if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
       wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh;
     else
