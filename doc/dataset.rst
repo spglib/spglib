@@ -195,7 +195,7 @@ members corresponding to those above are ``n_brv_atoms``,
 ``std_rotation_matrix``
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-Rotation matrix that rotates from the standardized crystal structure
+Rotation matrix that rotates the standardized crystal structure
 before idealization :math:`( \mathbf{a}_\mathrm{s} \;
 \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )` to that after
 idealization :math:`( \bar{\mathbf{a}}_\mathrm{s} \;

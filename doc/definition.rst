@@ -451,6 +451,27 @@ Cubic lattice
 - :math:`\mathbf{b}` is set along :math:`+y` direction of Cartesian coordinates.
 - :math:`\mathbf{c}` is set along :math:`+z` direction of Cartesian coordinates.
 
+Rotation introduced by idealization
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+In the idealization step presented above, the input unit cell crystal
+strcuture can be rotated in the Cartesian coordinates.  The rotation
+matrix :math:`\boldsymbol{R}` of this rotation is defined by
+
+.. math::
+   :label: rigid_rotation_matrix
+
+   ( \bar{\mathbf{a}}_\mathrm{s} \;
+   \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )
+   = \boldsymbol{R} ( \mathbf{a}_\mathrm{s} \;
+   \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} ).
+
+This rotation matrix rotates the standardized
+crystal structure before idealization :math:`( \mathbf{a}_\mathrm{s}
+\; \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )` to that after
+idealization :math:`( \bar{\mathbf{a}}_\mathrm{s} \;
+\bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )` in
+Cartesian coordinates of the given input unit cell.
 
 Examples
 --------
@@ -845,7 +866,14 @@ This equals to
    \end{pmatrix},
 
 with :math:`\theta = -\pi/4` and :math:`\det(\boldsymbol{R})=1` when
-no distortion. In summary
+no distortion. ``dataset['std_rotation_matrix'])`` gives
+approximately the same result::
+
+   [[ 0.70710678  0.70710678  0.        ]
+    [-0.70710678  0.70710678  0.        ]
+    [ 0.          0.          1.        ]]
+
+In summary,
 
 .. math::
 
