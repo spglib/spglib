@@ -23,6 +23,10 @@ matrix:
     sudo: false
     env: DOCKER_DEPLOY=false
          TRAVIS_PYTHON_VERSION='3.6'
+  - python: '3.6'
+    sudo: false
+    env: DOCKER_DEPLOY=false
+         TRAVIS_PYTHON_VERSION='3.6'
 
 before_install:
 - echo $DOCKER_DEPLOY
@@ -68,9 +72,14 @@ install:
   fi
 
 script:
-- if [[ ("$TRAVIS_BRANCH" != "rc" || "$TRAVIS_BRANCH" != "master") && "$DOCKER_DEPLOY" == "false" ]]; then
+- if [[ "$DOCKER_DEPLOY" == "false" ]]; then
     cd python;
-    python setup.py test;
+    if [[ "$TRAVIS_BRANCH" != "rc" || "$TRAVIS_BRANCH" != "master" ]]; then
+      python setup.py test;
+    else
+      ln -s ../src .;
+      python setup.py install;
+    fi
     cd ..;
   fi
 
