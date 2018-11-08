@@ -45,13 +45,7 @@ before_install:
 - cd ..
 
 install:
-- if [[ "$DOCKER_DEPLOY" == "false" ]]; then
-    # cd python;
-    # ln -s ../src .;
-    # python setup.py install ;
-    # cd ..;
-    ;
-  else
+- if [[ "$DOCKER_DEPLOY" != "false" ]]; then
     docker pull $DOCKER_IMAGE;
   fi
 
