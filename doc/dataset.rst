@@ -192,6 +192,8 @@ input unit cell.
 members corresponding to those above are ``n_brv_atoms``,
 ``brv_lattice``, ``brv_types``, and ``brv_positions``, respectively.
 
+.. _dataset_std_rotation_matrix:
+
 ``std_rotation_matrix``
 ^^^^^^^^^^^^^^^^^^^^^^^
 
