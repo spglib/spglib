@@ -48,6 +48,7 @@ Documentation
 
    install
    api
+   dataset
    variable
    Python interface <python-spglib>
    interface
