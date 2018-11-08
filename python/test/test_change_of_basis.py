@@ -62,7 +62,7 @@ class TestChangeOfBasis(unittest.TestCase):
             std_lat = dataset['std_lattice']
             tmat = dataset['transformation_matrix']
             lat = np.dot(cell[0].T, np.linalg.inv(tmat))
-            lat_rot = np.dot(dataset['std_rotation'], lat)
+            lat_rot = np.dot(dataset['std_rotation_matrix'], lat)
 
             np.testing.assert_allclose(std_lat, lat_rot.T, atol=symprec,
                                        err_msg="%s" % fname)

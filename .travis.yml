@@ -30,43 +30,38 @@ before_install:
   else
     wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
   fi;
-  echo $TRAVIS_PYTHON_VERSION;
-  bash miniconda.sh -b -p $HOME/miniconda;
-  export PATH="$HOME/miniconda/bin:$PATH";
-  conda update --yes conda;
-  conda update --all --yes;
-  conda install --no-update-deps --yes python="$TRAVIS_PYTHON_VERSION" pip numpy;
-  export PATH="$HOME/miniconda/bin:$PATH";
-  cd python;
-  git branch -v;
-  git describe --tags --dirty;
-  ./get_nanoversion.sh;
-  cat __nanoversion__.txt;
-  cd ..;
+- echo $TRAVIS_PYTHON_VERSION
+- bash miniconda.sh -b -p $HOME/miniconda
+- export PATH="$HOME/miniconda/bin:$PATH"
+- conda update --yes conda
+- conda update --all --yes
+- conda install --no-update-deps --yes python="$TRAVIS_PYTHON_VERSION" pip numpy
+- export PATH="$HOME/miniconda/bin:$PATH"
+- cd python
+- git branch -v
+- git describe --tags --dirty
+- ./get_nanoversion.sh
+- cat __nanoversion__.txt
+- cd ..
 
 install:
 - if [[ "$DOCKER_DEPLOY" == "false" ]]; then
-    aclocal;
-    autoheader;
-    libtoolize;
-    touch INSTALL NEWS README AUTHORS;
-    automake -acf;
-    autoconf;
-    ./configure;
-    make check;
-    cd python;
-    ln -s ../src .;
-    python setup.py install ;
-    cd ..;
+    # cd python;
+    # ln -s ../src .;
+    # python setup.py install ;
+    # cd ..;
+    ;
   else
     docker pull $DOCKER_IMAGE;
   fi
 
 script:
 - if [[ "$DOCKER_DEPLOY" == "false" ]]; then
-    cd python;
-    python setup.py test;
-    cd ..;
+    if [[ "$TRAVIS_BRANCH" != "rc" ]] || [[ "$TRAVIS_BRANCH" != "master" ]]; then
+      cd python;
+      python setup.py test;
+      cd ..;
+    fi
   else
     cd python;
     cp -a ../src .;
