@@ -149,8 +149,7 @@ class TestSpglib(unittest.TestCase):
                         dataset_orig['std_positions'],
                         dataset_orig['std_types'])
             dataset = get_symmetry_dataset(ref_cell, symprec=1e-5)
-            self.assertEqual(dataset['number'], spgnum,
-                             msg=("%s" % fname))
+            self.assertEqual(dataset['number'], spgnum, msg=("%s" % fname))
 
     def test_find_primitive(self):
         for fname in self._filenames:
@@ -181,45 +180,6 @@ class TestSpglib(unittest.TestCase):
                              len(primitive[2]) * multiplicity,
                              msg=("multi: %d, %s" % (multiplicity, fname)))
 
-    def test_get_symmetry(self):
-        for fname in self._filenames:
-            cell = read_vasp(fname)
-            if 'distorted' in fname:
-                symprec = 1e-1
-            else:
-                symprec = 1e-5
-
-            num_sym_dataset = len(
-                get_symmetry_dataset(cell, symprec=symprec)['rotations'])
-            num_sym = len(get_symmetry(cell, symprec=symprec)['rotations'])
-            self.assertEqual(num_sym_dataset, num_sym)
-
-    def test_change_of_basis(self):
-        for fname in self._filenames:
-            cell = read_vasp(fname)
-            if 'distorted' in fname:
-                symprec = 1e-1
-            else:
-                symprec = 1e-5
-
-            dataset = get_symmetry_dataset(cell, symprec=symprec)
-            std_lat = dataset['std_lattice']
-            std_pos = dataset['std_positions']
-            tmat = dataset['transformation_matrix']
-            orig_shift = dataset['origin_shift']
-            lat = np.dot(cell[0].T, np.linalg.inv(tmat))
-            pos = np.dot(cell[1], tmat.T) + orig_shift
-            self._compare(lat, pos, std_lat, std_pos, 2 * symprec)
-
-    def _compare(self, lat, pos, std_lat, std_pos, symprec):
-        for p in pos:
-            diff = std_pos - p
-            diff -= np.rint(diff)
-            diff = np.dot(diff, lat.T)
-            delta = np.sqrt((diff ** 2).sum(axis=1))
-            indices = np.where(delta < symprec)[0]
-            self.assertEqual(len(indices), 1,
-                             msg=("multi: %s %s" % (p, indices)))
 
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(TestSpglib)
