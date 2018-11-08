@@ -46,22 +46,21 @@ before_install:
 
 install:
 - if [[ "$DOCKER_DEPLOY" == "false" ]]; then
-    # cd python;
-    # ln -s ../src .;
-    # python setup.py install ;
-    # cd ..;
-    ;
+    cd python;
+    ln -s ../src .;
+    python setup.py install ;
+    cd ..;
   else
     docker pull $DOCKER_IMAGE;
   fi
 
 script:
 - if [[ "$DOCKER_DEPLOY" == "false" ]]; then
-    if [[ "$TRAVIS_BRANCH" != "rc" ]] || [[ "$TRAVIS_BRANCH" != "master" ]]; then
+    # if [[ "$TRAVIS_BRANCH" != "rc" ]] || [[ "$TRAVIS_BRANCH" != "master" ]]; then
       cd python;
       python setup.py test;
       cd ..;
-    fi
+    # fi
   else
     cd python;
     cp -a ../src .;
