@@ -123,7 +123,8 @@ if None in version_nums:
     print("Failed to get version number in setup.py.")
     raise
 
-version = ".".join(["%d" % n for n in version_nums])
+version = ".".join(["%d" % n for n in version_nums[:3]])
+version += "-%d" % version_nums[3]
 if use_setuptools:
     setup(name='spglib',
           version=version,
