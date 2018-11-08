@@ -4,7 +4,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Definitions and conventions &#8212; spglib 1.10.4 documentation</title>
+    <title>Definitions and conventions &#8212; spglib 1.11 documentation</title>
     <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -37,7 +37,7 @@
         </button>
         <a class="navbar-brand" href="index.html">
           spglib</a>
-        <span class="navbar-text navbar-version pull-left"><b>1.10.4</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>1.11</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -96,6 +96,7 @@
 <li><a class="reference internal" href="#cubic-lattice">Cubic lattice</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#rotation-introduced-by-idealization">Rotation introduced by idealization</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#examples">Examples</a><ul>
@@ -155,12 +156,13 @@ in the previous versions.</p>
 <li><a class="reference internal" href="#choice-of-basis-vectors" id="id10">Choice of basis vectors</a></li>
 <li><a class="reference internal" href="#transformation-to-the-primitive-cell" id="id11">Transformation to the primitive cell</a></li>
 <li><a class="reference internal" href="#def-idealize-cell" id="id12">Idealization of unit cell structure</a></li>
+<li><a class="reference internal" href="#rotation-introduced-by-idealization" id="id13">Rotation introduced by idealization</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#examples" id="id13">Examples</a><ul>
-<li><a class="reference internal" href="#crystallographic-choice-and-rigid-rotation" id="id14">Crystallographic choice and rigid rotation</a></li>
-<li><a class="reference internal" href="#transformation-to-a-primitive-cell" id="id15">Transformation to a primitive cell</a></li>
-<li><a class="reference internal" href="#computing-rigid-rotation-introduced-by-idealization" id="id16">Computing rigid rotation introduced by idealization</a></li>
+<li><a class="reference internal" href="#examples" id="id14">Examples</a><ul>
+<li><a class="reference internal" href="#crystallographic-choice-and-rigid-rotation" id="id15">Crystallographic choice and rigid rotation</a></li>
+<li><a class="reference internal" href="#transformation-to-a-primitive-cell" id="id16">Transformation to a primitive cell</a></li>
+<li><a class="reference internal" href="#computing-rigid-rotation-introduced-by-idealization" id="id17">Computing rigid rotation introduced by idealization</a></li>
 </ul>
 </li>
 </ul>
@@ -505,11 +507,28 @@ are placed by angles <span class="math notranslate nohighlight">\(120^\circ\)</s
 </ul>
 </div>
 </div>
+<div class="section" id="rotation-introduced-by-idealization">
+<h3><a class="toc-backref" href="#id13">Rotation introduced by idealization</a><a class="headerlink" href="#rotation-introduced-by-idealization" title="Permalink to this headline">¶</a></h3>
+<p>In the idealization step presented above, the input unit cell crystal
+strcuture can be rotated in the Cartesian coordinates.  The rotation
+matrix <span class="math notranslate nohighlight">\(\boldsymbol{R}\)</span> of this rotation is defined by</p>
+<div class="math notranslate nohighlight" id="equation-rigid-rotation-matrix">
+<span class="eqno">(12)<a class="headerlink" href="#equation-rigid-rotation-matrix" title="Permalink to this equation">¶</a></span>\[( \bar{\mathbf{a}}_\mathrm{s} \;
+\bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )
+= \boldsymbol{R} ( \mathbf{a}_\mathrm{s} \;
+\mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} ).\]</div>
+<p>This rotation matrix rotates the standardized
+crystal structure before idealization <span class="math notranslate nohighlight">\(( \mathbf{a}_\mathrm{s}
+\; \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )\)</span> to that after
+idealization <span class="math notranslate nohighlight">\(( \bar{\mathbf{a}}_\mathrm{s} \;
+\bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )\)</span> in
+Cartesian coordinates of the given input unit cell.</p>
+</div>
 </div>
 <div class="section" id="examples">
-<h2><a class="toc-backref" href="#id13">Examples</a><a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id14">Examples</a><a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="crystallographic-choice-and-rigid-rotation">
-<h3><a class="toc-backref" href="#id14">Crystallographic choice and rigid rotation</a><a class="headerlink" href="#crystallographic-choice-and-rigid-rotation" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id15">Crystallographic choice and rigid rotation</a><a class="headerlink" href="#crystallographic-choice-and-rigid-rotation" title="Permalink to this headline">¶</a></h3>
 <p>The following example of a python script gives a crystal structure of
 Br whose space group type is <em>Cmce</em>. The basis vectors
 <span class="math notranslate nohighlight">\((\mathbf{a}, \mathbf{b}, \mathbf{c})\)</span> are fixed by the symmetry
@@ -639,7 +658,7 @@ different but it changes only the order of atoms, so effectively it
 does nothing.</p>
 </div>
 <div class="section" id="transformation-to-a-primitive-cell">
-<h3><a class="toc-backref" href="#id15">Transformation to a primitive cell</a><a class="headerlink" href="#transformation-to-a-primitive-cell" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id16">Transformation to a primitive cell</a><a class="headerlink" href="#transformation-to-a-primitive-cell" title="Permalink to this headline">¶</a></h3>
 <p>There are infinite number of choices of primitive cell. The
 transformation from a primitive cell basis vectors to the other
 primitive cell basis vectors is always done by an integer matrix
@@ -776,7 +795,7 @@ so the following script doesn’t give this basis vectors:</p>
 crystal structure.</p>
 </div>
 <div class="section" id="computing-rigid-rotation-introduced-by-idealization">
-<h3><a class="toc-backref" href="#id16">Computing rigid rotation introduced by idealization</a><a class="headerlink" href="#computing-rigid-rotation-introduced-by-idealization" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id17">Computing rigid rotation introduced by idealization</a><a class="headerlink" href="#computing-rigid-rotation-introduced-by-idealization" title="Permalink to this headline">¶</a></h3>
 <p>In spglib, rigid rotation is purposely introduced in the idealization
 step though this is unlikely as a crystallographic operation.</p>
 <p>The crystal structure in the following script is the same as shown
@@ -867,7 +886,14 @@ matrix. This is computed by</p>
 0 &amp; 0 &amp; 1
 \end{pmatrix},\end{split}\]</div>
 <p>with <span class="math notranslate nohighlight">\(\theta = -\pi/4\)</span> and <span class="math notranslate nohighlight">\(\det(\boldsymbol{R})=1\)</span> when
-no distortion. In summary</p>
+no distortion. <code class="docutils literal notranslate"><span class="pre">dataset['std_rotation_matrix'])</span></code> gives
+approximately the same result:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[[</span> <span class="mf">0.70710678</span>  <span class="mf">0.70710678</span>  <span class="mf">0.</span>        <span class="p">]</span>
+ <span class="p">[</span><span class="o">-</span><span class="mf">0.70710678</span>  <span class="mf">0.70710678</span>  <span class="mf">0.</span>        <span class="p">]</span>
+ <span class="p">[</span> <span class="mf">0.</span>          <span class="mf">0.</span>          <span class="mf">1.</span>        <span class="p">]]</span>
+</pre></div>
+</div>
+<p>In summary,</p>
 <div class="math notranslate nohighlight">
 \[( \bar{\mathbf{a}}_\mathrm{s} \;
 \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )  \boldsymbol{P}

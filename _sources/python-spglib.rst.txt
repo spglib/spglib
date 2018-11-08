@@ -370,13 +370,13 @@ The arguments are:
   `list of space groups (Seto's web site)
   <http://pmsl.planet.sci.kobe-u.ac.jp/~seto/?page_id=37&lang=en>`_)
   among possible choices and settings is chosen as default. This
-  argument is useful when the other choice (or settting) is
-  expected to be hooked. This affects to the obtained values of ``international``,
+  argument is useful when the other choice (or settting) is expected to
+  be hooked. This affects to the obtained values of ``international``,
   ``hall``, ``hall_number``, ``choice``, ``transformation_matrix``,
   ``origin shift``, ``wyckoffs``, ``std_lattice``, ``std_positions``,
-  and ``std_types``, but not to ``rotations`` and ``translations`` since
-  the later set is defined with respect to the basis vectors of user's
-  input (the ``cell`` argument).
+  ``std_types`` and ``std_rotation_matrix``, but not to ``rotations``
+  and ``translations`` since the later set is defined with respect to
+  the basis vectors of user's input (the ``cell`` argument).
 
 ``dataset`` is a dictionary. Short explanations of the values of the
 keys are shown below. More the detail may be found at
@@ -407,6 +407,7 @@ keys are shown below. More the detail may be found at
   ``positions``, and ``numbers`` presented at
   :ref:`py_variables_crystal_structure`,
   respectively.
+* ``std_rotation_matrix``: See the detail at :ref:`dataset_idealized_cell`.
 * ``std_mapping_to_primitive``: Mapping table from atoms in the
   standardized crystal structure to the atoms in the primitive cell.
 
