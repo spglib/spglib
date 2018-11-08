@@ -57,12 +57,11 @@ install:
 
 script:
 - if [[ "$DOCKER_DEPLOY" == "false" ]]; then
-    # if [[ "$TRAVIS_BRANCH" != "rc" ]] || [[ "$TRAVIS_BRANCH" != "master" ]]; then
-    #   cd python;
-    #   python setup.py test;
-    #   cd ..;
-    # fi
-    ;
+    if [[ "$TRAVIS_BRANCH" != "rc" ]] || [[ "$TRAVIS_BRANCH" != "master" ]]; then
+      cd python;
+      python setup.py test;
+      cd ..;
+    fi
   else
     cd python;
     cp -a ../src .;
