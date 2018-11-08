@@ -37,13 +37,13 @@ except ImportError:
     except ImportError:
         print("numpy.distutils.misc_util cannot be imported. Please install "
               "numpy first before installing spglib...")
-        import sys
         sys.exit(1)
 
 # Workaround Python issue 21121
 import sysconfig
 config_var = sysconfig.get_config_var("CFLAGS")
-if config_var is not None and "-Werror=declaration-after-statement" in config_var:
+if (config_var is not None and
+    "-Werror=declaration-after-statement" in config_var):
     os.environ['CFLAGS'] = config_var.replace(
         "-Werror=declaration-after-statement", "")
 
@@ -73,11 +73,11 @@ if os.path.exists('src'):
 else:
     source_dir = "../src"
 
-include_dirs = [source_dir,]
+include_dirs = [source_dir, ]
 if not use_setuptools:
     include_dirs += get_numpy_include_dirs()
 
-for i,s in enumerate(sources):
+for i, s in enumerate(sources):
     sources[i] = "%s/%s" % (source_dir, s)
 
 extra_compile_args = []
@@ -110,7 +110,7 @@ with open("%s/version.h" % source_dir) as w:
 nanoversion = 0
 if os.path.isfile("__nanoversion__.txt"):
     with open('__nanoversion__.txt') as nv:
-        try :
+        try:
             for line in nv:
                 nanoversion = int(line.strip())
                 break
