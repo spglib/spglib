@@ -144,6 +144,11 @@ static void find_similar_bravais_lattice(double bravais_lattice[3][3],
                                          const Symmetry *symmetry,
                                          SPGCONST double std_lattice[3][3],
                                          SPGCONST double orig_lattice[3][3]);
+static void measure_rigid_rotation(double rotation[3][3],
+                                   SPGCONST double bravais_lattice[3][3],
+                                   SPGCONST double std_lattice[3][3]);
+static void get_orthonormal_basis(double basis[3][3],
+                                  SPGCONST double lattice[3][3]);
 
 static SPGCONST int identity[3][3] = {
   { 1, 0, 0},
@@ -160,7 +165,7 @@ ref_get_exact_structure_and_symmetry(Spacegroup * spacegroup,
                                      const double symprec)
 {
   int *std_mapping_to_primitive, *wyckoffs, *equivalent_atoms;
-  double std_lattice[3][3];
+  double std_lattice[3][3], rotation[3][3];
   Cell *bravais;
   Symmetry *symmetry;
   ExactStructure *exact_structure;
@@ -228,11 +233,16 @@ ref_get_exact_structure_and_symmetry(Spacegroup * spacegroup,
     goto err;
   }
 
+  measure_rigid_rotation(rotation,
+                         spacegroup->bravais_lattice,
+                         bravais->lattice);
+
   exact_structure->bravais = bravais;
   exact_structure->symmetry = symmetry;
   exact_structure->wyckoffs = wyckoffs;
   exact_structure->equivalent_atoms = equivalent_atoms;
   exact_structure->std_mapping_to_primitive = std_mapping_to_primitive;
+  mat_copy_matrix_d3(exact_structure->rotation, rotation);
 
   return exact_structure;
 
@@ -1351,6 +1361,10 @@ static void find_similar_bravais_lattice(double bravais_lattice[3][3],
   mat_copy_matrix_d3(rot_lat, bravais_lattice);
 
   for (i = 0; i < symmetry->size; i++) {
+    if (mat_get_determinant_i3(symmetry->rot[i]) < 0) {
+      continue;
+    }
+
     /* (a,b,c) PRP^-1 */
     mat_multiply_matrix_di3(tmp_mat, brv_dot_tmat, symmetry->rot[i]);
     mat_multiply_matrix_d3(tmp_mat, tmp_mat, inv_tmat);
@@ -1374,4 +1388,43 @@ static void find_similar_bravais_lattice(double bravais_lattice[3][3],
     origin_shift[i] = mat_Dmod1(origin_shift[i]);
   }
   mat_copy_matrix_d3(bravais_lattice, rot_lat);
+}
+
+static void measure_rigid_rotation(double rotation[3][3],
+                                   SPGCONST double bravais_lattice[3][3],
+                                   SPGCONST double std_lattice[3][3])
+{
+  /* (a_s^ideal, b_s^ideal, c_s^ideal) = R(a_s, b_s, c_s) */
+  double brv_basis[3][3], std_basis[3][3], inv_brv_basis[3][3];
+
+  get_orthonormal_basis(brv_basis, bravais_lattice);
+  get_orthonormal_basis(std_basis, std_lattice);
+  mat_inverse_matrix_d3(inv_brv_basis, brv_basis, 0);
+  mat_multiply_matrix_d3(rotation, std_basis, inv_brv_basis);
+}
+
+static void get_orthonormal_basis(double basis[3][3],
+                                  SPGCONST double lattice[3][3])
+{
+  int i, j;
+  double length;
+  double basis_T[3][3], lattice_T[3][3];
+
+  mat_transpose_matrix_d3(lattice_T, lattice);
+  for (i = 0; i < 3; i++) {
+    mat_copy_vector_d3(basis_T[0], lattice_T[0]);
+    /* c' = axb */
+    mat_cross_product_d3(basis_T[2], lattice_T[0], lattice_T[1]);
+    /* b' = (axb)xa = c'xa */
+    mat_cross_product_d3(basis_T[1], basis_T[2], lattice_T[0]);
+  }
+  for (i = 0; i < 3; i++) {
+    length = sqrt(mat_norm_squared_d3(basis_T[i]));
+    for (j = 0; j < 3; j++) {
+      basis_T[i][j] /= length;
+    }
+  }
+
+  mat_transpose_matrix_d3(basis, basis_T);
+
 }
