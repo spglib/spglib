@@ -32,9 +32,15 @@ requirements:
     - python
     - numpy
 
+test:
+  source_files:
+    - python/test
   requires:
     - python
     - numpy
+  # Python imports
+  imports:
+    - spglib
 
 #  commands:
     # You can put test commands to be run here.  Use this to test that the

@@ -96,7 +96,7 @@ deploy:
     repo: atztogo/spglib
     branch: rc
     tags: false
-    if: env(DOCKER_DEPLOY) IN ("manylinux1_x86_64", "manylinux1_i686")
+    condition: "$DOCKER_DEPLOY == manylinux1_x86_64 || $DOCKER_DEPLOY == manylinux1_i686"
 
 # testing conda
 - provider: script
@@ -107,10 +107,11 @@ deploy:
     repo: atztogo/spglib
     branch: rc
     tags: false
-    if: env(DOCKER_DEPLOY) = false
+    condition: "$DOCKER_DEPLOY == false"
+
 
 # production pypi
-- provider: pypi
+- provider: pypie
   skip_cleanup: true
   skip_existing: true
   user: atztogo
@@ -120,7 +121,7 @@ deploy:
     repo: atztogo/spglib
     branch: master
     tags: false
-    if: env(DOCKER_DEPLOY) IN ("manylinux1_x86_64", "manylinux1_i686")
+    condition: "$DOCKER_DEPLOY == manylinux1_x86_64 || $DOCKER_DEPLOY == manylinux1_i686"
 
 # production anaconda
 - provider: script
@@ -131,7 +132,7 @@ deploy:
     repo: atztogo/spglib
     branch: master
     tags: false
-    if: env(DOCKER_DEPLOY) = false
+    condition: "$DOCKER_DEPLOY == false"
 
 after_deploy:
 - cd ..
