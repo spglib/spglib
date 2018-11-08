@@ -23,10 +23,6 @@ matrix:
     sudo: false
     env: DOCKER_DEPLOY=false
          TRAVIS_PYTHON_VERSION='3.6'
-  - python: '3.6'
-    sudo: false
-    env: DOCKER_DEPLOY=false
-         TRAVIS_PYTHON_VERSION='3.6'
 
 before_install:
 - echo $DOCKER_DEPLOY
@@ -71,6 +67,12 @@ install:
       cp wheelhouse/spglib* dist/;
       ls dist/;
       cd ..;
+      if [[ "$DOCKER_DEPLOY" == "manylinux1_x86_64" ]]; then
+        cd python;
+        ln -s ../src .;
+        python setup.py install;
+        cd ..;
+      fi
     fi
   fi
 
@@ -80,11 +82,6 @@ script:
     if [[ "$TRAVIS_BRANCH" != "rc" || "$TRAVIS_BRANCH" != "master" ]]; then
       cd python;
       python setup.py test;
-      cd ..;
-    else
-      cd python;
-      ln -s ../src .;
-      python setup.py install;
       cd ..;
     fi
   fi
