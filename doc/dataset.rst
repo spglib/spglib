@@ -211,8 +211,9 @@ matrix :math:`\boldsymbol{R}` is defined by
 
    ( \bar{\mathbf{a}}_\mathrm{s} \;
    \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )
-   = \boldsymbol{R} ( \mathbf{a}_\mathrm{s} \;
-   \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} ).
+   = ( \boldsymbol{R} \mathbf{a}_\mathrm{s} \;
+   \boldsymbol{R} \mathbf{b}_\mathrm{s} \; \boldsymbol{R}
+   \mathbf{c}_\mathrm{s} ).
 
 ``std_mapping_to_primitive``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
