@@ -463,8 +463,9 @@ matrix :math:`\boldsymbol{R}` of this rotation is defined by
 
    ( \bar{\mathbf{a}}_\mathrm{s} \;
    \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )
-   = \boldsymbol{R} ( \mathbf{a}_\mathrm{s} \;
-   \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} ).
+   = ( \boldsymbol{R} \mathbf{a}_\mathrm{s} \;
+   \boldsymbol{R} \mathbf{b}_\mathrm{s} \; \boldsymbol{R}
+   \mathbf{c}_\mathrm{s} ).
 
 This rotation matrix rotates the standardized
 crystal structure before idealization :math:`( \mathbf{a}_\mathrm{s}
@@ -835,8 +836,9 @@ rigidly in the idealization step by
 
    ( \bar{\mathbf{a}}_\mathrm{s} \;
    \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )
-   = \boldsymbol{R} ( \mathbf{a}_\mathrm{s} \;
-   \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} ).
+   = ( \boldsymbol{R} \mathbf{a}_\mathrm{s} \;
+   \boldsymbol{R} \mathbf{b}_\mathrm{s} \; \boldsymbol{R}
+   \mathbf{c}_\mathrm{s} ).
 
 where :math:`\boldsymbol{R}` is the rotation
 matrix. This is computed by
@@ -880,7 +882,8 @@ In summary,
 
    ( \bar{\mathbf{a}}_\mathrm{s} \;
    \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )  \boldsymbol{P}
-   = \boldsymbol{R} ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} ).
+   = ( \boldsymbol{R} \mathbf{a} \; \boldsymbol{R} \mathbf{b} \;
+   \boldsymbol{R} \mathbf{c} ).
 
 The atomic point coordinates in :math:`( \bar{\mathbf{a}}_\mathrm{s}
 \; \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )`

@@ -515,8 +515,9 @@ matrix <span class="math notranslate nohighlight">\(\boldsymbol{R}\)</span> of t
 <div class="math notranslate nohighlight" id="equation-rigid-rotation-matrix">
 <span class="eqno">(12)<a class="headerlink" href="#equation-rigid-rotation-matrix" title="Permalink to this equation">¶</a></span>\[( \bar{\mathbf{a}}_\mathrm{s} \;
 \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )
-= \boldsymbol{R} ( \mathbf{a}_\mathrm{s} \;
-\mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} ).\]</div>
+= ( \boldsymbol{R} \mathbf{a}_\mathrm{s} \;
+\boldsymbol{R} \mathbf{b}_\mathrm{s} \; \boldsymbol{R}
+\mathbf{c}_\mathrm{s} ).\]</div>
 <p>This rotation matrix rotates the standardized
 crystal structure before idealization <span class="math notranslate nohighlight">\(( \mathbf{a}_\mathrm{s}
 \; \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )\)</span> to that after
@@ -863,8 +864,9 @@ rigidly in the idealization step by</p>
 <div class="math notranslate nohighlight">
 \[( \bar{\mathbf{a}}_\mathrm{s} \;
 \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )
-= \boldsymbol{R} ( \mathbf{a}_\mathrm{s} \;
-\mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} ).\]</div>
+= ( \boldsymbol{R} \mathbf{a}_\mathrm{s} \;
+\boldsymbol{R} \mathbf{b}_\mathrm{s} \; \boldsymbol{R}
+\mathbf{c}_\mathrm{s} ).\]</div>
 <p>where <span class="math notranslate nohighlight">\(\boldsymbol{R}\)</span> is the rotation
 matrix. This is computed by</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;std_lattice&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
@@ -897,7 +899,8 @@ approximately the same result:</p>
 <div class="math notranslate nohighlight">
 \[( \bar{\mathbf{a}}_\mathrm{s} \;
 \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )  \boldsymbol{P}
-= \boldsymbol{R} ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} ).\]</div>
+= ( \boldsymbol{R} \mathbf{a} \; \boldsymbol{R} \mathbf{b} \;
+\boldsymbol{R} \mathbf{c} ).\]</div>
 <p>The atomic point coordinates in <span class="math notranslate nohighlight">\(( \bar{\mathbf{a}}_\mathrm{s}
 \; \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )\)</span>
 are simply obtained by Eq. <a class="reference internal" href="#equation-change-of-basis-1">(8)</a> since the
