@@ -1,7 +1,6 @@
 import unittest
-import numpy as np
 from spglib import (get_symmetry_dataset, find_primitive,
-                    get_spacegroup_type, get_symmetry, standardize_cell)
+                    get_spacegroup_type, standardize_cell)
 from vasp import read_vasp
 import os
 

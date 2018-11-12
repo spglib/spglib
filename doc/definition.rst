@@ -526,7 +526,7 @@ This python script is saved in the file ``example.py``. Then we get
       1  0  0
       0  1  0
       0  0  1
-   Origin shift: 0.000000 0.000000 0.000000
+   Origin shift: 0.000000 0.500000 0.500000
 
 No rotation was introduced in the idealization. Next, we swap a- and c-axes.
 
@@ -611,7 +611,7 @@ and
       1  0  0
       0  1  0
       0  0  1
-   Origin shift: 0.500000 0.000000 0.000000
+   Origin shift: 0.000000 0.000000 0.500000
 
 The transformation matrix is kept unchanged even though the crystal
 structure is rotated in Cartesian coordinates. The origin shift is

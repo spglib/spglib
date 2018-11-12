@@ -1,3 +1,13 @@
+2018-11-12  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.11.1
+
+	* src/refinement.c (find_similar_bravais_lattice):
+
+	Bug fix. Origin shift was not correctly computed when the
+	standardized basis vectors are rotated in this method to find most
+	similar choice of basis vectors to the idealized ones.
+
 2018-11-09  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.11.0

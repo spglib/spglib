@@ -1340,14 +1340,19 @@ static void find_similar_bravais_lattice(double bravais_lattice[3][3],
                                          SPGCONST double std_lattice[3][3],
                                          SPGCONST double orig_lattice[3][3])
 {
-  int i, j, k;
+  int i, j, k, rot_i;
   double min_length2, length2, diff;
   double tmat[3][3], inv_tmat[3][3], tmp_mat[3][3];
   double brv_dot_tmat[3][3], rot_lat[3][3];
+  double tmp_vec[3], p[3], shortest_p[3];
 
+  /* (a_s,b_s,c_s)^-1 */
   mat_inverse_matrix_d3(tmp_mat, bravais_lattice, 0);
-  mat_multiply_matrix_d3(tmat, tmp_mat, orig_lattice); /* P: tmat */
+  /* P = (a_s,b_s,c_s)^-1(a, b, c): tmat */
+  mat_multiply_matrix_d3(tmat, tmp_mat, orig_lattice);
+  /* P^-1 */
   mat_inverse_matrix_d3(inv_tmat, tmat, 0);
+  /* (a_s,b_s,c_s)P */
   mat_multiply_matrix_d3(brv_dot_tmat, bravais_lattice, tmat);
 
   min_length2 = 0;
@@ -1358,14 +1363,14 @@ static void find_similar_bravais_lattice(double bravais_lattice[3][3],
   }
 
   /* For no best match */
-  mat_copy_matrix_d3(rot_lat, bravais_lattice);
+  rot_i = -1;
 
   for (i = 0; i < symmetry->size; i++) {
     if (mat_get_determinant_i3(symmetry->rot[i]) < 0) {
       continue;
     }
 
-    /* (a,b,c) PRP^-1 */
+    /* R_s = PRP-1, (a_s,b_s,c_s) PRP^-1 */
     mat_multiply_matrix_di3(tmp_mat, brv_dot_tmat, symmetry->rot[i]);
     mat_multiply_matrix_d3(tmp_mat, tmp_mat, inv_tmat);
     length2 = 0;
@@ -1377,17 +1382,47 @@ static void find_similar_bravais_lattice(double bravais_lattice[3][3],
     }
     if (length2 < min_length2) {
       mat_copy_matrix_d3(rot_lat, tmp_mat);
+      rot_i = i;
       min_length2 = length2;
     }
   }
 
-  mat_inverse_matrix_d3(tmp_mat, rot_lat, 0);
-  mat_multiply_matrix_d3(tmp_mat, tmp_mat, bravais_lattice);
-  mat_multiply_matrix_vector_d3(origin_shift, tmp_mat, origin_shift);
-  for (i = 0; i < 3; i++) {
-    origin_shift[i] = mat_Dmod1(origin_shift[i]);
+  min_length2 = 3;
+  if (rot_i > -1) {
+    mat_copy_matrix_d3(bravais_lattice, rot_lat);
+
+    /* PR */
+    mat_multiply_matrix_di3(tmp_mat, tmat, symmetry->rot[rot_i]);
+    /* R_s = PRP^-1 */
+    mat_multiply_matrix_d3(tmp_mat, tmp_mat, inv_tmat);
+    /* R_s^-1 = (PRP^-1)^-1 */
+    mat_inverse_matrix_d3(tmp_mat, tmp_mat, 0);
+
+    for (i = 0; i < symmetry->size; i++) {
+      if (!mat_check_identity_matrix_i3(symmetry->rot[i],
+                                        symmetry->rot[rot_i])) {
+        continue;
+      }
+      mat_copy_vector_d3(p, origin_shift);
+      /* t_s = Pt */
+      mat_multiply_matrix_vector_d3(tmp_vec, tmat, symmetry->trans[i]);
+      /* R_s^-1 t_s */
+      mat_multiply_matrix_vector_d3(tmp_vec, tmp_mat, tmp_vec);
+      for (j = 0; j < 3; j++) {
+        p[j] += tmp_vec[j];
+        p[j] -= mat_Nint(p[j]);
+      }
+      length2 = mat_norm_squared_d3(p);
+      if (length2 < min_length2) {
+        min_length2 = length2;
+        for (j = 0; j < 3; j++) {
+          p[j] = mat_Dmod1(p[j]);
+        }
+        mat_copy_vector_d3(shortest_p, p);
+      }
+    }
+    mat_copy_vector_d3(origin_shift, shortest_p);
   }
-  mat_copy_matrix_d3(bravais_lattice, rot_lat);
 }
 
 static void measure_rigid_rotation(double rotation[3][3],
