@@ -463,8 +463,9 @@ matrix :math:`\boldsymbol{R}` of this rotation is defined by
 
    ( \bar{\mathbf{a}}_\mathrm{s} \;
    \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )
-   = \boldsymbol{R} ( \mathbf{a}_\mathrm{s} \;
-   \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} ).
+   = ( \boldsymbol{R} \mathbf{a}_\mathrm{s} \;
+   \boldsymbol{R} \mathbf{b}_\mathrm{s} \; \boldsymbol{R}
+   \mathbf{c}_\mathrm{s} ).
 
 This rotation matrix rotates the standardized
 crystal structure before idealization :math:`( \mathbf{a}_\mathrm{s}
@@ -525,7 +526,7 @@ This python script is saved in the file ``example.py``. Then we get
       1  0  0
       0  1  0
       0  0  1
-   Origin shift: 0.000000 0.000000 0.000000
+   Origin shift: 0.000000 0.500000 0.500000
 
 No rotation was introduced in the idealization. Next, we swap a- and c-axes.
 
@@ -610,7 +611,7 @@ and
       1  0  0
       0  1  0
       0  0  1
-   Origin shift: 0.500000 0.000000 0.000000
+   Origin shift: 0.000000 0.000000 0.500000
 
 The transformation matrix is kept unchanged even though the crystal
 structure is rotated in Cartesian coordinates. The origin shift is
@@ -835,8 +836,9 @@ rigidly in the idealization step by
 
    ( \bar{\mathbf{a}}_\mathrm{s} \;
    \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )
-   = \boldsymbol{R} ( \mathbf{a}_\mathrm{s} \;
-   \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} ).
+   = ( \boldsymbol{R} \mathbf{a}_\mathrm{s} \;
+   \boldsymbol{R} \mathbf{b}_\mathrm{s} \; \boldsymbol{R}
+   \mathbf{c}_\mathrm{s} ).
 
 where :math:`\boldsymbol{R}` is the rotation
 matrix. This is computed by
@@ -880,7 +882,8 @@ In summary,
 
    ( \bar{\mathbf{a}}_\mathrm{s} \;
    \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )  \boldsymbol{P}
-   = \boldsymbol{R} ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} ).
+   = ( \boldsymbol{R} \mathbf{a} \; \boldsymbol{R} \mathbf{b} \;
+   \boldsymbol{R} \mathbf{c} ).
 
 The atomic point coordinates in :math:`( \bar{\mathbf{a}}_\mathrm{s}
 \; \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )`
