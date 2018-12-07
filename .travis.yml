@@ -48,7 +48,7 @@ before_install:
     if [[ "$DOCKER_DEPLOY" != "false" ]]; then
       conda install --no-update-deps --yes python="$TRAVIS_PYTHON_VERSION" pip;
     else
-      conda install --no-update-deps --yes python="$TRAVIS_PYTHON_VERSION" pip numpy;
+      conda install --no-update-deps --yes python="$TRAVIS_PYTHON_VERSION" pip numpy pyyaml;
     fi
   fi
 - pwd
