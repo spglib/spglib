@@ -2,6 +2,7 @@ import unittest
 from spglib import (get_symmetry_dataset, find_primitive,
                     get_spacegroup_type, standardize_cell)
 from vasp import read_vasp
+import yaml
 import os
 
 data_dir = os.path.dirname(os.path.abspath(__file__))
@@ -46,20 +47,29 @@ class TestSpglib(unittest.TestCase):
 
     def setUp(self):
         self._filenames = []
+        self._ref_filenames = []
         self._spgnum_ref = []
         for d in dirnames:
             dirname = os.path.join(data_dir, "data", d)
+            refdirname = os.path.join(data_dir, "ref", d)
             filenames = os.listdir(dirname)
             self._spgnum_ref += [int(fname.split('-')[1])
                                  for fname in filenames]
             self._filenames += [os.path.join(dirname, fname)
                                 for fname in filenames]
+            self._ref_filenames += [os.path.join(refdirname, fname + "-ref")
+                                    for fname in filenames]
+
+    def _create_symref(self):
+        pass
 
     def tearDown(self):
         pass
 
     def test_get_symmetry_dataset(self):
-        for fname, spgnum in zip(self._filenames, self._spgnum_ref):
+        for fname, spgnum, reffname in zip(self._filenames,
+                                           self._spgnum_ref,
+                                           self._ref_filenames):
             cell = read_vasp(fname)
 
             if 'distorted' in fname:
@@ -84,6 +94,18 @@ class TestSpglib(unittest.TestCase):
                 self.assertEqual(dataset['pointgroup'],
                                  spg_type['pointgroup_schoenflies'],
                                  msg=("%s" % fname))
+
+            wyckoffs = dataset['wyckoffs']
+            wyckoffs_ref = yaml.load(open(reffname))['wyckoffs']
+            for w, w_ref in zip(wyckoffs, wyckoffs_ref):
+                self.assertEqual(w, w_ref, msg=("%s" % fname))
+
+            # This is for writing out detailed symmetry info into files.
+            # Now it is only for Wyckoff positions.
+            # with open(reffname, 'w') as f:
+            #     f.write("wyckoffs:\n")
+            #     for w in dataset['wyckoffs']:
+            #         f.write("- \"%s\"\n" % w)
 
     def test_standardize_cell(self):
         for fname, spgnum in zip(self._filenames, self._spgnum_ref):
