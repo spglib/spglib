@@ -31,6 +31,7 @@ requirements:
   run:
     - python
     - numpy
+    - pyyaml
 
 test:
   source_files:
@@ -38,6 +39,7 @@ test:
   requires:
     - python
     - numpy
+    - pyyaml
   # Python imports
   imports:
     - spglib
