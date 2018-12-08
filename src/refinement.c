@@ -1394,7 +1394,7 @@ static int find_similar_bravais_lattice(Spacegroup *spacegroup)
   /* From the definition of transformation, we have (W^-1, -W^-1 w). */
   /* From x_s = (P, p) x and x_s' = (W^-1, -W^-1 w) x_s. */
   /* Finally, */
-  /* (W^-1, -W^-1 w)(P, p) x = W^-1Px+W^-1p-W^-1w = (W^-1P, Wp-W^-1w) */
+  /* (W^-1, -W^-1 w)(P, p) x = W^-1Px+W^-1p-W^-1w = (W^-1P, W^-1p-W^-1w) */
   min_length2 = 3;
   if (rot_i > -1) {
     for (i = 0; i < conv_sym->size; i++) {
