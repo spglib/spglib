@@ -1347,8 +1347,8 @@ static int set_dataset(SpglibDataset * dataset,
     goto err;
   }
 
-  debug_print("Refined cell after ref_get_Wyckoff_positions\n");
-  debug_print(" (line %d, %s).\n", __LINE__, __FILE__);
+  debug_print("[line %d, %s]\n", __LINE__, __FILE__);
+  debug_print("refined cell after ref_get_Wyckoff_positions\n");
   debug_print_matrix_d3(exstr->bravais->lattice);
 #ifdef SPGDEBUG
   for (i = 0; i < exstr->bravais->size; i++) {

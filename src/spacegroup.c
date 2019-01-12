@@ -608,6 +608,9 @@ static Spacegroup * search_spacegroup_with_symmetry(const Cell * primitive,
   debug_print("search_spacegroup (tolerance = %f):\n", symprec);
 
   spacegroup = NULL;
+  origin_shift[0] = 0;
+  origin_shift[1] = 0;
+  origin_shift[2] = 0;
 
   pointsym = ptg_get_pointsymmetry(symmetry->rot, symmetry->size);
   if (pointsym.size < symmetry->size) {
@@ -752,6 +755,11 @@ static int search_hall_number(double origin_shift[3],
   pointgroup = ptg_get_transformation_matrix(int_transform_mat,
                                              symmetry->rot,
                                              symmetry->size);
+
+  debug_print("[line %d, %s]\n", __LINE__, __FILE__);
+  debug_print("initial tranformation matrix\n");
+  debug_print_matrix_i3(int_transform_mat);
+
   if (pointgroup.number == 0) {
     goto err;
   }
@@ -785,6 +793,10 @@ static int search_hall_number(double origin_shift[3],
   mat_multiply_matrix_id3(transform_mat, int_transform_mat, correction_mat);
   mat_multiply_matrix_d3(conv_lattice, primitive_lattice, transform_mat);
 
+  debug_print("[line %d, %s]\n", __LINE__, __FILE__);
+  debug_print("tranformation matrix\n");
+  debug_print_matrix_d3(transform_mat);
+
   if ((conv_symmetry = get_initial_conventional_symmetry(centering,
                                                          transform_mat,
                                                          symmetry)) == NULL) {
@@ -800,6 +812,11 @@ static int search_hall_number(double origin_shift[3],
                              centering,
                              conv_symmetry,
                              symprec)) {
+
+      debug_print("[line %d, %s]\n", __LINE__, __FILE__);
+      debug_print("origin shift\n");
+      debug_print_vector_d3(origin_shift);
+
       hall_number = candidates[i];
       break;
     }

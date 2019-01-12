@@ -117,7 +117,7 @@ static DataContainer * get_spacegroup_and_primitive(const Cell * cell,
                                                     const double symprec,
                                                     const double angle_symprec)
 {
-  int attempt;
+  int attempt, i;
   double tolerance, angle_tolerance;
   DataContainer *container;
 
@@ -141,6 +141,11 @@ static DataContainer * get_spacegroup_and_primitive(const Cell * cell,
     if ((container->primitive = prm_get_primitive(cell,
                                                   tolerance,
                                                   angle_tolerance)) != NULL) {
+
+      debug_print("[line %d, %s]\n", __LINE__, __FILE__);
+      debug_print("primitive lattice\n");
+      debug_print_matrix_d3(container->primitive->cell->lattice);
+
       if ((container->spacegroup = spa_search_spacegroup(
              container->primitive->cell,
              hall_number,
