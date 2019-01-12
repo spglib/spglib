@@ -38,6 +38,8 @@
 
 #include "debug.h"
 
+#define ZERO_PREC 1e-10
+
 double mat_get_determinant_d3(SPGCONST double a[3][3])
 {
   return a[0][0] * (a[1][1] * a[2][2] - a[1][2] * a[2][1])
@@ -424,7 +426,7 @@ int mat_Nint(const double a)
 
 double mat_Dmod1(const double a)
 {
-  if (a < 0.0)
+  if (a < 0.0 - ZERO_PREC)
     return a + 1.0 - (int) a;
   else
     return a - (int) a;

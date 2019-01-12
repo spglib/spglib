@@ -583,6 +583,7 @@ static void get_conventional_lattice(double lattice[3][3],
 
   mat_get_metric(metric, spacegroup->bravais_lattice);
 
+  debug_print("[line %d, %s]\n", __LINE__, __FILE__);
   debug_print("bravais lattice\n");
 
   /* printf("%f %f %f\n", */

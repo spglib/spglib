@@ -50,6 +50,7 @@ if (config_var is not None and
 sources = ['arithmetic.c',
            'cell.c',
            'delaunay.c',
+           'debug.c',
            'determination.c',
            'hall_symbol.c',
            'kgrid.c',
