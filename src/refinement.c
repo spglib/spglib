@@ -1419,7 +1419,7 @@ static int find_similar_bravais_lattice(Spacegroup *spacegroup,
       if (length < min_length - symprec) {
         min_length = length;
         for (j = 0; j < 3; j++) {
-          p[j] = mat_Dmod1(p[j] + 1e-8) - 1e-8;
+          p[j] = mat_Dmod1(p[j]);
         }
         mat_copy_vector_d3(shortest_p, p);
       }

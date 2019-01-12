@@ -426,10 +426,13 @@ int mat_Nint(const double a)
 
 double mat_Dmod1(const double a)
 {
-  if (a < 0.0 - ZERO_PREC)
-    return a + 1.0 - (int) a;
+  double b;
+  b = a - mat_Nint(a);
+
+  if (b < 0.0 - ZERO_PREC)
+    return b + 1.0;
   else
-    return a - (int) a;
+    return b;
 }
 
 MatINT * mat_alloc_MatINT(const int size)
