@@ -96,7 +96,8 @@ class TestSpglib(unittest.TestCase):
                                  msg=("%s" % fname))
 
             wyckoffs = dataset['wyckoffs']
-            wyckoffs_ref = yaml.load(open(reffname))['wyckoffs']
+            with open(reffname) as f:
+                wyckoffs_ref = yaml.load(f)['wyckoffs']
             for w, w_ref in zip(wyckoffs, wyckoffs_ref):
                 self.assertEqual(w, w_ref, msg=("%s" % fname))
 

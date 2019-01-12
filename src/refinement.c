@@ -141,7 +141,8 @@ get_symmetry_in_original_cell(SPGCONST int t_mat[3][3],
 static Symmetry *
 copy_symmetry_upon_lattice_points(const VecDBL *pure_trans,
                                   const Symmetry *t_sym);
-static int find_similar_bravais_lattice(Spacegroup *spacegroup);
+static int find_similar_bravais_lattice(Spacegroup *spacegroup,
+                                        const double symprec);
 static void measure_rigid_rotation(double rotation[3][3],
                                    SPGCONST double bravais_lattice[3][3],
                                    SPGCONST double std_lattice[3][3]);
@@ -177,7 +178,7 @@ ref_get_exact_structure_and_symmetry(Spacegroup * spacegroup,
 
   /* spacegroup->bravais_lattice is overwirten. */
   /* spacegroup->origin_shift is overwirten. */
-  if (!find_similar_bravais_lattice(spacegroup)) {
+  if (!find_similar_bravais_lattice(spacegroup, symprec)) {
     goto err;
   }
 
@@ -1329,11 +1330,12 @@ copy_symmetry_upon_lattice_points(const VecDBL *pure_trans,
   return symmetry;
 }
 
-static int find_similar_bravais_lattice(Spacegroup *spacegroup)
+static int find_similar_bravais_lattice(Spacegroup *spacegroup,
+                                        const double symprec)
 {
   int i, j, k, rot_i;
   Symmetry *conv_sym;
-  double min_length2, length2, diff;
+  double min_length2, length2, diff, min_length, length;
   double tmp_mat[3][3], std_lattice[3][3];
   double rot_lat[3][3];
   double p[3], shortest_p[3], tmp_vec[3];
@@ -1354,6 +1356,7 @@ static int find_similar_bravais_lattice(Spacegroup *spacegroup)
         * spacegroup->bravais_lattice[i][j];
     }
   }
+  min_length = sqrt(min_length2);
 
   /* For no best match */
   rot_i = -1;
@@ -1372,10 +1375,11 @@ static int find_similar_bravais_lattice(Spacegroup *spacegroup)
         length2 += diff * diff;
       }
     }
-    if (length2 < min_length2) {
+    length = sqrt(length2);
+    if (length < min_length - symprec) {
       mat_copy_matrix_d3(rot_lat, tmp_mat);
       rot_i = i;
-      min_length2 = length2;
+      min_length = length;
     }
   }
 
@@ -1395,7 +1399,7 @@ static int find_similar_bravais_lattice(Spacegroup *spacegroup)
   /* From x_s = (P, p) x and x_s' = (W^-1, -W^-1 w) x_s. */
   /* Finally, */
   /* (W^-1, -W^-1 w)(P, p) x = W^-1Px+W^-1p-W^-1w = (W^-1P, W^-1p-W^-1w) */
-  min_length2 = 3;
+  min_length = 2;
   if (rot_i > -1) {
     for (i = 0; i < conv_sym->size; i++) {
       if (!mat_check_identity_matrix_i3(conv_sym->rot[i],
@@ -1410,9 +1414,9 @@ static int find_similar_bravais_lattice(Spacegroup *spacegroup)
         p[j] -= tmp_vec[j];
         p[j] -= mat_Nint(p[j]);
       }
-      length2 = mat_norm_squared_d3(p);
-      if (length2 < min_length2) {
-        min_length2 = length2;
+      length = sqrt(mat_norm_squared_d3(p));
+      if (length < min_length - symprec) {
+        min_length = length;
         for (j = 0; j < 3; j++) {
           p[j] = mat_Dmod1(p[j] + 1e-8) - 1e-8;
         }
