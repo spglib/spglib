@@ -386,6 +386,7 @@ get_bravais_exact_positions_and_lattice(int * wyckoffs,
 {
   int i;
   int *wyckoffs_prim, *equiv_atoms_prim;
+  char (*site_symmetry_symbols_prim)[7];
   Symmetry *conv_sym;
   Cell *bravais, *conv_prim;
   VecDBL *exact_positions;
@@ -394,6 +395,7 @@ get_bravais_exact_positions_and_lattice(int * wyckoffs,
 
   wyckoffs_prim = NULL;
   equiv_atoms_prim = NULL;
+  site_symmetry_symbols_prim = NULL;
   conv_prim = NULL;
   bravais = NULL;
   conv_sym = NULL;
@@ -413,9 +415,20 @@ get_bravais_exact_positions_and_lattice(int * wyckoffs,
     return NULL;
   }
 
+  if ((site_symmetry_symbols_prim =
+       (char (*)[7]) malloc(sizeof(char[7]) * primitive->size)) == NULL) {
+    warning_print("spglib: Memory could not be allocated ");
+    free(equiv_atoms_prim);
+    equiv_atoms_prim = NULL;
+    free(wyckoffs_prim);
+    wyckoffs_prim = NULL;
+    return NULL;
+  }
+
   for (i = 0; i < primitive->size; i++) {
     wyckoffs_prim[i] = -1;
     equiv_atoms_prim[i] = -1;
+    site_symmetry_symbols_prim[i][0] = '\0';
   }
 
   /* Positions of primitive atoms are represented wrt Bravais lattice */
@@ -424,6 +437,8 @@ get_bravais_exact_positions_and_lattice(int * wyckoffs,
     wyckoffs_prim = NULL;
     free(equiv_atoms_prim);
     equiv_atoms_prim = NULL;
+    free(site_symmetry_symbols_prim);
+    site_symmetry_symbols_prim = NULL;
     return NULL;
   }
 
@@ -438,6 +453,7 @@ get_bravais_exact_positions_and_lattice(int * wyckoffs,
 
   if ((exact_positions = ssm_get_exact_positions(wyckoffs_prim,
                                                  equiv_atoms_prim,
+                                                 site_symmetry_symbols_prim,
                                                  conv_prim,
                                                  conv_sym,
                                                  spacegroup->hall_number,
@@ -470,6 +486,8 @@ get_bravais_exact_positions_and_lattice(int * wyckoffs,
   wyckoffs_prim = NULL;
   free(equiv_atoms_prim);
   equiv_atoms_prim = NULL;
+  free(site_symmetry_symbols_prim);
+  site_symmetry_symbols_prim = NULL;
   cel_free_cell(conv_prim);
   conv_prim = NULL;
 

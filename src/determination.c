@@ -117,7 +117,7 @@ static DataContainer * get_spacegroup_and_primitive(const Cell * cell,
                                                     const double symprec,
                                                     const double angle_symprec)
 {
-  int attempt, i;
+  int attempt;
   double tolerance, angle_tolerance;
   DataContainer *container;
 
