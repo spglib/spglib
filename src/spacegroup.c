@@ -51,6 +51,7 @@
 #define REDUCE_RATE 0.95
 #define NUM_ATTEMPT 100
 #define INT_PREC 0.1
+#define ZERO_PREC 1e-10
 
 static double change_of_basis_monocli[36][3][3] = {
   {{ 1, 0, 0 }, /* b  first turn; two axes are flipped in second turn */
@@ -1164,13 +1165,13 @@ static int match_hall_symbol_db_monocli(double origin_shift[3],
     /* discard if principal angle is acute. */
     if (vec[0][0] * vec[1][0] +
         vec[0][1] * vec[1][1] +
-        vec[0][2] * vec[1][2] > 0) {
+        vec[0][2] * vec[1][2] > ZERO_PREC) {
       continue;
     }
 
     /* Choose |a| < |b| < |c| if there are freedom. */
     if (num_hall_types == 3) {
-      if (norms[0] > norms[1]) {continue;}
+      if (norms[0] > norms[1] + ZERO_PREC) {continue;}
     }
 
 
@@ -1235,7 +1236,7 @@ static int match_hall_symbol_db_ortho(double origin_shift[3],
         norms[l] = mat_norm_squared_d3(vec);
         l++;
       }
-      if (norms[0] > norms[1]) {continue;}
+      if (norms[0] > norms[1] + ZERO_PREC) {continue;}
     }
 
     if (num_free_axes == 3) {
@@ -1243,7 +1244,8 @@ static int match_hall_symbol_db_ortho(double origin_shift[3],
         for (k = 0; k < 3; k++) {vec[k] = changed_lattice[k][j];}
         norms[j] = mat_norm_squared_d3(vec);
       }
-      if (norms[0] > norms[1] || norms[0] > norms[2]) {continue;}
+      if ((norms[0] > norms[1] + ZERO_PREC) ||
+          (norms[0] > norms[2] + ZERO_PREC)) {continue;}
     }
 
     if (num_free_axes == 6) {
@@ -1251,7 +1253,8 @@ static int match_hall_symbol_db_ortho(double origin_shift[3],
         for (k = 0; k < 3; k++) {vec[k] = changed_lattice[k][j];}
         norms[j] = mat_norm_squared_d3(vec);
       }
-      if (norms[0] > norms[1] || norms[1] > norms[2]) {continue;}
+      if ((norms[0] > norms[1] + ZERO_PREC) ||
+          (norms[1] > norms[2] + ZERO_PREC)) {continue;}
     }
 
     if ((changed_symmetry = get_conventional_symmetry(change_of_basis_ortho[i],
