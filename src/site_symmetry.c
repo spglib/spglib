@@ -284,7 +284,7 @@ static int set_Wyckoffs_labels(int *wyckoffs,
                                const int hall_number,
                                const double symprec)
 {
-  int i, w;
+  int i, j, w;
 
   for (i = 0; i < conv_prim->size; i++) {
     if (i == equiv_atoms[i]) {
@@ -305,6 +305,9 @@ static int set_Wyckoffs_labels(int *wyckoffs,
   for (i = 0; i < conv_prim->size; i++) {
     if (i != equiv_atoms[i]) {
       wyckoffs[i] = wyckoffs[equiv_atoms[i]];
+      for (j = 0; j < 7; j++) {
+        site_symmetry_symbols[i][j] = site_symmetry_symbols[equiv_atoms[i]][j];
+      }
     }
   }
 

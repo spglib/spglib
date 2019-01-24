@@ -36,6 +36,7 @@
 #include "cell.h"
 #include "determination.h"
 #include "primitive.h"
+#include "refinement.h"
 #include "spacegroup.h"
 
 #include "debug.h"
