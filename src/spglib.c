@@ -1286,7 +1286,7 @@ static int set_dataset(SpglibDataset * dataset,
                        SPGCONST Spacegroup * spacegroup,
                        ExactStructure *exstr)
 {
-  int i;
+  int i, j;
   double inv_lat[3][3];
   Pointgroup pointgroup;
 
@@ -1330,6 +1330,12 @@ static int set_dataset(SpglibDataset * dataset,
     goto err;
   }
 
+  if ((dataset->site_symmetry_symbols =
+       (char(*)[7]) malloc(sizeof(char[7]) * cell->size)) == NULL) {
+    warning_print("spglib: Memory could not be allocated.");
+    goto err;
+  }
+
   if ((dataset->equivalent_atoms =
        (int*) malloc(sizeof(int) * dataset->n_atoms)) == NULL) {
     warning_print("spglib: Memory could not be allocated.");
@@ -1338,6 +1344,9 @@ static int set_dataset(SpglibDataset * dataset,
 
   for (i = 0; i < dataset->n_atoms; i++) {
     dataset->wyckoffs[i] = exstr->wyckoffs[i];
+    for (j = 0; j < 7; j++) {
+      dataset->site_symmetry_symbols[i][j] = exstr->site_symmetry_symbols[i][j];
+    }
     dataset->equivalent_atoms[i] = exstr->equivalent_atoms[i];
   }
 
@@ -1415,6 +1424,10 @@ static int set_dataset(SpglibDataset * dataset,
   if (dataset->mapping_to_primitive != NULL) {
     free(dataset->mapping_to_primitive);
     dataset->mapping_to_primitive = NULL;
+  }
+  if (dataset->site_symmetry_symbols != NULL) {
+    free(dataset->site_symmetry_symbols);
+    dataset->site_symmetry_symbols = NULL;
   }
   if (dataset->wyckoffs != NULL) {
     free(dataset->wyckoffs);

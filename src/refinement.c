@@ -50,6 +50,7 @@
 #include "debug.h"
 
 static Cell * get_Wyckoff_positions(int * wyckoffs,
+                                    char (*site_symmetry_symbols)[7],
                                     int * equiv_atoms,
                                     int * std_mapping_to_primitive,
                                     const Cell * primitive,
@@ -60,18 +61,22 @@ static Cell * get_Wyckoff_positions(int * wyckoffs,
                                     const double symprec);
 static Cell *
 get_bravais_exact_positions_and_lattice(int * wyckoffs,
+                                        char (*site_symmetry_symbols)[7],
                                         int * equiv_atoms,
                                         int * std_mapping_to_primitive,
                                         SPGCONST Spacegroup * spacegroup,
                                         const Cell * primitive,
                                         const double symprec);
-static Cell * expand_positions_in_bravais(int * wyckoffs,
-                                          int * equiv_atoms,
-                                          int * std_mapping_to_primitive,
-                                          const Cell * conv_prim,
-                                          const Symmetry * conv_sym,
-                                          const int * wyckoffs_prim,
-                                          const int * equiv_atoms_prim);
+static Cell *
+expand_positions_in_bravais(int * wyckoffs,
+                            char (*site_symmetry_symbols)[7],
+                            int * equiv_atoms,
+                            int * std_mapping_to_primitive,
+                            const Cell * conv_prim,
+                            const Symmetry * conv_sym,
+                            const int * wyckoffs_prim,
+                            SPGCONST char (*site_symmetry_symbols_prim)[7],
+                            const int * equiv_atoms_prim);
 static Cell * get_conventional_primitive(SPGCONST Spacegroup * spacegroup,
                                          const Cell * primitive);
 static int get_number_of_pure_translation(const Symmetry * conv_sym);
@@ -168,9 +173,11 @@ ref_get_exact_structure_and_symmetry(Spacegroup * spacegroup,
   Cell *bravais;
   Symmetry *symmetry;
   ExactStructure *exact_structure;
+  char (*site_symmetry_symbols)[7];
 
   std_mapping_to_primitive = NULL;
   wyckoffs = NULL;
+  site_symmetry_symbols = NULL;
   equivalent_atoms = NULL;
   bravais = NULL;
   symmetry = NULL;
@@ -194,6 +201,12 @@ ref_get_exact_structure_and_symmetry(Spacegroup * spacegroup,
     goto err;
   }
 
+  if ((site_symmetry_symbols = (char(*)[7]) malloc(sizeof(char[7]) * cell->size))
+      == NULL) {
+    warning_print("spglib: Memory could not be allocated.");
+    goto err;
+  }
+
   if ((equivalent_atoms = (int*) malloc(sizeof(int) * cell->size)) == NULL) {
     warning_print("spglib: Memory could not be allocated.");
     goto err;
@@ -206,6 +219,7 @@ ref_get_exact_structure_and_symmetry(Spacegroup * spacegroup,
   }
 
   if ((bravais = get_Wyckoff_positions(wyckoffs,
+                                       site_symmetry_symbols,
                                        equivalent_atoms,
                                        std_mapping_to_primitive,
                                        primitive,
@@ -236,6 +250,7 @@ ref_get_exact_structure_and_symmetry(Spacegroup * spacegroup,
   exact_structure->bravais = bravais;
   exact_structure->symmetry = symmetry;
   exact_structure->wyckoffs = wyckoffs;
+  exact_structure->site_symmetry_symbols = site_symmetry_symbols;
   exact_structure->equivalent_atoms = equivalent_atoms;
   exact_structure->std_mapping_to_primitive = std_mapping_to_primitive;
   mat_copy_matrix_d3(exact_structure->rotation, rotation);
@@ -246,6 +261,10 @@ err:
   if (wyckoffs != NULL) {
     free(wyckoffs);
     wyckoffs = NULL;
+  }
+  if (site_symmetry_symbols != NULL) {
+    free(site_symmetry_symbols);
+    site_symmetry_symbols = NULL;
   }
   if (equivalent_atoms != NULL) {
     free(equivalent_atoms);
@@ -288,6 +307,7 @@ void ref_free_exact_structure(ExactStructure *exstr)
 
 /* Return NULL if failed */
 static Cell * get_Wyckoff_positions(int * wyckoffs,
+                                    char (*site_symmetry_symbols)[7],
                                     int * equiv_atoms,
                                     int * std_mapping_to_primitive,
                                     const Cell * primitive,
@@ -298,14 +318,16 @@ static Cell * get_Wyckoff_positions(int * wyckoffs,
                                     const double symprec)
 {
   Cell *bravais;
-  int i, num_prim_sym;
+  int i, j, num_prim_sym;
   int *wyckoffs_bravais, *equiv_atoms_bravais;
   int operation_index[2];
+  char (*site_symmetry_symbols_bravais)[7];
 
   debug_print("get_Wyckoff_positions\n");
 
   bravais = NULL;
   wyckoffs_bravais = NULL;
+  site_symmetry_symbols_bravais = NULL;
   equiv_atoms_bravais = NULL;
 
   if ((wyckoffs_bravais = (int*)malloc(sizeof(int) * primitive->size * 4))
@@ -314,21 +336,32 @@ static Cell * get_Wyckoff_positions(int * wyckoffs,
     return NULL;
   }
 
-  if ((equiv_atoms_bravais = (int*)malloc(sizeof(int) * primitive->size * 4))
-      == NULL) {
-    warning_print("spglib: Memory could not be allocated ");
+  if ((site_symmetry_symbols_bravais =
+       (char(*)[7]) malloc(sizeof(char[7]) * primitive->size * 4)) == NULL) {
+    warning_print("spglib: Memory could not be allocated.");
     free(wyckoffs_bravais);
     wyckoffs_bravais = NULL;
     return NULL;
   }
 
-  if ((bravais = get_bravais_exact_positions_and_lattice
-       (wyckoffs_bravais,
-        equiv_atoms_bravais,
-        std_mapping_to_primitive,
-        spacegroup,
-        primitive,
-        symprec)) == NULL) {
+  if ((equiv_atoms_bravais = (int*)malloc(sizeof(int) * primitive->size * 4))
+      == NULL) {
+    warning_print("spglib: Memory could not be allocated ");
+    free(wyckoffs_bravais);
+    wyckoffs_bravais = NULL;
+    free(site_symmetry_symbols_bravais);
+    site_symmetry_symbols_bravais = NULL;
+    return NULL;
+  }
+
+  if ((bravais =
+       get_bravais_exact_positions_and_lattice(wyckoffs_bravais,
+                                               site_symmetry_symbols_bravais,
+                                               equiv_atoms_bravais,
+                                               std_mapping_to_primitive,
+                                               spacegroup,
+                                               primitive,
+                                               symprec)) == NULL) {
 
     warning_print("spglib: get_bravais_exact_positions_and_lattice failed.");
     warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
@@ -338,6 +371,10 @@ static Cell * get_Wyckoff_positions(int * wyckoffs,
 
   for (i = 0; i < cell->size; i++) {
     wyckoffs[i] = wyckoffs_bravais[mapping_table[i]];
+    for (j = 0; j < 7; j++) {
+      site_symmetry_symbols[i][j] =
+        site_symmetry_symbols_bravais[mapping_table[i]][j];
+    }
   }
 
   spgdb_get_operation_index(operation_index, spacegroup->hall_number);
@@ -368,6 +405,8 @@ static Cell * get_Wyckoff_positions(int * wyckoffs,
  ret:
   free(equiv_atoms_bravais);
   equiv_atoms_bravais = NULL;
+  free(site_symmetry_symbols_bravais);
+  site_symmetry_symbols_bravais = NULL;
   free(wyckoffs_bravais);
   wyckoffs_bravais = NULL;
 
@@ -378,14 +417,16 @@ static Cell * get_Wyckoff_positions(int * wyckoffs,
 /* Return NULL if failed */
 static Cell *
 get_bravais_exact_positions_and_lattice(int * wyckoffs,
+                                        char (*site_symmetry_symbols)[7],
                                         int * equiv_atoms,
                                         int * std_mapping_to_primitive,
                                         SPGCONST Spacegroup *spacegroup,
                                         const Cell * primitive,
                                         const double symprec)
 {
-  int i;
+  int i, j;
   int *wyckoffs_prim, *equiv_atoms_prim;
+  char (*site_symmetry_symbols_prim)[7];
   Symmetry *conv_sym;
   Cell *bravais, *conv_prim;
   VecDBL *exact_positions;
@@ -394,6 +435,7 @@ get_bravais_exact_positions_and_lattice(int * wyckoffs,
 
   wyckoffs_prim = NULL;
   equiv_atoms_prim = NULL;
+  site_symmetry_symbols_prim = NULL;
   conv_prim = NULL;
   bravais = NULL;
   conv_sym = NULL;
@@ -405,9 +447,19 @@ get_bravais_exact_positions_and_lattice(int * wyckoffs,
     return NULL;
   }
 
+  if ((site_symmetry_symbols_prim =
+       (char (*)[7]) malloc(sizeof(char[7]) * primitive->size)) == NULL) {
+    warning_print("spglib: Memory could not be allocated ");
+    free(wyckoffs_prim);
+    wyckoffs_prim = NULL;
+    return NULL;
+  }
+
   if ((equiv_atoms_prim = (int*)malloc(sizeof(int) * primitive->size))
       == NULL) {
     warning_print("spglib: Memory could not be allocated ");
+    free(site_symmetry_symbols_prim);
+    site_symmetry_symbols_prim = NULL;
     free(wyckoffs_prim);
     wyckoffs_prim = NULL;
     return NULL;
@@ -416,6 +468,9 @@ get_bravais_exact_positions_and_lattice(int * wyckoffs,
   for (i = 0; i < primitive->size; i++) {
     wyckoffs_prim[i] = -1;
     equiv_atoms_prim[i] = -1;
+    for (j = 0; j < 7; j++) {
+      site_symmetry_symbols_prim[i][j] = '\0';
+    }
   }
 
   /* Positions of primitive atoms are represented wrt Bravais lattice */
@@ -424,6 +479,8 @@ get_bravais_exact_positions_and_lattice(int * wyckoffs,
     wyckoffs_prim = NULL;
     free(equiv_atoms_prim);
     equiv_atoms_prim = NULL;
+    free(site_symmetry_symbols_prim);
+    site_symmetry_symbols_prim = NULL;
     return NULL;
   }
 
@@ -438,6 +495,7 @@ get_bravais_exact_positions_and_lattice(int * wyckoffs,
 
   if ((exact_positions = ssm_get_exact_positions(wyckoffs_prim,
                                                  equiv_atoms_prim,
+                                                 site_symmetry_symbols_prim,
                                                  conv_prim,
                                                  conv_sym,
                                                  spacegroup->hall_number,
@@ -454,11 +512,13 @@ get_bravais_exact_positions_and_lattice(int * wyckoffs,
   }
 
   bravais = expand_positions_in_bravais(wyckoffs,
+                                        site_symmetry_symbols,
                                         equiv_atoms,
                                         std_mapping_to_primitive,
                                         conv_prim,
                                         conv_sym,
                                         wyckoffs_prim,
+                                        site_symmetry_symbols_prim,
                                         equiv_atoms_prim);
 
   mat_free_VecDBL(exact_positions);
@@ -470,6 +530,8 @@ get_bravais_exact_positions_and_lattice(int * wyckoffs,
   wyckoffs_prim = NULL;
   free(equiv_atoms_prim);
   equiv_atoms_prim = NULL;
+  free(site_symmetry_symbols_prim);
+  site_symmetry_symbols_prim = NULL;
   cel_free_cell(conv_prim);
   conv_prim = NULL;
 
@@ -478,11 +540,13 @@ get_bravais_exact_positions_and_lattice(int * wyckoffs,
 
 /* Return NULL if failed */
 static Cell * expand_positions_in_bravais(int * wyckoffs,
+                                          char (*site_symmetry_symbols)[7],
                                           int * equiv_atoms,
                                           int * std_mapping_to_primitive,
                                           const Cell * conv_prim,
                                           const Symmetry * conv_sym,
                                           const int * wyckoffs_prim,
+                                          SPGCONST char (*site_symmetry_symbols_prim)[7],
                                           const int * equiv_atoms_prim)
 {
   int i, j, k, num_pure_trans;
@@ -510,6 +574,9 @@ static Cell * expand_positions_in_bravais(int * wyckoffs,
             mat_Dmod1(bravais->position[num_atom][k]);
         }
         wyckoffs[num_atom] = wyckoffs_prim[j];
+        for (k = 0; k < 7; k++) {
+          site_symmetry_symbols[num_atom][k] = site_symmetry_symbols_prim[j][k];
+        }
         equiv_atoms[num_atom] = equiv_atoms_prim[j];
         std_mapping_to_primitive[num_atom] = j;
         num_atom++;

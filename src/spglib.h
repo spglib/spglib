@@ -119,6 +119,7 @@ extern "C" {
     double (*translations)[3];
     int n_atoms;
     int *wyckoffs;
+    char (*site_symmetry_symbols)[7];
     int *equivalent_atoms;
     int *mapping_to_primitive;
     int n_std_atoms;
