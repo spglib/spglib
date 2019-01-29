@@ -394,6 +394,7 @@ keys are shown below. More the detail may be found at
 * ``origin shift``: See the detail at
   :ref:`dataset_origin_shift_and_transformation`.
 * ``wyckoffs``: Wyckoff letters
+* ``site_symmetry_symbols``: Site-symmetry symbols (**experimental**)
 * ``equivalent_atoms``: Mapping table to equivalent atoms
 * ``mapping_to_primitive``: Mapping table to atoms in the primitive cell
 * ``rotations`` and ``translations``: Rotation matrices and
