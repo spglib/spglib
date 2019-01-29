@@ -45,10 +45,13 @@ before_install:
     ./get_nanoversion.sh;
     cat __nanoversion__.txt;
     cd ..;
+    # python3.6 will break package dependency in conda.
     if [[ "$DOCKER_DEPLOY" != "false" ]]; then
-      conda install --no-update-deps --yes python="$TRAVIS_PYTHON_VERSION" pip;
+    # conda install --no-update-deps --yes python="$TRAVIS_PYTHON_VERSION" pip;
+      conda install --no-update-deps --yes pip;
     else
-      conda install --no-update-deps --yes python="$TRAVIS_PYTHON_VERSION" pip numpy pyyaml;
+    # conda install --no-update-deps --yes python="$TRAVIS_PYTHON_VERSION" pip numpy pyyaml;
+      conda install --no-update-deps --yes pip numpy pyyaml;
     fi
   fi
 - pwd

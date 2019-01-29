@@ -188,6 +188,7 @@ def get_symmetry_dataset(cell,
             'rotations',
             'translations',
             'wyckoffs',
+            'site_symmetry_symbols',
             'equivalent_atoms',
             'mapping_to_primitive',
             'std_lattice',
@@ -213,6 +214,8 @@ def get_symmetry_dataset(cell,
                                        dtype='double', order='C')
     letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
     dataset['wyckoffs'] = [letters[x] for x in dataset['wyckoffs']]
+    dataset['site_symmetry_symbols'] = [
+        s.strip() for s in dataset['site_symmetry_symbols']]
     dataset['equivalent_atoms'] = np.array(dataset['equivalent_atoms'],
                                            dtype='intc')
     dataset['mapping_to_primitive'] = np.array(dataset['mapping_to_primitive'],
@@ -544,27 +547,38 @@ def get_stabilized_reciprocal_mesh(mesh,
                                    is_shift=None,
                                    is_time_reversal=True,
                                    qpoints=None):
-    """Return k-point map to the irreducible k-points and k-point grid points .
+    """Return k-point map to the irreducible k-points and k-point grid points.
 
     The symmetry is searched from the input rotation matrices in real space.
 
-    Args:
-        mesh:
-            int array (3,): Uniform sampling mesh numbers
-        is_shift:
-            int array (3,): [0, 0, 0] gives Gamma center mesh and value 1 gives
-                            half mesh shift.
-        is_time_reversal:
-            bool: Time reversal symmetry is included or not.
-        qpoints:
-            float array (N ,3) or (3,):
-                Stabilizer(s) in the fractional coordinates.
+    Parameters
+    ----------
+    mesh : array_like
+        Uniform sampling mesh numbers.
+        dtype='intc', shape=(3,)
+    rotations : array_like
+        Rotation matrices with respect to real space basis vectors.
+        dtype='intc', shape=(rotations, 3)
+    is_shift : array_like
+        [0, 0, 0] gives Gamma center mesh and value 1 gives  half mesh shift.
+        dtype='intc', shape=(3,)
+    is_time_reversal : bool
+        Time reversal symmetry is included or not.
+    qpoints : array_like
+        q-points used as stabilizer(s) given in reciprocal space with respect
+        to reciprocal basis vectors.
+        dtype='double', shape=(qpoints ,3) or (3,)
 
-    Returns:
-        mapping_table:
-            int array (N,): Grid point mapping table to ir-gird-points
-        grid_address:
-            int array (N, 3): Address of all grid points
+    Returns
+    -------
+    mapping_table : ndarray
+        Grid point mapping table to ir-gird-points.
+        dtype='intc', shape=(prod(mesh),)
+    grid_address : ndarray
+        Address of all grid points. Each address is given by three unsigned
+        integers.
+        dtype='intc', shape=(prod(mesh), 3)
+
     """
     _set_no_error()
 
@@ -595,11 +609,39 @@ def get_stabilized_reciprocal_mesh(mesh,
 def get_grid_points_by_rotations(address_orig,
                                  reciprocal_rotations,
                                  mesh,
-                                 is_shift=np.zeros(3, dtype='intc')):
-    """Rotation operations in reciprocal space ``reciprocal_rotations`` are applied
-    to a grid point ``grid_point`` and resulting grid points are returned.
+                                 is_shift=None):
+    """Returns grid points obtained after rotating input grid address
+
+    Parameters
+    ----------
+    address_orig : array_like
+        Grid point address to be rotated.
+        dtype='intc', shape=(3,)
+    reciprocal_rotations : array_like
+        Rotation matrices {R} with respect to reciprocal basis vectors.
+        Defined by q'=Rq.
+        dtype='intc', shape=(rotations, 3, 3)
+    mesh : array_like
+        dtype='intc', shape=(3,)
+    is_shift : array_like, optional
+        With (1) or without (0) half grid shifts with respect to grid intervals
+        sampled along reciprocal basis vectors. Default is None, which
+        gives [0, 0, 0].
+
+    Returns
+    -------
+    rot_grid_points : ndarray
+        Grid points obtained after rotating input grid address
+        dtype='intc', shape=(rotations,)
+
     """
+
     _set_no_error()
+
+    if is_shift is None:
+        _is_shift = np.zeros(3, dtype='intc')
+    else:
+        _is_shift = np.array(is_shift, dtype='intc')
 
     rot_grid_points = np.zeros(len(reciprocal_rotations), dtype='intc')
     spg.grid_points_by_rotations(
@@ -607,7 +649,7 @@ def get_grid_points_by_rotations(address_orig,
         np.array(address_orig, dtype='intc'),
         np.array(reciprocal_rotations, dtype='intc', order='C'),
         np.array(mesh, dtype='intc'),
-        np.array(is_shift, dtype='intc'))
+        _is_shift)
 
     return rot_grid_points
 
@@ -617,9 +659,32 @@ def get_BZ_grid_points_by_rotations(address_orig,
                                     mesh,
                                     bz_map,
                                     is_shift=np.zeros(3, dtype='intc')):
-    """Rotation operations in reciprocal space ``reciprocal_rotations`` are applied
-    to a grid point ``grid_point`` and resulting grid points are returned.
+    """Returns grid points obtained after rotating input grid address
+
+    Parameters
+    ----------
+    address_orig : array_like
+        Grid point address to be rotated.
+        dtype='intc', shape=(3,)
+    reciprocal_rotations : array_like
+        Rotation matrices {R} with respect to reciprocal basis vectors.
+        Defined by q'=Rq.
+        dtype='intc', shape=(rotations, 3, 3)
+    mesh : array_like
+        dtype='intc', shape=(3,)
+    is_shift : array_like, optional
+        With (1) or without (0) half grid shifts with respect to grid intervals
+        sampled along reciprocal basis vectors. Default is None, which
+        gives [0, 0, 0].
+
+    Returns
+    -------
+    rot_grid_points : ndarray
+        Grid points obtained after rotating input grid address
+        dtype='intc', shape=(rotations,)
+
     """
+
     _set_no_error()
 
     rot_grid_points = np.zeros(len(reciprocal_rotations), dtype='intc')
@@ -637,43 +702,53 @@ def get_BZ_grid_points_by_rotations(address_orig,
 def relocate_BZ_grid_address(grid_address,
                              mesh,
                              reciprocal_lattice,  # column vectors
-                             is_shift=np.zeros(3, dtype='intc')):
-    """Grid addresses are relocated inside Brillouin zone.
+                             is_shift=None):
+    """Grid addresses are relocated to be inside first Brillouin zone.
+
     Number of ir-grid-points inside Brillouin zone is returned.
     It is assumed that the following arrays have the shapes of
-      bz_grid_address[prod(mesh + 1)][3]
-      bz_map[prod(mesh * 2)]
-    where grid_address[prod(mesh)][3].
-    Each element of grid_address is mapped to each element of
-    bz_grid_address with keeping element order. bz_grid_address has
-    larger memory space to represent BZ surface even if some points
-    on a surface are translationally equivalent to the other points
-    on the other surface. Those equivalent points are added successively
-    as grid point numbers to bz_grid_address. Those added grid points
-    are stored after the address of end point of grid_address, i.e.
+        bz_grid_address : (num_grid_points_in_FBZ, 3)
+        bz_map (prod(mesh * 2), )
 
-    |-----------------array size of bz_grid_address---------------------|
-    |--grid addresses similar to grid_address--|--newly added ones--|xxx|
+    Note that the shape of grid_address is (prod(mesh), 3) and the
+    addresses in grid_address are arranged to be in parallelepiped
+    made of reciprocal basis vectors. The addresses in bz_grid_address
+    are inside the first Brillouin zone or on its surface. Each
+    address in grid_address is mapped to one of those in
+    bz_grid_address by a reciprocal lattice vector (including zero
+    vector) with keeping element order. For those inside first
+    Brillouin zone, the mapping is one-to-one. For those on the first
+    Brillouin zone surface, more than one addresses in bz_grid_address
+    that are equivalent by the reciprocal lattice translations are
+    mapped to one address in grid_address. In this case, those grid
+    points except for one of them are appended to the tail of this array,
+    for which bz_grid_address has the following data storing:
 
-    where xxx means the memory space that may not be used. Number of grid
-    points stored in bz_grid_address is returned.
+    |------------------array size of bz_grid_address-------------------------|
+    |--those equivalent to grid_address--|--those on surface except for one--|
+    |-----array size of grid_address-----|
+
+    Number of grid points stored in bz_grid_address is returned.
     bz_map is used to recover grid point index expanded to include BZ
     surface from grid address. The grid point indices are mapped to
     (mesh[0] * 2) x (mesh[1] * 2) x (mesh[2] * 2) space (bz_map).
+
     """
     _set_no_error()
 
-    bz_grid_address = np.zeros(
-        ((mesh[0] + 1) * (mesh[1] + 1) * (mesh[2] + 1), 3), dtype='intc')
-    bz_map = np.zeros(
-        (2 * mesh[0]) * (2 * mesh[1]) * (2 * mesh[2]), dtype='intc')
+    if is_shift is None:
+        _is_shift = np.zeros(3, dtype='intc')
+    else:
+        _is_shift = np.array(is_shift, dtype='intc')
+    bz_grid_address = np.zeros((np.prod(np.add(mesh, 1)), 3), dtype='intc')
+    bz_map = np.zeros(np.prod(np.multiply(mesh, 2)), dtype='intc')
     num_bz_ir = spg.BZ_grid_address(
         bz_grid_address,
         bz_map,
         grid_address,
         np.array(mesh, dtype='intc'),
         np.array(reciprocal_lattice, dtype='double', order='C'),
-        np.array(is_shift, dtype='intc'))
+        _is_shift)
 
     return bz_grid_address[:num_bz_ir], bz_map
 

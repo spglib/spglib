@@ -1,3 +1,37 @@
+2019-01-29  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.12.0
+
+	After this minor version, addition of new features will be stopped
+	until version 2.0 will be released.
+
+	* src/sitesym_database.c (ssmdb_get_site_symmetry_symbol):
+
+	Experimental support of site symmetry symbols.
+
+	* src/pointgroup.c:
+
+	Comparisons of basis vector lengths are more carefully done for
+	letting them work for different computer architectures to treat
+	very small numerical different that is close to the machine
+	precision.
+
+	* src/mathfunc.c (mat_Dmod1):
+
+	Similarly, MOD-Z operation (bring values x inside the rage of 0<=
+	x < 1) is now done considering the difference of machine
+	precision.
+
+	* src/kpoint.c (kpt_get_irreducible_reciprocal_mesh):
+
+	To enable dense k-point mesh sampling, integer types of variables
+	that represent grid point indices were changed from int to size_t.
+	But to support current functions with the same API, adapters were
+	written for these functions (having 'dense' in their function
+	names until v2.0 will be released) and currently they are working
+	in the same way as before. Finally the API change will be realized
+	at the v2.0
+
 2018-12-07  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.11.2
