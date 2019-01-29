@@ -28,12 +28,13 @@ The dataset is accessible through the C-structure given by
      double (*translations)[3];
      int n_atoms;
      int *wyckoffs;
+     char (*site_symmetry_symbols)[7];
      int *equivalent_atoms;
      int *mapping_to_primitive;
-     int n_std_atoms;             /* n_brv_atoms before version 1.8.1 */
-     double std_lattice[3][3];    /* brv_lattice before version 1.8.1 */
-     int *std_types;              /* brv_types before version 1.8.1 */
-     double (*std_positions)[3];  /* brv_positions before version 1.8.1 */
+     int n_std_atoms;
+     double std_lattice[3][3];
+     int *std_types;
+     double (*std_positions)[3];
      double std_rotation_matrix[3][3];
      int *std_mapping_to_primitive;
      char pointgroup_symbol[6];
@@ -108,6 +109,15 @@ of a, b, c, :math:`\ldots`. These are assigned to all atomic positions
 of the input unit cell in this order. Therefore the number of elements in
 ``wyckoffs`` is same as the number of atoms in the input unit cell,
 which is given by ``n_atoms``.
+
+``site_symmetry_symbols``
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+**Experimental**
+
+This gives site-symmetry symbols. These are valid for the standard
+settings. For different settings and choices belonging to the same
+space group type, the same set of the symbols is returned.
 
 ``equivalent_atoms``
 ^^^^^^^^^^^^^^^^^^^^^

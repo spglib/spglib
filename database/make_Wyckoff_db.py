@@ -48,8 +48,15 @@ def position2operation(p):
     t = np.zeros(3, dtype=int)
 
     # translation multiplied by 24
+    try:
+        table = str.maketrans({'x': '', 'y': '', 'z': '', '+': '', '-': ''})
+    except AttributeError:
+        pass
     for i in range(3):
-        trans = p[i].translate(None, 'xyz+-')
+        try:
+            trans = p[i].translate(None, 'xyz+-')
+        except TypeError:
+            trans = p[i].translate(table)
         pos = trans.find('/')
         if pos > -1:
             frac = trans.split('/')
@@ -100,61 +107,87 @@ def run_test(len_wyckoffs, len_site, o_flat):
 
 def damp_array_wyckoffs(len_wyckoff):
     print("static const int position_wyckoff[] =")
-    print("  { %4d," % 0),
+    text = "  { %4d," % 0
     for i, x in enumerate(len_wyckoffs[1:]):
         if i % 10 == 0:
-            print("")
-            print("   "),
-        print("%4d," % x),
-    print("};")
+            print(text)
+            text = "   "
+        text += " %4d," % x
+    print(text + " };")
 
 
 def damp_array_numsites(len_site):
-    print("  { %5d," % 0),
+    text = "  { %5d," % 0
     for i, x in enumerate(len_site[1:]):
         if i % 10 == 0:
-            print("")
-            print("   "),
-        print("%5d," % x),
-    print("};")
+            print(text)
+            text = "   "
+        text += " %5d," % x
+    print(text + " };")
 
 
 def damp_array_positions(orbits):
-    print("  { %9d," % 0),
+    text = "  { %10d," % 0
     for i, x in enumerate(orbits[1:]):
         if i % 5 == 0:
-            print("")
-            print("   "),
-        print("%9d," % x),
-    print("};")
+            print(text)
+            text = "   "
+        text += " %10d," % x
+    print(text + " };")
 
 
 def damp_array_positions_short(orbits, len_site):
     count = 0
     print("static const int coordinates_first[] =")
-    print("  { %9d," % 0),
+    text = "  { %9d," % 0
     for i, x in enumerate(len_site[1:-1]):
         if count % 5 == 0:
-            print("")
-            print("   "),
-        print("%9d," % orbits[x]),
+            print(text)
+            text = "   "
+        text += " %9d," % orbits[x]
         count += 1
-    print("};")
+    print(text + " };")
 
     count = 0
     print("static const int num_sitesym[] =")
-    print("  { %3d," % 0),
+    text = "  { %3d," % 0
     for i, x in enumerate(len_site[1:-1]):
         if count % 10 == 0:
-            print("")
-            print("   "),
-        print("%3d," % (len_site[i+2] - len_site[i+1])),
+            print(text)
+            text = "   "
+        text += " %3d," % (len_site[i+2] - len_site[i+1])
         count += 1
-    print("};")
+    print(text + " };")
+
+
+def damp_array_site_symmetries(site_symmetries):
+    print("static const char site_symmetries[][7] =")
+    text = "  { %8s," % "\"      \""
+    for i, x in enumerate(site_symmetries):
+        if i % 6 == 0:
+            print(text)
+            text = "   "
+        text += " %8s," % x
+    print(text + " };")
 
 
 def read_wyckoff_csv(filename):
-    wyckoff_file = open(filename)
+    with open(filename) as wyckoff_file:
+        return parse_wyckoff_csv(wyckoff_file)
+
+
+def parse_wyckoff_csv(wyckoff_file):
+    """Parse Wyckoff.csv
+
+    There are 530 data sets. For one example:
+
+    9:C 1 2 1:::::::
+    ::4:c:1:(x,y,z):(-x,y,-z)::
+    ::2:b:2:(0,y,1/2):::
+    ::2:a:2:(0,y,0):::
+
+    """
+
     rowdata = []
     points = []
     hP_nums = [433, 436, 444, 450, 452, 458, 460]
@@ -163,18 +196,17 @@ def read_wyckoff_csv(filename):
             break
         rowdata.append(line.strip().split(':'))
 
-        # Remember the point where the first element is a number
+        # 2:P -1  ::::::: <-- store line number if first element is number
         if rowdata[-1][0].isdigit():
             points.append(i)
     points.append(i)
 
     wyckoff = []
-    for i in range(len(points) - 1):
-        symbol = rowdata[points[i]][1]
+    for i in range(len(points) - 1):  # 0 to 529
+        symbol = rowdata[points[i]][1]  # e.g. "C 1 2 1"
         if i + 1 in hP_nums:
             symbol = symbol.replace('R', 'H', 1)
-
-        wyckoff.append(dict({'symbol': symbol}))
+        wyckoff.append({'symbol': symbol.strip()})
 
     # When the number of positions is larger than 4,
     # the positions are written in the next line.
@@ -182,26 +214,39 @@ def read_wyckoff_csv(filename):
     for i in range(len(points) - 1):
         count = 0
         wyckoff[i]['wyckoff'] = []
-        for j in range(points[i]+1, points[i+1]):
-            # Hook if the third colum is a number (multiplicity)
+        for j in range(points[i] + 1, points[i + 1]):
+            # Hook if the third element is a number (multiplicity), e.g.,
+            #
+            # 232:P 2/b 2/m 2/b:::::::  <- ignored
+            # ::8:r:1:(x,y,z):(-x,y,-z):(x,-y+1/2,-z):(-x,-y+1/2,z)
+            # :::::(-x,-y,-z):(x,-y,z):(-x,y+1/2,z):(x,y+1/2,-z)  <- ignored
+            # ::4:q:..m:(x,0,z):(-x,0,-z):(x,1/2,-z):(-x,1/2,z)
+            # ::4:p:..2:(0,y,1/2):(0,-y+1/2,1/2):(0,-y,1/2):(0,y+1/2,1/2)
+            # ::4:o:..2:(1/2,y,0):(1/2,-y+1/2,0):(1/2,-y,0):(1/2,y+1/2,0)
+            # ...
             if rowdata[j][2].isdigit():
                 pos = []
-                w = {'letter': rowdata[j][3],
+                w = {'letter': rowdata[j][3].strip(),
                      'multiplicity': int(rowdata[j][2]),
-                     'site_symmetry': rowdata[j][4],
+                     'site_symmetry': rowdata[j][4].strip(),
                      'positions': pos}
                 wyckoff[i]['wyckoff'].append(w)
 
                 for k in range(4):
-                    if len(rowdata[j][k+5]) > 0:
+                    if rowdata[j][k + 5]:  # check if '(x,y,z)' or ''
                         count += 1
-                        pos.append(rowdata[j][k+5])
-
+                        pos.append(rowdata[j][k + 5])
             else:
                 for k in range(4):
-                    if len(rowdata[j][k+5]) > 0:
+                    if rowdata[j][k + 5]:
                         count += 1
-                        pos.append(rowdata[j][k+5])
+                        pos.append(rowdata[j][k + 5])
+
+        # assertion
+        for w in wyckoff[i]['wyckoff']:
+            n_pos = len(w['positions'])
+            n_pos *= len(lattice_symbols[wyckoff[i]['symbol'][0]])
+            assert n_pos == w['multiplicity']
 
     return wyckoff
 
@@ -230,6 +275,26 @@ def get_wyckoff_positions(wyckoff):
             positions_hall.append(positions_site)
         positions.append(positions_hall)
     return positions
+
+
+def get_site_symmetries(wyckoff):
+    """List up site symmetries
+
+    The data structure is as follows:
+
+        wyckoff[0]['wyckoff'][0]['site_symmetry']
+
+    Note
+    ----
+    Maximum length of string is 6.
+
+    """
+
+    ssyms = []
+    for w in wyckoff:
+        ssyms += ["\"%-6s\"" % w_s['site_symmetry'] for w_s in w['wyckoff']]
+
+    damp_array_site_symmetries(ssyms)
 
 
 def encode_wyckoff_positions(positions):
@@ -309,30 +374,35 @@ def get_data_arrays(encoded_positions):
 
 
 if __name__ == '__main__':
-    from optparse import OptionParser
-    parser = OptionParser()
+    import argparse
+    parser = argparse.ArgumentParser()
     parser.set_defaults(is_site=False,
                         is_position=False,
                         is_wyckoff=False,
                         is_site_short=False,
+                        is_site_symbol=False,
                         is_wyckoff_short=False)
 
-    parser.add_option("--site", dest="is_site",
-                      action="store_true",
-                      help="Index of site symmetries of each space group")
-    parser.add_option("--position", dest="is_position",
-                      action="store_true",
-                      help=("Index of positions of each site symmetries and "
-                            "space group"))
-    parser.add_option("--wyckoff", dest="is_wyckoff",
-                      action="store_true",
-                      help="Encoded Wyckoff position operators")
-    parser.add_option("--wyckoff_short", dest="is_wyckoff_short",
-                      action="store_true",
-                      help="Encoded Wyckoff position operators")
-    (options, args) = parser.parse_args()
-
-    wyckoff = read_wyckoff_csv(args[0])
+    parser.add_argument("--site", dest="is_site",
+                        action="store_true",
+                        help="Index of site symmetries of each space group")
+    parser.add_argument("--site-symbol", dest="is_site_symbol",
+                        action="store_true",
+                        help="Site symmetry symbols")
+    parser.add_argument("--position", dest="is_position",
+                        action="store_true",
+                        help=("Index of positions of each site symmetries and "
+                              "space group"))
+    parser.add_argument("--wyckoff", dest="is_wyckoff",
+                        action="store_true",
+                        help="Encoded Wyckoff position operators")
+    parser.add_argument("--wyckoff_short", dest="is_wyckoff_short",
+                        action="store_true",
+                        help="Encoded Wyckoff position operators")
+    parser.add_argument("filename", nargs='?',
+                        help="Filename of cvs file")
+    args = parser.parse_args()
+    wyckoff = read_wyckoff_csv(args.filename)
     operations = get_wyckoff_positions(wyckoff)
     encoded_positions = encode_wyckoff_positions(operations)
     len_wyckoffs, len_site, encpos_flat = get_data_arrays(encoded_positions)
@@ -342,12 +412,13 @@ if __name__ == '__main__':
     # print "%d = %d" % (len(o_flat), sum_elem)
 
     # Damp full arrays
-    if options.is_position:
+    if args.is_position:
         damp_array_wyckoffs(len_wyckoffs)
-    if options.is_site:
+    if args.is_site:
         damp_array_numsites(len_site)
-    if options.is_wyckoff:
+    if args.is_wyckoff:
         damp_array_positions(encpos_flat)
-
-    if options.is_wyckoff_short:
+    if args.is_wyckoff_short:
         damp_array_positions_short(encpos_flat, len_site)
+    if args.is_site_symbol:
+        get_site_symmetries(wyckoff)

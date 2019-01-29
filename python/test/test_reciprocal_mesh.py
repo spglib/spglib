@@ -7,7 +7,10 @@ except ImportError:
 import numpy as np
 from spglib import (get_ir_reciprocal_mesh,
                     get_stabilized_reciprocal_mesh,
-                    get_symmetry_dataset)
+                    get_symmetry_dataset,
+                    relocate_BZ_grid_address,
+                    get_grid_points_by_rotations,
+                    get_BZ_grid_points_by_rotations)
 from vasp import read_vasp
 
 data_dir = os.path.dirname(os.path.abspath(__file__))
@@ -232,24 +235,293 @@ result_ir_rec_mesh_distortion = ("""  0    0   0   0
    2    1  -1   0
    1   -1  -1   0""")
 
+result_bz_grid_address = ("""  0  0  0
+ 1  0  0
+ 2  0  0
+-1  0  0
+ 0  1  0
+ 1  1  0
+ 2  1  0
+-1  1  0
+ 0  2  0
+ 1  2  0
+ 2  2  0
+-1  2  0
+ 0 -1  0
+ 1 -1  0
+ 2 -1  0
+-1 -1  0
+ 0  0  1
+ 1  0  1
+ 2  0  1
+-1  0  1
+ 0  1  1
+ 1  1  1
+ 2  1  1
+-1  1  1
+ 0  2  1
+ 1  2  1
+ 2  2  1
+-1  2  1
+ 0 -1  1
+ 1 -1  1
+ 2 -1  1
+-1 -1  1
+ 0  0  2
+ 1  0  2
+ 2  0  2
+-1  0  2
+ 0  1  2
+ 1  1  2
+ 2  1  2
+-1  1  2
+ 0  2  2
+ 1  2  2
+ 2  2  2
+-1  2  2
+ 0 -1  2
+ 1 -1  2
+ 2 -1  2
+-1 -1  2
+ 0  0 -1
+ 1  0 -1
+ 2  0 -1
+-1  0 -1
+ 0  1 -1
+ 1  1 -1
+ 2  1 -1
+-1  1 -1
+ 0  2 -1
+ 1  2 -1
+ 2  2 -1
+-1  2 -1
+ 0 -1 -1
+ 1 -1 -1
+ 2 -1 -1
+-1 -1 -1
+-2  0  0
+-2  1  0
+ 0 -2  0
+ 1 -2  0
+ 2 -2  0
+-2  2  0
+-2 -2  0
+-1 -2  0
+-2 -1  0
+-2  0  1
+-2  1  1
+ 0 -2  1
+ 1 -2  1
+ 2 -2  1
+-2  2  1
+-2 -2  1
+-1 -2  1
+-2 -1  1
+ 0  0 -2
+ 1  0 -2
+ 2  0 -2
+-2  0  2
+-2  0 -2
+-1  0 -2
+ 0  1 -2
+ 1  1 -2
+ 2  1 -2
+-2  1  2
+-2  1 -2
+-1  1 -2
+ 0  2 -2
+ 0 -2  2
+ 0 -2 -2
+ 1  2 -2
+ 1 -2  2
+ 1 -2 -2
+ 2  2 -2
+ 2 -2  2
+ 2 -2 -2
+-2  2  2
+-2  2 -2
+-2 -2  2
+-2 -2 -2
+-1  2 -2
+-1 -2  2
+-1 -2 -2
+ 0 -1 -2
+ 1 -1 -2
+ 2 -1 -2
+-2 -1  2
+-2 -1 -2
+-1 -1 -2
+-2  0 -1
+-2  1 -1
+ 0 -2 -1
+ 1 -2 -1
+ 2 -2 -1
+-2  2 -1
+-2 -2 -1
+-1 -2 -1
+-2 -1 -1""", """ 0  0  0
+ 1  0  0
+ 2  0  0
+-1  0  0
+ 0  1  0
+ 1  1  0
+-2  1  0
+-1  1  0
+ 0  2  0
+ 1 -2  0
+ 2 -2  0
+-1  2  0
+ 0 -1  0
+ 1 -1  0
+ 2 -1  0
+-1 -1  0
+ 0  0  1
+ 1  0  1
+ 2  0  1
+-1  0  1
+ 0  1  1
+ 1  1  1
+-2  1  1
+-1  1  1
+ 0  2  1
+ 1 -2  1
+ 2 -2  1
+-1  2  1
+ 0 -1  1
+ 1 -1  1
+ 2 -1  1
+-1 -1  1
+-2  0  0
+ 0 -2  0
+-2  2  0
+ 0  0 -1
+ 1  0 -1
+ 2  0 -1
+-2  0  1
+-2  0 -1
+-1  0 -1
+ 0  1 -1
+ 1  1 -1
+-2  1 -1
+-1  1 -1
+ 0  2 -1
+ 0 -2  1
+ 0 -2 -1
+ 1 -2 -1
+ 2 -2 -1
+-2  2  1
+-2  2 -1
+-1  2 -1
+ 0 -1 -1
+ 1 -1 -1
+ 2 -1 -1
+-1 -1 -1""")
+
+result_bz_map = ("""  0   1   2  -1  -1  -1  64   3   4   5
+  6  -1  -1  -1  65   7   8   9  10  -1
+ -1  -1  69  11  -1  -1  -1  -1  -1  -1
+ -1  -1  -1  -1  -1  -1  -1  -1  -1  -1
+ -1  -1  -1  -1  -1  -1  -1  -1  66  67
+ 68  -1  -1  -1  70  71  12  13  14  -1
+ -1  -1  72  15  16  17  18  -1  -1  -1
+ 73  19  20  21  22  -1  -1  -1  74  23
+ 24  25  26  -1  -1  -1  78  27  -1  -1
+ -1  -1  -1  -1  -1  -1  -1  -1  -1  -1
+ -1  -1  -1  -1  -1  -1  -1  -1  -1  -1
+ -1  -1  75  76  77  -1  -1  -1  79  80
+ 28  29  30  -1  -1  -1  81  31  32  33
+ 34  -1  -1  -1  85  35  36  37  38  -1
+ -1  -1  91  39  40  41  42  -1  -1  -1
+103  43  -1  -1  -1  -1  -1  -1  -1  -1
+ -1  -1  -1  -1  -1  -1  -1  -1  -1  -1
+ -1  -1  -1  -1  -1  -1  95  98 101  -1
+ -1  -1 105 108  44  45  46  -1  -1  -1
+113  47  -1  -1  -1  -1  -1  -1  -1  -1
+ -1  -1  -1  -1  -1  -1  -1  -1  -1  -1
+ -1  -1  -1  -1  -1  -1  -1  -1  -1  -1
+ -1  -1  -1  -1  -1  -1  -1  -1  -1  -1
+ -1  -1  -1  -1  -1  -1  -1  -1  -1  -1
+ -1  -1  -1  -1  -1  -1  -1  -1  -1  -1
+ -1  -1  -1  -1  -1  -1  -1  -1  -1  -1
+ -1  -1  -1  -1  -1  -1  -1  -1  -1  -1
+ -1  -1  -1  -1  -1  -1  -1  -1  -1  -1
+ -1  -1  -1  -1  -1  -1  -1  -1  -1  -1
+ -1  -1  -1  -1  -1  -1  -1  -1  -1  -1
+ -1  -1  -1  -1  -1  -1  -1  -1  -1  -1
+ -1  -1  -1  -1  -1  -1  -1  -1  -1  -1
+ -1  -1  -1  -1  -1  -1  -1  -1  -1  -1
+ -1  -1  -1  -1  -1  -1  -1  -1  -1  -1
+ -1  -1  -1  -1  -1  -1  -1  -1  -1  -1
+ -1  -1  -1  -1  -1  -1  -1  -1  -1  -1
+ -1  -1  -1  -1  -1  -1  -1  -1  -1  -1
+ -1  -1  -1  -1  -1  -1  -1  -1  -1  -1
+ -1  -1  -1  -1  82  83  84  -1  -1  -1
+ 86  87  88  89  90  -1  -1  -1  92  93
+ 94  97 100  -1  -1  -1 104 107  -1  -1
+ -1  -1  -1  -1  -1  -1  -1  -1  -1  -1
+ -1  -1  -1  -1  -1  -1  -1  -1  -1  -1
+ -1  -1  96  99 102  -1  -1  -1 106 109
+110 111 112  -1  -1  -1 114 115  48  49
+ 50  -1  -1  -1 116  51  52  53  54  -1
+ -1  -1 117  55  56  57  58  -1  -1  -1
+121  59  -1  -1  -1  -1  -1  -1  -1  -1
+ -1  -1  -1  -1  -1  -1  -1  -1  -1  -1
+ -1  -1  -1  -1  -1  -1 118 119 120  -1
+ -1  -1 122 123  60  61  62  -1  -1  -1
+124  63""", """  0   1   2  -1  -1  -1  32   3   4   5
+ -1  -1  -1  -1   6   7   8  -1  -1  -1
+ -1  -1  34  11  -1  -1  -1  -1  -1  -1
+ -1  -1  -1  -1  -1  -1  -1  -1  -1  -1
+ -1  -1  -1  -1  -1  -1  -1  -1  33   9
+ 10  -1  -1  -1  -1  -1  12  13  14  -1
+ -1  -1  -1  15  16  17  18  -1  -1  -1
+ 38  19  20  21  -1  -1  -1  -1  22  23
+ 24  -1  -1  -1  -1  -1  50  27  -1  -1
+ -1  -1  -1  -1  -1  -1  -1  -1  -1  -1
+ -1  -1  -1  -1  -1  -1  -1  -1  -1  -1
+ -1  -1  46  25  26  -1  -1  -1  -1  -1
+ 28  29  30  -1  -1  -1  -1  31  -1  -1
+ -1  -1  -1  -1  -1  -1  -1  -1  -1  -1
+ -1  -1  -1  -1  -1  -1  -1  -1  -1  -1
+ -1  -1  -1  -1  -1  -1  -1  -1  -1  -1
+ -1  -1  -1  -1  -1  -1  -1  -1  -1  -1
+ -1  -1  -1  -1  -1  -1  -1  -1  -1  -1
+ -1  -1  -1  -1  -1  -1  -1  -1  -1  -1
+ -1  -1  35  36  37  -1  -1  -1  39  40
+ 41  42  -1  -1  -1  -1  43  44  45  -1
+ -1  -1  -1  -1  51  52  -1  -1  -1  -1
+ -1  -1  -1  -1  -1  -1  -1  -1  -1  -1
+ -1  -1  -1  -1  -1  -1  -1  -1  -1  -1
+ 47  48  49  -1  -1  -1  -1  -1  53  54
+ 55  -1  -1  -1  -1  56""")
+
 
 class TestReciprocalMesh(unittest.TestCase):
-
     def setUp(self):
-        pass
+        identity = np.eye(3, dtype='intc')
+        file_and_mesh = (
+            [os.path.join(data_dir, "data", "cubic", "POSCAR-217"), [4, 4, 4]],
+            [os.path.join(data_dir, "data", "hexagonal", "POSCAR-182"),
+             [4, 4, 2]])
+
+        self.meshes = []
+        self.cells = []
+        self.rotations = []
+        self.grid_addresses = []
+        for i, (fname, mesh) in enumerate(file_and_mesh):
+            self.meshes.append(mesh)
+            self.cells.append(read_vasp(fname))
+            self.rotations.append(
+                get_symmetry_dataset(self.cells[i])['rotations'])
+            _, ga = get_stabilized_reciprocal_mesh(mesh, [identity, ])
+            self.grid_addresses.append(ga)
 
     def tearDown(self):
         pass
 
     def test_get_ir_reciprocal_mesh(self):
-        file_and_mesh = (
-            [os.path.join(data_dir, "data", "cubic", "POSCAR-217"), [4, 4, 4]],
-            [os.path.join(data_dir, "data", "hexagonal", "POSCAR-182"),
-             [4, 4, 2]])
-        i = 0
-        for fname, mesh in file_and_mesh:
-            cell = read_vasp(fname)
-            ir_rec_mesh = get_ir_reciprocal_mesh(mesh, cell)
+        for i in range(len(self.cells)):
+            ir_rec_mesh = get_ir_reciprocal_mesh(self.meshes[i], self.cells[i])
             (mapping_table, grid_address) = ir_rec_mesh
             # for gp, ga in zip(mapping_table, grid_address):
             #     print("%4d  %3d %3d %3d" % (gp, ga[0], ga[1], ga[2]))
@@ -257,44 +529,88 @@ class TestReciprocalMesh(unittest.TestCase):
             data = np.loadtxt(StringIO(result_ir_rec_mesh[i]), dtype='intc')
             np.testing.assert_equal(data[:, 0], mapping_table)
             np.testing.assert_equal(data[:, 1:4], grid_address)
-            i += 1
 
     def test_get_stabilized_reciprocal_mesh(self):
-        file_and_mesh = (
-            [os.path.join(data_dir, "data", "cubic", "POSCAR-217"), [4, 4, 4]],
-            [os.path.join(data_dir, "data", "hexagonal", "POSCAR-182"),
-             [4, 4, 2]])
-        i = 0
-        for fname, mesh in file_and_mesh:
-            cell = read_vasp(fname)
-            rotations = get_symmetry_dataset(cell)['rotations']
-            ir_rec_mesh = get_stabilized_reciprocal_mesh(mesh, rotations)
+        for i in range(len(self.cells)):
+            ir_rec_mesh = get_stabilized_reciprocal_mesh(
+                self.meshes[i], self.rotations[i])
             (mapping_table, grid_address) = ir_rec_mesh
             data = np.loadtxt(StringIO(result_ir_rec_mesh[i]), dtype='intc')
             np.testing.assert_equal(data[:, 0], mapping_table)
             np.testing.assert_equal(data[:, 1:4], grid_address)
-            i += 1
 
     def test_get_ir_reciprocal_mesh_distortion(self):
-        file_and_mesh = (
-            [os.path.join(data_dir, "data", "cubic", "POSCAR-217"), [3, 4, 4]],
-            [os.path.join(data_dir, "data", "hexagonal", "POSCAR-182"),
-             [3, 5, 1]])
-        i = 0
+        j = 0
         for is_shift in ([0, 0, 0], [0, 1, 0]):
-            for fname, mesh in file_and_mesh:
-                cell = read_vasp(fname)
-                ir_rec_mesh = get_ir_reciprocal_mesh(mesh, cell,
+            for i, mesh in enumerate(([3, 4, 4], [3, 5, 1])):
+                ir_rec_mesh = get_ir_reciprocal_mesh(mesh, self.cells[i],
                                                      is_shift=is_shift)
                 (mapping_table, grid_address) = ir_rec_mesh
                 # for gp, ga in zip(mapping_table, grid_address):
                 #     print("%4d  %3d %3d %3d" % (gp, ga[0], ga[1], ga[2]))
                 # print("")
-                data = np.loadtxt(StringIO(result_ir_rec_mesh_distortion[i]),
+                data = np.loadtxt(StringIO(result_ir_rec_mesh_distortion[j]),
                                   dtype='intc')
                 np.testing.assert_equal(data[:, 0], mapping_table)
                 np.testing.assert_equal(data[:, 1:4], grid_address)
-                i += 1
+                j += 1
+
+    def test_relocate_BZ_grid_address(self):
+        for i, (cell, mesh, grid_address) in enumerate(
+                zip(self.cells, self.meshes, self.grid_addresses)):
+            reclat = np.linalg.inv(cell[0])
+            bz_grid_address, bz_map = relocate_BZ_grid_address(
+                grid_address,
+                mesh,
+                reclat)
+            data = np.loadtxt(StringIO(result_bz_grid_address[i]),
+                              dtype='intc')
+            np.testing.assert_equal(data, bz_grid_address)
+
+            data = [int(i) for i in result_bz_map[i].split()]
+            np.testing.assert_equal(data, bz_map)
+
+            # for i in range(len(bz_map) // 10):
+            #     print(("%3d " * 10) % tuple(bz_map[i * 10: (i + 1) * 10]))
+            # n = len(bz_map) % 10
+            # print(("%3d " * n) % tuple(bz_map[-n:]))
+
+    def test_get_grid_points_and_bz_grid_points_by_rotations(self):
+        data = [[21, 31, 61, 55, 31, 61, 55, 21, 55, 21, 31, 61,
+                 61, 55, 21, 31, 61, 55, 21, 31, 55, 21, 31, 61,
+                 21, 31, 61, 55, 31, 61, 55, 21, 55, 21, 31, 61,
+                 61, 55, 21, 31, 61, 55, 21, 31, 55, 21, 31, 61],
+                [21, 30, 25, 31, 22, 27, 31, 22, 27, 21, 30, 25]]
+
+        data_bz = [[21, 31, 61, 55, 31, 61, 55, 21, 55, 21, 31, 61,
+                    61, 55, 21, 31, 61, 55, 21, 31, 55, 21, 31, 61,
+                    21, 31, 61, 55, 31, 61, 55, 21, 55, 21, 31, 61,
+                    61, 55, 21, 31, 61, 55, 21, 31, 55, 21, 31, 61],
+                   [21, 30, 25, 31, 22, 27, 56, 43, 52, 42, 55, 48]]
+
+        for i, (cell, mesh, grid_address, rotations) in enumerate(
+                zip(self.cells, self.meshes, self.grid_addresses,
+                    self.rotations)):
+            rec_rots = [r.T for r in rotations]
+
+            gps = get_grid_points_by_rotations([1, 1, 1],
+                                               rec_rots,
+                                               mesh)
+            # print(", ".join(["%d" % g for g in gps]))
+            np.testing.assert_equal(data[i], gps)
+            bz_grid_address, bz_map = relocate_BZ_grid_address(
+                grid_address,
+                mesh,
+                np.linalg.inv(cell[0]))
+            bz_gps = get_BZ_grid_points_by_rotations([1, 1, 1],
+                                                     rec_rots,
+                                                     mesh,
+                                                     bz_map)
+            # print(", ".join(["%d" % g for g in bz_gps]))
+            np.testing.assert_equal(data_bz[i], bz_gps)
+            diff_address = bz_grid_address[:len(grid_address)] - grid_address
+            np.testing.assert_equal(diff_address % mesh, 0)
+
 
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(TestReciprocalMesh)
