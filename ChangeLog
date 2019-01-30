@@ -1,3 +1,12 @@
+2019-01-30  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.12.1
+
+	* src/spglib.h:
+
+	Bug fix of PR #70. #include <stddef.h> is inserted. In principle,
+	this line is necessary to compile.
+
 2019-01-29  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.12.0
