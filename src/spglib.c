@@ -357,6 +357,11 @@ void spg_free_dataset(SpglibDataset *dataset)
     dataset->n_std_atoms = 0;
   }
 
+  if (dataset->site_symmetry_symbols != NULL) {
+    free(dataset->site_symmetry_symbols);
+    dataset->site_symmetry_symbols = NULL;
+  }
+
   dataset->spacegroup_number = 0;
   dataset->hall_number = 0;
   strcpy(dataset->international_symbol, "");
