@@ -476,23 +476,37 @@ int spg_get_hall_number_from_symmetry(SPGCONST int rotation[][3][3],
 
   symmetry = NULL;
   prim_symmetry = NULL;
+  hall_number = 0;
 
-  symmetry = sym_alloc_symmetry(num_operations);
+  if ((symmetry = sym_alloc_symmetry(num_operations)) == NULL) {
+    return 0;
+  }
+
   for (i = 0; i < num_operations; i++) {
     mat_copy_matrix_i3(symmetry->rot[i], rotation[i]);
     mat_copy_vector_d3(symmetry->trans[i], translation[i]);
   }
 
   prim_symmetry = prm_get_primitive_symmetry(symmetry, symprec);
+  sym_free_symmetry(symmetry);
+  symmetry = NULL;
+
+  if (prim_symmetry == NULL) {
+    return 0;
+  }
+
   hall_number = spa_search_spacegroup_with_symmetry(prim_symmetry, symprec);
 
   if (hall_number) {
     spglib_error_code = SPGLIB_SUCCESS;
-    return hall_number;
   } else {
     spglib_error_code = SPGERR_SPACEGROUP_SEARCH_FAILED;
-    return 0;
   }
+
+  sym_free_symmetry(prim_symmetry);
+  prim_symmetry = NULL;
+
+  return hall_number;
 }
 
 /* Return 0 if failed */
