@@ -75,6 +75,11 @@ script:
 - pwd
 - if [[ "$DOCKER_DEPLOY" == "false" ]]; then
     if [[ "$TRAVIS_BRANCH" != "rc" && "$TRAVIS_BRANCH" != "master" ]]; then
+      conda install -c conda-forge --no-update-deps --yes make valgrind;
+      mkdir _build && cd _build;
+      cmake .. && make spglibtest;
+      valgrind --leak-check=yes --error-exitcode=123 ./spglibtest;
+      cd ..;
       cd python;
       python setup.py test;
       cd ..;
