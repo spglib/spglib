@@ -48,12 +48,10 @@ before_install:
     if [[ "$DOCKER_DEPLOY" != "false" ]]; then
       conda install --no-update-deps --yes pip;
     else
-      conda install --no-update-deps --yes pip numpy pyyaml;
+      conda install --no-update-deps --yes pip nomkl numpy pyyaml;
     fi
   fi
 - pwd
-# conda install --no-update-deps --yes python="$TRAVIS_PYTHON_VERSION" pip;
-# conda install --no-update-deps --yes python="$TRAVIS_PYTHON_VERSION" pip numpy pyyaml;
 
 install:
 - pwd
@@ -75,7 +73,7 @@ script:
 - pwd
 - if [[ "$DOCKER_DEPLOY" == "false" ]]; then
     if [[ "$TRAVIS_BRANCH" != "rc" && "$TRAVIS_BRANCH" != "master" ]]; then
-      conda install --no-update-deps --yes gcc_linux-64
+      conda install --no-update-deps --yes gcc_linux-64;
       conda install -c conda-forge --no-update-deps --yes make valgrind;
       mkdir _build && cd _build;
       cmake .. && make spglibtest;
