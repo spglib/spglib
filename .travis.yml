@@ -48,7 +48,7 @@ before_install:
     if [[ "$DOCKER_DEPLOY" != "false" ]]; then
       conda install --no-update-deps --yes pip;
     else
-      conda install --no-update-deps --yes pip nomkl numpy pyyaml;
+      conda install --no-update-deps --yes pip numpy pyyaml;
     fi
   fi
 - pwd
