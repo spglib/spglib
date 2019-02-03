@@ -987,143 +987,36 @@ size_t spg_get_dense_stabilized_reciprocal_mesh(int grid_address[][3],
                                               qpoints);
 }
 
-int spg_get_grid_points_by_rotations(int rot_grid_points[],
-                                     const int address_orig[3],
-                                     const int num_rot,
-                                     SPGCONST int rot_reciprocal[][3][3],
-                                     const int mesh[3],
-                                     const int is_shift[3])
+void spg_get_dense_grid_points_by_rotations(size_t rot_grid_points[],
+                                            const int address_orig[3],
+                                            const int num_rot,
+                                            SPGCONST int rot_reciprocal[][3][3],
+                                            const int mesh[3],
+                                            const int is_shift[3])
 {
-  int i;
-  MatINT *rot;
-
-  rot = NULL;
-
-  if ((rot = mat_alloc_MatINT(num_rot)) == NULL) {
-    return 0;
-  }
-
-  for (i = 0; i < num_rot; i++) {
-    mat_copy_matrix_i3(rot->mat[i], rot_reciprocal[i]);
-  }
-  kpt_get_grid_points_by_rotations(rot_grid_points,
-                                   address_orig,
-                                   rot,
-                                   mesh,
-                                   is_shift);
-  mat_free_MatINT(rot);
-  rot = NULL;
-
-  return 1;
-}
-
-int spg_get_dense_grid_points_by_rotations(size_t rot_grid_points[],
-                                           const int address_orig[3],
-                                           const int num_rot,
-                                           SPGCONST int rot_reciprocal[][3][3],
-                                           const int mesh[3],
-                                           const int is_shift[3])
-{
-  int i;
-  MatINT *rot;
-
-  rot = NULL;
-
-  if ((rot = mat_alloc_MatINT(num_rot)) == NULL) {
-    return 0;
-  }
-
-  for (i = 0; i < num_rot; i++) {
-    mat_copy_matrix_i3(rot->mat[i], rot_reciprocal[i]);
-  }
   kpt_get_dense_grid_points_by_rotations(rot_grid_points,
                                          address_orig,
-                                         rot,
+                                         rot_reciprocal,
+                                         num_rot,
                                          mesh,
                                          is_shift);
-  mat_free_MatINT(rot);
-  rot = NULL;
-
-  return 1;
 }
 
-int spg_get_BZ_grid_points_by_rotations(int rot_grid_points[],
-                                        const int address_orig[3],
-                                        const int num_rot,
-                                        SPGCONST int rot_reciprocal[][3][3],
-                                        const int mesh[3],
-                                        const int is_shift[3],
-                                        const int bz_map[])
+void spg_get_dense_BZ_grid_points_by_rotations(size_t rot_grid_points[],
+                                               const int address_orig[3],
+                                               const int num_rot,
+                                               SPGCONST int rot_reciprocal[][3][3],
+                                               const int mesh[3],
+                                               const int is_shift[3],
+                                               const size_t bz_map[])
 {
-  int i;
-  MatINT *rot;
-
-  rot = NULL;
-
-  if ((rot = mat_alloc_MatINT(num_rot)) == NULL) {
-    return 0;
-  }
-
-  for (i = 0; i < num_rot; i++) {
-    mat_copy_matrix_i3(rot->mat[i], rot_reciprocal[i]);
-  }
-  kpt_get_BZ_grid_points_by_rotations(rot_grid_points,
-                                      address_orig,
-                                      rot,
-                                      mesh,
-                                      is_shift,
-                                      bz_map);
-  mat_free_MatINT(rot);
-  rot = NULL;
-
-  return 1;
-}
-
-int spg_get_dense_BZ_grid_points_by_rotations(size_t rot_grid_points[],
-                                              const int address_orig[3],
-                                              const int num_rot,
-                                              SPGCONST int rot_reciprocal[][3][3],
-                                              const int mesh[3],
-                                              const int is_shift[3],
-                                              const size_t bz_map[])
-{
-  int i;
-  MatINT *rot;
-
-  rot = NULL;
-
-  if ((rot = mat_alloc_MatINT(num_rot)) == NULL) {
-    return 0;
-  }
-
-  for (i = 0; i < num_rot; i++) {
-    mat_copy_matrix_i3(rot->mat[i], rot_reciprocal[i]);
-  }
   kpt_get_dense_BZ_grid_points_by_rotations(rot_grid_points,
                                             address_orig,
-                                            rot,
+                                            rot_reciprocal,
+                                            num_rot,
                                             mesh,
                                             is_shift,
                                             bz_map);
-  mat_free_MatINT(rot);
-  rot = NULL;
-
-  return 1;
-}
-
-int spg_relocate_BZ_grid_address(int bz_grid_address[][3],
-                                 int bz_map[],
-                                 SPGCONST int grid_address[][3],
-                                 const int mesh[3],
-                                 SPGCONST double rec_lattice[3][3],
-                                 const int is_shift[3])
-{
-  return kpt_relocate_BZ_grid_address(bz_grid_address,
-                                      bz_map,
-                                      grid_address,
-                                      mesh,
-                                      rec_lattice,
-                                      is_shift);
 }
 
 size_t spg_relocate_dense_BZ_grid_address(int bz_grid_address[][3],

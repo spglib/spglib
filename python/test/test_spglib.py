@@ -1,6 +1,7 @@
 import unittest
 from spglib import (get_symmetry_dataset, find_primitive,
-                    get_spacegroup_type, standardize_cell)
+                    get_spacegroup_type, standardize_cell,
+                    get_pointgroup)
 from vasp import read_vasp
 import yaml
 import os
@@ -108,7 +109,7 @@ class TestSpglib(unittest.TestCase):
             #     for w in dataset['wyckoffs']:
             #         f.write("- \"%s\"\n" % w)
 
-    def test_standardize_cell(self):
+    def test_standardize_cell_and_pointgroup(self):
         for fname, spgnum in zip(self._filenames, self._spgnum_ref):
             cell = read_vasp(fname)
             if 'distorted' in fname:
@@ -122,6 +123,12 @@ class TestSpglib(unittest.TestCase):
                                         symprec=symprec)
             dataset = get_symmetry_dataset(std_cell, symprec=symprec)
             self.assertEqual(dataset['number'], spgnum,
+                             msg=("%s" % fname))
+
+            # The test for point group has to be done after standarization.
+            ptg_symbol, _, _ = get_pointgroup(dataset['rotations'])
+            self.assertEqual(dataset['pointgroup'],
+                             ptg_symbol,
                              msg=("%s" % fname))
 
     def test_standardize_cell_from_primitive(self):

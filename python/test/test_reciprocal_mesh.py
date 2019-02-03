@@ -10,7 +10,8 @@ from spglib import (get_ir_reciprocal_mesh,
                     get_symmetry_dataset,
                     relocate_BZ_grid_address,
                     get_grid_points_by_rotations,
-                    get_BZ_grid_points_by_rotations)
+                    get_BZ_grid_points_by_rotations,
+                    get_grid_point_from_address)
 from vasp import read_vasp
 
 data_dir = os.path.dirname(os.path.abspath(__file__))
@@ -521,7 +522,8 @@ class TestReciprocalMesh(unittest.TestCase):
 
     def test_get_ir_reciprocal_mesh(self):
         for i in range(len(self.cells)):
-            ir_rec_mesh = get_ir_reciprocal_mesh(self.meshes[i], self.cells[i])
+            ir_rec_mesh = get_ir_reciprocal_mesh(self.meshes[i], self.cells[i],
+                                                 is_dense=False)
             (mapping_table, grid_address) = ir_rec_mesh
             # for gp, ga in zip(mapping_table, grid_address):
             #     print("%4d  %3d %3d %3d" % (gp, ga[0], ga[1], ga[2]))
@@ -530,12 +532,9 @@ class TestReciprocalMesh(unittest.TestCase):
             np.testing.assert_equal(data[:, 0], mapping_table)
             np.testing.assert_equal(data[:, 1:4], grid_address)
 
-    def test_get_stabilized_reciprocal_mesh(self):
-        for i in range(len(self.cells)):
-            ir_rec_mesh = get_stabilized_reciprocal_mesh(
-                self.meshes[i], self.rotations[i])
+            ir_rec_mesh = get_ir_reciprocal_mesh(self.meshes[i], self.cells[i],
+                                                 is_dense=True)
             (mapping_table, grid_address) = ir_rec_mesh
-            data = np.loadtxt(StringIO(result_ir_rec_mesh[i]), dtype='intc')
             np.testing.assert_equal(data[:, 0], mapping_table)
             np.testing.assert_equal(data[:, 1:4], grid_address)
 
@@ -544,7 +543,8 @@ class TestReciprocalMesh(unittest.TestCase):
         for is_shift in ([0, 0, 0], [0, 1, 0]):
             for i, mesh in enumerate(([3, 4, 4], [3, 5, 1])):
                 ir_rec_mesh = get_ir_reciprocal_mesh(mesh, self.cells[i],
-                                                     is_shift=is_shift)
+                                                     is_shift=is_shift,
+                                                     is_dense=False)
                 (mapping_table, grid_address) = ir_rec_mesh
                 # for gp, ga in zip(mapping_table, grid_address):
                 #     print("%4d  %3d %3d %3d" % (gp, ga[0], ga[1], ga[2]))
@@ -553,7 +553,30 @@ class TestReciprocalMesh(unittest.TestCase):
                                   dtype='intc')
                 np.testing.assert_equal(data[:, 0], mapping_table)
                 np.testing.assert_equal(data[:, 1:4], grid_address)
+
+                ir_rec_mesh = get_ir_reciprocal_mesh(mesh, self.cells[i],
+                                                     is_shift=is_shift,
+                                                     is_dense=True)
+                (mapping_table, grid_address) = ir_rec_mesh
+                np.testing.assert_equal(data[:, 0], mapping_table)
+                np.testing.assert_equal(data[:, 1:4], grid_address)
+
                 j += 1
+
+    def test_get_stabilized_reciprocal_mesh(self):
+        for i in range(len(self.cells)):
+            ir_rec_mesh = get_stabilized_reciprocal_mesh(
+                self.meshes[i], self.rotations[i], is_dense=False)
+            (mapping_table, grid_address) = ir_rec_mesh
+            data = np.loadtxt(StringIO(result_ir_rec_mesh[i]), dtype='intc')
+            np.testing.assert_equal(data[:, 0], mapping_table)
+            np.testing.assert_equal(data[:, 1:4], grid_address)
+
+            ir_rec_mesh = get_stabilized_reciprocal_mesh(
+                self.meshes[i], self.rotations[i], is_dense=True)
+            (mapping_table, grid_address) = ir_rec_mesh
+            np.testing.assert_equal(data[:, 0], mapping_table)
+            np.testing.assert_equal(data[:, 1:4], grid_address)
 
     def test_relocate_BZ_grid_address(self):
         for i, (cell, mesh, grid_address) in enumerate(
@@ -562,18 +585,28 @@ class TestReciprocalMesh(unittest.TestCase):
             bz_grid_address, bz_map = relocate_BZ_grid_address(
                 grid_address,
                 mesh,
-                reclat)
-            data = np.loadtxt(StringIO(result_bz_grid_address[i]),
-                              dtype='intc')
-            np.testing.assert_equal(data, bz_grid_address)
+                reclat,
+                is_dense=False)
+            data_adrs = np.loadtxt(StringIO(result_bz_grid_address[i]),
+                                   dtype='intc')
+            np.testing.assert_equal(data_adrs, bz_grid_address)
 
-            data = [int(i) for i in result_bz_map[i].split()]
-            np.testing.assert_equal(data, bz_map)
+            data_map = np.array([int(i) for i in result_bz_map[i].split()])
+            data_map[data_map == -1] = np.prod(mesh) * 8
+            np.testing.assert_equal(data_map, bz_map)
 
             # for i in range(len(bz_map) // 10):
             #     print(("%3d " * 10) % tuple(bz_map[i * 10: (i + 1) * 10]))
             # n = len(bz_map) % 10
             # print(("%3d " * n) % tuple(bz_map[-n:]))
+
+            bz_grid_address, bz_map = relocate_BZ_grid_address(
+                grid_address,
+                mesh,
+                reclat,
+                is_dense=True)
+            np.testing.assert_equal(data_adrs, bz_grid_address)
+            np.testing.assert_equal(data_map, bz_map)
 
     def test_get_grid_points_and_bz_grid_points_by_rotations(self):
         data = [[21, 31, 61, 55, 31, 61, 55, 21, 55, 21, 31, 61,
@@ -595,9 +628,16 @@ class TestReciprocalMesh(unittest.TestCase):
 
             gps = get_grid_points_by_rotations([1, 1, 1],
                                                rec_rots,
-                                               mesh)
+                                               mesh,
+                                               is_dense=False)
             # print(", ".join(["%d" % g for g in gps]))
             np.testing.assert_equal(data[i], gps)
+            gps = get_grid_points_by_rotations([1, 1, 1],
+                                               rec_rots,
+                                               mesh,
+                                               is_dense=True)
+            np.testing.assert_equal(data[i], gps)
+
             bz_grid_address, bz_map = relocate_BZ_grid_address(
                 grid_address,
                 mesh,
@@ -605,11 +645,34 @@ class TestReciprocalMesh(unittest.TestCase):
             bz_gps = get_BZ_grid_points_by_rotations([1, 1, 1],
                                                      rec_rots,
                                                      mesh,
-                                                     bz_map)
+                                                     bz_map,
+                                                     is_dense=False)
             # print(", ".join(["%d" % g for g in bz_gps]))
             np.testing.assert_equal(data_bz[i], bz_gps)
             diff_address = bz_grid_address[:len(grid_address)] - grid_address
             np.testing.assert_equal(diff_address % mesh, 0)
+
+            bz_gps = get_BZ_grid_points_by_rotations([1, 1, 1],
+                                                     rec_rots,
+                                                     mesh,
+                                                     bz_map,
+                                                     is_dense=True)
+            np.testing.assert_equal(data_bz[i], bz_gps)
+
+    def test_get_grid_point_from_address(self):
+        mesh = (5, 5, 5)
+        adrs_ref = [0, 25, 50, 75, 100, 5, 30, 55, 80, 105, 10, 35, 60, 85,
+                    110, 15, 40, 65, 90, 115, 20, 45, 70, 95, 120, 1, 26, 51,
+                    76, 101, 6, 31, 56, 81, 106, 11, 36, 61, 86, 111, 16, 41,
+                    66, 91, 116, 21, 46, 71, 96, 121, 2, 27, 52, 77, 102, 7,
+                    32, 57, 82, 107, 12, 37, 62, 87, 112, 17, 42, 67, 92, 117,
+                    22, 47, 72, 97, 122, 3, 28, 53, 78, 103, 8, 33, 58, 83,
+                    108, 13, 38, 63, 88, 113, 18, 43, 68, 93, 118, 23, 48, 73,
+                    98, 123, 4, 29, 54, 79, 104, 9, 34, 59, 84, 109, 14, 39,
+                    64, 89, 114, 19, 44, 69, 94, 119, 24, 49, 74, 99, 124]
+        adrs = [get_grid_point_from_address([i, j, k], mesh)
+                for i, j, k in list(np.ndindex(mesh))]
+        np.testing.assert_equal(adrs_ref, adrs)
 
 
 if __name__ == '__main__':

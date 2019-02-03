@@ -495,27 +495,40 @@ def get_ir_reciprocal_mesh(mesh,
                            cell,
                            is_shift=None,
                            is_time_reversal=True,
-                           symprec=1e-5):
+                           symprec=1e-5,
+                           is_dense=False):
     """Return k-points mesh and k-point map to the irreducible k-points.
 
     The symmetry is serched from the input cell.
 
-    Args:
-        mesh:
-            int array (3,): Uniform sampling mesh numbers
-        cell, symprec:
-            See the docstring of get_symmetry.
-        is_shift:
-            int array (3,): [0, 0, 0] gives Gamma center mesh and value 1 gives
-                            half mesh shift.
-        is_time_reversal:
-            bool: Time reversal symmetry is included or not.
+    Parameters
+    ----------
+    mesh : array_like
+        Uniform sampling mesh numbers.
+        dtype='intc', shape=(3,)
+    cell : spglib cell tuple
+        Crystal structure.
+    is_shift : array_like, optional
+        [0, 0, 0] gives Gamma center mesh and value 1 gives half mesh shift.
+        Default is None which equals to [0, 0, 0].
+        dtype='intc', shape=(3,)
+    is_time_reversal : bool, optional
+        Whether time reversal symmetry is included or not. Default is True.
+    symprec : float, optional
+        Symmetry tolerance in distance. Default is 1e-5.
+    is_dense : bool, optional
+        grid_mapping_table is returned with dtype='uintp' if True. Otherwise
+        its dtype='intc'. Default is False.
 
-    Returns:
-        mapping_table:
-            int array (N,): Grid point mapping table to ir-gird-points
-        grid_address:
-            int array (N, 3): Address of all grid points
+    Returns
+    -------
+    grid_mapping_table : ndarray
+        Grid point mapping table to ir-gird-points.
+        dtype='intc' or 'uintp', shape=(prod(mesh),)
+    grid_address : ndarray
+        Address of all grid points.
+        dtype='intc', shspe=(prod(mesh), 3)
+
     """
     _set_no_error()
 
@@ -523,13 +536,17 @@ def get_ir_reciprocal_mesh(mesh,
     if lattice is None:
         return None
 
-    mapping = np.zeros(np.prod(mesh), dtype='intc')
+    if is_dense:
+        dtype = 'uintp'
+    else:
+        dtype = 'intc'
+    grid_mapping_table = np.zeros(np.prod(mesh), dtype=dtype)
     grid_address = np.zeros((np.prod(mesh), 3), dtype='intc')
     if is_shift is None:
         is_shift = [0, 0, 0]
     if spg.ir_reciprocal_mesh(
             grid_address,
-            mapping,
+            grid_mapping_table,
             np.array(mesh, dtype='intc'),
             np.array(is_shift, dtype='intc'),
             is_time_reversal * 1,
@@ -537,7 +554,7 @@ def get_ir_reciprocal_mesh(mesh,
             positions,
             numbers,
             symprec) > 0:
-        return mapping, grid_address
+        return grid_mapping_table, grid_address
     else:
         return None
 
@@ -546,7 +563,8 @@ def get_stabilized_reciprocal_mesh(mesh,
                                    rotations,
                                    is_shift=None,
                                    is_time_reversal=True,
-                                   qpoints=None):
+                                   qpoints=None,
+                                   is_dense=False):
     """Return k-point map to the irreducible k-points and k-point grid points.
 
     The symmetry is searched from the input rotation matrices in real space.
@@ -568,10 +586,13 @@ def get_stabilized_reciprocal_mesh(mesh,
         q-points used as stabilizer(s) given in reciprocal space with respect
         to reciprocal basis vectors.
         dtype='double', shape=(qpoints ,3) or (3,)
+    is_dense : bool, optional
+        grid_mapping_table is returned with dtype='uintp' if True. Otherwise
+        its dtype='intc'. Default is False.
 
     Returns
     -------
-    mapping_table : ndarray
+    grid_mapping_table : ndarray
         Grid point mapping table to ir-gird-points.
         dtype='intc', shape=(prod(mesh),)
     grid_address : ndarray
@@ -582,7 +603,11 @@ def get_stabilized_reciprocal_mesh(mesh,
     """
     _set_no_error()
 
-    mapping_table = np.zeros(np.prod(mesh), dtype='intc')
+    if is_dense:
+        dtype = 'uintp'
+    else:
+        dtype = 'intc'
+    mapping_table = np.zeros(np.prod(mesh), dtype=dtype)
     grid_address = np.zeros((np.prod(mesh), 3), dtype='intc')
     if is_shift is None:
         is_shift = [0, 0, 0]
@@ -609,7 +634,8 @@ def get_stabilized_reciprocal_mesh(mesh,
 def get_grid_points_by_rotations(address_orig,
                                  reciprocal_rotations,
                                  mesh,
-                                 is_shift=None):
+                                 is_shift=None,
+                                 is_dense=False):
     """Returns grid points obtained after rotating input grid address
 
     Parameters
@@ -627,12 +653,15 @@ def get_grid_points_by_rotations(address_orig,
         With (1) or without (0) half grid shifts with respect to grid intervals
         sampled along reciprocal basis vectors. Default is None, which
         gives [0, 0, 0].
+    is_dense : bool, optional
+        rot_grid_points is returned with dtype='uintp' if True. Otherwise
+        its dtype='intc'. Default is False.
 
     Returns
     -------
     rot_grid_points : ndarray
         Grid points obtained after rotating input grid address
-        dtype='intc', shape=(rotations,)
+        dtype='intc' or 'uintp', shape=(rotations,)
 
     """
 
@@ -643,7 +672,7 @@ def get_grid_points_by_rotations(address_orig,
     else:
         _is_shift = np.array(is_shift, dtype='intc')
 
-    rot_grid_points = np.zeros(len(reciprocal_rotations), dtype='intc')
+    rot_grid_points = np.zeros(len(reciprocal_rotations), dtype='uintp')
     spg.grid_points_by_rotations(
         rot_grid_points,
         np.array(address_orig, dtype='intc'),
@@ -651,14 +680,18 @@ def get_grid_points_by_rotations(address_orig,
         np.array(mesh, dtype='intc'),
         _is_shift)
 
-    return rot_grid_points
+    if is_dense:
+        return rot_grid_points
+    else:
+        return np.array(rot_grid_points, dtype='intc')
 
 
 def get_BZ_grid_points_by_rotations(address_orig,
                                     reciprocal_rotations,
                                     mesh,
                                     bz_map,
-                                    is_shift=np.zeros(3, dtype='intc')):
+                                    is_shift=None,
+                                    is_dense=False):
     """Returns grid points obtained after rotating input grid address
 
     Parameters
@@ -676,33 +709,50 @@ def get_BZ_grid_points_by_rotations(address_orig,
         With (1) or without (0) half grid shifts with respect to grid intervals
         sampled along reciprocal basis vectors. Default is None, which
         gives [0, 0, 0].
+    is_dense : bool, optional
+        rot_grid_points is returned with dtype='uintp' if True. Otherwise
+        its dtype='intc'. Default is False.
 
     Returns
     -------
     rot_grid_points : ndarray
         Grid points obtained after rotating input grid address
-        dtype='intc', shape=(rotations,)
+        dtype='intc' or 'uintp', shape=(rotations,)
 
     """
 
     _set_no_error()
 
-    rot_grid_points = np.zeros(len(reciprocal_rotations), dtype='intc')
+    if is_shift is None:
+        _is_shift = np.zeros(3, dtype='intc')
+    else:
+        _is_shift = np.array(is_shift, dtype='intc')
+
+    if bz_map.dtype == 'uintp' and bz_map.flags.c_contiguous:
+        _bz_map = bz_map
+    else:
+        _bz_map = np.array(bz_map, dtype='uintp')
+
+    rot_grid_points = np.zeros(len(reciprocal_rotations), dtype='uintp')
     spg.BZ_grid_points_by_rotations(
         rot_grid_points,
         np.array(address_orig, dtype='intc'),
         np.array(reciprocal_rotations, dtype='intc', order='C'),
         np.array(mesh, dtype='intc'),
-        np.array(is_shift, dtype='intc'),
-        bz_map)
+        _is_shift,
+        _bz_map)
 
-    return rot_grid_points
+    if is_dense:
+        return rot_grid_points
+    else:
+        return np.array(rot_grid_points, dtype='intc')
 
 
 def relocate_BZ_grid_address(grid_address,
                              mesh,
                              reciprocal_lattice,  # column vectors
-                             is_shift=None):
+                             is_shift=None,
+                             is_dense=False):
     """Grid addresses are relocated to be inside first Brillouin zone.
 
     Number of ir-grid-points inside Brillouin zone is returned.
@@ -741,7 +791,7 @@ def relocate_BZ_grid_address(grid_address,
     else:
         _is_shift = np.array(is_shift, dtype='intc')
     bz_grid_address = np.zeros((np.prod(np.add(mesh, 1)), 3), dtype='intc')
-    bz_map = np.zeros(np.prod(np.multiply(mesh, 2)), dtype='intc')
+    bz_map = np.zeros(np.prod(np.multiply(mesh, 2)), dtype='uintp')
     num_bz_ir = spg.BZ_grid_address(
         bz_grid_address,
         bz_map,
@@ -750,7 +800,10 @@ def relocate_BZ_grid_address(grid_address,
         np.array(reciprocal_lattice, dtype='double', order='C'),
         _is_shift)
 
-    return bz_grid_address[:num_bz_ir], bz_map
+    if is_dense:
+        return bz_grid_address[:num_bz_ir], bz_map
+    else:
+        return bz_grid_address[:num_bz_ir], np.array(bz_map, dtype='intc')
 
 
 def delaunay_reduce(lattice, eps=1e-5):
