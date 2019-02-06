@@ -1019,6 +1019,21 @@ void spg_get_dense_BZ_grid_points_by_rotations(size_t rot_grid_points[],
                                             bz_map);
 }
 
+int spg_relocate_BZ_grid_address(int bz_grid_address[][3],
+                                 int bz_map[],
+                                 SPGCONST int grid_address[][3],
+                                 const int mesh[3],
+                                 SPGCONST double rec_lattice[3][3],
+                                 const int is_shift[3])
+{
+  return kpt_relocate_BZ_grid_address(bz_grid_address,
+                                      bz_map,
+                                      grid_address,
+                                      mesh,
+                                      rec_lattice,
+                                      is_shift);
+}
+
 size_t spg_relocate_dense_BZ_grid_address(int bz_grid_address[][3],
                                           size_t bz_map[],
                                           SPGCONST int grid_address[][3],

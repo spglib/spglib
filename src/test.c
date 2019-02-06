@@ -1,6 +1,7 @@
 #include "spglib.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <stddef.h>
 #include <math.h>
 
 static int test_spg_get_symmetry(void);
@@ -26,6 +27,7 @@ static int test_spg_get_dataset(void);
 static int test_spg_get_ir_reciprocal_mesh(void);
 static int test_spg_get_stabilized_reciprocal_mesh(void);
 static int test_spg_relocate_BZ_grid_address(void);
+static int test_spg_relocate_dense_BZ_grid_address(void);
 static int test_spg_get_error_message(void);
 static int test_spg_get_hall_number_from_symmetry(void);
 static int show_spg_dataset(double lattice[3][3],
@@ -59,6 +61,7 @@ int main(void)
     test_spg_get_ir_reciprocal_mesh,
     test_spg_get_stabilized_reciprocal_mesh,
     test_spg_relocate_BZ_grid_address,
+    test_spg_relocate_dense_BZ_grid_address,
     test_spg_get_error_message,
     test_spg_get_hall_number_from_symmetry,
     NULL};
@@ -853,7 +856,7 @@ static int test_spg_relocate_BZ_grid_address(void)
   /* Memory spaces have to be allocated to pointers */
   /* to avoid Invalid read/write error by valgrind. */
   bz_grid_address = (int(*)[3])malloc(sizeof(int[3]) * (m + 1) * (m + 1) * (m + 1));
-  bz_map = (int(*))malloc(sizeof(int) * m * m * m * 8);
+  bz_map = (int*)malloc(sizeof(int) * m * m * m * 8);
   grid_address = (int(*)[3])malloc(sizeof(int[3]) * m * m * m);
   grid_mapping_table = (int*)malloc(sizeof(int) * m * m * m);
 
@@ -878,6 +881,69 @@ static int test_spg_relocate_BZ_grid_address(void)
 
     printf("Number of k-points of NaCl Brillouin zone\n");
     printf("with Gamma-centered 40x40x40 Monkhorst-Pack mesh is %d (65861).\n", num_q);
+  } else {
+    retval = 1;
+  }
+
+  free(bz_grid_address);
+  bz_grid_address = NULL;
+  free(bz_map);
+  bz_map = NULL;
+  free(grid_address);
+  grid_address = NULL;
+  free(grid_mapping_table);
+  grid_mapping_table = NULL;
+
+  return retval;
+}
+
+static int test_spg_relocate_dense_BZ_grid_address(void)
+{
+  double rec_lattice[3][3] = {{-0.17573761,  0.17573761,  0.17573761},
+                              { 0.17573761, -0.17573761,  0.17573761},
+                              { 0.17573761,  0.17573761, -0.17573761}};
+  int rotations[][3][3] = {{{1, 0, 0},
+                            {0, 1, 0},
+                            {0, 0, 1}}};
+
+
+  int retval = 0;
+  int (*bz_grid_address)[3], (*grid_address)[3];
+  size_t *grid_mapping_table, *bz_map;
+
+  int m = 40;
+  int mesh[] = {m, m, m};
+  int is_shift[] = {0, 0, 0};
+  double q[] = {0, 0, 0};
+
+  /* Memory spaces have to be allocated to pointers */
+  /* to avoid Invalid read/write error by valgrind. */
+  bz_grid_address = (int(*)[3])malloc(sizeof(int[3]) * (m + 1) * (m + 1) * (m + 1));
+  bz_map = (size_t*)malloc(sizeof(size_t) * m * m * m * 8);
+  grid_address = (int(*)[3])malloc(sizeof(int[3]) * m * m * m);
+  grid_mapping_table = (size_t*)malloc(sizeof(size_t) * m * m * m);
+
+  size_t num_ir = spg_get_dense_stabilized_reciprocal_mesh(grid_address,
+                                                           grid_mapping_table,
+                                                           mesh,
+                                                           is_shift,
+                                                           1,
+                                                           1,
+                                                           rotations,
+                                                           1,
+                                                           (double(*)[3])q);
+  if (num_ir) {
+    printf("*** spg_relocate_dense_BZ_grid_address of NaCl structure ***:\n");
+
+    size_t num_q = spg_relocate_dense_BZ_grid_address(bz_grid_address,
+                                                      bz_map,
+                                                      grid_address,
+                                                      mesh,
+                                                      rec_lattice,
+                                                      is_shift);
+
+    printf("Number of k-points of NaCl Brillouin zone\n");
+    printf("with Gamma-centered 40x40x40 Monkhorst-Pack mesh is %lu (65861).\n", num_q);
   } else {
     retval = 1;
   }
