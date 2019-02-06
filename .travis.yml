@@ -76,7 +76,7 @@ script:
     if [[ "$TRAVIS_BRANCH" != "rc" && "$TRAVIS_BRANCH" != "master" ]]; then
       conda install -c conda-forge --yes valgrind;
       mkdir _build && cd _build;
-      cmake .. && make VERBOSE=1 spglibtest;
+      cmake -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON .. && make spglibtest;
       valgrind --leak-check=yes --error-exitcode=123 ./spglibtest;
       cd ..;
       cd python;
