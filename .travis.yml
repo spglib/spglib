@@ -46,14 +46,13 @@ before_install:
     cat __nanoversion__.txt;
     cd ..;
     if [[ "$DOCKER_DEPLOY" != "false" ]]; then
-      conda install --no-update-deps --yes pip;
+      conda install --yes pip;
     else
-      conda install --no-update-deps --yes pip numpy pyyaml;
+      conda install --yes gcc_linux-64;
+      conda install --yes pip numpy pyyaml nomkl make cmake;
     fi
   fi
 - pwd
-# conda install --no-update-deps --yes python="$TRAVIS_PYTHON_VERSION" pip;
-# conda install --no-update-deps --yes python="$TRAVIS_PYTHON_VERSION" pip numpy pyyaml;
 
 install:
 - pwd
@@ -75,6 +74,11 @@ script:
 - pwd
 - if [[ "$DOCKER_DEPLOY" == "false" ]]; then
     if [[ "$TRAVIS_BRANCH" != "rc" && "$TRAVIS_BRANCH" != "master" ]]; then
+      conda install -c conda-forge --yes valgrind;
+      mkdir _build && cd _build;
+      cmake .. && make VERBOSE=1 spglibtest;
+      valgrind --leak-check=yes --error-exitcode=123 ./spglibtest;
+      cd ..;
       cd python;
       python setup.py test;
       cd ..;
