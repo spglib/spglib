@@ -1,3 +1,9 @@
+2019-02-06  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.12.2
+
+	Minor release for memory leak fix (PR#71).
+
 2019-01-30  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.12.1
