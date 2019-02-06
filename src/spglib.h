@@ -451,33 +451,33 @@ extern "C" {
 /* Rotation operations in reciprocal space ``rot_reciprocal`` are applied */
 /* to a grid address ``address_orig`` and resulting grid points are stored in */
 /* ``rot_grid_points``. Return 0 if failed. */
-  int spg_get_grid_points_by_rotations(int rot_grid_points[],
-                                       const int address_orig[3],
-                                       const int num_rot,
-                                       SPGCONST int rot_reciprocal[][3][3],
-                                       const int mesh[3],
-                                       const int is_shift[3]);
-  int spg_get_dense_grid_points_by_rotations(size_t rot_grid_points[],
-                                             const int address_orig[3],
-                                             const int num_rot,
-                                             SPGCONST int rot_reciprocal[][3][3],
-                                             const int mesh[3],
-                                             const int is_shift[3]);
+  void spg_get_grid_points_by_rotations(int rot_grid_points[],
+                                        const int address_orig[3],
+                                        const int num_rot,
+                                        SPGCONST int rot_reciprocal[][3][3],
+                                        const int mesh[3],
+                                        const int is_shift[3]);
+  void spg_get_dense_grid_points_by_rotations(size_t rot_grid_points[],
+                                              const int address_orig[3],
+                                              const int num_rot,
+                                              SPGCONST int rot_reciprocal[][3][3],
+                                              const int mesh[3],
+                                              const int is_shift[3]);
 
-  int spg_get_BZ_grid_points_by_rotations(int rot_grid_points[],
-                                          const int address_orig[3],
-                                          const int num_rot,
-                                          SPGCONST int rot_reciprocal[][3][3],
-                                          const int mesh[3],
-                                          const int is_shift[3],
-                                          const int bz_map[]);
-  int spg_get_dense_BZ_grid_points_by_rotations(size_t rot_grid_points[],
-                                                const int address_orig[3],
-                                                const int num_rot,
-                                                SPGCONST int rot_reciprocal[][3][3],
-                                                const int mesh[3],
-                                                const int is_shift[3],
-                                                const size_t bz_map[]);
+  void spg_get_BZ_grid_points_by_rotations(int rot_grid_points[],
+                                           const int address_orig[3],
+                                           const int num_rot,
+                                           SPGCONST int rot_reciprocal[][3][3],
+                                           const int mesh[3],
+                                           const int is_shift[3],
+                                           const int bz_map[]);
+  void spg_get_dense_BZ_grid_points_by_rotations(size_t rot_grid_points[],
+                                                 const int address_orig[3],
+                                                 const int num_rot,
+                                                 SPGCONST int rot_reciprocal[][3][3],
+                                                 const int mesh[3],
+                                                 const int is_shift[3],
+                                                 const size_t bz_map[]);
 
 /* Grid addresses are relocated inside Brillouin zone. */
 /* Number of ir-grid-points inside Brillouin zone is returned. */
@@ -513,14 +513,6 @@ extern "C" {
                                             const int mesh[3],
                                             SPGCONST double rec_lattice[3][3],
                                             const int is_shift[3]);
-
-  void spg_get_neighboring_grid_points(int relative_grid_points[],
-                                       const int grid_point,
-                                       SPGCONST int relative_grid_address[][3],
-                                       const int num_relative_grid_address,
-                                       const int mesh[3],
-                                       SPGCONST int bz_grid_address[][3],
-                                       const int bz_map[]);
 
 /*--------*/
 /* Niggli */
