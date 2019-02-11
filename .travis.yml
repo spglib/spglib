@@ -73,7 +73,7 @@ script:
 - pwd
 - if [[ "$DOCKER_DEPLOY" == "false" ]]; then
     if [[ "$TRAVIS_BRANCH" != "rc" && "$TRAVIS_BRANCH" != "master" ]]; then
-      conda create -n test;
+      conda create --yes -n test;
       source activate test;
       conda install --yes gcc_linux-64;
       conda install --yes pip numpy pyyaml nomkl make cmake;
