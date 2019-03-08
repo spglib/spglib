@@ -2,7 +2,9 @@ How to use spglib example files
 ================================
 
 This is the README file for spglib examples for C, Fortran, and
-a linear tetrahedron method example.
+a linear tetrahedron method example. "tetrahedron_method.c" and
+"tetrahedron_method.h" are distributed under kspclib
+(https://github.com/atztogo/kspclib).
 
 Examples of spglib functions in C
 ----------------------------------
