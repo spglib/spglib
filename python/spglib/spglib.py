@@ -119,6 +119,60 @@ def get_symmetry(cell, symprec=1e-5, angle_tolerance=-1.0):
                                              dtype='double', order='C'),
                     'equivalent_atoms': equivalent_atoms}
 
+def get_pointgroup_rotations(cell, symprec=1e-5, angle_tolerance=-1.0, is_time_reversal=True):
+	"""get_pointgroup_rotations() returns the rotations from the symmetry
+	operations for cell which are unique -- i.e., those for its pointgroup.
+	
+	Args:
+		cell: Crystal structure given either Atoms object or tuple.
+		symprec: float: Symmetry search tolerance in the unit of length.
+		angle_tolerance: float: symmetry search tolerance in angle, degrees.
+		
+	Return:
+		The unique rotations as used internally by spglib to identify the irreducible
+		part of the Brillouin Zone.
+	"""
+	
+	_set_no_error()
+	
+	lattice, positions, numbers, magmoms = _expand_cell(cell)
+	if lattice is None:
+		return None
+	
+	multi = 48 * len(positions)
+	rotation = np.zeros( (multi, 3, 3), dtype='intc')
+	
+	#if magmoms is None:
+	#	is_time_reversal=0
+	#else:
+	#	is_time_reversal=1
+	
+	# Get the unique rotations
+	num_unq = spg.pointgroup_rotations(rotation,lattice,positions,numbers,symprec,angle_tolerance,is_time_reversal*1)
+	
+	_set_error_message()
+	if num_unq == 0:
+		return None
+	else:
+		return np.array(rotation[:num_unq],dtype='intc',order='C')
+	
+def get_pointgroup_rotations_hall_number(hall_number, is_time_reversal=True):
+	#_set_no_error()
+	
+	rotation = np.zeros( (19200, 3, 3), dtype='intc')
+	
+	# Get the unique rotations
+	num_unq = spg.pointgroup_rotations_hall_number(rotation,hall_number,is_time_reversal*1)
+	
+	#_set_error_message()
+	if num_unq == 0:
+		return None
+	else:
+		return np.array(rotation[:num_unq],dtype='intc',order='C')
+
+def get_pointgroup_rotations_international(itname, is_time_reversal=True):
+	hall_number = get_hall_number_from_international(itname)
+	return get_pointgroup_rotations_hall_number(hall_number,is_time_reversal=is_time_reversal)
 
 def get_symmetry_dataset(cell,
                          symprec=1e-5,
@@ -479,6 +533,13 @@ def get_symmetry_from_database(hall_number):
                 'translations':
                 np.array(translations[:num_sym], dtype='double', order='C')}
 
+def get_symmetry_from_international(itname):
+	hall_number = spg.get_hall_number_from_international(itname)
+	return get_symmetry_from_database(hall_number)
+
+def get_hall_number_from_international(itname):
+	return spg.get_hall_number_from_international(itname)
+
 
 ############
 # k-points #
@@ -557,6 +618,36 @@ def get_ir_reciprocal_mesh(mesh,
         return grid_mapping_table, grid_address
     else:
         return None
+
+def get_ir_reciprocal_mesh_from_hall_number(mesh,hall_number,
+                           is_shift=None,
+                           is_time_reversal=True,
+                           is_dense=False):
+	_set_no_error()
+	if is_dense:
+		dtype = 'uintp'
+	else:
+		dtype = 'intc'
+	
+	grid_mapping_table = np.zeros(np.prod(mesh), dtype=dtype)
+	grid_address = np.zeros((np.prod(mesh), 3), dtype='intc')
+	if is_shift is None:
+		is_shift = [0, 0, 0]
+	
+	num_ir = spg.get_ir_reciprocal_mesh_from_hall_number(grid_address,
+                                                             grid_mapping_table,
+                                                             np.array(mesh, dtype='intc'),
+                                                             np.array(is_shift, dtype='intc'),
+                                                             is_time_reversal * 1,
+                                                             hall_number)
+	if num_ir > 0:
+		return grid_mapping_table, grid_address
+	else:
+		return None
+		
+def get_ir_reciprocal_mesh_from_international(mesh,itname,is_shift=None,is_time_reversal=True,is_dense=False):
+	hall_number = spg.get_hall_number_from_international(itname)
+	return get_ir_reciprocal_mesh_from_hall_number(mesh,hall_number,is_shift=is_shift,is_time_reversal=is_time_reversal,is_dense=is_dense)
 
 
 def get_stabilized_reciprocal_mesh(mesh,

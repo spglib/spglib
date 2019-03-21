@@ -103,6 +103,19 @@ static int get_symmetry_from_dataset(int rotation[][3][3],
                                      const int num_atom,
                                      const double symprec,
                                      const double angle_tolerance);
+static int get_pointgroup_rotations(int rotations[][3][3],
+                                    const int max_size,
+                                    SPGCONST double lattice[3][3],
+                                    SPGCONST double position[][3],
+                                    const int types[],
+                                    const int num_atom,
+                                    const double symprec,
+                                    const double angle_tolerance,
+                                    const int is_time_reversal);
+static int get_pointgroup_rotations_hall_number(int rotations[][3][3], 
+                                                const int max_size, 
+                                                const int hall_number, 
+                                    	        const int is_time_reversal);
 static int get_symmetry_with_collinear_spin(int rotation[][3][3],
                                             double translation[][3],
                                             int equivalent_atoms[],
@@ -185,6 +198,20 @@ static size_t get_dense_ir_reciprocal_mesh(int grid_address[][3],
                                            const size_t num_atom,
                                            const double symprec,
                                            const double angle_tolerance);
+static int get_ir_reciprocal_mesh_from_hall_number(
+			int grid_address[][3],
+			int ir_mapping_table[],
+			const int mesh[3],
+			const int is_shift[3],
+			const int is_time_reversal,
+			const int hall_number);
+static size_t get_dense_ir_reciprocal_mesh_from_hall_number(
+			int grid_address[][3],
+			size_t ir_mapping_table[],
+			const int mesh[3],
+			const int is_shift[3],
+			const int is_time_reversal,
+			const int hall_number);
 
 static int get_stabilized_reciprocal_mesh(int grid_address[][3],
                                           int ir_mapping_table[],
@@ -414,6 +441,37 @@ int spgat_get_symmetry(int rotation[][3][3],
                                    angle_tolerance);
 }
 
+int spg_get_pointgroup_rotations(int rotation[][3][3],
+                                 const int max_size,
+                                 SPGCONST double lattice[3][3],
+                                 SPGCONST double position[][3],
+                                 const int types[],
+                                 const int num_atom,
+                                 const double symprec,
+                                 const int is_time_reversal)
+{
+  return get_pointgroup_rotations(rotation,max_size,lattice,position,types,num_atom,symprec,-1,is_time_reversal);
+}
+int spg_get_pointgroup_rotations_hall_number(int rotation[][3][3],
+                                             const int max_size,
+                                             const int hall_number,
+                                             const int is_time_reversal)
+{
+  return get_pointgroup_rotations_hall_number(rotation,max_size,hall_number,is_time_reversal);
+}
+int spgat_get_pointgroup_rotations(int rotation[][3][3],
+                                   const int max_size,
+                                   SPGCONST double lattice[3][3],
+                                   SPGCONST double position[][3],
+                                   const int types[],
+                                   const int num_atom,
+                                   const double symprec,
+                                   const double angle_tolerance,
+                                   const int is_time_reversal)
+{
+  return get_pointgroup_rotations(rotation,max_size,lattice,position,types,num_atom,symprec,angle_tolerance,is_time_reversal);
+}
+
 /* Return 0 if failed */
 int spg_get_symmetry_with_collinear_spin(int rotation[][3][3],
                                          double translation[][3],
@@ -463,6 +521,17 @@ int spgat_get_symmetry_with_collinear_spin(int rotation[][3][3],
                                           num_atom,
                                           symprec,
                                           angle_tolerance);
+}
+
+int spg_get_hall_number_from_international(const char* itname)
+{
+	int hall_number;
+	hall_number = spa_international_to_hall_number(itname);
+	if (hall_number)
+		spglib_error_code = SPGLIB_SUCCESS;
+	else
+		spglib_error_code = SPGERR_SPACEGROUP_SEARCH_FAILED;
+	return hall_number;
 }
 
 int spg_get_hall_number_from_symmetry(SPGCONST int rotation[][3][3],
@@ -920,6 +989,32 @@ int spg_get_ir_reciprocal_mesh(int grid_address[][3],
                                 symprec,
                                 -1.0);
 }
+
+int spg_get_ir_reciprocal_mesh_from_hall_number(
+			int grid_address[][3],
+			int ir_mapping_table[],
+			const int mesh[3],
+			const int is_shift[3],
+			const int is_time_reversal,
+			int hall_number)
+{
+	return get_ir_reciprocal_mesh_from_hall_number(grid_address,
+	                                               ir_mapping_table,
+												   mesh,
+												   is_shift,
+												   is_time_reversal,
+												   hall_number);
+}
+size_t spg_get_dense_ir_reciprocal_mesh_from_hall_number(
+			int grid_address[][3],
+			size_t ir_mapping_table[],
+			const int mesh[3],
+			const int is_shift[3],
+			const int is_time_reversal,
+			int hall_number)
+			{
+				return get_dense_ir_reciprocal_mesh_from_hall_number(grid_address,ir_mapping_table,mesh,is_shift,is_time_reversal,hall_number);
+			}
 
 size_t spg_get_dense_ir_reciprocal_mesh(int grid_address[][3],
                                         size_t ir_mapping_table[],
@@ -1423,6 +1518,77 @@ static int get_symmetry_from_dataset(int rotation[][3][3],
   dataset = NULL;
   spglib_error_code = SPGERR_ARRAY_SIZE_SHORTAGE;
   return 0;
+}
+ 
+
+static int _internal_pointgroup_rotations(int rotations[][3][3], const int max_size,
+                                      MatINT *all_rots, const int is_time_reversal)
+{
+	MatINT *unq_rots;
+	unq_rots = kpt_get_unique_rotations(all_rots,is_time_reversal);
+	int i = 0;
+	if (unq_rots->size > max_size)
+		fprintf(stderr,"spglib: Indicated max size (%d) is less than number of unique rotations (%d)",max_size,unq_rots->size);
+	else
+		for (i=0; i < unq_rots->size; i++)
+			mat_copy_matrix_i3(rotations[i],unq_rots->mat[i]);
+	
+	mat_free_MatINT(unq_rots);
+	unq_rots = NULL;
+	return i; // i is either 0 or the last value from the for loop, unq_rots->size	
+}
+static int get_pointgroup_rotations(int rotations[][3][3],
+                                    const int max_size,
+                                    SPGCONST double lattice[3][3],
+                                    SPGCONST double position[][3],
+                                    const int types[],
+                                    const int num_atom,
+                                    const double symprec,
+                                    const double angle_tolerance,
+                                    const int is_time_reversal)
+{
+  int num_unique = 0;
+  SpglibDataset *dataset;
+  dataset = NULL;
+  if ( (dataset = get_dataset(lattice,position,types,num_atom,0,symprec,angle_tolerance))==NULL )
+	  return 0;
+  
+  MatINT * all_rots;
+  all_rots = NULL;
+  if ( (all_rots = mat_alloc_MatINT(dataset->n_operations)) == NULL ) {
+	  fprintf(stderr,"spglib: Out of memory for all rotations");
+	  spg_free_dataset(dataset);
+	  dataset = NULL;
+	  return 0;
+  }
+  for (int i=0; i<dataset->n_operations; i++)
+	  mat_copy_matrix_i3(all_rots->mat[i],dataset->rotations[i]);
+  
+  num_unique = _internal_pointgroup_rotations(rotations,max_size,all_rots,is_time_reversal);
+  mat_free_MatINT(all_rots);
+  all_rots = NULL;
+  
+  return num_unique;
+}
+static int get_pointgroup_rotations_hall_number(int rotations[][3][3], const int max_size, const int hall_number, const int is_time_reversal){
+	int all_rotations[192][3][3];
+	double translations[192][3];
+	int total_rotations = spg_get_symmetry_from_database(all_rotations,translations,hall_number);
+	
+	MatINT * all_rots;
+	all_rots = NULL;
+	if ( (all_rots = mat_alloc_MatINT(total_rotations)) == NULL ) {
+		fprintf(stderr,"spglib: Out of memory for all rotations");
+		return 0;
+	}
+	for (int i=0; i<total_rotations; i++)
+		mat_copy_matrix_i3(all_rots->mat[i], all_rotations[i]);
+	
+	int num_unique = _internal_pointgroup_rotations(rotations,max_size,all_rots,is_time_reversal);
+	mat_free_MatINT(all_rots);
+	all_rots = NULL;
+	
+	return num_unique;
 }
 
 /* Return 0 if failed */
@@ -1962,6 +2128,37 @@ static int get_schoenflies(char symbol[7],
 /*---------*/
 /* kpoints */
 /*---------*/
+static int get_ir_reciprocal_mesh_from_hall_number(
+			int grid_address[][3],
+			int ir_mapping_table[],
+			const int mesh[3],
+			const int is_shift[3],
+			const int is_time_reversal,
+			const int hall_number)
+{
+	Symmetry *symmetry = NULL;
+	symmetry = spgdb_get_spacegroup_operations(hall_number);
+	if (symmetry == NULL) return 0;
+	
+	MatINT *rotations = NULL;
+	rotations = mat_alloc_MatINT(symmetry->size);
+	if (rotations == NULL) return 0;
+	for (int i = 0; i < symmetry->size; i++)
+		mat_copy_matrix_i3(rotations->mat[i],symmetry->rot[i]);
+	
+	MatINT *rot_reciprocal;
+	rot_reciprocal = kpt_get_point_group_reciprocal(rotations, is_time_reversal);
+	int num_ir = kpt_get_irreducible_reciprocal_mesh(
+					grid_address,
+					ir_mapping_table,
+					mesh,
+					is_shift,
+					rot_reciprocal);
+	mat_free_MatINT(rot_reciprocal);
+	mat_free_MatINT(rotations);
+	return num_ir;	
+}
+
 static int get_ir_reciprocal_mesh(int grid_address[][3],
                                   int ir_mapping_table[],
                                   const int mesh[3],
@@ -2010,6 +2207,37 @@ static int get_ir_reciprocal_mesh(int grid_address[][3],
   spg_free_dataset(dataset);
   dataset = NULL;
   return num_ir;
+}
+
+static size_t get_dense_ir_reciprocal_mesh_from_hall_number(
+			int grid_address[][3],
+			size_t ir_mapping_table[],
+			const int mesh[3],
+			const int is_shift[3],
+			const int is_time_reversal,
+			const int hall_number)
+{
+	Symmetry *symmetry = NULL;
+	symmetry = spgdb_get_spacegroup_operations(hall_number);
+	if (symmetry == NULL) return 0;
+	
+	MatINT *rotations = NULL;
+	rotations = mat_alloc_MatINT(symmetry->size);
+	if (rotations == NULL) return 0;
+	for (int i = 0; i < symmetry->size; i++)
+		mat_copy_matrix_i3(rotations->mat[i],symmetry->rot[i]);
+	
+	MatINT *rot_reciprocal;
+	rot_reciprocal = kpt_get_point_group_reciprocal(rotations, is_time_reversal);
+	size_t num_ir = kpt_get_dense_irreducible_reciprocal_mesh(
+					grid_address,
+					ir_mapping_table,
+					mesh,
+					is_shift,
+					rot_reciprocal);
+	mat_free_MatINT(rot_reciprocal);
+	mat_free_MatINT(rotations);
+	return num_ir;	
 }
 
 static size_t get_dense_ir_reciprocal_mesh(int grid_address[][3],

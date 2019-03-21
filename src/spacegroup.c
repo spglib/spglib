@@ -370,6 +370,27 @@ static Centering get_centering(double correction_mat[3][3],
 static Centering get_base_center(SPGCONST int transform_mat[3][3]);
 static int get_centering_shifts(double shift[3][3],
                                 const Centering centering);
+								
+int spa_international_number_to_hall_number(const int number){
+	if (number>=0 && number<230)
+		return spacegroup_to_hall_number[number];
+	else
+		return -1;
+}
+
+int spa_international_to_hall_number(const char* itname)
+{
+  SpacegroupType spgtype;
+  for (int i=1; i<531; i++){
+	  spgtype = spgdb_get_spacegroup_type(i);
+	  // now check for matching international table names
+	  if ( 0 == strncmp(itname, spgtype.international, 32)
+		 ||0 == strncmp(itname, spgtype.international_full,20)
+	     ||0 == strncmp(itname, spgtype.international_short,11))
+		 return i;		 
+  }
+  return 0; // no matching strings
+}
 
 
 /* Return spacegroup.number = 0 if failed */

@@ -66,6 +66,9 @@ typedef enum {
   R_CENTER,
 } Centering;
 
+int spa_international_number_to_hall_number(const int number);
+int spa_international_to_hall_number(const char* itname);
+
 Spacegroup * spa_search_spacegroup(const Cell * primitive,
                                    const int hall_number,
                                    const double symprec,

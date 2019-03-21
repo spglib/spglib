@@ -91,6 +91,8 @@ size_t kpt_relocate_dense_BZ_grid_address(int bz_grid_address[][3],
                                           const int mesh[3],
                                           SPGCONST double rec_lattice[3][3],
                                           const int is_shift[3]);
+MatINT *kpt_get_unique_rotations(const MatINT * rotations, const int is_time_reversal);
+MatINT *kpt_get_point_group_reciprocal_from_unique(const MatINT * rot_unique);
 MatINT *kpt_get_point_group_reciprocal(const MatINT * rotations,
                                        const int is_time_reversal);
 MatINT *kpt_get_point_group_reciprocal_with_q(const MatINT * rot_reciprocal,

@@ -51,6 +51,8 @@ static PyObject * py_get_pointgroup(PyObject *self, PyObject *args);
 static PyObject * py_standardize_cell(PyObject *self, PyObject *args);
 static PyObject * py_refine_cell(PyObject *self, PyObject *args);
 static PyObject * py_get_symmetry(PyObject *self, PyObject *args);
+static PyObject * py_get_pointgroup_rotations(PyObject *self, PyObject *args);
+static PyObject * py_get_pointgroup_rotations_hall_number(PyObject *self, PyObject *args);
 static PyObject *
 py_get_symmetry_with_collinear_spin(PyObject *self, PyObject *args);
 static PyObject *
@@ -70,6 +72,8 @@ static PyObject * py_get_symmetry_from_database(PyObject *self, PyObject *args);
 static PyObject * py_delaunay_reduce(PyObject *self, PyObject *args);
 static PyObject * py_niggli_reduce(PyObject *self, PyObject *args);
 static PyObject * py_get_error_message(PyObject *self, PyObject *args);
+static PyObject * py_get_ir_reciprocal_mesh_from_hall_number(PyObject *self, PyObject *args);
+static PyObject * py_get_hall_number_from_international(PyObject *self, PyObject *args);
 
 struct module_state {
   PyObject *error;
@@ -101,6 +105,8 @@ static PyMethodDef _spglib_methods[] = {
   {"standardize_cell", py_standardize_cell, METH_VARARGS, "Standardize cell"},
   {"refine_cell", py_refine_cell, METH_VARARGS, "Refine cell"},
   {"symmetry", py_get_symmetry, METH_VARARGS, "Symmetry operations"},
+  {"pointgroup_rotations",py_get_pointgroup_rotations, METH_VARARGS,"Get the unique rotations for a pointgroup"},
+  {"pointgroup_rotations_hall_number",py_get_pointgroup_rotations_hall_number,METH_VARARGS,"Get the unique rotations for a pointgroup defined by its hall number"},
   {"symmetry_with_collinear_spin", py_get_symmetry_with_collinear_spin,
    METH_VARARGS, "Symmetry operations with collinear spin magnetic moments"},
   {"hall_number_from_symmetry", py_get_hall_number_from_symmetry,
@@ -122,6 +128,8 @@ static PyMethodDef _spglib_methods[] = {
   {"delaunay_reduce", py_delaunay_reduce, METH_VARARGS, "Delaunay reduction"},
   {"niggli_reduce", py_niggli_reduce, METH_VARARGS, "Niggli reduction"},
   {"error_message", py_get_error_message, METH_VARARGS, "Error message"},
+  {"get_ir_reciprocal_mesh_from_hall_number",py_get_ir_reciprocal_mesh_from_hall_number,METH_VARARGS,"Reciprocal mesh points with map from hall number"},
+  {"get_hall_number_from_international",py_get_hall_number_from_international,METH_VARARGS,"Get the lowest-matching hall number for the input International Tables spacegroup name"},
 
   {NULL, NULL, 0, NULL}
 };
@@ -428,6 +436,35 @@ static PyObject * py_get_symmetry_from_database(PyObject *self, PyObject *args)
   return PyLong_FromLong((long) num_sym);
 }
 
+static PyObject * py_get_hall_number_from_international(PyObject *self, PyObject *args)
+{
+	char * itname;
+	if (!PyArg_ParseTuple(args,"s",&itname)) return NULL;
+	int hall_number = spg_get_hall_number_from_international(itname);
+	return PyLong_FromLong((long) hall_number);
+}
+/* static PyObject * py_get_symmetry_from_international_table_name(PyObject *self, PyObject *args)
+{
+	PyArrayObject* py_rotations;
+	PyArrayObject* py_translations;
+	char * itname;
+	
+	int (*rot)[3][3];
+	int (*trans)[3];
+	int num_sym = 0;
+	
+	if (!PyArg_ParseTuple(args, "OOs", &py_rotations, &py_translations, &itname))
+		return NULL;
+	if (PyArray_DIMS(py_rotations)[0] < 192 || PyArray_DIMS(py_translations)[0] <192)
+		Py_RETURN_NONE;
+	rot = (int(*)[3][3])PyArray_DATA(py_rotations);
+	trans = (double(*)[3])PyArray_DATA(py_translations);
+	
+	int hall_number = spg_get_hall_number_from_international_table_name(itname);
+	if (hall_number) num_sym = spg_get_symmetry_from_database(rot, trans, hall_number);
+	return PyLong_FromLong((long) num_sym);
+} */
+
 static PyObject * py_get_spacegroup_type(PyObject *self, PyObject *args)
 {
   int n, hall_number;
@@ -675,6 +712,67 @@ static PyObject * py_get_symmetry(PyObject *self, PyObject *args)
   return PyLong_FromLong((long) num_sym);
 }
 
+static PyObject * py_get_pointgroup_rotations(PyObject *self, PyObject *args)
+{
+  // Outputs:
+  PyArrayObject* py_rotations;
+  // Inputs:
+  PyArrayObject* py_lattice;
+  PyArrayObject* py_positions;
+  PyArrayObject* py_atom_types;
+  double symprec, angle_tolerance;
+  int is_time_reversal;
+  
+  if (!PyArg_ParseTuple(args, "OOOOddi",
+                        &py_rotations,
+                        &py_lattice,
+						&py_positions,
+						&py_atom_types,
+						&symprec,
+						&angle_tolerance,
+						&is_time_reversal)
+	 ) return NULL;
+  //
+  
+  double (*lat)[3], (*pos)[3];
+  int *types, num_atom, max_rot, unq_rot, (*rot)[3][3];
+  
+  rot =(int(*)[3][3])PyArray_DATA(py_rotations);
+  lat =(double(*)[3])PyArray_DATA(py_lattice);
+  pos =(double(*)[3])PyArray_DATA(py_positions);
+  types=(int*)PyArray_DATA(py_atom_types);
+  num_atom = PyArray_DIMS(py_positions)[0];
+  max_rot = PyArray_DIMS(py_rotations)[0];
+  
+  unq_rot = spgat_get_pointgroup_rotations(rot,max_rot,lat,pos,types,num_atom,symprec,angle_tolerance,is_time_reversal);
+  
+  return PyLong_FromLong((long) unq_rot);
+}
+static PyObject * py_get_pointgroup_rotations_hall_number(PyObject *self, PyObject *args)
+{
+  // Outputs:
+  PyArrayObject* py_rotations;
+  // Inputs:
+  int hall_number;
+  int is_time_reversal;
+  
+  if (!PyArg_ParseTuple(args, "Oii",
+                        &py_rotations,
+                        &hall_number,
+						&is_time_reversal)
+	 ) return NULL;
+  //
+  double (*lat)[3], (*pos)[3];
+  int max_rot, unq_rot, (*rot)[3][3];
+  
+  rot =(int(*)[3][3])PyArray_DATA(py_rotations);
+  max_rot = PyArray_DIMS(py_rotations)[0];
+    
+  unq_rot = spg_get_pointgroup_rotations_hall_number(rot,max_rot,hall_number,is_time_reversal);
+  
+  return PyLong_FromLong((long) unq_rot);
+}
+
 static PyObject * py_get_symmetry_with_collinear_spin(PyObject *self,
                                                       PyObject *args)
 {
@@ -864,6 +962,47 @@ static PyObject * py_get_ir_reciprocal_mesh(PyObject *self, PyObject *args)
     return PyLong_FromLong((long) num_ir_int);
   }
 
+  Py_RETURN_NONE;
+}
+
+static PyObject * py_get_ir_reciprocal_mesh_from_hall_number(PyObject *self, PyObject *args)
+{
+  double symprec;
+  PyArrayObject* py_grid_address;
+  PyArrayObject* py_grid_mapping_table;
+  PyArrayObject* py_mesh;
+  PyArrayObject* py_is_shift;
+  int is_time_reversal;
+  int hall_number;
+
+
+  if (!PyArg_ParseTuple(args, "OOOOii",
+                        &py_grid_address,
+                        &py_grid_mapping_table,
+                        &py_mesh,
+                        &py_is_shift,
+                        &is_time_reversal,
+                        &hall_number)) {
+    return NULL;
+  }
+  int *mesh, *is_shift;
+  int (*grid_address)[3];
+  mesh = (int*)PyArray_DATA(py_mesh);
+  is_shift = (int*)PyArray_DATA(py_is_shift);
+  grid_address = (int(*)[3])PyArray_DATA(py_grid_address);
+  
+  if (PyArray_TYPE(py_grid_mapping_table) == NPY_UINTP) {
+    size_t *grid_mapping_table, num_ir;
+	grid_mapping_table = (size_t*)PyArray_DATA(py_grid_mapping_table);
+    num_ir = spg_get_dense_ir_reciprocal_mesh_from_hall_number(grid_address,grid_mapping_table,mesh,is_shift,is_time_reversal,hall_number);
+    return PyLong_FromSize_t(num_ir);
+  }
+  if (PyArray_TYPE(py_grid_mapping_table) == NPY_INT) {
+	int *grid_mapping_table, num_ir;
+    grid_mapping_table = (int*)PyArray_DATA(py_grid_mapping_table);
+    num_ir = spg_get_ir_reciprocal_mesh_from_hall_number(grid_address,grid_mapping_table,mesh,is_shift,is_time_reversal,hall_number);
+    return PyLong_FromLong((long) num_ir);
+  }
   Py_RETURN_NONE;
 }
 

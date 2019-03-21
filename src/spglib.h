@@ -212,6 +212,28 @@ extern "C" {
                          const int num_atom,
                          const double symprec,
                          const double angle_tolerance);
+						 
+  int spg_get_pointgroup_rotations(int rotation[][3][3],
+                                   const int max_size,
+                                   SPGCONST double lattice[3][3],
+                                   SPGCONST double position[][3],
+                                   const int types[],
+                                   const int num_atom,
+                                   const double symprec,
+                                   const int is_time_reversal);
+  int spgat_get_pointgroup_rotations(int rotation[][3][3],
+                                     const int max_size,
+                                     SPGCONST double lattice[3][3],
+                                     SPGCONST double position[][3],
+                                     const int types[],
+                                     const int num_atom,
+                                     const double symprec,
+                                     const double angle_tolerance,
+                                     const int is_time_reversal);
+  int spg_get_pointgroup_rotations_hall_number(int rotation[][3][3],
+                                               const int max_size,
+                                               const int hall_number,
+                                               const int is_time_reversal);
 
 /* Find symmetry operations with collinear spins on atoms. */
   int spg_get_symmetry_with_collinear_spin(int rotation[][3][3],
@@ -236,6 +258,13 @@ extern "C" {
                                              const int num_atom,
                                              const double symprec,
                                              const double angle_tolerance);
+
+// Space group type (hall number) is searched by International Table name
+// The passed string is checked against "international", "international_full"
+// and "international_short", in that order, for increasing hall number from
+// 1 to 530; short circuiting at the first match. This means that the returned
+// hall number may not be unique for the given string.
+  int spg_get_hall_number_from_international(const char* itname);
 
 /* Space group type (hall_number) is searched from symmetry operations. */
   int spg_get_hall_number_from_symmetry(SPGCONST int rotation[][3][3],
@@ -420,6 +449,21 @@ extern "C" {
                                           const int types[],
                                           const int num_atom,
                                           const double symprec);
+										  
+int spg_get_ir_reciprocal_mesh_from_hall_number(
+			int grid_address[][3],
+			int ir_mapping_table[],
+			const int mesh[3],
+			const int is_shift[3],
+			const int is_time_reversal,
+			int hall_number);
+size_t spg_get_dense_ir_reciprocal_mesh_from_hall_number(
+			int grid_address[][3],
+			size_t ir_mapping_table[],
+			const int mesh[3],
+			const int is_shift[3],
+			const int is_time_reversal,
+			int hall_number);
 
 /* The irreducible k-points are searched from unique k-point mesh */
 /* grids from real space lattice vectors and rotation matrices of */

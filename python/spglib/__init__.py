@@ -51,6 +51,13 @@ from .spglib import (get_version,
                      get_BZ_grid_points_by_rotations,
                      relocate_BZ_grid_address,
                      get_stabilized_reciprocal_mesh,
-                     get_error_message)
+                     get_error_message,
+                     get_hall_number_from_international,
+                     get_ir_reciprocal_mesh_from_international,
+                     get_ir_reciprocal_mesh_from_hall_number,
+                     get_symmetry_from_international,
+                     get_pointgroup_rotations,
+                     get_pointgroup_rotations_hall_number,
+                     get_pointgroup_rotations_international)
 
 __version__ = "%d.%d.%d" % get_version()

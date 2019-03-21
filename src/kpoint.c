@@ -176,6 +176,9 @@ static int bz_search_space[KPT_NUM_BZ_SEARCH_SPACE][3] = {
   {-1, -1, -1}
 };
 
+static MatINT *get_unique_rotations(const MatINT * rotations, 
+                                    const int is_time_reversal);
+static MatINT *get_point_group_reciprocal_from_unique(const MatINT * rot_unique);
 static MatINT *get_point_group_reciprocal(const MatINT * rotations,
                                           const int is_time_reversal);
 static MatINT *get_point_group_reciprocal_with_q(const MatINT * rot_reciprocal,
@@ -446,6 +449,15 @@ size_t kpt_relocate_dense_BZ_grid_address(int bz_grid_address[][3],
                                         is_shift);
 }
 
+MatINT *kpt_get_unique_rotations(const MatINT * rotations, const int is_time_reversal)
+{
+  return get_unique_rotations(rotations, is_time_reversal);
+}
+MatINT *kpt_get_point_group_reciprocal_from_unique(const MatINT * rot_unique)
+{
+  return get_point_group_reciprocal_from_unique(rot_unique);
+}
+
 MatINT *kpt_get_point_group_reciprocal(const MatINT * rotations,
                                        const int is_time_reversal)
 {
@@ -462,6 +474,71 @@ MatINT *kpt_get_point_group_reciprocal_with_q(const MatINT * rot_reciprocal,
                                            num_q,
                                            qpoints);
 }
+
+
+
+static MatINT *get_unique_rotations(const MatINT * rotations, 
+                                    const int is_time_reversal)
+{
+  MatINT *rot_tmp, *rot_unique;
+  int *unique_rot;
+  SPGCONST int inversion[3][3] = {
+	  {-1, 0, 0},
+	  { 0,-1, 0},
+	  { 0, 0,-1},
+  };
+  rot_tmp = NULL;
+  rot_unique = NULL;
+  unique_rot = NULL;
+  if ( (rot_tmp = mat_alloc_MatINT(rotations->size * (is_time_reversal ? 2 : 1)))==NULL)
+	  return NULL;
+  if ( (unique_rot = (int*)malloc(sizeof(int)*rot_tmp->size))==NULL ){
+	  warning_print("spglib: Memory for unique_rot could not be allocated.");
+	  mat_free_MatINT(rot_tmp);
+	  rot_tmp=NULL;
+	  return NULL;
+  }
+  for (int i=0; i< rot_tmp->size; i++) unique_rot[i]=-1;
+  for (int i=0; i< rotations->size; i++){
+	  mat_copy_matrix_i3(rot_tmp->mat[i], rotations->mat[i]);
+	  if (is_time_reversal)
+		  mat_multiply_matrix_i3(rot_tmp->mat[rotations->size+i],inversion,rot_tmp->mat[i]);
+  }
+  int num_rot = 0;
+  int is_not_unique = 0;
+  for (int i = 0; i < rot_tmp->size; i++) {
+	is_not_unique = 0;
+    for (int j = 0; j < num_rot; j++) {
+	  is_not_unique = mat_check_identity_matrix_i3(
+		                rot_tmp->mat[unique_rot[j]],
+						rot_tmp->mat[i]);
+	  if (is_not_unique) break;
+    }
+	if (0==is_not_unique) unique_rot[num_rot++] = i;
+  }
+  if ( (rot_unique = mat_alloc_MatINT(num_rot)) != NULL )
+	  for (int i=0; i<num_rot; i++)
+		  mat_copy_matrix_i3(rot_unique->mat[i],rot_tmp->mat[unique_rot[i]]);
+
+  free(unique_rot);
+  unique_rot = NULL;
+  mat_free_MatINT(rot_tmp);
+  rot_tmp = NULL;
+
+  return rot_unique;
+}
+
+static MatINT *get_point_group_reciprocal_from_unique(const MatINT * rot_unique)
+{
+  MatINT *rot_reciprocal;
+  rot_reciprocal = NULL;
+  if ( (rot_reciprocal = mat_alloc_MatINT(rot_unique->size)) == NULL )
+	  return NULL;
+  for (int i=0; i<rot_unique->size; i++)
+	  mat_transpose_matrix_i3(rot_reciprocal->mat[i],rot_unique->mat[i]);
+  return rot_reciprocal;
+}
+
 
 /* Return NULL if failed */
 static MatINT *get_point_group_reciprocal(const MatINT * rotations,
