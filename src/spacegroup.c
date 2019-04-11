@@ -170,36 +170,36 @@ static Centering change_of_centering_monocli[36] = {
   B_FACE,
   A_FACE,
   C_FACE,
-  BASE,
-  BASE,
-  BASE,
-  BASE,
-  BASE,
-  BASE,
   A_FACE,
   C_FACE,
   C_FACE,
   A_FACE,
   B_FACE,
   B_FACE,
+  BODY,
+  BODY,
+  BODY,
+  BODY,
+  BODY,
+  BODY,
   C_FACE, /* second turn */
   A_FACE,
   B_FACE,
   B_FACE,
   A_FACE,
   C_FACE,
-  BASE,
-  BASE,
-  BASE,
-  BASE,
-  BASE,
-  BASE,
   A_FACE,
   C_FACE,
   C_FACE,
   A_FACE,
   B_FACE,
-  B_FACE};
+  B_FACE,
+  BODY,
+  BODY,
+  BODY,
+  BODY,
+  BODY,
+  BODY};
 
 static int change_of_unique_axis_monocli[36] = {
   1, 1, 0, 2, 2, 0, 1, 1, 0, 2, 2, 0, 1, 1, 0, 2, 2, 0,
@@ -1513,7 +1513,7 @@ static int get_centering_shifts(double shift[3][3],
 
   if (centering != PRIMITIVE) {
     if (centering != FACE && centering != R_CENTER) {
-      for (i = 0; i < 3; i++) { shift[0][i] = 0.5; } /* BASE */
+      for (i = 0; i < 3; i++) { shift[0][i] = 0.5; } /* BODY */
       if (centering == A_FACE) { shift[0][0] = 0; }
       if (centering == B_FACE) { shift[0][1] = 0; }
       if (centering == C_FACE) { shift[0][2] = 0; }
