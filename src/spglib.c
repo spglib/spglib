@@ -627,7 +627,7 @@ int spg_get_pointgroup(char symbol[6],
     return 0;
   }
 
-  strcpy(symbol, pointgroup.symbol);
+  strncpy(symbol, pointgroup.symbol, sizeof symbol-1);
 
   spglib_error_code = SPGLIB_SUCCESS;
   return pointgroup.number;
@@ -688,18 +688,18 @@ SpglibSpacegroupType spg_get_spacegroup_type(const int hall_number)
   if (0 < hall_number && hall_number < 531) {
     spgtype = spgdb_get_spacegroup_type(hall_number);
     spglibtype.number = spgtype.number;
-    strcpy(spglibtype.schoenflies, spgtype.schoenflies);
-    strcpy(spglibtype.hall_symbol, spgtype.hall_symbol);
-    strcpy(spglibtype.choice, spgtype.choice);
-    strcpy(spglibtype.international, spgtype.international);
-    strcpy(spglibtype.international_full, spgtype.international_full);
-    strcpy(spglibtype.international_short, spgtype.international_short);
+    strncpy(spglibtype.schoenflies, spgtype.schoenflies, sizeof spglibtype.schoenflies - 1);
+    strncpy(spglibtype.hall_symbol, spgtype.hall_symbol, sizeof spglibtype.hall_symbol - 1);
+    strncpy(spglibtype.choice, spgtype.choice, sizeof spglibtype.choice - 1);
+    strncpy(spglibtype.international, spgtype.international, sizeof spglibtype.international - 1);
+    strncpy(spglibtype.international_full, spgtype.international_full, sizeof spglibtype.international_full - 1);
+    strncpy(spglibtype.international_short, spgtype.international_short, sizeof spglibtype.international_short - 1);
     pointgroup = ptg_get_pointgroup(spgtype.pointgroup_number);
-    strcpy(spglibtype.pointgroup_international, pointgroup.symbol);
-    strcpy(spglibtype.pointgroup_schoenflies, pointgroup.schoenflies);
+    strncpy(spglibtype.pointgroup_international, pointgroup.symbol, sizeof spglibtype.pointgroup_international - 1);
+    strncpy(spglibtype.pointgroup_schoenflies, pointgroup.schoenflies, sizeof spglibtype.pointgroup_schoenflies - 1);
     arth_number = arth_get_symbol(arth_symbol, spgtype.number);
     spglibtype.arithmetic_crystal_class_number = arth_number;
-    strcpy(spglibtype.arithmetic_crystal_class_symbol, arth_symbol);
+    strncpy(spglibtype.arithmetic_crystal_class_symbol, arth_symbol, sizeof spglibtype.arithmetic_crystal_class_symbol - 1);
     spglib_error_code = SPGLIB_SUCCESS;
   } else {
     spglib_error_code = SPGERR_SPACEGROUP_SEARCH_FAILED;
@@ -1222,9 +1222,9 @@ static int set_dataset(SpglibDataset * dataset,
   dataset->n_atoms = cell->size;
   dataset->spacegroup_number = spacegroup->number;
   dataset->hall_number = spacegroup->hall_number;
-  strcpy(dataset->international_symbol, spacegroup->international_short);
-  strcpy(dataset->hall_symbol, spacegroup->hall_symbol);
-  strcpy(dataset->choice, spacegroup->choice);
+  strncpy(dataset->international_symbol, spacegroup->international_short, sizeof dataset->international_symbol-1);
+  strncpy(dataset->hall_symbol, spacegroup->hall_symbol, sizeof dataset->hall_symbol - 1);
+  strncpy(dataset->choice, spacegroup->choice, sizeof dataset->choice - 1);
   mat_inverse_matrix_d3(inv_lat, spacegroup->bravais_lattice, 0);
   mat_multiply_matrix_d3(dataset->transformation_matrix,
                          inv_lat, cell->lattice);
@@ -1332,7 +1332,7 @@ static int set_dataset(SpglibDataset * dataset,
 
   /* dataset->pointgroup_number = spacegroup->pointgroup_number; */
   pointgroup = ptg_get_pointgroup(spacegroup->pointgroup_number);
-  strcpy(dataset->pointgroup_symbol, pointgroup.symbol);
+  strncpy(dataset->pointgroup_symbol, pointgroup.symbol, sizeof dataset->pointgroup_symbol - 1);
 
   return 1;
 
@@ -1897,7 +1897,7 @@ static int get_international(char symbol[11],
 
   if (dataset->spacegroup_number > 0) {
     number = dataset->spacegroup_number;
-    strcpy(symbol, dataset->international_symbol);
+    strncpy(symbol, dataset->international_symbol, sizeof symbol - 1);
     spg_free_dataset(dataset);
     dataset = NULL;
   } else {
@@ -1941,7 +1941,7 @@ static int get_schoenflies(char symbol[7],
   if (dataset->spacegroup_number > 0) {
     number = dataset->spacegroup_number;
     spgtype = spg_get_spacegroup_type(dataset->hall_number);
-    strcpy(symbol, spgtype.schoenflies);
+    strncpy(symbol, spgtype.schoenflies, sizeof symbol - 1);
     spg_free_dataset(dataset);
     dataset = NULL;
   } else {
