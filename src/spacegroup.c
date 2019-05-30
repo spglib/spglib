@@ -662,14 +662,13 @@ static Spacegroup * get_spacegroup(const int hall_number,
     spacegroup->number = spacegroup_type.number;
     spacegroup->hall_number = hall_number;
     spacegroup->pointgroup_number = spacegroup_type.pointgroup_number;
-    strncpy(spacegroup->schoenflies, spacegroup_type.schoenflies, 7);
-    strncpy(spacegroup->hall_symbol, spacegroup_type.hall_symbol, 17);
-    strncpy(spacegroup->international, spacegroup_type.international, 32);
-    strncpy(spacegroup->international_long, spacegroup_type.international_full,
-            20);
-    strncpy(spacegroup->international_short,
-            spacegroup_type.international_short, 11);
-    strncpy(spacegroup->choice, spacegroup_type.choice, 6);
+    memcpy(spacegroup->schoenflies, spacegroup_type.schoenflies, 7);
+    memcpy(spacegroup->hall_symbol, spacegroup_type.hall_symbol, 17);
+    memcpy(spacegroup->international, spacegroup_type.international, 32);
+    memcpy(spacegroup->international_long, spacegroup_type.international_full, 20);
+    memcpy(spacegroup->international_short,
+           spacegroup_type.international_short, 11);
+    memcpy(spacegroup->choice, spacegroup_type.choice, 6);
   }
 
   return spacegroup;
