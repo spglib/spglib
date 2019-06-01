@@ -44,9 +44,9 @@ Atomic points (in fractional coordinates with respect to basis vectors)
 
 ::
 
-  [ [ x1_a, x1_b, x1_c ], 
-    [ x2_a, x2_b, x2_c ], 
-    [ x3_a, x3_b, x3_c ], 
+  [ [ x1_a, x1_b, x1_c ],
+    [ x2_a, x2_b, x2_c ],
+    [ x3_a, x3_b, x3_c ],
     ...                   ]
 
 
@@ -83,25 +83,33 @@ coordinates.
 
     [ t_a, t_b, t_c ]
 
+.. _variables_symprec:
+
 ``symprec``
 ------------
 
-Tolerance of distance between atomic positions and between lengths of
-lattice vectors to be tolerated in the symmetry finding. The angle
-distortion between lattice vectors is converted to a length and
-compared with this distance tolerance. If the explicit angle tolerance
-is expected, see ``angle_tolerance``.
+Distance tolerance in Cartesian coordinates to find crystal
+symmetry.
+
+For atomic positions, roughly speaking, two position vectors `x` and
+`x'` in Cartesian coordinates are considered to be the same if ``|x' -
+x| < symprec``. For more details, see the `spglib paper
+<https://arxiv.org/abs/1808.01590>`_, Sec. II-A.
+
+The angle distortion between basis vectors is converted to a length
+and compared with this distance tolerance. For more details, see the
+`spglib paper <https://arxiv.org/abs/1808.01590>`_, Sec. IV-A. It is
+possible to specify angle tolerance explicitly, see
+:ref:`variables_angle_tolerance`.
 
 .. _variables_angle_tolerance:
 
 ``angle_tolerance``
 --------------------
 
-**Experimental**
-
-Tolerance of angle between lattice vectors in degrees to be tolerated
+Tolerance of angle between basis vectors in degrees to be tolerated
 in the symmetry finding. To use angle tolerance, another set of
-functions are prepared as follows
+functions are prepared for C-API as follows
 
 ::
 
@@ -115,6 +123,8 @@ functions are prepared as follows
    spgat_refine_cell
 
 These functions are called by the same way with an additional argument
-of ``const double angle_tolerance`` in degrees. By specifying a negative
-value, the behavior becomes the same as usual functions. The default
-value of ``angle_tolerance`` is a negative value.
+of ``const double angle_tolerance`` in degrees. By specifying a
+negative value, the behavior becomes the same as usual functions. The
+default value of ``angle_tolerance`` is a negative value. For
+python-API, the angle tolernce is given with a keyward argument of
+`angle_tolerance`.
