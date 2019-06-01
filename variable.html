@@ -11,7 +11,8 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
     <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
     <script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
@@ -120,17 +121,17 @@ other languages, the definition may be different, e.g., <code class="docutils li
 for Python interface is transposed.</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
-<li><a class="reference internal" href="#lattice" id="id1"><code class="docutils literal notranslate"><span class="pre">lattice</span></code></a></li>
-<li><a class="reference internal" href="#position" id="id2"><code class="docutils literal notranslate"><span class="pre">position</span></code></a></li>
-<li><a class="reference internal" href="#types" id="id3"><code class="docutils literal notranslate"><span class="pre">types</span></code></a></li>
-<li><a class="reference internal" href="#rotation" id="id4"><code class="docutils literal notranslate"><span class="pre">rotation</span></code></a></li>
-<li><a class="reference internal" href="#translation" id="id5"><code class="docutils literal notranslate"><span class="pre">translation</span></code></a></li>
-<li><a class="reference internal" href="#symprec" id="id6"><code class="docutils literal notranslate"><span class="pre">symprec</span></code></a></li>
-<li><a class="reference internal" href="#angle-tolerance" id="id7"><code class="docutils literal notranslate"><span class="pre">angle_tolerance</span></code></a></li>
+<li><a class="reference internal" href="#lattice" id="id2"><code class="docutils literal notranslate"><span class="pre">lattice</span></code></a></li>
+<li><a class="reference internal" href="#position" id="id3"><code class="docutils literal notranslate"><span class="pre">position</span></code></a></li>
+<li><a class="reference internal" href="#types" id="id4"><code class="docutils literal notranslate"><span class="pre">types</span></code></a></li>
+<li><a class="reference internal" href="#rotation" id="id5"><code class="docutils literal notranslate"><span class="pre">rotation</span></code></a></li>
+<li><a class="reference internal" href="#translation" id="id6"><code class="docutils literal notranslate"><span class="pre">translation</span></code></a></li>
+<li><a class="reference internal" href="#symprec" id="id7"><code class="docutils literal notranslate"><span class="pre">symprec</span></code></a></li>
+<li><a class="reference internal" href="#angle-tolerance" id="id8"><code class="docutils literal notranslate"><span class="pre">angle_tolerance</span></code></a></li>
 </ul>
 </div>
 <div class="section" id="lattice">
-<span id="variables-lattice"></span><h2><a class="toc-backref" href="#id1"><code class="docutils literal notranslate"><span class="pre">lattice</span></code></a><a class="headerlink" href="#lattice" title="Permalink to this headline">¶</a></h2>
+<span id="variables-lattice"></span><h2><a class="toc-backref" href="#id2"><code class="docutils literal notranslate"><span class="pre">lattice</span></code></a><a class="headerlink" href="#lattice" title="Permalink to this headline">¶</a></h2>
 <p><strong>Attention</strong>: In Python interface, <code class="docutils literal notranslate"><span class="pre">lattice</span></code> is transposed
 (<a class="reference internal" href="python-spglib.html#py-variables-crystal-structure"><span class="std std-ref">Crystal structure (cell)</span></a>.)</p>
 <p>Basis vectors (in Cartesian)</p>
@@ -148,7 +149,7 @@ for Python interface is transposed.</p>
 coordinates given below.</p>
 </div>
 <div class="section" id="position">
-<h2><a class="toc-backref" href="#id2"><code class="docutils literal notranslate"><span class="pre">position</span></code></a><a class="headerlink" href="#position" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id3"><code class="docutils literal notranslate"><span class="pre">position</span></code></a><a class="headerlink" href="#position" title="Permalink to this headline">¶</a></h2>
 <p>Atomic points (in fractional coordinates with respect to basis vectors)</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span> <span class="p">[</span> <span class="n">x1_a</span><span class="p">,</span> <span class="n">x1_b</span><span class="p">,</span> <span class="n">x1_c</span> <span class="p">],</span>
   <span class="p">[</span> <span class="n">x2_a</span><span class="p">,</span> <span class="n">x2_b</span><span class="p">,</span> <span class="n">x2_c</span> <span class="p">],</span>
@@ -158,7 +159,7 @@ coordinates given below.</p>
 </div>
 </div>
 <div class="section" id="types">
-<h2><a class="toc-backref" href="#id3"><code class="docutils literal notranslate"><span class="pre">types</span></code></a><a class="headerlink" href="#types" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id4"><code class="docutils literal notranslate"><span class="pre">types</span></code></a><a class="headerlink" href="#types" title="Permalink to this headline">¶</a></h2>
 <p>Atomic species are differenciated by integers. The nubmers are just
 used to distinguishes atoms, and is not releated to atomic numbers.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span> <span class="n">type_1</span><span class="p">,</span> <span class="n">type_2</span><span class="p">,</span> <span class="n">type_3</span><span class="p">,</span> <span class="o">...</span> <span class="p">]</span>
@@ -167,7 +168,7 @@ used to distinguishes atoms, and is not releated to atomic numbers.</p>
 <p>The number of elements is same as the number of atoms.</p>
 </div>
 <div class="section" id="rotation">
-<h2><a class="toc-backref" href="#id4"><code class="docutils literal notranslate"><span class="pre">rotation</span></code></a><a class="headerlink" href="#rotation" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id5"><code class="docutils literal notranslate"><span class="pre">rotation</span></code></a><a class="headerlink" href="#rotation" title="Permalink to this headline">¶</a></h2>
 <p>Rotation matricies (ingeger) of symmetry operations.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span> <span class="p">[</span> <span class="n">r_aa</span><span class="p">,</span> <span class="n">r_ab</span><span class="p">,</span> <span class="n">r_ac</span> <span class="p">],</span>
   <span class="p">[</span> <span class="n">r_ba</span><span class="p">,</span> <span class="n">r_bb</span><span class="p">,</span> <span class="n">r_bc</span> <span class="p">],</span>
@@ -176,7 +177,7 @@ used to distinguishes atoms, and is not releated to atomic numbers.</p>
 </div>
 </div>
 <div class="section" id="translation">
-<h2><a class="toc-backref" href="#id5"><code class="docutils literal notranslate"><span class="pre">translation</span></code></a><a class="headerlink" href="#translation" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id6"><code class="docutils literal notranslate"><span class="pre">translation</span></code></a><a class="headerlink" href="#translation" title="Permalink to this headline">¶</a></h2>
 <p>Translation vectors corresponding to symmetry operations in fractional
 coordinates.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span> <span class="n">t_a</span><span class="p">,</span> <span class="n">t_b</span><span class="p">,</span> <span class="n">t_c</span> <span class="p">]</span>
@@ -184,19 +185,23 @@ coordinates.</p>
 </div>
 </div>
 <div class="section" id="symprec">
-<h2><a class="toc-backref" href="#id6"><code class="docutils literal notranslate"><span class="pre">symprec</span></code></a><a class="headerlink" href="#symprec" title="Permalink to this headline">¶</a></h2>
-<p>Tolerance of distance between atomic positions and between lengths of
-lattice vectors to be tolerated in the symmetry finding. The angle
-distortion between lattice vectors is converted to a length and
-compared with this distance tolerance. If the explicit angle tolerance
-is expected, see <code class="docutils literal notranslate"><span class="pre">angle_tolerance</span></code>.</p>
+<span id="variables-symprec"></span><h2><a class="toc-backref" href="#id7"><code class="docutils literal notranslate"><span class="pre">symprec</span></code></a><a class="headerlink" href="#symprec" title="Permalink to this headline">¶</a></h2>
+<p>Distance tolerance in Cartesian coordinates to find crystal
+symmetry.</p>
+<p>For atomic positions, roughly speaking, two position vectors <cite>x</cite> and
+<cite>x’</cite> in Cartesian coordinates are considered to be the same if <code class="docutils literal notranslate"><span class="pre">|x'</span> <span class="pre">-</span>
+<span class="pre">x|</span> <span class="pre">&lt;</span> <span class="pre">symprec</span></code>. For more details, see the <a class="reference external" href="https://arxiv.org/abs/1808.01590">spglib paper</a>, Sec. II-A.</p>
+<p>The angle distortion between basis vectors is converted to a length
+and compared with this distance tolerance. For more details, see the
+<a class="reference external" href="https://arxiv.org/abs/1808.01590">spglib paper</a>, Sec. IV-A. It is
+possible to specify angle tolerance explicitly, see
+<a class="reference internal" href="#variables-angle-tolerance"><span class="std std-ref">angle_tolerance</span></a>.</p>
 </div>
 <div class="section" id="angle-tolerance">
-<span id="variables-angle-tolerance"></span><h2><a class="toc-backref" href="#id7"><code class="docutils literal notranslate"><span class="pre">angle_tolerance</span></code></a><a class="headerlink" href="#angle-tolerance" title="Permalink to this headline">¶</a></h2>
-<p><strong>Experimental</strong></p>
-<p>Tolerance of angle between lattice vectors in degrees to be tolerated
+<span id="variables-angle-tolerance"></span><h2><a class="toc-backref" href="#id8"><code class="docutils literal notranslate"><span class="pre">angle_tolerance</span></code></a><a class="headerlink" href="#angle-tolerance" title="Permalink to this headline">¶</a></h2>
+<p>Tolerance of angle between basis vectors in degrees to be tolerated
 in the symmetry finding. To use angle tolerance, another set of
-functions are prepared as follows</p>
+functions are prepared for C-API as follows</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">spgat_get_dataset</span>
 <span class="n">spgat_get_symmetry</span>
 <span class="n">spgat_get_symmetry_with_collinear_spin</span>
@@ -208,9 +213,11 @@ functions are prepared as follows</p>
 </pre></div>
 </div>
 <p>These functions are called by the same way with an additional argument
-of <code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">double</span> <span class="pre">angle_tolerance</span></code> in degrees. By specifying a negative
-value, the behavior becomes the same as usual functions. The default
-value of <code class="docutils literal notranslate"><span class="pre">angle_tolerance</span></code> is a negative value.</p>
+of <code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">double</span> <span class="pre">angle_tolerance</span></code> in degrees. By specifying a
+negative value, the behavior becomes the same as usual functions. The
+default value of <code class="docutils literal notranslate"><span class="pre">angle_tolerance</span></code> is a negative value. For
+python-API, the angle tolernce is given with a keyward argument of
+<cite>angle_tolerance</cite>.</p>
 </div>
 </div>
 
@@ -234,7 +241,7 @@ value of <code class="docutils literal notranslate"><span class="pre">angle_tole
     </p>
     <p>
         &copy; Copyright 2009, Atsushi Togo.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.<br/>
     </p>
   </div>
 </footer>

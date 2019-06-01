@@ -204,7 +204,8 @@ supported when ASE Atoms-class instance.
 Symmetry tolerance (``symprec``)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Distance tolerance in Cartesian coordinates to find crystal symmetry.
+Distance tolerance in Cartesian coordinates to find crystal
+symmetry. For more details, see :ref:`variables_symprec`
 
 Methods
 --------
