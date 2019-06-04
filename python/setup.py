@@ -1,6 +1,8 @@
 import os
 import sys
 
+setup_type = sys.argv[1]
+
 try:
     from setuptools import setup, Extension
     from setuptools.command.build_ext import build_ext as _build_ext
@@ -82,6 +84,8 @@ for i, s in enumerate(sources):
     sources[i] = "%s/%s" % (source_dir, s)
 
 extra_compile_args = []
+if setup_type == 'test':
+   extra_compile_args.append("-UNDEBUG")
 extra_link_args = []
 define_macros = []
 
