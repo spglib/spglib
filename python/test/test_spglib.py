@@ -96,18 +96,18 @@ class TestSpglib(unittest.TestCase):
                                  spg_type['pointgroup_schoenflies'],
                                  msg=("%s" % fname))
 
-            # wyckoffs = dataset['wyckoffs']
-            # with open(reffname) as f:
-            #     wyckoffs_ref = yaml.load(f, Loader=yaml.FullLoader)['wyckoffs']
-            # for w, w_ref in zip(wyckoffs, wyckoffs_ref):
-            #     self.assertEqual(w, w_ref, msg=("%s" % fname))
+            wyckoffs = dataset['wyckoffs']
+            with open(reffname) as f:
+                wyckoffs_ref = yaml.load(f, Loader=yaml.FullLoader)['wyckoffs']
+            for w, w_ref in zip(wyckoffs, wyckoffs_ref):
+                self.assertEqual(w, w_ref, msg=("%s" % fname))
 
             # This is for writing out detailed symmetry info into files.
             # Now it is only for Wyckoff positions.
-            with open(reffname, 'w') as f:
-                f.write("wyckoffs:\n")
-                for w in dataset['wyckoffs']:
-                    f.write("- \"%s\"\n" % w)
+            # with open(reffname, 'w') as f:
+            #     f.write("wyckoffs:\n")
+            #     for w in dataset['wyckoffs']:
+            #         f.write("- \"%s\"\n" % w)
 
     def test_standardize_cell_and_pointgroup(self):
         for fname, spgnum in zip(self._filenames, self._spgnum_ref):
