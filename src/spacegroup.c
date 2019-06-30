@@ -232,6 +232,28 @@ static Centering change_of_centering_ortho[6] = {C_FACE,
                                                  A_FACE};
 static int change_of_unique_axis_ortho[6] = {2, 1, 0, 2, 1, 0};
 
+/* n_l : the index of L(g) in N_\epsilon(g) of SPG No.16-74 */
+/* See ITA: Affine normalizer or highest symmetry Euclidean normalizer */
+/* Previous implementation below was not correct for 67, 68, 73, 74, */
+/* Cmma, Ccca, Ibca, Imma */
+/* 6 / ((Number of hall symbols of each spg-type) / x) */
+/* where x=1 and x=2 with without and with centring. */
+/* 6, 2, 2, 6, 2, */
+/* 2, 6, 6, 6, 2, 1, 2, 1, 1, 1, */
+/* 1, 2, 1, 2, 2, 1, 2, 1, 1, 1, */
+/* 1, 2, 2, 2, 2, 1, 6, 6, 2, 2, */
+/* 1, 1, 1, 1, 2, 2, 1, 2, 2, 1, */
+/* 3, 1, 1, 1, 2, 2, 1, 1, 6, 6, */
+/* 6, 2, 3, 1 */
+static int num_axis_choices_ortho[59] = {
+  6, 2, 2, 6, 2,  /* 16-20 */
+  2, 6, 6, 6, 2, 1, 2, 1, 1, 1,  /* 21-30 */
+  1, 2, 1, 2, 2, 1, 2, 1, 1, 1,  /* 31-40 */
+  1, 2, 2, 2, 2, 1, 6, 6, 2, 2,  /* 41-50 */
+  1, 1, 1, 1, 2, 2, 1, 2, 2, 1,  /* 51-60 */
+  3, 1, 1, 1, 2, 2, 2, 2, 6, 6,  /* 61-70 */
+  6, 2, 6, 2};  /* 71-74 */
+
 static double hR_to_hP[3][3] = {{ 1, 0, 1 },
                                 {-1, 1, 1 },
                                 { 0,-1, 1 }};
@@ -960,15 +982,7 @@ static int match_hall_symbol_db(double origin_shift[3],
     break;
 
   case ORTHO:
-    if (spacegroup_type.number == 48 ||
-        spacegroup_type.number == 50 ||
-        spacegroup_type.number == 59 ||
-        spacegroup_type.number == 68 ||
-        spacegroup_type.number == 70) { /* uncount origin shift */
-      num_hall_types /= 2;
-    }
-
-    if (num_hall_types == 1) {
+    if (num_axis_choices_ortho[spacegroup_type.number - 16] == 6) {
       if (match_hall_symbol_db_ortho(origin_shift,
                                      lattice,
                                      hall_number,
@@ -979,7 +993,7 @@ static int match_hall_symbol_db(double origin_shift[3],
       break;
     }
 
-    if (num_hall_types == 2) {
+    if (num_axis_choices_ortho[spacegroup_type.number - 16] == 3) {
       if (match_hall_symbol_db_ortho(origin_shift,
                                      lattice,
                                      hall_number,
@@ -990,7 +1004,7 @@ static int match_hall_symbol_db(double origin_shift[3],
       break;
     }
 
-    if (num_hall_types == 3) {
+    if (num_axis_choices_ortho[spacegroup_type.number - 16] == 2) {
       mat_copy_matrix_d3(changed_lattice, lattice);
       if (! match_hall_symbol_db_ortho
           (origin_shift,
@@ -1025,7 +1039,7 @@ static int match_hall_symbol_db(double origin_shift[3],
       break;
     }
 
-    if (num_hall_types == 6) {
+    if (num_axis_choices_ortho[spacegroup_type.number - 16] == 1) {
       if (match_hall_symbol_db_ortho(origin_shift,
                                      lattice,
                                      hall_number,
