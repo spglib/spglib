@@ -35,6 +35,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include "cell.h"
 #include "delaunay.h"
 #include "hall_symbol.h"
@@ -372,7 +373,7 @@ static int match_hall_symbol_db(double origin_shift[3],
 static int match_hall_symbol_db_monocli(double origin_shift[3],
                                         double lattice[3][3],
                                         const int hall_number,
-                                        const int num_hall_types,
+                                        const int space_group_number,
                                         const Centering centering,
                                         const Symmetry *symmetry,
                                         const double symprec);
@@ -975,7 +976,7 @@ static int match_hall_symbol_db(double origin_shift[3],
     if (match_hall_symbol_db_monocli(origin_shift,
                                      lattice,
                                      hall_number,
-                                     num_hall_types,
+                                     spacegroup_type.number,
                                      centering,
                                      symmetry,
                                      symprec)) {return 1;}
@@ -1145,20 +1146,40 @@ static int match_hall_symbol_db(double origin_shift[3],
 static int match_hall_symbol_db_monocli(double origin_shift[3],
                                         double lattice[3][3],
                                         const int hall_number,
-                                        const int num_hall_types,
+                                        const int space_group_number,
                                         const Centering centering,
                                         const Symmetry *symmetry,
                                         const double symprec)
 {
-  int i, j, k, l, is_found;
-  double vec[2][3], norms[3];
+  int i, j, k, l, check_norms, i_shortest, is_found_any;
+  int is_found[36];
+  double shortest_norm_sum, norm_sum;
+  double vec[2][3], norms_squared[36][2];
+  double changed_lattice[36][3][3], tmp_origin_shift[36][3];
   Centering changed_centering;
   Symmetry * changed_symmetry;
-  double changed_lattice[3][3];
 
   changed_symmetry = NULL;
 
+  /* E. Parthe and L. M. Gelato */
+  /* "The best unit cell for monoclinic structure..." (1983) */
+  if (space_group_number == 3 ||
+      space_group_number == 4 ||
+      space_group_number == 6 ||
+      space_group_number == 10 ||
+      space_group_number == 11) {
+    /* |a| < |c| for unique axis b. (This is as written in the paper 1983.) */
+    /* |a| < |b| for unique axis c. (This is spgilb definition.) */
+    /* |b| < |c| for unique axis a. (This is spgilb definition.) */
+    check_norms = 1;
+  } else {
+    check_norms = 0;
+  }
+
+  /* Exhaustive search */
   for (i = 0; i < 36; i++) {
+    is_found[i] = 0;
+
     /* centring type should be P or C */
     if (centering == C_FACE) {
       changed_centering = change_of_centering_monocli[i];
@@ -1166,16 +1187,20 @@ static int match_hall_symbol_db_monocli(double origin_shift[3],
       changed_centering = centering;
     }
 
-    mat_multiply_matrix_d3(changed_lattice,
+    mat_multiply_matrix_d3(changed_lattice[i],
                            lattice,
                            change_of_basis_monocli[i]);
 
     /* Make non-acute and length preference */
+    /* norms_squared[0] and norms_squared[1] are the two unique axes */
+    /* among a,b,c. */
     l = 0;
     for (j = 0; j < 3; j++) {
       if (j == change_of_unique_axis_monocli[i]) {continue;}
-      for (k = 0; k < 3; k++) {vec[l][k] = changed_lattice[k][j];}
-      norms[l] = mat_norm_squared_d3(vec[l]);
+      for (k = 0; k < 3; k++) {
+        vec[l][k] = changed_lattice[i][k][j];
+      }
+      norms_squared[i][l] = mat_norm_squared_d3(vec[l]);
       l++;
     }
 
@@ -1186,11 +1211,11 @@ static int match_hall_symbol_db_monocli(double origin_shift[3],
       continue;
     }
 
-    /* Choose |a| < |b| < |c| if there are freedom. */
-    if (num_hall_types == 3) {
-      if (norms[0] > norms[1] + ZERO_PREC) {continue;}
+    /* Choose |a| < |b| < |c| among two non-principles axes */
+    /* if there are freedom. */
+    if (check_norms) {
+      if (norms_squared[i][0] > norms_squared[i][1] + ZERO_PREC) {continue;}
     }
-
 
     if ((changed_symmetry =
          get_conventional_symmetry(change_of_basis_monocli[i],
@@ -1199,19 +1224,45 @@ static int match_hall_symbol_db_monocli(double origin_shift[3],
       goto err;
     }
 
-    is_found = hal_match_hall_symbol_db(origin_shift,
-                                        changed_lattice,
-                                        hall_number,
-                                        changed_centering,
-                                        changed_symmetry,
-                                        symprec);
+    is_found[i] = hal_match_hall_symbol_db(tmp_origin_shift[i],
+                                           changed_lattice[i],
+                                           hall_number,
+                                           changed_centering,
+                                           changed_symmetry,
+                                           symprec);
     sym_free_symmetry(changed_symmetry);
     changed_symmetry = NULL;
-    if (is_found) {
-      mat_copy_matrix_d3(lattice, changed_lattice);
-      return 1;
+  }
+
+  /* Find shortest non-unique axes */
+  is_found_any = 0;
+  for (i = 0; i < 36; i++) {
+    if (is_found[i]) {
+      i_shortest = i;
+      shortest_norm_sum = sqrt(norms_squared[i][0]) + sqrt(norms_squared[i][1]);
+      is_found_any = 1;
+      break;
     }
   }
+
+  if (! is_found_any) {
+    goto err;
+  }
+
+  for (i = 0; i < 36; i++) {
+    if (is_found[i]) {
+      norm_sum = sqrt(norms_squared[i][0]) + sqrt(norms_squared[i][1]);
+      if (shortest_norm_sum > norm_sum + ZERO_PREC) {
+        i_shortest = i;
+        shortest_norm_sum = sqrt(norms_squared[i][0]) + sqrt(norms_squared[i][1]);
+      }
+    }
+  }
+
+  mat_copy_vector_d3(origin_shift, tmp_origin_shift[i_shortest]);
+  mat_copy_matrix_d3(lattice, changed_lattice[i_shortest]);
+  return 1;
+
 
  err:
   return 0;
