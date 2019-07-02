@@ -17,7 +17,8 @@ invert_c = [[ 0, 1, 0 ],
 monocli_cell_choice = [[-1, 0, 1 ],
                        [ 0, 1, 0 ],
                        [-1, 0, 0 ]]
-monocli_centers = ['C', 'I', 'A', 'I']
+monocli_centers = ['C', 'A', 'I', 'C']
+
 
 def print_monocli():
     mat = identity
@@ -25,11 +26,11 @@ def print_monocli():
     centerings = []
     center = 'C'
     for i in range(3):
-        for j in range(3):
-            for k in range(2):
+        for j in range(3):  # changing choices
+            for k in range(2):  # a <-> c, -b
                 transform_mats.append(mat)
                 centerings.append(center)
-                
+
                 mat = np.dot(mat, invert_b)
                 if center == 'C':
                     center = 'A'
@@ -50,20 +51,21 @@ def print_monocli():
                 center = 'I'
         mat = np.dot(mat, monocli_cell_choice)
         center = monocli_centers[(i + 1) % 4]
-    
+
     for mat in np.array(transform_mats):
-        print " {{%2d,%2d,%2d }," % tuple(mat[0])
-        print "  {%2d,%2d,%2d }," % tuple(mat[1])
-        print "  {%2d,%2d,%2d }}," % tuple(mat[2])
+        print(" {{%2d,%2d,%2d }," % tuple(mat[0]))
+        print("  {%2d,%2d,%2d }," % tuple(mat[1]))
+        print("  {%2d,%2d,%2d }}," % tuple(mat[2]))
     for center in centerings:
         if center == 'C':
-            print "C_FACE,"
+            print("C_FACE,")
         if center == 'A':
-            print "A_FACE,"
+            print("A_FACE,")
         if center == 'B':
-            print "B_FACE,"
+            print("B_FACE,")
         if center == 'I':
-            print "BASE,"
+            print("BODY,")
+
 
 def print_ortho():
     mat = identity
@@ -88,21 +90,21 @@ def print_ortho():
             center = 'B'
         elif center == 'B':
             center = 'A'
-    
+
     for mat in np.array(transform_mats):
-        print " {{%2d,%2d,%2d }," % tuple(mat[0])
-        print "  {%2d,%2d,%2d }," % tuple(mat[1])
-        print "  {%2d,%2d,%2d }}," % tuple(mat[2])
+        print(" {{%2d,%2d,%2d }," % tuple(mat[0]))
+        print("  {%2d,%2d,%2d }," % tuple(mat[1]))
+        print("  {%2d,%2d,%2d }}," % tuple(mat[2]))
     for center in centerings:
         if center == 'C':
-            print "C_FACE,"
+            print("C_FACE,")
         if center == 'A':
-            print "A_FACE,"
+            print("A_FACE,")
         if center == 'B':
-            print "B_FACE,"
+            print("B_FACE,")
         if center == 'I':
-            print "BASE,"
-                                                 
+            print("BODY,")
+
 
 print_monocli()
 # print_ortho()

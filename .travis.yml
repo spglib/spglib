@@ -48,8 +48,7 @@ before_install:
     if [[ "$DOCKER_DEPLOY" != "false" ]]; then
       conda install --yes pip;
     else
-      conda install --yes gcc_linux-64;
-      conda install --yes pip numpy pyyaml nomkl make cmake;
+      conda install --yes pip numpy pyyaml nomkl;
     fi
   fi
 - pwd
@@ -74,6 +73,10 @@ script:
 - pwd
 - if [[ "$DOCKER_DEPLOY" == "false" ]]; then
     if [[ "$TRAVIS_BRANCH" != "rc" && "$TRAVIS_BRANCH" != "master" ]]; then
+      conda create --yes -n test;
+      source activate test;
+      conda install --yes gcc_linux-64;
+      conda install --yes pip numpy pyyaml nomkl make cmake;
       conda install -c conda-forge --yes valgrind;
       mkdir _build && cd _build;
       cmake -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON .. && make spglibtest;
@@ -82,6 +85,7 @@ script:
       cd python;
       python setup.py test;
       cd ..;
+      source deactivate;
     fi
   fi
 
