@@ -1,4 +1,3 @@
-
    module spglib_f08
 
    use iso_c_binding, only:  c_char, c_int, c_double, c_ptr, c_null_char, c_f_pointer, c_associated
@@ -21,23 +20,27 @@
    end enum
 
    type :: SpglibDataset
-      integer :: spacegroup_number
-      integer :: hall_number
+      integer(c_int) :: spacegroup_number
+      integer(c_int) :: hall_number
       character(len=11) :: international_symbol
       character(len=17) :: hall_symbol
       character(len=6) :: choice
       real(c_double)  :: transformation_matrix(3,3)
       real(c_double)  :: origin_shift(3)
-      integer :: n_operations
-      integer, allocatable :: rotations(:,:,:)
+      integer(c_int) :: n_operations
+      integer(c_int), allocatable :: rotations(:,:,:)
       real(c_double), allocatable :: translations(:,:)
-      integer :: n_atoms
-      integer, allocatable :: wyckoffs(:)
-      integer, allocatable :: equivalent_atoms(:) !Beware mapping refers to positions starting at 0
-      integer :: n_std_atoms
+      integer(c_int) :: n_atoms
+      integer(c_int), allocatable :: wyckoffs(:)
+      character(len=7), allocatable :: site_symmetry_symbols(:)
+      integer(c_int), allocatable :: equivalent_atoms(:) !Beware mapping refers to positions starting at 0
+      integer(c_int), allocatable :: mapping_to_primitive(:)
+      integer(c_int) :: n_std_atoms
       real(c_double) :: std_lattice(3,3)
-      integer, allocatable :: std_types(:)
+      integer(c_int), allocatable :: std_types(:)
       real(c_double), allocatable :: std_positions(:,:)
+      real(c_double)  :: std_rotation_matrix(3,3)
+      integer(c_int), allocatable :: std_mapping_to_primitive(:)
       character(len=6) :: pointgroup_symbol
       integer(kind(SPGLIB_SUCCESS)) :: spglib_error
 
@@ -103,7 +106,6 @@
    end function spgat_get_symmetry_with_collinear_spin
 
 
-
    function spg_get_multiplicity( lattice, position, types, num_atom, symprec) bind(c)
       import c_int, c_double
       real(c_double), intent(in) :: lattice(3,3), position(3,*)
@@ -160,7 +162,6 @@
    end function spgat_find_primitive
 
 
-
    function spg_get_international( symbol, lattice, position, types, num_atom, symprec) bind(c)
       import c_char, c_int, c_double
       character(kind=c_char), intent(out) :: symbol(11)
@@ -183,8 +184,6 @@
    end function spgat_get_international
 
 
-
-
    function spg_get_schoenflies( symbol, lattice, position, types, num_atom, symprec) bind(c)
       import c_char, c_int, c_double
       character(kind=c_char), intent(out) :: symbol(7)
@@ -195,6 +194,7 @@
       integer(c_int) :: spg_get_schoenflies ! the number corresponding to 'symbol'. 0 on failure
    end function spg_get_schoenflies
 
+
    function spgat_get_schoenflies( symbol, lattice, position, types, num_atom, symprec, angle_tolerance) bind(c)
       import c_char, c_int, c_double
       character(kind=c_char), intent(out) :: symbol(7)
@@ -204,7 +204,6 @@
       real(c_double), intent(in), value :: symprec, angle_tolerance
       integer(c_int) :: spgat_get_schoenflies ! the number corresponding to 'symbol'. 0 on failure
    end function spgat_get_schoenflies
-
 
 
    function spg_get_pointgroup( symbol, trans_mat, rotations, num_rotations) bind(c)
@@ -226,6 +225,7 @@
       integer(c_int) :: spg_refine_cell
    end function spg_refine_cell
 
+
    function spgat_refine_cell( lattice, position, types, num_atom, symprec, angle_tolerance) bind(c)
       import c_int, c_double
       real(c_double), intent(inout) :: lattice(3,3), position(3,*)
@@ -234,22 +234,6 @@
       real(c_double), intent(in), value :: symprec, angle_tolerance
       integer(c_int) :: spgat_refine_cell
    end function spgat_refine_cell
-
-
-   function spg_get_ir_kpoints( map, kpoints, num_kpoints, lattice, position, &
-                           & types, num_atom, is_time_reversal, symprec) bind(c)
-!   Beware the map refers to positions starting at 0
-      import c_int, c_double
-      integer(c_int), intent(inout) :: map(*)
-      real(c_double), intent(in) :: kpoints(3,*)
-      integer(c_int), intent(in), value :: num_kpoints
-      real(c_double), intent(in) :: lattice(3,3), position(3,*)
-      integer(c_int), intent(in) :: types(*)
-      integer(c_int), intent(in), value :: num_atom
-      integer(c_int), intent(in), value :: is_time_reversal
-      real(c_double), intent(in), value :: symprec
-      integer(c_int) :: spg_get_ir_kpoints
-   end function spg_get_ir_kpoints
 
 
    function spg_get_ir_reciprocal_mesh(grid_point, map, mesh, &
@@ -284,46 +268,11 @@
    end function spg_get_stabilized_reciprocal_mesh
 
 
-   function spg_get_triplets_reciprocal_mesh_at_q(weights, grid_points, third_q, &
-      & grid_point, mesh, is_time_reversal, lattice, num_rot, rotations) bind(c)
-      import c_int, c_double
-      integer(c_int), intent(inout) :: weights(*)
-      integer(c_int), intent(inout) :: grid_points(3,*)
-      integer(c_int), intent(inout) :: third_q(*)
-      integer(c_int), intent(in), value :: grid_point
-      integer(c_int), intent(in) :: mesh(3)
-      integer(c_int), intent(in), value :: is_time_reversal
-      real(c_double), intent(in) :: lattice(3,3)
-      integer(c_int), intent(in), value :: num_rot
-      integer(c_int), intent(in) :: rotations(3,3,*)
-      integer(c_int) :: spg_get_triplets_reciprocal_mesh_at_q
-   end function spg_get_triplets_reciprocal_mesh_at_q
-
-
-
-   function spg_extract_triplets_reciprocal_mesh_at_q(triplets_at_q, &
-         & weight_triplets_at_q, fixed_grid_number, num_triplets, triplets, &
-         & mesh, is_time_reversal, lattice, num_rot, rotations) bind(c)
-      import c_int, c_double
-      integer(c_int), intent(inout) :: triplets_at_q(3,*)
-      integer(c_int), intent(inout) :: weight_triplets_at_q(*)
-      integer(c_int), intent(in), value :: fixed_grid_number
-      integer(c_int), intent(in), value :: num_triplets
-      integer(c_int), intent(in) :: triplets(3,*)
-      integer(c_int), intent(in) :: mesh(3)
-      integer(c_int), intent(in), value :: is_time_reversal
-      real(c_double), intent(in) :: lattice(3,3)
-      integer(c_int), intent(in), value :: num_rot
-      integer(c_int), intent(in) :: rotations(3,3,*)
-      integer(c_int) :: spg_extract_triplets_reciprocal_mesh_at_q
-   end function spg_extract_triplets_reciprocal_mesh_at_q
-
    function spg_get_error_code() bind(c, name='spg_get_error_code')
      integer(kind(SPGLIB_SUCCESS)) :: spg_get_error_code
    end function spg_get_error_code
-      
-   end interface
 
+   end interface
 
 
    public :: SpglibDataset, spg_get_dataset, &
@@ -336,14 +285,13 @@
       & spg_get_international, spgat_get_international, &
       & spg_get_schoenflies, spgat_get_schoenflies, &
       & spg_get_pointgroup, spg_refine_cell, spgat_refine_cell, &
-      & spg_get_ir_kpoints, spg_get_ir_reciprocal_mesh, &
+      & spg_get_ir_reciprocal_mesh, &
       & spg_get_stabilized_reciprocal_mesh, &
-      & spg_get_triplets_reciprocal_mesh_at_q, &
-      & spg_extract_triplets_reciprocal_mesh_at_q, &
-      & spg_get_error_code, spg_get_error_message 
+      & spg_get_error_code, spg_get_error_message
 
 
    contains
+
 
    function spg_get_error_message(spglib_error)
      integer(kind(SPGLIB_SUCCESS)) :: spglib_error
@@ -367,11 +315,11 @@
      end interface
 
      message_ptr = spg_get_error_message_c(spglib_error)
-     call c_f_pointer( message_ptr, message, [len(spg_get_error_message)])
+     call c_f_pointer(message_ptr, message, [len(spg_get_error_message)])
 
      spg_get_error_message = ' '
      do i = 1, len(spg_get_error_message)
-        if(  message(i) == C_NULL_CHAR ) exit
+        if (message(i) == C_NULL_CHAR) exit
         spg_get_error_message(i:i) = message(i)
      end do
 
@@ -382,12 +330,10 @@
 
       real(c_double), intent(in) :: lattice(3,3)
       real(c_double), intent(in) :: position(3,*)
-      integer, intent(in) :: types(*)
-      integer, intent(in), value :: num_atom
+      integer(c_int), intent(in) :: types(*)
+      integer(c_int), intent(in), value :: num_atom
       real(c_double), intent(in), value :: symprec
       type(SpglibDataset) :: dset
-
-
 
       type, bind(c) :: SpglibDataset_c
          integer(c_int) :: spacegroup_number
@@ -395,25 +341,24 @@
          character(kind=c_char) :: international_symbol(11)
          character(kind=c_char) :: hall_symbol(17)
          character(kind=c_char) :: choice(6)
-         real(c_double)      :: transformation_matrix(3,3)
+         real(c_double) :: transformation_matrix(3,3)
          real(c_double) :: origin_shift(3)
          integer(c_int) :: n_operations
-   !       integer(c_int), pointer :: rotations(3,3,:)
          type(c_ptr) :: rotations
-   !       real(c_double), pointer :: translations(3,:)
          type(c_ptr) :: translations
          integer(c_int) :: n_atoms
-   !       integer(c_int), pointer :: wyckoffs(:)
          type(c_ptr) :: wyckoffs
-   !       integer(c_int), pointer :: equivalent_atoms(:)
+         type(c_ptr) :: site_symmetry_symbols
          type(c_ptr) :: equivalent_atoms
+         type(c_ptr) :: mapping_to_primitive
          integer(c_int) :: n_std_atoms
          real(c_double) :: std_lattice(3,3)
          type(c_ptr) :: std_types
          type(c_ptr) :: std_positions
+         real(c_double)  :: std_rotation_matrix(3,3)
+         type(c_ptr) :: std_mapping_to_primitive
          character(kind=c_char) :: pointgroup_symbol(6)
       end type
-
 
       interface
          function spg_get_dataset_c(lattice, position, types, num_atom, symprec) bind(c, name='spg_get_dataset')
@@ -435,16 +380,17 @@
 
       type(SpglibDataset_c), pointer :: dset_c
       type(c_ptr) :: dataset_ptr_c
-      integer :: n_operations, n_atoms, n_std_atoms, i
+      integer(c_int) :: n_operations, n_atoms, n_std_atoms
+      integer :: i
       integer(kind(SPGLIB_SUCCESS)) :: SpglibErrcode
       real(c_double), pointer :: translations(:,:)
       integer(c_int), pointer :: rotations(:,:,:), wyckoffs(:), equivalent_atoms(:), std_types(:), std_positions(:,:)
 
       dataset_ptr_c = spg_get_dataset_c(lattice, position, types, num_atom, symprec)
 
-      if( c_associated(dataset_ptr_c)) then
+      if (c_associated(dataset_ptr_c)) then
 
-         dset%spglib_error = SPGLIB_SUCCESS
+         dset % spglib_error = SPGLIB_SUCCESS
 
          call c_f_pointer(dataset_ptr_c , dset_c)
 
@@ -459,7 +405,7 @@
 
          ! Copy C strings to Fortran characters, converting C NULL to Fortran space padded strings
          do i = 1, size(dset_c % international_symbol)
-            if(  dset_c % international_symbol(i) == C_NULL_CHAR ) then
+            if (dset_c % international_symbol(i) == C_NULL_CHAR) then
                 dset % international_symbol(i:) = ' '
                 exit
             end if
@@ -467,7 +413,7 @@
          end do
 
          do i = 1, size(dset_c % hall_symbol)
-            if(  dset_c % hall_symbol(i) == C_NULL_CHAR ) then
+            if (dset_c % hall_symbol(i) == C_NULL_CHAR) then
                 dset % hall_symbol(i:) = ' '
                 exit
             end if
@@ -475,11 +421,19 @@
          end do
 
          do i = 1, size(dset_c % choice)
-            if(  dset_c % choice(i) == C_NULL_CHAR ) then
+            if (dset_c % choice(i) == C_NULL_CHAR) then
                 dset % choice(i:) = ' '
                 exit
             end if
             dset % choice(i:i) = dset_c % choice(i)
+         end do
+
+         do i = 1, size(dset_c % pointgroup_symbol)
+            if (dset_c % pointgroup_symbol(i) == C_NULL_CHAR) then
+                dset % pointgroup_symbol(i:) = ' '
+                exit
+            end if
+            dset % pointgroup_symbol(i:i) = dset_c % pointgroup_symbol(i)
          end do
 
          n_operations = dset_c % n_operations
