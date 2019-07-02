@@ -44,12 +44,11 @@ set -e -x
 # done
 
 # Install a system package required by our library
-yum install -y atlas-devel
-yum install -y numpy
+# yum install -y atlas-devel
 
 # Compile wheels
 for PYBIN in /opt/python/*/bin; do
-    # "${PYBIN}/pip" install -r /io/dev-requirements.txt
+    "${PYBIN}/pip" install -r /io/dev-requirements.txt
     "${PYBIN}/pip" wheel /io/ -w wheelhouse/
 done
 
@@ -61,5 +60,5 @@ done
 # Install packages and test
 for PYBIN in /opt/python/*/bin/; do
     "${PYBIN}/pip" install spglib --no-index -f /io/wheelhouse
-    #(cd "$HOME"; "${PYBIN}/nosetests" pymanylinuxdemo)
+    (cd "$HOME"; "${PYBIN}/nosetests" spglib)
 done
