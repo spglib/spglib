@@ -1,3 +1,19 @@
+2019-07-02  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.13
+	
+	* src/spacegroup.c (match_hall_symbol_db_ortho, match_hall_symbol_db_monocli):
+
+	Fix Issue#57 of SeekPath: Standardizations of choices of a,b,c axes
+	for Cmma (67), Ccca(68), Ibca(73), Imma(74) were fixed. For
+	monoclinic systems, lengths of non-unique axes are now checked by a
+	exhaustive way.
+	
+	* src/kpoint.c (check_mesh_symmetry):
+
+	Issue#79: Treatment of ir-kpoint search for special cases with three fold
+	rotation (e.g., hexagonal or primitive FCC).
+	
 2019-02-06  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.12.2
