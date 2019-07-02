@@ -48,8 +48,10 @@ set -e -x
 
 # Compile wheels
 for PYBIN in /opt/python/*/bin; do
-    "${PYBIN}/pip" install -r /io/dev-requirements.txt
-    "${PYBIN}/pip" wheel /io/ -w wheelhouse/
+    if  [[ ! $PYBIN == *"34"* ]]; then
+        "${PYBIN}/pip" install -r /io/dev-requirements.txt
+        "${PYBIN}/pip" wheel /io/ -w wheelhouse/
+    fi
 done
 
 # Bundle external shared libraries into the wheels
@@ -59,6 +61,8 @@ done
 
 # Install packages and test
 for PYBIN in /opt/python/*/bin/; do
-    "${PYBIN}/pip" install spglib --no-index -f /io/wheelhouse
-    (cd "$HOME"; "${PYBIN}/nosetests" spglib)
+    if  [[ ! $PYBIN == *"34"* ]]; then
+        "${PYBIN}/pip" install spglib --no-index -f /io/wheelhouse
+        (cd "$HOME"; "${PYBIN}/nosetests" spglib)
+    fi
 done
