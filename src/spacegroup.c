@@ -377,11 +377,22 @@ static int match_hall_symbol_db(double origin_shift[3],
                                 const double symprec);
 static int match_hall_symbol_db_monocli(double origin_shift[3],
                                         double conv_lattice[3][3],
+                                        SPGCONST double (*orig_lattice)[3],
                                         const int hall_number,
                                         const int space_group_number,
                                         const Centering centering,
-                                        const Symmetry *symmetry,
+                                        const Symmetry *conv_symmetry,
                                         const double symprec);
+static int match_hall_symbol_db_monocli_in_loop(double origin_shift[3],
+                                                double conv_lattice[3][3],
+                                                double norms_squared[2],
+                                                const int i,
+                                                SPGCONST double (*orig_lattice)[3],
+                                                const int check_norms,
+                                                const int hall_number,
+                                                const Centering centering,
+                                                const Symmetry *conv_symmetry,
+                                                const double symprec);
 static int match_hall_symbol_db_ortho(double origin_shift[3],
                                       double conv_lattice[3][3],
                                       SPGCONST double (*orig_lattice)[3],
@@ -408,7 +419,8 @@ static Centering get_centering(double correction_mat[3][3],
 static Centering get_base_center(SPGCONST int tmat[3][3]);
 static int get_centering_shifts(double shift[3][3],
                                 const Centering centering);
-static int flip_axes(double lattice[3][3],
+static int flip_axes(double tmat[3][3],
+                     SPGCONST double lattice[3][3],
                      SPGCONST double orig_lattice[3][3],
                      const double symprec);
 
@@ -1008,6 +1020,7 @@ static int match_hall_symbol_db(double origin_shift[3],
   case MONOCLI:
     if (match_hall_symbol_db_monocli(origin_shift,
                                      conv_lattice,
+                                     orig_lattice,
                                      hall_number,
                                      spacegroup_type.number,
                                      centering,
@@ -1183,18 +1196,18 @@ static int match_hall_symbol_db(double origin_shift[3],
 /* Return 0 if failed */
 static int match_hall_symbol_db_monocli(double origin_shift[3],
                                         double conv_lattice[3][3],
+                                        SPGCONST double (*orig_lattice)[3],
                                         const int hall_number,
                                         const int space_group_number,
                                         const Centering centering,
-                                        const Symmetry *symmetry,
+                                        const Symmetry *conv_symmetry,
                                         const double symprec)
 {
-  int i, j, k, l, check_norms, i_shortest, is_found_any;
+  int i, check_norms, i_shortest, is_found_any;
   int is_found[36];
   double shortest_norm_sum, norm_sum;
-  double vec[2][3], norms_squared[36][2];
-  double changed_lattice[36][3][3], tmp_origin_shift[36][3];
-  Centering changed_centering;
+  double norms_squared[36][2];
+  double all_conv_lattices[36][3][3], all_origin_shifts[36][3];
   Symmetry * changed_symmetry;
 
   changed_symmetry = NULL;
@@ -1214,65 +1227,24 @@ static int match_hall_symbol_db_monocli(double origin_shift[3],
     check_norms = 0;
   }
 
-  /* Exhaustive search */
   for (i = 0; i < 36; i++) {
-    is_found[i] = 0;
-
-    /* centring type should be P or C */
-    if (centering == C_FACE) {
-      changed_centering = change_of_centering_monocli[i];
-    } else { /* suppose PRIMITIVE */
-      changed_centering = centering;
-    }
-
-    mat_multiply_matrix_d3(changed_lattice[i],
-                           conv_lattice,
-                           change_of_basis_monocli[i]);
-
-    /* Make non-acute and length preference */
-    /* norms_squared[0] and norms_squared[1] are the two unique axes */
-    /* among a,b,c. */
-    l = 0;
-    for (j = 0; j < 3; j++) {
-      if (j == change_of_unique_axis_monocli[i]) {continue;}
-      for (k = 0; k < 3; k++) {
-        vec[l][k] = changed_lattice[i][k][j];
-      }
-      norms_squared[i][l] = mat_norm_squared_d3(vec[l]);
-      l++;
-    }
-
-    /* discard if principal angle is acute. */
-    if (vec[0][0] * vec[1][0] +
-        vec[0][1] * vec[1][1] +
-        vec[0][2] * vec[1][2] > ZERO_PREC) {
-      continue;
-    }
-
-    /* Choose |a| < |b| < |c| among two non-principles axes */
-    /* if there are freedom. */
-    if (check_norms) {
-      if (norms_squared[i][0] > norms_squared[i][1] + ZERO_PREC) {continue;}
-    }
-
-    if ((changed_symmetry =
-         get_conventional_symmetry(change_of_basis_monocli[i],
-                                   PRIMITIVE,
-                                   symmetry)) == NULL) {
-      goto err;
-    }
-
-    is_found[i] = hal_match_hall_symbol_db(tmp_origin_shift[i],
-                                           changed_lattice[i],
-                                           hall_number,
-                                           changed_centering,
-                                           changed_symmetry,
-                                           symprec);
-    sym_free_symmetry(changed_symmetry);
-    changed_symmetry = NULL;
+    mat_copy_matrix_d3(all_conv_lattices[i], conv_lattice);
+    /* all_origin_shifts[i] is possibly overwritten. */
+    /* is_found == 0: Not found */
+    /* is_found == 1: Found. conv_lattice may not be similar to orig_lattice */
+    /* is_found == 2: Found. conv_lattice is similar to orig_lattice */
+    is_found[i] = match_hall_symbol_db_monocli_in_loop(all_origin_shifts[i],
+                                                       all_conv_lattices[i],
+                                                       norms_squared[i],
+                                                       i,
+                                                       orig_lattice,
+                                                       check_norms,
+                                                       hall_number,
+                                                       centering,
+                                                       conv_symmetry,
+                                                       symprec);
   }
 
-  /* Find shortest non-unique axes */
   is_found_any = 0;
   for (i = 0; i < 36; i++) {
     if (is_found[i]) {
@@ -1287,22 +1259,142 @@ static int match_hall_symbol_db_monocli(double origin_shift[3],
     goto err;
   }
 
+  /* Find shortest non-unique axes lengths */
   for (i = 0; i < 36; i++) {
     if (is_found[i]) {
       norm_sum = sqrt(norms_squared[i][0]) + sqrt(norms_squared[i][1]);
-      if (shortest_norm_sum > norm_sum + ZERO_PREC) {
-        i_shortest = i;
-        shortest_norm_sum = sqrt(norms_squared[i][0]) + sqrt(norms_squared[i][1]);
+      if (shortest_norm_sum > norm_sum) {
+        shortest_norm_sum = norm_sum;
       }
     }
   }
 
-  mat_copy_vector_d3(origin_shift, tmp_origin_shift[i_shortest]);
-  mat_copy_matrix_d3(conv_lattice, changed_lattice[i_shortest]);
+  /* Prefers is_found == 2, i.e., similar to orig_lattice */
+  i_shortest = -1;
+  for (i = 0; i < 36; i++) {
+    if (is_found[i]) {
+      norm_sum = sqrt(norms_squared[i][0]) + sqrt(norms_squared[i][1]);
+      if (mat_Dabs(norm_sum - shortest_norm_sum) < symprec) {
+        if (is_found[i] == 2) {
+          i_shortest = i;
+          break;
+        }
+        if (i_shortest < 0) {
+          i_shortest = i;
+        }
+      }
+    }
+  }
+
+  mat_copy_vector_d3(origin_shift, all_origin_shifts[i_shortest]);
+  mat_copy_matrix_d3(conv_lattice, all_conv_lattices[i_shortest]);
   return 1;
 
-
  err:
+  return 0;
+}
+
+static int match_hall_symbol_db_monocli_in_loop(double origin_shift[3],
+                                                double conv_lattice[3][3],
+                                                double norms_squared[2],
+                                                const int i,
+                                                SPGCONST double (*orig_lattice)[3],
+                                                const int check_norms,
+                                                const int hall_number,
+                                                const Centering centering,
+                                                const Symmetry *conv_symmetry,
+                                                const double symprec)
+{
+  int j, k, l, is_found, retval;
+  double sign;
+  double vec[2][3];
+  double tmat[3][3], change_of_basis[3][3];
+  Centering changed_centering;
+  Symmetry * changed_symmetry;
+
+  /* centring type should be P or C */
+  if (centering == C_FACE) {
+    changed_centering = change_of_centering_monocli[i];
+  } else { /* suppose PRIMITIVE */
+    changed_centering = centering;
+  }
+
+  mat_multiply_matrix_d3(conv_lattice,
+                         conv_lattice, change_of_basis_monocli[i]);
+
+  /* Make non-acute and length preference */
+  /* norms_squared[0] and norms_squared[1] are the two non unique axes */
+  /* among a,b,c. */
+  l = 0;
+  for (j = 0; j < 3; j++) {
+    if (j == change_of_unique_axis_monocli[i]) {continue;}
+    for (k = 0; k < 3; k++) {
+      vec[l][k] = conv_lattice[k][j];
+    }
+    norms_squared[l] = mat_norm_squared_d3(vec[l]);
+    l++;
+  }
+
+  /* discard if principal angle is acute. */
+  if (vec[0][0] * vec[1][0] +
+      vec[0][1] * vec[1][1] +
+      vec[0][2] * vec[1][2] > ZERO_PREC) {
+    goto cont;
+  }
+
+  /* Choose |a| < |b| < |c| among two non-principles axes */
+  /* if there are freedom. */
+  if (check_norms) {
+    if (norms_squared[0] > norms_squared[1] + ZERO_PREC) {
+      goto cont;
+    }
+  }
+
+  /* When orig_lattice is given not NULL, try to find similar (a, b, c) */
+  /* choises to the input (a, b, c) by flipping a, b, c axes. */
+  /* Here flipping means a -> -a, and so on. */
+  /* Note that flipped (a,b,c) that match those of input should not */
+  /* change centring for monoclinic case. */
+  mat_copy_matrix_d3(change_of_basis, change_of_basis_monocli[i]);
+  retval = 1;
+  if (orig_lattice != NULL) {
+    if (mat_get_determinant_d3(orig_lattice) > symprec) {
+      if (flip_axes(tmat, conv_lattice, orig_lattice, symprec)) {
+        /* Check if not change principal angle. */
+        sign = 1;
+        for (j = 0; j < 3; j++) {
+          if (j == change_of_unique_axis_monocli[i]) {continue;}
+          sign *= tmat[j][j];
+        }
+        if (sign > 0) {
+          mat_multiply_matrix_d3(conv_lattice, conv_lattice, tmat);
+          mat_multiply_matrix_d3(change_of_basis, change_of_basis, tmat);
+          retval = 2;
+        }
+      }
+    }
+  }
+
+  if ((changed_symmetry = get_conventional_symmetry(change_of_basis,
+                                                    PRIMITIVE,
+                                                    conv_symmetry)) == NULL) {
+    goto cont;
+  }
+
+  is_found = hal_match_hall_symbol_db(origin_shift,
+                                      conv_lattice,
+                                      hall_number,
+                                      changed_centering,
+                                      changed_symmetry,
+                                      symprec);
+  sym_free_symmetry(changed_symmetry);
+  changed_symmetry = NULL;
+
+  if (is_found) {
+    return retval;
+  }
+
+cont:
   return 0;
 }
 
@@ -1320,22 +1412,24 @@ static int match_hall_symbol_db_ortho(double origin_shift[3],
 
   /* Try to find the best (a, b, c) by flipping axes. */
   if (orig_lattice != NULL) {
-    for (i = 0; i < 6; i++) {
-      if (match_hall_symbol_db_ortho_in_loop(origin_shift,
-                                             conv_lattice,
-                                             orig_lattice,
-                                             i,
-                                             hall_number,
-                                             centering,
-                                             conv_symmetry,
-                                             num_free_axes,
-                                             symprec)) {
-        return 1;
+    if (mat_get_determinant_d3(orig_lattice) > symprec) {
+      for (i = 0; i < 6; i++) {
+        if (match_hall_symbol_db_ortho_in_loop(origin_shift,
+                                               conv_lattice,
+                                               orig_lattice,
+                                               i,
+                                               hall_number,
+                                               centering,
+                                               conv_symmetry,
+                                               num_free_axes,
+                                               symprec)) {
+          return 1;
+        }
       }
     }
   }
 
-  /* Flipping didn't work, usual search is made. */
+  /* If flipping didn't work, usual search is made. */
   for (i = 0; i < 6; i++) {
     if (match_hall_symbol_db_ortho_in_loop(origin_shift,
                                            conv_lattice,
@@ -1367,7 +1461,7 @@ static int match_hall_symbol_db_ortho_in_loop(double origin_shift[3],
   double vec[3], norms[3];
   Centering changed_centering;
   Symmetry * changed_symmetry;
-  double changed_lattice[3][3], tmat[3][3], lattice_inv[3][3], lattice_tmp[3][3];
+  double changed_lattice[3][3], tmat[3][3], change_of_basis[3][3];
 
   changed_symmetry = NULL;
 
@@ -1385,19 +1479,14 @@ static int match_hall_symbol_db_ortho_in_loop(double origin_shift[3],
   /* choises to the input (a, b, c) by flipping a, b, c axes. */
   /* Here flipping means a -> -a, and so on. */
   /* Note that flipping of axes doesn't change centring. */
+  mat_copy_matrix_d3(change_of_basis, change_of_basis_ortho[i]);
   if (orig_lattice != NULL) {
-    mat_copy_matrix_d3(lattice_tmp, changed_lattice);
-    if (flip_axes(lattice_tmp, orig_lattice, symprec)) {
-      /* This means additional change of basis. */
-      mat_inverse_matrix_d3(lattice_inv, lattice_tmp, symprec);
-      mat_multiply_matrix_d3(tmat, lattice_inv, changed_lattice);
-      mat_multiply_matrix_d3(tmat, tmat, change_of_basis_ortho[i]);
-      mat_copy_matrix_d3(changed_lattice, lattice_tmp);
+    if (flip_axes(tmat, changed_lattice, orig_lattice, symprec)) {
+      mat_multiply_matrix_d3(changed_lattice, changed_lattice, tmat);
+      mat_multiply_matrix_d3(change_of_basis, change_of_basis, tmat);
     } else {
       goto cont;
     }
-  } else {  /* Usual search without flipping axes. */
-    mat_copy_matrix_d3(tmat, change_of_basis_ortho[i]);
   }
 
   if (num_free_axes == 2) {
@@ -1429,7 +1518,7 @@ static int match_hall_symbol_db_ortho_in_loop(double origin_shift[3],
         (norms[1] > norms[2] + ZERO_PREC)) {goto cont;}
   }
 
-  if ((changed_symmetry = get_conventional_symmetry(tmat,
+  if ((changed_symmetry = get_conventional_symmetry(change_of_basis,
                                                     PRIMITIVE,
                                                     symmetry)) == NULL) {
     goto cont;
@@ -1717,12 +1806,13 @@ static int get_centering_shifts(double shift[3][3],
 
 /* Flip axes when abs(P)=I but P!=I. */
 /* lattice is overwritten. */
-static int flip_axes(double lattice[3][3],
+static int flip_axes(double tmat[3][3],
+                     SPGCONST double lattice[3][3],
                      SPGCONST double orig_lattice[3][3],
                      const double symprec)
 {
   int i, j;
-  double inv_lat[3][3], tmat[3][3];
+  double inv_lat[3][3];
   int tmat_int[3][3], tmat_abs[3][3];
 
   if (mat_Dabs(mat_get_determinant_d3(lattice) -
@@ -1749,8 +1839,6 @@ static int flip_axes(double lattice[3][3],
   if (!mat_check_identity_matrix_i3(identity_int, tmat_abs)) {
     return 0;  /* Do nothing */
   }
-
-  mat_multiply_matrix_di3(lattice, lattice, tmat_int);
 
   return 1;
 }

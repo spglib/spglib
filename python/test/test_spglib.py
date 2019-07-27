@@ -5,6 +5,7 @@ from spglib import (get_symmetry_dataset, find_primitive,
 from vasp import read_vasp
 import yaml
 import os
+import numpy as np
 
 data_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -171,14 +172,34 @@ class TestSpglib(unittest.TestCase):
         for fname, spgnum in zip(self._filenames, self._spgnum_ref):
             cell = read_vasp(fname)
             if 'distorted' in fname:
-                dataset_orig = get_symmetry_dataset(cell, symprec=1e-1)
+                dataset_0 = get_symmetry_dataset(cell, symprec=1e-1)
             else:
-                dataset_orig = get_symmetry_dataset(cell, symprec=1e-5)
-            ref_cell = (dataset_orig['std_lattice'],
-                        dataset_orig['std_positions'],
-                        dataset_orig['std_types'])
-            dataset = get_symmetry_dataset(ref_cell, symprec=1e-5)
-            self.assertEqual(dataset['number'], spgnum, msg=("%s" % fname))
+                dataset_0 = get_symmetry_dataset(cell, symprec=1e-5)
+            ref_cell_0 = (dataset_0['std_lattice'],
+                          dataset_0['std_positions'],
+                          dataset_0['std_types'])
+            dataset_1 = get_symmetry_dataset(ref_cell_0, symprec=1e-5)
+            # Check the same space group type is found.
+            self.assertEqual(dataset_1['number'], spgnum, msg=("%s" % fname))
+
+            # Check if the same structure is obtained when applying
+            # standardization again, i.e., examining non cycling behaviour.
+            # Currently only for orthorhombic.
+            if 'orthorhombic' in fname or 'monoclinic' in fname:
+                ref_cell_1 = (dataset_1['std_lattice'],
+                              dataset_1['std_positions'],
+                              dataset_1['std_types'])
+                dataset_2 = get_symmetry_dataset(ref_cell_1, symprec=1e-5)
+                np.testing.assert_equal(
+                    dataset_1['std_types'], dataset_2['std_types'],
+                    err_msg="%s" % fname)
+                np.testing.assert_allclose(
+                    dataset_1['std_lattice'], dataset_2['std_lattice'],
+                    atol=1e-5, err_msg="%s" % fname)
+                diff = dataset_1['std_positions'] - dataset_2['std_positions']
+                diff -= np.rint(diff)
+                np.testing.assert_allclose(
+                    diff, 0, atol=1e-5, err_msg="%s" % fname)
 
     def test_find_primitive(self):
         for fname in self._filenames:
