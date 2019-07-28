@@ -258,9 +258,11 @@ static int num_axis_choices_ortho[59] = {
 static double hR_to_hP[3][3] = {{ 1, 0, 1 },
                                 {-1, 1, 1 },
                                 { 0,-1, 1 }};
-static double change_of_basis_501[3][3] = {{ 0, 0, 1},
-                                           { 0,-1, 0},
-                                           { 1, 0, 0}};
+
+/* Removed after commit 67997654 */
+/* static double change_of_basis_501[3][3] = {{ 0, 0, 1}, */
+/*                                            { 0,-1, 0}, */
+/*                                            { 1, 0, 0}}; */
 
 static int spacegroup_to_hall_number[230] = {
     1,   2,   3,   6,   9,  18,  21,  30,  39,  57,
@@ -417,6 +419,14 @@ static int match_hall_symbol_db_cubic(double origin_shift[3],
                                       const Centering centering,
                                       const Symmetry *conv_symmetry,
                                       const double symprec);
+static int match_hall_symbol_db_cubic_in_loop(double origin_shift[3],
+                                              double conv_lattice[3][3],
+                                              SPGCONST double (*orig_lattice)[3],
+                                              const int i,
+                                              const int hall_number,
+                                              const Centering centering,
+                                              const Symmetry *conv_symmetry,
+                                              const double symprec);
 static Symmetry * get_conventional_symmetry(SPGCONST double tmat[3][3],
                                             const Centering centering,
                                             const Symmetry *primitive_sym);
@@ -1476,7 +1486,8 @@ static int match_hall_symbol_db_ortho_in_loop(double origin_shift[3],
       mat_multiply_matrix_d3(changed_lattice, changed_lattice, tmat);
       mat_multiply_matrix_d3(change_of_basis, change_of_basis, tmat);
     } else {
-      goto cont;  /* orig_lattice == NULL will come in the later loop. */
+      goto cont;  /* This is necessary to run through all */
+                  /* change_of_basis_ortho. */
     }
   }
 
@@ -1540,54 +1551,93 @@ static int match_hall_symbol_db_cubic(double origin_shift[3],
                                       const Symmetry *conv_symmetry,
                                       const double symprec)
 {
+  int i;
+
+  /* Special treatment for No. 205 (501) is included in this change of */
+  /* basis. To see old code, commit hash 67997654 and change_of_basis_501. */
+  if (orig_lattice != NULL) {
+    if (mat_get_determinant_d3(orig_lattice) > symprec) {
+      for (i = 0; i < 6; i++) {
+        if (match_hall_symbol_db_cubic_in_loop(origin_shift,
+                                               conv_lattice,
+                                               orig_lattice,
+                                               i,
+                                               hall_number,
+                                               centering,
+                                               conv_symmetry,
+                                               symprec)) {
+          return 1;
+        }
+      }
+    }
+  }
+
+  for (i = 0; i < 6; i++) {
+    if (match_hall_symbol_db_cubic_in_loop(origin_shift,
+                                           conv_lattice,
+                                           NULL,
+                                           i,
+                                           hall_number,
+                                           centering,
+                                           conv_symmetry,
+                                           symprec)) {
+      return 1;
+    }
+  }
+  return 0;
+}
+
+static int match_hall_symbol_db_cubic_in_loop(double origin_shift[3],
+                                              double conv_lattice[3][3],
+                                              SPGCONST double (*orig_lattice)[3],
+                                              const int i,
+                                              const int hall_number,
+                                              const Centering centering,
+                                              const Symmetry *conv_symmetry,
+                                              const double symprec)
+{
   int is_found;
+  double origin_shift_bak[3];
   double changed_lattice[3][3], tmat[3][3], change_of_basis[3][3];
   Symmetry *changed_symmetry;
 
   changed_symmetry = NULL;
 
-  mat_copy_matrix_d3(changed_lattice, conv_lattice);
-  /* if (orig_lattice != NULL) { */
-  /*   if (flip_axes(tmat, changed_lattice, orig_lattice, symprec)) { */
-  /*     mat_multiply_matrix_d3(changed_lattice, changed_lattice, tmat); */
-  /*   } */
-  /* } */
+  mat_copy_matrix_d3(change_of_basis, change_of_basis_ortho[i]);
+  mat_multiply_matrix_d3(changed_lattice, conv_lattice, change_of_basis);
 
-  if (hal_match_hall_symbol_db(origin_shift,
-                               changed_lattice,
-                               hall_number,
-                               centering,
-                               conv_symmetry,
-                               symprec)) {
+  if (orig_lattice != NULL) {
+    if (flip_axes(tmat, changed_lattice, orig_lattice, symprec)) {
+      mat_multiply_matrix_d3(changed_lattice, changed_lattice, tmat);
+      mat_multiply_matrix_d3(change_of_basis, change_of_basis, tmat);
+    } else {
+      goto cont;  /* This is necessary to run through all */
+                  /* change_of_basis_ortho. */
+    }
+  }
+
+  if ((changed_symmetry = get_conventional_symmetry(change_of_basis,
+                                                    PRIMITIVE,
+                                                    conv_symmetry)) == NULL) {
+    goto cont;
+  }
+
+  is_found = hal_match_hall_symbol_db(origin_shift,
+                                      changed_lattice,
+                                      hall_number,
+                                      centering,
+                                      changed_symmetry,
+                                      symprec);
+
+  sym_free_symmetry(changed_symmetry);
+  changed_symmetry = NULL;
+
+  if (is_found) {
     mat_copy_matrix_d3(conv_lattice, changed_lattice);
     return 1;
   }
 
-  if (hall_number == 501) { /* Try another basis for No.205 */
-    mat_multiply_matrix_d3(changed_lattice, changed_lattice, change_of_basis_501);
-    /* mat_multiply_matrix_d3(change_of_basis, tmat, change_of_basis_501); */
-    mat_copy_matrix_d3(change_of_basis, change_of_basis_501);
-    if ((changed_symmetry = get_conventional_symmetry(change_of_basis,
-                                                      PRIMITIVE,
-                                                      conv_symmetry)) == NULL) {
-      goto err;
-    }
-
-    is_found = hal_match_hall_symbol_db(origin_shift,
-                                        changed_lattice,
-                                        hall_number,
-                                        PRIMITIVE,
-                                        changed_symmetry,
-                                        symprec);
-    sym_free_symmetry(changed_symmetry);
-    changed_symmetry = NULL;
-    if (is_found) {
-      mat_copy_matrix_d3(conv_lattice, changed_lattice);
-      return 1;
-    }
-  }
-
-err:
+cont:
   return 0;
 }
 
