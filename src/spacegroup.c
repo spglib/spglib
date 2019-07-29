@@ -259,6 +259,35 @@ static double hR_to_hP[3][3] = {{ 1, 0, 1 },
                                 {-1, 1, 1 },
                                 { 0,-1, 1 }};
 
+static double change_of_basis_rhombo[6][3][3] = {{{ 1, 0, 0 },
+                                                  { 0, 1, 0 },
+                                                  { 0, 0, 1 }},
+                                                 {{ 0, 0, 1 },
+                                                  { 1, 0, 0 },
+                                                  { 0, 1, 0 }},
+                                                 {{ 0, 1, 0 },
+                                                  { 0, 0, 1 },
+                                                  { 1, 0, 0 }},
+                                                 {{ 0, 0,-1 },
+                                                  { 0,-1, 0 },
+                                                  {-1, 0, 0 }},
+                                                 {{ 0,-1, 0 },
+                                                  {-1, 0, 0 },
+                                                  { 0, 0,-1 }},
+                                                 {{-1, 0, 0 },
+                                                  { 0, 0,-1 },
+                                                  { 0,-1, 0 }}};
+
+static double change_of_basis_hexa[3][3][3] = {{{ 1, 0, 0 },
+                                                { 0, 1, 0 },
+                                                { 0, 0, 1 }},
+                                               {{ 1,-1, 0 },
+                                                { 1, 0, 0 },
+                                                { 0, 0, 1 }},
+                                               {{ 0,-1, 0 },
+                                                { 1,-1, 0 },
+                                                { 0, 0, 1 }}};
+
 /* Removed after commit 67997654 */
 /* static double change_of_basis_501[3][3] = {{ 0, 0, 1}, */
 /*                                            { 0,-1, 0}, */
@@ -427,6 +456,14 @@ static int match_hall_symbol_db_cubic_in_loop(double origin_shift[3],
                                               const Centering centering,
                                               const Symmetry *conv_symmetry,
                                               const double symprec);
+static int match_hall_symbol_db_others(double origin_shift[3],
+                                       double conv_lattice[3][3],
+                                       SPGCONST double (*orig_lattice)[3],
+                                       const int hall_number,
+                                       const Centering centering,
+                                       const Holohedry holohedry,
+                                       const Symmetry *conv_symmetry,
+                                       const double symprec);
 static Symmetry * get_conventional_symmetry(SPGCONST double tmat[3][3],
                                             const Centering centering,
                                             const Symmetry *primitive_sym);
@@ -1146,7 +1183,7 @@ static int match_hall_symbol_db(double origin_shift[3],
           hall_number == 450 ||
           hall_number == 452 ||
           hall_number == 458 ||
-          hall_number == 460) {
+          hall_number == 460) {  /* Hexagonal lattice */
         mat_multiply_matrix_d3(changed_lattice, conv_lattice, hR_to_hP);
         if ((changed_symmetry =
              get_conventional_symmetry(hR_to_hP, R_CENTER, symmetry)) == NULL) {
@@ -1165,7 +1202,7 @@ static int match_hall_symbol_db(double origin_shift[3],
           mat_copy_matrix_d3(conv_lattice, changed_lattice);
           return 1;
         }
-      } else {
+      } else {  /* Rhombohedral (a=b=c) lattice */
         if (hal_match_hall_symbol_db(origin_shift,
                                      conv_lattice,
                                      hall_number,
@@ -1179,14 +1216,14 @@ static int match_hall_symbol_db(double origin_shift[3],
     }
     /* Do not break for other trigonal cases */
   default: /* HEXA, TETRA, TRICLI and rest of TRIGO */
-    if (hal_match_hall_symbol_db(origin_shift,
-                                 conv_lattice,
-                                 hall_number,
-                                 centering,
-                                 symmetry,
-                                 symprec)) {
-      return 1;
-    }
+    if (match_hall_symbol_db_others(origin_shift,
+                                    conv_lattice,
+                                    orig_lattice,
+                                    hall_number,
+                                    centering,
+                                    holohedry,
+                                    symmetry,
+                                    symprec)) {return 1;}
     break;
   }
 
@@ -1597,7 +1634,6 @@ static int match_hall_symbol_db_cubic_in_loop(double origin_shift[3],
                                               const double symprec)
 {
   int is_found;
-  double origin_shift_bak[3];
   double changed_lattice[3][3], tmat[3][3], change_of_basis[3][3];
   Symmetry *changed_symmetry;
 
@@ -1638,6 +1674,60 @@ static int match_hall_symbol_db_cubic_in_loop(double origin_shift[3],
   }
 
 cont:
+  return 0;
+}
+
+/* HEXA, TETRA, TRICLI and TRIGO but not Rhombohedral a=b=c */
+static int match_hall_symbol_db_others(double origin_shift[3],
+                                       double conv_lattice[3][3],
+                                       SPGCONST double (*orig_lattice)[3],
+                                       const int hall_number,
+                                       const Centering centering,
+                                       const Holohedry holohedry,
+                                       const Symmetry *conv_symmetry,
+                                       const double symprec)
+{
+  /* Hexagonal lattice: HEXA and TRICLI but not Rhombohedral a=b=c */
+  /*                    60-degs rotation has to be checked. */
+  /* Rhombohedral a=b=c: 6 permutation */
+  /* TETRA: flip_axes can be directly usable. */
+  /* TRICLI: No check. */
+
+  if (holohedry == TRICLI) {
+    return hal_match_hall_symbol_db(origin_shift,
+                                    conv_lattice,
+                                    hall_number,
+                                    centering,
+                                    conv_symmetry,
+                                    symprec);
+  }
+
+  if ((holohedry == TRIGO) && (centering == PRIMITIVE)) {
+    return hal_match_hall_symbol_db(origin_shift,
+                                    conv_lattice,
+                                    hall_number,
+                                    centering,
+                                    conv_symmetry,
+                                    symprec);
+  }
+
+  if (holohedry == TETRA) {
+    return hal_match_hall_symbol_db(origin_shift,
+                                    conv_lattice,
+                                    hall_number,
+                                    centering,
+                                    conv_symmetry,
+                                    symprec);
+  }
+
+  /* Hexagonal lattice */
+  return hal_match_hall_symbol_db(origin_shift,
+                                  conv_lattice,
+                                  hall_number,
+                                  centering,
+                                  conv_symmetry,
+                                  symprec);
+
   return 0;
 }
 

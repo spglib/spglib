@@ -185,7 +185,10 @@ class TestSpglib(unittest.TestCase):
             # Check if the same structure is obtained when applying
             # standardization again, i.e., examining non cycling behaviour.
             # Currently only for orthorhombic.
-            if 'cubic' in fname or 'orthorhombic' in fname or 'monoclinic' in fname:
+            if ('cubic' in fname or
+                'orthorhombic' in fname or
+                'monoclinic' in fname or
+                'triclinic' in fname):
                 ref_cell_1 = (dataset_1['std_lattice'],
                               dataset_1['std_positions'],
                               dataset_1['std_types'])
