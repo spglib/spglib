@@ -255,9 +255,13 @@ static int num_axis_choices_ortho[59] = {
   3, 1, 1, 1, 2, 2, 2, 2, 6, 6,  /* 61-70 */
   6, 2, 6, 2};  /* 71-74 */
 
-static double hR_to_hP[3][3] = {{ 1, 0, 1 },
-                                {-1, 1, 1 },
-                                { 0,-1, 1 }};
+/* hR_to_hP is the inverse of rhombo_obverse and used until the */
+/* commit  e0398ba9. But now this is included in */
+/* change_of_basis_rhombo in a way of */
+/* dot(change_of_basis_rhombo_hex,hR_to_hP). */
+/* static double hR_to_hP[3][3] = {{ 1, 0, 1 }, */
+/*                                 {-1, 1, 1 }, */
+/*                                 { 0,-1, 1 }}; */
 
 static double change_of_basis_rhombo[6][3][3] = {{{ 1, 0, 0 },
                                                   { 0, 1, 0 },
@@ -278,15 +282,86 @@ static double change_of_basis_rhombo[6][3][3] = {{{ 1, 0, 0 },
                                                   { 0, 0,-1 },
                                                   { 0,-1, 0 }}};
 
-static double change_of_basis_hexa[3][3][3] = {{{ 1, 0, 0 },
-                                                { 0, 1, 0 },
-                                                { 0, 0, 1 }},
-                                               {{ 1,-1, 0 },
-                                                { 1, 0, 0 },
-                                                { 0, 0, 1 }},
-                                               {{ 0,-1, 0 },
-                                                { 1,-1, 0 },
-                                                { 0, 0, 1 }}};
+static double change_of_basis_rhombo_hex[6][3][3] = {{{ 1,  0,  1},
+                                                      {-1,  1,  1},
+                                                      { 0, -1,  1}},
+                                                     {{ 0, -1,  1},
+                                                      { 1,  0,  1},
+                                                      {-1,  1,  1}},
+                                                     {{-1,  1,  1},
+                                                      { 0, -1,  1},
+                                                      { 1,  0,  1}},
+                                                     {{ 0,  1, -1},
+                                                      { 1, -1, -1},
+                                                      {-1,  0, -1}},
+                                                     {{ 1, -1, -1},
+                                                      {-1,  0, -1},
+                                                      { 0,  1, -1}},
+                                                     {{-1,  0, -1},
+                                                      { 0,  1, -1},
+                                                      { 1, -1, -1}}};
+
+static double change_of_basis_C4[8][3][3] = {{{ 1, 0, 0 },
+                                              { 0, 1, 0 },
+                                              { 0, 0, 1 }},
+                                             {{ 0,-1, 0 },
+                                              { 1, 0, 0 },
+                                              { 0, 0, 1 }},
+                                             {{-1, 0, 0 },
+                                              { 0,-1, 0 },
+                                              { 0, 0, 1 }},
+                                             {{ 0, 1, 0 },
+                                              {-1, 0, 0 },
+                                              { 0, 0, 1 }},
+                                             {{ 0, 1, 0 },
+                                              { 1, 0, 0 },
+                                              { 0, 0,-1 }},
+                                             {{-1, 0, 0 },
+                                              { 0, 1, 0 },
+                                              { 0, 0,-1 }},
+                                             {{ 0,-1, 0 },
+                                              {-1, 0, 0 },
+                                              { 0, 0,-1 }},
+                                             {{ 1, 0, 0 },
+                                              { 0,-1, 0 },
+                                              { 0, 0,-1 }}};
+
+static double change_of_basis_C6[12][3][3] = {{{ 1, 0, 0 }, /* 1 */
+                                               { 0, 1, 0 },
+                                               { 0, 0, 1 }},
+                                              {{ 1,-1, 0 }, /* 2 */
+                                               { 1, 0, 0 },
+                                               { 0, 0, 1 }},
+                                              {{ 0,-1, 0 }, /* 3 */
+                                               { 1,-1, 0 },
+                                               { 0, 0, 1 }},
+                                              {{-1, 0, 0 }, /* 4 */
+                                               { 0,-1, 0 },
+                                               { 0, 0, 1 }},
+                                              {{-1, 1, 0 }, /* 5 */
+                                               {-1, 0, 0 },
+                                               { 0, 0, 1 }},
+                                              {{ 0, 1, 0 }, /* 6 */
+                                               {-1, 1, 0 },
+                                               { 0, 0, 1 }},
+                                              {{ 0, 1, 0 }, /* 7 */
+                                               { 1, 0, 0 },
+                                               { 0, 0,-1 }},
+                                              {{-1, 1, 0 }, /* 8 */
+                                               { 0, 1, 0 },
+                                               { 0, 0,-1 }},
+                                              {{-1, 0, 0 }, /* 9 */
+                                               {-1, 1, 0 },
+                                               { 0, 0,-1 }},
+                                              {{ 0,-1, 0 }, /* 10 */
+                                               {-1, 0, 0 },
+                                               { 0, 0,-1 }},
+                                              {{ 1,-1, 0 }, /* 11 */
+                                               { 0,-1, 0 },
+                                               { 0, 0,-1 }},
+                                              {{ 1, 0, 0 }, /* 12 */
+                                               { 1,-1, 0 },
+                                               { 0, 0,-1 }}};
 
 /* Removed after commit 67997654 */
 /* static double change_of_basis_501[3][3] = {{ 0, 0, 1}, */
@@ -318,10 +393,6 @@ static int spacegroup_to_hall_number[230] = {
   507, 508, 509, 510, 511, 512, 513, 514, 515, 516,
   517, 518, 520, 521, 523, 524, 525, 527, 529, 530,
 };
-
-static int identity_int[3][3] = {{ 1, 0, 0 },
-                                 { 0, 1, 0 },
-                                 { 0, 0, 1 }};
 
 static double identity[3][3] = {{ 1, 0, 0 },
                                 { 0, 1, 0 },
@@ -456,6 +527,12 @@ static int match_hall_symbol_db_cubic_in_loop(double origin_shift[3],
                                               const Centering centering,
                                               const Symmetry *conv_symmetry,
                                               const double symprec);
+static int match_hall_symbol_db_rhombo(double origin_shift[3],
+                                       double conv_lattice[3][3],
+                                       SPGCONST double (*orig_lattice)[3],
+                                       const int hall_number,
+                                       const Symmetry *conv_symmetry,
+                                       const double symprec);
 static int match_hall_symbol_db_others(double origin_shift[3],
                                        double conv_lattice[3][3],
                                        SPGCONST double (*orig_lattice)[3],
@@ -464,6 +541,16 @@ static int match_hall_symbol_db_others(double origin_shift[3],
                                        const Holohedry holohedry,
                                        const Symmetry *conv_symmetry,
                                        const double symprec);
+static int match_hall_symbol_db_change_of_basis_loop(
+  double origin_shift[3],
+  double conv_lattice[3][3],
+  SPGCONST double (*orig_lattice)[3],
+  SPGCONST double (*change_of_basis)[3][3],
+  const int num_change_of_basis,
+  const int hall_number,
+  const Centering centering,
+  const Symmetry *conv_symmetry,
+  const double symprec);
 static Symmetry * get_conventional_symmetry(SPGCONST double tmat[3][3],
                                             const Centering centering,
                                             const Symmetry *primitive_sym);
@@ -473,10 +560,11 @@ static Centering get_centering(double correction_mat[3][3],
 static Centering get_base_center(SPGCONST int tmat[3][3]);
 static int get_centering_shifts(double shift[3][3],
                                 const Centering centering);
-static int flip_axes(double tmat[3][3],
-                     SPGCONST double lattice[3][3],
-                     SPGCONST double orig_lattice[3][3],
-                     const double symprec);
+static int is_equivalent_lattice(double tmat[3][3],
+                                 const int allow_flip,
+                                 SPGCONST double lattice[3][3],
+                                 SPGCONST double orig_lattice[3][3],
+                                 const double symprec);
 
 /* Return spacegroup.number = 0 if failed */
 Spacegroup * spa_search_spacegroup(const Primitive * primitive,
@@ -867,6 +955,9 @@ static int search_hall_number(double origin_shift[3],
   hall_number = 0;
   conv_symmetry = NULL;
 
+  /* For rhombohedral system, basis vectors for hP */
+  /* (hexagonal lattice basis) are provided by tmat_int, */
+  /* but may be either obverse or reverse setting. */
   pointgroup = ptg_get_transformation_matrix(tmat_int,
                                              symmetry->rot,
                                              symmetry->size);
@@ -900,6 +991,9 @@ static int search_hall_number(double origin_shift[3],
     }
   }
 
+  /* For rhombohedral system, correction matrix to hR */
+  /* (a=b=c primitive lattice basis) is returned judging */
+  /* either obverse or reverse setting. centering=R_CENTER. */
   if ((centering = get_centering(correction_mat,
                                  tmat_int,
                                  pointgroup.laue)) == CENTERING_ERROR) {
@@ -913,17 +1007,16 @@ static int search_hall_number(double origin_shift[3],
   debug_print("tranformation matrix\n");
   debug_print_matrix_d3(tmat);
 
+  /* For rhombohedral system, symmetry for a=b=c primitive lattice */
+  /* basis is returned although centering == R_CENTER. */
   if ((conv_symmetry = get_initial_conventional_symmetry(centering,
                                                          tmat,
                                                          symmetry)) == NULL) {
     goto err;
   }
 
-  /* for (i = 0; i < 3; i++) { */
-  /*   printf("%f %f %f\n", conv_lattice[i][0], conv_lattice[i][1], conv_lattice[i][2]); */
-  /* } */
-
   for (i = 0; i < num_candidates; i++) {
+    /* Check if hall_number is that of rhombohedral. */
     if (match_hall_symbol_db(origin_shift,
                              conv_lattice, /* <-- modified only matched */
                              primitive->orig_lattice,
@@ -1176,42 +1269,28 @@ static int match_hall_symbol_db(double origin_shift[3],
     break;
 
   case TRIGO:
-    if (centering == R_CENTER) {
-      if (hall_number == 433 ||
+    if ((centering == R_CENTER) && (
+          hall_number == 433 ||
+          hall_number == 434 ||
           hall_number == 436 ||
+          hall_number == 437 ||
           hall_number == 444 ||
+          hall_number == 445 ||
           hall_number == 450 ||
+          hall_number == 451 ||
           hall_number == 452 ||
+          hall_number == 453 ||
           hall_number == 458 ||
-          hall_number == 460) {  /* Hexagonal lattice */
-        mat_multiply_matrix_d3(changed_lattice, conv_lattice, hR_to_hP);
-        if ((changed_symmetry =
-             get_conventional_symmetry(hR_to_hP, R_CENTER, symmetry)) == NULL) {
-          goto err;
-        }
-
-        is_found = hal_match_hall_symbol_db(origin_shift,
-                                            changed_lattice,
-                                            hall_number,
-                                            centering,
-                                            changed_symmetry,
-                                            symprec);
-        sym_free_symmetry(changed_symmetry);
-        changed_symmetry = NULL;
-        if (is_found) {
-          mat_copy_matrix_d3(conv_lattice, changed_lattice);
-          return 1;
-        }
-      } else {  /* Rhombohedral (a=b=c) lattice */
-        if (hal_match_hall_symbol_db(origin_shift,
-                                     conv_lattice,
-                                     hall_number,
-                                     PRIMITIVE,
-                                     symmetry,
-                                     symprec)) {
-          return 1;
-        }
-      }
+          hall_number == 459 ||
+          hall_number == 460 ||
+          hall_number == 461)) {
+      /* Rhombohedral. symmetry is for a=b=c basis. */
+      if (match_hall_symbol_db_rhombo(origin_shift,
+                                      conv_lattice,
+                                      orig_lattice,
+                                      hall_number,
+                                      symmetry,
+                                      symprec)) {return 1;}
       break;
     }
     /* Do not break for other trigonal cases */
@@ -1397,7 +1476,8 @@ static int match_hall_symbol_db_monocli_in_loop(double origin_shift[3],
   retval = 1;
   if (orig_lattice != NULL) {
     if (mat_get_determinant_d3(orig_lattice) > symprec) {
-      if (flip_axes(tmat, conv_lattice, orig_lattice, symprec)) {
+      if (is_equivalent_lattice(
+            tmat, 1, conv_lattice, orig_lattice, symprec)) {
         /* Check if not change principal angle. */
         sign = 1;
         for (j = 0; j < 3; j++) {
@@ -1519,7 +1599,8 @@ static int match_hall_symbol_db_ortho_in_loop(double origin_shift[3],
   /* Note that flipping of axes doesn't change centring. */
   mat_copy_matrix_d3(change_of_basis, change_of_basis_ortho[i]);
   if (orig_lattice != NULL) {
-    if (flip_axes(tmat, changed_lattice, orig_lattice, symprec)) {
+    if (is_equivalent_lattice(
+          tmat, 1, changed_lattice, orig_lattice, symprec)) {
       mat_multiply_matrix_d3(changed_lattice, changed_lattice, tmat);
       mat_multiply_matrix_d3(change_of_basis, change_of_basis, tmat);
     } else {
@@ -1643,7 +1724,8 @@ static int match_hall_symbol_db_cubic_in_loop(double origin_shift[3],
   mat_multiply_matrix_d3(changed_lattice, conv_lattice, change_of_basis);
 
   if (orig_lattice != NULL) {
-    if (flip_axes(tmat, changed_lattice, orig_lattice, symprec)) {
+    if (is_equivalent_lattice(
+          tmat, 1, changed_lattice, orig_lattice, symprec)) {
       mat_multiply_matrix_d3(changed_lattice, changed_lattice, tmat);
       mat_multiply_matrix_d3(change_of_basis, change_of_basis, tmat);
     } else {
@@ -1677,6 +1759,54 @@ cont:
   return 0;
 }
 
+static int match_hall_symbol_db_rhombo(double origin_shift[3],
+                                       double conv_lattice[3][3],
+                                       SPGCONST double (*orig_lattice)[3],
+                                       const int hall_number,
+                                       const Symmetry *conv_symmetry,
+                                       const double symprec)
+{
+  int is_found;
+
+  if (hall_number == 433 ||
+      hall_number == 436 ||
+      hall_number == 444 ||
+      hall_number == 450 ||
+      hall_number == 452 ||
+      hall_number == 458 ||
+      hall_number == 460) {  /* Hexagonal lattice */
+    is_found = match_hall_symbol_db_change_of_basis_loop(
+      origin_shift,
+      conv_lattice,
+      orig_lattice,
+      change_of_basis_rhombo_hex,
+      6,
+      hall_number,
+      R_CENTER,
+      conv_symmetry,
+      symprec);
+    if (is_found) {
+      /* mat_copy_matrix_d3(conv_lattice, changed_lattice); */
+      return 1;
+    } else {
+      return 0;
+    }
+  } else {  /* Rhombohedral (a=b=c) lattice */
+    return match_hall_symbol_db_change_of_basis_loop(
+      origin_shift,
+      conv_lattice,
+      orig_lattice,
+      change_of_basis_rhombo,
+      6,
+      hall_number,
+      PRIMITIVE,
+      conv_symmetry,
+      symprec);
+  }
+
+  return 0;
+}
+
 /* HEXA, TETRA, TRICLI and TRIGO but not Rhombohedral a=b=c */
 static int match_hall_symbol_db_others(double origin_shift[3],
                                        double conv_lattice[3][3],
@@ -1687,12 +1817,7 @@ static int match_hall_symbol_db_others(double origin_shift[3],
                                        const Symmetry *conv_symmetry,
                                        const double symprec)
 {
-  /* Hexagonal lattice: HEXA and TRICLI but not Rhombohedral a=b=c */
-  /*                    60-degs rotation has to be checked. */
-  /* Rhombohedral a=b=c: 6 permutation */
-  /* TETRA: flip_axes can be directly usable. */
   /* TRICLI: No check. */
-
   if (holohedry == TRICLI) {
     return hal_match_hall_symbol_db(origin_shift,
                                     conv_lattice,
@@ -1702,31 +1827,111 @@ static int match_hall_symbol_db_others(double origin_shift[3],
                                     symprec);
   }
 
-  if ((holohedry == TRIGO) && (centering == PRIMITIVE)) {
-    return hal_match_hall_symbol_db(origin_shift,
-                                    conv_lattice,
-                                    hall_number,
-                                    centering,
-                                    conv_symmetry,
-                                    symprec);
-  }
-
+  /* TETRA: Check over 4 fold rotations with/without flipping c-axis */
   if (holohedry == TETRA) {
-    return hal_match_hall_symbol_db(origin_shift,
-                                    conv_lattice,
-                                    hall_number,
-                                    centering,
-                                    conv_symmetry,
-                                    symprec);
+    return match_hall_symbol_db_change_of_basis_loop(
+      origin_shift,
+      conv_lattice,
+      orig_lattice,
+      change_of_basis_C4,
+      8,
+      hall_number,
+      centering,
+      conv_symmetry,
+      symprec);
   }
 
-  /* Hexagonal lattice */
-  return hal_match_hall_symbol_db(origin_shift,
-                                  conv_lattice,
-                                  hall_number,
-                                  centering,
-                                  conv_symmetry,
-                                  symprec);
+  /* HEXA and TRIGO but not Rhombohedral: */
+  /*    Check over 6 fold rotations with/without flipping c-axis */
+  return match_hall_symbol_db_change_of_basis_loop(
+    origin_shift,
+    conv_lattice,
+    orig_lattice,
+    change_of_basis_C6,
+    12,
+    hall_number,
+    centering,
+    conv_symmetry,
+    symprec);
+}
+
+static int match_hall_symbol_db_change_of_basis_loop(
+  double origin_shift[3],
+  double conv_lattice[3][3],
+  SPGCONST double (*orig_lattice)[3],
+  SPGCONST double (*change_of_basis)[3][3],
+  const int num_change_of_basis,
+  const int hall_number,
+  const Centering centering,
+  const Symmetry *conv_symmetry,
+  const double symprec)
+{
+  int i, is_found;
+  double changed_lattice[3][3], tmat[3][3];
+  Symmetry *changed_symmetry;
+  Centering centering_for_symmetry;
+
+  changed_symmetry = NULL;
+
+  if (centering == R_CENTER) {
+    centering_for_symmetry = R_CENTER;
+  } else {
+    centering_for_symmetry = PRIMITIVE;
+  }
+
+  /* Check of similarity of basis vectors to those of input */
+  if (orig_lattice != NULL) {
+    if (mat_get_determinant_d3(orig_lattice) > symprec) {
+      for (i = 0; i < num_change_of_basis; i++) {
+        if ((changed_symmetry = get_conventional_symmetry(
+               change_of_basis[i], centering_for_symmetry, conv_symmetry))
+            == NULL) {
+          continue;
+        }
+        mat_multiply_matrix_d3(
+          changed_lattice, conv_lattice, change_of_basis[i]);
+        if (is_equivalent_lattice(
+              tmat, 0, changed_lattice, orig_lattice, symprec)) {
+          /* Here R_CENTER means hP (hexagonal) setting. */
+          is_found = hal_match_hall_symbol_db(origin_shift,
+                                              changed_lattice,
+                                              hall_number,
+                                              centering,
+                                              changed_symmetry,
+                                              symprec);
+        } else {
+          is_found = 0;
+        }
+        sym_free_symmetry(changed_symmetry);
+        changed_symmetry = NULL;
+        if (is_found) {
+          mat_copy_matrix_d3(conv_lattice, changed_lattice);
+          return 1;
+        }
+      }
+    }
+  }
+
+  /* No check of similarity of basis vectors to those of input */
+  for (i = 0; i < num_change_of_basis; i++) {
+    if ((changed_symmetry = get_conventional_symmetry(
+           change_of_basis[i], centering_for_symmetry, conv_symmetry)) == NULL) {
+      continue;
+    }
+    mat_multiply_matrix_d3(changed_lattice, conv_lattice, change_of_basis[i]);
+    is_found = hal_match_hall_symbol_db(origin_shift,
+                                        changed_lattice,
+                                        hall_number,
+                                        centering,
+                                        changed_symmetry,
+                                        symprec);
+    sym_free_symmetry(changed_symmetry);
+    changed_symmetry = NULL;
+    if (is_found) {
+      mat_copy_matrix_d3(conv_lattice, changed_lattice);
+      return 1;
+    }
+  }
 
   return 0;
 }
@@ -1994,41 +2199,44 @@ static int get_centering_shifts(double shift[3][3],
   return multi;
 }
 
-/* Flip axes when abs(P)=I but P!=I. */
+/* allow_flip: Flip axes when abs(P)=I but P!=I. */
 /* lattice is overwritten. */
-static int flip_axes(double tmat[3][3],
-                     SPGCONST double lattice[3][3],
-                     SPGCONST double orig_lattice[3][3],
-                     const double symprec)
+static int is_equivalent_lattice(double tmat[3][3],
+                                 const int allow_flip,
+                                 SPGCONST double lattice[3][3],
+                                 SPGCONST double orig_lattice[3][3],
+                                 const double symprec)
 {
   int i, j;
-  double inv_lat[3][3];
-  int tmat_int[3][3], tmat_abs[3][3];
+  double inv_lat[3][3], tmat_abs[3][3];
 
   if (mat_Dabs(mat_get_determinant_d3(lattice) -
                mat_get_determinant_d3(orig_lattice)) > symprec) {
-    return 0;  /* Do nothing */
+    goto fail;
   }
 
   if (!mat_inverse_matrix_d3(inv_lat, lattice, symprec)) {
-    return 0;  /* Do nothing */
+    goto fail;
   }
 
   mat_multiply_matrix_d3(tmat, inv_lat, orig_lattice);
-  mat_cast_matrix_3d_to_3i(tmat_int, tmat);
 
-  for (i = 0; i < 3; i++) {
-    for (j = 0; j < 3; j++) {
-      if (mat_Dabs(tmat_int[i][j] - tmat[i][j]) > symprec) {
-        return 0;  /* Do nothing */
+  if (allow_flip) {
+    for (i = 0; i < 3; i++) {
+      for (j = 0; j < 3; j++) {
+        tmat_abs[i][j] = mat_Dabs(tmat[i][j]);
       }
-      tmat_abs[i][j] = abs(tmat_int[i][j]);
+    }
+
+    if (mat_check_identity_matrix_d3(identity, tmat_abs, symprec)) {
+      return 1;
+    }
+  } else {
+    if (mat_check_identity_matrix_d3(identity, tmat, symprec)) {
+      return 1;
     }
   }
 
-  if (!mat_check_identity_matrix_i3(identity_int, tmat_abs)) {
-    return 0;  /* Do nothing */
-  }
-
-  return 1;
+fail:
+  return 0;
 }
