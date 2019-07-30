@@ -84,6 +84,7 @@ class TestSpglib(unittest.TestCase):
             for i in range(spg_to_hall[spgnum - 1], spg_to_hall[spgnum]):
                 dataset = get_symmetry_dataset(cell, hall_number=i,
                                                symprec=symprec)
+                self.assertEqual(type(dataset), dict, msg=("%s/%d" % (fname, i)))
                 self.assertEqual(dataset['hall_number'], i, msg=("%s" % fname))
                 spg_type = get_spacegroup_type(dataset['hall_number'])
                 self.assertEqual(dataset['international'],
