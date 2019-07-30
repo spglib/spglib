@@ -1,19 +1,34 @@
+2019-07-30  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.14
+
+	Improvement against cyclic point change over applying
+	standardizaion repeatedly. More specifically, when we have an
+	input crystal structre, we standardize it by spglib then we may
+	get another structure. We apply the standardization again to this
+	standardized structure and we get another structure. Some people
+	may expect after several iteration, the input and output
+	structures become same. This version provides some improvement on
+	this. But unfortunately it could not be perfect, for example, this
+	can be not working for crystal structures having special metrics
+	given in the table of Euclidean normalizer section of ITA.
+
 2019-07-02  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.13
-	
+
 	* src/spacegroup.c (match_hall_symbol_db_ortho, match_hall_symbol_db_monocli):
 
 	Fix Issue#57 of SeekPath: Standardizations of choices of a,b,c axes
 	for Cmma (67), Ccca(68), Ibca(73), Imma(74) were fixed. For
 	monoclinic systems, lengths of non-unique axes are now checked by a
 	exhaustive way.
-	
+
 	* src/kpoint.c (check_mesh_symmetry):
 
 	Issue#79: Treatment of ir-kpoint search for special cases with three fold
 	rotation (e.g., hexagonal or primitive FCC).
-	
+
 2019-02-06  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.12.2
