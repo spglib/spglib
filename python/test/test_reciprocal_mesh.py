@@ -737,20 +737,20 @@ class TestReciprocalMesh(unittest.TestCase):
             np.testing.assert_equal(data_map, bz_map)
 
     def test_get_grid_points_and_bz_grid_points_by_rotations(self):
-        data = [[21, 31, 61, 55, 31, 61, 55, 21, 55, 21, 31, 61,
-                 61, 55, 21, 31, 61, 55, 21, 31, 55, 21, 31, 61,
-                 21, 31, 61, 55, 31, 61, 55, 21, 55, 21, 31, 61,
-                 61, 55, 21, 31, 61, 55, 21, 31, 55, 21, 31, 61],
+        data = [[21, 55, 31, 61, 61, 21, 55, 31, 21, 55, 31, 61,
+                 61, 21, 55, 31, 21, 55, 31, 61, 61, 21, 55, 31,
+                 21, 55, 31, 61, 61, 21, 55, 31, 21, 55, 31, 61,
+                 61, 21, 55, 31, 21, 55, 31, 61, 61, 21, 55, 31],
                 [21, 30, 25, 31, 22, 27, 31, 22, 27, 21, 30, 25],
                 [13, 3, 18, 1, 2, 26, 6, 9, 13, 3, 18, 1, 2, 26,
                  6, 9, 13, 3, 18, 1, 2, 26, 6, 9, 26, 6, 9, 2, 1,
                  13, 3, 18, 26, 6, 9, 2, 1, 13, 3, 18, 26, 6, 9,
                  2, 1, 13, 3, 18]]
 
-        data_bz = [[21, 31, 61, 55, 31, 61, 55, 21, 55, 21, 31, 61,
-                    61, 55, 21, 31, 61, 55, 21, 31, 55, 21, 31, 61,
-                    21, 31, 61, 55, 31, 61, 55, 21, 55, 21, 31, 61,
-                    61, 55, 21, 31, 61, 55, 21, 31, 55, 21, 31, 61],
+        data_bz = [[21, 55, 31, 61, 61, 21, 55, 31, 21, 55, 31, 61,
+                    61, 21, 55, 31, 21, 55, 31, 61, 61, 21, 55, 31,
+                    21, 55, 31, 61, 61, 21, 55, 31, 21, 55, 31, 61,
+                    61, 21, 55, 31, 21, 55, 31, 61, 61, 21, 55, 31],
                    [21, 30, 25, 31, 22, 27, 56, 43, 52, 42, 55, 48],
                    [13, 3, 18, 1, 2, 26, 6, 9, 13, 3, 18, 1, 2, 26,
                     6, 9, 13, 3, 18, 1, 2, 26, 6, 9, 26, 6, 9, 2, 1,
@@ -766,6 +766,14 @@ class TestReciprocalMesh(unittest.TestCase):
                                                rec_rots,
                                                mesh,
                                                is_dense=False)
+
+            # The order of numbers of data[i] can change when the order
+            # of rotations changes. But frequencies should not change.
+            # for n in np.unique(data[i]):
+            #     print(n, (data[i] == n).sum())
+            # for n in np.unique(gps):
+            #     print(n, (gps == n).sum())
+
             # print(i)
             # print(", ".join(["%d" % g for g in gps]))
 
@@ -785,6 +793,7 @@ class TestReciprocalMesh(unittest.TestCase):
                                                      mesh,
                                                      bz_map,
                                                      is_dense=False)
+
             # print(i)
             # print(", ".join(["%d" % g for g in bz_gps]))
 
