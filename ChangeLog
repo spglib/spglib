@@ -1,5 +1,11 @@
 2019-07-30  Atsushi Togo  <atz.togo@gmail.com>
 
+	* Version 1.14.1
+
+	Version number increment just to release pypi package.
+
+2019-07-30  Atsushi Togo  <atz.togo@gmail.com>
+
 	* Version 1.14
 
 	Improvement against cyclic point change over applying
