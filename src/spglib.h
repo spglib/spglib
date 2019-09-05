@@ -237,6 +237,34 @@ extern "C" {
                                              const double symprec,
                                              const double angle_tolerance);
 
+/* Return 0 if failed */
+  int spg_get_symmetry_with_site_tensors(int rotation[][3][3],
+                                         double translation[][3],
+                                         int equivalent_atoms[],
+                                         const int max_size,
+                                         SPGCONST double lattice[3][3],
+                                         SPGCONST double position[][3],
+                                         const int types[],
+                                         const double *tensors,
+                                         const int tensor_rank,
+                                         const int num_atom,
+                                         const int is_magnetic,
+                                         const double symprec);
+
+  int spgat_get_symmetry_with_site_tensors(int rotation[][3][3],
+                                           double translation[][3],
+                                           int equivalent_atoms[],
+                                           const int max_size,
+                                           SPGCONST double lattice[3][3],
+                                           SPGCONST double position[][3],
+                                           const int types[],
+                                           const double *tensors,
+                                           const int tensor_rank,
+                                           const int num_atom,
+                                           const int is_magnetic,
+                                           const double symprec,
+                                           const double angle_tolerance);
+
 /* Space group type (hall_number) is searched from symmetry operations. */
   int spg_get_hall_number_from_symmetry(SPGCONST int rotation[][3][3],
                                         SPGCONST double translation[][3],

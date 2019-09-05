@@ -42,9 +42,9 @@
 
 static Symmetry * get_operations(const Symmetry *sym_nonspin,
                                  const Cell *cell,
-                                 const double *spins,
-                                 const int dim,
-                                 const int is_noncollinear,
+                                 const double *tensors,
+                                 const int tensor_rank,
+                                 const int is_magnetic,
                                  const double symprec);
 static int set_equivalent_atoms(int * equiv_atoms,
                                 const Symmetry *symmetry,
@@ -53,24 +53,26 @@ static int set_equivalent_atoms(int * equiv_atoms,
 static int * get_mapping_table(const Symmetry *symmetry,
                                const Cell * cell,
                                const double symprec);
-static int check_collinear_spin(const int spin_j,
-                                const int spin_k,
-                                const int sign,
-                                const double symprec);
+static int check_spin(const int spin_j,
+                      const int spin_k,
+                      const int sign,
+                      const double symprec);
 static int check_vector(const int j,
                         const int k,
                         const double* spins,
                         SPGCONST int rot[3][3],
                         SPGCONST double lattice[3][3],
-                        const int is_noncollinear,
+                        const int is_magnetic,
                         const double symprec);
 
 /* Return NULL if failed */
-Symmetry * spn_get_collinear_operations(int equiv_atoms[],
-                                        const Symmetry *sym_nonspin,
-                                        const Cell *cell,
-                                        const double spins[],
-                                        const double symprec)
+Symmetry * spn_get_operations_with_site_tensors(int equiv_atoms[],
+                                                const Symmetry *sym_nonspin,
+                                                const Cell *cell,
+                                                const double *tensors,
+                                                const int tensor_rank,
+                                                const int is_magnetic,
+                                                const double symprec)
 {
   Symmetry *symmetry;
 
@@ -78,9 +80,9 @@ Symmetry * spn_get_collinear_operations(int equiv_atoms[],
 
   if ((symmetry = get_operations(sym_nonspin,
                                  cell,
-                                 spins,
-                                 1,
-                                 0,
+                                 tensors,
+                                 tensor_rank,
+                                 is_magnetic,
                                  symprec)) == NULL) {
     return NULL;
   }
@@ -99,9 +101,9 @@ Symmetry * spn_get_collinear_operations(int equiv_atoms[],
 /* Return NULL if failed */
 static Symmetry * get_operations(const Symmetry *sym_nonspin,
                                  const Cell *cell,
-                                 const double *spins,
-                                 const int dim,
-                                 const int is_noncollinear,
+                                 const double *tensors,
+                                 const int tensor_rank,
+                                 const int is_magnetic,
                                  const double symprec)
 {
   Symmetry *symmetry;
@@ -115,7 +117,7 @@ static Symmetry * get_operations(const Symmetry *sym_nonspin,
   num_sym = 0;
 
   for (i = 0; i < sym_nonspin->size; i++) {
-    /* Set sign as undetermined (used for collinear spin case (dim = 1) */
+    /* Set sign as undetermined (used for collinear spin case (rank = 0) */
     sign = 0;
     for (j = 0; j < cell->size; j++) {
       mat_multiply_matrix_vector_id3(pos, sym_nonspin->rot[i], cell->position[j]);
@@ -129,13 +131,21 @@ static Symmetry * get_operations(const Symmetry *sym_nonspin,
                                           cell->types[j],
                                           cell->lattice,
                                           symprec)) {
-          if (dim == 1) {
-            sign = check_collinear_spin(spins[j], spins[k], sign, symprec);
-            is_found = abs(sign);
+          if (tensor_rank == 0) {
+            if (is_magnetic) {
+              sign = check_spin(tensors[j], tensors[k], sign, symprec);
+              is_found = abs(sign);
+            } else {
+              if (mat_Dabs(tensors[j] - tensors[k]) < symprec) {
+                is_found = 1;
+              } else {
+                is_found = 0;
+              }
+            }
           }
-          if (dim == 3) {
-            is_found = check_vector(j, k, spins, sym_nonspin->rot[i],
-                                    cell->lattice, is_noncollinear, symprec);
+          if (tensor_rank == 1) {
+            is_found = check_vector(j, k, tensors, sym_nonspin->rot[i],
+                                    cell->lattice, is_magnetic, symprec);
           }
           break;
         }
@@ -283,10 +293,10 @@ static int * get_mapping_table(const Symmetry *symmetry,
   return mapping_table;
 }
 
-static int check_collinear_spin(const int spin_j,
-                                const int spin_k,
-                                const int sign,
-                                const double symprec)
+static int check_spin(const int spin_j,
+                      const int spin_k,
+                      const int sign,
+                      const double symprec)
 {
   if (sign == 0) {
     if (mat_Dabs(spin_j - spin_k) < symprec) {
@@ -307,38 +317,38 @@ static int check_collinear_spin(const int spin_j,
 
 static int check_vector(const int j,
                         const int k,
-                        const double* spins,
+                        const double* vectors,
                         SPGCONST int rot[3][3],
                         SPGCONST double lattice[3][3],
-                        const int is_noncollinear,
+                        const int is_magnetic,
                         const double symprec)
 {
   int i, detR;
   double vec_j[3], vec_jp[3], diff[3];
   double inv_lat[3][3], rot_cart[3][3];
 
-  /* is_noncollinear: Non-collinear magnetic moment m' = |detR|Rm */
-  /* !is_noncollinear: Usual vector: v' = Rv */
+  /* is_magnetic: Non-collinear magnetic moment m' = |detR|Rm */
+  /* !is_magnetic: Usual vector: v' = Rv */
 
   mat_inverse_matrix_d3(inv_lat, lattice, 0);
   mat_multiply_matrix_id3(rot_cart, rot, inv_lat);
   mat_multiply_matrix_d3(rot_cart, lattice, rot_cart);
 
   for (i = 0; i < 3; i++) {
-    vec_j[i] = spins[j * 3 + i];
+    vec_j[i] = vectors[j * 3 + i];
   }
 
   /* v_j' = R v_j */
   mat_multiply_matrix_vector_d3(vec_jp, rot_cart, vec_j);
 
-  if (is_noncollinear) {
+  if (is_magnetic) {
     detR = mat_get_determinant_i3(rot);
     for (i = 0; i < 3; i++) {
-      diff[i] = mat_Dabs(detR * vec_jp[i] - spins[k * 3 + i]);
+      diff[i] = mat_Dabs(detR * vec_jp[i] - vectors[k * 3 + i]);
     }
   } else {
     for (i = 0; i < 3; i++) {
-      diff[i] = mat_Dabs(vec_jp[i] - spins[k * 3 + i]);
+      diff[i] = mat_Dabs(vec_jp[i] - vectors[k * 3 + i]);
     }
   }
 

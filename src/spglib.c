@@ -103,17 +103,19 @@ static int get_symmetry_from_dataset(int rotation[][3][3],
                                      const int num_atom,
                                      const double symprec,
                                      const double angle_tolerance);
-static int get_symmetry_with_collinear_spin(int rotation[][3][3],
-                                            double translation[][3],
-                                            int equivalent_atoms[],
-                                            const int max_size,
-                                            SPGCONST double lattice[3][3],
-                                            SPGCONST double position[][3],
-                                            const int types[],
-                                            const double spins[],
-                                            const int num_atom,
-                                            const double symprec,
-                                            const double angle_tolerance);
+static int get_symmetry_with_site_tensors(int rotation[][3][3],
+                                          double translation[][3],
+                                          int equivalent_atoms[],
+                                          const int max_size,
+                                          SPGCONST double lattice[3][3],
+                                          SPGCONST double position[][3],
+                                          const int types[],
+                                          const double *tensors,
+                                          const int tensor_rank,
+                                          const int num_atom,
+                                          const int is_magnetic,
+                                          const double symprec,
+                                          const double angle_tolerance);
 static int get_multiplicity(SPGCONST double lattice[3][3],
                             SPGCONST double position[][3],
                             const int types[],
@@ -426,17 +428,19 @@ int spg_get_symmetry_with_collinear_spin(int rotation[][3][3],
                                          const int num_atom,
                                          const double symprec)
 {
-  return get_symmetry_with_collinear_spin(rotation,
-                                          translation,
-                                          equivalent_atoms,
-                                          max_size,
-                                          lattice,
-                                          position,
-                                          types,
-                                          spins,
-                                          num_atom,
-                                          symprec,
-                                          -1.0);
+  return get_symmetry_with_site_tensors(rotation,
+                                        translation,
+                                        equivalent_atoms,
+                                        max_size,
+                                        lattice,
+                                        position,
+                                        types,
+                                        spins,
+                                        0,
+                                        num_atom,
+                                        1,
+                                        symprec,
+                                        -1.0);
 }
 
 /* Return 0 if failed */
@@ -452,17 +456,77 @@ int spgat_get_symmetry_with_collinear_spin(int rotation[][3][3],
                                            const double symprec,
                                            const double angle_tolerance)
 {
-  return get_symmetry_with_collinear_spin(rotation,
-                                          translation,
-                                          equivalent_atoms,
-                                          max_size,
-                                          lattice,
-                                          position,
-                                          types,
-                                          spins,
-                                          num_atom,
-                                          symprec,
-                                          angle_tolerance);
+  return get_symmetry_with_site_tensors(rotation,
+                                        translation,
+                                        equivalent_atoms,
+                                        max_size,
+                                        lattice,
+                                        position,
+                                        types,
+                                        spins,
+                                        0,
+                                        num_atom,
+                                        1,
+                                        symprec,
+                                        angle_tolerance);
+}
+
+/* Return 0 if failed */
+int spg_get_symmetry_with_site_tensors(int rotation[][3][3],
+                                       double translation[][3],
+                                       int equivalent_atoms[],
+                                       const int max_size,
+                                       SPGCONST double lattice[3][3],
+                                       SPGCONST double position[][3],
+                                       const int types[],
+                                       const double *tensors,
+                                       const int tensor_rank,
+                                       const int num_atom,
+                                       const int is_magnetic,
+                                       const double symprec)
+{
+  return get_symmetry_with_site_tensors(rotation,
+                                        translation,
+                                        equivalent_atoms,
+                                        max_size,
+                                        lattice,
+                                        position,
+                                        types,
+                                        tensors,
+                                        tensor_rank,
+                                        num_atom,
+                                        is_magnetic,
+                                        symprec,
+                                        -1.0);
+}
+
+int spgat_get_symmetry_with_site_tensors(int rotation[][3][3],
+                                         double translation[][3],
+                                         int equivalent_atoms[],
+                                         const int max_size,
+                                         SPGCONST double lattice[3][3],
+                                         SPGCONST double position[][3],
+                                         const int types[],
+                                         const double *tensors,
+                                         const int tensor_rank,
+                                         const int num_atom,
+                                         const int is_magnetic,
+                                         const double symprec,
+                                         const double angle_tolerance)
+{
+  return get_symmetry_with_site_tensors(rotation,
+                                        translation,
+                                        equivalent_atoms,
+                                        max_size,
+                                        lattice,
+                                        position,
+                                        types,
+                                        tensors,
+                                        tensor_rank,
+                                        num_atom,
+                                        is_magnetic,
+                                        symprec,
+                                        angle_tolerance);
 }
 
 int spg_get_hall_number_from_symmetry(SPGCONST int rotation[][3][3],
@@ -1426,17 +1490,19 @@ static int get_symmetry_from_dataset(int rotation[][3][3],
 }
 
 /* Return 0 if failed */
-static int get_symmetry_with_collinear_spin(int rotation[][3][3],
-                                            double translation[][3],
-                                            int equivalent_atoms[],
-                                            const int max_size,
-                                            SPGCONST double lattice[3][3],
-                                            SPGCONST double position[][3],
-                                            const int types[],
-                                            const double spins[],
-                                            const int num_atom,
-                                            const double symprec,
-                                            const double angle_tolerance)
+static int get_symmetry_with_site_tensors(int rotation[][3][3],
+                                          double translation[][3],
+                                          int equivalent_atoms[],
+                                          const int max_size,
+                                          SPGCONST double lattice[3][3],
+                                          SPGCONST double position[][3],
+                                          const int types[],
+                                          const double *tensors,
+                                          const int tensor_rank,
+                                          const int num_atom,
+                                          const int is_magnetic,
+                                          const double symprec,
+                                          const double angle_tolerance)
 {
   int i, size;
   Symmetry *symmetry, *sym_nonspin;
@@ -1486,11 +1552,13 @@ static int get_symmetry_with_collinear_spin(int rotation[][3][3],
   dataset = NULL;
 #endif
 
-  if ((symmetry = spn_get_collinear_operations(equivalent_atoms,
-                                               sym_nonspin,
-                                               cell,
-                                               spins,
-                                               symprec)) == NULL) {
+  if ((symmetry = spn_get_operations_with_site_tensors(equivalent_atoms,
+                                                       sym_nonspin,
+                                                       cell,
+                                                       tensors,
+                                                       tensor_rank,
+                                                       is_magnetic,
+                                                       symprec)) == NULL) {
     sym_free_symmetry(sym_nonspin);
     sym_nonspin = NULL;
     cel_free_cell(cell);
