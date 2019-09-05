@@ -135,19 +135,18 @@ def get_symmetry(cell,
                     'equivalent_atoms': dataset['equivalent_atoms']}
     else:
         equivalent_atoms = np.zeros(len(magmoms), dtype='intc')
-        if len(magmoms) == len(numbers):
-            # (magmoms.ndim - 1) has to be equal to the rank of physical
-            # tensors, e.g., ndim=1 for collinear, ndim=2 for non-collinear.
-            num_sym = spg.symmetry_with_site_tensors(rotation,
-                                                     translation,
-                                                     equivalent_atoms,
-                                                     lattice,
-                                                     positions,
-                                                     numbers,
-                                                     magmoms,
-                                                     is_magnetic * 1,
-                                                     symprec,
-                                                     angle_tolerance)
+        # (magmoms.ndim - 1) has to be equal to the rank of physical
+        # tensors, e.g., ndim=1 for collinear, ndim=2 for non-collinear.
+        num_sym = spg.symmetry_with_site_tensors(rotation,
+                                                 translation,
+                                                 equivalent_atoms,
+                                                 lattice,
+                                                 positions,
+                                                 numbers,
+                                                 magmoms,
+                                                 is_magnetic * 1,
+                                                 symprec,
+                                                 angle_tolerance)
 
         _set_error_message()
         if num_sym == 0:
@@ -958,8 +957,6 @@ def _check(lattice, positions, numbers, magmoms):
     if len(numbers) != positions.shape[0]:
         return False
     if magmoms is not None:
-        if magmoms.ndim != 1:
-            return False
         if len(magmoms) != len(numbers):
             return False
     return True
