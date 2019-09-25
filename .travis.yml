@@ -59,7 +59,7 @@ before_install:
       conda install --yes pip;
     else
       conda install --yes pip numpy pyyaml nomkl;
-    fi
+    fi;
   fi
 - pwd
 
@@ -76,7 +76,7 @@ install:
       cp wheelhouse/spglib* dist/;
       ls dist/;
       cd ..;
-    fi
+    fi;
   fi
 
 script:
