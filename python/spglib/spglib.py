@@ -118,28 +118,28 @@ def get_symmetry(cell,
     if lattice is None:
         return None
 
-    multi = 48 * len(positions)
-    rotation = np.zeros((multi, 3, 3), dtype='intc')
-    translation = np.zeros((multi, 3), dtype='double')
+    # Get symmetry operations without on-site tensors (i.e. normal crystal)
+    dataset = get_symmetry_dataset(cell,
+                                   symprec=symprec,
+                                   angle_tolerance=angle_tolerance)
+    if dataset is None:
+        return None
 
-    # Get symmetry operations
     if magmoms is None:
-        dataset = get_symmetry_dataset(cell,
-                                       symprec=symprec,
-                                       angle_tolerance=angle_tolerance)
-        if dataset is None:
-            return None
-        else:
-            return {'rotations': dataset['rotations'],
-                    'translations': dataset['translations'],
-                    'equivalent_atoms': dataset['equivalent_atoms']}
+        return {'rotations': dataset['rotations'],
+                'translations': dataset['translations'],
+                'equivalent_atoms': dataset['equivalent_atoms']}
     else:
+        rotations = dataset['rotations']
+        translations = dataset['translations']
         equivalent_atoms = np.zeros(len(magmoms), dtype='intc')
+        primitive_lattice = np.zeros((3, 3), dtype='double', order='C')
         # (magmoms.ndim - 1) has to be equal to the rank of physical
         # tensors, e.g., ndim=1 for collinear, ndim=2 for non-collinear.
-        num_sym = spg.symmetry_with_site_tensors(rotation,
-                                                 translation,
+        num_sym = spg.symmetry_with_site_tensors(rotations,
+                                                 translations,
                                                  equivalent_atoms,
+                                                 primitive_lattice,
                                                  lattice,
                                                  positions,
                                                  numbers,
@@ -152,11 +152,12 @@ def get_symmetry(cell,
         if num_sym == 0:
             return None
         else:
-            return {'rotations': np.array(rotation[:num_sym],
+            return {'rotations': np.array(rotations[:num_sym],
                                           dtype='intc', order='C'),
-                    'translations': np.array(translation[:num_sym],
+                    'translations': np.array(translations[:num_sym],
                                              dtype='double', order='C'),
-                    'equivalent_atoms': equivalent_atoms}
+                    'equivalent_atoms': equivalent_atoms,
+                    'primitive_lattice': primitive_lattice}
 
 
 def get_symmetry_dataset(cell,
@@ -189,8 +190,11 @@ def get_symmetry_dataset(cell,
                 [(r,t) for r, t in zip(rotations, translations)]
             wyckoffs (n char): Wyckoff letters
             equivalent_atoms (n int): Symmetrically equivalent atoms
-            mapping_to_primitive (n int):
-                Original cell atom index mapping to primivie cell atom index
+            Primitive cell:
+                primitive_lattice (3x3 float, row vectors):
+                    Shape of cell by these basis vectors may not be nice.
+                mapping_to_primitive (n int):
+                    Atom index mapping from original cell to primivie cell
             Idealized standardized unit cell:
                 std_lattice (3x3 float, row vectors),
                 std_positions (Nx3 float), std_types (N int)
@@ -229,6 +233,7 @@ def get_symmetry_dataset(cell,
             'wyckoffs',
             'site_symmetry_symbols',
             'equivalent_atoms',
+            'primitive_lattice',
             'mapping_to_primitive',
             'std_lattice',
             'std_types',
@@ -257,6 +262,9 @@ def get_symmetry_dataset(cell,
         s.strip() for s in dataset['site_symmetry_symbols']]
     dataset['equivalent_atoms'] = np.array(dataset['equivalent_atoms'],
                                            dtype='intc')
+    dataset['primitive_lattice'] = np.array(
+        np.transpose(dataset['primitive_lattice']),
+        dtype='double', order='C')
     dataset['mapping_to_primitive'] = np.array(dataset['mapping_to_primitive'],
                                                dtype='intc')
     dataset['std_lattice'] = np.array(np.transpose(dataset['std_lattice']),

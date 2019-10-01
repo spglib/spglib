@@ -220,7 +220,7 @@ static PyObject * py_get_dataset(PyObject *self, PyObject *args)
   PyArrayObject* py_atom_types;
 
   PyObject *array, *vec, *mat, *rot, *trans, *wyckoffs, *equiv_atoms;
-  PyObject *site_symmetry_symbols, *mapping_to_primitive;
+  PyObject *site_symmetry_symbols, *primitive_lattice, *mapping_to_primitive;
   PyObject *std_lattice, *std_types, *std_positions, *std_mapping_to_primitive;
   PyObject *std_rotation;
 
@@ -256,7 +256,7 @@ static PyObject * py_get_dataset(PyObject *self, PyObject *args)
     Py_RETURN_NONE;
   }
 
-  len_list = 19;
+  len_list = 20;
   array = PyList_New(len_list);
   n = 0;
 
@@ -341,6 +341,18 @@ static PyObject * py_get_dataset(PyObject *self, PyObject *args)
   n++;
   PyList_SetItem(array, n, equiv_atoms);
   n++;
+
+  primitive_lattice = PyList_New(3);
+  for (i = 0; i < 3; i++) {
+    vec = PyList_New(3);
+    for (j = 0; j < 3; j++) {
+      PyList_SetItem(vec, j, PyFloat_FromDouble(dataset->primitive_lattice[i][j]));
+    }
+    PyList_SetItem(primitive_lattice, i, vec);
+  }
+  PyList_SetItem(array, n, primitive_lattice);
+  n++;
+
   PyList_SetItem(array, n, mapping_to_primitive);
   n++;
 
@@ -752,6 +764,8 @@ static PyObject * py_get_symmetry_with_site_tensors(PyObject *self,
   PyArrayObject* py_atom_types;
   PyArrayObject* py_tensors;
   PyArrayObject* py_equiv_atoms;
+  PyArrayObject* py_primitive_lattice;
+
   int is_magnetic;
 
   double (*lat)[3];
@@ -762,14 +776,16 @@ static PyObject * py_get_symmetry_with_site_tensors(PyObject *self,
   int (*rot)[3][3];
   double (*trans)[3];
   int *equiv_atoms;
+  double (*primitive_lattice)[3];
   int num_sym_from_array_size;
   int num_sym;
   int tensor_rank;
 
-  if (!PyArg_ParseTuple(args, "OOOOOOOidd",
+  if (!PyArg_ParseTuple(args, "OOOOOOOOidd",
                         &py_rotations,
                         &py_translations,
                         &py_equiv_atoms,
+                        &py_primitive_lattice,
                         &py_lattice,
                         &py_positions,
                         &py_atom_types,
@@ -788,6 +804,7 @@ static PyObject * py_get_symmetry_with_site_tensors(PyObject *self,
   rot = (int(*)[3][3])PyArray_DATA(py_rotations);
   trans = (double(*)[3])PyArray_DATA(py_translations);
   equiv_atoms = (int*)PyArray_DATA(py_equiv_atoms);
+  primitive_lattice = (double(*)[3])PyArray_DATA(py_primitive_lattice);
   num_sym_from_array_size = PyArray_DIMS(py_rotations)[0];
   tensor_rank = PyArray_NDIM(py_tensors) - 1;
 
@@ -795,6 +812,7 @@ static PyObject * py_get_symmetry_with_site_tensors(PyObject *self,
   num_sym = spgat_get_symmetry_with_site_tensors(rot,
                                                  trans,
                                                  equiv_atoms,
+                                                 primitive_lattice,
                                                  num_sym_from_array_size,
                                                  lat,
                                                  pos,

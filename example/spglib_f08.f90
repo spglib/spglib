@@ -34,6 +34,7 @@
       integer(c_int), allocatable :: wyckoffs(:)
       character(len=7), allocatable :: site_symmetry_symbols(:)
       integer(c_int), allocatable :: equivalent_atoms(:) !Beware mapping refers to positions starting at 0
+      real(c_double) :: primitive_lattice(3,3)
       integer(c_int), allocatable :: mapping_to_primitive(:)
       integer(c_int) :: n_std_atoms
       real(c_double) :: std_lattice(3,3)
@@ -77,10 +78,12 @@
 
 
    function spg_get_symmetry_with_collinear_spin( rotation, translation, &
-      & max_size, lattice, position, types, spins, num_atom, symprec) bind(c)
+        & equivalent_atoms, max_size, lattice, position, types, spins, &
+        & num_atom, symprec) bind(c)
       import c_int, c_double
       integer(c_int), intent(inout) :: rotation(3,3,*)
       real(c_double), intent(inout) :: translation(3,*)
+      integer(c_int), intent(inout) :: equivalent_atoms(*)
       integer(c_int), intent(in), value :: max_size
       real(c_double), intent(in) :: lattice(3,3), position(3,*)
       integer(c_int), intent(in) :: types(*)
@@ -92,10 +95,12 @@
 
 
    function spgat_get_symmetry_with_collinear_spin( rotation, translation, &
-      & max_size, lattice, position, types, spins, num_atom, symprec, angle_tolerance) bind(c)
+        & equivalent_atoms, max_size, lattice, position, types, spins, &
+        & num_atom, symprec, angle_tolerance) bind(c)
       import c_int, c_double
       integer(c_int), intent(inout) :: rotation(3,3,*)
       real(c_double), intent(inout) :: translation(3,*)
+      integer(c_int), intent(inout) :: equivalent_atoms(*)
       integer(c_int), intent(in), value :: max_size
       real(c_double), intent(in) :: lattice(3,3), position(3,*)
       integer(c_int), intent(in) :: types(*)
@@ -104,6 +109,47 @@
       real(c_double), intent(in), value :: symprec, angle_tolerance
       integer(c_int) :: spgat_get_symmetry_with_collinear_spin
    end function spgat_get_symmetry_with_collinear_spin
+
+
+   function spg_get_symmetry_with_site_tensors( rotation, translation, &
+        & equivalent_atoms, primitive_lattice, max_size, lattice, position, &
+        & types, tensors, tensor_rank, num_atom, is_magnetic, symprec) bind(c)
+      import c_int, c_double
+      integer(c_int), intent(inout) :: rotation(3,3,*)
+      real(c_double), intent(inout) :: translation(3,*)
+      integer(c_int), intent(inout) :: equivalent_atoms(*)
+      real(c_double), intent(inout) :: primitive_lattice(3,3)
+      integer(c_int), intent(in), value :: max_size
+      real(c_double), intent(in) :: lattice(3,3), position(3,*)
+      integer(c_int), intent(in) :: types(*)
+      real(c_double), intent(in) :: tensors(*)
+      integer(c_int), intent(in), value :: tensor_rank
+      integer(c_int), intent(in), value :: num_atom
+      integer(c_int), intent(in), value :: is_magnetic
+      real(c_double), intent(in), value :: symprec
+      integer(c_int) :: spg_get_symmetry_with_site_tensors
+   end function spg_get_symmetry_with_site_tensors
+
+
+   function spgat_get_symmetry_with_site_tensors( rotation, translation, &
+        & equivalent_atoms, primitive_lattice, max_size, lattice, position, &
+        & types, tensors, tensor_rank, num_atom, is_magnetic, symprec, &
+        & angle_tolerance) bind(c)
+      import c_int, c_double
+      integer(c_int), intent(inout) :: rotation(3,3,*)
+      real(c_double), intent(inout) :: translation(3,*)
+      integer(c_int), intent(inout) :: equivalent_atoms(*)
+      real(c_double), intent(inout) :: primitive_lattice(3,3)
+      integer(c_int), intent(in), value :: max_size
+      real(c_double), intent(in) :: lattice(3,3), position(3,*)
+      integer(c_int), intent(in) :: types(*)
+      real(c_double), intent(in) :: tensors(*)
+      integer(c_int), intent(in), value :: tensor_rank
+      integer(c_int), intent(in), value :: num_atom
+      integer(c_int), intent(in), value :: is_magnetic
+      real(c_double), intent(in), value :: symprec, angle_tolerance
+      integer(c_int) :: spgat_get_symmetry_with_site_tensors
+   end function spgat_get_symmetry_with_site_tensors
 
 
    function spg_get_multiplicity( lattice, position, types, num_atom, symprec) bind(c)
@@ -279,6 +325,8 @@
       & spg_get_symmetry, spgat_get_symmetry, &
       & spg_get_symmetry_with_collinear_spin, &
       & spgat_get_symmetry_with_collinear_spin, &
+      & spg_get_symmetry_with_site_tensors, &
+      & spgat_get_symmetry_with_site_tensors, &
       & spg_get_multiplicity, spgat_get_multiplicity, &
       & spg_delaunay_reduce, spg_niggli_reduce, &
       & spg_find_primitive, spgat_find_primitive, &
@@ -350,6 +398,7 @@
          type(c_ptr) :: wyckoffs
          type(c_ptr) :: site_symmetry_symbols
          type(c_ptr) :: equivalent_atoms
+         real(c_double) :: primitive_lattice(3,3)
          type(c_ptr) :: mapping_to_primitive
          integer(c_int) :: n_std_atoms
          real(c_double) :: std_lattice(3,3)
@@ -402,6 +451,7 @@
          dset % n_atoms               = dset_c % n_atoms
          dset % n_std_atoms           = dset_c % n_std_atoms
          dset % std_lattice           = dset_c % std_lattice
+         dset % primitive_lattice     = dset_c % primitive_lattice
 
          ! Copy C strings to Fortran characters, converting C NULL to Fortran space padded strings
          do i = 1, size(dset_c % international_symbol)
@@ -478,6 +528,7 @@
          dset%n_atoms = 0
          dset%n_std_atoms = 0
          dset%std_lattice = 0.0_c_double
+         dset%primitive_lattice = 0.0_c_double
          dset%pointgroup_symbol = ' '
 
       end if

@@ -34,6 +34,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "primitive.h"
 #include "mathfunc.h"
 #include "symmetry.h"
 #include "cell.h"
@@ -67,16 +68,24 @@ static int check_vector(const int j,
 
 /* Return NULL if failed */
 Symmetry * spn_get_operations_with_site_tensors(int equiv_atoms[],
+                                                double prim_lattice[3][3],
                                                 const Symmetry *sym_nonspin,
                                                 const Cell *cell,
                                                 const double *tensors,
                                                 const int tensor_rank,
                                                 const int is_magnetic,
-                                                const double symprec)
+                                                const double symprec,
+                                                const double angle_tolerance)
 {
+  int i, num_pure_trans, multi;
   Symmetry *symmetry;
+  VecDBL *pure_trans;
+  int identity[3][3] = {{ 1, 0, 0 },
+                        { 0, 1, 0 },
+                        { 0, 0, 1 }};
 
   symmetry = NULL;
+  pure_trans = NULL;
 
   if ((symmetry = get_operations(sym_nonspin,
                                  cell,
@@ -94,6 +103,40 @@ Symmetry * spn_get_operations_with_site_tensors(int equiv_atoms[],
     sym_free_symmetry(symmetry);
     symmetry = NULL;
   }
+
+  num_pure_trans = 0;
+  for (i = 0; i < symmetry->size; i++) {
+    if (mat_check_identity_matrix_i3(identity, symmetry->rot[i])) {
+      num_pure_trans++;
+    }
+  }
+
+  if ((pure_trans = mat_alloc_VecDBL(num_pure_trans)) == NULL) {
+    return NULL;
+  }
+
+  num_pure_trans = 0;
+  for (i = 0; i < symmetry->size; i++) {
+    if (mat_check_identity_matrix_i3(identity, symmetry->rot[i])) {
+      mat_copy_vector_d3(pure_trans->vec[num_pure_trans], symmetry->trans[i]);
+      num_pure_trans++;
+    }
+  }
+
+  multi = prm_get_primitive_lattice_vectors(prim_lattice,
+                                            cell,
+                                            pure_trans,
+                                            symprec,
+                                            angle_tolerance);
+
+  /* By definition, change of number of pure translations would */
+  /* not be allowed. */
+  if (multi != num_pure_trans) {
+    return NULL;
+  }
+
+  mat_free_VecDBL(pure_trans);
+  pure_trans = NULL;
 
   return symmetry;
 }

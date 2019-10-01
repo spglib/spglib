@@ -123,6 +123,7 @@ extern "C" {
     int *wyckoffs;
     char (*site_symmetry_symbols)[7];
     int *equivalent_atoms;
+    double primitive_lattice[3][3];
     int *mapping_to_primitive;
     int n_std_atoms;
     double std_lattice[3][3];
@@ -241,7 +242,8 @@ extern "C" {
   int spg_get_symmetry_with_site_tensors(int rotation[][3][3],
                                          double translation[][3],
                                          int equivalent_atoms[],
-                                         const int max_size,
+                                         double primitive_lattice[3][3],
+                                         const int num_operations,
                                          SPGCONST double lattice[3][3],
                                          SPGCONST double position[][3],
                                          const int types[],
@@ -254,7 +256,8 @@ extern "C" {
   int spgat_get_symmetry_with_site_tensors(int rotation[][3][3],
                                            double translation[][3],
                                            int equivalent_atoms[],
-                                           const int max_size,
+                                           double primitive_lattice[3][3],
+                                           const int num_operations,
                                            SPGCONST double lattice[3][3],
                                            SPGCONST double position[][3],
                                            const int types[],

@@ -106,7 +106,9 @@ static int get_symmetry_from_dataset(int rotation[][3][3],
 static int get_symmetry_with_site_tensors(int rotation[][3][3],
                                           double translation[][3],
                                           int equivalent_atoms[],
-                                          const int max_size,
+                                          double primitive_lattice[3][3],
+                                          const int run_symmetry_search,
+                                          const int num_operations,
                                           SPGCONST double lattice[3][3],
                                           SPGCONST double position[][3],
                                           const int types[],
@@ -428,9 +430,13 @@ int spg_get_symmetry_with_collinear_spin(int rotation[][3][3],
                                          const int num_atom,
                                          const double symprec)
 {
+  double primitive_lattice[3][3];
+
   return get_symmetry_with_site_tensors(rotation,
                                         translation,
                                         equivalent_atoms,
+                                        primitive_lattice,
+                                        1,
                                         max_size,
                                         lattice,
                                         position,
@@ -456,9 +462,13 @@ int spgat_get_symmetry_with_collinear_spin(int rotation[][3][3],
                                            const double symprec,
                                            const double angle_tolerance)
 {
+  double primitive_lattice[3][3];
+
   return get_symmetry_with_site_tensors(rotation,
                                         translation,
                                         equivalent_atoms,
+                                        primitive_lattice,
+                                        1,
                                         max_size,
                                         lattice,
                                         position,
@@ -475,7 +485,8 @@ int spgat_get_symmetry_with_collinear_spin(int rotation[][3][3],
 int spg_get_symmetry_with_site_tensors(int rotation[][3][3],
                                        double translation[][3],
                                        int equivalent_atoms[],
-                                       const int max_size,
+                                       double primitive_lattice[3][3],
+                                       const int num_operations,
                                        SPGCONST double lattice[3][3],
                                        SPGCONST double position[][3],
                                        const int types[],
@@ -488,7 +499,9 @@ int spg_get_symmetry_with_site_tensors(int rotation[][3][3],
   return get_symmetry_with_site_tensors(rotation,
                                         translation,
                                         equivalent_atoms,
-                                        max_size,
+                                        primitive_lattice,
+                                        0,
+                                        num_operations,
                                         lattice,
                                         position,
                                         types,
@@ -503,7 +516,8 @@ int spg_get_symmetry_with_site_tensors(int rotation[][3][3],
 int spgat_get_symmetry_with_site_tensors(int rotation[][3][3],
                                          double translation[][3],
                                          int equivalent_atoms[],
-                                         const int max_size,
+                                         double primitive_lattice[3][3],
+                                         const int num_operations,
                                          SPGCONST double lattice[3][3],
                                          SPGCONST double position[][3],
                                          const int types[],
@@ -517,7 +531,9 @@ int spgat_get_symmetry_with_site_tensors(int rotation[][3][3],
   return get_symmetry_with_site_tensors(rotation,
                                         translation,
                                         equivalent_atoms,
-                                        max_size,
+                                        primitive_lattice,
+                                        0,
+                                        num_operations,
                                         lattice,
                                         position,
                                         types,
@@ -1361,6 +1377,7 @@ static int set_dataset(SpglibDataset * dataset,
   }
 #endif
 
+  mat_copy_matrix_d3(dataset->primitive_lattice, primitive->cell->lattice);
   for (i = 0; i < dataset->n_atoms; i++) {
     dataset->mapping_to_primitive[i] = primitive->mapping_table[i];
   }
@@ -1493,7 +1510,9 @@ static int get_symmetry_from_dataset(int rotation[][3][3],
 static int get_symmetry_with_site_tensors(int rotation[][3][3],
                                           double translation[][3],
                                           int equivalent_atoms[],
-                                          const int max_size,
+                                          double primitive_lattice[3][3],
+                                          const int run_symmetry_search,
+                                          const int num_operations,
                                           SPGCONST double lattice[3][3],
                                           SPGCONST double position[][3],
                                           const int types[],
@@ -1521,82 +1540,92 @@ static int get_symmetry_with_site_tensors(int rotation[][3][3],
 
   cel_set_cell(cell, lattice, position, types);
 
-#ifdef SPGTEST
-  sym_nonspin = sym_get_operation(cell, symprec, angle_tolerance);
-#else
-  if ((dataset = get_dataset(lattice,
-                             position,
-                             types,
-                             num_atom,
-                             0,
-                             symprec,
-                             angle_tolerance)) == NULL) {
-    cel_free_cell(cell);
-    cell = NULL;
-    goto get_dataset_failed;
-  }
+  if (run_symmetry_search) {
+    if ((dataset = get_dataset(lattice,
+                               position,
+                               types,
+                               num_atom,
+                               0,
+                               symprec,
+                               angle_tolerance)) == NULL) {
+      cel_free_cell(cell);
+      cell = NULL;
+      goto err;
+    }
+    if ((sym_nonspin = sym_alloc_symmetry(dataset->n_operations)) == NULL) {
+      spg_free_dataset(dataset);
+      dataset = NULL;
+      cel_free_cell(cell);
+      cell = NULL;
+      goto err;
+    }
 
-  if ((sym_nonspin = sym_alloc_symmetry(dataset->n_operations)) == NULL) {
+    for (i = 0; i < dataset->n_operations; i++) {
+      mat_copy_matrix_i3(sym_nonspin->rot[i], dataset->rotations[i]);
+      mat_copy_vector_d3(sym_nonspin->trans[i], dataset->translations[i]);
+    }
     spg_free_dataset(dataset);
     dataset = NULL;
-    cel_free_cell(cell);
-    cell = NULL;
-    goto err;
+  } else {
+    if ((sym_nonspin = sym_alloc_symmetry(num_operations)) == NULL) {
+      cel_free_cell(cell);
+      cell = NULL;
+      goto err;
+    }
+    for (i = 0; i < num_operations; i++) {
+      mat_copy_matrix_i3(sym_nonspin->rot[i], rotation[i]);
+      mat_copy_vector_d3(sym_nonspin->trans[i], translation[i]);
+    }
   }
 
-  for (i = 0; i < dataset->n_operations; i++) {
-    mat_copy_matrix_i3(sym_nonspin->rot[i], dataset->rotations[i]);
-    mat_copy_vector_d3(sym_nonspin->trans[i], dataset->translations[i]);
-  }
-  spg_free_dataset(dataset);
-  dataset = NULL;
-#endif
-
-  if ((symmetry = spn_get_operations_with_site_tensors(equivalent_atoms,
-                                                       sym_nonspin,
-                                                       cell,
-                                                       tensors,
-                                                       tensor_rank,
-                                                       is_magnetic,
-                                                       symprec)) == NULL) {
-    sym_free_symmetry(sym_nonspin);
-    sym_nonspin = NULL;
-    cel_free_cell(cell);
-    cell = NULL;
-    goto err;
-  }
+  symmetry = spn_get_operations_with_site_tensors(equivalent_atoms,
+                                                  primitive_lattice,
+                                                  sym_nonspin,
+                                                  cell,
+                                                  tensors,
+                                                  tensor_rank,
+                                                  is_magnetic,
+                                                  symprec,
+                                                  angle_tolerance);
 
   sym_free_symmetry(sym_nonspin);
   sym_nonspin = NULL;
+  cel_free_cell(cell);
+  cell = NULL;
 
-  if (symmetry->size > max_size) {
+  if (symmetry == NULL) {
+    goto err;
+  }
+
+  if (symmetry->size > num_operations) {
     fprintf(stderr, "spglib: Indicated max size(=%d) is less than number ",
-            max_size);
+            num_operations);
     fprintf(stderr, "spglib: of symmetry operations(=%d).\n", symmetry->size);
-    goto ret;
+    sym_free_symmetry(symmetry);
+    symmetry = NULL;
+    goto array_size_shortage_err;
   }
 
   for (i = 0; i < symmetry->size; i++) {
     mat_copy_matrix_i3(rotation[i], symmetry->rot[i]);
     mat_copy_vector_d3(translation[i], symmetry->trans[i]);
   }
-
   size = symmetry->size;
 
- ret:
   sym_free_symmetry(symmetry);
   symmetry = NULL;
-  cel_free_cell(cell);
-  cell = NULL;
-
   spglib_error_code = SPGLIB_SUCCESS;
+
   return size;
 
  err:
   spglib_error_code = SPGERR_SYMMETRY_OPERATION_SEARCH_FAILED;
-
- get_dataset_failed:
   return 0;
+
+array_size_shortage_err:
+  spglib_error_code = SPGERR_ARRAY_SIZE_SHORTAGE;
+  return 0;
+
 }
 
 /* Return 0 if failed */
