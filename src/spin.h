@@ -39,10 +39,15 @@
 #include "symmetry.h"
 #include "cell.h"
 
-Symmetry * spn_get_collinear_operations(int equiv_atoms[],
-                                        const Symmetry *sym_nonspin,
-                                        const Cell *cell,
-                                        const double spins[],
-                                        const double symprec);
+Symmetry * spn_get_operations_with_site_tensors(int equiv_atoms[],
+                                                double prim_lattice[3][3],
+                                                int *spin_flips,
+                                                const Symmetry *sym_nonspin,
+                                                const Cell *cell,
+                                                const double *tensors,
+                                                const int tensor_rank,
+                                                const int is_magnetic,
+                                                const double symprec,
+                                                const double angle_tolerance);
 
 #endif

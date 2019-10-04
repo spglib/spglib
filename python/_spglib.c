@@ -54,6 +54,8 @@ static PyObject * py_get_symmetry(PyObject *self, PyObject *args);
 static PyObject *
 py_get_symmetry_with_collinear_spin(PyObject *self, PyObject *args);
 static PyObject *
+py_get_symmetry_with_site_tensors(PyObject *self, PyObject *args);
+static PyObject *
 py_get_hall_number_from_symmetry(PyObject *self, PyObject *args);
 static PyObject * py_find_primitive(PyObject *self, PyObject *args);
 static PyObject *
@@ -103,6 +105,8 @@ static PyMethodDef _spglib_methods[] = {
   {"symmetry", py_get_symmetry, METH_VARARGS, "Symmetry operations"},
   {"symmetry_with_collinear_spin", py_get_symmetry_with_collinear_spin,
    METH_VARARGS, "Symmetry operations with collinear spin magnetic moments"},
+  {"symmetry_with_site_tensors", py_get_symmetry_with_site_tensors,
+   METH_VARARGS, "Symmetry operations with site vectors"},
   {"hall_number_from_symmetry", py_get_hall_number_from_symmetry,
    METH_VARARGS, "Space group type is searched from symmetry operations."},
   {"primitive", py_find_primitive, METH_VARARGS,
@@ -216,7 +220,7 @@ static PyObject * py_get_dataset(PyObject *self, PyObject *args)
   PyArrayObject* py_atom_types;
 
   PyObject *array, *vec, *mat, *rot, *trans, *wyckoffs, *equiv_atoms;
-  PyObject *site_symmetry_symbols, *mapping_to_primitive;
+  PyObject *site_symmetry_symbols, *primitive_lattice, *mapping_to_primitive;
   PyObject *std_lattice, *std_types, *std_positions, *std_mapping_to_primitive;
   PyObject *std_rotation;
 
@@ -252,7 +256,7 @@ static PyObject * py_get_dataset(PyObject *self, PyObject *args)
     Py_RETURN_NONE;
   }
 
-  len_list = 19;
+  len_list = 20;
   array = PyList_New(len_list);
   n = 0;
 
@@ -337,6 +341,18 @@ static PyObject * py_get_dataset(PyObject *self, PyObject *args)
   n++;
   PyList_SetItem(array, n, equiv_atoms);
   n++;
+
+  primitive_lattice = PyList_New(3);
+  for (i = 0; i < 3; i++) {
+    vec = PyList_New(3);
+    for (j = 0; j < 3; j++) {
+      PyList_SetItem(vec, j, PyFloat_FromDouble(dataset->primitive_lattice[i][j]));
+    }
+    PyList_SetItem(primitive_lattice, i, vec);
+  }
+  PyList_SetItem(array, n, primitive_lattice);
+  n++;
+
   PyList_SetItem(array, n, mapping_to_primitive);
   n++;
 
@@ -733,6 +749,89 @@ static PyObject * py_get_symmetry_with_collinear_spin(PyObject *self,
                                                    num_atom,
                                                    symprec,
                                                    angle_tolerance);
+  return PyLong_FromLong((long) num_sym);
+}
+
+
+static PyObject * py_get_symmetry_with_site_tensors(PyObject *self,
+                                                    PyObject *args)
+{
+  double symprec, angle_tolerance;
+  PyArrayObject* py_lattice;
+  PyArrayObject* py_positions;
+  PyArrayObject* py_rotations;
+  PyArrayObject* py_translations;
+  PyArrayObject* py_atom_types;
+  PyArrayObject* py_tensors;
+  PyArrayObject* py_equiv_atoms;
+  PyArrayObject* py_primitive_lattice;
+  PyArrayObject* py_spin_flips;
+
+  int is_magnetic;
+
+  double (*lat)[3];
+  double (*pos)[3];
+  double *tensors;
+  int *types;
+  int num_atom;
+  int (*rot)[3][3];
+  double (*trans)[3];
+  int *equiv_atoms;
+  double (*primitive_lattice)[3];
+  int *spin_flips;
+  int num_sym_from_array_size;
+  int num_sym;
+  int tensor_rank;
+
+  if (!PyArg_ParseTuple(args, "OOOOOOOOOidd",
+                        &py_rotations,
+                        &py_translations,
+                        &py_equiv_atoms,
+                        &py_primitive_lattice,
+                        &py_spin_flips,
+                        &py_lattice,
+                        &py_positions,
+                        &py_atom_types,
+                        &py_tensors,
+                        &is_magnetic,
+                        &symprec,
+                        &angle_tolerance)) {
+    return NULL;
+  }
+
+  lat = (double(*)[3])PyArray_DATA(py_lattice);
+  pos = (double(*)[3])PyArray_DATA(py_positions);
+  tensors = (double*)PyArray_DATA(py_tensors);
+  types = (int*)PyArray_DATA(py_atom_types);
+  num_atom = PyArray_DIMS(py_positions)[0];
+  rot = (int(*)[3][3])PyArray_DATA(py_rotations);
+  trans = (double(*)[3])PyArray_DATA(py_translations);
+  equiv_atoms = (int*)PyArray_DATA(py_equiv_atoms);
+  primitive_lattice = (double(*)[3])PyArray_DATA(py_primitive_lattice);
+  num_sym_from_array_size = PyArray_DIMS(py_rotations)[0];
+  tensor_rank = PyArray_NDIM(py_tensors) - 1;
+  if (tensor_rank == 0) {
+    spin_flips = (int*)PyArray_DATA(py_spin_flips);
+  } else {
+    spin_flips = NULL;
+  }
+
+  /* num_sym has to be larger than num_sym_from_array_size. */
+  num_sym = spgat_get_symmetry_with_site_tensors(rot,
+                                                 trans,
+                                                 equiv_atoms,
+                                                 primitive_lattice,
+                                                 spin_flips,
+                                                 num_sym_from_array_size,
+                                                 lat,
+                                                 pos,
+                                                 types,
+                                                 tensors,
+                                                 tensor_rank,
+                                                 num_atom,
+                                                 is_magnetic,
+                                                 symprec,
+                                                 angle_tolerance);
   return PyLong_FromLong((long) num_sym);
 }
 

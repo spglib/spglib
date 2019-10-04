@@ -54,5 +54,12 @@ Primitive * prm_get_primitive(const Cell * cell,
                               const double symprec,
                               const double angle_tolerance);
 Symmetry * prm_get_primitive_symmetry(const Symmetry *symmetry,
-				      const double symprec);
+                                      const double symprec);
+int prm_get_primitive_lattice_vectors(double prim_lattice[3][3],
+                                      const Cell * cell,
+                                      const VecDBL * pure_trans,
+                                      const double symprec,
+                                      const double angle_tolerance);
+
+
 #endif

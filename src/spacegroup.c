@@ -1326,9 +1326,6 @@ static int match_hall_symbol_db_monocli(double origin_shift[3],
   double shortest_norm_sum, norm_sum;
   double norms_squared[36][2];
   double all_conv_lattices[36][3][3], all_origin_shifts[36][3];
-  Symmetry * changed_symmetry;
-
-  changed_symmetry = NULL;
 
   /* E. Parthe and L. M. Gelato */
   /* "The best unit cell for monoclinic structure..." (1983) */

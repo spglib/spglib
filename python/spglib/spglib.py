@@ -48,33 +48,68 @@ def get_version():
     return tuple(spg.version())
 
 
-def get_symmetry(cell, symprec=1e-5, angle_tolerance=-1.0):
-    """This gives crystal symmetry operations from a crystal structure.
+def get_symmetry(cell,
+                 is_magnetic=True,
+                 symprec=1e-5,
+                 angle_tolerance=-1.0):
+    """Find symmetry operations from a crystal structure and site tensors
 
-    Args:
-        cell: Crystal structrue given either in Atoms object or tuple.
-            In the case given by a tuple, it has to follow the form below,
-            (Lattice parameters in a 3x3 array (see the detail below),
-             Fractional atomic positions in an Nx3 array,
-             Integer numbers to distinguish species in a length N array,
-             (optional) Collinear magnetic moments in a length N array),
-            where N is the number of atoms.
-            Lattice parameters are given in the form:
-                [[a_x, a_y, a_z],
-                 [b_x, b_y, b_z],
-                 [c_x, c_y, c_z]]
-        symprec:
-            float: Symmetry search tolerance in the unit of length.
-        angle_tolerance:
-            float: Symmetry search tolerance in the unit of angle deg.
-                If the value is negative, an internally optimized routine
-                is used to judge symmetry.
+    Parameters
+    ----------
+    cell : tuple
+        Crystal structrue given either in tuple or Atoms object (deprecated).
+        In the case given by a tuple, it has to follow the form below,
 
-    Return:
-        A dictionary: Rotation parts and translation parts. Dictionary keys:
-            'rotations': Gives the numpy 'intc' array of the rotation matrices.
-            'translations': Gives the numpy 'double' array of fractional
-                translations with respect to a, b, c axes.
+        (basis vectors, atomic points, types in integer numbers, ...)
+
+        basis vectors : array_like
+            [[a_x, a_y, a_z],
+             [b_x, b_y, b_z],
+             [c_x, c_y, c_z]]
+            shape=(3, 3), order='C', dtype='double'
+        atomic points : array_like
+            Atomic position vectors with respect to basis vectors, i.e.,
+            given in  fractional coordinates.
+            shape=(num_atom, 3), order='C', dtype='double'
+        types : array_like
+            Integer numbers to distinguish species.
+            shape=(num_atom, ), dtype='intc'
+        optional data :
+            case-I: Scalar
+                Each atomic site has a scalar value. With is_magnetic=True,
+                values are included in the symmetry search in a way of
+                collinear magnetic moments.
+                shape=(num_atom, ), dtype='double'
+            case-II: Vectors
+                Each atomic site has a vector. With is_magnetic=True,
+                vectors are included in the symmetry search in a way of
+                non-collinear magnetic moments.
+                shape=(num_atom, 3), order='C', dtype='double'
+    is_magnetic : bool
+        When optiona data (4th element of cell tuple) is given in case-II,
+        the symmetry search is performed considering magnetic symmetry, which
+        may be corresponding to that for non-collinear calculation. Default is
+        True, but this does nothing unless optiona data is supplied.
+    symprec : float
+        Symmetry search tolerance in the unit of length.
+    angle_tolerance : float
+        Symmetry search tolerance in the unit of angle deg. If the value is
+        negative, an internally optimized routine is used to judge symmetry.
+
+    Returns
+    -------
+    dictionary
+        Rotation parts and translation parts of symmetry operations represented
+        with respect to basis vectors and atom index mapping by symmetry
+        operations.
+        'rotations' : ndarray
+            Rotation (matrix) parts of symmetry operations
+            shape=(num_operations, 3, 3), order='C', dtype='intc'
+        'translations' : ndarray
+            Translation (vector) parts of symmetry operations
+            shape=(num_operations, 3), dtype='double'
+        'equivalent_atoms' : ndarray
+            shape=(num_atoms, ), dtype='intc'
 
     """
     _set_no_error()
@@ -83,41 +118,51 @@ def get_symmetry(cell, symprec=1e-5, angle_tolerance=-1.0):
     if lattice is None:
         return None
 
-    multi = 48 * len(positions)
-    rotation = np.zeros((multi, 3, 3), dtype='intc')
-    translation = np.zeros((multi, 3), dtype='double')
+    # Get symmetry operations without on-site tensors (i.e. normal crystal)
+    dataset = get_symmetry_dataset(cell,
+                                   symprec=symprec,
+                                   angle_tolerance=angle_tolerance)
+    if dataset is None:
+        return None
 
-    # Get symmetry operations
     if magmoms is None:
-        dataset = get_symmetry_dataset(cell,
-                                       symprec=symprec,
-                                       angle_tolerance=angle_tolerance)
-        if dataset is None:
-            return None
-        else:
-            return {'rotations': dataset['rotations'],
-                    'translations': dataset['translations'],
-                    'equivalent_atoms': dataset['equivalent_atoms']}
+        return {'rotations': dataset['rotations'],
+                'translations': dataset['translations'],
+                'equivalent_atoms': dataset['equivalent_atoms']}
     else:
+        rotations = dataset['rotations']
+        translations = dataset['translations']
         equivalent_atoms = np.zeros(len(magmoms), dtype='intc')
-        num_sym = spg.symmetry_with_collinear_spin(rotation,
-                                                   translation,
-                                                   equivalent_atoms,
-                                                   lattice,
-                                                   positions,
-                                                   numbers,
-                                                   magmoms,
-                                                   symprec,
-                                                   angle_tolerance)
+        primitive_lattice = np.zeros((3, 3), dtype='double', order='C')
+        # (magmoms.ndim - 1) has to be equal to the rank of physical
+        # tensors, e.g., ndim=1 for collinear, ndim=2 for non-collinear.
+        if magmoms.ndim == 1:
+            spin_flips = np.zeros(len(rotations), dtype='intc')
+        else:
+            spin_flips = None
+        num_sym = spg.symmetry_with_site_tensors(rotations,
+                                                 translations,
+                                                 equivalent_atoms,
+                                                 primitive_lattice,
+                                                 spin_flips,
+                                                 lattice,
+                                                 positions,
+                                                 numbers,
+                                                 magmoms,
+                                                 is_magnetic * 1,
+                                                 symprec,
+                                                 angle_tolerance)
+
         _set_error_message()
         if num_sym == 0:
             return None
         else:
-            return {'rotations': np.array(rotation[:num_sym],
+            return {'rotations': np.array(rotations[:num_sym],
                                           dtype='intc', order='C'),
-                    'translations': np.array(translation[:num_sym],
+                    'translations': np.array(translations[:num_sym],
                                              dtype='double', order='C'),
-                    'equivalent_atoms': equivalent_atoms}
+                    'equivalent_atoms': equivalent_atoms,
+                    'primitive_lattice': primitive_lattice}
 
 
 def get_symmetry_dataset(cell,
@@ -150,8 +195,11 @@ def get_symmetry_dataset(cell,
                 [(r,t) for r, t in zip(rotations, translations)]
             wyckoffs (n char): Wyckoff letters
             equivalent_atoms (n int): Symmetrically equivalent atoms
-            mapping_to_primitive (n int):
-                Original cell atom index mapping to primivie cell atom index
+            Primitive cell:
+                primitive_lattice (3x3 float, row vectors):
+                    Shape of cell by these basis vectors may not be nice.
+                mapping_to_primitive (n int):
+                    Atom index mapping from original cell to primivie cell
             Idealized standardized unit cell:
                 std_lattice (3x3 float, row vectors),
                 std_positions (Nx3 float), std_types (N int)
@@ -190,6 +238,7 @@ def get_symmetry_dataset(cell,
             'wyckoffs',
             'site_symmetry_symbols',
             'equivalent_atoms',
+            'primitive_lattice',
             'mapping_to_primitive',
             'std_lattice',
             'std_types',
@@ -218,6 +267,9 @@ def get_symmetry_dataset(cell,
         s.strip() for s in dataset['site_symmetry_symbols']]
     dataset['equivalent_atoms'] = np.array(dataset['equivalent_atoms'],
                                            dtype='intc')
+    dataset['primitive_lattice'] = np.array(
+        np.transpose(dataset['primitive_lattice']),
+        dtype='double', order='C')
     dataset['mapping_to_primitive'] = np.array(dataset['mapping_to_primitive'],
                                                dtype='intc')
     dataset['std_lattice'] = np.array(np.transpose(dataset['std_lattice']),
@@ -887,7 +939,7 @@ def _expand_cell(cell):
         positions = np.array(cell[1], dtype='double', order='C')
         numbers = np.array(cell[2], dtype='intc')
         if len(cell) > 3:
-            magmoms = np.array(cell[3], dtype='double')
+            magmoms = np.array(cell[3], order='C', dtype='double')
         else:
             magmoms = None
     else:
@@ -918,8 +970,6 @@ def _check(lattice, positions, numbers, magmoms):
     if len(numbers) != positions.shape[0]:
         return False
     if magmoms is not None:
-        if magmoms.ndim != 1:
-            return False
         if len(magmoms) != len(numbers):
             return False
     return True
