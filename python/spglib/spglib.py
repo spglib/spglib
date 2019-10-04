@@ -136,10 +136,15 @@ def get_symmetry(cell,
         primitive_lattice = np.zeros((3, 3), dtype='double', order='C')
         # (magmoms.ndim - 1) has to be equal to the rank of physical
         # tensors, e.g., ndim=1 for collinear, ndim=2 for non-collinear.
+        if magmoms.ndim == 1:
+            spin_flips = np.zeros(len(rotations), dtype='intc')
+        else:
+            spin_flips = None
         num_sym = spg.symmetry_with_site_tensors(rotations,
                                                  translations,
                                                  equivalent_atoms,
                                                  primitive_lattice,
+                                                 spin_flips,
                                                  lattice,
                                                  positions,
                                                  numbers,

@@ -765,6 +765,7 @@ static PyObject * py_get_symmetry_with_site_tensors(PyObject *self,
   PyArrayObject* py_tensors;
   PyArrayObject* py_equiv_atoms;
   PyArrayObject* py_primitive_lattice;
+  PyArrayObject* py_spin_flips;
 
   int is_magnetic;
 
@@ -777,15 +778,17 @@ static PyObject * py_get_symmetry_with_site_tensors(PyObject *self,
   double (*trans)[3];
   int *equiv_atoms;
   double (*primitive_lattice)[3];
+  int *spin_flips;
   int num_sym_from_array_size;
   int num_sym;
   int tensor_rank;
 
-  if (!PyArg_ParseTuple(args, "OOOOOOOOidd",
+  if (!PyArg_ParseTuple(args, "OOOOOOOOOidd",
                         &py_rotations,
                         &py_translations,
                         &py_equiv_atoms,
                         &py_primitive_lattice,
+                        &py_spin_flips,
                         &py_lattice,
                         &py_positions,
                         &py_atom_types,
@@ -807,12 +810,18 @@ static PyObject * py_get_symmetry_with_site_tensors(PyObject *self,
   primitive_lattice = (double(*)[3])PyArray_DATA(py_primitive_lattice);
   num_sym_from_array_size = PyArray_DIMS(py_rotations)[0];
   tensor_rank = PyArray_NDIM(py_tensors) - 1;
+  if (tensor_rank == 0) {
+    spin_flips = (int*)PyArray_DATA(py_spin_flips);
+  } else {
+    spin_flips = NULL;
+  }
 
   /* num_sym has to be larger than num_sym_from_array_size. */
   num_sym = spgat_get_symmetry_with_site_tensors(rot,
                                                  trans,
                                                  equiv_atoms,
                                                  primitive_lattice,
+                                                 spin_flips,
                                                  num_sym_from_array_size,
                                                  lat,
                                                  pos,

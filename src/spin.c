@@ -41,7 +41,8 @@
 #include "spin.h"
 #include "debug.h"
 
-static Symmetry * get_operations(const Symmetry *sym_nonspin,
+static Symmetry * get_operations(int *spin_flips,
+                                 const Symmetry *sym_nonspin,
                                  const Cell *cell,
                                  const double *tensors,
                                  const int tensor_rank,
@@ -69,6 +70,7 @@ static int check_vector(const int j,
 /* Return NULL if failed */
 Symmetry * spn_get_operations_with_site_tensors(int equiv_atoms[],
                                                 double prim_lattice[3][3],
+                                                int *spin_flips,
                                                 const Symmetry *sym_nonspin,
                                                 const Cell *cell,
                                                 const double *tensors,
@@ -87,7 +89,8 @@ Symmetry * spn_get_operations_with_site_tensors(int equiv_atoms[],
   symmetry = NULL;
   pure_trans = NULL;
 
-  if ((symmetry = get_operations(sym_nonspin,
+  if ((symmetry = get_operations(spin_flips,
+                                 sym_nonspin,
                                  cell,
                                  tensors,
                                  tensor_rank,
@@ -142,7 +145,9 @@ Symmetry * spn_get_operations_with_site_tensors(int equiv_atoms[],
 }
 
 /* Return NULL if failed */
-static Symmetry * get_operations(const Symmetry *sym_nonspin,
+/* spin_flips can be NULL if tensor_rank != 0. */
+static Symmetry * get_operations(int *spin_flips,
+                                 const Symmetry *sym_nonspin,
                                  const Cell *cell,
                                  const double *tensors,
                                  const int tensor_rank,
@@ -200,6 +205,9 @@ static Symmetry * get_operations(const Symmetry *sym_nonspin,
     if (is_found) {
       mat_copy_matrix_i3(rotations->mat[num_sym], sym_nonspin->rot[i]);
       mat_copy_vector_d3(trans->vec[num_sym], sym_nonspin->trans[i]);
+      if ((tensor_rank == 0) && (is_magnetic)) {
+        spin_flips[num_sym] = sign;
+      }
       num_sym++;
     }
   }
@@ -358,6 +366,7 @@ static int check_spin(const int spin_j,
   }
 }
 
+/* Work in Cartesian coordinates. */
 static int check_vector(const int j,
                         const int k,
                         const double* vectors,

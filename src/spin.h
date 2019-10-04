@@ -41,6 +41,7 @@
 
 Symmetry * spn_get_operations_with_site_tensors(int equiv_atoms[],
                                                 double prim_lattice[3][3],
+                                                int *spin_flips,
                                                 const Symmetry *sym_nonspin,
                                                 const Cell *cell,
                                                 const double *tensors,
