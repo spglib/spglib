@@ -333,8 +333,8 @@ def get_spacegroup_type(hall_number):
             'schoenflies',
             'hall_symbol',
             'choice',
-            'pointgroup_schoenflies',
             'pointgroup_international',
+            'pointgroup_schoenflies',
             'arithmetic_crystal_class_number',
             'arithmetic_crystal_class_symbol')
     spg_type_list = spg.spacegroup_type(hall_number)
