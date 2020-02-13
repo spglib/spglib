@@ -8,6 +8,8 @@ if(NOT CMAKE_BUILD_TYPE)
 endif(NOT CMAKE_BUILD_TYPE)
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 
+include(GNUInstallDirs)
+
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 
@@ -50,17 +52,17 @@ set(SOURCES ${PROJECT_SOURCE_DIR}/src/arithmetic.c
 add_library(symspg SHARED ${SOURCES})
 set_property(TARGET symspg PROPERTY VERSION ${serial})
 set_property(TARGET symspg PROPERTY SOVERSION ${soserial})
-install(TARGETS symspg LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+install(TARGETS symspg LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 # Static link library
 add_library(symspg_static STATIC ${SOURCES})
 set_property(TARGET symspg_static PROPERTY VERSION ${serial})
 set_property(TARGET symspg_static PROPERTY SOVERSION ${soserial})
 set_property(TARGET symspg_static PROPERTY OUTPUT_NAME symspg)
-install(TARGETS symspg_static ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+install(TARGETS symspg_static ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 # Header file
-install(FILES ${PROJECT_SOURCE_DIR}/src/spglib.h DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
+install(FILES ${PROJECT_SOURCE_DIR}/src/spglib.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 # make check
 enable_testing()
