@@ -50,6 +50,7 @@ set(SOURCES ${PROJECT_SOURCE_DIR}/src/arithmetic.c
 
 # Shared library
 add_library(symspg SHARED ${SOURCES})
+target_link_libraries(symspg m)
 set_property(TARGET symspg PROPERTY VERSION ${serial})
 set_property(TARGET symspg PROPERTY SOVERSION ${soserial})
 install(TARGETS symspg LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
