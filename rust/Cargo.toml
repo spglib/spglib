@@ -1,0 +1,16 @@
+[package]
+name = "spglib"
+version = "0.1.2"
+authors = ["Seaton Ullberg <seatonullberg@gmail.com>"]
+edition = "2018"
+license = "BSD-3-Clause"
+description = "Rust-y bindings to spglib"
+repository = "https://github.com/seatonullberg/spglib"
+categories = ["science"]
+keywords = ["crystallography", "materials-science"]
+
+[lib]
+name = "spglib"
+
+[dependencies]
+spglib-sys = "0.1.0"
