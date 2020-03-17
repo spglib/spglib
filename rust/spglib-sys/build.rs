@@ -5,9 +5,9 @@ use std::path::PathBuf;
 
 fn main() {
     println!("cargo:rustc-link-lib=symspg");
-    println!("cargo:rerun-if-changed=spglib.h");
+    println!("cargo:rerun-if-changed=wrapper.h");
     let bindings = bindgen::Builder::default()
-        .header("spglib.h")
+        .header("wrapper.h")
         .parse_callbacks(Box::new(bindgen::CargoCallbacks))
         .generate()
         .expect("Unable to generate bindings");
