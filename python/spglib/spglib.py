@@ -194,6 +194,7 @@ def get_symmetry_dataset(cell,
             'std_lattice',
             'std_types',
             'std_positions',
+            'std_equivalent_atoms',
             'std_rotation_matrix',
             'std_mapping_to_primitive',
             # 'pointgroup_number',
@@ -225,6 +226,8 @@ def get_symmetry_dataset(cell,
     dataset['std_types'] = np.array(dataset['std_types'], dtype='intc')
     dataset['std_positions'] = np.array(dataset['std_positions'],
                                         dtype='double', order='C')
+    dataset['std_equivalent_atoms'] = np.array(dataset['std_equivalent_atoms'],
+                                           dtype='intc')
     dataset['std_rotation_matrix'] = np.array(dataset['std_rotation_matrix'],
                                               dtype='double', order='C')
     dataset['std_mapping_to_primitive'] = np.array(

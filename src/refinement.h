@@ -45,6 +45,7 @@ typedef struct {
   int *wyckoffs;
   char (*site_symmetry_symbols)[7];
   int *equivalent_atoms;
+  int *std_equivalent_atoms;
   int *std_mapping_to_primitive;
   double rotation[3][3];
 } ExactStructure;

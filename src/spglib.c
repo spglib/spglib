@@ -355,6 +355,8 @@ void spg_free_dataset(SpglibDataset *dataset)
     free(dataset->std_mapping_to_primitive);
     dataset->std_mapping_to_primitive = NULL;
     dataset->n_std_atoms = 0;
+    free(dataset->std_equivalent_atoms);
+    dataset->std_equivalent_atoms = NULL;
   }
 
   if (dataset->site_symmetry_symbols != NULL) {
@@ -1131,7 +1133,7 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
                                      symprec,
                                      angle_tolerance))
       != NULL) {
-    if (set_dataset(dataset,
+      if (set_dataset(dataset,
                     cell,
                     container->primitive,
                     container->spacegroup,
@@ -1188,6 +1190,7 @@ static SpglibDataset * init_dataset(void)
   dataset->n_atoms = 0;
   dataset->wyckoffs = NULL;
   dataset->equivalent_atoms = NULL;
+  dataset->std_equivalent_atoms = NULL;
   dataset->mapping_to_primitive = NULL;
   dataset->n_operations = 0;
   dataset->rotations = NULL;
@@ -1317,6 +1320,12 @@ static int set_dataset(SpglibDataset * dataset,
     goto err;
   }
 
+  if ((dataset->std_equivalent_atoms =
+       (int*) malloc(sizeof(int) * dataset->n_std_atoms)) == NULL) {
+    warning_print("spglib: Memory could not be allocated.");
+    goto err;
+  }
+
   if ((dataset->std_mapping_to_primitive =
        (int*) malloc(sizeof(int) * dataset->n_std_atoms)) == NULL) {
     warning_print("spglib: Memory could not be allocated.");
@@ -1327,7 +1336,9 @@ static int set_dataset(SpglibDataset * dataset,
     mat_copy_vector_d3(dataset->std_positions[i], exstr->bravais->position[i]);
     dataset->std_types[i] = exstr->bravais->types[i];
     dataset->std_mapping_to_primitive[i] = exstr->std_mapping_to_primitive[i];
+    dataset->std_equivalent_atoms[i] = exstr->std_equivalent_atoms[i];
   }
+
   mat_copy_matrix_d3(dataset->std_rotation_matrix, exstr->rotation);
 
   /* dataset->pointgroup_number = spacegroup->pointgroup_number; */
@@ -1348,6 +1359,10 @@ static int set_dataset(SpglibDataset * dataset,
   if (dataset->equivalent_atoms != NULL) {
     free(dataset->equivalent_atoms);
     dataset->equivalent_atoms = NULL;
+  }
+  if (dataset->std_equivalent_atoms != NULL) {
+    free(dataset->std_equivalent_atoms);
+    dataset->std_equivalent_atoms = NULL;
   }
   if (dataset->mapping_to_primitive != NULL) {
     free(dataset->mapping_to_primitive);
