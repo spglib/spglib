@@ -52,7 +52,7 @@
 static Cell * get_Wyckoff_positions(int * wyckoffs,
                                     char (*site_symmetry_symbols)[7],
                                     int * equiv_atoms,
-                                    int * std_equiv_atoms,
+                                    int * crystallographic_orbits,
                                     int * std_mapping_to_primitive,
                                     const Cell * primitive,
                                     const Cell * cell,
