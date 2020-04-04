@@ -159,6 +159,10 @@ def get_symmetry_dataset(cell,
                 Rigid rotation matrix to rotate from standardized basis
                 vectors to idealized standardized basis vectors
                     L^idealized = R * L^standardized
+            crystallographic_orbits (n int): Groups of atoms in the
+                standardized unit cell that are related through symmetry
+                operations of a site-symmetry group and have the same atomic
+                number.
             std_mapping_to_primitive (m int):
                 std_positions index mapping to those of primivie cell atoms
             pointgroup (str): Pointgroup symbol
@@ -194,8 +198,8 @@ def get_symmetry_dataset(cell,
             'std_lattice',
             'std_types',
             'std_positions',
-            'std_equivalent_atoms',
             'std_rotation_matrix',
+            'crystallographic_orbits',
             'std_mapping_to_primitive',
             # 'pointgroup_number',
             'pointgroup')
@@ -226,10 +230,10 @@ def get_symmetry_dataset(cell,
     dataset['std_types'] = np.array(dataset['std_types'], dtype='intc')
     dataset['std_positions'] = np.array(dataset['std_positions'],
                                         dtype='double', order='C')
-    dataset['std_equivalent_atoms'] = np.array(dataset['std_equivalent_atoms'],
-                                           dtype='intc')
     dataset['std_rotation_matrix'] = np.array(dataset['std_rotation_matrix'],
                                               dtype='double', order='C')
+    dataset['crystallographic_orbits'] = np.array(dataset['crystallographic_orbits'],
+                                           dtype='intc')
     dataset['std_mapping_to_primitive'] = np.array(
         dataset['std_mapping_to_primitive'], dtype='intc')
     dataset['pointgroup'] = dataset['pointgroup'].strip()

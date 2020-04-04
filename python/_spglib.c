@@ -217,7 +217,7 @@ static PyObject * py_get_dataset(PyObject *self, PyObject *args)
 
   PyObject *array, *vec, *mat, *rot, *trans, *wyckoffs, *equiv_atoms;
   PyObject *site_symmetry_symbols, *mapping_to_primitive;
-  PyObject *std_lattice, *std_types, *std_positions, *std_mapping_to_primitive, *std_equiv_atoms;
+  PyObject *std_lattice, *std_types, *std_positions, *std_mapping_to_primitive, *crystallographic_orbits;
   PyObject *std_rotation;
 
   int i, j, k, n;
@@ -355,23 +355,21 @@ static PyObject * py_get_dataset(PyObject *self, PyObject *args)
   std_types = PyList_New(dataset->n_std_atoms);
   std_positions = PyList_New(dataset->n_std_atoms);
   std_mapping_to_primitive = PyList_New(dataset->n_std_atoms);
-  std_equiv_atoms = PyList_New(dataset->n_std_atoms);
+  crystallographic_orbits = PyList_New(dataset->n_std_atoms);
   for (i = 0; i < dataset->n_std_atoms; i++) {
     vec = PyList_New(3);
     for (j = 0; j < 3; j++) {
       PyList_SetItem(vec, j, PyFloat_FromDouble(dataset->std_positions[i][j]));
     }
-    PyList_SetItem(std_equiv_atoms, i, PyLong_FromLong((long) dataset->std_equivalent_atoms[i]));
     PyList_SetItem(std_types, i, PyLong_FromLong((long) dataset->std_types[i]));
     PyList_SetItem(std_positions, i, vec);
+    PyList_SetItem(crystallographic_orbits, i, PyLong_FromLong((long) dataset->crystallographic_orbits[i]));
     PyList_SetItem(std_mapping_to_primitive, i,
                    PyLong_FromLong((long) dataset->std_mapping_to_primitive[i]));
   }
   PyList_SetItem(array, n, std_types);
   n++;
   PyList_SetItem(array, n, std_positions);
-  n++;
-  PyList_SetItem(array, n, std_equiv_atoms);
   n++;
 
   std_rotation = PyList_New(3);
@@ -384,6 +382,9 @@ static PyObject * py_get_dataset(PyObject *self, PyObject *args)
     PyList_SetItem(std_rotation, i, vec);
   }
   PyList_SetItem(array, n, std_rotation);
+  n++;
+
+  PyList_SetItem(array, n, crystallographic_orbits);
   n++;
 
   PyList_SetItem(array, n, std_mapping_to_primitive);

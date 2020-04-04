@@ -355,8 +355,8 @@ void spg_free_dataset(SpglibDataset *dataset)
     free(dataset->std_mapping_to_primitive);
     dataset->std_mapping_to_primitive = NULL;
     dataset->n_std_atoms = 0;
-    free(dataset->std_equivalent_atoms);
-    dataset->std_equivalent_atoms = NULL;
+    free(dataset->crystallographic_orbits);
+    dataset->crystallographic_orbits = NULL;
   }
 
   if (dataset->site_symmetry_symbols != NULL) {
@@ -1190,7 +1190,7 @@ static SpglibDataset * init_dataset(void)
   dataset->n_atoms = 0;
   dataset->wyckoffs = NULL;
   dataset->equivalent_atoms = NULL;
-  dataset->std_equivalent_atoms = NULL;
+  dataset->crystallographic_orbits = NULL;
   dataset->mapping_to_primitive = NULL;
   dataset->n_operations = 0;
   dataset->rotations = NULL;
@@ -1320,7 +1320,7 @@ static int set_dataset(SpglibDataset * dataset,
     goto err;
   }
 
-  if ((dataset->std_equivalent_atoms =
+  if ((dataset->crystallographic_orbits =
        (int*) malloc(sizeof(int) * dataset->n_std_atoms)) == NULL) {
     warning_print("spglib: Memory could not be allocated.");
     goto err;
@@ -1336,7 +1336,7 @@ static int set_dataset(SpglibDataset * dataset,
     mat_copy_vector_d3(dataset->std_positions[i], exstr->bravais->position[i]);
     dataset->std_types[i] = exstr->bravais->types[i];
     dataset->std_mapping_to_primitive[i] = exstr->std_mapping_to_primitive[i];
-    dataset->std_equivalent_atoms[i] = exstr->std_equivalent_atoms[i];
+    dataset->crystallographic_orbits[i] = exstr->crystallographic_orbits[i];
   }
 
   mat_copy_matrix_d3(dataset->std_rotation_matrix, exstr->rotation);
@@ -1360,9 +1360,9 @@ static int set_dataset(SpglibDataset * dataset,
     free(dataset->equivalent_atoms);
     dataset->equivalent_atoms = NULL;
   }
-  if (dataset->std_equivalent_atoms != NULL) {
-    free(dataset->std_equivalent_atoms);
-    dataset->std_equivalent_atoms = NULL;
+  if (dataset->crystallographic_orbits != NULL) {
+    free(dataset->crystallographic_orbits);
+    dataset->crystallographic_orbits = NULL;
   }
   if (dataset->mapping_to_primitive != NULL) {
     free(dataset->mapping_to_primitive);
