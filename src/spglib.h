@@ -123,6 +123,7 @@ extern "C" {
     int *wyckoffs;
     char (*site_symmetry_symbols)[7];
     int *equivalent_atoms;
+    int *crystallographic_orbits;
     double primitive_lattice[3][3];
     int *mapping_to_primitive;
     int n_std_atoms;
