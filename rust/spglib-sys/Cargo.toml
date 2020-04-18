@@ -1,0 +1,16 @@
+[package]
+name = "spglib-sys"
+version = "0.1.1"
+authors = ["Seaton Ullberg <seatonullberg@gmail.com>"]
+edition = "2018"
+license = "BSD-3-Clause"
+description = "Raw bindings to spglib"
+repository = "https://github.com/atztogo/spglib"
+categories = ["external-ffi-bindings", "science"]
+
+[lib]
+name = "spglib_sys"
+path = "./lib.rs"
+
+[build-dependencies]
+bindgen = "0.52.0"

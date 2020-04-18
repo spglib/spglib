@@ -347,6 +347,10 @@ void spg_free_dataset(SpglibDataset *dataset)
     dataset->wyckoffs = NULL;
     free(dataset->equivalent_atoms);
     dataset->equivalent_atoms = NULL;
+    free(dataset->crystallographic_orbits);
+    dataset->crystallographic_orbits = NULL;
+    free(dataset->site_symmetry_symbols);
+    dataset->site_symmetry_symbols = NULL;
     free(dataset->mapping_to_primitive);
     dataset->mapping_to_primitive = NULL;
     dataset->n_atoms = 0;
@@ -360,11 +364,6 @@ void spg_free_dataset(SpglibDataset *dataset)
     free(dataset->std_mapping_to_primitive);
     dataset->std_mapping_to_primitive = NULL;
     dataset->n_std_atoms = 0;
-  }
-
-  if (dataset->site_symmetry_symbols != NULL) {
-    free(dataset->site_symmetry_symbols);
-    dataset->site_symmetry_symbols = NULL;
   }
 
   dataset->spacegroup_number = 0;
@@ -1294,6 +1293,7 @@ static SpglibDataset * init_dataset(void)
   dataset->n_atoms = 0;
   dataset->wyckoffs = NULL;
   dataset->equivalent_atoms = NULL;
+  dataset->crystallographic_orbits = NULL;
   dataset->mapping_to_primitive = NULL;
   dataset->n_operations = 0;
   dataset->rotations = NULL;
@@ -1365,12 +1365,18 @@ static int set_dataset(SpglibDataset * dataset,
   }
 
   if ((dataset->site_symmetry_symbols =
-       (char(*)[7]) malloc(sizeof(char[7]) * cell->size)) == NULL) {
+       (char(*)[7]) malloc(sizeof(char[7]) * dataset->n_atoms)) == NULL) {
     warning_print("spglib: Memory could not be allocated.");
     goto err;
   }
 
   if ((dataset->equivalent_atoms =
+       (int*) malloc(sizeof(int) * dataset->n_atoms)) == NULL) {
+    warning_print("spglib: Memory could not be allocated.");
+    goto err;
+  }
+
+  if ((dataset->crystallographic_orbits =
        (int*) malloc(sizeof(int) * dataset->n_atoms)) == NULL) {
     warning_print("spglib: Memory could not be allocated.");
     goto err;
@@ -1382,6 +1388,7 @@ static int set_dataset(SpglibDataset * dataset,
       dataset->site_symmetry_symbols[i][j] = exstr->site_symmetry_symbols[i][j];
     }
     dataset->equivalent_atoms[i] = exstr->equivalent_atoms[i];
+    dataset->crystallographic_orbits[i] = exstr->crystallographic_orbits[i];
   }
 
   if ((dataset->mapping_to_primitive =
@@ -1435,6 +1442,7 @@ static int set_dataset(SpglibDataset * dataset,
     dataset->std_types[i] = exstr->bravais->types[i];
     dataset->std_mapping_to_primitive[i] = exstr->std_mapping_to_primitive[i];
   }
+
   mat_copy_matrix_d3(dataset->std_rotation_matrix, exstr->rotation);
 
   /* dataset->pointgroup_number = spacegroup->pointgroup_number; */
@@ -1455,6 +1463,10 @@ static int set_dataset(SpglibDataset * dataset,
   if (dataset->equivalent_atoms != NULL) {
     free(dataset->equivalent_atoms);
     dataset->equivalent_atoms = NULL;
+  }
+  if (dataset->crystallographic_orbits != NULL) {
+    free(dataset->crystallographic_orbits);
+    dataset->crystallographic_orbits = NULL;
   }
   if (dataset->mapping_to_primitive != NULL) {
     free(dataset->mapping_to_primitive);

@@ -193,8 +193,22 @@ def get_symmetry_dataset(cell,
                 Rotation matrices and translation vectors. Space group
                 operations are obtained by
                 [(r,t) for r, t in zip(rotations, translations)]
-            wyckoffs (n char): Wyckoff letters
-            equivalent_atoms (n int): Symmetrically equivalent atoms
+            wyckoffs (n char): Wyckoff letters corresponding to the space
+                group type.
+            site_symmetry_symbols: Site symmetry symbols corresponding to the
+                space group type.
+            equivalent_atoms (n int): Symmetrically equivalent atoms, where
+                'symmetrically' means found symmetry operations. In spglib,
+                symmetry operations are given for the input cell. When a
+                non-primitive cell is inputed and the lattice made by the
+                non-primitive basis vectors breaks its point group,
+                the found symmetry operations may not correspond to the
+                crystallographic space group type.
+            crystallographic_orbits (n int): Symmetrically equivalent atoms,
+                where 'symmetrically' means the space group operations
+                corresponding to the space group type. This is very similar to
+                ``equivalent_atoms``. See the difference explained in
+                ``equivalent_atoms``
             Primitive cell:
                 primitive_lattice (3x3 float, row vectors):
                     Shape of cell by these basis vectors may not be nice.
@@ -237,6 +251,7 @@ def get_symmetry_dataset(cell,
             'translations',
             'wyckoffs',
             'site_symmetry_symbols',
+            'crystallographic_orbits',
             'equivalent_atoms',
             'primitive_lattice',
             'mapping_to_primitive',
@@ -265,6 +280,8 @@ def get_symmetry_dataset(cell,
     dataset['wyckoffs'] = [letters[x] for x in dataset['wyckoffs']]
     dataset['site_symmetry_symbols'] = [
         s.strip() for s in dataset['site_symmetry_symbols']]
+    dataset['crystallographic_orbits'] = np.array(
+        dataset['crystallographic_orbits'], dtype='intc')
     dataset['equivalent_atoms'] = np.array(dataset['equivalent_atoms'],
                                            dtype='intc')
     dataset['primitive_lattice'] = np.array(
@@ -333,8 +350,8 @@ def get_spacegroup_type(hall_number):
             'schoenflies',
             'hall_symbol',
             'choice',
-            'pointgroup_schoenflies',
             'pointgroup_international',
+            'pointgroup_schoenflies',
             'arithmetic_crystal_class_number',
             'arithmetic_crystal_class_symbol')
     spg_type_list = spg.spacegroup_type(hall_number)

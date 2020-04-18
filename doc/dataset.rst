@@ -30,6 +30,8 @@ The dataset is accessible through the C-structure given by
      int *wyckoffs;
      char (*site_symmetry_symbols)[7];
      int *equivalent_atoms;
+     int *crystallographic_orbits;
+     double primitive_lattice[3][3];
      int *mapping_to_primitive;
      int n_std_atoms;
      double std_lattice[3][3];
@@ -110,14 +112,16 @@ of the input unit cell in this order. Therefore the number of elements in
 ``wyckoffs`` is same as the number of atoms in the input unit cell,
 which is given by ``n_atoms``.
 
+This is determined from the symmetry of the primitive cell.
+
 ``site_symmetry_symbols``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-**Experimental**
 
 This gives site-symmetry symbols. These are valid for the standard
 settings. For different settings and choices belonging to the same
 space group type, the same set of the symbols is returned.
+
+This is determined from the symmetry of the primitive cell.
 
 ``equivalent_atoms``
 ^^^^^^^^^^^^^^^^^^^^^
@@ -126,10 +130,24 @@ This gives the mapping table from the atomic indices of the input unit
 cell to the atomic indices of symmetrically independent atom, such as
 ``[0, 0, 0, 0, 4, 4, 4, 4]``, where the symmetrically independent
 atomic indices are 0 and
-4. We can see that the atoms from 0 to 3 are mapped to 0
-and those from 4 to 7 are mapped to 4.
-The number of elements in ``equivalent_atoms`` is same as the
-number of atoms in the input unit cell, which is given by ``n_atoms``.
+4. We can see that the atoms from 0 to 3 are mapped to 0 and those
+from 4 to 7 are mapped to 4.  The number of elements in
+``equivalent_atoms`` is same as the number of atoms in the input unit
+cell, which is given by ``n_atoms``.
+
+Symmetry operations found for the input cell are used to determine the
+equivalent atoms. ``equivalent_atoms`` and ``crystallographic_orbits``
+are almost equivalent, but they can be different in a special
+case as written in :ref:`api_spg_get_symmetry`.
+
+``crystallographic_orbits``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+**New at version 1.15**
+
+This is almost equivalent to ``equivalent_atoms``. But symmetry of the
+primitive cell is used to determine the symmetrically equivalent atoms.
+
 
 ``mapping_to_primitive``
 ^^^^^^^^^^^^^^^^^^^^^^^^^
