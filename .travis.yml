@@ -38,29 +38,27 @@ before_install:
 - echo $DOCKER_DEPLOY
 - echo $TRAVIS_BRANCH
 - echo $TRAVIS_PYTHON_VERSION
-- if [[ ("$TRAVIS_BRANCH" != "rc" || "$TRAVIS_BRANCH" != "master") && "$DOCKER_DEPLOY" == "false" || ("$TRAVIS_BRANCH" == "rc" || "$TRAVIS_BRANCH" == "master") && "$DOCKER_DEPLOY" != "false" ]]; then
-    if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
-      wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh;
-    else
-      wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
-    fi;
-    echo $TRAVIS_PYTHON_VERSION;
-    bash miniconda.sh -b -p $HOME/miniconda;
-    export PATH="$HOME/miniconda/bin:$PATH";
-    conda update --yes conda;
-    conda update --all --yes;
-    cd python;
-    git branch -v;
-    git describe --tags --dirty;
-    ./get_nanoversion.sh;
-    cat __nanoversion__.txt;
-    cd ..;
-    if [[ "$DOCKER_DEPLOY" != "false" ]]; then
-      conda install --yes pip;
-    else
-      conda install --yes pip numpy pyyaml nomkl;
-    fi
-  fi
+- if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
+    wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh;
+  else
+    wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
+  fi;
+- echo $TRAVIS_PYTHON_VERSION;
+- bash miniconda.sh -b -p $HOME/miniconda;
+- export PATH="$HOME/miniconda/bin:$PATH";
+- conda update --yes conda;
+- conda update --all --yes;
+- cd python;
+- git branch -v;
+- git describe --tags --dirty;
+- ./get_nanoversion.sh;
+- cat __nanoversion__.txt;
+- cd ..;
+- if [[ "$DOCKER_DEPLOY" != "false" ]]; then
+    conda install --yes pip;
+  else
+    conda install --yes pip numpy pyyaml nomkl;
+  fi;
 - pwd
 
 install:
@@ -76,15 +74,13 @@ install:
       cp wheelhouse/spglib* dist/;
       ls dist/;
       cd ..;
-    fi
+    fi;
   fi
 
 script:
 - pwd
 - if [[ "$DOCKER_DEPLOY" == "false" ]]; then
     if [[ "$TRAVIS_BRANCH" != "rc" && "$TRAVIS_BRANCH" != "master" ]]; then
-      conda create --yes -n test;
-      source activate test;
       conda install --yes gcc_linux-64;
       conda install --yes pip numpy pyyaml nomkl make cmake;
       conda install -c conda-forge --yes valgrind;
@@ -95,7 +91,6 @@ script:
       cd python;
       python setup.py test;
       cd ..;
-      source deactivate;
     fi
   fi
 

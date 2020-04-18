@@ -52,6 +52,7 @@
 static Cell * get_Wyckoff_positions(int * wyckoffs,
                                     char (*site_symmetry_symbols)[7],
                                     int * equiv_atoms,
+                                    int * crystallographic_orbits,
                                     int * std_mapping_to_primitive,
                                     const Cell * primitive,
                                     const Cell * cell,
@@ -111,11 +112,11 @@ static void get_corners(int corners[3][8],
                         SPGCONST int t_mat[3][3]);
 static void get_surrounding_frame(int frame[3],
                                   SPGCONST int t_mat[3][3]);
-static int set_equivalent_atoms(int * equiv_atoms_cell,
-                                const Cell * primitive,
-                                const Cell * cell,
-                                const int * equiv_atoms_prim,
-                                const int * mapping_table);
+static int set_crystallographic_orbits(int * equiv_atoms_cell,
+                                       const Cell * primitive,
+                                       const Cell * cell,
+                                       const int * equiv_atoms_prim,
+                                       const int * mapping_table);
 static void set_equivalent_atoms_broken_symmetry(int * equiv_atoms_cell,
                                                  const Cell * cell,
                                                  const Symmetry *symmetry,
@@ -168,6 +169,7 @@ ref_get_exact_structure_and_symmetry(Spacegroup * spacegroup,
                                      const double symprec)
 {
   int *std_mapping_to_primitive, *wyckoffs, *equivalent_atoms;
+  int *crystallographic_orbits;
   double rotation[3][3];
   Cell *bravais;
   Symmetry *symmetry;
@@ -178,6 +180,7 @@ ref_get_exact_structure_and_symmetry(Spacegroup * spacegroup,
   wyckoffs = NULL;
   site_symmetry_symbols = NULL;
   equivalent_atoms = NULL;
+  crystallographic_orbits = NULL;
   bravais = NULL;
   symmetry = NULL;
   exact_structure = NULL;
@@ -211,6 +214,12 @@ ref_get_exact_structure_and_symmetry(Spacegroup * spacegroup,
     goto err;
   }
 
+  if ((crystallographic_orbits = (int*)malloc(sizeof(int) * cell->size))
+      == NULL) {
+    warning_print("spglib: Memory could not be allocated.");
+    goto err;
+  }
+
   if ((std_mapping_to_primitive =
        (int*) malloc(sizeof(int) * primitive->size * 4)) == NULL) {
     warning_print("spglib: Memory could not be allocated.");
@@ -220,6 +229,7 @@ ref_get_exact_structure_and_symmetry(Spacegroup * spacegroup,
   if ((bravais = get_Wyckoff_positions(wyckoffs,
                                        site_symmetry_symbols,
                                        equivalent_atoms,
+                                       crystallographic_orbits,
                                        std_mapping_to_primitive,
                                        primitive,
                                        cell,
@@ -251,6 +261,7 @@ ref_get_exact_structure_and_symmetry(Spacegroup * spacegroup,
   exact_structure->wyckoffs = wyckoffs;
   exact_structure->site_symmetry_symbols = site_symmetry_symbols;
   exact_structure->equivalent_atoms = equivalent_atoms;
+  exact_structure->crystallographic_orbits = crystallographic_orbits;
   exact_structure->std_mapping_to_primitive = std_mapping_to_primitive;
   mat_copy_matrix_d3(exact_structure->rotation, rotation);
 
@@ -268,6 +279,10 @@ err:
   if (equivalent_atoms != NULL) {
     free(equivalent_atoms);
     equivalent_atoms = NULL;
+  }
+  if (crystallographic_orbits != NULL) {
+    free(crystallographic_orbits);
+    crystallographic_orbits = NULL;
   }
   if (std_mapping_to_primitive != NULL) {
     free(std_mapping_to_primitive);
@@ -296,6 +311,11 @@ void ref_free_exact_structure(ExactStructure *exstr)
       free(exstr->equivalent_atoms);
       exstr->equivalent_atoms = NULL;
     }
+    // CAUSES CORRUPTED DOUBLE LINKED LIST
+    if (exstr->crystallographic_orbits != NULL) {
+      free(exstr->crystallographic_orbits);
+      exstr->crystallographic_orbits = NULL;
+    }
     if (exstr->std_mapping_to_primitive != NULL) {
       free(exstr->std_mapping_to_primitive);
       exstr->std_mapping_to_primitive = NULL;
@@ -312,6 +332,7 @@ void ref_free_exact_structure(ExactStructure *exstr)
 static Cell * get_Wyckoff_positions(int * wyckoffs,
                                     char (*site_symmetry_symbols)[7],
                                     int * equiv_atoms,
+                                    int * crystallographic_orbits,
                                     int * std_mapping_to_primitive,
                                     const Cell * primitive,
                                     const Cell * cell,
@@ -380,10 +401,31 @@ static Cell * get_Wyckoff_positions(int * wyckoffs,
     }
   }
 
-  spgdb_get_operation_index(operation_index, spacegroup->hall_number);
-  num_prim_sym = operation_index[0] / (bravais->size / primitive->size);
+  /* crystallographic orbits defined here is almost equivalent to */
+  /* symmetrically equivalent atoms. */
+  /* Only when broken symmetry due to non-primitive cell */
+  /* (so-called supercell) is found, they can be different. */
+  /* The terminology of crystallographic orbits may not be appropriate, */
+  /* but we admit it because we have already used equivalent_atoms */
+  /* with respect to the found symmetry operations before including */
+  /* equivalent atoms in crystallographic sense. */
+  if (set_crystallographic_orbits(crystallographic_orbits,
+                                  primitive,
+                                  cell,
+                                  equiv_atoms_bravais,
+                                  mapping_table) == 0) {
+    cel_free_cell(bravais);
+    bravais = NULL;
+
+    warning_print("spglib: set_crystallographic_orbits failed.");
+    warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
+
+    goto ret;
+  }
 
   /* Check symmetry breaking by unusual multiplicity of primitive cell. */
+  spgdb_get_operation_index(operation_index, spacegroup->hall_number);
+  num_prim_sym = operation_index[0] / (bravais->size / primitive->size);
   if (cell->size * num_prim_sym != symmetry->size * primitive->size) {
     set_equivalent_atoms_broken_symmetry(equiv_atoms,
                                          cell,
@@ -391,17 +433,8 @@ static Cell * get_Wyckoff_positions(int * wyckoffs,
                                          mapping_table,
                                          symprec);
   } else {
-    if (set_equivalent_atoms(equiv_atoms,
-                             primitive,
-                             cell,
-                             equiv_atoms_bravais,
-                             mapping_table) == 0) {
-      cel_free_cell(bravais);
-
-      warning_print("spglib: set_equivalent_atoms failed.");
-      warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
-
-      bravais = NULL;
+    for (i = 0; i < cell->size; i++) {
+      equiv_atoms[i] = crystallographic_orbits[i];
     }
   }
 
@@ -514,6 +547,8 @@ get_bravais_exact_positions_and_lattice(int * wyckoffs,
     mat_copy_vector_d3(conv_prim->position[i], exact_positions->vec[i]);
   }
 
+  /* The order of atoms in bravais is: */
+  /* [atoms in primitive cell] * number of pure translations. */
   bravais = expand_positions_in_bravais(wyckoffs,
                                         site_symmetry_symbols,
                                         equiv_atoms,
@@ -568,6 +603,7 @@ static Cell * expand_positions_in_bravais(int * wyckoffs,
   for (i = 0; i < conv_sym->size; i++) {
     /* Referred atoms in Bravais lattice */
     if (mat_check_identity_matrix_i3(identity, conv_sym->rot[i])) {
+      /* The order of atoms in conv_prim is same as that in primitive. */
       for (j = 0; j < conv_prim->size; j++) {
         bravais->types[num_atom] = conv_prim->types[j];
         mat_copy_vector_d3(bravais->position[num_atom], conv_prim->position[j]);
@@ -925,11 +961,11 @@ get_refined_symmetry_operations(const Cell * cell,
   return symmetry;
 }
 
-static int set_equivalent_atoms(int * equiv_atoms_cell,
-                                const Cell * primitive,
-                                const Cell * cell,
-                                const int * equiv_atoms_prim,
-                                const int * mapping_table)
+static int set_crystallographic_orbits(int * equiv_atoms_cell,
+                                       const Cell * primitive,
+                                       const Cell * cell,
+                                       const int * equiv_atoms_prim,
+                                       const int * mapping_table)
 {
   int i, j;
   int *equiv_atoms;
@@ -952,6 +988,7 @@ static int set_equivalent_atoms(int * equiv_atoms_cell,
   for (i = 0; i < cell->size; i++) {
     equiv_atoms_cell[i] = equiv_atoms[mapping_table[i]];
   }
+
   free(equiv_atoms);
   equiv_atoms = NULL;
 

@@ -95,7 +95,7 @@ class TestSpglib(unittest.TestCase):
                 self.assertEqual(dataset['choice'], spg_type['choice'],
                                  msg=("%s" % fname))
                 self.assertEqual(dataset['pointgroup'],
-                                 spg_type['pointgroup_schoenflies'],
+                                 spg_type['pointgroup_international'],
                                  msg=("%s" % fname))
 
             wyckoffs = dataset['wyckoffs']
