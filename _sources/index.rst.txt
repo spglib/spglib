@@ -3,7 +3,7 @@ Spglib
 
 Spglib is a library for finding and handling crystal symmetries
 written in C. There are the :ref:`python <python_spglib>`,
-:ref:`fortran, and ruby <interfaces>` interfaces.
+:ref:`fortran, rust, and ruby <interfaces>` interfaces.
 Version history is found at `ChangeLog
 <https://github.com/atztogo/spglib/blob/master/ChangeLog>`_.
 
@@ -93,5 +93,5 @@ Acknowledgments
 ----------------
 
 Spglib project acknowledges Paweł T. Jochym for deployment and
-packaging, Yusuke Seto for the Crystallographic database, and Dimitar
-Pashov for the fortran interface.
+packaging, Yusuke Seto for the Crystallographic database, Dimitar
+Pashov for the Fortran interface, and many other contributers.

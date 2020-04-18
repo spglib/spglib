@@ -1,30 +1,29 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Spglib for Python &#8212; spglib 1.12.0 documentation</title>
+    <meta charset="utf-8" />
+    <title>Spglib for Python &#8212; Spglig v.1.15.0</title>
     <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
-    <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
-    <script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Fortran and Ruby interfaces" href="interface.html" />
+    <link rel="next" title="Rust, Fortran, and Ruby interfaces" href="interface.html" />
     <link rel="prev" title="Variables" href="variable.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
 <meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="_static/bootstrap-sphinx.js "></script>
 
   </head><body>
 
@@ -39,7 +38,7 @@
         </button>
         <a class="navbar-brand" href="index.html">
           spglib</a>
-        <span class="navbar-text navbar-version pull-left"><b>1.12.0</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>1.15</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -60,7 +59,7 @@
 <li class="toctree-l1"><a class="reference internal" href="dataset.html">Spglib dataset</a></li>
 <li class="toctree-l1"><a class="reference internal" href="variable.html">Variables</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Python interface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="interface.html">Fortran and Ruby interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interface.html">Rust, Fortran, and Ruby interfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="definition.html">Definitions and conventions</a></li>
 </ul>
 </ul>
@@ -140,42 +139,45 @@
 
 <div class="container">
   <div class="row">
-    <div class="col-md-12 content">
+    <div class="body col-md-12 content" role="main">
       
   <div class="section" id="spglib-for-python">
 <span id="python-spglib"></span><h1>Spglib for Python<a class="headerlink" href="#spglib-for-python" title="Permalink to this headline">¶</a></h1>
 <div class="contents local topic" id="contents">
 <ul class="simple">
-<li><a class="reference internal" href="#installation" id="id2">Installation</a><ul>
-<li><a class="reference internal" href="#using-pip" id="id3">Using pip</a></li>
-<li><a class="reference internal" href="#using-conda" id="id4">Using conda</a></li>
-<li><a class="reference internal" href="#building-using-setup-py" id="id5">Building using setup.py</a></li>
+<li><p><a class="reference internal" href="#installation" id="id2">Installation</a></p>
+<ul>
+<li><p><a class="reference internal" href="#using-pip" id="id3">Using pip</a></p></li>
+<li><p><a class="reference internal" href="#using-conda" id="id4">Using conda</a></p></li>
+<li><p><a class="reference internal" href="#building-using-setup-py" id="id5">Building using setup.py</a></p></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#test" id="id6">Test</a></li>
-<li><a class="reference internal" href="#how-to-import-spglib-module" id="id7">How to import spglib module</a></li>
-<li><a class="reference internal" href="#version-number" id="id8">Version number</a></li>
-<li><a class="reference internal" href="#example" id="id9">Example</a></li>
-<li><a class="reference internal" href="#variables" id="id10">Variables</a><ul>
-<li><a class="reference internal" href="#crystal-structure-cell" id="id11">Crystal structure (<code class="docutils literal notranslate"><span class="pre">cell</span></code>)</a></li>
-<li><a class="reference internal" href="#symmetry-tolerance-symprec" id="id12">Symmetry tolerance (<code class="docutils literal notranslate"><span class="pre">symprec</span></code>)</a></li>
+<li><p><a class="reference internal" href="#test" id="id6">Test</a></p></li>
+<li><p><a class="reference internal" href="#how-to-import-spglib-module" id="id7">How to import spglib module</a></p></li>
+<li><p><a class="reference internal" href="#version-number" id="id8">Version number</a></p></li>
+<li><p><a class="reference internal" href="#example" id="id9">Example</a></p></li>
+<li><p><a class="reference internal" href="#variables" id="id10">Variables</a></p>
+<ul>
+<li><p><a class="reference internal" href="#crystal-structure-cell" id="id11">Crystal structure (<code class="docutils literal notranslate"><span class="pre">cell</span></code>)</a></p></li>
+<li><p><a class="reference internal" href="#symmetry-tolerance-symprec" id="id12">Symmetry tolerance (<code class="docutils literal notranslate"><span class="pre">symprec</span></code>)</a></p></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#methods" id="id13">Methods</a><ul>
-<li><a class="reference internal" href="#get-version" id="id14"><code class="docutils literal notranslate"><span class="pre">get_version</span></code></a></li>
-<li><a class="reference internal" href="#get-error-message" id="id15"><code class="docutils literal notranslate"><span class="pre">get_error_message</span></code></a></li>
-<li><a class="reference internal" href="#get-spacegroup" id="id16"><code class="docutils literal notranslate"><span class="pre">get_spacegroup</span></code></a></li>
-<li><a class="reference internal" href="#get-symmetry" id="id17"><code class="docutils literal notranslate"><span class="pre">get_symmetry</span></code></a></li>
-<li><a class="reference internal" href="#refine-cell" id="id18"><code class="docutils literal notranslate"><span class="pre">refine_cell</span></code></a></li>
-<li><a class="reference internal" href="#find-primitive" id="id19"><code class="docutils literal notranslate"><span class="pre">find_primitive</span></code></a></li>
-<li><a class="reference internal" href="#standardize-cell" id="id20"><code class="docutils literal notranslate"><span class="pre">standardize_cell</span></code></a></li>
-<li><a class="reference internal" href="#get-symmetry-dataset" id="id21"><code class="docutils literal notranslate"><span class="pre">get_symmetry_dataset</span></code></a></li>
-<li><a class="reference internal" href="#get-symmetry-from-database" id="id22"><code class="docutils literal notranslate"><span class="pre">get_symmetry_from_database</span></code></a></li>
-<li><a class="reference internal" href="#get-spacegroup-type" id="id23"><code class="docutils literal notranslate"><span class="pre">get_spacegroup_type</span></code></a></li>
-<li><a class="reference internal" href="#get-hall-number-from-symmetry" id="id24"><code class="docutils literal notranslate"><span class="pre">get_hall_number_from_symmetry</span></code></a></li>
-<li><a class="reference internal" href="#niggli-reduce" id="id25"><code class="docutils literal notranslate"><span class="pre">niggli_reduce</span></code></a></li>
-<li><a class="reference internal" href="#delaunay-reduce" id="id26"><code class="docutils literal notranslate"><span class="pre">delaunay_reduce</span></code></a></li>
-<li><a class="reference internal" href="#get-ir-reciprocal-mesh" id="id27"><code class="docutils literal notranslate"><span class="pre">get_ir_reciprocal_mesh</span></code></a></li>
+<li><p><a class="reference internal" href="#methods" id="id13">Methods</a></p>
+<ul>
+<li><p><a class="reference internal" href="#get-version" id="id14"><code class="docutils literal notranslate"><span class="pre">get_version</span></code></a></p></li>
+<li><p><a class="reference internal" href="#get-error-message" id="id15"><code class="docutils literal notranslate"><span class="pre">get_error_message</span></code></a></p></li>
+<li><p><a class="reference internal" href="#get-spacegroup" id="id16"><code class="docutils literal notranslate"><span class="pre">get_spacegroup</span></code></a></p></li>
+<li><p><a class="reference internal" href="#get-symmetry" id="id17"><code class="docutils literal notranslate"><span class="pre">get_symmetry</span></code></a></p></li>
+<li><p><a class="reference internal" href="#refine-cell" id="id18"><code class="docutils literal notranslate"><span class="pre">refine_cell</span></code></a></p></li>
+<li><p><a class="reference internal" href="#find-primitive" id="id19"><code class="docutils literal notranslate"><span class="pre">find_primitive</span></code></a></p></li>
+<li><p><a class="reference internal" href="#standardize-cell" id="id20"><code class="docutils literal notranslate"><span class="pre">standardize_cell</span></code></a></p></li>
+<li><p><a class="reference internal" href="#get-symmetry-dataset" id="id21"><code class="docutils literal notranslate"><span class="pre">get_symmetry_dataset</span></code></a></p></li>
+<li><p><a class="reference internal" href="#get-symmetry-from-database" id="id22"><code class="docutils literal notranslate"><span class="pre">get_symmetry_from_database</span></code></a></p></li>
+<li><p><a class="reference internal" href="#get-spacegroup-type" id="id23"><code class="docutils literal notranslate"><span class="pre">get_spacegroup_type</span></code></a></p></li>
+<li><p><a class="reference internal" href="#get-hall-number-from-symmetry" id="id24"><code class="docutils literal notranslate"><span class="pre">get_hall_number_from_symmetry</span></code></a></p></li>
+<li><p><a class="reference internal" href="#niggli-reduce" id="id25"><code class="docutils literal notranslate"><span class="pre">niggli_reduce</span></code></a></p></li>
+<li><p><a class="reference internal" href="#delaunay-reduce" id="id26"><code class="docutils literal notranslate"><span class="pre">delaunay_reduce</span></code></a></p></li>
+<li><p><a class="reference internal" href="#get-ir-reciprocal-mesh" id="id27"><code class="docutils literal notranslate"><span class="pre">get_ir_reciprocal_mesh</span></code></a></p></li>
 </ul>
 </li>
 </ul>
@@ -231,17 +233,16 @@ files (python-dev), C-compiler (e.g., gcc, clang), and numpy are
 required before the build. The installation steps are shown as
 follows:</p>
 <ol class="arabic">
-<li><p class="first">Go to the <code class="file docutils literal notranslate"><span class="pre">python</span></code> directory</p>
-</li>
-<li><p class="first">Type the command:</p>
+<li><p>Go to the <code class="file docutils literal notranslate"><span class="pre">python</span></code> directory</p></li>
+<li><p>Type the command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span> <span class="o">--</span><span class="n">user</span>
 </pre></div>
 </div>
 <p>Document about where spglib is installed is found at the
 links below:</p>
 <ul class="simple">
-<li><a class="reference external" href="https://docs.python.org/2/install/#alternate-installation-the-user-scheme">https://docs.python.org/2/install/#alternate-installation-the-user-scheme</a></li>
-<li><a class="reference external" href="https://docs.python.org/3/install/#alternate-installation-the-user-scheme">https://docs.python.org/3/install/#alternate-installation-the-user-scheme</a></li>
+<li><p><a class="reference external" href="https://docs.python.org/2/install/#alternate-installation-the-user-scheme">https://docs.python.org/2/install/#alternate-installation-the-user-scheme</a></p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/install/#alternate-installation-the-user-scheme">https://docs.python.org/3/install/#alternate-installation-the-user-scheme</a></p></li>
 </ul>
 </li>
 </ol>
@@ -277,14 +278,14 @@ directory. Got to this directory and run this script. It will be like below:</p>
 </pre></div>
 </div>
 <p>For versions 1.8.x or before:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyspglib</span> <span class="k">import</span> <span class="n">spglib</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyspglib</span> <span class="kn">import</span> <span class="n">spglib</span>
 </pre></div>
 </div>
 <p>If the version is not sure:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">spglib</span> <span class="k">as</span> <span class="nn">spg</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">pyspglib</span> <span class="k">import</span> <span class="n">spglib</span> <span class="k">as</span> <span class="n">spg</span>
+    <span class="kn">from</span> <span class="nn">pyspglib</span> <span class="kn">import</span> <span class="n">spglib</span> <span class="k">as</span> <span class="n">spg</span>
 </pre></div>
 </div>
 </div>
@@ -477,12 +478,12 @@ is shown in the spglib (C-API) document.</p>
 </div>
 <p>The arguments are:</p>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">cell</span></code> and <code class="docutils literal notranslate"><span class="pre">symprec</span></code>: See <a class="reference internal" href="#py-variables"><span class="std std-ref">Variables</span></a>.</li>
-<li><code class="docutils literal notranslate"><span class="pre">angle_tolerance</span></code>: An experimental argument that controls angle
+<li><p><code class="docutils literal notranslate"><span class="pre">cell</span></code> and <code class="docutils literal notranslate"><span class="pre">symprec</span></code>: See <a class="reference internal" href="#py-variables"><span class="std std-ref">Variables</span></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">angle_tolerance</span></code>: An experimental argument that controls angle
 tolerance between basis vectors. Normally it is not recommended to use
 this argument. See a bit more detail at
-<a class="reference internal" href="variable.html#variables-angle-tolerance"><span class="std std-ref">angle_tolerance</span></a>.</li>
-<li><code class="docutils literal notranslate"><span class="pre">hall_number</span></code> (see the definition of this number at
+<a class="reference internal" href="variable.html#variables-angle-tolerance"><span class="std std-ref">angle_tolerance</span></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hall_number</span></code> (see the definition of this number at
 <a class="reference internal" href="dataset.html#dataset-spg-get-dataset-spacegroup-type"><span class="std std-ref">Space group type</span></a>): The argument to
 constrain the space-group-type search only for the Hall symbol
 corresponding to it. The mapping from Hall symbols to a
@@ -497,41 +498,41 @@ be hooked. This affects to the obtained values of <code class="docutils literal 
 <code class="docutils literal notranslate"><span class="pre">origin</span> <span class="pre">shift</span></code>, <code class="docutils literal notranslate"><span class="pre">wyckoffs</span></code>, <code class="docutils literal notranslate"><span class="pre">std_lattice</span></code>, <code class="docutils literal notranslate"><span class="pre">std_positions</span></code>,
 <code class="docutils literal notranslate"><span class="pre">std_types</span></code> and <code class="docutils literal notranslate"><span class="pre">std_rotation_matrix</span></code>, but not to <code class="docutils literal notranslate"><span class="pre">rotations</span></code>
 and <code class="docutils literal notranslate"><span class="pre">translations</span></code> since the later set is defined with respect to
-the basis vectors of user’s input (the <code class="docutils literal notranslate"><span class="pre">cell</span></code> argument).</li>
+the basis vectors of user’s input (the <code class="docutils literal notranslate"><span class="pre">cell</span></code> argument).</p></li>
 </ul>
 <p><code class="docutils literal notranslate"><span class="pre">dataset</span></code> is a dictionary. Short explanations of the values of the
 keys are shown below. More the detail may be found at
 <a class="reference internal" href="dataset.html#spglib-dataset"><span class="std std-ref">Spglib dataset</span></a>.</p>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">number</span></code>: International space group number</li>
-<li><code class="docutils literal notranslate"><span class="pre">international</span></code>: International short symbol</li>
-<li><code class="docutils literal notranslate"><span class="pre">hall</span></code>: Hall symbol</li>
-<li><code class="docutils literal notranslate"><span class="pre">hall_number</span></code>: Hall number. This number is used in
+<li><p><code class="docutils literal notranslate"><span class="pre">number</span></code>: International space group number</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">international</span></code>: International short symbol</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hall</span></code>: Hall symbol</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hall_number</span></code>: Hall number. This number is used in
 <a class="reference internal" href="#py-method-get-symmetry-from-database"><span class="std std-ref">get_symmetry_from_database</span></a> and
-<a class="reference internal" href="#py-method-get-spacegroup-type"><span class="std std-ref">get_spacegroup_type</span></a>.</li>
-<li><code class="docutils literal notranslate"><span class="pre">choice</span></code>: Centring, origin, basis vector setting</li>
-<li><code class="docutils literal notranslate"><span class="pre">transformation_matrix</span></code>: See the detail at
-<a class="reference internal" href="dataset.html#dataset-origin-shift-and-transformation"><span class="std std-ref">Transformation matrix and origin shift</span></a>.</li>
-<li><code class="docutils literal notranslate"><span class="pre">origin</span> <span class="pre">shift</span></code>: See the detail at
-<a class="reference internal" href="dataset.html#dataset-origin-shift-and-transformation"><span class="std std-ref">Transformation matrix and origin shift</span></a>.</li>
-<li><code class="docutils literal notranslate"><span class="pre">wyckoffs</span></code>: Wyckoff letters</li>
-<li><code class="docutils literal notranslate"><span class="pre">site_symmetry_symbols</span></code>: Site-symmetry symbols (<strong>experimental</strong>)</li>
-<li><code class="docutils literal notranslate"><span class="pre">equivalent_atoms</span></code>: Mapping table to equivalent atoms</li>
-<li><code class="docutils literal notranslate"><span class="pre">mapping_to_primitive</span></code>: Mapping table to atoms in the primitive cell</li>
-<li><code class="docutils literal notranslate"><span class="pre">rotations</span></code> and <code class="docutils literal notranslate"><span class="pre">translations</span></code>: Rotation matrices and
+<a class="reference internal" href="#py-method-get-spacegroup-type"><span class="std std-ref">get_spacegroup_type</span></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">choice</span></code>: Centring, origin, basis vector setting</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">transformation_matrix</span></code>: See the detail at
+<a class="reference internal" href="dataset.html#dataset-origin-shift-and-transformation"><span class="std std-ref">Transformation matrix and origin shift</span></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">origin</span> <span class="pre">shift</span></code>: See the detail at
+<a class="reference internal" href="dataset.html#dataset-origin-shift-and-transformation"><span class="std std-ref">Transformation matrix and origin shift</span></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">wyckoffs</span></code>: Wyckoff letters</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">site_symmetry_symbols</span></code>: Site-symmetry symbols (<strong>experimental</strong>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">equivalent_atoms</span></code>: Mapping table to equivalent atoms</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mapping_to_primitive</span></code>: Mapping table to atoms in the primitive cell</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rotations</span></code> and <code class="docutils literal notranslate"><span class="pre">translations</span></code>: Rotation matrices and
 translation vectors. See <a class="reference internal" href="#py-method-get-symmetry"><span class="std std-ref">get_symmetry</span></a> for more
-details.</li>
-<li><code class="docutils literal notranslate"><span class="pre">pointgroup</span></code>: Symbol of the crystallographic point group in
-the Hermann–Mauguin notation.</li>
-<li><code class="docutils literal notranslate"><span class="pre">std_lattice</span></code>, <code class="docutils literal notranslate"><span class="pre">std_positions</span></code>, <code class="docutils literal notranslate"><span class="pre">std_types</span></code>: Standardized
+details.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pointgroup</span></code>: Symbol of the crystallographic point group in
+the Hermann–Mauguin notation.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">std_lattice</span></code>, <code class="docutils literal notranslate"><span class="pre">std_positions</span></code>, <code class="docutils literal notranslate"><span class="pre">std_types</span></code>: Standardized
 crystal structure corresponding to a Hall symbol found. These are
 equivalently given in the array formats of <code class="docutils literal notranslate"><span class="pre">lattice</span></code>,
 <code class="docutils literal notranslate"><span class="pre">positions</span></code>, and <code class="docutils literal notranslate"><span class="pre">numbers</span></code> presented at
 <a class="reference internal" href="#py-variables-crystal-structure"><span class="std std-ref">Crystal structure (cell)</span></a>,
-respectively.</li>
-<li><code class="docutils literal notranslate"><span class="pre">std_rotation_matrix</span></code>: See the detail at <a class="reference internal" href="dataset.html#dataset-idealized-cell"><span class="std std-ref">Standardized crystal structure after idealization</span></a>.</li>
-<li><code class="docutils literal notranslate"><span class="pre">std_mapping_to_primitive</span></code>: Mapping table from atoms in the
-standardized crystal structure to the atoms in the primitive cell.</li>
+respectively.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">std_rotation_matrix</span></code>: See the detail at <a class="reference internal" href="dataset.html#dataset-idealized-cell"><span class="std std-ref">Standardized crystal structure after idealization</span></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">std_mapping_to_primitive</span></code>: Mapping table from atoms in the
+standardized crystal structure to the atoms in the primitive cell.</p></li>
 </ul>
 <p>When the search failed, <code class="docutils literal notranslate"><span class="pre">None</span></code> is returned.</p>
 </div>
@@ -591,8 +592,10 @@ space-group-type information is obtained through
 <p>This is expected to work well for the set of symmetry operations whose
 distortion is small. The aim of making this feature is to find
 space-group-type for the set of symmetry operations given by the other
-source than spglib. <code class="docutils literal notranslate"><span class="pre">symprec</span></code> is in the length of the fractional
-coordinates and should be small like <code class="docutils literal notranslate"><span class="pre">1e-5</span></code>.</p>
+source than spglib.</p>
+<p>Note that the definition of <code class="docutils literal notranslate"><span class="pre">symprec</span></code> is
+different from usual one, but is given in the fractional
+coordinates and so it should be small like <code class="docutils literal notranslate"><span class="pre">1e-5</span></code>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">get_hall_number_from_symmetry</span><span class="p">(</span><span class="n">rotations</span><span class="p">,</span> <span class="n">translations</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -736,7 +739,7 @@ the irreducible k-point indices that are obtained by</p>
     </p>
     <p>
         &copy; Copyright 2009, Atsushi Togo.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.1.<br/>
     </p>
   </div>
 </footer>

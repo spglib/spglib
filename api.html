@@ -1,22 +1,17 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>C-APIs &#8212; spglib 1.12.0 documentation</title>
+    <meta charset="utf-8" />
+    <title>C-APIs &#8212; Spglig v.1.15.0</title>
     <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
-    <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
-    <script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Spglib dataset" href="dataset.html" />
@@ -25,6 +20,10 @@
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
 <meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="_static/bootstrap-sphinx.js "></script>
 
   </head><body>
 
@@ -39,7 +38,7 @@
         </button>
         <a class="navbar-brand" href="index.html">
           spglib</a>
-        <span class="navbar-text navbar-version pull-left"><b>1.12.0</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>1.15</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -60,7 +59,7 @@
 <li class="toctree-l1"><a class="reference internal" href="dataset.html">Spglib dataset</a></li>
 <li class="toctree-l1"><a class="reference internal" href="variable.html">Variables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="python-spglib.html">Python interface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="interface.html">Fortran and Ruby interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interface.html">Rust, Fortran, and Ruby interfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="definition.html">Definitions and conventions</a></li>
 </ul>
 </ul>
@@ -124,32 +123,32 @@
 
 <div class="container">
   <div class="row">
-    <div class="col-md-12 content">
+    <div class="body col-md-12 content" role="main">
       
   <div class="section" id="c-apis">
 <h1>C-APIs<a class="headerlink" href="#c-apis" title="Permalink to this headline">¶</a></h1>
 <div class="contents local topic" id="list-of-c-apis">
 <p class="topic-title first">List of C-APIs</p>
 <ul class="simple">
-<li><a class="reference internal" href="#spg-get-major-version-spg-get-minor-version-spg-get-micro-version" id="id1"><code class="docutils literal notranslate"><span class="pre">spg_get_major_version</span></code>, <code class="docutils literal notranslate"><span class="pre">spg_get_minor_version</span></code>, <code class="docutils literal notranslate"><span class="pre">spg_get_micro_version</span></code></a></li>
-<li><a class="reference internal" href="#spg-get-error-code-and-spg-get-error-message" id="id2"><code class="docutils literal notranslate"><span class="pre">spg_get_error_code</span></code> and <code class="docutils literal notranslate"><span class="pre">spg_get_error_message</span></code></a></li>
-<li><a class="reference internal" href="#spg-get-symmetry" id="id3"><code class="docutils literal notranslate"><span class="pre">spg_get_symmetry</span></code></a></li>
-<li><a class="reference internal" href="#spg-get-international" id="id4"><code class="docutils literal notranslate"><span class="pre">spg_get_international</span></code></a></li>
-<li><a class="reference internal" href="#spg-get-schoenflies" id="id5"><code class="docutils literal notranslate"><span class="pre">spg_get_schoenflies</span></code></a></li>
-<li><a class="reference internal" href="#spg-standardize-cell" id="id6"><code class="docutils literal notranslate"><span class="pre">spg_standardize_cell</span></code></a></li>
-<li><a class="reference internal" href="#spg-find-primitive" id="id7"><code class="docutils literal notranslate"><span class="pre">spg_find_primitive</span></code></a></li>
-<li><a class="reference internal" href="#spg-refine-cell" id="id8"><code class="docutils literal notranslate"><span class="pre">spg_refine_cell</span></code></a></li>
-<li><a class="reference internal" href="#spg-get-dataset-and-spg-get-dataset-with-hall-number" id="id9"><code class="docutils literal notranslate"><span class="pre">spg_get_dataset</span></code> and <code class="docutils literal notranslate"><span class="pre">spg_get_dataset_with_hall_number</span></code></a></li>
-<li><a class="reference internal" href="#spg-free-dataset" id="id10"><code class="docutils literal notranslate"><span class="pre">spg_free_dataset</span></code></a></li>
-<li><a class="reference internal" href="#spg-get-spacegroup-type" id="id11"><code class="docutils literal notranslate"><span class="pre">spg_get_spacegroup_type</span></code></a></li>
-<li><a class="reference internal" href="#spg-get-symmetry-from-database" id="id12"><code class="docutils literal notranslate"><span class="pre">spg_get_symmetry_from_database</span></code></a></li>
-<li><a class="reference internal" href="#spg-get-multiplicity" id="id13"><code class="docutils literal notranslate"><span class="pre">spg_get_multiplicity</span></code></a></li>
-<li><a class="reference internal" href="#spg-get-symmetry-with-collinear-spin" id="id14"><code class="docutils literal notranslate"><span class="pre">spg_get_symmetry_with_collinear_spin</span></code></a></li>
-<li><a class="reference internal" href="#spg-niggli-reduce" id="id15"><code class="docutils literal notranslate"><span class="pre">spg_niggli_reduce</span></code></a></li>
-<li><a class="reference internal" href="#spg-delaunay-reduce" id="id16"><code class="docutils literal notranslate"><span class="pre">spg_delaunay_reduce</span></code></a></li>
-<li><a class="reference internal" href="#spg-get-ir-reciprocal-mesh" id="id17"><code class="docutils literal notranslate"><span class="pre">spg_get_ir_reciprocal_mesh</span></code></a></li>
-<li><a class="reference internal" href="#spg-get-stabilized-reciprocal-mesh" id="id18"><code class="docutils literal notranslate"><span class="pre">spg_get_stabilized_reciprocal_mesh</span></code></a></li>
-<li><a class="reference internal" href="#spg-get-hall-number-from-symmetry" id="id19"><code class="docutils literal notranslate"><span class="pre">spg_get_hall_number_from_symmetry</span></code></a></li>
+<li><p><a class="reference internal" href="#spg-get-major-version-spg-get-minor-version-spg-get-micro-version" id="id1"><code class="docutils literal notranslate"><span class="pre">spg_get_major_version</span></code>, <code class="docutils literal notranslate"><span class="pre">spg_get_minor_version</span></code>, <code class="docutils literal notranslate"><span class="pre">spg_get_micro_version</span></code></a></p></li>
+<li><p><a class="reference internal" href="#spg-get-error-code-and-spg-get-error-message" id="id2"><code class="docutils literal notranslate"><span class="pre">spg_get_error_code</span></code> and <code class="docutils literal notranslate"><span class="pre">spg_get_error_message</span></code></a></p></li>
+<li><p><a class="reference internal" href="#spg-get-symmetry" id="id3"><code class="docutils literal notranslate"><span class="pre">spg_get_symmetry</span></code></a></p></li>
+<li><p><a class="reference internal" href="#spg-get-international" id="id4"><code class="docutils literal notranslate"><span class="pre">spg_get_international</span></code></a></p></li>
+<li><p><a class="reference internal" href="#spg-get-schoenflies" id="id5"><code class="docutils literal notranslate"><span class="pre">spg_get_schoenflies</span></code></a></p></li>
+<li><p><a class="reference internal" href="#spg-standardize-cell" id="id6"><code class="docutils literal notranslate"><span class="pre">spg_standardize_cell</span></code></a></p></li>
+<li><p><a class="reference internal" href="#spg-find-primitive" id="id7"><code class="docutils literal notranslate"><span class="pre">spg_find_primitive</span></code></a></p></li>
+<li><p><a class="reference internal" href="#spg-refine-cell" id="id8"><code class="docutils literal notranslate"><span class="pre">spg_refine_cell</span></code></a></p></li>
+<li><p><a class="reference internal" href="#spg-get-dataset-and-spg-get-dataset-with-hall-number" id="id9"><code class="docutils literal notranslate"><span class="pre">spg_get_dataset</span></code> and <code class="docutils literal notranslate"><span class="pre">spg_get_dataset_with_hall_number</span></code></a></p></li>
+<li><p><a class="reference internal" href="#spg-free-dataset" id="id10"><code class="docutils literal notranslate"><span class="pre">spg_free_dataset</span></code></a></p></li>
+<li><p><a class="reference internal" href="#spg-get-spacegroup-type" id="id11"><code class="docutils literal notranslate"><span class="pre">spg_get_spacegroup_type</span></code></a></p></li>
+<li><p><a class="reference internal" href="#spg-get-symmetry-from-database" id="id12"><code class="docutils literal notranslate"><span class="pre">spg_get_symmetry_from_database</span></code></a></p></li>
+<li><p><a class="reference internal" href="#spg-get-multiplicity" id="id13"><code class="docutils literal notranslate"><span class="pre">spg_get_multiplicity</span></code></a></p></li>
+<li><p><a class="reference internal" href="#spg-get-symmetry-with-collinear-spin" id="id14"><code class="docutils literal notranslate"><span class="pre">spg_get_symmetry_with_collinear_spin</span></code></a></p></li>
+<li><p><a class="reference internal" href="#spg-niggli-reduce" id="id15"><code class="docutils literal notranslate"><span class="pre">spg_niggli_reduce</span></code></a></p></li>
+<li><p><a class="reference internal" href="#spg-delaunay-reduce" id="id16"><code class="docutils literal notranslate"><span class="pre">spg_delaunay_reduce</span></code></a></p></li>
+<li><p><a class="reference internal" href="#spg-get-ir-reciprocal-mesh" id="id17"><code class="docutils literal notranslate"><span class="pre">spg_get_ir_reciprocal_mesh</span></code></a></p></li>
+<li><p><a class="reference internal" href="#spg-get-stabilized-reciprocal-mesh" id="id18"><code class="docutils literal notranslate"><span class="pre">spg_get_stabilized_reciprocal_mesh</span></code></a></p></li>
+<li><p><a class="reference internal" href="#spg-get-hall-number-from-symmetry" id="id19"><code class="docutils literal notranslate"><span class="pre">spg_get_hall_number_from_symmetry</span></code></a></p></li>
 </ul>
 </div>
 <div class="section" id="spg-get-major-version-spg-get-minor-version-spg-get-micro-version">
@@ -218,14 +217,15 @@ number of operations is return as the return value. Rotations and
 translations are given in fractional coordinates, and <code class="docutils literal notranslate"><span class="pre">rotation[i]</span></code>
 and <code class="docutils literal notranslate"><span class="pre">translation[i]</span></code> with same index give a symmetry operations,
 i.e., these have to be used together.</p>
-<p>As an exceptional case, if a supercell has the basis vectors of the
-lattice that break crsytallographic point group, the crystallographic
-symmetry operations are searched with this broken symmetry, i.e., at
-most the crystallographic point group found in this case is the point
-group of the lattice. For example, this happens for the <span class="math notranslate nohighlight">\(2\times
-1\times 1\)</span> supercell of a conventional cubic unit cell. This may not
-be understandable in crystallographic sense, but is practically useful
-treatment for research in computational materials science.</p>
+<p>As an exceptional case, if a supercell (or non-primitive cell) has the
+basis vectors whose lattice breaks crsytallographic point group, the
+crystallographic symmetry operations are searched within this broken
+symmetry, i.e., at most the crystallographic point group found in this
+case is the point group of the lattice. For example, this happens for
+the <span class="math notranslate nohighlight">\(2\times 1\times 1\)</span> supercell of a conventional cubic unit
+cell. This may not be understandable in crystallographic sense, but is
+practically useful treatment for research in computational materials
+science.</p>
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
@@ -635,8 +635,10 @@ space-group-type information is obtained through
 <p>This is expected to work well for the set of symmetry operations whose
 distortion is small. The aim of making this feature is to find
 space-group-type for the set of symmetry operations given by the other
-source than spglib. <code class="docutils literal notranslate"><span class="pre">symprec</span></code> is in the length of the fractional
-coordinates and should be small like <code class="docutils literal notranslate"><span class="pre">1e-5</span></code>.</p>
+source than spglib.</p>
+<p>Note that the definition of <code class="docutils literal notranslate"><span class="pre">symprec</span></code> is
+different from usual one, but is given in the fractional
+coordinates and so it should be small like <code class="docutils literal notranslate"><span class="pre">1e-5</span></code>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">spg_get_hall_number_from_symmetry</span><span class="p">(</span><span class="n">SPGCONST</span> <span class="nb">int</span> <span class="n">rotation</span><span class="p">[][</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span>
                                       <span class="n">SPGCONST</span> <span class="n">double</span> <span class="n">translation</span><span class="p">[][</span><span class="mi">3</span><span class="p">],</span>
                                       <span class="n">const</span> <span class="nb">int</span> <span class="n">num_operations</span><span class="p">,</span>
@@ -666,7 +668,7 @@ coordinates and should be small like <code class="docutils literal notranslate">
     </p>
     <p>
         &copy; Copyright 2009, Atsushi Togo.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.1.<br/>
     </p>
   </div>
 </footer>

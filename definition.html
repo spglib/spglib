@@ -1,29 +1,28 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Definitions and conventions &#8212; spglib 1.12.0 documentation</title>
+    <meta charset="utf-8" />
+    <title>Definitions and conventions &#8212; Spglig v.1.15.0</title>
     <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
-    <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
-    <script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Fortran and Ruby interfaces" href="interface.html" />
+    <link rel="prev" title="Rust, Fortran, and Ruby interfaces" href="interface.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
 <meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="_static/bootstrap-sphinx.js "></script>
 
   </head><body>
 
@@ -38,7 +37,7 @@
         </button>
         <a class="navbar-brand" href="index.html">
           spglib</a>
-        <span class="navbar-text navbar-version pull-left"><b>1.12.0</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>1.15</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -59,7 +58,7 @@
 <li class="toctree-l1"><a class="reference internal" href="dataset.html">Spglib dataset</a></li>
 <li class="toctree-l1"><a class="reference internal" href="variable.html">Variables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="python-spglib.html">Python interface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="interface.html">Fortran and Ruby interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interface.html">Rust, Fortran, and Ruby interfaces</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Definitions and conventions</a></li>
 </ul>
 </ul>
@@ -135,7 +134,7 @@
 
 <div class="container">
   <div class="row">
-    <div class="col-md-12 content">
+    <div class="body col-md-12 content" role="main">
       
   <div class="section" id="definitions-and-conventions">
 <span id="id1"></span><h1>Definitions and conventions<a class="headerlink" href="#definitions-and-conventions" title="Permalink to this headline">¶</a></h1>
@@ -144,26 +143,29 @@ definitions of transformation matrix and origin shift were different
 in the previous versions.</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
-<li><a class="reference internal" href="#references" id="id2">References</a></li>
-<li><a class="reference internal" href="#space-group-operation-and-change-of-basis" id="id3">Space group operation and change of basis</a><ul>
-<li><a class="reference internal" href="#basis-vectors-mathbf-a-mathbf-b-mathbf-c-or-mathbf-a-1-mathbf-a-2-mathbf-a-3" id="id4">Basis vectors <span class="math notranslate nohighlight">\((\mathbf{a}, \mathbf{b}, \mathbf{c})\)</span> or <span class="math notranslate nohighlight">\((\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)\)</span></a></li>
-<li><a class="reference internal" href="#atomic-point-coordinates-boldsymbol-x" id="id5">Atomic point coordinates <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span></a></li>
-<li><a class="reference internal" href="#symmetry-operation-boldsymbol-w-boldsymbol-w" id="id6">Symmetry operation <span class="math notranslate nohighlight">\((\boldsymbol{W}, \boldsymbol{w})\)</span></a></li>
-<li><a class="reference internal" href="#transformation-matrix-boldsymbol-p-and-origin-shift-boldsymbol-p" id="id7">Transformation matrix <span class="math notranslate nohighlight">\(\boldsymbol{P}\)</span> and origin shift <span class="math notranslate nohighlight">\(\boldsymbol{p}\)</span></a></li>
-<li><a class="reference internal" href="#difference-between-rotation-and-transformation-matrices" id="id8">Difference between rotation and transformation matrices</a></li>
+<li><p><a class="reference internal" href="#references" id="id2">References</a></p></li>
+<li><p><a class="reference internal" href="#space-group-operation-and-change-of-basis" id="id3">Space group operation and change of basis</a></p>
+<ul>
+<li><p><a class="reference internal" href="#basis-vectors-mathbf-a-mathbf-b-mathbf-c-or-mathbf-a-1-mathbf-a-2-mathbf-a-3" id="id4">Basis vectors <span class="math notranslate nohighlight">\((\mathbf{a}, \mathbf{b}, \mathbf{c})\)</span> or <span class="math notranslate nohighlight">\((\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)\)</span></a></p></li>
+<li><p><a class="reference internal" href="#atomic-point-coordinates-boldsymbol-x" id="id5">Atomic point coordinates <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span></a></p></li>
+<li><p><a class="reference internal" href="#symmetry-operation-boldsymbol-w-boldsymbol-w" id="id6">Symmetry operation <span class="math notranslate nohighlight">\((\boldsymbol{W}, \boldsymbol{w})\)</span></a></p></li>
+<li><p><a class="reference internal" href="#transformation-matrix-boldsymbol-p-and-origin-shift-boldsymbol-p" id="id7">Transformation matrix <span class="math notranslate nohighlight">\(\boldsymbol{P}\)</span> and origin shift <span class="math notranslate nohighlight">\(\boldsymbol{p}\)</span></a></p></li>
+<li><p><a class="reference internal" href="#difference-between-rotation-and-transformation-matrices" id="id8">Difference between rotation and transformation matrices</a></p></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#spglib-conventions-of-standardized-unit-cell" id="id9">Spglib conventions of standardized unit cell</a><ul>
-<li><a class="reference internal" href="#choice-of-basis-vectors" id="id10">Choice of basis vectors</a></li>
-<li><a class="reference internal" href="#transformation-to-the-primitive-cell" id="id11">Transformation to the primitive cell</a></li>
-<li><a class="reference internal" href="#def-idealize-cell" id="id12">Idealization of unit cell structure</a></li>
-<li><a class="reference internal" href="#rotation-introduced-by-idealization" id="id13">Rotation introduced by idealization</a></li>
+<li><p><a class="reference internal" href="#spglib-conventions-of-standardized-unit-cell" id="id9">Spglib conventions of standardized unit cell</a></p>
+<ul>
+<li><p><a class="reference internal" href="#choice-of-basis-vectors" id="id10">Choice of basis vectors</a></p></li>
+<li><p><a class="reference internal" href="#transformation-to-the-primitive-cell" id="id11">Transformation to the primitive cell</a></p></li>
+<li><p><a class="reference internal" href="#def-idealize-cell" id="id12">Idealization of unit cell structure</a></p></li>
+<li><p><a class="reference internal" href="#rotation-introduced-by-idealization" id="id13">Rotation introduced by idealization</a></p></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#examples" id="id14">Examples</a><ul>
-<li><a class="reference internal" href="#crystallographic-choice-and-rigid-rotation" id="id15">Crystallographic choice and rigid rotation</a></li>
-<li><a class="reference internal" href="#transformation-to-a-primitive-cell" id="id16">Transformation to a primitive cell</a></li>
-<li><a class="reference internal" href="#computing-rigid-rotation-introduced-by-idealization" id="id17">Computing rigid rotation introduced by idealization</a></li>
+<li><p><a class="reference internal" href="#examples" id="id14">Examples</a></p>
+<ul>
+<li><p><a class="reference internal" href="#crystallographic-choice-and-rigid-rotation" id="id15">Crystallographic choice and rigid rotation</a></p></li>
+<li><p><a class="reference internal" href="#transformation-to-a-primitive-cell" id="id16">Transformation to a primitive cell</a></p></li>
+<li><p><a class="reference internal" href="#computing-rigid-rotation-introduced-by-idealization" id="id17">Computing rigid rotation introduced by idealization</a></p></li>
 </ul>
 </li>
 </ul>
@@ -175,24 +177,24 @@ shown below. Though spglib may not follow them fully, it doesn’t mean
 spglib doesn’t respect them, rather it is due to spglib-author’s lack of
 understanding the crystallography ashamedly.</p>
 <ul class="simple">
-<li><a class="reference external" href="http://it.iucr.org/">International Tables for Crystallography</a>.</li>
-<li><a class="reference external" href="http://www.cryst.ehu.es/">Bilbao Crystallographic Server</a>. The
+<li><p><a class="reference external" href="http://it.iucr.org/">International Tables for Crystallography</a>.</p></li>
+<li><p><a class="reference external" href="http://www.cryst.ehu.es/">Bilbao Crystallographic Server</a>. The
 references of many useful papers are found at
-<a class="reference external" href="http://www.cryst.ehu.es/wiki/index.php/Articles">http://www.cryst.ehu.es/wiki/index.php/Articles</a>.</li>
-<li>Ulrich Müller, “Symmetry Relationships between Crystal Structures”</li>
-<li>E. Parthé, K. Cenzual, and R. E. Gladyshevskii, “Standardization of
+<a class="reference external" href="http://www.cryst.ehu.es/wiki/index.php/Articles">http://www.cryst.ehu.es/wiki/index.php/Articles</a>.</p></li>
+<li><p>Ulrich Müller, “Symmetry Relationships between Crystal Structures”</p></li>
+<li><p>E. Parthé, K. Cenzual, and R. E. Gladyshevskii, “Standardization of
 crystal structure data as an aid to the classification of crystal
 structure types”, Journal of Alloys and Compounds, <strong>197</strong>, 291-301
-(1993). [<a class="reference external" href="https://dx.doi.org/10.1016/0925-8388(93)90049-S">doi2</a>]</li>
-<li>E. Parthé and L. M. Gelato, “The ’best’ unit cell for monoclinic
+(1993). [<a class="reference external" href="https://dx.doi.org/10.1016/0925-8388(93)90049-S">doi2</a>]</p></li>
+<li><p>E. Parthé and L. M. Gelato, “The ’best’ unit cell for monoclinic
 structures consistent with b axis unique and cell choice 1
 of international tables for crystallography (1983)”, Acta
-Cryst. A <strong>41</strong>, 142-151 (1985) [<a class="reference external" href="https://doi.org/10.1107/S0108767385000289">doi3</a>]</li>
-<li>E. Parthé and L. M. Gelato, “The standardization of inorganic
+Cryst. A <strong>41</strong>, 142-151 (1985) [<a class="reference external" href="https://doi.org/10.1107/S0108767385000289">doi3</a>]</p></li>
+<li><p>E. Parthé and L. M. Gelato, “The standardization of inorganic
 crystal-structure data”, Acta Cryst. A
-<strong>40</strong>, 169-183 (1984) [<a class="reference external" href="https://doi.org/10.1107/S0108767384000416">doi4</a>]</li>
-<li>S. Hall, “Space-group notation with an explicit origin”, Acta
-Cryst. A <strong>37</strong>, 517-525 (1981) [<a class="reference external" href="https://doi.org/10.1107/S0567739481001228">doi1</a>]</li>
+<strong>40</strong>, 169-183 (1984) [<a class="reference external" href="https://doi.org/10.1107/S0108767384000416">doi4</a>]</p></li>
+<li><p>S. Hall, “Space-group notation with an explicit origin”, Acta
+Cryst. A <strong>37</strong>, 517-525 (1981) [<a class="reference external" href="https://doi.org/10.1107/S0567739481001228">doi1</a>]</p></li>
 </ul>
 </div>
 <div class="section" id="space-group-operation-and-change-of-basis">
@@ -425,86 +427,86 @@ change-of-basis transformation explained above.</p>
 <div class="section" id="triclinic-lattice">
 <h4>Triclinic lattice<a class="headerlink" href="#triclinic-lattice" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
-<li>Niggli reduced cell is used for choosing <span class="math notranslate nohighlight">\(\mathbf{a}, \mathbf{b}, \mathbf{c}\)</span>.</li>
-<li><span class="math notranslate nohighlight">\(\mathbf{a}\)</span> is set along <span class="math notranslate nohighlight">\(+x\)</span> direction of Cartesian coordinates.</li>
-<li><span class="math notranslate nohighlight">\(\mathbf{b}\)</span> is set in <span class="math notranslate nohighlight">\(x\text{-}y\)</span> plane of Cartesian
+<li><p>Niggli reduced cell is used for choosing <span class="math notranslate nohighlight">\(\mathbf{a}, \mathbf{b}, \mathbf{c}\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{a}\)</span> is set along <span class="math notranslate nohighlight">\(+x\)</span> direction of Cartesian coordinates.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{b}\)</span> is set in <span class="math notranslate nohighlight">\(x\text{-}y\)</span> plane of Cartesian
 coordinates so that <span class="math notranslate nohighlight">\(\mathbf{a}\times\mathbf{b}\)</span> is along
-<span class="math notranslate nohighlight">\(+z\)</span> direction of Cartesian coordinates.</li>
+<span class="math notranslate nohighlight">\(+z\)</span> direction of Cartesian coordinates.</p></li>
 </ul>
 </div>
 <div class="section" id="monoclinic-lattice">
 <h4>Monoclinic lattice<a class="headerlink" href="#monoclinic-lattice" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
-<li><span class="math notranslate nohighlight">\(b\)</span> axis is taken as the unique axis.</li>
-<li><span class="math notranslate nohighlight">\(\alpha = 90^\circ\)</span> and <span class="math notranslate nohighlight">\(\gamma = 90^\circ\)</span></li>
-<li><span class="math notranslate nohighlight">\(90^\circ &lt; \beta &lt; 120^\circ\)</span>.</li>
-<li><span class="math notranslate nohighlight">\(\mathbf{a}\)</span> is set along <span class="math notranslate nohighlight">\(+x\)</span> direction of Cartesian coordinates.</li>
-<li><span class="math notranslate nohighlight">\(\mathbf{b}\)</span> is set along <span class="math notranslate nohighlight">\(+y\)</span> direction of Cartesian coordinates.</li>
-<li><span class="math notranslate nohighlight">\(\mathbf{c}\)</span> is set in <span class="math notranslate nohighlight">\(x\text{-}z\)</span> plane of Cartesian coordinates.</li>
+<li><p><span class="math notranslate nohighlight">\(b\)</span> axis is taken as the unique axis.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\alpha = 90^\circ\)</span> and <span class="math notranslate nohighlight">\(\gamma = 90^\circ\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(90^\circ &lt; \beta &lt; 120^\circ\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{a}\)</span> is set along <span class="math notranslate nohighlight">\(+x\)</span> direction of Cartesian coordinates.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{b}\)</span> is set along <span class="math notranslate nohighlight">\(+y\)</span> direction of Cartesian coordinates.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{c}\)</span> is set in <span class="math notranslate nohighlight">\(x\text{-}z\)</span> plane of Cartesian coordinates.</p></li>
 </ul>
 </div>
 <div class="section" id="orthorhombic-lattice">
 <h4>Orthorhombic lattice<a class="headerlink" href="#orthorhombic-lattice" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
-<li><span class="math notranslate nohighlight">\(\alpha = \beta = \gamma = 90^\circ\)</span>.</li>
-<li><span class="math notranslate nohighlight">\(\mathbf{a}\)</span> is set along <span class="math notranslate nohighlight">\(+x\)</span> direction of Cartesian coordinates.</li>
-<li><span class="math notranslate nohighlight">\(\mathbf{b}\)</span> is set along <span class="math notranslate nohighlight">\(+y\)</span> direction of Cartesian coordinates.</li>
-<li><span class="math notranslate nohighlight">\(\mathbf{c}\)</span> is set along <span class="math notranslate nohighlight">\(+z\)</span> direction of Cartesian coordinates.</li>
+<li><p><span class="math notranslate nohighlight">\(\alpha = \beta = \gamma = 90^\circ\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{a}\)</span> is set along <span class="math notranslate nohighlight">\(+x\)</span> direction of Cartesian coordinates.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{b}\)</span> is set along <span class="math notranslate nohighlight">\(+y\)</span> direction of Cartesian coordinates.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{c}\)</span> is set along <span class="math notranslate nohighlight">\(+z\)</span> direction of Cartesian coordinates.</p></li>
 </ul>
 </div>
 <div class="section" id="tetragonal-lattice">
 <h4>Tetragonal lattice<a class="headerlink" href="#tetragonal-lattice" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
-<li><span class="math notranslate nohighlight">\(\alpha = \beta = \gamma = 90^\circ\)</span>.</li>
-<li><span class="math notranslate nohighlight">\(a=b\)</span>.</li>
-<li><span class="math notranslate nohighlight">\(\mathbf{a}\)</span> is set along <span class="math notranslate nohighlight">\(+x\)</span> direction of Cartesian coordinates.</li>
-<li><span class="math notranslate nohighlight">\(\mathbf{b}\)</span> is set along <span class="math notranslate nohighlight">\(+y\)</span> direction of Cartesian coordinates.</li>
-<li><span class="math notranslate nohighlight">\(\mathbf{c}\)</span> is set along <span class="math notranslate nohighlight">\(+z\)</span> direction of Cartesian coordinates.</li>
+<li><p><span class="math notranslate nohighlight">\(\alpha = \beta = \gamma = 90^\circ\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(a=b\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{a}\)</span> is set along <span class="math notranslate nohighlight">\(+x\)</span> direction of Cartesian coordinates.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{b}\)</span> is set along <span class="math notranslate nohighlight">\(+y\)</span> direction of Cartesian coordinates.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{c}\)</span> is set along <span class="math notranslate nohighlight">\(+z\)</span> direction of Cartesian coordinates.</p></li>
 </ul>
 </div>
 <div class="section" id="rhombohedral-lattice">
 <h4>Rhombohedral lattice<a class="headerlink" href="#rhombohedral-lattice" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
-<li><span class="math notranslate nohighlight">\(\alpha = \beta = \gamma\)</span>.</li>
-<li><span class="math notranslate nohighlight">\(a=b=c\)</span>.</li>
-<li>Let <span class="math notranslate nohighlight">\(\mathbf{a}\)</span>, <span class="math notranslate nohighlight">\(\mathbf{b}\)</span>, and <span class="math notranslate nohighlight">\(\mathbf{c}\)</span>
+<li><p><span class="math notranslate nohighlight">\(\alpha = \beta = \gamma\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(a=b=c\)</span>.</p></li>
+<li><p>Let <span class="math notranslate nohighlight">\(\mathbf{a}\)</span>, <span class="math notranslate nohighlight">\(\mathbf{b}\)</span>, and <span class="math notranslate nohighlight">\(\mathbf{c}\)</span>
 projected on <span class="math notranslate nohighlight">\(x\text{-}y\)</span> plane in Cartesian coordinates be
 <span class="math notranslate nohighlight">\(\mathbf{a}_{xy}\)</span>, <span class="math notranslate nohighlight">\(\mathbf{b}_{xy}\)</span>, and
 <span class="math notranslate nohighlight">\(\mathbf{c}_{xy}\)</span>, respectively, and their angles be
 <span class="math notranslate nohighlight">\(\alpha_{xy}\)</span>, <span class="math notranslate nohighlight">\(\beta_{xy}\)</span>,
-<span class="math notranslate nohighlight">\(\gamma_{xy}\)</span>, respectively.</li>
-<li>Let <span class="math notranslate nohighlight">\(\mathbf{a}\)</span>, <span class="math notranslate nohighlight">\(\mathbf{b}\)</span>, and <span class="math notranslate nohighlight">\(\mathbf{c}\)</span>
+<span class="math notranslate nohighlight">\(\gamma_{xy}\)</span>, respectively.</p></li>
+<li><p>Let <span class="math notranslate nohighlight">\(\mathbf{a}\)</span>, <span class="math notranslate nohighlight">\(\mathbf{b}\)</span>, and <span class="math notranslate nohighlight">\(\mathbf{c}\)</span>
 projected along <span class="math notranslate nohighlight">\(z\)</span>-axis in Cartesian coordinates be
 <span class="math notranslate nohighlight">\(\mathbf{a}_{z}\)</span>, <span class="math notranslate nohighlight">\(\mathbf{b}_{z}\)</span>, and
-<span class="math notranslate nohighlight">\(\mathbf{c}_{z}\)</span>, respectively.</li>
-<li><span class="math notranslate nohighlight">\(\mathbf{a}_{xy}\)</span> is set along <span class="math notranslate nohighlight">\(+x\)</span> direction of Cartesian
+<span class="math notranslate nohighlight">\(\mathbf{c}_{z}\)</span>, respectively.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{a}_{xy}\)</span> is set along <span class="math notranslate nohighlight">\(+x\)</span> direction of Cartesian
 coordinates, and <span class="math notranslate nohighlight">\(\mathbf{b}_{xy}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{c}_{xy}\)</span>
 are placed by angles <span class="math notranslate nohighlight">\(120^\circ\)</span> and <span class="math notranslate nohighlight">\(240^\circ\)</span> from
-<span class="math notranslate nohighlight">\(\mathbf{a}_{xy}\)</span> counter-clockwise, respectively.</li>
-<li><span class="math notranslate nohighlight">\(\alpha_{xy} = \beta_{xy} = \gamma_{xy} = 120^\circ\)</span>.</li>
-<li><span class="math notranslate nohighlight">\(a_{xy} = b_{xy} = c_{xy}\)</span>.</li>
-<li><span class="math notranslate nohighlight">\(a_{z} = b_{z} = c_{z}\)</span>.</li>
+<span class="math notranslate nohighlight">\(\mathbf{a}_{xy}\)</span> counter-clockwise, respectively.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\alpha_{xy} = \beta_{xy} = \gamma_{xy} = 120^\circ\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(a_{xy} = b_{xy} = c_{xy}\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(a_{z} = b_{z} = c_{z}\)</span>.</p></li>
 </ul>
 </div>
 <div class="section" id="hexagonal-lattice">
 <h4>Hexagonal lattice<a class="headerlink" href="#hexagonal-lattice" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
-<li><span class="math notranslate nohighlight">\(\alpha = \beta = 90^\circ\)</span>.</li>
-<li><span class="math notranslate nohighlight">\(\gamma = 120^\circ\)</span>.</li>
-<li><span class="math notranslate nohighlight">\(a=b\)</span>.</li>
-<li><span class="math notranslate nohighlight">\(\mathbf{a}\)</span> is set along <span class="math notranslate nohighlight">\(+x\)</span> direction of Cartesian coordinates.</li>
-<li><span class="math notranslate nohighlight">\(\mathbf{b}\)</span> is set in <span class="math notranslate nohighlight">\(x\text{-}y\)</span> plane of Cartesian coordinates.</li>
-<li><span class="math notranslate nohighlight">\(\mathbf{c}\)</span> is set along <span class="math notranslate nohighlight">\(+z\)</span> direction of Cartesian coordinates.</li>
+<li><p><span class="math notranslate nohighlight">\(\alpha = \beta = 90^\circ\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\gamma = 120^\circ\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(a=b\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{a}\)</span> is set along <span class="math notranslate nohighlight">\(+x\)</span> direction of Cartesian coordinates.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{b}\)</span> is set in <span class="math notranslate nohighlight">\(x\text{-}y\)</span> plane of Cartesian coordinates.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{c}\)</span> is set along <span class="math notranslate nohighlight">\(+z\)</span> direction of Cartesian coordinates.</p></li>
 </ul>
 </div>
 <div class="section" id="cubic-lattice">
 <h4>Cubic lattice<a class="headerlink" href="#cubic-lattice" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
-<li><span class="math notranslate nohighlight">\(\alpha = \beta = \gamma = 90^\circ\)</span>.</li>
-<li><span class="math notranslate nohighlight">\(a=b=c\)</span>.</li>
-<li><span class="math notranslate nohighlight">\(\mathbf{a}\)</span> is set along <span class="math notranslate nohighlight">\(+x\)</span> direction of Cartesian coordinates.</li>
-<li><span class="math notranslate nohighlight">\(\mathbf{b}\)</span> is set along <span class="math notranslate nohighlight">\(+y\)</span> direction of Cartesian coordinates.</li>
-<li><span class="math notranslate nohighlight">\(\mathbf{c}\)</span> is set along <span class="math notranslate nohighlight">\(+z\)</span> direction of Cartesian coordinates.</li>
+<li><p><span class="math notranslate nohighlight">\(\alpha = \beta = \gamma = 90^\circ\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(a=b=c\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{a}\)</span> is set along <span class="math notranslate nohighlight">\(+x\)</span> direction of Cartesian coordinates.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{b}\)</span> is set along <span class="math notranslate nohighlight">\(+y\)</span> direction of Cartesian coordinates.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{c}\)</span> is set along <span class="math notranslate nohighlight">\(+z\)</span> direction of Cartesian coordinates.</p></li>
 </ul>
 </div>
 </div>
@@ -930,7 +932,7 @@ rotation doesn’t affect them.</p>
     </p>
     <p>
         &copy; Copyright 2009, Atsushi Togo.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.1.<br/>
     </p>
   </div>
 </footer>

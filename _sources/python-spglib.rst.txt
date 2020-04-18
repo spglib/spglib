@@ -491,8 +491,12 @@ space-group-type information is obtained through
 This is expected to work well for the set of symmetry operations whose
 distortion is small. The aim of making this feature is to find
 space-group-type for the set of symmetry operations given by the other
-source than spglib. ``symprec`` is in the length of the fractional
-coordinates and should be small like ``1e-5``.
+source than spglib.
+
+Note that the definition of ``symprec`` is
+different from usual one, but is given in the fractional
+coordinates and so it should be small like ``1e-5``.
+
 
 ::
 
