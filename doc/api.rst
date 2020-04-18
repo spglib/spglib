@@ -84,14 +84,15 @@ translations are given in fractional coordinates, and ``rotation[i]``
 and ``translation[i]`` with same index give a symmetry operations,
 i.e., these have to be used together.
 
-As an exceptional case, if a supercell has the basis vectors of the
-lattice that break crsytallographic point group, the crystallographic
-symmetry operations are searched with this broken symmetry, i.e., at
-most the crystallographic point group found in this case is the point
-group of the lattice. For example, this happens for the :math:`2\times
-1\times 1` supercell of a conventional cubic unit cell. This may not
-be understandable in crystallographic sense, but is practically useful
-treatment for research in computational materials science.
+As an exceptional case, if a supercell (or non-primitive cell) has the
+basis vectors whose lattice breaks crsytallographic point group, the
+crystallographic symmetry operations are searched within this broken
+symmetry, i.e., at most the crystallographic point group found in this
+case is the point group of the lattice. For example, this happens for
+the :math:`2\times 1\times 1` supercell of a conventional cubic unit
+cell. This may not be understandable in crystallographic sense, but is
+practically useful treatment for research in computational materials
+science.
 
 |
 
