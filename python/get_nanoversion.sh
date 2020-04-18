@@ -9,7 +9,9 @@ git describe --tags --dirty
 
 TD=`mktemp -d`
 WD=`pwd`
-echo "Run 'git clone --depth 1 $u $TD'"
+
+# full clone is necessary to count number of commits after tag.
+echo "Run 'git clone $u $TD'"
 git clone --depth 1 $u $TD
 cd $TD
 echo $u $br
