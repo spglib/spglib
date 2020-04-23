@@ -3,7 +3,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Definitions and conventions &#8212; Spglig v.1.15.0</title>
+    <title>Definitions and conventions &#8212; Spglig v.1.15.1</title>
     <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -409,8 +409,14 @@ as follows:</p>
 \frac{{1}}{2} &amp; 0 &amp; \frac{{1}}{2} \\
 \frac{{1}}{2} &amp; \frac{{1}}{2} &amp; 0
 \end{pmatrix}.\end{split}\]</div>
-<p>For rhombohedral lattice systems with the choice of hexagonal axes,
-<span class="math notranslate nohighlight">\(\boldsymbol{P}_\mathrm{R}\)</span> is applied.</p>
+<p>The choice of transformation matrix depends on purposes. These
+transformation matrices above are just the spglib choices and may not
+be the best.</p>
+<p>For rhombohedral lattice systems with the H setting (hexagonal
+lattice), <span class="math notranslate nohighlight">\(\boldsymbol{P}_\mathrm{R}\)</span> is applied to obtain
+primitive basis vectors, but for that with the R setting (rhombohedral
+lattice), no transformation matrix is applied because it is already
+the primitive cell.</p>
 </div>
 <div class="section" id="def-idealize-cell">
 <span id="idealization-of-unit-cell-structure"></span><h3><a class="toc-backref" href="#id12">Idealization of unit cell structure</a><a class="headerlink" href="#def-idealize-cell" title="Permalink to this headline">¶</a></h3>
@@ -479,10 +485,12 @@ projected on <span class="math notranslate nohighlight">\(x\text{-}y\)</span> pl
 projected along <span class="math notranslate nohighlight">\(z\)</span>-axis in Cartesian coordinates be
 <span class="math notranslate nohighlight">\(\mathbf{a}_{z}\)</span>, <span class="math notranslate nohighlight">\(\mathbf{b}_{z}\)</span>, and
 <span class="math notranslate nohighlight">\(\mathbf{c}_{z}\)</span>, respectively.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{a}_{xy}\)</span> is set along <span class="math notranslate nohighlight">\(+x\)</span> direction of Cartesian
-coordinates, and <span class="math notranslate nohighlight">\(\mathbf{b}_{xy}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{c}_{xy}\)</span>
-are placed by angles <span class="math notranslate nohighlight">\(120^\circ\)</span> and <span class="math notranslate nohighlight">\(240^\circ\)</span> from
-<span class="math notranslate nohighlight">\(\mathbf{a}_{xy}\)</span> counter-clockwise, respectively.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{a}_{xy}\)</span> is set along the ray <span class="math notranslate nohighlight">\(30^\circ\)</span>
+rotated counter-clockwise from the <span class="math notranslate nohighlight">\(+x\)</span>
+direction of Cartesian coordinates, and <span class="math notranslate nohighlight">\(\mathbf{b}_{xy}\)</span> and
+<span class="math notranslate nohighlight">\(\mathbf{c}_{xy}\)</span> are placed by angles <span class="math notranslate nohighlight">\(120^\circ\)</span> and
+<span class="math notranslate nohighlight">\(240^\circ\)</span> from <span class="math notranslate nohighlight">\(\mathbf{a}_{xy}\)</span> counter-clockwise,
+respectively.</p></li>
 <li><p><span class="math notranslate nohighlight">\(\alpha_{xy} = \beta_{xy} = \gamma_{xy} = 120^\circ\)</span>.</p></li>
 <li><p><span class="math notranslate nohighlight">\(a_{xy} = b_{xy} = c_{xy}\)</span>.</p></li>
 <li><p><span class="math notranslate nohighlight">\(a_{z} = b_{z} = c_{z}\)</span>.</p></li>
