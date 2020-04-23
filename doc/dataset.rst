@@ -148,17 +148,6 @@ case as written in :ref:`api_spg_get_symmetry`.
 This is almost equivalent to ``equivalent_atoms``. But symmetry of the
 primitive cell is used to determine the symmetrically equivalent atoms.
 
-
-``mapping_to_primitive``
-^^^^^^^^^^^^^^^^^^^^^^^^^
-
-In version 1.10 or later, ``mapping_to_primitive`` is available. This
-gives a list of atomic indices in the primitive cell of the input
-crystal structure, where the same number presents the same atom in the
-primitive cell. By collective the atoms having the same number, a set
-of relative lattice points in the the input crystal structure is
-obtained.
-
 .. _dataset_origin_shift_and_transformation:
 
 Transformation matrix and origin shift
@@ -274,3 +263,28 @@ point groups::
    1, -1, 2, m, 2/m, 222, mm2, mmm, 4, -4, 4/m, 422, 4mm, -42m, 4/mmm,
    3, -3, 32, 3m, -3m, 6, -6, 6/m, 622, 6mm, -6m2, 6/mmm, 23, m-3,
    432, -43m, m-3m
+
+Intermediate data in symmetry search
+------------------------------------
+
+A primitive cell is searched from the translational symemtry. This
+primitive cell is given by ``primitive_lattice`` and
+``mapping_to_primitive`` below.
+
+``primitive_lattice``
+^^^^^^^^^^^^^^^^^^^^^
+
+**New at version 1.15**
+
+Non-standardized basis vectors of a primitive cell in the input
+cell.
+
+``mapping_to_primitive``
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+In version 1.10 or later, ``mapping_to_primitive`` is available. This
+gives a list of atomic indices in the primitive cell of the input
+crystal structure, where the same number presents the same atom in the
+primitive cell. By collective the atoms having the same number, a set
+of relative lattice points in the the input crystal structure is
+obtained.
