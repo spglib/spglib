@@ -856,12 +856,13 @@ static void set_rhomb(double lattice[3][3],
   ahex = 2 * (a+b+c)/3 * sin(angle / 2);
   chex = (a+b+c)/3 * sqrt(3 * (1 + 2 * cos(angle))) ;
   lattice[0][0] = ahex / 2;
-  lattice[1][0] = -ahex / (2 * sqrt(3));
+  lattice[1][0] = ahex / (2 * sqrt(3));
   lattice[2][0] = chex / 3;
-  lattice[1][1] = ahex / sqrt(3);
+  lattice[0][1] = -ahex / 2;
+  lattice[1][1] = ahex / (2 * sqrt(3));
   lattice[2][1] = chex / 3;
-  lattice[0][2] = -ahex / 2;
-  lattice[1][2] = -ahex / (2 * sqrt(3));
+  lattice[0][2] = 0;
+  lattice[1][2] = -ahex / sqrt(3);
   lattice[2][2] = chex / 3;
 
 
