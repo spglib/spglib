@@ -300,11 +300,13 @@ considering this freedome. In ASE Atoms-class object, this is not supported.
 
     lattice, scaled_positions, numbers = refine_cell(cell, symprec=1e-5)
 
-Standardized crystal structure is obtained as a tuple of lattice (a 3x3
-numpy array), atomic scaled positions (a numpy array of
+Standardized crystal structure is obtained as a tuple of lattice (a
+3x3 numpy array), atomic scaled positions (a numpy array of
 [number_of_atoms,3]), and atomic numbers (a 1D numpy array) that are
-symmetrized following space group type. When the search
-failed, ``None`` is returned.
+symmetrized following space group type. When the search failed,
+``None`` is returned. About the default choice of the setting, see the
+documentation of ``hall_number`` argument of
+:ref:`py_method_get_symmetry_dataset`.
 
 The detailed control of standardization of unit cell is achieved using
 ``standardize_cell``.
@@ -340,8 +342,10 @@ cell, and ``no_idealize=True`` disables to idealize lengths and angles
 of basis vectors and positions of atoms according to crystal
 symmetry. Now ``refine_cell`` and ``find_primitive`` are shorthands of
 this method with combinations of these options. When the search
-failed, ``None`` is returned.  is returned. More detailed explanation
-is shown in the spglib (C-API) document.
+failed, ``None`` is returned.  is returned. About the default choice
+of the setting, see the documentation of ``hall_number`` argument of
+:ref:`py_method_get_symmetry_dataset`.  More detailed explanation is
+shown in the spglib (C-API) document.
 
 .. _py_method_get_symmetry_dataset:
 
@@ -380,8 +384,7 @@ The arguments are:
   the basis vectors of user's input (the ``cell`` argument).
 
 ``dataset`` is a dictionary. Short explanations of the values of the
-keys are shown below. More the detail may be found at
-:ref:`spglib_dataset`.
+keys are shown below. More details are found at :ref:`spglib_dataset`.
 
 * ``number``: International space group number
 * ``international``: International short symbol
@@ -397,6 +400,10 @@ keys are shown below. More the detail may be found at
 * ``wyckoffs``: Wyckoff letters
 * ``site_symmetry_symbols``: Site-symmetry symbols (**experimental**)
 * ``equivalent_atoms``: Mapping table to equivalent atoms
+* ``crystallographic_orbits`` : Mapping table to equivalent atoms (see
+  :ref:`this <dataset_spg_get_dataset_site_symmetry>` for the difference
+  between ``equivalent_atoms`` and ``crystallographic_orbits``)
+* ``primitive_lattice`` : Basis vectors of a primitive cell
 * ``mapping_to_primitive``: Mapping table to atoms in the primitive cell
 * ``rotations`` and ``translations``: Rotation matrices and
   translation vectors. See :ref:`py_method_get_symmetry` for more
