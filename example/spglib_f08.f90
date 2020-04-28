@@ -286,6 +286,28 @@ module spglib_f08
      end function spgat_refine_cell
 
 
+     function spg_standardize_cell( lattice, position, types, num_atom, to_primitive, no_idealize, symprec) bind(c)
+       import c_int, c_double
+       real(c_double), intent(inout) :: lattice(3,3), position(3,*)
+       integer(c_int), intent(inout) :: types(*)
+       integer(c_int), intent(in), value :: num_atom
+       integer(c_int), intent(in), value :: to_primitive, no_idealize
+       real(c_double), intent(in), value :: symprec
+       integer(c_int) :: spg_refine_cell
+     end function spg_standardize_cell
+
+
+     function spgat_standardize_cell( lattice, position, types, num_atom, to_primitive, no_idealize, symprec, angle_tolerance) bind(c)
+       import c_int, c_double
+       real(c_double), intent(inout) :: lattice(3,3), position(3,*)
+       integer(c_int), intent(inout) :: types(*)
+       integer(c_int), intent(in), value :: num_atom
+       integer(c_int), intent(in), value :: to_primitive, no_idealize
+       real(c_double), intent(in), value :: symprec, angle_tolerance
+       integer(c_int) :: spgat_refine_cell
+     end function spgat_standardize_cell
+
+
      function spg_get_ir_reciprocal_mesh(grid_point, map, mesh, &
           & is_shift, is_time_reversal, lattice, position, types, num_atom, symprec) bind(c)
        import c_int, c_double
