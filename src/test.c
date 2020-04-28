@@ -141,7 +141,8 @@ static int test_spg_find_primitive_BCC(void)
     {0.5, 0.5, 0.5}
   };
   int types[] = {1, 1};
-  int num_atom = 2, num_primitive_atom;
+  int num_atom = 2;
+  int num_primitive_atom;
   double symprec = 1e-5;
 
   /* lattice, position, and types are overwirtten. */
@@ -256,7 +257,8 @@ static int test_spg_standardize_cell_BCC(void)
     {0.5, 0.5001, 0.5}
   };
   int types[] = {1, 1};
-  int j, k, num_atom = 2;
+  int j, k;
+  int num_atom = 2;
   double symprec = 1e-1;
 
   /* lattice, position, and types are overwirtten. */
@@ -357,9 +359,13 @@ static int sub_spg_standardize_cell(double lattice[3][3],
                                     const int to_primitive,
                                     const int no_idealize)
 {
-  int i, num_primitive_atom;
-  double lat[3][3], pos[num_atom][3];
-  int typ[num_atom];
+  int i, num_primitive_atom, retval;
+  double lat[3][3];
+  double (*pos)[3];
+  int *typ;
+
+  pos = (double(*)[3])malloc(sizeof(double[3]) * num_atom);
+  typ = (int*)malloc(sizeof(int) * num_atom);
 
   for (i = 0; i < 3; i++) {
     lat[i][0] = lattice[i][0];
@@ -382,6 +388,7 @@ static int sub_spg_standardize_cell(double lattice[3][3],
                                             to_primitive,
                                             no_idealize,
                                             symprec);
+
   if (num_primitive_atom) {
     printf("VASP POSCAR format: ");
     if (to_primitive == 0) {
@@ -405,10 +412,17 @@ static int sub_spg_standardize_cell(double lattice[3][3],
       printf("%f %f %f\n", pos[i][0], pos[i][1], pos[i][2]);
     }
 
-    return 0;
+    retval = 0;
   } else {
-    return 1;
+    retval = 1;
   }
+
+  free(typ);
+  typ = NULL;
+  free(pos);
+  pos = NULL;
+
+  return retval;
 }
 
 static int test_spg_get_international(void)
@@ -547,12 +561,16 @@ static int test_spg_get_symmetry(void)
     };
   int types[] = {1, 1, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2};
   int num_atom = 12;
-  int max_size = 50;
-  int i, j, size;
-  int rotation[max_size][3][3];
-  double translation[max_size][3];
-
+  int i, j, size, retval, max_size;
   double origin_shift[3] = {0.1, 0.1, 0};
+
+  int (*rotation)[3][3];
+  double (*translation)[3];
+
+  max_size = num_atom * 48;
+  rotation = (int(*)[3][3])malloc(sizeof(int[3][3]) * max_size);
+  translation = (double(*)[3])malloc(sizeof(double[3]) * max_size);
+
   for (i = 0; i < num_atom; i++) {
     for (j = 0; j < 3; j++) {
       position[i][j] += origin_shift[j];
@@ -576,10 +594,17 @@ static int test_spg_get_symmetry(void)
       printf("%f %f %f\n",
              translation[i][0], translation[i][1], translation[i][2]);
     }
-    return 0;
+    retval = 0;
   } else {
-    return 1;
+    retval = 1;
   }
+
+  free(rotation);
+  rotation = NULL;
+  free(translation);
+  translation = NULL;
+
+  return retval;
 }
 
 static int test_spg_get_symmetry_with_collinear_spin(void) {
@@ -593,10 +618,14 @@ static int test_spg_get_symmetry_with_collinear_spin(void) {
   int equivalent_atoms[2];
   double spins[2];
   int num_atom = 2;
-  int max_size = 300;
-  int i, j, size;
-  int rotation[max_size][3][3];
-  double translation[max_size][3];
+  int i, j, size, retval, max_size;
+
+  int (*rotation)[3][3];
+  double (*translation)[3];
+
+  max_size = num_atom * 48;
+  rotation = (int(*)[3][3])malloc(sizeof(int[3][3]) * max_size);
+  translation = (double(*)[3])malloc(sizeof(double[3]) * max_size);
 
   printf("*** spg_get_symmetry_with_spin (BCC ferro) ***:\n");
   spins[0] = 1;
@@ -622,7 +651,8 @@ static int test_spg_get_symmetry_with_collinear_spin(void) {
              translation[i][2]);
     }
   } else {
-    return 1;
+    retval = 1;
+    goto end;
   }
 
   printf("*** Example of spg_get_symmetry_with_spin (BCC antiferro) ***:\n");
@@ -649,7 +679,8 @@ static int test_spg_get_symmetry_with_collinear_spin(void) {
              translation[i][2]);
     }
   } else {
-    return 1;
+    retval = 1;
+    goto end;
   }
 
   printf("*** spg_get_symmetry_with_spin (BCC broken spin) ***:\n");
@@ -675,16 +706,24 @@ static int test_spg_get_symmetry_with_collinear_spin(void) {
       printf("%f %f %f\n", translation[i][0], translation[i][1],
              translation[i][2]);
     }
-    return 0;
+    retval = 0;
   } else {
-    return 1;
+    retval = 1;
   }
+
+end:
+  free(rotation);
+  rotation = NULL;
+  free(translation);
+  translation = NULL;
+
+  return retval;
+
 }
 
 
 static int test_spg_get_dataset(void)
 {
-  printf("*** spg_get_dataset (Rutile two unit cells) ***:\n");
   double lattice[3][3] = {{4, 0, 0}, {0, 4, 0}, {0, 0, 3}};
   double origin_shift[3] = {0.1, 0.1, 0};
   double position[][3] =
@@ -705,10 +744,6 @@ static int test_spg_get_dataset(void)
   int types[] = {1, 1, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2};
   int num_atom = 12;
 
-  if (show_spg_dataset(lattice, origin_shift, position, num_atom, types) == 1) {
-    return 1;
-  }
-
   double lattice_2[3][3] = {{3.7332982433264039, -1.8666491216632011, 0},
                             {0, 3.2331311186244847, 0},
                             {0, 0, 6.0979971306362799}};
@@ -722,6 +757,12 @@ static int test_spg_get_dataset(void)
     };
   int types_2[] = {1, 2, 3, 3};
   int num_atom_2 = 4;
+
+  printf("*** spg_get_dataset (Rutile two unit cells) ***:\n");
+
+  if (show_spg_dataset(lattice, origin_shift, position, num_atom, types) == 1) {
+    return 1;
+  }
 
   if (show_spg_dataset(lattice_2, origin_shift_2, position_2, num_atom_2, types_2)) {
     return 1;
@@ -742,6 +783,7 @@ static int test_spg_get_ir_reciprocal_mesh(void)
       {0.2, 0.8, 0.5},
       {0.8, 0.2, 0.5},
     };
+  int num_ir;
   int types[] = {1, 1, 2, 2, 2, 2};
   int num_atom = 6;
   int m = 40;
@@ -752,16 +794,16 @@ static int test_spg_get_ir_reciprocal_mesh(void)
 
   printf("*** spg_get_ir_reciprocal_mesh of Rutile structure ***:\n");
 
-  int num_ir = spg_get_ir_reciprocal_mesh(grid_address,
-                                          grid_mapping_table,
-                                          mesh,
-                                          is_shift,
-                                          1,
-                                          lattice,
-                                          position,
-                                          types,
-                                          num_atom,
-                                          1e-5);
+  num_ir = spg_get_ir_reciprocal_mesh(grid_address,
+                                      grid_mapping_table,
+                                      mesh,
+                                      is_shift,
+                                      1,
+                                      lattice,
+                                      position,
+                                      types,
+                                      num_atom,
+                                      1e-5);
 
   if (num_ir) {
     printf("Number of irreducible k-points of Rutile with\n");
@@ -792,9 +834,14 @@ static int test_spg_get_stabilized_reciprocal_mesh(void)
   int m = 40;
   int mesh[] = {m, m, m};
   int is_shift[] = {1, 1, 1};
-  int grid_address[m * m * m][3];
-  int grid_mapping_table[m * m * m];
+  int (*grid_address)[3];
+  int *grid_mapping_table;
   double q[] = {0, 0.5, 0.5};
+
+  /* Memory spaces have to be allocated to pointers */
+  /* to avoid Invalid read/write error by valgrind. */
+  grid_address = (int(*)[3])malloc(sizeof(int[3]) * m * m * m);
+  grid_mapping_table = (int*)malloc(sizeof(int) * m * m * m);
 
   dataset = spg_get_dataset(lattice,
                             position,
@@ -830,6 +877,10 @@ static int test_spg_get_stabilized_reciprocal_mesh(void)
   }
 
 end:
+  free(grid_address);
+  grid_address = NULL;
+  free(grid_mapping_table);
+  grid_mapping_table = NULL;
   return retval;
 
 }
@@ -848,6 +899,7 @@ static int test_spg_relocate_BZ_grid_address(void)
   int (*bz_grid_address)[3], (*grid_address)[3];
   int *grid_mapping_table, *bz_map;
 
+  int num_ir, num_q;
   int m = 40;
   int mesh[] = {m, m, m};
   int is_shift[] = {0, 0, 0};
@@ -860,24 +912,24 @@ static int test_spg_relocate_BZ_grid_address(void)
   grid_address = (int(*)[3])malloc(sizeof(int[3]) * m * m * m);
   grid_mapping_table = (int*)malloc(sizeof(int) * m * m * m);
 
-  int num_ir = spg_get_stabilized_reciprocal_mesh(grid_address,
-                                                  grid_mapping_table,
-                                                  mesh,
-                                                  is_shift,
-                                                  1,
-                                                  1,
-                                                  rotations,
-                                                  1,
-                                                  (double(*)[3])q);
+  num_ir = spg_get_stabilized_reciprocal_mesh(grid_address,
+                                              grid_mapping_table,
+                                              mesh,
+                                              is_shift,
+                                              1,
+                                              1,
+                                              rotations,
+                                              1,
+                                              (double(*)[3])q);
   if (num_ir) {
     printf("*** spg_relocate_BZ_grid_address of NaCl structure ***:\n");
 
-    int num_q = spg_relocate_BZ_grid_address(bz_grid_address,
-                                             bz_map,
-                                             grid_address,
-                                             mesh,
-                                             rec_lattice,
-                                             is_shift);
+    num_q = spg_relocate_BZ_grid_address(bz_grid_address,
+                                         bz_map,
+                                         grid_address,
+                                         mesh,
+                                         rec_lattice,
+                                         is_shift);
 
     printf("Number of k-points of NaCl Brillouin zone\n");
     printf("with Gamma-centered 40x40x40 Monkhorst-Pack mesh is %d (65861).\n", num_q);
@@ -911,6 +963,7 @@ static int test_spg_relocate_dense_BZ_grid_address(void)
   int (*bz_grid_address)[3], (*grid_address)[3];
   size_t *grid_mapping_table, *bz_map;
 
+  size_t num_ir, num_q;
   int m = 40;
   int mesh[] = {m, m, m};
   int is_shift[] = {0, 0, 0};
@@ -923,24 +976,24 @@ static int test_spg_relocate_dense_BZ_grid_address(void)
   grid_address = (int(*)[3])malloc(sizeof(int[3]) * m * m * m);
   grid_mapping_table = (size_t*)malloc(sizeof(size_t) * m * m * m);
 
-  size_t num_ir = spg_get_dense_stabilized_reciprocal_mesh(grid_address,
-                                                           grid_mapping_table,
-                                                           mesh,
-                                                           is_shift,
-                                                           1,
-                                                           1,
-                                                           rotations,
-                                                           1,
-                                                           (double(*)[3])q);
+  num_ir = spg_get_dense_stabilized_reciprocal_mesh(grid_address,
+                                                    grid_mapping_table,
+                                                    mesh,
+                                                    is_shift,
+                                                    1,
+                                                    1,
+                                                    rotations,
+                                                    1,
+                                                    (double(*)[3])q);
   if (num_ir) {
     printf("*** spg_relocate_dense_BZ_grid_address of NaCl structure ***:\n");
 
-    size_t num_q = spg_relocate_dense_BZ_grid_address(bz_grid_address,
-                                                      bz_map,
-                                                      grid_address,
-                                                      mesh,
-                                                      rec_lattice,
-                                                      is_shift);
+    num_q = spg_relocate_dense_BZ_grid_address(bz_grid_address,
+                                               bz_map,
+                                               grid_address,
+                                               mesh,
+                                               rec_lattice,
+                                               is_shift);
 
     printf("Number of k-points of NaCl Brillouin zone\n");
     printf("with Gamma-centered 40x40x40 Monkhorst-Pack mesh is %lu (65861).\n", num_q);
