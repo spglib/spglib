@@ -195,7 +195,8 @@ static int test_spg_find_primitive_corundum(void)
     {0.6395007239788255, 0.9728340573121541, 0.4166666666666643},
   };
   int types[30];
-  int i, num_atom = 30, num_primitive_atom;
+  int i, num_primitive_atom;
+  int num_atom = 30;
   double symprec = 1e-5;
 
   for (i = 0; i < 12; i++) {
@@ -225,7 +226,8 @@ static int test_spg_refine_cell_BCC(void)
   double position[4][3];
   int types[4];
 
-  int num_atom_bravais, num_atom = 1;
+  int num_atom_bravais;
+  int num_atom = 1;
   double symprec = 1e-5;
 
   position[0][0] = 0;
@@ -320,7 +322,8 @@ static int test_spg_standardize_cell_corundum(void)
     {0.6395007239788255, 0.9728340573121541, 0.4166666666666643},
   };
   int types[30];
-  int i, j, k, num_atom = 30;
+  int i, j, k;
+  int num_atom = 30;
   double symprec = 1e-5;
 
   for (i = 0; i < 12; i++) {
@@ -438,7 +441,8 @@ static int test_spg_get_international(void)
       {0.8, 0.2, 0.5},
     };
   int types[] = {1, 1, 2, 2, 2, 2};
-  int num_spg, num_atom = 6;
+  int num_spg;
+  int num_atom = 6;
   char symbol[21];
 
   num_spg = spg_get_international(symbol, lattice, position, types, num_atom, 1e-5);
@@ -783,14 +787,20 @@ static int test_spg_get_ir_reciprocal_mesh(void)
       {0.2, 0.8, 0.5},
       {0.8, 0.2, 0.5},
     };
-  int num_ir;
+  int num_ir, retval;
   int types[] = {1, 1, 2, 2, 2, 2};
   int num_atom = 6;
   int m = 40;
-  int mesh[] = {m, m, m};
+  int mesh[3];
   int is_shift[] = {1, 1, 1};
-  int grid_address[m * m * m][3];
-  int grid_mapping_table[m * m * m];
+  int (*grid_address)[3];
+  int *grid_mapping_table;
+
+  mesh[0] = m;
+  mesh[1] = m;
+  mesh[2] = m;
+  grid_address = (int(*)[3])malloc(sizeof(int[3]) * m * m * m);
+  grid_mapping_table = (int*)malloc(sizeof(int) * m * m * m);
 
   printf("*** spg_get_ir_reciprocal_mesh of Rutile structure ***:\n");
 
@@ -808,10 +818,16 @@ static int test_spg_get_ir_reciprocal_mesh(void)
   if (num_ir) {
     printf("Number of irreducible k-points of Rutile with\n");
     printf("40x40x40 Monkhorst-Pack mesh is %d (4200).\n", num_ir);
-    return 0;
+    retval = 0;
   } else {
-    return 1;
+    retval = 1;
   }
+
+  free(grid_address);
+  grid_address = NULL;
+  free(grid_mapping_table);
+  grid_mapping_table = NULL;
+  return retval;
 }
 
 static int test_spg_get_stabilized_reciprocal_mesh(void)
@@ -832,11 +848,15 @@ static int test_spg_get_stabilized_reciprocal_mesh(void)
   int types[] = {1, 1, 2, 2, 2, 2};
   int num_atom = 6;
   int m = 40;
-  int mesh[] = {m, m, m};
+  int mesh[3];
   int is_shift[] = {1, 1, 1};
   int (*grid_address)[3];
   int *grid_mapping_table;
   double q[] = {0, 0.5, 0.5};
+
+  mesh[0] = m;
+  mesh[1] = m;
+  mesh[2] = m;
 
   /* Memory spaces have to be allocated to pointers */
   /* to avoid Invalid read/write error by valgrind. */
@@ -901,9 +921,13 @@ static int test_spg_relocate_BZ_grid_address(void)
 
   int num_ir, num_q;
   int m = 40;
-  int mesh[] = {m, m, m};
+  int mesh[3];
   int is_shift[] = {0, 0, 0};
   double q[] = {0, 0, 0};
+
+  mesh[0] = m;
+  mesh[1] = m;
+  mesh[2] = m;
 
   /* Memory spaces have to be allocated to pointers */
   /* to avoid Invalid read/write error by valgrind. */
@@ -965,9 +989,13 @@ static int test_spg_relocate_dense_BZ_grid_address(void)
 
   size_t num_ir, num_q;
   int m = 40;
-  int mesh[] = {m, m, m};
+  int mesh[3];
   int is_shift[] = {0, 0, 0};
   double q[] = {0, 0, 0};
+
+  mesh[0] = m;
+  mesh[1] = m;
+  mesh[2] = m;
 
   /* Memory spaces have to be allocated to pointers */
   /* to avoid Invalid read/write error by valgrind. */
@@ -1022,7 +1050,8 @@ static int test_spg_get_error_message(void)
     {0.5, 0.5, 0.5}
   };
   int types[] = {1, 1, 1};
-  int num_atom = 3, num_primitive_atom;
+  int num_atom = 3;
+  int num_primitive_atom;
   double symprec = 1e-5;
   SpglibError error;
 
