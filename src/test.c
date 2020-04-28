@@ -632,8 +632,8 @@ static int test_spg_get_symmetry_with_collinear_spin(void) {
   translation = (double(*)[3])malloc(sizeof(double[3]) * max_size);
 
   printf("*** spg_get_symmetry_with_spin (BCC ferro) ***:\n");
-  spins[0] = 1;
-  spins[1] = 1;
+  spins[0] = 0.6;
+  spins[1] = 0.6;
   size = spg_get_symmetry_with_collinear_spin(rotation,
                                               translation,
                                               equivalent_atoms,
@@ -660,8 +660,8 @@ static int test_spg_get_symmetry_with_collinear_spin(void) {
   }
 
   printf("*** Example of spg_get_symmetry_with_spin (BCC antiferro) ***:\n");
-  spins[0] = 1;
-  spins[1] = -1;
+  spins[0] = 0.6;
+  spins[1] = -0.6;
   size = spg_get_symmetry_with_collinear_spin(rotation,
                                               translation,
                                               equivalent_atoms,
@@ -688,8 +688,8 @@ static int test_spg_get_symmetry_with_collinear_spin(void) {
   }
 
   printf("*** spg_get_symmetry_with_spin (BCC broken spin) ***:\n");
-  spins[0] = 1;
-  spins[1] = 2;
+  spins[0] = 0.6;
+  spins[1] = 1.2;
   size = spg_get_symmetry_with_collinear_spin(rotation,
                                               translation,
                                               equivalent_atoms,

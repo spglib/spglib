@@ -430,6 +430,7 @@ int spg_get_symmetry_with_collinear_spin(int rotation[][3][3],
                                          const int num_atom,
                                          const double symprec)
 {
+  int succeeded;
   double primitive_lattice[3][3];
   int *spin_flips;
 
@@ -439,24 +440,26 @@ int spg_get_symmetry_with_collinear_spin(int rotation[][3][3],
     return 0;
   }
 
-  return get_symmetry_with_site_tensors(rotation,
-                                        translation,
-                                        equivalent_atoms,
-                                        primitive_lattice,
-                                        spin_flips,
-                                        1,
-                                        max_size,
-                                        lattice,
-                                        position,
-                                        types,
-                                        spins,
-                                        0,
-                                        num_atom,
-                                        1,
-                                        symprec,
-                                        -1.0);
+  succeeded = get_symmetry_with_site_tensors(rotation,
+                                             translation,
+                                             equivalent_atoms,
+                                             primitive_lattice,
+                                             spin_flips,
+                                             1,
+                                             max_size,
+                                             lattice,
+                                             position,
+                                             types,
+                                             spins,
+                                             0,
+                                             num_atom,
+                                             1,
+                                             symprec,
+                                             -1.0);
   free(spin_flips);
   spin_flips = NULL;
+
+  return succeeded;
 }
 
 /* Return 0 if failed */
@@ -472,6 +475,7 @@ int spgat_get_symmetry_with_collinear_spin(int rotation[][3][3],
                                            const double symprec,
                                            const double angle_tolerance)
 {
+  int succeeded;
   double primitive_lattice[3][3];
   int *spin_flips;
 
@@ -481,25 +485,27 @@ int spgat_get_symmetry_with_collinear_spin(int rotation[][3][3],
     return 0;
   }
 
-  return get_symmetry_with_site_tensors(rotation,
-                                        translation,
-                                        equivalent_atoms,
-                                        primitive_lattice,
-                                        spin_flips,
-                                        1,
-                                        max_size,
-                                        lattice,
-                                        position,
-                                        types,
-                                        spins,
-                                        0,
-                                        num_atom,
-                                        1,
-                                        symprec,
-                                        angle_tolerance);
+  succeeded = get_symmetry_with_site_tensors(rotation,
+                                             translation,
+                                             equivalent_atoms,
+                                             primitive_lattice,
+                                             spin_flips,
+                                             1,
+                                             max_size,
+                                             lattice,
+                                             position,
+                                             types,
+                                             spins,
+                                             0,
+                                             num_atom,
+                                             1,
+                                             symprec,
+                                             angle_tolerance);
 
   free(spin_flips);
   spin_flips = NULL;
+
+  return succeeded;
 }
 
 /* Return 0 if failed */
