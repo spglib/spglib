@@ -34,14 +34,15 @@ module spglib_f08
      integer(c_int), allocatable :: wyckoffs(:)
      character(len=7), allocatable :: site_symmetry_symbols(:)
      integer(c_int), allocatable :: equivalent_atoms(:) !Beware mapping refers to positions starting at 0
+     integer(c_int), allocatable :: crystallographic_orbits(:) !Beware mapping refers to positions starting at 0
      real(c_double) :: primitive_lattice(3,3)
-     integer(c_int), allocatable :: mapping_to_primitive(:)
+     integer(c_int), allocatable :: mapping_to_primitive(:) !Beware mapping refers to positions starting at 0
      integer(c_int) :: n_std_atoms
      real(c_double) :: std_lattice(3,3)
      integer(c_int), allocatable :: std_types(:)
      real(c_double), allocatable :: std_positions(:,:)
      real(c_double)  :: std_rotation_matrix(3,3)
-     integer(c_int), allocatable :: std_mapping_to_primitive(:)
+     integer(c_int), allocatable :: std_mapping_to_primitive(:) !Beware mapping refers to positions starting at 0
      character(len=6) :: pointgroup_symbol
      integer(kind(SPGLIB_SUCCESS)) :: spglib_error
 
@@ -285,6 +286,28 @@ module spglib_f08
      end function spgat_refine_cell
 
 
+     function spg_standardize_cell( lattice, position, types, num_atom, to_primitive, no_idealize, symprec) bind(c)
+       import c_int, c_double
+       real(c_double), intent(inout) :: lattice(3,3), position(3,*)
+       integer(c_int), intent(inout) :: types(*)
+       integer(c_int), intent(in), value :: num_atom
+       integer(c_int), intent(in), value :: to_primitive, no_idealize
+       real(c_double), intent(in), value :: symprec
+       integer(c_int) :: spg_refine_cell
+     end function spg_standardize_cell
+
+
+     function spgat_standardize_cell( lattice, position, types, num_atom, to_primitive, no_idealize, symprec, angle_tolerance) bind(c)
+       import c_int, c_double
+       real(c_double), intent(inout) :: lattice(3,3), position(3,*)
+       integer(c_int), intent(inout) :: types(*)
+       integer(c_int), intent(in), value :: num_atom
+       integer(c_int), intent(in), value :: to_primitive, no_idealize
+       real(c_double), intent(in), value :: symprec, angle_tolerance
+       integer(c_int) :: spgat_refine_cell
+     end function spgat_standardize_cell
+
+
      function spg_get_ir_reciprocal_mesh(grid_point, map, mesh, &
           & is_shift, is_time_reversal, lattice, position, types, num_atom, symprec) bind(c)
        import c_int, c_double
@@ -401,6 +424,7 @@ contains
        type(c_ptr) :: wyckoffs
        type(c_ptr) :: site_symmetry_symbols
        type(c_ptr) :: equivalent_atoms
+       type(c_ptr) :: crystallographic_orbits
        real(c_double) :: primitive_lattice(3,3)
        type(c_ptr) :: mapping_to_primitive
        integer(c_int) :: n_std_atoms
@@ -436,7 +460,8 @@ contains
     integer :: i
     integer(kind(SPGLIB_SUCCESS)) :: SpglibErrcode
     real(c_double), pointer :: translations(:,:)
-    integer(c_int), pointer :: rotations(:,:,:), wyckoffs(:), equivalent_atoms(:), std_types(:), std_positions(:,:)
+    integer(c_int), pointer :: rotations(:,:,:), wyckoffs(:), equivalent_atoms(:)
+    integer(c_int), pointer :: crystallographic_orbits(:), std_types(:), std_positions(:,:)
 
     dataset_ptr_c = spg_get_dataset_c(lattice, position, types, num_atom, symprec)
 
@@ -497,6 +522,7 @@ contains
        call c_f_pointer (dset_c % translations    , translations    , shape = [3,    n_operations])
        call c_f_pointer (dset_c % wyckoffs        , wyckoffs        , shape = [n_atoms])
        call c_f_pointer (dset_c % equivalent_atoms, equivalent_atoms, shape = [n_atoms])
+       call c_f_pointer (dset_c % crystallographic_orbits, crystallographic_orbits, shape = [n_atoms])
        call c_f_pointer (dset_c % std_types       , std_types       , shape = [n_std_atoms])
        call c_f_pointer (dset_c % std_positions   , std_positions   , shape = [3, n_std_atoms])
 
@@ -504,6 +530,7 @@ contains
        allocate( dset % translations    (3,    n_operations))
        allocate( dset % wyckoffs        (n_atoms))
        allocate( dset % equivalent_atoms(n_atoms))
+       allocate( dset % crystallographic_orbits(n_atoms))
        allocate( dset % std_types       (n_std_atoms))
        allocate( dset % std_positions   (3, n_std_atoms))
 
@@ -511,6 +538,7 @@ contains
        dset % translations     = translations
        dset % wyckoffs         = wyckoffs
        dset % equivalent_atoms = equivalent_atoms
+       dset % crystallographic_orbits = crystallographic_orbits
        dset % std_types        = std_types
        dset % std_positions    = std_positions
 

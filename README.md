@@ -7,17 +7,6 @@ spglib
 
 C library for finding and handling crystal symmetries
 
-How to compile with autotools
--------------------------------
-
-    % aclocal
-    % autoheader
-    % libtoolize # or glibtoolize with macport etc
-    % touch INSTALL NEWS README AUTHORS
-    % automake -acf
-    % autoconf
-    % ./configure
-
 How to compile with cmake
 --------------------------
 
@@ -34,3 +23,20 @@ Or to install under /some/where
     % cmake -DCMAKE_INSTALL_PREFIX="" ..
     % make
     % make DESTDIR=/some/where install
+
+A simple test is executed by
+
+    % make check
+
+How to compile with autotools
+-----------------------------
+
+Autotools support is deprecated in the next major release.
+
+    % aclocal
+    % autoheader
+    % libtoolize # or glibtoolize with macport etc
+    % touch INSTALL NEWS README AUTHORS
+    % automake -acf
+    % autoconf
+    % ./configure

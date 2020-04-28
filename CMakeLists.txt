@@ -1,4 +1,6 @@
+
 cmake_minimum_required(VERSION 2.4)
+
 project(spglib C)
 set(CMAKE_MACOSX_RPATH 1)
 set(CMAKE_C_FLAGS_RELEASE "-Wall -O2")
@@ -50,7 +52,10 @@ set(SOURCES ${PROJECT_SOURCE_DIR}/src/arithmetic.c
 
 # Shared library
 add_library(symspg SHARED ${SOURCES})
-target_link_libraries(symspg m)
+
+if(NOT MSVC)
+  target_link_libraries(symspg m)
+endif()
 set_property(TARGET symspg PROPERTY VERSION ${serial})
 set_property(TARGET symspg PROPERTY SOVERSION ${soserial})
 install(TARGETS symspg LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
@@ -67,9 +72,15 @@ install(FILES ${PROJECT_SOURCE_DIR}/src/spglib.h DESTINATION ${CMAKE_INSTALL_INC
 
 # make check
 enable_testing()
+
 add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
+
 set(CMAKE_CTEST_COMMAND ctest -V)
+
 add_executable(spglibtest EXCLUDE_FROM_ALL ${PROJECT_SOURCE_DIR}/src/test.c ${SOURCES})
-target_link_libraries(spglibtest m)
+
+if(NOT MSVC)
+  target_link_libraries(spglibtest m)
+endif()
 add_test(spglibtest spglibtest)
 add_dependencies(check spglibtest)

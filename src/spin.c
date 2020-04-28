@@ -55,8 +55,8 @@ static int set_equivalent_atoms(int * equiv_atoms,
 static int * get_mapping_table(const Symmetry *symmetry,
                                const Cell * cell,
                                const double symprec);
-static int check_spin(const int spin_j,
-                      const int spin_k,
+static int check_spin(const double spin_j,
+                      const double spin_k,
                       const int sign,
                       const double symprec);
 static int check_vector(const int j,
@@ -195,6 +195,8 @@ static Symmetry * get_operations(int *spin_flips,
             is_found = check_vector(j, k, tensors, sym_nonspin->rot[i],
                                     cell->lattice, is_magnetic, symprec);
           }
+          /* Break because cel_is_overlap_with_same_type == true */
+          /* for only one atom. */
           break;
         }
       }
@@ -344,8 +346,8 @@ static int * get_mapping_table(const Symmetry *symmetry,
   return mapping_table;
 }
 
-static int check_spin(const int spin_j,
-                      const int spin_k,
+static int check_spin(const double spin_j,
+                      const double spin_k,
                       const int sign,
                       const double symprec)
 {
