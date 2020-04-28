@@ -346,8 +346,15 @@ as follows:
    \frac{{1}}{2} & \frac{{1}}{2} & 0
    \end{pmatrix}.
 
-For rhombohedral lattice systems with the choice of hexagonal axes,
-:math:`\boldsymbol{P}_\mathrm{R}` is applied.
+The choice of transformation matrix depends on purposes. These
+transformation matrices above are just the spglib choices and may not
+be the best.
+
+For rhombohedral lattice systems with the H setting (hexagonal
+lattice), :math:`\boldsymbol{P}_\mathrm{R}` is applied to obtain
+primitive basis vectors, but for that with the R setting (rhombohedral
+lattice), no transformation matrix is applied because it is already
+the primitive cell.
 
 .. _def_idealize_cell:
 
@@ -421,10 +428,12 @@ Rhombohedral lattice
   :math:`\mathbf{a}_{z}`, :math:`\mathbf{b}_{z}`, and
   :math:`\mathbf{c}_{z}`, respectively.
 
-- :math:`\mathbf{a}_{xy}` is set along :math:`+x` direction of Cartesian
-  coordinates, and :math:`\mathbf{b}_{xy}` and :math:`\mathbf{c}_{xy}`
-  are placed by angles :math:`120^\circ` and :math:`240^\circ` from
-  :math:`\mathbf{a}_{xy}` counter-clockwise, respectively.
+- :math:`\mathbf{a}_{xy}` is set along the ray :math:`30^\circ`
+  rotated counter-clockwise from the :math:`+x`
+  direction of Cartesian coordinates, and :math:`\mathbf{b}_{xy}` and
+  :math:`\mathbf{c}_{xy}` are placed by angles :math:`120^\circ` and
+  :math:`240^\circ` from :math:`\mathbf{a}_{xy}` counter-clockwise,
+  respectively.
 - :math:`\alpha_{xy} = \beta_{xy} = \gamma_{xy} = 120^\circ`.
 - :math:`a_{xy} = b_{xy} = c_{xy}`.
 - :math:`a_{z} = b_{z} = c_{z}`.

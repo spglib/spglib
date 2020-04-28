@@ -138,11 +138,12 @@ and also as a number (return value). 0 is returned if it failed.
 -------------------------
 
 The standardized unit cell (see :ref:`def_standardized_unit_cell`) is
-generated from an input unit cell structure and its space group type
-determined about a symmetry search tolerance. Usually
-``to_primitive=0`` and ``no_idealize=0`` are recommended to set and
-this setting results in the same behavior as ``spg_refine_cell``. 0 is
-returned if it failed.
+generated from an input unit cell structure and its symmetry found by
+the symmetry search. The choice of the setting for each space group
+type is as explained for :ref:`spg_get_dataset <api_spg_get_dataset>`.
+Usually ``to_primitive=0`` and ``no_idealize=0`` are recommended to
+set and this setting results in the same behavior as
+``spg_refine_cell``. 0 is returned if it failed.
 
 ::
 
@@ -247,17 +248,20 @@ those required for the input unit cell in general.
 
 For an input unit cell structure, symmetry operations of the crystal
 are searched. Then they are compared with the crsytallographic
-database and the space group type is determined. The result is
-returned as the ``SpglibDataset`` structure as a dataset. The default
-choice of setting of basis vectors in spglib is explained in the
-manuscript found at http://arxiv.org/abs/1506.01455.
+database and the space group type is determined.  The result is
+returned as the ``SpglibDataset`` structure as a dataset.
 
 The detail of the dataset is given at :ref:`spglib_dataset`.
 
 Dataset corresponding to the space group type in the standard setting
-is obtained by ``spg_get_dataset``. If this symmetry search fails,
-``NULL`` is returned in version 1.8.1 or later (spacegroup_number = 0
-is returned in the previous versions). In this function, the other
+is obtained by ``spg_get_dataset``. Here the standard setting means
+the first top one among the Hall symbols listed for each space group
+type. For example, H setting (hexagonal lattice) is chosen for
+rhombohedral crystals. ``spg_get_dataset_with_hall_number`` explained
+below is used to choose different settings such as R setting of
+rhombohedral crystals. If this symmetry search fails, ``NULL`` is
+returned in version 1.8.1 or later (spacegroup_number = 0 is returned
+in the previous versions). In this function, the other
 crystallographic setting is not obtained.
 
 ::
