@@ -89,7 +89,6 @@ add_custom_target(check
         COMMAND ${CMAKE_COMMAND} -E env CTEST_OUTPUT_ON_FAILURE=1
             ${CMAKE_CTEST_COMMAND} -C $<CONFIG> --verbose
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-    DEPENDS ALL_BUILD
+    DEPENDS spglibtest
     )
 
-add_dependencies(check spglibtest)
