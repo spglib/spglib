@@ -1,3 +1,14 @@
+2020-04-28  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.15.1
+
+	Critical bug fix for collinear spin symmetry.
+	
+	* src/spin.c (get_operations):
+
+	Collinear spin symmetry was wrongly handled. This was fixed at
+	commit bf954039.
+
 2020-04-17  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.15
