@@ -70,17 +70,25 @@ install(TARGETS symspg_static ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 # Header file
 install(FILES ${PROJECT_SOURCE_DIR}/src/spglib.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-# make check
-enable_testing()
-
-add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
-
-set(CMAKE_CTEST_COMMAND ctest -V)
-
 add_executable(spglibtest EXCLUDE_FROM_ALL ${PROJECT_SOURCE_DIR}/src/test.c ${SOURCES})
 
 if(NOT MSVC)
   target_link_libraries(spglibtest m)
 endif()
+
+enable_testing()
 add_test(spglibtest spglibtest)
-add_dependencies(check spglibtest)
+
+# make check
+
+# cf. https://stackoverflow.com/questions/5709914/using-cmake-how-do-i-get-verbose-output-from-ctest
+add_custom_target(check 
+        ${CMAKE_COMMAND} -E echo CWD=${CMAKE_BINARY_DIR}
+        COMMAND ${CMAKE_COMMAND} -E echo CMD=${CMAKE_CTEST_COMMAND} -C $<CONFIG>
+        COMMAND ${CMAKE_COMMAND} -E echo ----------------------------------
+        COMMAND ${CMAKE_COMMAND} -E env CTEST_OUTPUT_ON_FAILURE=1
+            ${CMAKE_CTEST_COMMAND} -C $<CONFIG> --verbose
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    DEPENDS spglibtest
+    )
+
