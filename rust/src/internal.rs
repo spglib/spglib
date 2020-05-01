@@ -220,6 +220,15 @@ pub fn validate_rutile_cell_dataset(dataset: &Dataset) {
         dataset.equivalent_atoms[..],
         [0, 0, 2, 2, 2, 2, 0, 0, 2, 2, 2, 2]
     );
+
+    assert_eq!(
+        dataset.crystallographic_orbits[..],
+        [0, 0, 2, 2, 2, 2, 0, 0, 2, 2, 2, 2]
+    );
+    assert_eq!(
+        dataset.primitive_lattice,
+        [[0.0, 4.0, 0.0], [0.0, 0.0, 4.0], [2.0, 0.0, 0.0]]
+    );
     assert_eq!(
         dataset.mapping_to_primitive[..],
         [0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5]
