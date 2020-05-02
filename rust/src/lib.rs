@@ -1,7 +1,7 @@
 #![deny(missing_docs)]
 #![deny(missing_debug_implementations)]
 
-//! The `spglib` crate provides a Rust-y wrapper to [spglib](https://atztogo.github.io/spglib/), a C library for finding and handling crystal symmetries.
+//! The `spglib` crate provides a Rust-y wrapper to [spglib](https://spglib.github.io/spglib/), a C library for finding and handling crystal symmetries.
 
 pub mod cell;
 pub mod dataset;

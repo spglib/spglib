@@ -240,6 +240,9 @@ extern "C" {
                                              const double angle_tolerance);
 
 /* Return 0 if failed */
+/* ``rotation`` and ``tranlation`` are used as input and output. */
+/* ``num_operations`` is the number of the symmetry operations of */
+/* input. */
   int spg_get_symmetry_with_site_tensors(int rotation[][3][3],
                                          double translation[][3],
                                          int equivalent_atoms[],

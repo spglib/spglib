@@ -5,7 +5,7 @@ Spglib is a library for finding and handling crystal symmetries
 written in C. There are the :ref:`python <python_spglib>`,
 :ref:`fortran, rust, and ruby <interfaces>` interfaces.
 Version history is found at `ChangeLog
-<https://github.com/atztogo/spglib/blob/master/ChangeLog>`_.
+<https://github.com/spglib/spglib/blob/master/ChangeLog>`_.
 
 The detailed algorithm of spglib is describted the following text:
 
@@ -84,7 +84,7 @@ https://lists.sourceforge.net/lists/listinfo/spglib-users
 For more information
 ---------------------
 
-* Repository: https://github.com/atztogo/spglib
+* Repository: https://github.com/spglib/spglib
 * License: New BSD after version 1.0.beta-1
 * Contact: atz.togo@gmail.com
 * Authour: Atsushi Togo

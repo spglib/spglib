@@ -19,10 +19,10 @@ pub struct Dataset {
     /// The information on unique axis, setting, or cell choices
     pub choice: String,
     /// The result of space-group-type matching under a set of unique axis, setting, and cell choices.
-    /// For more detail: https://atztogo.github.io/spglib/definition.html#transformation-matrix-boldsymbol-p-and-origin-shift-boldsymbol-p
+    /// For more detail: https://spglib.github.io/spglib/definition.html#transformation-matrix-boldsymbol-p-and-origin-shift-boldsymbol-p
     pub transformation_matrix: [[f64; 3]; 3],
     /// The result of space-group-type matching under a set of unique axis, setting, and cell choices.
-    /// For more detail: https://atztogo.github.io/spglib/definition.html#transformation-matrix-boldsymbol-p-and-origin-shift-boldsymbol-p
+    /// For more detail: https://spglib.github.io/spglib/definition.html#transformation-matrix-boldsymbol-p-and-origin-shift-boldsymbol-p
     pub origin_shift: [f64; 3],
     /// The number of symmetry operations
     pub n_operations: i32,

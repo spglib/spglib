@@ -5,7 +5,7 @@ authors = ["Seaton Ullberg <seatonullberg@gmail.com>"]
 edition = "2018"
 license = "BSD-3-Clause"
 description = "Rust-y bindings to spglib"
-repository = "https://github.com/atztogo/spglib"
+repository = "https://github.com/spglib/spglib"
 categories = ["science"]
 keywords = ["crystallography", "materials-science"]
 

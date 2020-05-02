@@ -11,7 +11,7 @@ Installation
 
 The package is developed on github. You can get the source for the
 released versions from the
-`repository <https://github.com/atztogo/spglib/releases>`__.
+`repository <https://github.com/spglib/spglib/releases>`__.
 
 Using package distribution service
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -50,7 +50,7 @@ required before the build. The installation steps are shown as follows:
    :target: https://anaconda.org/atztogo/spglib
 .. |Downloads Badge| image:: https://anaconda.org/atztogo/spglib/badges/downloads.svg
    :target: https://anaconda.org/atztogo/spglib
-.. |PyPi downloads| image:: https://img.shields.io/pypi/dm/spglib.svg?maxAge=2592000   
+.. |PyPi downloads| image:: https://img.shields.io/pypi/dm/spglib.svg?maxAge=2592000
    :target: https://pypi.python.org/pypi/spglib
 .. |Build Status| image:: https://travis-ci.org/atztogo/spglib.svg?branch=master
    :target: https://travis-ci.org/atztogo/spglib
