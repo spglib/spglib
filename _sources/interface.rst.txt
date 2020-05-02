@@ -10,12 +10,12 @@ Fortran interface
 ------------------
 
 Fortran interface `spglib_f08.f90
-<https://github.com/atztogo/spglib/blob/master/example/example_f08.f90>`_
+<https://github.com/spglib/spglib/blob/master/example/example_f08.f90>`_
 is found in `example
-<https://github.com/atztogo/spglib/tree/master/example>`_
+<https://github.com/spglib/spglib/tree/master/example>`_
 directory. This fortran interface is originally contributed by Dimitar
 Pashov and has been updated by some other people. `spglib_f.c
-<https://github.com/atztogo/spglib/blob/master/src/spglib_f.c>`_ is
+<https://github.com/spglib/spglib/blob/master/src/spglib_f.c>`_ is
 obsolete and is not recommended to use.
 
 Rust interface
@@ -46,4 +46,4 @@ Some more options are shown with ``--help`` option::
    ruby symPoscar.rb --help
 
 The way to compile the ruby module is explained in
-`ruby/README <https://github.com/atztogo/spglib/blob/master/ruby/README>`_.
+`ruby/README <https://github.com/spglib/spglib/blob/master/ruby/README>`_.
