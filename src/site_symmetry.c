@@ -67,11 +67,13 @@ static int set_Wyckoffs_labels(int * wyckoffs,
                                const int * equiv_atoms,
                                const Cell * conv_prim,
                                const Symmetry * conv_sym,
+                               const int num_pure_trans,
                                const int hall_number,
                                const double symprec);
 static int get_Wyckoff_notation(char site_sym_symbol[7],
                                 const double position[3],
                                 const Symmetry * conv_sym,
+                                const int ref_multiplicity,
                                 SPGCONST double bravais_lattice[3][3],
                                 const int hall_number,
                                 const double symprec);
@@ -82,6 +84,7 @@ VecDBL * ssm_get_exact_positions(int *wyckoffs,
                                  char (*site_symmetry_symbols)[7],
                                  const Cell * conv_prim,
                                  const Symmetry * conv_sym,
+                                 const int num_pure_trans,
                                  const int hall_number,
                                  const double symprec)
 {
@@ -107,10 +110,13 @@ VecDBL * ssm_get_exact_positions(int *wyckoffs,
                             equiv_atoms,
                             conv_prim,
                             conv_sym,
+                            num_pure_trans,
                             hall_number,
                             symprec)) {
       break;
     } else {
+      warning_print("spglib: ssm_get_exact_positions failed (attempt=%d).", i);
+      warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
       mat_free_VecDBL(positions);
       positions = NULL;
       tolerance *= INCREASE_RATE;
@@ -281,16 +287,31 @@ static int set_Wyckoffs_labels(int *wyckoffs,
                                const int * equiv_atoms,
                                const Cell * conv_prim,
                                const Symmetry * conv_sym,
+                               const int num_pure_trans,
                                const int hall_number,
                                const double symprec)
 {
   int i, j, w;
+  int *nums_equiv_atoms;
+
+  nums_equiv_atoms = (int*)malloc(sizeof(int) * conv_prim->size);
+  for (i = 0; i < conv_prim->size; i++) {
+    nums_equiv_atoms[i] = 0;
+  }
+
+  for (i = 0; i < conv_prim->size; i++) {
+    nums_equiv_atoms[equiv_atoms[i]]++;
+  }
+
+  debug_print("num_pure_trans: %d\n", num_pure_trans);
 
   for (i = 0; i < conv_prim->size; i++) {
     if (i == equiv_atoms[i]) {
+      debug_print("num_equiv_atoms[%d]: %d\n", i, nums_equiv_atoms[i]);
       w = get_Wyckoff_notation(site_symmetry_symbols[i],
                                positions->vec[i],
                                conv_sym,
+                               nums_equiv_atoms[i] * num_pure_trans,
                                conv_prim->lattice,
                                hall_number,
                                symprec);
@@ -311,9 +332,13 @@ static int set_Wyckoffs_labels(int *wyckoffs,
     }
   }
 
+  free(nums_equiv_atoms);
+  nums_equiv_atoms = NULL;
   return 1;
 
  err:
+  free(nums_equiv_atoms);
+  nums_equiv_atoms = NULL;
   return 0;
 }
 
@@ -321,6 +346,7 @@ static int set_Wyckoffs_labels(int *wyckoffs,
 static int get_Wyckoff_notation(char site_sym_symbol[7],
                                 const double position[3],
                                 const Symmetry * conv_sym,
+                                const int ref_multiplicity,
                                 SPGCONST double bravais_lattice[3][3],
                                 const int hall_number,
                                 const double symprec)
@@ -357,6 +383,7 @@ static int get_Wyckoff_notation(char site_sym_symbol[7],
     /* [0, 0, 0]                 */
     /* [0, 0, 0]                 */
     multiplicity = ssmdb_get_coordinate(rot, trans, i + indices_wyc[0]);
+
     /* Effectively this iteration runs over all 'Coordinates' of each */
     /* Wyckoff position, i.e., works as looking for the first element. */
     for (j = 0; j < pos_rot->size; j++) {
@@ -378,7 +405,12 @@ static int get_Wyckoff_notation(char site_sym_symbol[7],
           }
         }
       }
-      if (num_sitesym * multiplicity == conv_sym->size) {
+
+      /* Consistency check */
+      /* 1) num_sym == num_sitesym * m */
+      /* 2) num_equiv_atoms in conventional cell == m */
+      if ((num_sitesym * multiplicity == conv_sym->size) &&
+          (multiplicity == ref_multiplicity)) {
         /* Database is made reversed order, e.g., gfedcba. */
         /* wyckoff is set 0 1 2 3 4... for a b c d e..., respectively. */
         wyckoff_letter = indices_wyc[1] - i - 1;
