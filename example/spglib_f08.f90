@@ -19,6 +19,20 @@ module spglib_f08
      enumerator ::  SPGERR_NONE
   end enum
 
+  type :: SpglibSpacegroupType
+     integer(c_int) :: number
+     character(len=11) :: international_short
+     character(len=20) :: international_full
+     character(len=32) :: international
+     character(len=7) :: schoenflies
+     character(len=17) :: hall_symbol
+     character(len=6) :: choice
+     character(len=6) :: pointgroup_international
+     character(len=4) :: pointgroup_schoenflies
+     integer(c_int) :: arithmetic_crystal_class_number
+     character(len=7) :: arithmetic_crystal_class_symbol
+  end type SpglibSpacegroupType
+
   type :: SpglibDataset
      integer(c_int) :: spacegroup_number
      integer(c_int) :: hall_number
@@ -45,7 +59,6 @@ module spglib_f08
      integer(c_int), allocatable :: std_mapping_to_primitive(:) !Beware mapping refers to positions starting at 0
      character(len=6) :: pointgroup_symbol
      integer(kind(SPGLIB_SUCCESS)) :: spglib_error
-
   end type SpglibDataset
 
   interface
@@ -156,7 +169,8 @@ module spglib_f08
      end function spgat_get_symmetry_with_site_tensors
 
 
-     function spg_get_multiplicity( lattice, position, types, num_atom, symprec) bind(c)
+     function spg_get_multiplicity( lattice, position, types, num_atom, &
+          & symprec) bind(c)
        import c_int, c_double
        real(c_double), intent(in) :: lattice(3,3), position(3,*)
        integer(c_int), intent(in) :: types(*)
@@ -166,7 +180,8 @@ module spglib_f08
      end function spg_get_multiplicity
 
 
-     function spgat_get_multiplicity( lattice, position, types, num_atom, symprec, angle_tolerance) bind(c)
+     function spgat_get_multiplicity( lattice, position, types, num_atom, &
+          & symprec, angle_tolerance) bind(c)
        import c_int, c_double
        real(c_double), intent(in) :: lattice(3,3), position(3,*)
        integer(c_int), intent(in) :: types(*)
@@ -192,7 +207,8 @@ module spglib_f08
      end function spg_niggli_reduce
 
 
-     function spg_find_primitive(lattice, position, types, num_atom, symprec) bind(c)
+     function spg_find_primitive(lattice, position, types, num_atom, symprec) &
+       & bind(c)
        import c_int, c_double
        real(c_double), intent(inout) :: lattice(3,3), position(3,*)
        integer(c_int), intent(inout) :: types(*)
@@ -202,7 +218,8 @@ module spglib_f08
      end function spg_find_primitive
 
 
-     function spgat_find_primitive(lattice, position, types, num_atom, symprec, angle_tolerance) bind(c)
+     function spgat_find_primitive(lattice, position, types, num_atom, symprec, &
+          & angle_tolerance) bind(c)
        import c_int, c_double
        real(c_double), intent(inout) :: lattice(3,3), position(3,*)
        integer(c_int), intent(inout) :: types(*)
@@ -212,7 +229,8 @@ module spglib_f08
      end function spgat_find_primitive
 
 
-     function spg_get_international( symbol, lattice, position, types, num_atom, symprec) bind(c)
+     function spg_get_international( symbol, lattice, position, types, num_atom, &
+          & symprec) bind(c)
        import c_char, c_int, c_double
        character(kind=c_char), intent(out) :: symbol(11)
        real(c_double), intent(in) :: lattice(3,3), position(3, *)
@@ -223,7 +241,8 @@ module spglib_f08
      end function spg_get_international
 
 
-     function spgat_get_international( symbol, lattice, position, types, num_atom, symprec, angle_tolerance) bind(c)
+     function spgat_get_international( symbol, lattice, position, types, num_atom, &
+          & symprec, angle_tolerance) bind(c)
        import c_char, c_int, c_double
        character(kind=c_char), intent(out) :: symbol(11)
        real(c_double), intent(in) :: lattice(3,3), position(3, *)
@@ -234,7 +253,8 @@ module spglib_f08
      end function spgat_get_international
 
 
-     function spg_get_schoenflies( symbol, lattice, position, types, num_atom, symprec) bind(c)
+     function spg_get_schoenflies( symbol, lattice, position, types, num_atom, &
+          & symprec) bind(c)
        import c_char, c_int, c_double
        character(kind=c_char), intent(out) :: symbol(7)
        real(c_double), intent(in) :: lattice(3,3), position(3, *)
@@ -245,7 +265,8 @@ module spglib_f08
      end function spg_get_schoenflies
 
 
-     function spgat_get_schoenflies( symbol, lattice, position, types, num_atom, symprec, angle_tolerance) bind(c)
+     function spgat_get_schoenflies( symbol, lattice, position, types, num_atom, &
+          & symprec, angle_tolerance) bind(c)
        import c_char, c_int, c_double
        character(kind=c_char), intent(out) :: symbol(7)
        real(c_double), intent(in) :: lattice(3,3), position(3, *)
@@ -256,7 +277,8 @@ module spglib_f08
      end function spgat_get_schoenflies
 
 
-     function spg_get_pointgroup( symbol, trans_mat, rotations, num_rotations) bind(c)
+     function spg_get_pointgroup( symbol, trans_mat, rotations, num_rotations) &
+          & bind(c)
        import c_char, c_int, c_double
        character(kind=c_char) :: symbol(6)
        integer(c_int), intent(inout) :: trans_mat(3,3)
@@ -276,7 +298,8 @@ module spglib_f08
      end function spg_refine_cell
 
 
-     function spgat_refine_cell( lattice, position, types, num_atom, symprec, angle_tolerance) bind(c)
+     function spgat_refine_cell( lattice, position, types, num_atom, symprec, &
+          & angle_tolerance) bind(c)
        import c_int, c_double
        real(c_double), intent(inout) :: lattice(3,3), position(3,*)
        integer(c_int), intent(inout) :: types(*)
@@ -286,7 +309,8 @@ module spglib_f08
      end function spgat_refine_cell
 
 
-     function spg_standardize_cell( lattice, position, types, num_atom, to_primitive, no_idealize, symprec) bind(c)
+     function spg_standardize_cell( lattice, position, types, num_atom, &
+          & to_primitive, no_idealize, symprec) bind(c)
        import c_int, c_double
        real(c_double), intent(inout) :: lattice(3,3), position(3,*)
        integer(c_int), intent(inout) :: types(*)
@@ -297,7 +321,8 @@ module spglib_f08
      end function spg_standardize_cell
 
 
-     function spgat_standardize_cell( lattice, position, types, num_atom, to_primitive, no_idealize, symprec, angle_tolerance) bind(c)
+     function spgat_standardize_cell( lattice, position, types, num_atom, &
+          & to_primitive, no_idealize, symprec, angle_tolerance) bind(c)
        import c_int, c_double
        real(c_double), intent(inout) :: lattice(3,3), position(3,*)
        integer(c_int), intent(inout) :: types(*)
@@ -308,8 +333,8 @@ module spglib_f08
      end function spgat_standardize_cell
 
 
-     function spg_get_ir_reciprocal_mesh(grid_point, map, mesh, &
-          & is_shift, is_time_reversal, lattice, position, types, num_atom, symprec) bind(c)
+     function spg_get_ir_reciprocal_mesh(grid_point, map, mesh, is_shift, &
+          & is_time_reversal, lattice, position, types, num_atom, symprec) bind(c)
        import c_int, c_double
        !   Beware the map refers to positions starting at 0
        integer(c_int), intent(out) :: grid_point(3, *), map(*) ! size is product(mesh)
@@ -361,7 +386,8 @@ module spglib_f08
        & spg_get_pointgroup, spg_refine_cell, spgat_refine_cell, &
        & spg_get_ir_reciprocal_mesh, &
        & spg_get_stabilized_reciprocal_mesh, &
-       & spg_get_error_code, spg_get_error_message
+       & spg_get_error_code, spg_get_error_message, &
+       & SpglibSpacegroupType, spg_get_spacegroup_type
 
 
 contains
@@ -378,7 +404,8 @@ contains
 
     interface
 
-       function spg_get_error_message_c(spglib_error) bind(c, name='spg_get_error_message')
+       function spg_get_error_message_c(spglib_error) &
+            & bind(c, name='spg_get_error_message')
          import c_ptr, SPGLIB_SUCCESS
 
          integer(kind(SPGLIB_SUCCESS)), value :: spglib_error
@@ -399,6 +426,121 @@ contains
 
   end function spg_get_error_message
 
+
+  function spg_get_spacegroup_type(hall_number) result(spgtype)
+    integer(c_int), intent(in) :: hall_number
+    type(SpglibSpacegroupType) :: spgtype
+
+    type, bind(c) :: SpglibSpacegroupType_c
+       integer(c_int) :: number
+       character(kind=c_char) :: international_short(11)
+       character(kind=c_char) :: international_full(20)
+       character(kind=c_char) :: international(32)
+       character(kind=c_char) :: schoenflies(7)
+       character(kind=c_char) :: hall_symbol(17)
+       character(kind=c_char) :: choice(6)
+       character(kind=c_char) :: pointgroup_international(6)
+       character(kind=c_char) :: pointgroup_schoenflies(4)
+       integer(c_int) :: arithmetic_crystal_class_number
+       character(kind=c_char) :: arithmetic_crystal_class_symbol(7)
+    end type SpglibSpacegroupType_c
+
+    interface
+
+       function spg_get_spacegroup_type_c(hall_number) &
+            & bind(c, name='spg_get_spacegroup_type')
+         import c_int, SpglibSpacegroupType_c
+         integer(c_int), intent(in), value :: hall_number
+         type(SpglibSpacegroupType_c) :: spg_get_spacegroup_type_c
+       end function spg_get_spacegroup_type_c
+
+    end interface
+
+    type(SpglibSpacegroupType_c):: spgtype_c
+    integer :: i
+
+    spgtype_c = spg_get_spacegroup_type_c(hall_number)
+
+    spgtype % number = spgtype_c % number
+    spgtype % arithmetic_crystal_class_number = &
+         & spgtype_c % arithmetic_crystal_class_number
+
+    do i = 1, size(spgtype_c % international_short)
+       if (spgtype_c % international_short(i) == C_NULL_CHAR) then
+          spgtype % international_short(i:) = ' '
+          exit
+       end if
+       spgtype % international_short(i:i) = spgtype_c % international_short(i)
+    end do
+
+    do i = 1, size(spgtype_c % international_full)
+       if (spgtype_c % international_full(i) == C_NULL_CHAR) then
+          spgtype % international_full(i:) = ' '
+          exit
+       end if
+       spgtype % international_full(i:i) = spgtype_c % international_full(i)
+    end do
+
+    do i = 1, size(spgtype_c % international)
+       if (spgtype_c % international(i) == C_NULL_CHAR) then
+          spgtype % international(i:) = ' '
+          exit
+       end if
+       spgtype % international(i:i) = spgtype_c % international(i)
+    end do
+
+    do i = 1, size(spgtype_c % schoenflies)
+       if (spgtype_c % schoenflies(i) == C_NULL_CHAR) then
+          spgtype % schoenflies(i:) = ' '
+          exit
+       end if
+       spgtype % schoenflies(i:i) = spgtype_c % schoenflies(i)
+    end do
+
+    do i = 1, size(spgtype_c % hall_symbol)
+       if (spgtype_c % hall_symbol(i) == C_NULL_CHAR) then
+          spgtype % hall_symbol(i:) = ' '
+          exit
+       end if
+       spgtype % hall_symbol(i:i) = spgtype_c % hall_symbol(i)
+    end do
+
+    do i = 1, size(spgtype_c % choice)
+       if (spgtype_c % choice(i) == C_NULL_CHAR) then
+          spgtype % choice(i:) = ' '
+          exit
+       end if
+       spgtype % choice(i:i) = spgtype_c % choice(i)
+    end do
+
+    do i = 1, size(spgtype_c % pointgroup_international)
+       if (spgtype_c % pointgroup_international(i) == C_NULL_CHAR) then
+          spgtype % pointgroup_international(i:) = ' '
+          exit
+       end if
+       spgtype % pointgroup_international(i:i) = &
+            & spgtype_c % pointgroup_international(i)
+    end do
+
+    do i = 1, size(spgtype_c % pointgroup_schoenflies)
+       if (spgtype_c % pointgroup_schoenflies(i) == C_NULL_CHAR) then
+          spgtype % pointgroup_schoenflies(i:) = ' '
+          exit
+       end if
+       spgtype % pointgroup_schoenflies(i:i) = &
+            & spgtype_c % pointgroup_schoenflies(i)
+    end do
+
+    do i = 1, size(spgtype_c % arithmetic_crystal_class_symbol)
+       if (spgtype_c % arithmetic_crystal_class_symbol(i) == C_NULL_CHAR) then
+          spgtype % arithmetic_crystal_class_symbol(i:) = ' '
+          exit
+       end if
+       spgtype % arithmetic_crystal_class_symbol(i:i) = &
+            & spgtype_c % arithmetic_crystal_class_symbol(i)
+    end do
+
+  end function spg_get_spacegroup_type
 
   function spg_get_dataset(lattice, position, types, num_atom, symprec) result(dset)
 
@@ -437,7 +579,8 @@ contains
     end type SpglibDataset_c
 
     interface
-       function spg_get_dataset_c(lattice, position, types, num_atom, symprec) bind(c, name='spg_get_dataset')
+       function spg_get_dataset_c(lattice, position, types, num_atom, symprec) &
+            & bind(c, name='spg_get_dataset')
          import c_int, c_double, c_ptr
          real(c_double), intent(in) :: lattice(3,3)
          real(c_double), intent(in) :: position(3,*)
@@ -447,7 +590,7 @@ contains
          type(c_ptr) :: spg_get_dataset_c
        end function spg_get_dataset_c
 
-       subroutine spg_free_dataset_c(dataset) bind(c, name = 'spg_free_dataset')
+       subroutine spg_free_dataset_c(dataset) bind(c, name='spg_free_dataset')
          import SpglibDataset_c
          type(SpglibDataset_c), intent(inout) :: dataset
        end subroutine spg_free_dataset_c

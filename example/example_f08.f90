@@ -1,9 +1,8 @@
-! How to make 
+! How to make
 !
-! gcc -c spglib_f.c 
-! gfortran -c spglib_f08.f90 
-! gfortran -c example_f08.f90 
-! gfortran -o example_f08 example_f08.o spglib_f08.o spglib_f.o ~/code/spglib/src/.libs/libsymspg.a
+! gfortran -c spglib_f08.f90
+! gfortran -c example_f08.f90
+! gfortran -o example_f08 example_f08.o spglib_f08.o ~/code/spglib/src/.libs/libsymspg.a
 
 module defs_basis
   implicit none
@@ -15,11 +14,11 @@ subroutine write_syminfo( max_num_sym, num_atom, &
      & mesh, is_shift, is_time_reversal )
 
   use defs_basis
-  
+
   use spglib_f08
 
   implicit none
-  
+
   ! Arguments ------------------------------------
   ! scalars
   integer, intent(in) :: num_atom, max_num_sym, is_time_reversal
@@ -34,7 +33,7 @@ subroutine write_syminfo( max_num_sym, num_atom, &
   integer :: i, j, counter, weight, space_group, num_sym, indent
   integer :: num_ir_grid
   character(len=21) :: international
-  character(len=10) :: schoenflies
+  character(len=7) :: schoenflies
   character(len=30) :: space
   character(len=128) :: fmt
   ! arrays
@@ -44,25 +43,24 @@ subroutine write_syminfo( max_num_sym, num_atom, &
   real(dp), dimension(3, max_num_sym) :: translations
 
   type(SpglibDataset) :: dset
-  
+  type(SpglibSpacegroupType) :: spgtype
+
   !**************************************************************************
 
   space = "                              "
 
 !   The allocatable components of dset get deallocated on scope exit
   dset = spg_get_dataset(lattice, positions, atom_types, num_atom, symprec)
-  
+
   num_sym = dset % n_operations
-  
+
   indent = 1
   if (dset % spacegroup_number /= 0) then
-     schoenflies = ' '
-     space_group = spg_get_schoenflies( schoenflies, & 
-          & lattice, positions, atom_types, num_atom, symprec );
+     spgtype = spg_get_spacegroup_type(dset % hall_number)
 
      print('(a, "space_group: ", i3)'), space(1:indent*2), dset % spacegroup_number
      print('(a, "international: ", a, a)' ), space(1:indent*2), trim(dset % international_symbol)
-     print('(a, "schoenflies: ", a)'), space(1:indent*2), trim(schoenflies)
+     print('(a, "schoenflies: ", a)'), space(1:indent*2), trim(spgtype % schoenflies)
   else
      print '("Space group could not be found,")'
   end if
@@ -88,7 +86,7 @@ subroutine write_syminfo( max_num_sym, num_atom, &
      print('(a, "  translation: [ ", f10.7,", ", f10.7,", ", f10.7,"]")'), space(1:indent*2), dset % translations(:,i)
   end do
 
-  
+
   write(fmt, '(i0,a)') num_atom, "(x,i0,':',i0))"
   print "(a,'wyckoffs:         ', "//fmt,space(1:indent*2),(i, dset % wyckoffs(i), i = 1, dset % n_atoms)
   print "(a,'equivalent_atoms: ', "//fmt,space(1:indent*2),(i, dset % equivalent_atoms(i) + 1, i = 1, dset % n_atoms)
@@ -96,7 +94,7 @@ subroutine write_syminfo( max_num_sym, num_atom, &
   print('(a, "reciprocal-mesh: [", i3, ", ", i3, ", ", i3, "]")'), space(1:indent*2), mesh(:)
   print('(a, "- is_shift: [", i3, ", ", i3, ", ", i3, "]")'), space(1:indent*2), is_shift(:)
   print('(a, "- is_time_reversal: ", i3)'), space(1:indent*2), is_time_reversal
-  
+
   num_ir_grid = spg_get_ir_reciprocal_mesh( grid_point, map, &
       & mesh, is_shift, is_time_reversal, lattice, positions, &
       & atom_types, num_atom, symprec )
@@ -104,19 +102,19 @@ subroutine write_syminfo( max_num_sym, num_atom, &
   print('(a, "- num-ir-grid-point:", i4)'), space(1:indent*2), num_ir_grid
   print('(a, "- ir-grid-point:")'), space(1:indent*2)
   counter = 0
-  
-  do i = 1, product(mesh) 
+
+  do i = 1, product(mesh)
      if ( i-1 == map(i) ) then
         ! Ad-hoc and intuitive implementation of weight. Not optimal for very large size
         weight = count(map == i-1)
         counter = counter + 1
-        
+
         print '(i5, 3(x,f9.6), 2x,i4,2x, f9.6, 3(x,i4))', counter, &
          & real(is_shift + 2*grid_point(:, i))/real(2*mesh), map(i)+1, &
          & real(weight)/real(product(mesh)), grid_point(:, i)
      end if
   end do
-  
+
 end subroutine write_syminfo
 
 program spglib_example_f08
@@ -142,14 +140,14 @@ program spglib_example_f08
   integer, dimension(3, 8000) :: grid_point
   integer, dimension(8000) :: map
   integer :: is_time_reversal = 1
-   
+
   real(dp) :: a
 
 !  All numbers are improperly given in default (single) precision to avoid clutter. It should be fine as long as symprec > the error of sp
-  
+
   symprec = 1e-6
 
-  
+
     ! Rutile
 
   print '("Rutile:")'
@@ -184,49 +182,47 @@ program spglib_example_f08
   call write_syminfo( max_num_sym, num_atom, &
        lattice, symprec, atom_types, positions, &
        mesh, is_shift, is_time_reversal )
-  
-  
-  
-  
-  
+
+
+
+
+
   print '(/,"D0_{24}:")'
   a = 2.89
-  
+
   lattice(1,:) = [ sqrt(3.0), -1.0, 0.0]
   lattice(2,:) = [ sqrt(3.0),  1.0, 0.0]
   lattice(3,:) = [ 0.0      ,  0.0, sqrt(32.0/3.0)]
-  
-  
-  num_atom = 16  
+
+
+  num_atom = 16
   positions(:, 1) = [ 0.0, 0.0, 0.0]
-  positions(:, 2) = [ 3.0, 0.0, 0.0]          
-  positions(:, 3) = [ 0.0, 3.0, 0.0]          
-  positions(:, 4) = [ 3.0, 3.0, 0.0]          
-  positions(:, 5) = [ 2.0, 2.0, 1.0]         
-  positions(:, 6) = [ 5.0, 2.0, 1.0]         
-  positions(:, 7) = [ 2.0, 5.0, 1.0]         
-  positions(:, 8) = [ 5.0, 5.0, 1.0]         
-  positions(:, 9) = [ 0.0, 0.0, 2.0]          
-  positions(:,10) = [ 3.0, 0.0, 2.0]          
-  positions(:,11) = [ 0.0, 3.0, 2.0]          
-  positions(:,12) = [ 3.0, 3.0, 2.0]          
-  positions(:,13) = [ 1.0, 1.0, 3.0]         
-  positions(:,14) = [ 4.0, 1.0, 3.0]         
-  positions(:,15) = [ 1.0, 4.0, 3.0]         
-  positions(:,16) = [ 4.0, 4.0, 3.0]         
-  
+  positions(:, 2) = [ 3.0, 0.0, 0.0]
+  positions(:, 3) = [ 0.0, 3.0, 0.0]
+  positions(:, 4) = [ 3.0, 3.0, 0.0]
+  positions(:, 5) = [ 2.0, 2.0, 1.0]
+  positions(:, 6) = [ 5.0, 2.0, 1.0]
+  positions(:, 7) = [ 2.0, 5.0, 1.0]
+  positions(:, 8) = [ 5.0, 5.0, 1.0]
+  positions(:, 9) = [ 0.0, 0.0, 2.0]
+  positions(:,10) = [ 3.0, 0.0, 2.0]
+  positions(:,11) = [ 0.0, 3.0, 2.0]
+  positions(:,12) = [ 3.0, 3.0, 2.0]
+  positions(:,13) = [ 1.0, 1.0, 3.0]
+  positions(:,14) = [ 4.0, 1.0, 3.0]
+  positions(:,15) = [ 1.0, 4.0, 3.0]
+  positions(:,16) = [ 4.0, 4.0, 3.0]
+
   positions(1:2,:num_atom) = positions(1:2,:num_atom)/6.0
-  positions(3,:num_atom) = positions(3,:num_atom)/4.0  
-    
-  
-  atom_types(:num_atom) = [ 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1]     
+  positions(3,:num_atom) = positions(3,:num_atom)/4.0
+
+
+  atom_types(:num_atom) = [ 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1]
   mesh = [ 12, 12, 6]
   is_shift = [1,1,1]
-  
+
   call write_syminfo( max_num_sym, num_atom, &
   &     lattice, symprec, atom_types, positions, &
   &    mesh, is_shift, is_time_reversal )
-       
+
 end program spglib_example_f08
-
-
