@@ -35,7 +35,7 @@ A simple test is executed by
 
 ## Mailing list for questions
 
-Usual spglib questions should be sent to spglib mailing list (https://sourceforge.net/s/spglib/mailman/).
+Usual spglib questions should be sent to spglib mailing list (https://sourceforge.net/p/spglib/mailman/).
 
 ## Development
 
