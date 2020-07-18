@@ -168,6 +168,21 @@ as a list of N floating point values.
                 ...]
    numbers = [n_1, n_2, n_3, ...]
    magmoms = [m_1, m_2, m_3, ...]  # Only works with get_symmetry
+   
+
+For example, the crystal structure (``cell``) of L1 `2`:sub: -type AlNi `3`:sub: is:
+
+::
+
+  lattice = [[1.0, 0.0, 0.0],
+             [0.0, 1.0, 0.0],
+             [0.0, 0.0, 1.0]]
+  positions = [[0.0, 0.0, 0.0], # Al
+               [0.5, 0.5, 0.0], # Ni
+               [0.0, 0.5, 0.5], # Ni
+               [0.5, 0.0, 0.5]] # Ni
+  numbers = [1, 2, 2, 2]        # Al, Ni, Ni, Ni
+  
 
 Version 1.9.5 or later: The methods that use the crsytal strcutre
 will return ``None`` when a crystal structure is not properly given.
