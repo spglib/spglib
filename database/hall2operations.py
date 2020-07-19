@@ -6,100 +6,99 @@
 import numpy as np
 
 lattice_symbols = {
-    'P': [ [ 0, 0, 0 ] ],
-    'A': [ [ 0, 0, 0 ], [ 0, 1./2, 1./2 ] ],
-    'B': [ [ 0, 0, 0 ], [ 1./2, 0, 1./2 ] ],
-    'C': [ [ 0, 0, 0 ], [ 1./2, 1./2, 0 ] ],
-    'I': [ [ 0, 0, 0 ], [ 1./2, 1./2, 1./2 ] ],
-    'R': [ [ 0, 0, 0 ], [ 2./3, 1./3, 1./3 ], [ 1./3, 2./3, 2./3 ] ],
-    'H': [ [ 0, 0, 0 ], [ 2./3, 1./3, 0 ], [ 1./3, 2./3, 0 ] ],
-    'F': [ [ 0, 0, 0 ], [ 0, 1./2, 1./2 ], [ 1./2, 0, 1./2 ], [ 1./2, 1./2, 0 ] ]
-    }
+    'P': [[0, 0, 0]],
+    'A': [[0, 0, 0], [0, 1./2, 1./2]],
+    'B': [[0, 0, 0], [1./2, 0, 1./2]],
+    'C': [[0, 0, 0], [1./2, 1./2, 0]],
+    'I': [[0, 0, 0], [1./2, 1./2, 1./2]],
+    'R': [[0, 0, 0], [2./3, 1./3, 1./3], [1./3, 2./3, 2./3]],
+    'H': [[0, 0, 0], [2./3, 1./3, 0], [1./3, 2./3, 0]],
+    'F': [[0, 0, 0], [0, 1./2, 1./2], [1./2, 0, 1./2], [1./2, 1./2, 0]]
+}
 
 rotation_matrices = {
-    '1x': [ [ 1, 0, 0 ],
-            [ 0, 1, 0 ],
-            [ 0, 0, 1 ] ],
-    '1y': [ [ 1, 0, 0 ],
-            [ 0, 1, 0 ],
-            [ 0, 0, 1 ] ],
-    '1z': [ [ 1, 0, 0 ],
-            [ 0, 1, 0 ],
-            [ 0, 0, 1 ] ],
-    '2x': [ [ 1, 0, 0 ],
-            [ 0,-1, 0 ],
-            [ 0, 0,-1 ] ],
-    '2y': [ [-1, 0, 0 ],
-            [ 0, 1, 0 ],
-            [ 0, 0,-1 ] ],
-    '2z': [ [-1, 0, 0 ],
-            [ 0,-1, 0 ],
-            [ 0, 0, 1 ] ],
-    '3x': [ [ 1, 0, 0 ],
-            [ 0, 0,-1 ],
-            [ 0, 1,-1 ] ],
-    '3y': [ [-1, 0, 1 ],
-            [ 0, 1, 0 ],
-            [-1, 0, 0 ] ],
-    '3z': [ [ 0,-1, 0 ],
-            [ 1,-1, 0 ],
-            [ 0, 0, 1 ] ],
-    '4x': [ [ 1, 0, 0 ],
-            [ 0, 0,-1 ],
-            [ 0, 1, 0 ] ],
-    '4y': [ [ 0, 0, 1 ],
-            [ 0, 1, 0 ],
-            [-1, 0, 0 ] ],
-    '4z': [ [ 0,-1, 0 ],
-            [ 1, 0, 0 ],
-            [ 0, 0, 1 ] ],
-    '6x': [ [ 1, 0, 0 ],
-            [ 0, 1,-1 ],
-            [ 0, 1, 0 ] ],
-    '6y': [ [ 0, 0, 1 ],
-            [ 0, 1, 0 ],
-            [-1, 0, 1 ] ],
-    '6z': [ [ 1,-1, 0 ],
-            [ 1, 0, 0 ],
-            [ 0, 0, 1 ] ],
-    '2px': [ [-1, 0, 0 ],     # b-c
-             [ 0, 0,-1 ],
-             [ 0,-1, 0 ] ],
-    '2ppx': [ [-1, 0, 0 ],    # b+c
-              [ 0, 0, 1 ],
-              [ 0, 1, 0 ] ],
-    '2py': [ [ 0, 0,-1 ],     # a-c
-             [ 0,-1, 0 ],
-             [-1, 0, 0 ] ],
-    '2ppy': [ [ 0, 0, 1 ],    # a+c
-              [ 0,-1, 0 ],
-              [ 1, 0, 0 ] ],
-    '2pz': [ [ 0,-1, 0 ],     # a-b
-             [-1, 0, 0 ],
-             [ 0, 0,-1 ] ],
-    '2ppz': [ [ 0, 1, 0 ],    # a+b
-              [ 1, 0, 0 ],
-              [ 0, 0,-1 ] ],
-    '3*': [ [ 0, 0, 1 ],     # a+b+c
-            [ 1, 0, 0 ],
-            [ 0, 1, 0 ] ]
-    }
+    '1x': [[1, 0, 0],
+           [0, 1, 0],
+           [0, 0, 1]],
+    '1y': [[1, 0, 0],
+           [0, 1, 0],
+           [0, 0, 1]],
+    '1z': [[1, 0, 0],
+           [0, 1, 0],
+           [0, 0, 1]],
+    '2x': [[1, 0, 0],
+           [0, -1, 0],
+           [0, 0, -1]],
+    '2y': [[-1, 0, 0],
+           [0, 1, 0],
+           [0, 0, -1]],
+    '2z': [[-1, 0, 0],
+           [0, -1, 0],
+           [0, 0, 1]],
+    '3x': [[1, 0, 0],
+           [0, 0, -1],
+           [0, 1, -1]],
+    '3y': [[-1, 0, 1],
+           [0, 1, 0],
+           [-1, 0, 0]],
+    '3z': [[0, -1, 0],
+           [1, -1, 0],
+           [0, 0, 1]],
+    '4x': [[1, 0, 0],
+           [0, 0, -1],
+           [0, 1, 0]],
+    '4y': [[0, 0, 1],
+           [0, 1, 0],
+           [-1, 0, 0]],
+    '4z': [[0, -1, 0],
+           [1, 0, 0],
+           [0, 0, 1]],
+    '6x': [[1, 0, 0],
+           [0, 1, -1],
+           [0, 1, 0]],
+    '6y': [[0, 0, 1],
+           [0, 1, 0],
+           [-1, 0, 1]],
+    '6z': [[1, -1, 0],
+           [1, 0, 0],
+           [0, 0, 1]],
+    '2px': [[-1, 0, 0],     # b-c
+            [0, 0, -1],
+            [0, -1, 0]],
+    '2ppx': [[-1, 0, 0],    # b+c
+             [0, 0, 1],
+             [0, 1, 0]],
+    '2py': [[0, 0, -1],     # a-c
+            [0, -1, 0],
+            [-1, 0, 0]],
+    '2ppy': [[0, 0, 1],    # a+c
+             [0, -1, 0],
+             [1, 0, 0]],
+    '2pz': [[0, -1, 0],     # a-b
+            [-1, 0, 0],
+            [0, 0, -1]],
+    '2ppz': [[0, 1, 0],    # a+b
+             [1, 0, 0],
+             [0, 0, -1]],
+    '3*': [[0, 0, 1],     # a+b+c
+           [1, 0, 0],
+           [0, 1, 0]]
+}
 
 translations = {
-    'a': [ 1./2, 0, 0 ],
-    'b': [ 0, 1./2, 0 ],
-    'c': [ 0, 0, 1./2 ],
-    'n': [ 1./2, 1./2, 1./2 ],
-    'u': [ 1./4, 0, 0 ],
-    'v': [ 0, 1./4, 0 ],
-    'w': [ 0, 0, 1./4 ],
-    'd': [ 1./4, 1./4, 1./4 ]
-    }
+    'a': [1./2, 0, 0],
+    'b': [0, 1./2, 0],
+    'c': [0, 0, 1./2],
+    'n': [1./2, 1./2, 1./2],
+    'u': [1./4, 0, 0],
+    'v': [0, 1./4, 0],
+    'w': [0, 0, 1./4],
+    'd': [1./4, 1./4, 1./4]
+}
 
 
 def read_spg_csv(filename="spg.csv"):
     hall_symbols = []
-    spg_num = []
     for line in open(filename):
         data = line.split(',')
         hall_symbols.append([data[6], data[4]])
@@ -110,45 +109,52 @@ class HallSymbol:
     def __init__(self, hall_symbol):
         self.hall_symbol = hall_symbol.split()
         self._decompose()
-        self._operations()
         self._full_operations()
 
     def get_LNV(self):
         return self.L, self.N, self.V
 
     def get_operations(self):
-        return self.R, self.T
-
-    def get_full_operations(self):
         return self.G_R, self.G_T
 
     def _full_operations(self):
+        gens_R, gens_T = self._generators()
+
         E = np.array(rotation_matrices['1x'])
         T0 = np.zeros(3, dtype=float)
         if self.L[0] == '-':
-            G_R = [ E, -E ]
-            G_T = [ T0, T0 ]
+            G_R = [E, -E]
+            G_T = [T0, T0]
         else:
-            G_R = [ E ]
-            G_T = [ T0 ]
+            G_R = [E]
+            G_T = [T0]
 
-        for r, t in zip(self.R, self.T):
+        for r, t in zip(gens_R, gens_T):
             G2_R, G2_T = self._get_group(r, t)
             G_R, G_T = self._multiply_groups(G_R, G_T, G2_R, G2_T)
 
         if self.V is not None:
             G_T = self._change_of_basis(G_R, G_T)
 
-        G_R_conventional = []
-        G_T_conventional = []
+        G_R_with_centres = []
+        G_T_with_centred = []
         for t in lattice_symbols[self.L[-1]]:
-            G_R_conventional, G_T_conventional = self._lattice_translation(
-                G_R_conventional,
-                G_T_conventional,
-                G_R, G_T, np.array(t))
+            self._lattice_translation(G_R_with_centres,
+                                      G_T_with_centred,
+                                      G_R, G_T, t)
 
-        self.G_R = G_R_conventional
-        self.G_T = G_T_conventional
+        self.G_R = np.array(G_R_with_centres)
+        self.G_T = np.array(G_T_with_centred)
+
+        # Make sure the first operation has no rotation.
+        assert (self.G_R[0] == rotation_matrices['1x']).all()
+
+        # In Hall numbers 212, 213, 214, the first operation has non-zero
+        # translation. This translation is subtracted from all operations.
+        self.G_T -= self.G_T[0]
+        self.G_T -= np.rint(self.G_T)
+        cond = self.G_T < -1e-3
+        self.G_T[cond] += 1
 
     def _change_of_basis(self, G_R, G_T):
         G_T_new = []
@@ -161,14 +167,9 @@ class HallSymbol:
         for r, t in zip(G_R0, G_T0):
             G_R.append(r.copy())
             t_new = t + translation
-            t_new -= np.round(t_new)
-            for i, x in enumerate(t_new):
-                if x < -0.001:
-                    t_new[i] += 1
             G_T.append(t_new)
-        return G_R, G_T
 
-    def _multiply_groups(self, G1_R, G1_T, G2_R, G2_T): # G2xG1
+    def _multiply_groups(self, G1_R, G1_T, G2_R, G2_T):  # G2xG1
         G_R = []
         G_T = []
         for r1, t1 in zip(G2_R, G2_T):
@@ -179,27 +180,44 @@ class HallSymbol:
         return G_R, G_T
 
     def _get_group(self, r, t):
-        G_R, G_T = self._get_group_recursive([np.array(r)], [np.array(t)])
-        r = G_R.pop()
-        t = G_T.pop()
-        G_R.insert(0, r)
-        G_T.insert(0, t)
+        G_R = [r, ]
+        G_T = [t, ]
+        while not (G_R[-1] == rotation_matrices['1x']).all():
+            _r = np.dot(G_R[-1], r)
+            _t = np.dot(G_R[-1], t) + G_T[-1]
+            G_R.append(_r)
+            G_T.append(_t)
+
+        # Bring identity in front
+        _r = G_R.pop()
+        _t = G_T.pop()
+        G_R.insert(0, _r)
+        G_T.insert(0, _t)
+
         return G_R, G_T
 
-    def _get_group_recursive(self, G_R, G_T):
-        if not (G_R[-1] == rotation_matrices['1x']).all():
-            r = np.dot(G_R[-1], G_R[0])
-            t = np.dot(G_R[-1], G_T[0]) + G_T[-1]
-            G_R.append(r)
-            G_T.append(t)
-            G_R, G_T = self._get_group_recursive(G_R, G_T)
-        return G_R, G_T
+    # def _get_group(self, r, t):
+    #     G_R, G_T = self._get_group_recursive([np.array(r)], [np.array(t)])
+    #     r = G_R.pop()
+    #     t = G_T.pop()
+    #     G_R.insert(0, r)
+    #     G_T.insert(0, t)
+    #     return G_R, G_T
 
-    def _operations(self):
+    # def _get_group_recursive(self, G_R, G_T):
+    #     if not (G_R[-1] == rotation_matrices['1x']).all():
+    #         r = np.dot(G_R[-1], G_R[0])
+    #         t = np.dot(G_R[-1], G_T[0]) + G_T[-1]
+    #         G_R.append(r)
+    #         G_T.append(t)
+    #         self._get_group_recursive(G_R, G_T)
+    #     return G_R, G_T
+
+    def _generators(self):
         R = []
         T = []
         for N in self.N:
-            rot = np.array(rotation_matrices[ N[1]+N[2] ])
+            rot = np.array(rotation_matrices[N[1] + N[2]])
             if N[0] == '-':
                 rot = -rot
             R.append(rot)
@@ -207,7 +225,7 @@ class HallSymbol:
             trans = np.zeros(3, dtype=float)
             if N[3] is not None:
                 for t in N[3]:
-                    if t == '1' or t == '2' or t == '3' or t == '4' or t == '5':
+                    if t in ('1', '2', '3', '4', '5'):
                         trans_screw = float(t) / int(N[1])
                         if N[2] == 'x':
                             trans[0] += trans_screw
@@ -221,8 +239,7 @@ class HallSymbol:
                         trans += np.array(translations[t])
             T.append(trans)
 
-        self.R = np.array(R, dtype=int)
-        self.T = np.array(T, dtype=float)
+        return np.array(R, dtype=int), np.array(T, dtype=float)
 
     def _rotation_matrix(self, str):
         pass
@@ -271,11 +288,11 @@ class HallSymbol:
                     A = 'z'
                     N = N[2:]
             if i == 1 and A is None:
-                if precededN == 2 or precededN == 4:   # 2x
+                if precededN == 2 or precededN == 4:  # 2x
                     R = '2'
                     A = 'x'
                     N = N[1:]
-                elif precededN == 3 or precededN == 6: # 2'
+                elif precededN == 3 or precededN == 6:  # 2'
                     R = '2p'
                     A = 'z'
                     N = N[1:]
@@ -326,11 +343,11 @@ def dump_operations(filename):
     print("  0       ,  /* dummy */")
     for i in range(530):
         hs = HallSymbol(hall_symbols[i][0])
-        G_R, G_T = hs.get_full_operations()
+        G_R, G_T = hs.get_operations()
         for j, (r, t) in enumerate(zip(G_R, G_T)):
             count += 1
             r_encode = encode_rotation(r)
-            x = (t*12+0.1).astype(int)
+            x = np.rint(t * 12).astype(int)
             t_encode = x[0] * 144 + x[1] * 12 + x[2]
             total = t_encode * 3 ** 9 + r_encode
             text = "  %-8d," % (total)
@@ -345,7 +362,7 @@ def dump_operations_old(filename):
     count = 0
     for i in range(530):
         hs = HallSymbol(hall_symbols[i][0])
-        G_R, G_T = hs.get_full_operations()
+        G_R, G_T = hs.get_operations()
         for j, (r, t) in enumerate(zip(G_R, G_T)):
             count += 1
             text = "{%3d," % (i + 1)
@@ -379,17 +396,19 @@ def get_reference_to_operations(filename):
     count = 0
     for i in range(530):
         hs = HallSymbol(hall_symbols[i][0])
-        G_R, G_T = hs.get_full_operations()
-        print("{%4d,%5d}," % (len(G_R), count + 1))
+        G_R, G_T = hs.get_operations()
+        print("  {%4d,%5d}, /* %3d */ " % (len(G_R), count + 1, i + 1))
         count += len(G_R)
 
 
 def watch_hs(filename, number):
+    print("  {   0,    0}, /*   0 */")
     num = number - 1
     hall_symbols = read_spg_csv(filename)
-    h = HallSymbol(hall_symbols[num][0])
-    print(h.get_LNV())
-    G_R, G_T = h.get_full_operations()
+    hs = HallSymbol(hall_symbols[num][0])
+    for char, vals in zip(('L', 'N', 'V'), hs.get_LNV()):
+        print("%s: %s" % (char, vals))
+    G_R, G_T = hs.get_operations()
     print(number, ":", hall_symbols[num][0], "(", len(G_R), ")")
     for i, (r, t) in enumerate(zip(G_R, G_T)):
         print("-----", i + 1, "-----")
