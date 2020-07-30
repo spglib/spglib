@@ -1,7 +1,6 @@
 matrix:
   include:
   - python: '3.6'
-    sudo: required
     services:
     - docker
     env: DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
@@ -9,7 +8,6 @@ matrix:
          TRAVIS_PYTHON_VERSION='3.6'
          PLAT=manylinux1_x86_64
   - python: '3.6'
-    sudo: required
     services:
     - docker
     env: DOCKER_IMAGE=quay.io/pypa/manylinux1_i686
@@ -18,7 +16,6 @@ matrix:
          TRAVIS_PYTHON_VERSION='3.6'
          PLAT=manylinux1_i686
   - python: '3.6'
-    sudo: required
     services:
       - docker
     env: DOCKER_IMAGE=quay.io/pypa/manylinux2010_x86_64
@@ -26,11 +23,9 @@ matrix:
          TRAVIS_PYTHON_VERSION='3.6'
          PLAT=manylinux2010_x86_64
   - python: '2.7'
-    sudo: false
     env: DOCKER_DEPLOY=false
          TRAVIS_PYTHON_VERSION='2.7'
   - python: '3.6'
-    sudo: false
     env: DOCKER_DEPLOY=false
          TRAVIS_PYTHON_VERSION='3.6'
 
@@ -102,7 +97,6 @@ deploy:
 - provider: pypi
   server: https://test.pypi.org/legacy/
   skip_existing: true
-  skip_cleanup: true
   user: atztogo
   password:
     secure: "uqsoPpQNbie297e1iDPOHUVqM1HPHeZjIuAutWvVjZF6TpaksDhPNkK9sIE9Wh4sAVLi1wUCtjlMYjC7ElS94tsHwj6+tyxvQtrDmGUWRdf6BjFFZ6CdKBxMJwBQTryCScQGxR81NVlKAzKgZkdrhAxr93kDWmG0thYQrDQO8ihgfxgZUDnZnwarZCiUxwCsT/5VyUv6aRL+epXOUdlPZL2ypiRPlu+9zgwP348OCseh8EtlSLp0uv+K6qOMDVfjQeaEVl0CQIfbkIFMIxPB7xxBNn8pG1aMFJOks6QKo4dq0QhW5eCacPVy/WIQyZ96DNub+zcpFboCIIyWdLO7VFMhyp4PnsqbiTpHLPmImFLWuzaTvCc58Q/QRGRJ3+68kByX/eBWoWgBJED9uX+fSCumfUak+Q9UcVVy/+uh8DJmKlCEWBevk5mVb9evgmLDvpo4q9Vk2U3xv4Cj511PH9JJzcVa3YgznUzLbL93NbSBzlO1/sWYjVp32mPQNekQzOlXCMhqBKkqCIk0Y0INtUNx7v7cA13iEM+QudQQ/sJvCRScNSztYa++W274wo5QxOQeZf5RS8sXzu9bvNvJRpFWsAkyebGVmab597hGgjdVtRMiuaq72+sy45ZCDSSSx0rlEbj6QhYNaSjEqutRBoddTHp7JY1ZT6PKGa/iWPA="
@@ -114,7 +108,6 @@ deploy:
 
 # testing conda
 - provider: script
-  skip_cleanup: true
   skip_existing: true
   script: conda/anaconda_deploy.sh rc $ANACONDA_TOKEN $TRAVIS_BRANCH
   on:
@@ -126,7 +119,6 @@ deploy:
 
 # production pypi
 - provider: pypi
-  skip_cleanup: true
   skip_existing: true
   user: atztogo
   password:
@@ -139,7 +131,6 @@ deploy:
 
 # production anaconda
 - provider: script
-  skip_cleanup: true
   skip_existing: true
   script: conda/anaconda_deploy.sh main $ANACONDA_TOKEN $TRAVIS_BRANCH
   on:
