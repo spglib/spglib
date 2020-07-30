@@ -1,68 +1,30 @@
 #!/bin/bash
-set -e -x
+set -e -u -x
 
-# Install a system package required by our library
-# yum install -y numpy
+function repair_wheel {
+    wheel="$1"
+    if ! auditwheel show "$wheel"; then
+        echo "Skipping non-platform wheel $wheel"
+    else
+        auditwheel repair "$wheel" --plat "$PLAT" -w /io/wheelhouse/
+    fi
+}
 
-# ls /opt/python
-
-# # Compile wheels
-# for PYBIN in /opt/python/cp27*/bin; do
-#     # "${PYBIN}/pip" install --no-binary numpy
-#     "${PYBIN}/pip" wheel /io/ -w wheelhouse/
-# done
-
-# for PYBIN in /opt/python/cp35*/bin; do
-#     # "${PYBIN}/pip" install --no-binary numpy
-#     "${PYBIN}/pip" wheel /io/ -w wheelhouse/
-# done
-
-# for PYBIN in /opt/python/cp36*/bin; do
-#     # "${PYBIN}/pip" install --no-binary numpy
-#     "${PYBIN}/pip" wheel /io/ -w wheelhouse/
-# done
-
-# # Bundle external shared libraries into the wheels
-# ls wheelhouse/*.whl
-# for whl in wheelhouse/spglib*.whl; do
-#     auditwheel repair "$whl" -w /io/wheelhouse/
-# done
-
-# cp wheelhouse/numpy*whl /io/wheelhouse/
-
-# # Install packages and test
-# for PYBIN in /opt/python/cp27*/bin/; do
-#     "${PYBIN}/pip" install spglib --no-index -f /io/wheelhouse
-# done
-
-# for PYBIN in /opt/python/cp35*/bin/; do
-#     "${PYBIN}/pip" install spglib --no-index -f /io/wheelhouse
-# done
-
-# for PYBIN in /opt/python/cp36*/bin/; do
-#     "${PYBIN}/pip" install spglib --no-index -f /io/wheelhouse
-# done
-
-# Install a system package required by our library
-# yum install -y atlas-devel
-
-# Compile wheels
 for PYBIN in /opt/python/*/bin; do
-    if  [[ ! $PYBIN == *"34"* ]]; then
+    if [[ $PYBIN == *"36"* ]] || [[ $PYBIN == *"37"* ]] || [[ $PYBIN == *"38"* ]]; then
         "${PYBIN}/pip" install -r /io/dev-requirements.txt
         "${PYBIN}/pip" wheel /io/ -w wheelhouse/
     fi
 done
 
 # Bundle external shared libraries into the wheels
-for whl in wheelhouse/*.whl; do
-    auditwheel repair "$whl" --plat $PLAT -w /io/wheelhouse/
+for whl in wheelhouse/spglib*.whl; do
+    repair_wheel "$whl"
 done
 
 # Install packages and test
 for PYBIN in /opt/python/*/bin/; do
-    if  [[ ! $PYBIN == *"34"* ]]; then
+    if [[ $PYBIN == *"36"* ]] || [[ $PYBIN == *"37"* ]] || [[ $PYBIN == *"38"* ]]; then
         "${PYBIN}/pip" install spglib --no-index -f /io/wheelhouse
-        (cd "$HOME"; "${PYBIN}/nosetests" spglib)
     fi
 done

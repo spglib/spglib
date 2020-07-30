@@ -75,6 +75,7 @@ expand_positions_in_bravais(int * wyckoffs,
                             int * std_mapping_to_primitive,
                             const Cell * conv_prim,
                             const Symmetry * conv_sym,
+                            const int num_pure_trans,
                             const int * wyckoffs_prim,
                             SPGCONST char (*site_symmetry_symbols_prim)[7],
                             const int * equiv_atoms_prim);
@@ -460,7 +461,7 @@ get_bravais_exact_positions_and_lattice(int * wyckoffs,
                                         const Cell * primitive,
                                         const double symprec)
 {
-  int i, j;
+  int i, j, num_pure_trans;
   int *wyckoffs_prim, *equiv_atoms_prim;
   char (*site_symmetry_symbols_prim)[7];
   Symmetry *conv_sym;
@@ -525,6 +526,7 @@ get_bravais_exact_positions_and_lattice(int * wyckoffs,
       == NULL) {
     goto err;
   }
+  num_pure_trans = get_number_of_pure_translation(conv_sym);
 
   /* Lattice vectors are set. */
   get_conventional_lattice(conv_prim->lattice, spacegroup);
@@ -534,6 +536,7 @@ get_bravais_exact_positions_and_lattice(int * wyckoffs,
                                                  site_symmetry_symbols_prim,
                                                  conv_prim,
                                                  conv_sym,
+                                                 num_pure_trans,
                                                  spacegroup->hall_number,
                                                  symprec)) == NULL) {
     sym_free_symmetry(conv_sym);
@@ -555,6 +558,7 @@ get_bravais_exact_positions_and_lattice(int * wyckoffs,
                                         std_mapping_to_primitive,
                                         conv_prim,
                                         conv_sym,
+                                        num_pure_trans,
                                         wyckoffs_prim,
                                         site_symmetry_symbols_prim,
                                         equiv_atoms_prim);
@@ -583,17 +587,16 @@ static Cell * expand_positions_in_bravais(int * wyckoffs,
                                           int * std_mapping_to_primitive,
                                           const Cell * conv_prim,
                                           const Symmetry * conv_sym,
+                                          const int num_pure_trans,
                                           const int * wyckoffs_prim,
                                           SPGCONST char (*site_symmetry_symbols_prim)[7],
                                           const int * equiv_atoms_prim)
 {
-  int i, j, k, num_pure_trans;
+  int i, j, k;
   int num_atom;
   Cell * bravais;
 
   bravais = NULL;
-
-  num_pure_trans = get_number_of_pure_translation(conv_sym);
 
   if ((bravais = cel_alloc_cell(conv_prim->size * num_pure_trans)) == NULL) {
     return NULL;

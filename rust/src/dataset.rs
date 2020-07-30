@@ -19,10 +19,10 @@ pub struct Dataset {
     /// The information on unique axis, setting, or cell choices
     pub choice: String,
     /// The result of space-group-type matching under a set of unique axis, setting, and cell choices.
-    /// For more detail: https://atztogo.github.io/spglib/definition.html#transformation-matrix-boldsymbol-p-and-origin-shift-boldsymbol-p
+    /// For more detail: https://spglib.github.io/spglib/definition.html#transformation-matrix-boldsymbol-p-and-origin-shift-boldsymbol-p
     pub transformation_matrix: [[f64; 3]; 3],
     /// The result of space-group-type matching under a set of unique axis, setting, and cell choices.
-    /// For more detail: https://atztogo.github.io/spglib/definition.html#transformation-matrix-boldsymbol-p-and-origin-shift-boldsymbol-p
+    /// For more detail: https://spglib.github.io/spglib/definition.html#transformation-matrix-boldsymbol-p-and-origin-shift-boldsymbol-p
     pub origin_shift: [f64; 3],
     /// The number of symmetry operations
     pub n_operations: i32,
@@ -38,6 +38,10 @@ pub struct Dataset {
     pub site_symmetry_symbols: Box<[String]>,
     /// The mapping table from the atomic indices of the input cell to the atomic indices of symmetrically independent atoms
     pub equivalent_atoms: Box<[i32]>,
+    /// This is almost equivalent to equivalent_atoms. But symmetry of the primitive cell is used to determine the symmetrically equivalent atoms.
+    pub crystallographic_orbits: Box<[i32]>,
+    /// Non-standardized basis vectors of a primitive cell in the input cell
+    pub primitive_lattice: [[f64; 3]; 3],
     /// The atomic indices in the primitive cell of the input structure
     pub mapping_to_primitive: Box<[i32]>,
     /// Number of atoms in the standardized cell after idealization
@@ -147,6 +151,10 @@ fn raw_spglib_dataset_to_wrapper_dataset(raw: *mut ffi::SpglibDataset) -> Datase
         equivalent_atoms: unsafe {
             Vec::from_raw_parts(raw.equivalent_atoms, n_atoms, n_atoms).into_boxed_slice()
         },
+        crystallographic_orbits: unsafe {
+            Vec::from_raw_parts(raw.crystallographic_orbits, n_atoms, n_atoms).into_boxed_slice()
+        },
+        primitive_lattice: raw.primitive_lattice,
         mapping_to_primitive: unsafe {
             Vec::from_raw_parts(raw.mapping_to_primitive, n_atoms, n_atoms).into_boxed_slice()
         },

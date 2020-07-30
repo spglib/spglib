@@ -11,11 +11,11 @@ Installation
 -------------
 
 The source code is downloaded at
-https://github.com/atztogo/spglib/releases .
+https://github.com/spglib/spglib/tags.
 But minor updates are not included in this package. If you want the
 latest version, you can git-clone the spglib repository::
 
-   % git clone https://github.com/atztogo/spglib.git
+   % git clone https://github.com/spglib/spglib.git
 
 It is also possible to install spglib for python via the following
 package distribution services or from building using setup.py.
@@ -126,7 +126,7 @@ Example
 --------
 
 Examples are found in `examples
-<https://github.com/atztogo/spglib/tree/master/python/examples>`_
+<https://github.com/spglib/spglib/tree/master/python/examples>`_
 directory.
 
 .. _py_variables:
@@ -168,6 +168,21 @@ as a list of N floating point values.
                 ...]
    numbers = [n_1, n_2, n_3, ...]
    magmoms = [m_1, m_2, m_3, ...]  # Only works with get_symmetry
+   
+
+For example, the crystal structure (``cell``) of L1 `2`:sub: -type AlNi `3`:sub: is:
+
+::
+
+  lattice = [[1.0, 0.0, 0.0],
+             [0.0, 1.0, 0.0],
+             [0.0, 0.0, 1.0]]
+  positions = [[0.0, 0.0, 0.0], # Al
+               [0.5, 0.5, 0.0], # Ni
+               [0.0, 0.5, 0.5], # Ni
+               [0.5, 0.0, 0.5]] # Ni
+  numbers = [1, 2, 2, 2]        # Al, Ni, Ni, Ni
+  
 
 Version 1.9.5 or later: The methods that use the crsytal strcutre
 will return ``None`` when a crystal structure is not properly given.
@@ -192,12 +207,12 @@ from the ASE Atoms-class instance::
 
 for which the corresponding code is written out of API and it is found
 at `here
-<https://github.com/atztogo/spglib/blob/e0851894ccdad1abb87d519b228d056128b56806/python/spglib/spglib.py#L737-L741>`_. Nevertheless
+<https://github.com/spglib/spglib/blob/e0851894ccdad1abb87d519b228d056128b56806/python/spglib/spglib.py#L737-L741>`_. Nevertheless
 the ASE Atoms-like input will be accepted for a while.  An alternative
 Atoms class (`atoms.py
-<https://github.com/atztogo/spglib/blob/master/python/examples/atoms.py>`_)
+<https://github.com/spglib/spglib/blob/master/python/examples/atoms.py>`_)
 that contains minimum set of methods is prepared in the `examples
-<https://github.com/atztogo/spglib/tree/master/python/examples>`_
+<https://github.com/spglib/spglib/tree/master/python/examples>`_
 directory. ``get_symmetry`` with collinear polarizations is not
 supported when ASE Atoms-class instance.
 

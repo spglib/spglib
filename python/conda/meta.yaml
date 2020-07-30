@@ -3,7 +3,7 @@ package:
   version: version_from_shell
 
 source:
-  git_url: https://github.com/atztogo/spglib.git
+  git_url: https://github.com/spglib/spglib.git
   git_branch: {{ environ.get('GIT_BRANCH','master') }}
 
 build:
@@ -55,7 +55,7 @@ test:
     #- nose
 
 about:
-  home: https://atztogo.github.io/spglib/
+  home: https://spglib.github.io/spglib/
   license: BSD
   summary: 'Space symmetry groups spglib module.'
 

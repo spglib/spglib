@@ -1,5 +1,7 @@
 #!/bin/bash
 
+git checkout $GIT_BRANCH
+
 cd python
 ./get_nanoversion.sh
 ln -s ../src .

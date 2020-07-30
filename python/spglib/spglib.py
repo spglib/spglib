@@ -49,9 +49,9 @@ def get_version():
 
 
 def get_symmetry(cell,
-                 is_magnetic=True,
                  symprec=1e-5,
-                 angle_tolerance=-1.0):
+                 angle_tolerance=-1.0,
+                 is_magnetic=True):
     """Find symmetry operations from a crystal structure and site tensors
 
     Parameters
@@ -85,16 +85,16 @@ def get_symmetry(cell,
                 vectors are included in the symmetry search in a way of
                 non-collinear magnetic moments.
                 shape=(num_atom, 3), order='C', dtype='double'
-    is_magnetic : bool
-        When optiona data (4th element of cell tuple) is given in case-II,
-        the symmetry search is performed considering magnetic symmetry, which
-        may be corresponding to that for non-collinear calculation. Default is
-        True, but this does nothing unless optiona data is supplied.
     symprec : float
         Symmetry search tolerance in the unit of length.
     angle_tolerance : float
         Symmetry search tolerance in the unit of angle deg. If the value is
         negative, an internally optimized routine is used to judge symmetry.
+    is_magnetic : bool
+        When optiona data (4th element of cell tuple) is given in case-II,
+        the symmetry search is performed considering magnetic symmetry, which
+        may be corresponding to that for non-collinear calculation. Default is
+        True, but this does nothing unless optiona data is supplied.
 
     Returns
     -------

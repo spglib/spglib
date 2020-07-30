@@ -1,7 +1,6 @@
 matrix:
   include:
   - python: '3.6'
-    sudo: required
     services:
     - docker
     env: DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
@@ -9,7 +8,6 @@ matrix:
          TRAVIS_PYTHON_VERSION='3.6'
          PLAT=manylinux1_x86_64
   - python: '3.6'
-    sudo: required
     services:
     - docker
     env: DOCKER_IMAGE=quay.io/pypa/manylinux1_i686
@@ -18,7 +16,6 @@ matrix:
          TRAVIS_PYTHON_VERSION='3.6'
          PLAT=manylinux1_i686
   - python: '3.6'
-    sudo: required
     services:
       - docker
     env: DOCKER_IMAGE=quay.io/pypa/manylinux2010_x86_64
@@ -26,13 +23,14 @@ matrix:
          TRAVIS_PYTHON_VERSION='3.6'
          PLAT=manylinux2010_x86_64
   - python: '2.7'
-    sudo: false
     env: DOCKER_DEPLOY=false
          TRAVIS_PYTHON_VERSION='2.7'
   - python: '3.6'
-    sudo: false
     env: DOCKER_DEPLOY=false
          TRAVIS_PYTHON_VERSION='3.6'
+  - python: '3.7'
+    env: DOCKER_DEPLOY=false
+         TRAVIS_PYTHON_VERSION='3.7'
 
 before_install:
 - echo $DOCKER_DEPLOY
@@ -57,7 +55,7 @@ before_install:
 - if [[ "$DOCKER_DEPLOY" != "false" ]]; then
     conda install --yes pip;
   else
-    conda install --yes pip numpy pyyaml nomkl;
+    conda install --yes pip numpy pyyaml nomkl pytest;
   fi;
 - pwd
 
@@ -72,6 +70,7 @@ install:
       ls wheelhouse/;
       mkdir dist;
       cp wheelhouse/spglib* dist/;
+      pwd;
       ls dist/;
       cd ..;
     fi;
@@ -89,7 +88,7 @@ script:
       valgrind --leak-check=yes --error-exitcode=123 ./spglibtest;
       cd ..;
       cd python;
-      python setup.py test;
+      pytest;
       cd ..;
     fi
   fi
@@ -103,22 +102,21 @@ deploy:
   server: https://test.pypi.org/legacy/
   skip_existing: true
   skip_cleanup: true
+  cleanup: false
   user: atztogo
   password:
     secure: "uqsoPpQNbie297e1iDPOHUVqM1HPHeZjIuAutWvVjZF6TpaksDhPNkK9sIE9Wh4sAVLi1wUCtjlMYjC7ElS94tsHwj6+tyxvQtrDmGUWRdf6BjFFZ6CdKBxMJwBQTryCScQGxR81NVlKAzKgZkdrhAxr93kDWmG0thYQrDQO8ihgfxgZUDnZnwarZCiUxwCsT/5VyUv6aRL+epXOUdlPZL2ypiRPlu+9zgwP348OCseh8EtlSLp0uv+K6qOMDVfjQeaEVl0CQIfbkIFMIxPB7xxBNn8pG1aMFJOks6QKo4dq0QhW5eCacPVy/WIQyZ96DNub+zcpFboCIIyWdLO7VFMhyp4PnsqbiTpHLPmImFLWuzaTvCc58Q/QRGRJ3+68kByX/eBWoWgBJED9uX+fSCumfUak+Q9UcVVy/+uh8DJmKlCEWBevk5mVb9evgmLDvpo4q9Vk2U3xv4Cj511PH9JJzcVa3YgznUzLbL93NbSBzlO1/sWYjVp32mPQNekQzOlXCMhqBKkqCIk0Y0INtUNx7v7cA13iEM+QudQQ/sJvCRScNSztYa++W274wo5QxOQeZf5RS8sXzu9bvNvJRpFWsAkyebGVmab597hGgjdVtRMiuaq72+sy45ZCDSSSx0rlEbj6QhYNaSjEqutRBoddTHp7JY1ZT6PKGa/iWPA="
   on:
-    repo: atztogo/spglib
+    repo: spglib/spglib
     branch: rc
     tags: false
     condition: "$DOCKER_DEPLOY == manylinux1_x86_64 || $DOCKER_DEPLOY == manylinux1_i686 || $DOCKER_DEPLOY == manylinux2010_x86_64"
 
 # testing conda
 - provider: script
-  skip_cleanup: true
-  skip_existing: true
   script: conda/anaconda_deploy.sh rc $ANACONDA_TOKEN $TRAVIS_BRANCH
   on:
-    repo: atztogo/spglib
+    repo: spglib/spglib
     branch: rc
     tags: false
     condition: "$DOCKER_DEPLOY == false"
@@ -126,24 +124,23 @@ deploy:
 
 # production pypi
 - provider: pypi
-  skip_cleanup: true
   skip_existing: true
+  skip_cleanup: true
+  cleanup: false
   user: atztogo
   password:
       secure: "sjUxbFSrhflB/NqMwcJCmalmQRX1EN4zgsK2YyY93JEk16aep+5pRyV87Q3Q54L19PGOkTqOrGyvUhwxTHUweo87F2DM1gd695bg0rROcquvhwWxlTuhMhMoUGSxDljgKbEeTvLikFd91JX2Rr/deIZLog/c3z/m55MbgHqGoyR5p1twxqLoUcJHznM8Mnn/KTauVHVQKG/6sVQr/h9AhRB8qI5VRCcrnDqAWoePqkgibWjEKchx/lmgW4TiB15IIvmIVgMxNwUa2q91Lqn3AhZDOcB/TST34yZCx8j1TpLJgAtB8+aRnTdmtfhnPWN8gebVuHJni+EQYsq4sIOiRzsU5qHkCzmW2x6I/kcTTYWYW4KybKorWQcypotTkyDoSfFuhZ93kyMy6QXBdV0/3xskBAbA++Mc93u6KaNMDnBGLb9PoeIT6R6YRNnwDAYBSlJ8lMZoNwVKrPhxI11r15eAK/4NamUHSLORBJWYKw1Z1Ko5wjkMXTSC4y7rC5UD+wrgZCfhB7WBLvatGBA3oD83dmEzMl3zA3wyaegDqHbEzKIFCGX5/eKrVN91hQrvlFkVYwf7YHAcNTvplZi0EGotfuZVsyhHiYSXRrMdF16g/NyZwunMEydafsbbwQatLxMhCMufX+5B1bk8VsmM0QDI9EV3rdvC7vgpnO5KPpY="
   on:
-    repo: atztogo/spglib
+    repo: spglib/spglib
     branch: master
     tags: false
     condition: "$DOCKER_DEPLOY == manylinux1_x86_64 || $DOCKER_DEPLOY == manylinux1_i686 || $DOCKER_DEPLOY == manylinux2010_x86_64"
 
 # production anaconda
 - provider: script
-  skip_cleanup: true
-  skip_existing: true
   script: conda/anaconda_deploy.sh main $ANACONDA_TOKEN $TRAVIS_BRANCH
   on:
-    repo: atztogo/spglib
+    repo: spglib/spglib
     branch: master
     tags: false
     condition: "$DOCKER_DEPLOY == false"
