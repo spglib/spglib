@@ -23,8 +23,8 @@ for whl in wheelhouse/spglib*.whl; do
 done
 
 # Install packages and test
-# for PYBIN in /opt/python/*/bin/; do
-#     if [[ $PYBIN == *"36"* ]] || [[ $PYBIN == *"37"* ]] || [[ $PYBIN == *"38"* ]]; then
-#         "${PYBIN}/pip" install spglib --no-index -f /io/wheelhouse
-#     fi
-# done
+for PYBIN in /opt/python/*/bin/; do
+    if [[ $PYBIN == *"36"* ]] || [[ $PYBIN == *"37"* ]] || [[ $PYBIN == *"38"* ]]; then
+        "${PYBIN}/pip" install spglib --no-index -f /io/wheelhouse
+    fi
+done

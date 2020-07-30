@@ -70,6 +70,7 @@ install:
       ls wheelhouse/;
       mkdir dist;
       cp wheelhouse/spglib* dist/;
+      pwd;
       ls dist/;
       cd ..;
     fi;
