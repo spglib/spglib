@@ -111,7 +111,6 @@ deploy:
 
 # testing conda
 - provider: script
-  skip_existing: true
   script: conda/anaconda_deploy.sh rc $ANACONDA_TOKEN $TRAVIS_BRANCH
   on:
     repo: spglib/spglib
@@ -134,7 +133,6 @@ deploy:
 
 # production anaconda
 - provider: script
-  skip_existing: true
   script: conda/anaconda_deploy.sh main $ANACONDA_TOKEN $TRAVIS_BRANCH
   on:
     repo: spglib/spglib
