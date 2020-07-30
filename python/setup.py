@@ -137,8 +137,7 @@ if use_setuptools:
           provides=['spglib'],
           platforms=['all'],
           ext_modules=[extension],
-          test_suite='nose.collector',
-          tests_require=['nose', 'pyyaml'])
+          tests_require=['pyyaml', ])
 else:
     setup(name='spglib',
           version=version,
@@ -154,5 +153,4 @@ else:
           provides=['spglib'],
           platforms=['all'],
           ext_modules=[extension],
-          test_suite='nose.collector',
-          tests_require=['nose', 'pyyaml'])
+          tests_require=['pyyaml', ])
