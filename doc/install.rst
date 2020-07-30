@@ -5,12 +5,12 @@ Download
 ---------
 
 The source code is downloaded at
-https://github.com/atztogo/spglib/archive/master.zip or you can
+https://github.com/spglib/spglib/archive/master.zip or you can
 git-clone the spglib repository by
 
 ::
 
-   % git clone https://github.com/atztogo/spglib.git
+   % git clone https://github.com/spglib/spglib.git
 
 Install
 --------
@@ -67,10 +67,10 @@ Usage
 1. Include ``spglib.h``
 2. Link ``libsymspg.a`` or ``libsymspg.so``
 3. A compilation example is shown in  `example/README
-   <https://github.com/atztogo/spglib/blob/master/example/README>`_.
+   <https://github.com/spglib/spglib/blob/master/example/README>`_.
 
 Example
 --------
 
 A few examples are found in `example
-<https://github.com/atztogo/spglib/tree/master/example>`_ directory.
+<https://github.com/spglib/spglib/tree/master/example>`_ directory.

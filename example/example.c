@@ -12,12 +12,12 @@ static void test_spg_standardize_cell_BCC(void);
 static void test_spg_standardize_cell_BCC_prim(void);
 static void test_spg_standardize_cell_corundum(void);
 static int sub_spg_standardize_cell(double lattice[3][3],
-				    double position[][3],
-				    int types[],
-				    const int num_atom,
-				    const double symprec,
-				    const int to_primitive,
-				    const int no_idealize);
+                                    double position[][3],
+                                    int types[],
+                                    const int num_atom,
+                                    const double symprec,
+                                    const int to_primitive,
+                                    const int no_idealize);
 static void test_spg_get_international(void);
 static void test_spg_get_schoenflies(void);
 static void test_spg_get_spacegroup_type(void);
@@ -29,14 +29,14 @@ static void test_spg_get_stabilized_reciprocal_mesh(void);
 static void test_spg_relocate_BZ_grid_address(void);
 static void test_spg_get_error_message(void);
 static void show_spg_dataset(double lattice[3][3],
-			     const double origin_shift[3],
-			     double position[][3],
-			     const int num_atom,
-			     const int types[]);
+                             const double origin_shift[3],
+                             double position[][3],
+                             const int num_atom,
+                             const int types[]);
 static void show_cell(double lattice[3][3],
-		      double position[][3],
-		      const int types[],
-		      const int num_atom);
+                      double position[][3],
+                      const int types[],
+                      const int num_atom);
 
 int main(void)
 {
@@ -72,13 +72,13 @@ static void test_spg_find_primitive_BCC(void)
   int types[] = {1, 1};
   int i, num_atom = 2, num_primitive_atom;
   double symprec = 1e-5;
-  
+
   /* lattice, position, and types are overwirtten. */
   printf("*** Example of spg_find_primitive (BCC unitcell --> primitive) ***:\n");
   num_primitive_atom = spg_find_primitive(lattice, position, types, num_atom, symprec);
   if (num_primitive_atom == 0) {
     printf("Primitive cell was not found.\n");
-  } else { 
+  } else {
     show_cell(lattice, position, types, num_primitive_atom);
   }
 }
@@ -86,8 +86,8 @@ static void test_spg_find_primitive_BCC(void)
 static void test_spg_find_primitive_corundum(void)
 {
   double lattice[3][3] = {{4.8076344022756095, -2.4038172011378047, 0},
-			  {0, 4.1635335244786962, 0},
-			  {0, 0, 13.1172699198127543}};
+                          {0, 4.1635335244786962, 0},
+                          {0, 0, 13.1172699198127543}};
   double position[][3] = {
     {0.0000000000000000, 0.0000000000000000, 0.3521850942289043},
     {0.6666666666666643, 0.3333333333333357, 0.6855184275622400},
@@ -123,7 +123,7 @@ static void test_spg_find_primitive_corundum(void)
   int types[30];
   int i, num_atom = 30, num_primitive_atom;
   double symprec = 1e-5;
-  
+
   for (i = 0; i < 12; i++) {
     types[i] = 1;
   }
@@ -136,7 +136,7 @@ static void test_spg_find_primitive_corundum(void)
   num_primitive_atom = spg_find_primitive(lattice, position, types, num_atom, symprec);
   if (num_primitive_atom == 0) {
     printf("Primitive cell was not found.\n");
-  } else { 
+  } else {
     show_cell(lattice, position, types, num_primitive_atom);
   }
 }
@@ -148,7 +148,7 @@ static void test_spg_refine_cell_BCC(void)
   /* 4 times larger memory space must be prepared. */
   double position[4][3];
   int types[4];
-  
+
   int i, num_atom_bravais, num_atom = 1;
   double symprec = 1e-5;
 
@@ -156,14 +156,14 @@ static void test_spg_refine_cell_BCC(void)
   position[0][1] = 0;
   position[0][2] = 0;
   types[0] = 1;
-  
+
   /* lattice, position, and types are overwirtten. */
   printf("*** Example of spg_refine_cell ***:\n");
   num_atom_bravais = spg_refine_cell( lattice,
-				      position,
-				      types,
-				      num_atom,
-				      symprec );
+                                      position,
+                                      types,
+                                      num_atom,
+                                      symprec );
   show_cell(lattice, position, types, num_atom_bravais);
 }
 
@@ -177,19 +177,19 @@ static void test_spg_standardize_cell_BCC(void)
   int types[] = {1, 1};
   int i, j, k, num_atom = 2, num_primitive_atom;
   double symprec = 1e-1;
-  
+
   /* lattice, position, and types are overwirtten. */
   printf("*** Example of spg_standardize_cell (BCC unitcell) ***:\n");
   printf("------------------------------------------------------\n");
   for (j = 0; j < 2; j++) {
     for (k = 0; k < 2; k++) {
       sub_spg_standardize_cell(lattice,
-			       position,
-			       types,
-			       num_atom,
-			       symprec,
-			       j,
-			       k);
+                               position,
+                               types,
+                               num_atom,
+                               symprec,
+                               j,
+                               k);
       printf("------------------------------------------------------\n");
     }
   }
@@ -204,19 +204,19 @@ static void test_spg_standardize_cell_BCC_prim(void)
   int types[] = {1};
   int i, j, k, num_atom = 1, num_primitive_atom;
   double symprec = 1e-1;
-  
+
   /* lattice, position, and types are overwirtten. */
   printf("*** Example of spg_standardize_cell (BCC primitive) ***:\n");
   printf("------------------------------------------------------\n");
   for (j = 0; j < 2; j++) {
     for (k = 0; k < 2; k++) {
       sub_spg_standardize_cell(lattice,
-			       position,
-			       types,
-			       num_atom,
-			       symprec,
-			       j,
-			       k);
+                               position,
+                               types,
+                               num_atom,
+                               symprec,
+                               j,
+                               k);
       printf("------------------------------------------------------\n");
     }
   }
@@ -225,8 +225,8 @@ static void test_spg_standardize_cell_BCC_prim(void)
 static void test_spg_standardize_cell_corundum(void)
 {
   double lattice[3][3] = {{4.8076344022756095, -2.4038172011378047, 0},
-			  {0, 4.1635335244786962, 0},
-			  {0, 0, 13.1172699198127543}};
+                          {0, 4.1635335244786962, 0},
+                          {0, 0, 13.1172699198127543}};
   double position[][3] = {
     {0.0000000000000000, 0.0000000000000000, 0.3521850942289043},
     {0.6666666666666643, 0.3333333333333357, 0.6855184275622400},
@@ -262,38 +262,38 @@ static void test_spg_standardize_cell_corundum(void)
   int types[30];
   int i, j, k, num_atom = 30;
   double symprec = 1e-5;
-  
+
   for (i = 0; i < 12; i++) {
     types[i] = 1;
   }
   for (i = 12; i < 30; i++) {
     types[i] = 2;
   }
-  
+
   /* lattice, position, and types are overwirtten. */
   printf("*** Example of spg_standardize_cell (Corundum) ***:\n");
   printf("------------------------------------------------------\n");
   for (j = 0; j < 2; j++) {
     for (k = 0; k < 2; k++) {
       sub_spg_standardize_cell(lattice,
-			       position,
-			       types,
-			       num_atom,
-			       symprec,
-			       j,
-			       k);
+                               position,
+                               types,
+                               num_atom,
+                               symprec,
+                               j,
+                               k);
       printf("------------------------------------------------------\n");
     }
   }
 }
 
 static int sub_spg_standardize_cell(double lattice[3][3],
-				    double position[][3],
-				    int types[],
-				    const int num_atom,
-				    const double symprec,
-				    const int to_primitive,
-				    const int no_idealize)
+                                    double position[][3],
+                                    int types[],
+                                    const int num_atom,
+                                    const double symprec,
+                                    const int to_primitive,
+                                    const int no_idealize)
 {
   int i, num_primitive_atom;
   double lat[3][3], pos[num_atom][3];
@@ -311,15 +311,15 @@ static int sub_spg_standardize_cell(double lattice[3][3],
     pos[i][2] = position[i][2];
     typ[i] = types[i];
   }
-  
+
   /* lattice, position, and types are overwirtten. */
   num_primitive_atom = spg_standardize_cell(lat,
-					    pos,
-					    typ,
-					    num_atom,
-					    to_primitive,
-					    no_idealize,
-					    symprec);
+                                            pos,
+                                            typ,
+                                            num_atom,
+                                            to_primitive,
+                                            no_idealize,
+                                            symprec);
   printf("VASP POSCAR format: ");
   if (to_primitive == 0) {
     printf("to_primitive=0 and ");
@@ -358,7 +358,7 @@ static void test_spg_get_international(void)
   int types[] = {1, 1, 2, 2, 2, 2};
   int num_spg, num_atom = 6;
   char symbol[21];
-  
+
   num_spg = spg_get_international(symbol, lattice, position, types, num_atom, 1e-5);
   printf("*** Example of spg_get_international ***:\n");
   if ( num_spg > 0 ) {
@@ -383,7 +383,7 @@ static void test_spg_get_schoenflies(void)
   int types[] = {1, 1, 2, 2, 2, 2};
   int num_atom = 6;
   char symbol[7];
-  
+
   spg_get_schoenflies(symbol, lattice, position, types, num_atom, 1e-5);
   printf("*** Example of spg_get_schoenflies ***:\n");
   printf("Schoenflies: %s\n", symbol);
@@ -401,7 +401,7 @@ static void test_spg_get_spacegroup_type(void)
   printf("International: %s\n", spgtype.international_full);
   printf("International: %s\n", spgtype.international_short);
   printf("Hall symbol:   %s\n", spgtype.hall_symbol);
-  
+
 }
 
 static void test_spg_get_symmetry_from_database(void)
@@ -409,20 +409,20 @@ static void test_spg_get_symmetry_from_database(void)
   int rotations[192][3][3];
   double translations[192][3];
   int max_size, i, j, size;
-  
+
   size = spg_get_symmetry_from_database(rotations,
-					translations,
-					460);
-  
+                                        translations,
+                                        460);
+
   printf("*** Example of spg_get_symmetry_from_database ***:\n");
   for (i = 0; i < size; i++) {
     printf("--- %d ---\n", i + 1);
     for (j = 0; j < 3; j++) {
       printf("%2d %2d %2d\n",
-	     rotations[i][j][0], rotations[i][j][1], rotations[i][j][2]);
+             rotations[i][j][0], rotations[i][j][1], rotations[i][j][2]);
     }
     printf("%f %f %f\n",
-	   translations[i][0], translations[i][1], translations[i][2]);
+           translations[i][0], translations[i][1], translations[i][2]);
   }
 }
 
@@ -478,19 +478,19 @@ static void test_spg_get_symmetry(void)
 
   printf("*** Example of spg_get_symmetry (Rutile two unit cells) ***:\n");
   size = spg_get_symmetry(rotation,
-			  translation,
-			  max_size,
-			  lattice,
-			  position,
-			  types,
-			  num_atom,
-			  1e-5);
+                          translation,
+                          max_size,
+                          lattice,
+                          position,
+                          types,
+                          num_atom,
+                          1e-5);
   for (i = 0; i < size; i++) {
     printf("--- %d ---\n", i + 1);
     for (j = 0; j < 3; j++)
       printf("%2d %2d %2d\n", rotation[i][j][0], rotation[i][j][1], rotation[i][j][2]);
     printf("%f %f %f\n",
-	   translation[i][0], translation[i][1], translation[i][2]);
+           translation[i][0], translation[i][1], translation[i][2]);
   }
 
 }
@@ -501,7 +501,7 @@ static void test_spg_get_symmetry_with_collinear_spin(void) {
     {
       {0, 0, 0},
       {0.5, 0.5, 0.5}
-    };	
+    };
   int types[] = {1, 1};
   int equivalent_atoms[2];
   double spins[2];
@@ -515,20 +515,20 @@ static void test_spg_get_symmetry_with_collinear_spin(void) {
   spins[0] = 1;
   spins[1] = 1;
   size = spg_get_symmetry_with_collinear_spin(rotation,
-					      translation,
-					      equivalent_atoms,
-					      max_size,
-					      lattice,
-					      position,
-					      types,
-					      spins,
-					      num_atom,
-					      1e-5);
+                                              translation,
+                                              equivalent_atoms,
+                                              max_size,
+                                              lattice,
+                                              position,
+                                              types,
+                                              spins,
+                                              num_atom,
+                                              1e-5);
   for (i = 0; i < size; i++) {
     printf("--- %d ---\n", i + 1);
     for (j = 0; j < 3; j++) {
       printf("%2d %2d %2d\n",
-	     rotation[i][j][0], rotation[i][j][1], rotation[i][j][2]);
+             rotation[i][j][0], rotation[i][j][1], rotation[i][j][2]);
     }
     printf("%f %f %f\n", translation[i][0], translation[i][1],
            translation[i][2]);
@@ -538,20 +538,20 @@ static void test_spg_get_symmetry_with_collinear_spin(void) {
   spins[0] = 1;
   spins[1] = -1;
   size = spg_get_symmetry_with_collinear_spin(rotation,
-					      translation,
-					      equivalent_atoms,
-					      max_size,
-					      lattice,
-					      position,
-					      types,
-					      spins,
-					      num_atom,
-					      1e-5);
+                                              translation,
+                                              equivalent_atoms,
+                                              max_size,
+                                              lattice,
+                                              position,
+                                              types,
+                                              spins,
+                                              num_atom,
+                                              1e-5);
   for (i = 0; i < size; i++) {
     printf("--- %d ---\n", i + 1);
     for (j = 0; j < 3; j++) {
       printf("%2d %2d %2d\n",
-	     rotation[i][j][0], rotation[i][j][1], rotation[i][j][2]);
+             rotation[i][j][0], rotation[i][j][1], rotation[i][j][2]);
     }
     printf("%f %f %f\n", translation[i][0], translation[i][1],
            translation[i][2]);
@@ -561,20 +561,20 @@ static void test_spg_get_symmetry_with_collinear_spin(void) {
   spins[0] = 1;
   spins[1] = 2;
   size = spg_get_symmetry_with_collinear_spin(rotation,
-					      translation,
-					      equivalent_atoms,
-					      max_size,
-					      lattice,
-					      position,
-					      types,
-					      spins,
-					      num_atom,
-					      1e-5);
+                                              translation,
+                                              equivalent_atoms,
+                                              max_size,
+                                              lattice,
+                                              position,
+                                              types,
+                                              spins,
+                                              num_atom,
+                                              1e-5);
   for (i = 0; i < size; i++) {
     printf("--- %d ---\n", i + 1);
     for (j = 0; j < 3; j++) {
       printf("%2d %2d %2d\n",
-	     rotation[i][j][0], rotation[i][j][1], rotation[i][j][2]);
+             rotation[i][j][0], rotation[i][j][1], rotation[i][j][2]);
     }
     printf("%f %f %f\n", translation[i][0], translation[i][1],
            translation[i][2]);
@@ -608,8 +608,8 @@ static void test_spg_get_dataset(void)
   show_spg_dataset(lattice, origin_shift, position, num_atom, types);
 
   double lattice_2[3][3] = {{3.7332982433264039, -1.8666491216632011, 0},
-			    {0, 3.2331311186244847, 0},
-			    {0, 0, 6.0979971306362799}};
+                            {0, 3.2331311186244847, 0},
+                            {0, 0, 6.0979971306362799}};
   double origin_shift_2[3] = {0.1, 0.1, 0};
   double position_2[][3] =
     {
@@ -647,15 +647,15 @@ static void test_spg_get_ir_reciprocal_mesh(void)
   printf("*** Example of spg_get_ir_reciprocal_mesh of Rutile structure ***:\n");
 
   int num_ir = spg_get_ir_reciprocal_mesh(grid_address,
-					  grid_mapping_table,
-					  mesh,
-					  is_shift,
-					  1,
-					  lattice,
-					  position,
-					  types,
-					  num_atom,
-					  1e-5);
+                                          grid_mapping_table,
+                                          mesh,
+                                          is_shift,
+                                          1,
+                                          lattice,
+                                          position,
+                                          types,
+                                          num_atom,
+                                          1e-5);
 
   printf("Number of irreducible k-points of Rutile with\n");
   printf("40x40x40 Monkhorst-Pack mesh is %d (4200).\n", num_ir);
@@ -678,12 +678,12 @@ static void test_spg_get_stabilized_reciprocal_mesh(void)
   int num_atom = 6;
 
   dataset = spg_get_dataset(lattice,
-			    position,
-			    types,
-			    num_atom,
-			    1e-5);
+                            position,
+                            types,
+                            num_atom,
+                            1e-5);
 
-  
+
   int m = 40;
   int mesh[] = {m, m, m};
   int is_shift[] = {1, 1, 1};
@@ -694,14 +694,14 @@ static void test_spg_get_stabilized_reciprocal_mesh(void)
   printf("*** Example of spg_get_stabilized_reciprocal_mesh of Rutile structure ***:\n");
 
   int num_ir = spg_get_stabilized_reciprocal_mesh(grid_address,
-						  grid_mapping_table,
-						  mesh,
-						  is_shift,
-						  1,
-						  dataset->n_operations,
-						  dataset->rotations,
-						  1,
-						  (double(*)[3])q);
+                                                  grid_mapping_table,
+                                                  mesh,
+                                                  is_shift,
+                                                  1,
+                                                  dataset->n_operations,
+                                                  dataset->rotations,
+                                                  1,
+                                                  (double(*)[3])q);
   spg_free_dataset(dataset);
 
   printf("Number of irreducible k-points stabilized by q=(0, 1/2, 1/2) of Rutile with\n");
@@ -711,13 +711,13 @@ static void test_spg_get_stabilized_reciprocal_mesh(void)
 static void test_spg_relocate_BZ_grid_address(void)
 {
   double rec_lattice[3][3] = {{-0.17573761,  0.17573761,  0.17573761},
-			      { 0.17573761, -0.17573761,  0.17573761},
-			      { 0.17573761,  0.17573761, -0.17573761}};
+                              { 0.17573761, -0.17573761,  0.17573761},
+                              { 0.17573761,  0.17573761, -0.17573761}};
   int rotations[][3][3] = {{{1, 0, 0},
-			    {0, 1, 0},
-			    {0, 0, 1}}};
+                            {0, 1, 0},
+                            {0, 0, 1}}};
 
-  
+
   int m = 40;
   int mesh[] = {m, m, m};
   int is_shift[] = {0, 0, 0};
@@ -728,34 +728,34 @@ static void test_spg_relocate_BZ_grid_address(void)
   double q[] = {0, 0, 0};
 
   int num_ir = spg_get_stabilized_reciprocal_mesh(grid_address,
-						  grid_mapping_table,
-						  mesh,
-						  is_shift,
-						  1,
-						  1,
-						  rotations,
-						  1,
-						  (double(*)[3])q);
-  
+                                                  grid_mapping_table,
+                                                  mesh,
+                                                  is_shift,
+                                                  1,
+                                                  1,
+                                                  rotations,
+                                                  1,
+                                                  (double(*)[3])q);
+
 
   printf("*** Example of spg_relocate_BZ_grid_address of NaCl structure ***:\n");
 
   int num_q = spg_relocate_BZ_grid_address(bz_grid_address,
-					   bz_map,
-					   grid_address,
-					   mesh,
-					   rec_lattice,
-					   is_shift);
+                                           bz_map,
+                                           grid_address,
+                                           mesh,
+                                           rec_lattice,
+                                           is_shift);
 
   printf("Number of k-points of NaCl Brillouin zone\n");
   printf("with Gamma-centered 40x40x40 Monkhorst-Pack mesh is %d (65861).\n", num_q);
 }
 
 static void show_spg_dataset(double lattice[3][3],
-			     const double origin_shift[3],
-			     double position[][3],
-			     const int num_atom,
-			     const int types[])
+                             const double origin_shift[3],
+                             double position[][3],
+                             const int num_atom,
+                             const int types[])
 {
   SpglibDataset *dataset;
   char ptsymbol[6];
@@ -771,24 +771,24 @@ static void show_spg_dataset(double lattice[3][3],
   }
 
   dataset = spg_get_dataset(lattice,
-			    position,
-			    types,
-			    num_atom,
-			    1e-5);
-  
+                            position,
+                            types,
+                            num_atom,
+                            1e-5);
+
   printf("International: %s (%d)\n", dataset->international_symbol, dataset->spacegroup_number );
   printf("Hall symbol:   %s\n", dataset->hall_symbol );
   spg_get_pointgroup(ptsymbol,
-		     pt_trans_mat,
-		     dataset->rotations,
-		     dataset->n_operations);
+                     pt_trans_mat,
+                     dataset->rotations,
+                     dataset->n_operations);
   printf("Point group:   %s\n", ptsymbol);
   printf("Transformation matrix:\n");
   for ( i = 0; i < 3; i++ ) {
     printf("%f %f %f\n",
-	   dataset->transformation_matrix[i][0],
-	   dataset->transformation_matrix[i][1],
-	   dataset->transformation_matrix[i][2]);
+           dataset->transformation_matrix[i][0],
+           dataset->transformation_matrix[i][1],
+           dataset->transformation_matrix[i][2]);
   }
   printf("Wyckoff letters:\n");
   for ( i = 0; i < dataset->n_atoms; i++ ) {
@@ -800,19 +800,19 @@ static void show_spg_dataset(double lattice[3][3],
     printf("%d ", dataset->equivalent_atoms[i]);
   }
   printf("\n");
-  
+
   for (i = 0; i < dataset->n_operations; i++) {
     printf("--- %d ---\n", i + 1);
     for (j = 0; j < 3; j++) {
       printf("%2d %2d %2d\n",
-	     dataset->rotations[i][j][0],
-	     dataset->rotations[i][j][1],
-	     dataset->rotations[i][j][2]);
+             dataset->rotations[i][j][0],
+             dataset->rotations[i][j][1],
+             dataset->rotations[i][j][2]);
     }
     printf("%f %f %f\n",
-	   dataset->translations[i][0],
-	   dataset->translations[i][1],
-	   dataset->translations[i][2]);
+           dataset->translations[i][0],
+           dataset->translations[i][1],
+           dataset->translations[i][2]);
   }
 
   spg_free_dataset(dataset);
@@ -820,9 +820,9 @@ static void show_spg_dataset(double lattice[3][3],
 }
 
 static void show_cell(double lattice[3][3],
-		      double position[][3],
-		      const int types[],
-		      const int num_atom)
+                      double position[][3],
+                      const int types[],
+                      const int num_atom)
 {
   int i;
 
@@ -833,7 +833,7 @@ static void show_cell(double lattice[3][3],
   printf("Atomic positions:\n");
   for (i = 0; i < num_atom; i++) {
     printf("%d: %f %f %f\n",
-	   types[i], position[i][0], position[i][1], position[i][2]);
+           types[i], position[i][0], position[i][1], position[i][2]);
   }
 }
 
@@ -849,8 +849,8 @@ static void test_spg_get_error_message(void)
   int i, num_atom = 3, num_primitive_atom;
   double symprec = 1e-5;
   SpglibError error;
-  
-  
+
+
   /* lattice, position, and types are overwirtten. */
   printf("*** Example of spg_get_error_message ***:\n");
   num_primitive_atom = spg_find_primitive(lattice, position, types, num_atom, symprec);

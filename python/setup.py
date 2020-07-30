@@ -131,14 +131,13 @@ if use_setuptools:
           long_description_content_type='text/x-rst',
           author='Atsushi Togo',
           author_email='atz.togo@gmail.com',
-          url='http://atztogo.github.io/spglib/',
+          url='http://spglib.github.io/spglib/',
           packages=['spglib'],
           install_requires=['numpy', ],
           provides=['spglib'],
           platforms=['all'],
           ext_modules=[extension],
-          test_suite='nose.collector',
-          tests_require=['nose', 'pyyaml'])
+          tests_require=['pyyaml', ])
 else:
     setup(name='spglib',
           version=version,
@@ -148,11 +147,10 @@ else:
           long_description_content_type='text/x-rst',
           author='Atsushi Togo',
           author_email='atz.togo@gmail.com',
-          url='http://atztogo.github.io/spglib/',
+          url='http://spglib.github.io/spglib/',
           packages=['spglib'],
           requires=['numpy'],
           provides=['spglib'],
           platforms=['all'],
           ext_modules=[extension],
-          test_suite='nose.collector',
-          tests_require=['nose', 'pyyaml'])
+          tests_require=['pyyaml', ])

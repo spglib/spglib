@@ -1,9 +1,17 @@
+2020-07-30  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.16
+
+	Minor update. Symmetry operations in spg_database.c for
+	Hall numbers 212, 213, 214 are re-ordered to start by identity
+	operation.
+
 2020-04-28  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.15.1
 
 	Critical bug fix for collinear spin symmetry.
-	
+
 	* src/spin.c (get_operations):
 
 	Collinear spin symmetry was wrongly handled. This was fixed at
