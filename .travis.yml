@@ -57,7 +57,7 @@ before_install:
 - if [[ "$DOCKER_DEPLOY" != "false" ]]; then
     conda install --yes pip;
   else
-    conda install --yes pip numpy pyyaml nomkl;
+    conda install --yes pip numpy pyyaml nomkl pytest;
   fi;
 - pwd
 
@@ -89,7 +89,7 @@ script:
       valgrind --leak-check=yes --error-exitcode=123 ./spglibtest;
       cd ..;
       cd python;
-      python setup.py test;
+      pytest;
       cd ..;
     fi
   fi
