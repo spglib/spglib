@@ -602,9 +602,9 @@ contains
     integer(c_int) :: n_operations, n_atoms, n_std_atoms
     integer :: i
     integer(kind(SPGLIB_SUCCESS)) :: SpglibErrcode
-    real(c_double), pointer :: translations(:,:)
+    real(c_double), pointer :: translations(:,:), std_positions(:,:)
     integer(c_int), pointer :: rotations(:,:,:), wyckoffs(:), equivalent_atoms(:)
-    integer(c_int), pointer :: crystallographic_orbits(:), std_types(:), std_positions(:,:)
+    integer(c_int), pointer :: crystallographic_orbits(:), std_types(:)
 
     dataset_ptr_c = spg_get_dataset_c(lattice, position, types, num_atom, symprec)
 
