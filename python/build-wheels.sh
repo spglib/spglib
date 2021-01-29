@@ -11,7 +11,7 @@ function repair_wheel {
 }
 
 for PYBIN in /opt/python/*/bin; do
-    if [[ $PYBIN == *"36"* ]] || [[ $PYBIN == *"37"* ]] || [[ $PYBIN == *"38"* ]]; then
+    if [[ $PYBIN == *"36"* ]] || [[ $PYBIN == *"37"* ]] || [[ $PYBIN == *"38"* ]] || [[ $PYBIN == *"39"* ]]; then
         "${PYBIN}/pip" install -r /io/dev-requirements.txt
         "${PYBIN}/pip" wheel /io/ -w wheelhouse/
     fi
@@ -24,7 +24,7 @@ done
 
 # Install packages and test
 for PYBIN in /opt/python/*/bin/; do
-    if [[ $PYBIN == *"36"* ]] || [[ $PYBIN == *"37"* ]] || [[ $PYBIN == *"38"* ]]; then
+    if [[ $PYBIN == *"36"* ]] || [[ $PYBIN == *"37"* ]] || [[ $PYBIN == *"38"* ]] || [[ $PYBIN == *"39"* ]]; then
         "${PYBIN}/pip" install spglib --no-index -f /io/wheelhouse
     fi
 done

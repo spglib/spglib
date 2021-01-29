@@ -1,3 +1,9 @@
+2021-01-29  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.16.1
+
+	Bug fix of fortran wrapper.
+
 2020-07-30  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.16
