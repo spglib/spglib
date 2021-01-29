@@ -26,11 +26,11 @@ build:
 requirements:
   build:
     - python
-    - numpy
+    - numpy>=1.11
 
   run:
     - python
-    - numpy
+    - numpy>=1.11
     - pyyaml
 
 test:

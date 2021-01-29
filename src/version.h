@@ -15,7 +15,7 @@
 /*   the documentation and/or other materials provided with the */
 /*   distribution. */
 
-/* * Neither the name of the phonopy project nor the names of its */
+/* * Neither the name of the spglib project nor the names of its */
 /*   contributors may be used to endorse or promote products derived */
 /*   from this software without specific prior written permission. */
 
@@ -37,6 +37,6 @@
 
 #define SPGLIB_MAJOR_VERSION 1
 #define SPGLIB_MINOR_VERSION 16
-#define SPGLIB_MICRO_VERSION 0
+#define SPGLIB_MICRO_VERSION 1
 
 #endif
