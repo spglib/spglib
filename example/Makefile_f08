@@ -1,7 +1,7 @@
 
 fc = gfortran -g -fcheck=all -fbacktrace
 # fc = ifort -g -check all -traceback
-lib = ../src/.libs/libsymspg.a
+lib = ../build/lib/libsymspg.a
 
 test: example
 	./example

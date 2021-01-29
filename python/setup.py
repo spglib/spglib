@@ -63,14 +63,14 @@ sources = ['arithmetic.c',
 if os.path.exists('src'):
     source_dir = "src"
 else:
-    source_dir = "../src"
+    source_dir = os.path.join(os.pardir, "src")
 
 include_dirs = [source_dir, ]
 if not use_setuptools:
     include_dirs += get_numpy_include_dirs()
 
 for i, s in enumerate(sources):
-    sources[i] = "%s/%s" % (source_dir, s)
+    sources[i] = os.path.join(source_dir, s)
 
 extra_compile_args = []
 if setup_type == 'test':
@@ -94,7 +94,7 @@ extension = Extension('spglib._spglib',
                       define_macros=define_macros)
 
 version_nums = [None, None, None]
-with open("%s/version.h" % source_dir) as w:
+with open(os.path.join(source_dir, "version.h")) as w:
     for line in w:
         for i, chars in enumerate(("MAJOR", "MINOR", "MICRO")):
             if chars in line:
