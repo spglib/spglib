@@ -317,7 +317,7 @@ module spglib_f08
        integer(c_int), intent(in), value :: num_atom
        integer(c_int), intent(in), value :: to_primitive, no_idealize
        real(c_double), intent(in), value :: symprec
-       integer(c_int) :: spg_refine_cell
+       integer(c_int) :: spg_standardize_cell
      end function spg_standardize_cell
 
 
@@ -329,7 +329,7 @@ module spglib_f08
        integer(c_int), intent(in), value :: num_atom
        integer(c_int), intent(in), value :: to_primitive, no_idealize
        real(c_double), intent(in), value :: symprec, angle_tolerance
-       integer(c_int) :: spgat_refine_cell
+       integer(c_int) :: spgat_standardize_cell
      end function spgat_standardize_cell
 
 
@@ -384,6 +384,7 @@ module spglib_f08
        & spg_get_international, spgat_get_international, &
        & spg_get_schoenflies, spgat_get_schoenflies, &
        & spg_get_pointgroup, spg_refine_cell, spgat_refine_cell, &
+       & spg_standardize_cell, spgat_standardize_cell, &
        & spg_get_ir_reciprocal_mesh, &
        & spg_get_stabilized_reciprocal_mesh, &
        & spg_get_error_code, spg_get_error_message, &
