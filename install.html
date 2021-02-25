@@ -3,15 +3,14 @@
 <html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>How to install spglib C-API &#8212; Spglig v.1.16.0</title>
-    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="C-APIs" href="api.html" />
@@ -77,8 +76,8 @@
 <li><a class="reference internal" href="#">How to install spglib C-API</a><ul>
 <li><a class="reference internal" href="#download">Download</a></li>
 <li><a class="reference internal" href="#install">Install</a><ul>
-<li><a class="reference internal" href="#compiling-using-cmake">Compiling using cmake</a></li>
-<li><a class="reference internal" href="#compiling-using-configure-script">Compiling using configure script</a></li>
+<li><a class="reference internal" href="#unix-like">Unix-like</a></li>
+<li><a class="reference internal" href="#windows-cygwin">Windows &amp; Cygwin</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#usage">Usage</a></li>
@@ -127,16 +126,14 @@ git-clone the spglib repository by</p>
 </div>
 <div class="section" id="install">
 <h2>Install<a class="headerlink" href="#install" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="compiling-using-cmake">
-<h3>Compiling using cmake<a class="headerlink" href="#compiling-using-cmake" title="Permalink to this headline">¶</a></h3>
-<ol class="arabic">
-<li><p>After expanding source code, go into the source code directory:</p>
+<div class="section" id="unix-like">
+<h3>Unix-like<a class="headerlink" href="#unix-like" title="Permalink to this headline">¶</a></h3>
+<p>After expanding source code, go into the source code directory:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">tar</span> <span class="n">xvfz</span> <span class="n">spglib</span><span class="o">-</span><span class="mf">1.9</span><span class="o">.</span><span class="mf">8.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
 <span class="o">%</span> <span class="n">cd</span> <span class="n">spglib</span><span class="o">-</span><span class="mf">1.9</span><span class="o">.</span><span class="mi">8</span>
 </pre></div>
 </div>
-</li>
-<li><p>Build and install in <code class="docutils literal notranslate"><span class="pre">_build</span></code> directory by</p>
+<p>Build and install in <code class="docutils literal notranslate"><span class="pre">_build</span></code> directory by</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">mkdir</span> <span class="n">_build</span> <span class="o">&amp;&amp;</span> <span class="n">_build</span>
 <span class="o">%</span> <span class="n">cmake</span> <span class="o">-</span><span class="n">DCMAKE_INSTALL_PREFIX</span><span class="o">=</span><span class="s2">&quot;&quot;</span> <span class="o">..</span>
 <span class="o">%</span> <span class="n">make</span>
@@ -145,35 +142,18 @@ git-clone the spglib repository by</p>
 </div>
 <p>The libraries are installed at <code class="docutils literal notranslate"><span class="pre">/some/where/lib</span></code> and the
 header file is installed at <code class="docutils literal notranslate"><span class="pre">/some/where/include</span></code>.</p>
-</li>
-</ol>
 </div>
-<div class="section" id="compiling-using-configure-script">
-<h3>Compiling using configure script<a class="headerlink" href="#compiling-using-configure-script" title="Permalink to this headline">¶</a></h3>
-<ol class="arabic">
-<li><p>The configure script is prepared using
-autotools and libtool as follows:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">aclocal</span>
-<span class="o">%</span> <span class="n">autoheader</span>
-<span class="o">%</span> <span class="n">libtoolize</span> <span class="c1"># or glibtoolize with macport etc</span>
-<span class="o">%</span> <span class="n">touch</span> <span class="n">INSTALL</span> <span class="n">NEWS</span> <span class="n">README</span> <span class="n">AUTHORS</span>
-<span class="o">%</span> <span class="n">automake</span> <span class="o">-</span><span class="n">acf</span>
-<span class="o">%</span> <span class="n">autoconf</span>
+<div class="section" id="windows-cygwin">
+<h3>Windows &amp; Cygwin<a class="headerlink" href="#windows-cygwin" title="Permalink to this headline">¶</a></h3>
+<p>For windows, cmake behaves slightly differently and the following
+way is recommended</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>% cmake -DCMAKE_INSTALL_PREFIX=&quot;$(shell cygpath -w &quot;${BUILD_DIR}&quot;)&quot; ..
+% cmake --build . --config Release
+% cmake --install . --config Release
 </pre></div>
 </div>
-</li>
-<li><p>Run configure script:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">tar</span> <span class="n">xvfz</span> <span class="n">spglib</span><span class="o">-</span><span class="mf">1.9</span><span class="o">.</span><span class="mf">8.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
-<span class="o">%</span> <span class="n">cd</span> <span class="n">spglib</span><span class="o">-</span><span class="mf">1.9</span><span class="o">.</span><span class="mi">8</span>
-<span class="o">%</span> <span class="o">./</span><span class="n">configure</span> <span class="o">--</span><span class="n">prefix</span><span class="o">=</span><span class="n">INSTALLATION_LOCATION</span>
-<span class="o">%</span> <span class="n">make</span>
-<span class="o">%</span> <span class="n">make</span> <span class="n">install</span>
-</pre></div>
-</div>
-</li>
-<li><p>The libraries are installed at <code class="docutils literal notranslate"><span class="pre">INSTALLATION_LOCATION/lib</span></code> or found in
-<code class="docutils literal notranslate"><span class="pre">src/.libs</span></code> if you don’t run <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code>.</p></li>
-</ol>
+<p>The detail of the windows installation process is discussed at
+<a class="reference external" href="https://github.com/spglib/spglib/issues/118">https://github.com/spglib/spglib/issues/118</a>.</p>
 </div>
 </div>
 <div class="section" id="usage">
@@ -210,7 +190,7 @@ autotools and libtool as follows:</p>
     </p>
     <p>
         &copy; Copyright 2009, Atsushi Togo.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.1.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.1.<br/>
     </p>
   </div>
 </footer>
