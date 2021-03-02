@@ -164,6 +164,8 @@ static Symmetry * get_operations(int *spin_flips,
   trans = mat_alloc_VecDBL(sym_nonspin->size);
   num_sym = 0;
 
+  is_found = 0;
+
   for (i = 0; i < sym_nonspin->size; i++) {
     /* Set sign as undetermined (used for collinear spin case (rank = 0) */
     sign = 0;
