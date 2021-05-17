@@ -38,7 +38,7 @@
 /* This gives number of Wyckoff positions. */
 /* Space group No. 1: 1 = 1-0 */
 /* Space group No. 2: 9 = 11-2 */
-/* Space group No. 3: 5 = 16-1 */
+/* Space group No. 3: 5 = 16-11 */
 static const int position_wyckoff[] =
   {    0,
        1,    2,   11,   16,   21,   26,   27,   28,   29,   32,
