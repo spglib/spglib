@@ -1063,7 +1063,7 @@ static void set_translation_with_origin_shift(Symmetry *conv_sym,
   double tmp_vec[3];
   int tmp_mat[3][3];
 
-  /* t' = t - (R-E)w, w is the origin shift */
+  /* t' = t + (R-E)w, w is the origin shift */
   for (i = 0; i < conv_sym->size; i++) {
     mat_copy_matrix_i3(tmp_mat, conv_sym->rot[i]);
     tmp_mat[0][0]--;
@@ -1502,7 +1502,7 @@ static int find_similar_bravais_lattice(Spacegroup *spacegroup,
   /* (W, w)x = x~ -> W^-1 x~ - W^-1 w = (W^-1, -W^-1 w)x~ = x. */
   /* */
   /* We can check this geometrically. */
-  /* Basis vectors are roatated and its origin is shifted by W and w. */
+  /* Basis vectors are rotated and its origin is shifted by W and w. */
   /* (a_s, b_s, c_s) W = (a_s', b_s', c_s') */
   /* The shift is measured in the coordinated before rotation. */
   /* Therefore */
@@ -1565,13 +1565,12 @@ static void get_orthonormal_basis(double basis[3][3],
   double basis_T[3][3], lattice_T[3][3];
 
   mat_transpose_matrix_d3(lattice_T, lattice);
-  for (i = 0; i < 3; i++) {
-    mat_copy_vector_d3(basis_T[0], lattice_T[0]);
-    /* c' = axb */
-    mat_cross_product_d3(basis_T[2], lattice_T[0], lattice_T[1]);
-    /* b' = (axb)xa = c'xa */
-    mat_cross_product_d3(basis_T[1], basis_T[2], lattice_T[0]);
-  }
+  mat_copy_vector_d3(basis_T[0], lattice_T[0]);
+  /* c' = axb */
+  mat_cross_product_d3(basis_T[2], lattice_T[0], lattice_T[1]);
+  /* b' = (axb)xa = c'xa */
+  mat_cross_product_d3(basis_T[1], basis_T[2], lattice_T[0]);
+
   for (i = 0; i < 3; i++) {
     length = sqrt(mat_norm_squared_d3(basis_T[i]));
     for (j = 0; j < 3; j++) {
