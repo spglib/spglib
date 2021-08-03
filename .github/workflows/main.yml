@@ -1,0 +1,62 @@
+name: Wheel build
+
+on: [push]
+
+jobs:
+  build-wheel:
+    name: Build ${{ matrix.platform }} wheels
+    runs-on: ubuntu-latest
+    strategy:    
+      matrix:
+        platform:
+          - manylinux1_x86_64
+          - manylinux1_i686
+          - manylinux2014_x86_64
+          - manylinux2014_aarch64  
+      fail-fast: false
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up QEMU
+      if: ${{ matrix.platform == 'manylinux2014_aarch64' }}
+      uses: docker/setup-qemu-action@v1
+
+    - name: Set up Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.6
+
+    - name: Build manylinux Python wheels
+      if: ${{ matrix.platform == 'manylinux1_x86_64' }}
+      uses: RalfG/python-wheels-manylinux-build@v0.3.4-manylinux1_x86_64
+      with:
+        python-versions: 'cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39'
+        pre-build-command: cp -a ../src .
+        package-path: ./python
+    - name: Build manylinux Python wheels
+      if: ${{ matrix.platform == 'manylinux1_i686' }}
+      uses: RalfG/python-wheels-manylinux-build@v0.3.4-manylinux1_i686
+      with:
+        python-versions: 'cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39'
+        pre-build-command: cp -a ../src .
+        package-path: ./python
+    - name: Build manylinux Python wheels
+      if: ${{ matrix.platform == 'manylinux2014_x86_64' }}
+      uses: RalfG/python-wheels-manylinux-build@v0.3.4-manylinux2014_x86_64
+      with:
+        python-versions: 'cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39'
+        pre-build-command: cp -a ../src .
+        package-path: ./python
+    - name: Build manylinux Python wheels
+      if: ${{ matrix.platform == 'manylinux2014_aarch64' }}
+      uses: RalfG/python-wheels-manylinux-build@v0.3.4-manylinux2014_aarch64
+      with:
+        python-versions: 'cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39'
+        pre-build-command: cp -a ../src .
+        package-path: ./python        
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: dist
+        path: ./python/dist/*-manylinux*.whl
