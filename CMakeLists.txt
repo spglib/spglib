@@ -1,5 +1,5 @@
 
-cmake_minimum_required(VERSION 2.4)
+cmake_minimum_required(VERSION 2.8.12)
 
 project(spglib C)
 set(CMAKE_MACOSX_RPATH 1)
@@ -14,6 +14,14 @@ include(GNUInstallDirs)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
+option(USE_OMP "Build with OpenMP support" ON)
+
+if (USE_OMP)
+  find_package(OpenMP)
+  if (OPENMP_FOUND)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+  endif()
+endif()
 
 # Version numbers
 file(READ ${PROJECT_SOURCE_DIR}/src/version.h version_file)
@@ -68,7 +76,9 @@ set_property(TARGET symspg_static PROPERTY OUTPUT_NAME symspg)
 install(TARGETS symspg_static ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 # Header file
-install(FILES ${PROJECT_SOURCE_DIR}/src/spglib.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(FILES ${PROJECT_SOURCE_DIR}/src/spglib.h
+              ${PROJECT_SOURCE_DIR}/fortran/spglib_f08.f90
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 add_executable(spglibtest EXCLUDE_FROM_ALL ${PROJECT_SOURCE_DIR}/src/test.c ${SOURCES})
 

@@ -92,7 +92,9 @@ static int delaunay_reduce(double red_lattice[3][3],
   int i, j, attempt, succeeded;
   int tmp_mat_int[3][3];
   double volume;
-  double tmp_mat[3][3], basis[4][3];
+  double orig_lattice[3][3], tmp_mat[3][3], basis[4][3];
+
+  mat_copy_matrix_d3(orig_lattice, lattice);
 
   get_exteneded_basis(basis, lattice);
 
@@ -132,7 +134,7 @@ static int delaunay_reduce(double red_lattice[3][3],
   }
 
   mat_inverse_matrix_d3(tmp_mat, red_lattice, symprec);
-  mat_multiply_matrix_d3(tmp_mat, tmp_mat, lattice);
+  mat_multiply_matrix_d3(tmp_mat, tmp_mat, orig_lattice);
   mat_cast_matrix_3d_to_3i(tmp_mat_int, tmp_mat);
   if (abs(mat_get_determinant_i3(tmp_mat_int)) != 1) {
     warning_print("spglib: Determinant of Delaunay change of basis matrix "
