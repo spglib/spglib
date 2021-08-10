@@ -1,3 +1,29 @@
+2021-08-10  Atsushi Togo  <atz.togo@gmail.com>
+
+	* Version 1.16.2
+
+	Collection of fixes and improvements.
+
+	* PR #130 by odidev
+
+	Github workflow to build PyPI wheels.
+
+	* PR #124 by site-g
+	
+	Fix wyckoff position database.
+
+	* PR #120 by site-g
+
+	Fix Delaunay reduction.
+
+	* PR #119 by dmt4
+
+	Improvements of fortran interface.
+
+	* PR #117 by Jonas-Finkler
+
+	Added standardize_cell to fortran interface.
+
 2021-01-29  Atsushi Togo  <atz.togo@gmail.com>
 
 	* Version 1.16.1

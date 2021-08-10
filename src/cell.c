@@ -72,8 +72,6 @@ Cell * cel_alloc_cell(const int size)
     return NULL;
   }
 
-  cell = NULL;
-
   if ((cell = (Cell*) malloc(sizeof(Cell))) == NULL) {
     warning_print("spglib: Memory could not be allocated.");
     return NULL;
