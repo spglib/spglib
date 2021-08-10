@@ -1,7 +1,6 @@
 [![Version Badge](https://anaconda.org/conda-forge/spglib/badges/version.svg)](https://anaconda.org/conda-forge/spglib)
 [![Downloads Badge](https://anaconda.org/conda-forge/spglib/badges/downloads.svg)](https://anaconda.org/conda-forge/spglib)
 [![PyPI](https://img.shields.io/pypi/dm/spglib.svg?maxAge=2592000)](https://pypi.python.org/pypi/spglib)
-[![Build Status](https://travis-ci.org/atztogo/spglib.svg?branch=master)](https://travis-ci.org/atztogo/spglib)
 
 # Spglib
 
@@ -33,9 +32,14 @@ A simple test is executed by
 % make check
 ```
 
-## Mailing list for questions
+## How to run test
 
-Usual spglib questions should be sent to spglib mailing list (https://sourceforge.net/p/spglib/mailman/).
+Test is provided with the python interface.
+```
+% cd python
+% pip install -e .
+% pytest
+```
 
 ## Development
 
@@ -47,3 +51,7 @@ The development of spglib is managed on the `develop` branch of github spglib re
 ## Documentation
 
 Spglib user documetation is written using python sphinx. The source files are stored in `doc` directory. Please see how to write the documentation at `doc/README.md`.
+
+## Mailing list for questions
+
+Usual spglib questions should be sent to spglib mailing list (https://sourceforge.net/p/spglib/mailman/).
