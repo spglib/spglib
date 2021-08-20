@@ -642,7 +642,7 @@ static size_t get_dense_ir_reciprocal_mesh_normal(int grid_address[][3],
   /* grid: reducible grid points */
   /* ir_mapping_table: the mapping from each point to ir-point. */
 
-  ptrdiff_t i;
+  long i;
   size_t grid_point_rot;
   int j;
   int address_double[3], address_double_rot[3];
@@ -682,7 +682,7 @@ get_dense_ir_reciprocal_mesh_distortion(int grid_address[][3],
                                         const int is_shift[3],
                                         const MatINT *rot_reciprocal)
 {
-  ptrdiff_t i;
+  long i;
   size_t grid_point_rot;
   int j, k, indivisible;
   int address_double[3], address_double_rot[3];
@@ -746,7 +746,7 @@ get_dense_ir_reciprocal_mesh_distortion(int grid_address[][3],
 
 static size_t get_dense_num_ir(size_t ir_mapping_table[], const int mesh[3])
 {
-  ptrdiff_t i;
+  long i;
   size_t num_ir;
 
   num_ir = 0;
