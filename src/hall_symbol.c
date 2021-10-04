@@ -1537,8 +1537,9 @@ static int find_hall_symbol(double origin_shift[3],
     return 0;
   }
 
-  /* HEXA, IT: 168-194, Hall: 462-488 */
-  if (462 <= hall_number && hall_number <= 488) {
+  /* HEXA, ITA: 168-194, Hall: 462-488; ITE: 73-80, Layer Hall: 109-116 */
+  if (462 <= hall_number && hall_number <= 488 ||
+      -116 <= hall_number && hall_number <= -109) {
     if (is_hall_symbol_hexa(origin_shift,
                             hall_number,
                             primitive_lattice,
@@ -1547,8 +1548,9 @@ static int find_hall_symbol(double origin_shift[3],
     return 0;
   }
 
-  /* TRIGO, IT: 143-167, Hall: 430-461 */
-  if (430 <= hall_number && hall_number <= 461) {
+  /* TRIGO, ITA: 143-167, Hall: 430-461; ITE: 65-73, Layer Hall: 101-108 */
+  if (430 <= hall_number && hall_number <= 461 ||
+      -108 <= hall_number && hall_number <= -101) {
     if (hall_number == 433 ||
         hall_number == 434 ||
         hall_number == 436 ||
@@ -1578,8 +1580,9 @@ static int find_hall_symbol(double origin_shift[3],
     return 0;
   }
 
-  /* TETRA, IT: 75-142, Hall: 349-429 */
-  if (349 <= hall_number && hall_number <= 429) {
+  /* TETRA, ITA: 75-142, Hall: 349-429; ITE: 49-64, Layer Hall: 82-100 */
+  if (349 <= hall_number && hall_number <= 429 ||
+      -100 <= hall_number && hall_number <= -82) {
     if (is_hall_symbol_tetra(origin_shift,
                              hall_number,
                              primitive_lattice,
@@ -1589,8 +1592,9 @@ static int find_hall_symbol(double origin_shift[3],
     return 0;
   }
 
-  /* ORTHO, IT: 16-74, Hall: 108-348 */
-  if (108 <= hall_number && hall_number <= 348) {
+  /* ORTHO, ITA: 16-74, Hall: 108-348; ITE: 19-48, Layer Hall: 34-81 */
+  if (108 <= hall_number && hall_number <= 348 ||
+      -81 <= hall_number && hall_number <= -34) {
     if (is_hall_symbol_ortho(origin_shift,
                              hall_number,
                              primitive_lattice,
@@ -1600,8 +1604,9 @@ static int find_hall_symbol(double origin_shift[3],
     return 0;
   }
 
-  /* MONOCLI, IT: 3-15, Hall: 3-107 */
-  if (3 <= hall_number && hall_number <= 107) {
+  /* MONOCLI, ITA: 3-15, Hall: 3-107; ITE: 3-18, Layer Hall: 3-33 */
+  if (3 <= hall_number && hall_number <= 107 ||
+      -33 <= hall_number && hall_number <= -3) {
     if (is_hall_symbol_monocli(origin_shift,
                                hall_number,
                                primitive_lattice,
@@ -1611,8 +1616,8 @@ static int find_hall_symbol(double origin_shift[3],
     return 0;
   }
 
-  /* TRICLI, IT: 1-2, Hall: 1-2 */
-  if (1 <= hall_number && hall_number <= 2) {
+  /* TRICLI, ITA: 1-2, Hall: 1-2; ITE: 1-2, Layer Hall: 1-2 */
+  if (-2 <= hall_number && hall_number <= 2 && hall_number != 0) {
     if (is_hall_symbol_tricli(origin_shift,
                               hall_number,
                               primitive_lattice,
@@ -2133,9 +2138,11 @@ static void transform_translation(double trans_reduced[3],
     break;
   }
 
+  /* This is done in get_origin_shift
   for (i = 0; i < 3; i++) {
     trans_reduced[i] = mat_Dmod1(trans_reduced[i]);
   }
+  */
 }
 
 static void transform_rotation(double rot_reduced[3][3],
@@ -2191,9 +2198,9 @@ static int get_origin_shift(double shift[3],
       }
     } else {
       if (set_dw(tmp_dw, operation_index, rot[i], trans[i], centering)) {
-        for (j = 0; j < 3; j++) {
-          dw[i * 3 + j] = tmp_dw[j];
-        }
+        dw[i * 3] = mat_Dmod1(tmp_dw[0]);
+        dw[i * 3 + 1] = mat_Dmod1(tmp_dw[1]);
+        dw[i * 3 + 2] = hall_number > 0 ? mat_Dmod1(tmp_dw[2]) : tmp_dw[2];
       } else {
         goto not_found;
       }
@@ -2206,8 +2213,11 @@ static int get_origin_shift(double shift[3],
     for (j = 0; j < 9; j++) {
       shift[i] += VSpU[i][j] * dw[j];
     }
-    shift[i] = mat_Dmod1(shift[i]);
   }
+
+  shift[0] = mat_Dmod1(shift[0]);
+  shift[1] = mat_Dmod1(shift[1]);
+  shift[2] = hall_number > 0 ? mat_Dmod1(shift[2]) : shift[2];
 
   return 1;
 
@@ -2232,7 +2242,7 @@ static int set_dw(double dw[3],
     if (mat_check_identity_matrix_i3(rot_db, rot)) {
       for (j = 0; j < 3; j++) {
         dw[j] = trans_prim[j] - trans_db_prim[j];
-        dw[j] = mat_Dmod1(dw[j]);
+        /* dw[j] = mat_Dmod1(dw[j]); */
       }
       goto found;
     }
@@ -2258,6 +2268,7 @@ static int is_match_database(const int hall_number,
   int found_list[192];
   double trans_db[3], trans_db_prim[3], trans_prim[3], diff[3], shift_rot[3];
   double rot_prim[3][3];
+  int periodic_axes[2] = {0, 1};
 
   spgdb_get_operation_index(operation_index, hall_number);
 
@@ -2274,7 +2285,15 @@ static int is_match_database(const int hall_number,
           diff[k] = trans_prim[k] - trans_db_prim[k] + origin_shift[k];
         }
         mat_multiply_matrix_vector_d3(shift_rot, rot_prim, origin_shift);
-        if (cel_is_overlap(diff, shift_rot, primitive_lattice, symprec)) {
+        if (hall_number > 0 && cel_is_overlap(diff,
+                                              shift_rot,
+                                              primitive_lattice,
+                                              symprec) ||
+            hall_number < 0 && cel_layer_is_overlap(diff,
+                                                    shift_rot,
+                                                    primitive_lattice,
+                                                    periodic_axes,
+                                                    symprec)) {
           if (! found_list[j]) {
             found_list[j] = 1;
             is_found = 1;

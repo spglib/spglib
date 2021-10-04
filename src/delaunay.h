@@ -44,5 +44,14 @@ int del_delaunay_reduce_2D(double min_lattice[3][3],
                            SPGCONST double lattice[3][3],
                            const int unique_axis,
                            const double symprec);
+int del_layer_delaunay_reduce(double min_lattice[3][3],
+                              SPGCONST double lattice[3][3],
+                              const int aperiodic_axis,
+                              const double symprec);
+int del_layer_delaunay_reduce_2D(double min_lattice[3][3],
+                                 SPGCONST double lattice[3][3],
+                                 const int unique_axis,
+                                 const int aperiodic_axis,
+                                 const double symprec);
 
 #endif
