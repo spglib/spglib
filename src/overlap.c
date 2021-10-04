@@ -112,6 +112,17 @@ static int check_total_overlap_for_sorted(SPGCONST double lattice[3][3],
                                           const int types_rotated[],
                                           const int num_pos,
                                           const double symprec);
+/* ovl_check_total_overlap ,check_total_overlap_for_sorted, layer_has_overlap */
+/* and layer_has_overlap_with_same_type are copied to get rid of some if statement */
+/* I have not tested if it is better in efficiency. */
+static int check_layer_total_overlap_for_sorted(SPGCONST double lattice[3][3],
+                                                SPGCONST double (*pos_original)[3],
+                                                SPGCONST double (*pos_rotated)[3],
+                                                const int types_original[],
+                                                const int types_rotated[],
+                                                const int num_pos,
+                                                const int periodic_axes[3],
+                                                const double symprec);
 
 /* Note that some compilers apparently don't like it
  * when you have a separate prototype with a function
@@ -176,6 +187,43 @@ static OVL_INLINE int has_overlap_with_same_type(const double a[3],
   }
 }
 
+/* Modified from has_overlap */
+static OVL_INLINE int layer_has_overlap(const double a[3],
+                                        const double b[3],
+                                        SPGCONST double lattice[3][3],
+                                        const int periodic_axes[2],
+                                        const double symprec)
+{
+  double v_diff[3];
+  v_diff[0] = a[0] - b[0];
+  v_diff[1] = a[1] - b[1];
+  v_diff[2] = a[2] - b[2];
+
+  v_diff[periodic_axes[0]] -= Nint(v_diff[periodic_axes[0]]);
+  v_diff[periodic_axes[1]] -= Nint(v_diff[periodic_axes[1]]);
+
+  if (cartesian_norm(lattice, v_diff) <= symprec) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+static OVL_INLINE int layer_has_overlap_with_same_type(const double a[3],
+                                                       const double b[3],
+                                                       const int type_a,
+                                                       const int type_b,
+                                                       SPGCONST double lattice[3][3],
+                                                       const int periodic_axes[2],
+                                                       const double symprec)
+{
+  if (type_a == type_b) {
+    return layer_has_overlap(a, b, lattice, periodic_axes, symprec);
+  } else {
+    return 0;
+  }
+}
+
 /* ------------------------------------- */
 /*          arg-sorting                  */
 
@@ -204,6 +252,7 @@ void ovl_overlap_checker_free(OverlapChecker *checker)
 
 OverlapChecker* ovl_overlap_checker_init(const Cell *cell)
 {
+  int i, rank;
   OverlapChecker * checker;
   checker = NULL;
 
@@ -237,6 +286,14 @@ OverlapChecker* ovl_overlap_checker_init(const Cell *cell)
               cell->types,
               checker->perm_temp,
               cell->size);
+
+  rank = 0;
+  for (i = 0; i < 3; i++) {
+    if (i != cell->aperiodic_axis) {
+      checker->periodic_axes[rank] = i;
+      rank++;
+    }
+  }
 
   return checker;
 }
@@ -304,6 +361,78 @@ int ovl_check_total_overlap(OverlapChecker *checker,
                                          checker->types_sorted, /* types_original */
                                          checker->size,
                                          symprec);
+  if (check == -1) {
+    /* Error! */
+    return -1;
+  }
+
+  return check;
+}
+
+/* Uses a OverlapChecker to efficiently--but thoroughly--confirm that a given symmetry operator */
+/* is a symmetry of the cell. If you need to test many symmetry operators on the same cell, */
+/* you can create one OverlapChecker from the Cell and call this function many times. */
+/* -1: Error.  0:  Not a symmetry.   1. Is a symmetry. */
+int ovl_check_layer_total_overlap(OverlapChecker *checker,
+                                  const double test_trans[3],
+                                  int rot[3][3],
+                                  const double symprec,
+                                  const int is_identity)
+{
+  int i, k, check;
+
+  /* Check a few atoms by brute force before continuing. */
+  /* For bad translations, this can be much cheaper than sorting. */
+  if (!check_possible_overlap(checker,
+                              test_trans,
+                              rot,
+                              symprec)) {
+    return 0;
+  }
+
+  /* Write rotated positions to 'pos_temp_1' */
+  for (i = 0; i < checker->size; i++) {
+    if (is_identity) {
+      for (k = 0; k < 3; k++) {
+        checker->pos_temp_1[i][k] = checker->pos_sorted[i][k];
+      }
+    } else {
+      mat_multiply_matrix_vector_id3(checker->pos_temp_1[i],
+                                     rot,
+                                     checker->pos_sorted[i]);
+    }
+
+    for (k = 0; k < 3; k++) {
+      checker->pos_temp_1[i][k] += test_trans[k];
+    }
+  }
+
+  /* Get permutation that sorts these positions. */
+  if (!argsort_by_lattice_point_distance(checker->perm_temp,
+                                         checker->lattice,
+                                         checker->pos_temp_1,
+                                         checker->types_sorted,
+                                         checker->distance_temp,
+                                         checker->argsort_work,
+                                         checker->size)) {
+    return -1;
+  }
+
+  /* Use the permutation to sort them. Write to 'pos_temp_2'. */
+  permute_double_3(checker->pos_temp_2,
+                   checker->pos_temp_1,
+                   checker->perm_temp,
+                   checker->size);
+
+  /* Do optimized check for overlap between sorted coordinates. */
+  check = check_layer_total_overlap_for_sorted(checker->lattice,
+                                               checker->pos_sorted, /* pos_original */
+                                               checker->pos_temp_2, /* pos_rotated */
+                                               checker->types_sorted, /* types_original */
+                                               checker->types_sorted, /* types_original */
+                                               checker->size,
+                                               checker->periodic_axes,
+                                               symprec);
   if (check == -1) {
     /* Error! */
     return -1;
@@ -433,6 +562,7 @@ static OverlapChecker* overlap_checker_alloc(int size)
 {
   int offset_pos_temp_1, offset_pos_temp_2, offset_distance_temp;
   int offset_perm_temp, offset_pos_sorted, offset_types_sorted, offset_lattice;
+  int offset_periodic_axes;
   int offset, blob_size;
   char * chr_blob;
   OverlapChecker * checker;
@@ -450,6 +580,7 @@ static OverlapChecker* overlap_checker_alloc(int size)
   offset_lattice = SPG_POST_INCREMENT(offset, 9 * sizeof(double));
   offset_pos_sorted = SPG_POST_INCREMENT(offset, size * sizeof(double[3]));
   offset_types_sorted =  SPG_POST_INCREMENT(offset, size * sizeof(int));
+  offset_periodic_axes = SPG_POST_INCREMENT(offset, 3 * sizeof(int));
   blob_size = offset;
 
   if ((checker = (OverlapChecker*)malloc(sizeof(OverlapChecker))) == NULL) {
@@ -485,6 +616,7 @@ static OverlapChecker* overlap_checker_alloc(int size)
   checker->lattice = (double (*)[3])(chr_blob + offset_lattice);
   checker->pos_sorted  = (double (*)[3])(chr_blob + offset_pos_sorted);
   checker->types_sorted = (int *)(chr_blob + offset_types_sorted);
+  checker->periodic_axes = (int *)(chr_blob + offset_periodic_axes);
 
   return checker;
 }
@@ -623,6 +755,78 @@ static int check_total_overlap_for_sorted(SPGCONST double lattice[3][3],
                                      types_rotated[i_rot],
                                      lattice,
                                      symprec)) {
+        found[i_rot] = 1;
+        break;
+      }
+    }
+
+    if (i_rot == num_pos) {
+      /* We never hit the 'break'. */
+      /* Failure; a position in pos_original does not */
+      /* overlap with any position in pos_rotated. */
+      free(found);
+      found = NULL;
+      return 0;
+    }
+  }
+
+  free(found);
+  found = NULL;
+
+  /* Success */
+  return 1;
+}
+
+/* Optimized for the case where the max difference in index */
+/* between pos_original and pos_rotated is small. */
+/* -1: Error.  0: False.  1:  True. */
+static int check_layer_total_overlap_for_sorted(SPGCONST double lattice[3][3],
+                                                SPGCONST double (*pos_original)[3],
+                                                SPGCONST double (*pos_rotated)[3],
+                                                const int types_original[],
+                                                const int types_rotated[],
+                                                const int num_pos,
+                                                const int periodic_axes[3],
+                                                const double symprec)
+{
+  int * found;
+  int i, i_orig, i_rot;
+  int search_start;
+
+  found = NULL;
+
+  if ((found = (int *)malloc(num_pos * sizeof(int))) == NULL) {
+    warning_print("spglib: Memory could not be allocated");
+    return -1;
+  }
+
+  /* found[i] = 1 if pos_rotated[i] has been found in pos_original */
+  for (i = 0; i < num_pos; i++) {
+    found[i] = 0;
+  }
+
+  search_start = 0;
+  for (i_orig = 0; i_orig < num_pos; i_orig++) {
+
+    /* Permanently skip positions filled near the beginning. */
+    while (found[search_start]) {
+      search_start++;
+    }
+
+    for (i_rot = search_start; i_rot < num_pos; i_rot++) {
+
+      /* Skip any filled positions that aren't near the beginning. */
+      if (found[i_rot]) {
+        continue;
+      }
+
+      if (layer_has_overlap_with_same_type(pos_original[i_orig],
+                                           pos_rotated[i_rot],
+                                           types_original[i_orig],
+                                           types_rotated[i_rot],
+                                           lattice,
+                                           periodic_axes,
+                                           symprec)) {
         found[i_rot] = 1;
         break;
       }
