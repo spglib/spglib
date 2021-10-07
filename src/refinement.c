@@ -645,7 +645,7 @@ static Cell * expand_positions_in_bravais(int * wyckoffs,
   }
 
   mat_copy_matrix_d3(bravais->lattice, conv_prim->lattice);
-  bravais->aperiodic_axis == conv_prim->aperiodic_axis;
+  bravais->aperiodic_axis = conv_prim->aperiodic_axis;
 
   return bravais;
 }

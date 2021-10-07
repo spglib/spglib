@@ -266,7 +266,6 @@ int cel_layer_is_overlap(const double a[3],
                          const int periodic_axes[2],
                          const double symprec)
 {
-  int i;
   double v_diff[3];
 
   v_diff[0] = a[0] - b[0];

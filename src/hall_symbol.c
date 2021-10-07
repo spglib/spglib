@@ -2110,7 +2110,9 @@ static void transform_translation(double trans_reduced[3],
                                   const Centering centering,
                                   const double trans[3])
 {
+  /* This is done in get_origin_shift
   int i;
+  */
 
   switch (centering) {
   case PRIMITIVE:

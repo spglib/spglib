@@ -127,7 +127,7 @@ int niggli_get_micro_version(void)
 /* return 0 if failed */
 int niggli_reduce(double* lattice_, const double eps_)
 {
-  periodic_niggli_reduce(lattice_, eps_, -1);
+  return periodic_niggli_reduce(lattice_, eps_, -1);
 }
 
 int periodic_niggli_reduce(double *lattice_, 
