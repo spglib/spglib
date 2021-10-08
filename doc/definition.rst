@@ -348,7 +348,7 @@ as follows:
 
 The choice of transformation matrix is a matter of convention. The transformation
 matrices above transform from a conventional ITA basis to the primitive
-setting adopted in the reference work of Cracknell, Davies, Love, and Miller
+setting adopted in the reference work of Cracknell, Davies, Miller, and Love
 (CDML). Other primitive setting choices exist: of note, the CDML choice is not
 the primitive setting choice made in the International Tables of Crystallography.
 
