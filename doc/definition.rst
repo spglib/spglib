@@ -78,7 +78,7 @@ Atomic point coordinates :math:`\boldsymbol{x}`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Coordinates of an atomic point :math:`\boldsymbol{x}` are represented
-as three fractional values relative to basis vectors ,
+as three fractional values relative to basis vectors as follows,
 
 .. math::
    :label: coordinate_triplet
