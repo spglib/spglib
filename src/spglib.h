@@ -163,6 +163,14 @@ extern "C" {
                                   const int num_atom,
                                   const double symprec);
 
+  /* This is for test using */
+  SpglibDataset * spg_get_layer_dataset(SPGCONST double lattice[3][3],
+                                        SPGCONST double position[][3],
+                                        const int types[],
+                                        const int num_atom,
+                                        const int aperiodic_axis,
+                                        const double symprec);
+
   SpglibDataset * spgat_get_dataset(SPGCONST double lattice[3][3],
                                     SPGCONST double position[][3],
                                     const int types[],

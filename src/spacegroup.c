@@ -54,7 +54,7 @@
 #define INT_PREC 0.1
 #define ZERO_PREC 1e-10
 
-static double change_of_basis_monocli[36][3][3] = {
+static double change_of_basis_monocli[48][3][3] = {
   {{ 1, 0, 0 }, /* b  first turn; two axes are flipped in second turn */
    { 0, 1, 0 },
    { 0, 0, 1 }},
@@ -162,7 +162,47 @@ static double change_of_basis_monocli[36][3][3] = {
    { 1, 1, 0 }},
   {{ 0, 0,-1 }, /* a */
    {-1, 0, 0 },
-   { 0, 1,-1 }}};
+   { 0, 1,-1 }},
+  {{ 1, 0, 0 }, /*  c1  Monoclinic/Oblique layer group; first turn */
+   { 0, 1, 0 },
+   { 0, 0, 1 }},
+  {{ 0, 1, 0 }, /* -c1 */
+   { 1, 0, 0 },
+   { 0, 0,-1 }},
+  {{ 0,-1, 0 }, /*  c2 */
+   { 1,-1, 0 },
+   { 0, 0, 1 }},
+  {{-1, 0, 0 }, /* -c2 */
+   {-1, 1, 0 },
+   { 0, 0,-1 }},
+  {{-1, 1, 0 }, /*  c3 */
+   {-1, 0, 0 },
+   { 0, 0, 1 }},
+  {{ 1,-1, 0 }, /* -c3 */
+   { 0,-1, 0 },
+   { 0, 0,-1 }},
+  {{ 1, 0, 0 }, /* -c1  Monoclinic/Oblique layer group; second turn */
+   { 0,-1, 0 },
+   { 0, 0,-1 }},
+  {{ 0,-1, 0 }, /*  c1 */
+   { 1, 0, 0 },
+   { 0, 0, 1 }},
+  {{ 0, 1, 0 }, /* -c2 */
+   { 1, 1, 0 },
+   { 0, 0,-1 }},
+  {{-1, 0, 0 }, /*  c2 */
+   {-1,-1, 0 },
+   { 0, 0, 1 }},
+  {{-1,-1, 0 }, /* -c3 */
+   {-1, 0, 0 },
+   { 0, 0,-1 }},
+  {{ 1, 1, 0 }, /*  c3 */
+   { 0, 1, 0 },
+   { 0, 0, 1 }},
+};
+
+/* Change of basis for Monoclinic/Rectangular layer group */
+static int index_monocli_rectang[8] = {0, 5, 7, 8, 18, 23, 25, 26};
 
 static Centering change_of_centering_monocli[36] = {
   C_FACE, /* first turn */
@@ -202,9 +242,10 @@ static Centering change_of_centering_monocli[36] = {
   BODY,
   BODY};
 
-static int change_of_unique_axis_monocli[36] = {
+static int change_of_unique_axis_monocli[48] = {
   1, 1, 0, 2, 2, 0, 1, 1, 0, 2, 2, 0, 1, 1, 0, 2, 2, 0,
-  1, 1, 0, 2, 2, 0, 1, 1, 0, 2, 2, 0, 1, 1, 0, 2, 2, 0};
+  1, 1, 0, 2, 2, 0, 1, 1, 0, 2, 2, 0, 1, 1, 0, 2, 2, 0,
+  2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2};
 
 static double change_of_basis_ortho[6][3][3] = {{{ 1, 0, 0 },
                                                  { 0, 1, 0 },
@@ -254,6 +295,13 @@ static int num_axis_choices_ortho[59] = {
   1, 1, 1, 1, 2, 2, 1, 2, 2, 1,  /* 51-60 */
   3, 1, 1, 1, 2, 2, 2, 2, 6, 6,  /* 61-70 */
   6, 2, 6, 2};  /* 71-74 */
+
+/* Use n_l of spacegroup with c != a and c != b */
+static int layer_num_axis_choices_ortho[30] = {
+  2, 1,  /* 19-20 */
+  2, 2, 2, 1, 2, 2, 1, 1, 1, 1,  /* 21-30 */
+  1, 1, 1, 1, 1, 1, 2, 1, 2, 1,  /* 31-40 */
+  1, 1, 1, 2, 1, 2, 2, 2 };  /* 41-48 */
 
 /* hR_to_hP is the inverse of rhombo_obverse and used until the */
 /* commit  e0398ba9. But now this is included in */
@@ -394,6 +442,17 @@ static int spacegroup_to_hall_number[230] = {
   517, 518, 520, 521, 523, 524, 525, 527, 529, 530,
 };
 
+static int layer_group_to_hall_number[116] = {
+    -1,   -2,   -3,   -4,   -5,   -8,   -9,  -12,  -14,  -16,
+   -18,  -20,  -22,  -24,  -26,  -28,  -30,  -32,  -34,  -35,
+   -37,  -38,  -39,  -40,  -42,  -43,  -44,  -46,  -48,  -50,
+   -52,  -54,  -56,  -58,  -60,  -62,  -64,  -65,  -67,  -68,
+   -70,  -72,  -74,  -76,  -77,  -79,  -80,  -81,  -82,  -83,
+   -84,  -85,  -87,  -88,  -89,  -90,  -91,  -92,  -93,  -94,
+   -95,  -96,  -98,  -99, -101, -102, -103, -104, -105, -106,
+  -107, -108, -109, -110, -111, -112, -113, -114, -115, -116,
+};
+
 static double identity[3][3] = {{ 1, 0, 0 },
                                 { 0, 1, 0 },
                                 { 0, 0, 1 }};
@@ -452,11 +511,13 @@ static int iterative_search_hall_number(double origin_shift[3],
 static int change_basis_tricli(int tmat_int[3][3],
                                SPGCONST double conv_lattice[3][3],
                                SPGCONST double primitive_lattice[3][3],
-                               const double symprec);
+                               const double symprec,
+                               const int aperiodic_axis);
 static int change_basis_monocli(int tmat_int[3][3],
                                 SPGCONST double conv_lattice[3][3],
                                 SPGCONST double primitive_lattice[3][3],
-                                const double symprec);
+                                const double symprec,
+                                const int aperiodic_axis_prim);
 static Symmetry *
 get_initial_conventional_symmetry(const Centering centering,
                                   SPGCONST double tmat[3][3],
@@ -586,7 +647,7 @@ Spacegroup * spa_search_spacegroup(const Primitive * primitive,
     return NULL;
   }
 
-  if (hall_number > 0) {
+  if (hall_number != 0) {
     candidate[0] = hall_number;
   }
 
@@ -597,14 +658,21 @@ Spacegroup * spa_search_spacegroup(const Primitive * primitive,
                                                  symmetry,
                                                  symprec,
                                                  angle_tolerance);
-  } else {
+  } else if (primitive->cell->aperiodic_axis == -1) {
     spacegroup = search_spacegroup_with_symmetry(primitive,
                                                  spacegroup_to_hall_number,
                                                  230,
                                                  symmetry,
                                                  symprec,
                                                  angle_tolerance);
-  }
+  } else {
+    spacegroup = search_spacegroup_with_symmetry(primitive,
+                                                 layer_group_to_hall_number,
+                                                 116,
+                                                 symmetry,
+                                                 symprec,
+                                                 angle_tolerance);
+  };
 
   sym_free_symmetry(symmetry);
   symmetry = NULL;
@@ -854,7 +922,7 @@ static Spacegroup * get_spacegroup(const int hall_number,
     return NULL;
   }
 
-  if (0 < hall_number && hall_number < 531) {
+  if (-117 < hall_number && hall_number < 531 && hall_number != 0) {
     spacegroup_type = spgdb_get_spacegroup_type(hall_number);
     mat_copy_matrix_d3(spacegroup->bravais_lattice, conv_lattice);
     mat_copy_vector_d3(spacegroup->origin_shift, origin_shift);
@@ -900,7 +968,7 @@ static int iterative_search_hall_number(double origin_shift[3],
                                    symmetry,
                                    symprec);
 
-  if (hall_number > 0) {
+  if (hall_number != 0) {
     goto ret;
   }
 
@@ -925,7 +993,7 @@ static int iterative_search_hall_number(double origin_shift[3],
                                      symprec);
     sym_free_symmetry(sym_reduced);
     sym_reduced = NULL;
-    if (hall_number > 0) {
+    if (hall_number != 0) {
       break;
     }
   }
@@ -943,7 +1011,7 @@ static int search_hall_number(double origin_shift[3],
                               const Symmetry * symmetry,
                               const double symprec)
 {
-  int i, hall_number;
+  int i, hall_number, aperiodic_axis;
   Centering centering;
   Pointgroup pointgroup;
   Symmetry * conv_symmetry;
@@ -955,15 +1023,18 @@ static int search_hall_number(double origin_shift[3],
   hall_number = 0;
   conv_symmetry = NULL;
 
+  aperiodic_axis = primitive->cell->aperiodic_axis;
+
   /* primitive->cell->lattice is set right handed. */
   /* tmat_int is set right handed. */
 
   /* For rhombohedral system, basis vectors for hP */
   /* (hexagonal lattice basis) are provided by tmat_int, */
   /* but may be either obverse or reverse setting. */
-  pointgroup = ptg_get_transformation_matrix(tmat_int,
-                                             symmetry->rot,
-                                             symmetry->size);
+  pointgroup = ptg_get_layer_transformation_matrix(tmat_int,
+                                                   symmetry->rot,
+                                                   symmetry->size,
+                                                   aperiodic_axis);
 
   debug_print("[line %d, %s]\n", __LINE__, __FILE__);
   debug_print("initial tranformation matrix\n");
@@ -982,7 +1053,8 @@ static int search_hall_number(double origin_shift[3],
       if (! change_basis_tricli(tmat_int,
                                 conv_lattice_tmp,
                                 primitive->cell->lattice,
-                                symprec)) {
+                                symprec,
+                                aperiodic_axis)) {
         goto err;
       }
     }
@@ -992,7 +1064,8 @@ static int search_hall_number(double origin_shift[3],
       if (! change_basis_monocli(tmat_int,
                                  conv_lattice_tmp,
                                  primitive->cell->lattice,
-                                 symprec)) {
+                                 symprec,
+                                 aperiodic_axis)) {
         goto err;
       }
     }
@@ -1057,7 +1130,8 @@ static int search_hall_number(double origin_shift[3],
 static int change_basis_tricli(int tmat_int[3][3],
                                SPGCONST double conv_lattice[3][3],
                                SPGCONST double primitive_lattice[3][3],
-                               const double symprec)
+                               const double symprec,
+                               const int aperiodic_axis)
 {
   int i, j;
   double niggli_cell[9];
@@ -1069,7 +1143,7 @@ static int change_basis_tricli(int tmat_int[3][3],
     }
   }
 
-  if (! niggli_reduce(niggli_cell, symprec * symprec)) {
+  if (! periodic_niggli_reduce(niggli_cell, symprec * symprec, aperiodic_axis)) {
     return 0;
   }
 
@@ -1097,15 +1171,34 @@ static int change_basis_tricli(int tmat_int[3][3],
 static int change_basis_monocli(int tmat_int[3][3],
                                 SPGCONST double conv_lattice[3][3],
                                 SPGCONST double primitive_lattice[3][3],
-                                const double symprec)
+                                const double symprec,
+                                const int aperiodic_axis_prim)
 {
   double smallest_lattice[3][3], inv_lattice[3][3], tmat[3][3];
+  int i, aperiodic_axis_conv;
 
-  if (! del_delaunay_reduce_2D(smallest_lattice,
-                               conv_lattice,
-                               1, /* unique axis of b */
-                               symprec)) {
+  aperiodic_axis_conv = -1;
+  if (aperiodic_axis_prim != -1) {
+    for (i = 0; i < 3; i++) {
+      if (tmat_int[aperiodic_axis_prim][i] != 0) {
+        aperiodic_axis_conv = i;
+      }
+    }
+  }
+
+  if (! del_layer_delaunay_reduce_2D(smallest_lattice,
+                                     conv_lattice,
+                                     1, /* unique axis of b */
+                                     aperiodic_axis_conv,
+                                     symprec)) {
     return 0;
+  }
+
+  /* For layer with 2D mp lattice, move the unique axis to c */
+  if (aperiodic_axis_conv == 0) {
+    mat_multiply_matrix_d3(smallest_lattice,
+                           smallest_lattice,
+                           change_of_basis_monocli[2]);
   }
 
   mat_inverse_matrix_d3(inv_lattice, primitive_lattice, 0);
@@ -1208,7 +1301,8 @@ static int match_hall_symbol_db(double origin_shift[3],
     /*      lengths preference. */
     /*   2. Finding transformation matrix and origin shift for the */
     /*      specified hall symbol. */
-    if (num_axis_choices_ortho[spacegroup_type.number - 16] == 2) {
+    if (hall_number > 0 &&
+        num_axis_choices_ortho[spacegroup_type.number - 16] == 2) {
       mat_copy_matrix_d3(changed_lattice, conv_lattice);
       if (! match_hall_symbol_db_ortho(
             origin_shift,
@@ -1245,7 +1339,22 @@ static int match_hall_symbol_db(double origin_shift[3],
       break;
     }
 
-    if (num_axis_choices_ortho[spacegroup_type.number - 16] == 1) {
+    /* c is the principal axis, axes switch is not required. */
+    if (hall_number < 0 &&
+        layer_num_axis_choices_ortho[spacegroup_type.number - 19] == 2) {
+        if (match_hall_symbol_db_ortho(origin_shift,
+                                       conv_lattice,
+                                       orig_lattice,
+                                       hall_number,
+                                       centering,
+                                       symmetry,
+                                       2,
+                                       symprec)) {return 1;}
+      break;
+    }
+
+    if (num_axis_choices_ortho[spacegroup_type.number - 16] == 1 ||
+        layer_num_axis_choices_ortho[spacegroup_type.number - 19] == 1) {
       if (match_hall_symbol_db_ortho(origin_shift,
                                      conv_lattice,
                                      orig_lattice,
@@ -1321,7 +1430,7 @@ static int match_hall_symbol_db_monocli(double origin_shift[3],
                                         const Symmetry *conv_symmetry,
                                         const double symprec)
 {
-  int i, check_norms, i_shortest, is_found_any;
+  int i, check_norms, i_shortest, is_found_any, j, num_change_of_basis;
   int is_found[36];
   double shortest_norm_sum, norm_sum;
   double norms_squared[36][2];
@@ -1329,11 +1438,13 @@ static int match_hall_symbol_db_monocli(double origin_shift[3],
 
   /* E. Parthe and L. M. Gelato */
   /* "The best unit cell for monoclinic structure..." (1983) */
+  /* 3: P2, p112. 4: P2_1, p11m. 6: Pm, p112/m. 10: P2/m. 11: P2_1/m */
   if (space_group_number == 3 ||
       space_group_number == 4 ||
       space_group_number == 6 ||
-      space_group_number == 10 ||
-      space_group_number == 11) {
+      (space_group_number == 10 ||
+       space_group_number == 11) &&
+      hall_number > 0) {
     /* |a| < |c| for unique axis b. (This is as written in the paper 1983.) */
     /* |a| < |b| for unique axis c. (This is spgilb definition.) */
     /* |b| < |c| for unique axis a. (This is spgilb definition.) */
@@ -1342,8 +1453,26 @@ static int match_hall_symbol_db_monocli(double origin_shift[3],
     check_norms = 0;
   }
 
-  for (i = 0; i < 36; i++) {
+  /* For layer group, 3-11: Monoclinic/Oblique, 12-33: Monoclinic/Rectangular */
+  if (hall_number > 0) {
+    num_change_of_basis = 36;
+  } else if (-11 <= hall_number && hall_number <= -3) {
+    num_change_of_basis = 12;
+  } else if (-33 <= hall_number && hall_number <= -12) {
+    num_change_of_basis = 8;
+  }
+
+  for (i = 0; i < num_change_of_basis; i++) {
     mat_copy_matrix_d3(all_conv_lattices[i], conv_lattice);
+    
+    if (hall_number > 0) {
+      j = i;
+    } else if (-11 <= hall_number && hall_number <= -3) {
+      j = i + 36;
+    } else if (-33 <= hall_number && hall_number <= -12) {
+      j = index_monocli_rectang[i];
+    }
+
     /* all_origin_shifts[i] is possibly overwritten. */
     /* is_found == 0: Not found */
     /* is_found == 1: Found. conv_lattice may not be similar to orig_lattice */
@@ -1351,7 +1480,7 @@ static int match_hall_symbol_db_monocli(double origin_shift[3],
     is_found[i] = match_hall_symbol_db_monocli_in_loop(all_origin_shifts[i],
                                                        all_conv_lattices[i],
                                                        norms_squared[i],
-                                                       i,
+                                                       j,
                                                        orig_lattice,
                                                        check_norms,
                                                        hall_number,
@@ -1361,7 +1490,7 @@ static int match_hall_symbol_db_monocli(double origin_shift[3],
   }
 
   is_found_any = 0;
-  for (i = 0; i < 36; i++) {
+  for (i = 0; i < num_change_of_basis; i++) {
     if (is_found[i]) {
       i_shortest = i;
       shortest_norm_sum = sqrt(norms_squared[i][0]) + sqrt(norms_squared[i][1]);
@@ -1375,7 +1504,7 @@ static int match_hall_symbol_db_monocli(double origin_shift[3],
   }
 
   /* Find shortest non-unique axes lengths */
-  for (i = 0; i < 36; i++) {
+  for (i = 0; i < num_change_of_basis; i++) {
     if (is_found[i]) {
       norm_sum = sqrt(norms_squared[i][0]) + sqrt(norms_squared[i][1]);
       if (shortest_norm_sum > norm_sum) {
@@ -1386,7 +1515,7 @@ static int match_hall_symbol_db_monocli(double origin_shift[3],
 
   /* Prefers is_found == 2, i.e., similar to orig_lattice */
   i_shortest = -1;
-  for (i = 0; i < 36; i++) {
+  for (i = 0; i < num_change_of_basis; i++) {
     if (is_found[i]) {
       norm_sum = sqrt(norms_squared[i][0]) + sqrt(norms_squared[i][1]);
       if (mat_Dabs(norm_sum - shortest_norm_sum) < symprec) {
@@ -1519,12 +1648,14 @@ static int match_hall_symbol_db_ortho(double origin_shift[3],
                                       const int num_free_axes,
                                       const double symprec)
 {
-  int i;
+  int i, j;
+
+  j = hall_number > 0 ? 1 : 3;
 
   /* Try to find the best (a, b, c) by flipping axes. */
   if (orig_lattice != NULL) {
     if (mat_get_determinant_d3(orig_lattice) > symprec) {
-      for (i = 0; i < 6; i++) {
+      for (i = 0; i < 6; i += j) {
         if (match_hall_symbol_db_ortho_in_loop(origin_shift,
                                                conv_lattice,
                                                orig_lattice,
@@ -1541,7 +1672,7 @@ static int match_hall_symbol_db_ortho(double origin_shift[3],
   }
 
   /* If flipping didn't work, usual search is made. */
-  for (i = 0; i < 6; i++) {
+  for (i = 0; i < 6; i += j) {
     if (match_hall_symbol_db_ortho_in_loop(origin_shift,
                                            conv_lattice,
                                            NULL,
@@ -2002,6 +2133,7 @@ static Symmetry * get_conventional_symmetry(SPGCONST double tmat[3][3],
     }
   }
 
+  /* This is done in get_origin_shift
   for (i = 0; i < multi; i++) {
     for (j = 0; j < size; j++) {
       for (k = 0; k < 3; k++) {
@@ -2010,6 +2142,7 @@ static Symmetry * get_conventional_symmetry(SPGCONST double tmat[3][3],
       }
     }
   }
+  */
 
   return symmetry;
 }

@@ -88,6 +88,14 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
                                    const int hall_number,
                                    const double symprec,
                                    const double angle_tolerance);
+static SpglibDataset * get_layer_dataset(SPGCONST double lattice[3][3],
+                                         SPGCONST double position[][3],
+                                         const int types[],
+                                         const int num_atom,
+                                         const int aperiodic_axis,
+                                         const int hall_number,
+                                         const double symprec,
+                                         const double angle_tolerance);
 static SpglibDataset * init_dataset(void);
 static int set_dataset(SpglibDataset * dataset,
                        const Cell * cell,
@@ -277,6 +285,23 @@ SpglibDataset * spg_get_dataset(SPGCONST double lattice[3][3],
                      0,
                      symprec,
                      -1.0);
+}
+
+SpglibDataset * spg_get_layer_dataset(SPGCONST double lattice[3][3],
+                                      SPGCONST double position[][3],
+                                      const int types[],
+                                      const int num_atom,
+                                      const int aperiodic_axis,
+                                      const double symprec)
+{
+  return get_layer_dataset(lattice,
+                           position,
+                           types,
+                           num_atom,
+                           aperiodic_axis,
+                           0,
+                           symprec,
+                           -1.0);
 }
 
 /* Return NULL if failed */
@@ -1235,6 +1260,101 @@ static SpglibDataset * get_dataset(SPGCONST double lattice[3][3],
     free(dataset);
     dataset = NULL;
     goto atoms_too_close;
+  }
+
+  if ((container = det_determine_all(cell,
+                                     hall_number,
+                                     symprec,
+                                     angle_tolerance))
+      != NULL) {
+    if (set_dataset(dataset,
+                    cell,
+                    container->primitive,
+                    container->spacegroup,
+                    container->exact_structure)) {
+      det_free_container(container);
+      container = NULL;
+      cel_free_cell(cell);
+      cell = NULL;
+      goto found;
+    }
+    det_free_container(container);
+    container = NULL;
+  }
+
+  cel_free_cell(cell);
+  cell = NULL;
+  free(dataset);
+  dataset = NULL;
+
+ not_found:
+  spglib_error_code = SPGERR_SPACEGROUP_SEARCH_FAILED;
+  return NULL;
+
+ atoms_too_close:
+  spglib_error_code = SPGERR_ATOMS_TOO_CLOSE;
+  return NULL;
+
+ found:
+
+  spglib_error_code = SPGLIB_SUCCESS;
+  return dataset;
+}
+
+/* Return NULL if failed */
+static SpglibDataset * get_layer_dataset(SPGCONST double lattice[3][3],
+                                         SPGCONST double position[][3],
+                                         const int types[],
+                                         const int num_atom,
+                                         const int aperiodic_axis,
+                                         const int hall_number,
+                                         const double symprec,
+                                         const double angle_tolerance)
+{
+  SpglibDataset *dataset;
+  Cell *cell;
+  DataContainer *container;
+
+  int i, rank, periodic_axes[2];
+
+  dataset = NULL;
+  cell = NULL;
+  container = NULL;
+
+  if ((dataset = init_dataset()) == NULL) {
+    goto not_found;
+  }
+
+  if ((cell = cel_alloc_cell(num_atom)) == NULL) {
+    free(dataset);
+    dataset = NULL;
+    goto not_found;
+  }
+
+  cel_set_layer_cell(cell, lattice, position, types, aperiodic_axis);
+  if (aperiodic_axis == -1) {
+    if (cel_any_overlap_with_same_type(cell, symprec)) {
+      cel_free_cell(cell);
+      cell = NULL;
+      free(dataset);
+      dataset = NULL;
+      goto atoms_too_close;
+    }
+  } else {
+    rank = 0;
+    for (i = 0; i < 3; i++) {
+      if (i != cell->aperiodic_axis) {
+        periodic_axes[rank] = i;
+        rank++;
+      }
+    }
+    if (cel_layer_any_overlap_with_same_type(cell, periodic_axes, symprec)) {
+      cel_free_cell(cell);
+      cell = NULL;
+      free(dataset);
+      dataset = NULL;
+      goto atoms_too_close;
+    }
   }
 
   if ((container = det_determine_all(cell,
