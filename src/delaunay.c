@@ -221,6 +221,13 @@ static void get_delaunay_shortest_vectors(double basis[4][3],
 
   /* Bubble sort */
   if (lattice_rank == 3) {
+    /* Uncomment to pass original POSCAR-074-ref
+    for (i = 0; i < 3; i++) {
+      b[2][i] = basis[2][i];
+      b[3][i] = basis[3][i];
+      b[4][i] = basis[0][i] + basis[1][i];
+    }
+    */
     for (i = 0; i < 6; i++) {
       for (j = 0; j < 6; j++) {
         if (mat_norm_squared_d3(b[j]) > mat_norm_squared_d3(b[j+1]) + ZERO_PREC) {

@@ -703,6 +703,10 @@ static int laue2m(int axes[3],
   int i, num_ortho_axis, norm, min_norm, is_found;
   int prop_rot[3][3];
   int ortho_axes[NUM_ROT_AXES];
+  /* Uncomment to pass original POSCAR-14-227-47-ref, POSCAR-15-230-prim-18-ref, POSCAR-15-bcc-18-ref */
+  /* This has been done in 2D delaunay reduce
+  int tmpval, t_mat[3][3];
+  */
 
   for (i = 0; i < pointsym->size; i++) {
     get_proper_rotation(prop_rot, pointsym->rot[i]);
@@ -746,6 +750,7 @@ static int laue2m(int axes[3],
   }
   if (! is_found) { goto err; }
 
+  /* Uncomment to pass original POSCAR-14-227-47-ref, POSCAR-15-230-prim-18-ref, POSCAR-15-bcc-18-ref */
   /* This has been done in 2D delaunay reduce
   set_transformation_matrix(t_mat, axes); 
   if (mat_get_determinant_i3(t_mat) < 0) {
