@@ -515,16 +515,16 @@ static int * get_overlap_table(const VecDBL * position,
                                const Cell * trimmed_cell,
                                const double symprec)
 {
-  int i, j, attempt, num_overlap, ratio, rank;
+  int i, j, attempt, num_overlap, ratio, lattice_rank;
   double trim_tolerance;
   int *overlap_table;
   int periodic_axes[3];
   /* use periodic_axes to avoid for loop in cel_layer_is_overlap */
-  rank = 0;
+  lattice_rank = 0;
   for (i = 0; i < 3; i++) {
     if (i != trimmed_cell->aperiodic_axis) {
-      periodic_axes[rank] = i;
-      rank++;
+      periodic_axes[lattice_rank] = i;
+      lattice_rank++;
     }
   }
 
@@ -541,11 +541,11 @@ static int * get_overlap_table(const VecDBL * position,
       overlap_table[i] = i;
       for (j = 0; j < cell_size; j++) {
         if (cell_types[i] == cell_types[j]) {
-          if ((rank == 3 && cel_is_overlap(position->vec[i],
+          if ((lattice_rank == 3 && cel_is_overlap(position->vec[i],
                                            position->vec[j],
                                            trimmed_cell->lattice,
                                            trim_tolerance))
-            || (rank == 2 && cel_layer_is_overlap(position->vec[i],
+            || (lattice_rank == 2 && cel_layer_is_overlap(position->vec[i],
                                                   position->vec[j],
                                                   trimmed_cell->lattice,
                                                   periodic_axes,

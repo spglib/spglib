@@ -252,7 +252,7 @@ void ovl_overlap_checker_free(OverlapChecker *checker)
 
 OverlapChecker* ovl_overlap_checker_init(const Cell *cell)
 {
-  int i, rank;
+  int i, lattice_rank;
   OverlapChecker * checker;
   checker = NULL;
 
@@ -287,11 +287,11 @@ OverlapChecker* ovl_overlap_checker_init(const Cell *cell)
               checker->perm_temp,
               cell->size);
 
-  rank = 0;
+  lattice_rank = 0;
   for (i = 0; i < 3; i++) {
     if (i != cell->aperiodic_axis) {
-      checker->periodic_axes[rank] = i;
-      rank++;
+      checker->periodic_axes[lattice_rank] = i;
+      lattice_rank++;
     }
   }
 

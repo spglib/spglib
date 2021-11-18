@@ -1436,14 +1436,14 @@ static void sort_axes(int axes[3])
 /* I am not sure if this would ever happen. */
 static void layer_check_and_sort_axes(int axes[3], const int aperiodic_axis)
 {
-  int i, rank, arank, axis, axis_i;
+  int i, lattice_rank, arank, axis, axis_i;
   int t_mat[3][3];
 
-  rank = 0;
+  lattice_rank = 0;
   arank = 0;
   for (i = 0; i < 3; i++) {
     if (rot_axes[axes[i]][aperiodic_axis] == 0) {
-      rank++;
+      lattice_rank++;
     } else if (rot_axes[axes[i]][aperiodic_axis] == 1 ||
                rot_axes[axes[i]][aperiodic_axis] == -1) {
                  axis = axes[i];
@@ -1452,7 +1452,7 @@ static void layer_check_and_sort_axes(int axes[3], const int aperiodic_axis)
                }
   }
 
-  if (rank == 2 && arank == 1) {
+  if (lattice_rank == 2 && arank == 1) {
     axes[axis_i] = axes[2];
     axes[2] = axis;
 

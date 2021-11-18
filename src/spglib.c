@@ -1315,7 +1315,7 @@ static SpglibDataset * get_layer_dataset(SPGCONST double lattice[3][3],
   Cell *cell;
   DataContainer *container;
 
-  int i, rank, periodic_axes[2];
+  int i, lattice_rank, periodic_axes[2];
 
   dataset = NULL;
   cell = NULL;
@@ -1341,11 +1341,11 @@ static SpglibDataset * get_layer_dataset(SPGCONST double lattice[3][3],
       goto atoms_too_close;
     }
   } else {
-    rank = 0;
+    lattice_rank = 0;
     for (i = 0; i < 3; i++) {
       if (i != cell->aperiodic_axis) {
-        periodic_axes[rank] = i;
-        rank++;
+        periodic_axes[lattice_rank] = i;
+        lattice_rank++;
       }
     }
     if (cel_layer_any_overlap_with_same_type(cell, periodic_axes, symprec)) {

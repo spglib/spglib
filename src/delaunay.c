@@ -47,10 +47,10 @@ static int delaunay_reduce(double red_lattice[3][3],
                            const int aperiodic_axis,
                            SPGCONST double symprec);
 static int delaunay_reduce_basis(double basis[4][3],
-                                 const int rank,
+                                 const int lattice_rank,
                                  const double symprec);
 static void get_delaunay_shortest_vectors(double basis[4][3],
-                                          const int rank,
+                                          const int lattice_rank,
                                           const double symprec);
 static int get_exteneded_basis(double basis[4][3],
                                 SPGCONST double lattice[3][3],
@@ -61,11 +61,11 @@ static int delaunay_reduce_2D(double red_lattice[3][3],
                               const int aperiodic_axis,
                               const double symprec);
 static int delaunay_reduce_basis_2D(double basis[3][3],
-                                    const int rank,
+                                    const int lattice_rank,
                                     const double symprec);
 static void get_delaunay_shortest_vectors_2D(double basis[3][3],
                                              const double unique_vec[3],
-                                             const int rank,
+                                             const int lattice_rank,
                                              const double symprec);
 static void get_exteneded_basis_2D(double basis[3][3],
                                    SPGCONST double lattice[3][2]);
@@ -118,17 +118,17 @@ static int delaunay_reduce(double red_lattice[3][3],
                            const int aperiodic_axis,
                            const double symprec)
 {
-  int i, j, attempt, succeeded, rank;
+  int i, j, attempt, succeeded, lattice_rank;
   int tmp_mat_int[3][3];
   double volume;
   double orig_lattice[3][3], tmp_mat[3][3], basis[4][3];
 
   mat_copy_matrix_d3(orig_lattice, lattice);
 
-  rank = get_exteneded_basis(basis, lattice, aperiodic_axis);
+  lattice_rank = get_exteneded_basis(basis, lattice, aperiodic_axis);
 
   for (attempt = 0; attempt < NUM_ATTEMPT; attempt++) {
-    succeeded = delaunay_reduce_basis(basis, rank, symprec);
+    succeeded = delaunay_reduce_basis(basis, lattice_rank, symprec);
     if (succeeded) {
       break;
     }
@@ -138,7 +138,7 @@ static int delaunay_reduce(double red_lattice[3][3],
     goto err;
   }
 
-  get_delaunay_shortest_vectors(basis, rank, symprec);
+  get_delaunay_shortest_vectors(basis, lattice_rank, symprec);
 
   for (i = 0; i < 3; i++) {
     for (j = 0; j < 3; j++) {
@@ -146,7 +146,7 @@ static int delaunay_reduce(double red_lattice[3][3],
     }
   }
   /* move the aperiodic axis from b3 back to its original direction */
-  if (rank == 2 && aperiodic_axis != 2) {
+  if (lattice_rank == 2 && aperiodic_axis != 2) {
     for (i = 0; i < 3; i++) {
       for (j = 0; j < 3; j++) {
         if (j == aperiodic_axis) {
@@ -189,7 +189,7 @@ static int delaunay_reduce(double red_lattice[3][3],
 }
 
 static void get_delaunay_shortest_vectors(double basis[4][3],
-                                          const int rank,
+                                          const int lattice_rank,
                                           const double symprec)
 {
   int i, j;
@@ -220,7 +220,7 @@ static void get_delaunay_shortest_vectors(double basis[4][3],
   }
 
   /* Bubble sort */
-  if (rank == 3) {
+  if (lattice_rank == 3) {
     for (i = 0; i < 6; i++) {
       for (j = 0; j < 6; j++) {
         if (mat_norm_squared_d3(b[j]) > mat_norm_squared_d3(b[j+1]) + ZERO_PREC) {
@@ -271,7 +271,7 @@ static void get_delaunay_shortest_vectors(double basis[4][3],
 }
 
 static int delaunay_reduce_basis(double basis[4][3],
-                                 const int rank,
+                                 const int lattice_rank,
                                  const double symprec)
 {
   int i, j, k, l;
@@ -284,7 +284,7 @@ static int delaunay_reduce_basis(double basis[4][3],
         dot_product += basis[i][k] * basis[j][k];
       }
       if (dot_product > symprec) {
-        if (i < rank) {
+        if (i < lattice_rank) {
           for (k = 0; k < 4; k++) {
             if (! (k == i || k == j)) {
               for (l = 0; l < 3; l++) {
@@ -316,27 +316,27 @@ static int get_exteneded_basis(double basis[4][3],
                                 SPGCONST double lattice[3][3],
                                 const int aperiodic_axis)
 {
-  int i, j, rank;
+  int i, j, lattice_rank;
 
-  rank = 0;
+  lattice_rank = 0;
   for (i = 0; i < 3; i++) {
     if (i != aperiodic_axis) {
       for (j = 0; j < 3; j++) {
-        basis[rank][j] = lattice[j][i];
+        basis[lattice_rank][j] = lattice[j][i];
       }
-      rank++;
+      lattice_rank++;
     }
   }
 
   for (j = 0; j < 3; j++) {
-    basis[rank][j] = lattice[j][aperiodic_axis];
+    basis[lattice_rank][j] = lattice[j][aperiodic_axis];
   }
 
   for (i = 0; i < 3; i++) {
     basis[3][i] = -lattice[i][0] -lattice[i][1] -lattice[i][2];
   }
 
-  return rank;
+  return lattice_rank;
 }
 
 
@@ -349,7 +349,7 @@ static int delaunay_reduce_2D(double red_lattice[3][3],
                               const int aperiodic_axis,
                               const double symprec)
 {
-  int i, j, k, attempt, succeeded, rank;
+  int i, j, k, attempt, succeeded, lattice_rank;
   double volume;
   double basis[3][3], lattice_2D[3][2], unique_vec[3];
 
@@ -364,7 +364,7 @@ static int delaunay_reduce_2D(double red_lattice[3][3],
         }
       }
     }
-    rank = 2;
+    lattice_rank = 2;
   } else {
     for (i = 0; i < 3; i++) {
       if (i != unique_axis && i != aperiodic_axis) {
@@ -372,7 +372,7 @@ static int delaunay_reduce_2D(double red_lattice[3][3],
       }
     }
     k = aperiodic_axis;
-    rank = 1;
+    lattice_rank = 1;
   }
 
   for (i = 0; i < 3; i++) {
@@ -385,7 +385,7 @@ static int delaunay_reduce_2D(double red_lattice[3][3],
 
 
   for (attempt = 0; attempt < NUM_ATTEMPT; attempt++) {
-    succeeded = delaunay_reduce_basis_2D(basis, rank, symprec);
+    succeeded = delaunay_reduce_basis_2D(basis, lattice_rank, symprec);
     if (succeeded) {
       break;
     }
@@ -395,7 +395,7 @@ static int delaunay_reduce_2D(double red_lattice[3][3],
     goto err;
   }
 
-  get_delaunay_shortest_vectors_2D(basis, unique_vec, rank, symprec);
+  get_delaunay_shortest_vectors_2D(basis, unique_vec, lattice_rank, symprec);
 
   for (i = 0; i < 3; i++) {
     red_lattice[i][unique_axis] = lattice[i][unique_axis];;
@@ -422,7 +422,7 @@ static int delaunay_reduce_2D(double red_lattice[3][3],
 }
 
 static int delaunay_reduce_basis_2D(double basis[3][3],
-                                    const int rank,
+                                    const int lattice_rank,
                                     const double symprec)
 {
   int i, j, k, l;
@@ -435,7 +435,7 @@ static int delaunay_reduce_basis_2D(double basis[3][3],
         dot_product += basis[i][k] * basis[j][k];
       }
       if (dot_product > symprec) {
-        if (i < rank) {
+        if (i < lattice_rank) {
           for (k = 0; k < 3; k++) {
             if (! (k == i || k == j)) {
               for (l = 0; l < 3; l++) {
@@ -462,7 +462,7 @@ static int delaunay_reduce_basis_2D(double basis[3][3],
 
 static void get_delaunay_shortest_vectors_2D(double basis[3][3],
                                              const double unique_vec[3],
-                                             const int rank,
+                                             const int lattice_rank,
                                              const double symprec)
 {
   int i, j;
@@ -481,8 +481,8 @@ static void get_delaunay_shortest_vectors_2D(double basis[3][3],
   }
 
   /* Bubble sort */
-  for (i = rank % 2; i < 3; i++) {
-    for (j = rank % 2; j < 3; j++) {
+  for (i = lattice_rank % 2; i < 3; i++) {
+    for (j = lattice_rank % 2; j < 3; j++) {
       if (mat_norm_squared_d3(b[j]) > mat_norm_squared_d3(b[j + 1]) + ZERO_PREC) {
         mat_copy_vector_d3(tmpvec, b[j]);
         mat_copy_vector_d3(b[j], b[j + 1]);

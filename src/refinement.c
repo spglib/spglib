@@ -605,7 +605,7 @@ static Cell * expand_positions_in_bravais(int * wyckoffs,
                                           SPGCONST char (*site_symmetry_symbols_prim)[7],
                                           const int * equiv_atoms_prim)
 {
-  int i, j, k, rank;
+  int i, j, k, lattice_rank;
   int num_atom;
   Cell * bravais;
 
@@ -637,9 +637,9 @@ static Cell * expand_positions_in_bravais(int * wyckoffs,
     }
   }
 
-  rank = conv_prim->aperiodic_axis == -1 ? 3 : 2;
+  lattice_rank = conv_prim->aperiodic_axis == -1 ? 3 : 2;
   for (i = 0; i < num_atom; i++) {
-    for (k = 0; k < rank; k++) {
+    for (k = 0; k < lattice_rank; k++) {
       bravais->position[i][k] = mat_Dmod1(bravais->position[i][k]);
     }
   }
@@ -1576,7 +1576,7 @@ copy_symmetry_upon_lattice_points(const VecDBL *pure_trans,
 static int find_similar_bravais_lattice(Spacegroup *spacegroup,
                                         const double symprec)
 {
-  int i, j, k, rot_i, rank;
+  int i, j, k, rot_i, lattice_rank;
   Symmetry *conv_sym;
   double min_length2, length2, diff, min_length, length;
   double tmp_mat[3][3], std_lattice[3][3];
@@ -1643,7 +1643,7 @@ static int find_similar_bravais_lattice(Spacegroup *spacegroup,
   /* Finally, */
   /* (W^-1, -W^-1 w)(P, p) x = W^-1Px+W^-1p-W^-1w = (W^-1P, W^-1p-W^-1w) */
   min_length = 2;
-  rank = spacegroup->hall_number > 0 ? 3 : 2;
+  lattice_rank = spacegroup->hall_number > 0 ? 3 : 2;
   if (rot_i > -1) {
     for (i = 0; i < conv_sym->size; i++) {
       if (!mat_check_identity_matrix_i3(conv_sym->rot[i],
@@ -1654,17 +1654,17 @@ static int find_similar_bravais_lattice(Spacegroup *spacegroup,
       mat_inverse_matrix_d3(tmp_mat, tmp_mat, 0);
       mat_multiply_matrix_vector_d3(p, tmp_mat, spacegroup->origin_shift);
       mat_multiply_matrix_vector_d3(tmp_vec, tmp_mat, conv_sym->trans[i]);
-      for (j = 0; j < rank; j++) {
+      for (j = 0; j < lattice_rank; j++) {
         p[j] -= tmp_vec[j];
         p[j] -= mat_Nint(p[j]);
       }
-      for (j = rank; j < 3; j++) {
+      for (j = lattice_rank; j < 3; j++) {
         p[j] -= tmp_vec[j];
       }
       length = sqrt(mat_norm_squared_d3(p));
       if (length < min_length - symprec) {
         min_length = length;
-        for (j = 0; j < rank; j++) {
+        for (j = 0; j < lattice_rank; j++) {
           p[j] = mat_Dmod1(p[j]);
         }
         mat_copy_vector_d3(shortest_p, p);
