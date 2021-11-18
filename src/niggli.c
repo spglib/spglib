@@ -151,8 +151,9 @@ int periodic_niggli_reduce(double *lattice_,
   }
 
   /* Step 0 */
-  if (! ((aperiodic_axis == 0 || aperiodic_axis == 1) && layer_swap_axis(p, aperiodic_axis)
-      || (aperiodic_axis == -1 || aperiodic_axis == 2) && set_parameters(p))) {
+  if (!( ( (aperiodic_axis ==  0 || aperiodic_axis == 1) && layer_swap_axis(p, aperiodic_axis) ) ||
+         ( (aperiodic_axis == -1 || aperiodic_axis == 2) && set_parameters(p) )
+       )) {
     goto ret;
   }
 

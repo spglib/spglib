@@ -1538,8 +1538,8 @@ static int find_hall_symbol(double origin_shift[3],
   }
 
   /* HEXA, ITA: 168-194, Hall: 462-488; ITE: 73-80, Layer Hall: 109-116 */
-  if (462 <= hall_number && hall_number <= 488 ||
-      -116 <= hall_number && hall_number <= -109) {
+  if ((462 <= hall_number && hall_number <= 488) ||
+      (-116 <= hall_number && hall_number <= -109)) {
     if (is_hall_symbol_hexa(origin_shift,
                             hall_number,
                             primitive_lattice,
@@ -1549,8 +1549,8 @@ static int find_hall_symbol(double origin_shift[3],
   }
 
   /* TRIGO, ITA: 143-167, Hall: 430-461; ITE: 65-73, Layer Hall: 101-108 */
-  if (430 <= hall_number && hall_number <= 461 ||
-      -108 <= hall_number && hall_number <= -101) {
+  if ((430 <= hall_number && hall_number <= 461) ||
+      (-108 <= hall_number && hall_number <= -101)) {
     if (hall_number == 433 ||
         hall_number == 434 ||
         hall_number == 436 ||
@@ -1581,8 +1581,8 @@ static int find_hall_symbol(double origin_shift[3],
   }
 
   /* TETRA, ITA: 75-142, Hall: 349-429; ITE: 49-64, Layer Hall: 82-100 */
-  if (349 <= hall_number && hall_number <= 429 ||
-      -100 <= hall_number && hall_number <= -82) {
+  if ((349 <= hall_number && hall_number <= 429) ||
+      (-100 <= hall_number && hall_number <= -82)) {
     if (is_hall_symbol_tetra(origin_shift,
                              hall_number,
                              primitive_lattice,
@@ -1593,8 +1593,8 @@ static int find_hall_symbol(double origin_shift[3],
   }
 
   /* ORTHO, ITA: 16-74, Hall: 108-348; ITE: 19-48, Layer Hall: 34-81 */
-  if (108 <= hall_number && hall_number <= 348 ||
-      -81 <= hall_number && hall_number <= -34) {
+  if ((108 <= hall_number && hall_number <= 348) ||
+      (-81 <= hall_number && hall_number <= -34)) {
     if (is_hall_symbol_ortho(origin_shift,
                              hall_number,
                              primitive_lattice,
@@ -1605,8 +1605,8 @@ static int find_hall_symbol(double origin_shift[3],
   }
 
   /* MONOCLI, ITA: 3-15, Hall: 3-107; ITE: 3-18, Layer Hall: 3-33 */
-  if (3 <= hall_number && hall_number <= 107 ||
-      -33 <= hall_number && hall_number <= -3) {
+  if ((3 <= hall_number && hall_number <= 107) ||
+      (-33 <= hall_number && hall_number <= -3)) {
     if (is_hall_symbol_monocli(origin_shift,
                                hall_number,
                                primitive_lattice,
@@ -2287,15 +2287,15 @@ static int is_match_database(const int hall_number,
           diff[k] = trans_prim[k] - trans_db_prim[k] + origin_shift[k];
         }
         mat_multiply_matrix_vector_d3(shift_rot, rot_prim, origin_shift);
-        if (hall_number > 0 && cel_is_overlap(diff,
-                                              shift_rot,
-                                              primitive_lattice,
-                                              symprec) ||
-            hall_number < 0 && cel_layer_is_overlap(diff,
-                                                    shift_rot,
-                                                    primitive_lattice,
-                                                    periodic_axes,
-                                                    symprec)) {
+        if ((hall_number > 0 && cel_is_overlap(diff,
+                                               shift_rot,
+                                               primitive_lattice,
+                                               symprec)) ||
+            (hall_number < 0 && cel_layer_is_overlap(diff,
+                                                     shift_rot,
+                                                     primitive_lattice,
+                                                     periodic_axes,
+                                                     symprec))) {
           if (! found_list[j]) {
             found_list[j] = 1;
             is_found = 1;

@@ -1442,9 +1442,9 @@ static int match_hall_symbol_db_monocli(double origin_shift[3],
   if (space_group_number == 3 ||
       space_group_number == 4 ||
       space_group_number == 6 ||
-      (space_group_number == 10 ||
-       space_group_number == 11) &&
-      hall_number > 0) {
+      (hall_number > 0 &&
+        (space_group_number == 10 || 
+         space_group_number == 11))) {
     /* |a| < |c| for unique axis b. (This is as written in the paper 1983.) */
     /* |a| < |b| for unique axis c. (This is spgilb definition.) */
     /* |b| < |c| for unique axis a. (This is spgilb definition.) */
