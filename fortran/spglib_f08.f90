@@ -366,6 +366,7 @@ module spglib_f08
 
 
      function spg_get_error_code() bind(c, name='spg_get_error_code')
+       import SPGLIB_SUCCESS
        integer(kind(SPGLIB_SUCCESS)) :: spg_get_error_code
      end function spg_get_error_code
 
