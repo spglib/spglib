@@ -28,8 +28,13 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.6
-
+          python-version: '3.7'
+      - name: Build sdist
+        run: |
+          pip install numpy
+          cd python
+          python setup.py sdist
+          cd ..
       - name: Build manylinux Python wheels manylinux1_x86_64
         if: matrix.platform == 'manylinux1_x86_64'
         uses: RalfG/python-wheels-manylinux-build@v0.3.4-manylinux1_x86_64
@@ -59,12 +64,8 @@ jobs:
           pre-build-command: 'sh pre-build-script.sh'
           package-path: ./python
 
-      - name: copy manylinux wheels
+      - name: copy source and manylinux wheels
         run: |
-          pip install numpy
-          cd python
-          python setup.py sdist
-          cd ..
           mkdir dist
           cp ./python/dist/*manylinux*whl dist
           cp ./python/dist/*.tar.gz dist
