@@ -13,8 +13,6 @@ jobs:
     strategy:
       matrix:
         platform:
-          - manylinux_2_24_x86_64
-          - manylinux_2_24_aarch64
           - manylinux2014_x86_64
           - manylinux2014_aarch64
           - manylinux2010_x86_64
@@ -22,60 +20,41 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set up QEMU
-        if: matrix.platform == 'manylinux2014_aarch64'
-        uses: docker/setup-qemu-action@v1
-
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.6'
+          python-version: '3.7'
       - name: Build sdist
+        if: matrix.platform == 'manylinux2010_x86_64'
         run: |
           pip install numpy
           cd python
+          sh pre-build-script.sh
           python setup.py sdist
           cd ..
-      - name: Build manylinux Python wheels manylinux_2_24_x86_64
-        if: matrix.platform == 'manylinux_2_24_x86_64'
-        uses: RalfG/python-wheels-manylinux-build@v0.4.0-manylinux_2_24_x86_64
-        with:
-          python-versions: "cp38-cp38 cp39-cp39 cp310-cp310"
-          pre-build-command: 'sh pre-build-script.sh'
-          package-path: ./python
-      - name: Build manylinux Python wheels manylinux_2_24_aarch64
-        if: matrix.platform == 'manylinux_2_24_aarch64'
-        uses: RalfG/python-wheels-manylinux-build@v0.4.0-manylinux_2_24_aarch64
-        with:
-          python-versions: "cp38-cp38 cp39-cp39 cp310-cp310"
-          pre-build-command: 'sh pre-build-script.sh'
-          package-path: ./python
       - name: Build manylinux Python wheels manylinux2014_x86_64
         if: matrix.platform == 'manylinux2014_x86_64'
         uses: RalfG/python-wheels-manylinux-build@v0.4.0-manylinux2014_x86_64
         with:
-          python-versions: "cp37-cp37m cp38-cp38 cp39-cp39 cp310-cp310"
           pre-build-command: 'sh pre-build-script.sh'
           package-path: ./python
       - name: Build manylinux Python wheels manylinux2014_aarch64
         if: matrix.platform == 'manylinux2014_aarch64'
         uses: RalfG/python-wheels-manylinux-build@v0.4.0-manylinux2014_aarch64
         with:
-          python-versions: "cp37-cp37m cp38-cp38 cp39-cp39 cp310-cp310"
           pre-build-command: 'sh pre-build-script.sh'
           package-path: ./python
       - name: Build manylinux Python wheels manylinux2010_x86_64
         if: matrix.platform == 'manylinux2010_x86_64'
         uses: RalfG/python-wheels-manylinux-build@v0.4.0-manylinux2010_x86_64
         with:
-          python-versions: "cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39"
           pre-build-command: 'sh pre-build-script.sh'
           package-path: ./python
       - name: mkdir
         run: |
           mkdir dist
       - name: copy source
-        if: matrix.platform == 'manylinux2014_x86_64'
+        if: matrix.platform == 'manylinux2010_x86_64'
         run: |
           cp ./python/dist/*.tar.gz dist
       - name: copy manylinux wheels
