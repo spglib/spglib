@@ -22,10 +22,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set up QEMU
-        if: matrix.platform == 'manylinux2014_aarch64'
-        uses: docker/setup-qemu-action@v1
-
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
@@ -71,12 +67,16 @@ jobs:
           python-versions: "cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39 cp310-cp310"
           pre-build-command: 'sh pre-build-script.sh'
           package-path: ./python
-      - name: copy source and manylinux wheels
-        if: matrix.platform == 'manylinux2014_x86_64'
+      - name: mkdir
         run: |
           mkdir dist
-          cp ./python/dist/*manylinux*whl dist
+      - name: copy source
+        if: matrix.platform == 'manylinux2014_x86_64'
+        run: |
           cp ./python/dist/*.tar.gz dist
+      - name: copy manylinux wheels
+        run: |
+          cp ./python/dist/*manylinux*whl dist
 
       - name: Publish package to TestPyPI
         if: startsWith(github.ref, 'refs/heads/rc')
