@@ -63,6 +63,7 @@ jobs:
         run: |
           mkdir dist
           cp ./python/dist/*manylinux*whl dist
+          cp ./python/dist/*.tar.gz dist
 
       - name: Publish package to TestPyPI
         if: startsWith(github.ref, 'refs/heads/rc')
