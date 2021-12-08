@@ -22,10 +22,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Set up QEMU
+        if: matrix.platform == 'manylinux2014_aarch64'
+        uses: docker/setup-qemu-action@v1
+
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.7'
+          python-version: '3.6'
       - name: Build sdist
         run: |
           pip install numpy
@@ -64,7 +68,7 @@ jobs:
         if: matrix.platform == 'manylinux2010_x86_64'
         uses: RalfG/python-wheels-manylinux-build@v0.4.0-manylinux2010_x86_64
         with:
-          python-versions: "cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39 cp310-cp310"
+          python-versions: "cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39"
           pre-build-command: 'sh pre-build-script.sh'
           package-path: ./python
       - name: mkdir
