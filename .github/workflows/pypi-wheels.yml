@@ -62,8 +62,12 @@ jobs:
       - name: copy manylinux wheels
         run: |
           pip install numpy
+          cd python
           python setup.py sdist
+          cd ..
+          mkdir dist
           cp ./python/dist/*manylinux*whl dist
+          cp ./python/dist/*.tar.gz dist
 
       - name: Publish package to TestPyPI
         if: startsWith(github.ref, 'refs/heads/rc')
