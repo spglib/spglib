@@ -551,8 +551,9 @@ This function can be used to obtain all mesh grid points by setting
 
 **experimental**
 
-``hall_number`` is obtained from the set of symmetry operations.  The
-definition of ``hall_number`` is found at
+Return one of ``hall_number`` corresponding to a space-group type of the given set of symmetry operations.
+When multiple ``hall_number`` exist for the space-group type, the smallest one (the first description of the space-group type in International Tables for Crystallography) is chosen.
+The definition of ``hall_number`` is found at
 :ref:`dataset_spg_get_dataset_spacegroup_type` and the corresponding
 space-group-type information is obtained through
 :ref:`api_spg_spacegroup_type`.
