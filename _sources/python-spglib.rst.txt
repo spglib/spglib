@@ -168,7 +168,7 @@ as a list of N floating point values.
                 ...]
    numbers = [n_1, n_2, n_3, ...]
    magmoms = [m_1, m_2, m_3, ...]  # Only works with get_symmetry
-   
+
 
 For example, the crystal structure (``cell``) of L1 `2`:sub: -type AlNi `3`:sub: is:
 
@@ -182,7 +182,7 @@ For example, the crystal structure (``cell``) of L1 `2`:sub: -type AlNi `3`:sub:
                [0.0, 0.5, 0.5], # Ni
                [0.5, 0.0, 0.5]] # Ni
   numbers = [1, 2, 2, 2]        # Al, Ni, Ni, Ni
-  
+
 
 Version 1.9.5 or later: The methods that use the crsytal strcutre
 will return ``None`` when a crystal structure is not properly given.
@@ -504,8 +504,9 @@ When something wrong happened, ``None`` is returned.
 
 **experimental**
 
-``hall_number`` is obtained from the set of symmetry operations.  The
-definition of ``hall_number`` is found at
+Return one of ``hall_number`` corresponding to a space-group type of the given set of symmetry operations.
+When multiple ``hall_number`` exist for the space-group type, the smallest one (the first description of the space-group type in International Tables for Crystallography) is chosen.
+The definition of ``hall_number`` is found at
 :ref:`dataset_spg_get_dataset_spacegroup_type` and the corresponding
 space-group-type information is obtained through
 :ref:`py_method_get_spacegroup_type`.
