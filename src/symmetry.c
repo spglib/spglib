@@ -121,7 +121,7 @@ get_space_group_operations(SPGCONST PointSymmetry *lattice_sym,
                            const double symprec);
 static void set_axes(int axes[3][3],
                      const int a1, const int a2, const int a3);
-static PointSymmetry get_lattice_symmetry(SPGCONST double cell_lattice[3][3],
+static PointSymmetry get_lattice_symmetry(const Cell *cell,
                                           const double symprec,
                                           const double angle_symprec);
 static int is_identity_metric(SPGCONST double metric_rotated[3][3],
@@ -131,6 +131,26 @@ static int is_identity_metric(SPGCONST double metric_rotated[3][3],
 static double get_angle(SPGCONST double metric[3][3],
                         const int i,
                         const int j);
+
+/* get_translation, search_translation_part and search_pure_translations */
+/* are duplicated to get the if statement outside the nested loops */
+/* I have not tested if it is better in efficiency. */
+static VecDBL * get_layer_translation(SPGCONST int rot[3][3],
+                                      const Cell *cell,
+                                      const double symprec,
+                                      const int is_identity);
+static int search_layer_translation_part(int atoms_found[],
+                                         const Cell * cell,
+                                         SPGCONST int rot[3][3],
+                                         const int min_atom_index,
+                                         const double origin[3],
+                                         const double symprec,
+                                         const int is_identity);
+static int search_layer_pure_translations(int atoms_found[],
+                                          const Cell * cell,
+                                          const double trans[3],
+                                          const int periodic_axes[2],
+                                          const double symprec);
 
 /* Return NULL if failed */
 Symmetry * sym_alloc_symmetry(const int size)
@@ -216,8 +236,12 @@ VecDBL * sym_get_pure_translation(const Cell *cell,
 
   multi = 0;
   pure_trans = NULL;
-
-  if ((pure_trans = get_translation(identity, cell, symprec, 1)) == NULL) {
+  if (cell->aperiodic_axis == -1) {
+    pure_trans = get_translation(identity, cell, symprec, 1);
+  } else {
+    pure_trans = get_layer_translation(identity, cell, symprec, 1);
+  }
+  if (pure_trans == NULL) {
     warning_print("spglib: get_translation failed (line %d, %s).\n",
                   __LINE__, __FILE__);
     return NULL;
@@ -287,6 +311,7 @@ VecDBL * sym_reduce_pure_translation(const Cell * cell,
   return pure_trans_reduced;
 }
 
+/* Warining! Comment 1 does not seem to happen. There is nothing about input cell.*/
 /* 1) Pointgroup operations of the primitive cell are obtained. */
 /*    These are constrained by the input cell lattice pointgroup, */
 /*    i.e., even if the lattice of the primitive cell has higher */
@@ -307,7 +332,7 @@ static Symmetry * get_operations(const Cell *primitive,
 
   symmetry = NULL;
 
-  lattice_sym = get_lattice_symmetry(primitive->lattice,
+  lattice_sym = get_lattice_symmetry(primitive,
                                      symprec,
                                      angle_symprec);
   if (lattice_sym.size == 0) {
@@ -346,7 +371,7 @@ static Symmetry * reduce_operation(const Cell * primitive,
     point_symmetry.size = 1;
     mat_copy_matrix_i3(point_symmetry.rot[0], identity);
   } else {
-    point_symmetry = get_lattice_symmetry(primitive->lattice,
+    point_symmetry = get_lattice_symmetry(primitive,
                                           symprec,
                                           angle_symprec);
     if (point_symmetry.size == 0) {
@@ -605,11 +630,19 @@ static int is_overlap_all_atoms(const double trans[3],
     return -1;
   }
 
-  result = ovl_check_total_overlap(checker,
-                                   trans,
-                                   rot,
-                                   symprec,
-                                   is_identity);
+  if (cell->aperiodic_axis == -1) {
+    result = ovl_check_total_overlap(checker,
+                                     trans,
+                                     rot,
+                                     symprec,
+                                     is_identity);
+  } else {
+    result = ovl_check_layer_total_overlap(checker,
+                                           trans,
+                                           rot,
+                                           symprec,
+                                           is_identity);
+  }
 
   ovl_overlap_checker_free(checker);
   checker = NULL;
@@ -657,6 +690,201 @@ static int get_index_with_least_atoms(const Cell *cell)
   return min_index;
 }
 
+/* Look for the translations which satisfy the input symmetry operation. */
+/* This function is heaviest in this code. */
+/* Return NULL if failed */
+static VecDBL * get_layer_translation(SPGCONST int rot[3][3],
+                                      const Cell *cell,
+                                      const double symprec,
+                                      const int is_identity)
+{
+  int i, j, k, min_atom_index, num_trans;
+  int *is_found;
+  double origin[3];
+  VecDBL *trans;
+
+  debug_print("get_translation (tolerance = %f):\n", symprec);
+
+  num_trans = 0;
+  is_found = NULL;
+  trans = NULL;
+
+  if ((is_found = (int*) malloc(sizeof(int)*cell->size)) == NULL) {
+    warning_print("spglib: Memory could not be allocated ");
+    return NULL;
+  }
+
+  for (i = 0; i < cell->size; i++) {
+    is_found[i] = 0;
+  }
+
+  /* Look for the atom index with least number of atoms within same type */
+  min_atom_index = get_index_with_least_atoms(cell);
+  if (min_atom_index == -1) {
+    debug_print("spglib: get_index_with_least_atoms failed.\n");
+    goto ret;
+  }
+
+  /* Set min_atom_index as the origin to measure the distance between atoms. */
+  mat_multiply_matrix_vector_id3(origin, rot, cell->position[min_atom_index]);
+
+  num_trans = search_layer_translation_part(is_found,
+                                            cell,
+                                            rot,
+                                            min_atom_index,
+                                            origin,
+                                            symprec,
+                                            is_identity);
+  if (num_trans == -1 || num_trans == 0) {
+    goto ret;
+  }
+
+  if ((trans = mat_alloc_VecDBL(num_trans)) == NULL) {
+    goto ret;
+  }
+
+  k = 0;
+  for (i = 0; i < cell->size; i++) {
+    if (is_found[i]) {
+      for (j = 0; j < 3; j++) {
+        trans->vec[k][j] = cell->position[i][j] - origin[j];
+        if (j != cell->aperiodic_axis) {
+          trans->vec[k][j] = mat_Dmod1(trans->vec[k][j]);
+        }
+      }
+      k++;
+    }
+  }
+
+ ret:
+  free(is_found);
+  is_found = NULL;
+
+  return trans;
+}
+
+/* Returns -1 on failure. */
+static int search_layer_translation_part(int atoms_found[],
+                                         const Cell * cell,
+                                         SPGCONST int rot[3][3],
+                                         const int min_atom_index,
+                                         const double origin[3],
+                                         const double symprec,
+                                         const int is_identity)
+{
+  int i, j, num_trans, is_overlap;
+  double trans[3];
+  OverlapChecker * checker;
+
+  checker = NULL;
+
+  if ((checker = ovl_overlap_checker_init(cell)) == NULL) {
+    return -1;
+  }
+
+  num_trans = 0;
+
+  for (i = 0; i < cell->size; i++) {
+    if (atoms_found[i]) {
+      continue;
+    }
+
+    if (cell->types[i] != cell->types[min_atom_index]) {
+      continue;
+    }
+
+    for (j = 0; j < 3; j++) {
+      trans[j] = cell->position[i][j] - origin[j];
+    }
+
+    is_overlap = ovl_check_layer_total_overlap(checker,
+                                               trans,
+                                               rot,
+                                               symprec,
+                                               is_identity);
+    if (is_overlap == -1) {
+      goto err;
+    } else if (is_overlap) {
+      atoms_found[i] = 1;
+      num_trans++;
+      if (is_identity) {
+        num_trans += search_layer_pure_translations(atoms_found,
+                                                    cell,
+                                                    trans,
+                                                    checker->periodic_axes,
+                                                    symprec);
+      }
+    }
+  }
+
+  ovl_overlap_checker_free(checker);
+  checker = NULL;
+  return num_trans;
+
+ err:
+  ovl_overlap_checker_free(checker);
+  checker = NULL;
+  return -1;
+}
+
+static int search_layer_pure_translations(int atoms_found[],
+                                          const Cell * cell,
+                                          const double trans[3],
+                                          const int periodic_axes[2],
+                                          const double symprec)
+{
+  int i, j, num_trans, i_atom, initial_atom;
+  int *copy_atoms_found;
+  double vec[3];
+
+  num_trans = 0;
+
+  copy_atoms_found = (int*)malloc(sizeof(int) * cell->size);
+  for (i = 0; i < cell->size; i++) {
+    copy_atoms_found[i] = atoms_found[i];
+  }
+
+  for (initial_atom = 0; initial_atom < cell->size; initial_atom++) {
+    if (!copy_atoms_found[initial_atom]) {
+      continue;
+    }
+
+    i_atom = initial_atom;
+
+    for (i = 0; i < cell->size; i++) {
+      for (j = 0; j < 3; j++) {
+        vec[j] = cell->position[i_atom][j] + trans[j];
+      }
+
+      for (j = 0; j < cell->size; j++) {
+        if (cel_layer_is_overlap_with_same_type(vec,
+                                                cell->position[j],
+                                                cell->types[i_atom],
+                                                cell->types[j],
+                                                cell->lattice,
+                                                periodic_axes,
+                                                symprec)) {
+          if (!atoms_found[j]) {
+            atoms_found[j] = 1;
+            num_trans++;
+          }
+          i_atom = j;
+
+          break;
+        }
+      }
+
+      if (i_atom == initial_atom) {
+        break;
+      }
+    }
+  }
+
+  free(copy_atoms_found);
+
+  return num_trans;
+}
+
 /* Return NULL if failed */
 static Symmetry *
 get_space_group_operations(SPGCONST PointSymmetry *lattice_sym,
@@ -683,16 +911,31 @@ get_space_group_operations(SPGCONST PointSymmetry *lattice_sym,
   }
 
   total_num_sym = 0;
-  for (i = 0; i < lattice_sym->size; i++) {
 
-    if ((trans[i] = get_translation(lattice_sym->rot[i], primitive, symprec, 0))
-        != NULL) {
+  if (primitive->aperiodic_axis == -1) {
+    for (i = 0; i < lattice_sym->size; i++) {
 
-      debug_print("  match translation %d/%d; tolerance = %f\n",
-                  i + 1, lattice_sym->size, symprec);
+      if ((trans[i] = get_translation(lattice_sym->rot[i], primitive, symprec, 0))
+          != NULL) {
 
-      total_num_sym += trans[i]->size;
+        debug_print("  match translation %d/%d; tolerance = %f\n",
+                    i + 1, lattice_sym->size, symprec);
+
+        total_num_sym += trans[i]->size;
+      }
     }
+  } else {
+    for (i = 0; i < lattice_sym->size; i++) {
+
+      if ((trans[i] = get_layer_translation(lattice_sym->rot[i], primitive, symprec, 0))
+          != NULL) {
+
+        debug_print("  match translation %d/%d; tolerance = %f\n",
+                    i + 1, lattice_sym->size, symprec);
+
+        total_num_sym += trans[i]->size;
+      }
+    }    
   }
 
   if ((symmetry = sym_alloc_symmetry(total_num_sym)) == NULL) {
@@ -725,11 +968,11 @@ get_space_group_operations(SPGCONST PointSymmetry *lattice_sym,
 }
 
 /* lattice_sym.size = 0 is returned if failed. */
-static PointSymmetry get_lattice_symmetry(SPGCONST double cell_lattice[3][3],
+static PointSymmetry get_lattice_symmetry(const Cell * cell,
                                           const double symprec,
                                           const double angle_symprec)
 {
-  int i, j, k, attempt, num_sym;
+  int i, j, k, attempt, num_sym, aperiodic_axis;
   double angle_tol;
   int axes[3][3];
   double lattice[3][3], min_lattice[3][3];
@@ -740,7 +983,17 @@ static PointSymmetry get_lattice_symmetry(SPGCONST double cell_lattice[3][3],
 
   lattice_sym.size = 0;
 
-  if (! del_delaunay_reduce(min_lattice, cell_lattice, symprec)) {
+  aperiodic_axis = cell->aperiodic_axis;
+
+  /* input cell of get_lattice_symmetry seems always to be primitive cell, */
+  /* then del_delaunay_reduce and transform_pointsymmetry are useless. */
+  if ((aperiodic_axis == -1 && ! del_delaunay_reduce(min_lattice,
+                                                     cell->lattice,
+                                                     symprec))
+   || (aperiodic_axis != -1 && ! del_layer_delaunay_reduce(min_lattice,
+                                                           cell->lattice,
+                                                           aperiodic_axis,
+                                                           symprec))) {
     goto err;
   }
 
@@ -752,6 +1005,14 @@ static PointSymmetry get_lattice_symmetry(SPGCONST double cell_lattice[3][3],
     for (i = 0; i < 26; i++) {
       for (j = 0; j < 26; j++) {
         for (k = 0; k < 26; k++) {
+          /* For layer group, some rotations are not permitted. */
+          if (aperiodic_axis != -1 &&
+              ((aperiodic_axis == 2 && k != 2 && k != 5) ||
+               (aperiodic_axis == 0 && i != 0 && i != 3) ||
+               (aperiodic_axis == 1 && j != 1 && j != 4)
+              )) {
+              continue;
+          }
           set_axes(axes, i, j, k);
           if (! ((mat_get_determinant_i3(axes) == 1) ||
                  (mat_get_determinant_i3(axes) == -1))) {
@@ -761,7 +1022,8 @@ static PointSymmetry get_lattice_symmetry(SPGCONST double cell_lattice[3][3],
           mat_get_metric(metric, lattice);
 
           if (is_identity_metric(metric, metric_orig, symprec, angle_tol)) {
-            if (num_sym > 47) {
+            if ((aperiodic_axis == -1 && num_sym > 47) ||
+                (aperiodic_axis != -1 && num_sym > 23)) {
               warning_print("spglib: Too many lattice symmetries was found.\n");
               if (angle_tol > 0) {
                 angle_tol *= ANGLE_REDUCE_RATE;
@@ -779,9 +1041,11 @@ static PointSymmetry get_lattice_symmetry(SPGCONST double cell_lattice[3][3],
       }
     }
 
-    if (num_sym < 49 || angle_tol < 0) {
+    if ((aperiodic_axis == -1 && num_sym < 49) ||
+        (aperiodic_axis != -1 && num_sym < 25) ||
+        angle_tol < 0) {
       lattice_sym.size = num_sym;
-      return transform_pointsymmetry(&lattice_sym, cell_lattice, min_lattice);
+      return transform_pointsymmetry(&lattice_sym, cell->lattice, min_lattice);
     }
 
   next_attempt:

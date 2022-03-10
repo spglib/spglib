@@ -71,6 +71,8 @@ static void set_angle_types(NiggliParams *p);
 static double * get_transpose(const double *M);
 static double * get_metric(const double *M);
 static double * multiply_matrices(const double *A, const double *B);
+static int layer_swap_axis(NiggliParams* p, const int aperiodic_axis);
+static int step2_for_layer(NiggliParams* p);
 
 #ifdef NIGGLI_DEBUG
 #define debug_print(...) printf(__VA_ARGS__)
@@ -123,12 +125,23 @@ int niggli_get_micro_version(void)
 }
 
 /* return 0 if failed */
-int niggli_reduce(double *lattice_, const double eps_)
+int niggli_reduce(double* lattice_, const double eps_)
+{
+  return periodic_niggli_reduce(lattice_, eps_, -1);
+}
+
+int periodic_niggli_reduce(double *lattice_, 
+                                   const double eps_, 
+                                   const int aperiodic_axis)
 {
   int i, j, succeeded;
   NiggliParams *p;
   int (*steps[8])(NiggliParams *p) = {step1, step2, step3, step4,
                                       step5, step6, step7, step8};
+
+  if (aperiodic_axis != -1) {
+    steps[1] = step2_for_layer;
+  }
 
   p = NULL;
   succeeded = 0;
@@ -138,7 +151,9 @@ int niggli_reduce(double *lattice_, const double eps_)
   }
 
   /* Step 0 */
-  if (! set_parameters(p)) {
+  if (!( ( (aperiodic_axis ==  0 || aperiodic_axis == 1) && layer_swap_axis(p, aperiodic_axis) ) ||
+         ( (aperiodic_axis == -1 || aperiodic_axis == 2) && set_parameters(p) )
+       )) {
     goto ret;
   }
 
@@ -207,6 +222,22 @@ static NiggliParams * initialize(const double *lattice_, const double eps_)
   memcpy(p->lattice, lattice_, sizeof(double) * 9);
 
   return p;
+}
+
+/* move aperiodic axis to c. */
+static int layer_swap_axis(NiggliParams* p, const int aperiodic_axis)
+{
+  if (aperiodic_axis == 0) {
+    p->tmat[0] = 0, p->tmat[1] = 0, p->tmat[2] = -1;
+    p->tmat[3] = 0, p->tmat[4] = -1, p->tmat[5] = 0;
+    p->tmat[6] = -1, p->tmat[7] = 0, p->tmat[8] = 0;
+  } else if (aperiodic_axis == 1) {
+    p->tmat[0] = -1, p->tmat[1] = 0, p->tmat[2] = 0;
+    p->tmat[3] = 0, p->tmat[4] = 0, p->tmat[5] = -1;
+    p->tmat[6] = 0, p->tmat[7] = -1, p->tmat[8] = 0;
+  }
+
+  return reset(p);
 }
 
 static void finalize(double *lattice_, NiggliParams *p)
@@ -294,6 +325,18 @@ static int step2(NiggliParams *p)
     return 1;
   }
   else {return 0;}
+}
+
+/* Aperiodic axis is fixed to C, the output may not be a standard Niggli cell */
+/* Nothing else should be affected, so only a warning */
+static int step2_for_layer(NiggliParams* p)
+{
+  if (p->B > p->C + p->eps ||
+      (! (fabs(p->B - p->C) > p->eps)
+       && fabs(p->eta) > fabs(p->zeta) + p->eps)) {
+    warning_print("niggli: B > C or B = C and |eta| > |zeta|. Please elongate the aperiodic axis.");
+  }
+  return 0;
 }
 
 static int step3(NiggliParams *p)
