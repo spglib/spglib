@@ -86,6 +86,8 @@ Cell * cel_alloc_cell(const int size)
 
   cell->size = size;
 
+  cell->aperiodic_axis = -1;
+
   if ((cell->types = (int *) malloc(sizeof(int) * size)) == NULL) {
     warning_print("spglib: Memory could not be allocated.");
     free(cell->lattice);
@@ -143,6 +145,25 @@ void cel_set_cell(Cell * cell,
   }
 }
 
+/* aperiodic_axis = -1 for none; = 0 1 2 for a b c */
+void cel_set_layer_cell(Cell * cell,
+                        SPGCONST double lattice[3][3],
+                        SPGCONST double position[][3],
+                        const int types[],
+                        const int aperiodic_axis)
+{
+  int i, j;
+  mat_copy_matrix_d3(cell->lattice, lattice);
+  for (i = 0; i < cell->size; i++) {
+    for (j = 0; j < 3; j++) {
+      cell->position[i][j] = j != aperiodic_axis ? position[i][j] - mat_Nint(position[i][j]) :
+                                                   position[i][j];
+    }
+    cell->types[i] = types[i];
+  }
+  cell->aperiodic_axis = aperiodic_axis;
+}
+
 Cell * cel_copy_cell(const Cell * cell)
 {
   Cell * cell_new;
@@ -153,10 +174,11 @@ Cell * cel_copy_cell(const Cell * cell)
     return NULL;
   }
 
-  cel_set_cell(cell_new,
-               cell->lattice,
-               cell->position,
-               cell->types);
+  cel_set_layer_cell(cell_new,
+                     cell->lattice,
+                     cell->position,
+                     cell->types,
+                     cell->aperiodic_axis);
 
   return cell_new;
 }
@@ -236,6 +258,69 @@ int cel_any_overlap_with_same_type(const Cell * cell,
   return 0;
 }
 
+/* Modified from cel_is_overlap */
+/* Periodic boundary condition only applied on 2 directions */
+int cel_layer_is_overlap(const double a[3],
+                         const double b[3],
+                         SPGCONST double lattice[3][3],
+                         const int periodic_axes[2],
+                         const double symprec)
+{
+  double v_diff[3];
+
+  v_diff[0] = a[0] - b[0];
+  v_diff[1] = a[1] - b[1];
+  v_diff[2] = a[2] - b[2];
+
+  v_diff[periodic_axes[0]] -= mat_Nint(v_diff[periodic_axes[0]]);
+  v_diff[periodic_axes[1]] -= mat_Nint(v_diff[periodic_axes[1]]);
+
+  mat_multiply_matrix_vector_d3(v_diff, lattice, v_diff);
+  if (sqrt(mat_norm_squared_d3(v_diff)) < symprec) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+int cel_layer_is_overlap_with_same_type(const double a[3],
+                                        const double b[3],
+                                        const int type_a,
+                                        const int type_b,
+                                        SPGCONST double lattice[3][3],
+                                        const int periodic_axes[2],
+                                        const double symprec)
+{
+  if (type_a == type_b) {
+    return cel_layer_is_overlap(a, b, lattice, periodic_axes, symprec);
+  } else {
+    return 0;
+  }
+}
+
+/* 1: At least one overlap of a pair of atoms with same type was found. */
+/* 0: No overlap of atoms was found. */
+int cel_layer_any_overlap_with_same_type(const Cell * cell,
+                                         const int periodic_axes[2],
+                                         const double symprec) {
+  int i, j;
+
+  for (i = 0; i < cell->size; i++) {
+    for (j = i + 1; j < cell->size; j++) {
+      if (cel_layer_is_overlap_with_same_type(cell->position[i],
+                                              cell->position[j],
+                                              cell->types[i],
+                                              cell->types[j],
+                                              cell->lattice,
+                                              periodic_axes,
+                                              symprec)) {
+        return 1;
+      }
+    }
+  }
+  return 0;
+}
+
 Cell * cel_trim_cell(int * mapping_table,
                      SPGCONST double trimmed_lattice[3][3],
                      const Cell * cell,
@@ -302,6 +387,8 @@ static Cell * trim_cell(int * mapping_table,
   }
 
   mat_copy_matrix_d3(trimmed_cell->lattice, trimmed_lattice);
+/* aperiodic axis of trimmed_cell is directly copied from cell */
+    trimmed_cell->aperiodic_axis = cell->aperiodic_axis;
 
   if ((overlap_table = get_overlap_table(position,
                                          cell->size,
@@ -380,7 +467,9 @@ static void set_positions(Cell * trimmed_cell,
   for (i = 0; i < trimmed_cell->size; i++) {
     for (j = 0; j < 3; j++) {
       trimmed_cell->position[i][j] /= multi;
-      trimmed_cell->position[i][j] = mat_Dmod1(trimmed_cell->position[i][j]);
+      if (j != trimmed_cell->aperiodic_axis) {
+        trimmed_cell->position[i][j] = mat_Dmod1(trimmed_cell->position[i][j]);
+      }
     }
   }
 }
@@ -409,7 +498,9 @@ translate_atoms_in_trimmed_lattice(const Cell * cell,
                                   axis_inv,
                                   cell->position[i]);
     for (j = 0; j < 3; j++) {
-      position->vec[i][j] = mat_Dmod1(position->vec[i][j]);
+      if (j != cell->aperiodic_axis) {
+        position->vec[i][j] = mat_Dmod1(position->vec[i][j]);
+      }
     }
   }
 
@@ -424,9 +515,18 @@ static int * get_overlap_table(const VecDBL * position,
                                const Cell * trimmed_cell,
                                const double symprec)
 {
-  int i, j, attempt, num_overlap, ratio;
+  int i, j, attempt, num_overlap, ratio, lattice_rank;
   double trim_tolerance;
   int *overlap_table;
+  int periodic_axes[3];
+  /* use periodic_axes to avoid for loop in cel_layer_is_overlap */
+  lattice_rank = 0;
+  for (i = 0; i < 3; i++) {
+    if (i != trimmed_cell->aperiodic_axis) {
+      periodic_axes[lattice_rank] = i;
+      lattice_rank++;
+    }
+  }
 
   trim_tolerance = symprec;
 
@@ -441,10 +541,15 @@ static int * get_overlap_table(const VecDBL * position,
       overlap_table[i] = i;
       for (j = 0; j < cell_size; j++) {
         if (cell_types[i] == cell_types[j]) {
-          if (cel_is_overlap(position->vec[i],
-                             position->vec[j],
-                             trimmed_cell->lattice,
-                             trim_tolerance)) {
+          if ((lattice_rank == 3 && cel_is_overlap(position->vec[i],
+                                           position->vec[j],
+                                           trimmed_cell->lattice,
+                                           trim_tolerance))
+            || (lattice_rank == 2 && cel_layer_is_overlap(position->vec[i],
+                                                  position->vec[j],
+                                                  trimmed_cell->lattice,
+                                                  periodic_axes,
+                                                  trim_tolerance))) {
             if (overlap_table[j] == j) {
               overlap_table[i] = j;
               break;

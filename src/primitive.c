@@ -294,7 +294,7 @@ static Primitive * get_primitive(const Cell * cell,
 static Cell * get_cell_with_smallest_lattice(const Cell * cell,
                                              const double symprec)
 {
-  int i, j;
+  int i, j, aperiodic_axis;
   double min_lat[3][3], trans_mat[3][3], inv_lat[3][3];
   Cell * smallest_cell;
 
@@ -302,7 +302,14 @@ static Cell * get_cell_with_smallest_lattice(const Cell * cell,
 
   smallest_cell = NULL;
 
-  if (!del_delaunay_reduce(min_lat, cell->lattice, symprec)) {
+  aperiodic_axis = cell->aperiodic_axis;
+  if ((aperiodic_axis == -1 && ! del_delaunay_reduce(min_lat,
+                                                     cell->lattice,
+                                                     symprec))
+   || (aperiodic_axis != -1 && ! del_layer_delaunay_reduce(min_lat,
+                                                           cell->lattice,
+                                                           aperiodic_axis,
+                                                           symprec))) {
     return NULL;
   }
 
@@ -319,7 +326,11 @@ static Cell * get_cell_with_smallest_lattice(const Cell * cell,
     mat_multiply_matrix_vector_d3(smallest_cell->position[i],
                                   trans_mat, cell->position[i]);
     for (j = 0; j < 3; j++) {
-      smallest_cell->position[i][j] = mat_Dmod1(smallest_cell->position[i][j]);
+      if (j == aperiodic_axis) {
+        smallest_cell->aperiodic_axis = j;
+      } else {
+        smallest_cell->position[i][j] = mat_Dmod1(smallest_cell->position[i][j]);
+      }
     }
   }
 
@@ -415,7 +426,13 @@ static int get_primitive_lattice_vectors(double prim_lattice[3][3],
       mat_free_VecDBL(pure_trans_reduced);
       pure_trans_reduced = NULL;
 
-      if (! del_delaunay_reduce(prim_lattice, prim_lattice, symprec)) {
+      if ((cell->aperiodic_axis == -1 && ! del_delaunay_reduce(prim_lattice,
+                                                               prim_lattice,
+                                                               symprec))
+       || (cell->aperiodic_axis != -1 && ! del_layer_delaunay_reduce(prim_lattice,
+                                                                     prim_lattice,
+                                                                     cell->aperiodic_axis,
+                                                                     symprec))) {
         goto fail;
       }
 
@@ -475,7 +492,7 @@ static int find_primitive_lattice_vectors(double prim_lattice[3][3],
                                           const Cell * cell,
                                           const double symprec)
 {
-  int i, j, k, size;
+  int i, j, k, size, aperiodic_axis;
   double initial_volume, volume;
   double relative_lattice[3][3], min_vectors[3][3], tmp_lattice[3][3];
   double inv_mat_dbl[3][3];
@@ -485,27 +502,64 @@ static int find_primitive_lattice_vectors(double prim_lattice[3][3],
 
   size = vectors->size;
   initial_volume = mat_Dabs(mat_get_determinant_d3(cell->lattice));
+  aperiodic_axis = cell->aperiodic_axis;
 
   /* check volumes of all possible lattices, find smallest volume */
-  for (i = 0; i < size; i++) {
-    for (j = i + 1; j < size; j++) {
-      for (k = j + 1; k < size; k++) {
-        mat_multiply_matrix_vector_d3(tmp_lattice[0],
-                                      cell->lattice,
-                                      vectors->vec[i]);
-        mat_multiply_matrix_vector_d3(tmp_lattice[1],
-                                      cell->lattice,
-                                      vectors->vec[j]);
-        mat_multiply_matrix_vector_d3(tmp_lattice[2],
-                                      cell->lattice,
-                                      vectors->vec[k]);
-        volume = mat_Dabs(mat_get_determinant_d3(tmp_lattice));
-        if (volume > symprec) {
-          if (mat_Nint(initial_volume / volume) == size - 2) {
-            mat_copy_vector_d3(min_vectors[0], vectors->vec[i]);
-            mat_copy_vector_d3(min_vectors[1], vectors->vec[j]);
-            mat_copy_vector_d3(min_vectors[2], vectors->vec[k]);
-            goto ret;
+  if (aperiodic_axis == -1) {
+    for (i = 0; i < size; i++) {
+      for (j = i + 1; j < size; j++) {
+        for (k = j + 1; k < size; k++) {
+          mat_multiply_matrix_vector_d3(tmp_lattice[0],
+                                        cell->lattice,
+                                        vectors->vec[i]);
+          mat_multiply_matrix_vector_d3(tmp_lattice[1],
+                                        cell->lattice,
+                                        vectors->vec[j]);
+          mat_multiply_matrix_vector_d3(tmp_lattice[2],
+                                        cell->lattice,
+                                        vectors->vec[k]);
+          volume = mat_Dabs(mat_get_determinant_d3(tmp_lattice));
+          if (volume > symprec) {
+            if (mat_Nint(initial_volume / volume) == size - 2) {
+              mat_copy_vector_d3(min_vectors[0], vectors->vec[i]);
+              mat_copy_vector_d3(min_vectors[1], vectors->vec[j]);
+              mat_copy_vector_d3(min_vectors[2], vectors->vec[k]);
+              goto ret;
+            }
+          }
+        }
+      }
+    }
+  } else {
+  /* for layer, first move aperiodic axis to c */
+    k = size + aperiodic_axis - 3;
+
+    for (i = 0; i < size; i++) {
+      for (j = i + 1; j < size; j++) {
+        if (i != k && j != k) {
+          mat_multiply_matrix_vector_d3(tmp_lattice[0],
+                                        cell->lattice,
+                                        vectors->vec[i]);
+          mat_multiply_matrix_vector_d3(tmp_lattice[1],
+                                        cell->lattice,
+                                        vectors->vec[j]);
+          mat_multiply_matrix_vector_d3(tmp_lattice[2],
+                                        cell->lattice,
+                                        vectors->vec[k]);
+          volume = mat_Dabs(mat_get_determinant_d3(tmp_lattice));
+          if (volume > symprec) {
+            if (mat_Nint(initial_volume / volume) == size - 2) {
+              mat_copy_vector_d3(min_vectors[0], vectors->vec[i]);
+              mat_copy_vector_d3(min_vectors[1], vectors->vec[j]);
+              /* move aperiodic axis back */
+              if (aperiodic_axis == 2) {
+                mat_copy_vector_d3(min_vectors[2], vectors->vec[k]);
+              } else {
+                mat_copy_vector_d3(min_vectors[2], min_vectors[aperiodic_axis]);
+                mat_copy_vector_d3(min_vectors[aperiodic_axis], vectors->vec[k]);
+              }
+              goto ret;
+            }
           }
         }
       }
