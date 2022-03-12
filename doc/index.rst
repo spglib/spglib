@@ -92,6 +92,7 @@ For more information
 Acknowledgments
 ----------------
 
-Spglib project acknowledges Paweł T. Jochym for deployment and
-packaging, Yusuke Seto for the Crystallographic database, Dimitar
-Pashov for the Fortran interface, and many other contributers.
+Spglib project acknowledges Paweł T. Jochym for deployment and packaging, Yusuke
+Seto for the Crystallographic database, Jingheng Fu for layer group
+implementation, Dimitar Pashov for the Fortran interface, and many other
+contributers.
