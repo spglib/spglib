@@ -11,7 +11,7 @@ import numpy as np
 
 #######################################################################
 # Using the local Atoms-like class (BSD license) where a small set of #
-# ASE Atoms features is comaptible but enough for this example.       #
+# ASE Atoms features is compatible but enough for this example.       #
 #######################################################################
 from atoms import Atoms
 

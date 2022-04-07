@@ -2191,7 +2191,7 @@ static int get_origin_shift(double shift[3],
 
   spgdb_get_operation_index(operation_index, hall_number);
 
-  /* The obtained dw is reduced to that of primitve cell by centerings. */
+  /* The obtained dw is reduced to that of primitive cell by centerings. */
   for (i = 0; i < 3; i++) {
     /* Zero matrix is the sign to set dw 0 */
     if (mat_get_determinant_i3(rot[i]) == 0) {

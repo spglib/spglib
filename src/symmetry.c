@@ -311,7 +311,7 @@ VecDBL * sym_reduce_pure_translation(const Cell * cell,
   return pure_trans_reduced;
 }
 
-/* Warining! Comment 1 does not seem to happen. There is nothing about input cell.*/
+/* Warning! Comment 1 does not seem to happen. There is nothing about input cell.*/
 /* 1) Pointgroup operations of the primitive cell are obtained. */
 /*    These are constrained by the input cell lattice pointgroup, */
 /*    i.e., even if the lattice of the primitive cell has higher */

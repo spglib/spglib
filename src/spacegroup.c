@@ -680,7 +680,7 @@ Spacegroup * spa_search_spacegroup(const Primitive * primitive,
   return spacegroup;
 }
 
-/* Retrun 0 if failed */
+/* Return 0 if failed */
 int spa_search_spacegroup_with_symmetry(const Symmetry *symmetry,
                                         const double symprec)
 {
@@ -1037,7 +1037,7 @@ static int search_hall_number(double origin_shift[3],
                                                    aperiodic_axis);
 
   debug_print("[line %d, %s]\n", __LINE__, __FILE__);
-  debug_print("initial tranformation matrix\n");
+  debug_print("initial transformation matrix\n");
   debug_print_matrix_i3(tmat_int);
 
   if (pointgroup.number == 0) {
@@ -1084,7 +1084,7 @@ static int search_hall_number(double origin_shift[3],
   mat_multiply_matrix_d3(conv_lattice, primitive->cell->lattice, tmat);
 
   debug_print("[line %d, %s]\n", __LINE__, __FILE__);
-  debug_print("tranformation matrix\n");
+  debug_print("transformation matrix\n");
   debug_print_matrix_d3(tmat);
 
   /* For rhombohedral system, symmetry for a=b=c primitive lattice */
@@ -1595,7 +1595,7 @@ static int match_hall_symbol_db_monocli_in_loop(double origin_shift[3],
   }
 
   /* When orig_lattice is given not NULL, try to find similar (a, b, c) */
-  /* choises to the input (a, b, c) by flipping a, b, c axes. */
+  /* choices to the input (a, b, c) by flipping a, b, c axes. */
   /* Here flipping means a -> -a, and so on. */
   /* Note that flipped (a,b,c) that match those of input should not */
   /* change centring for monoclinic case. */
@@ -1718,7 +1718,7 @@ static int match_hall_symbol_db_ortho_in_loop(double origin_shift[3],
                          change_of_basis_ortho[i]);
 
   /* When orig_lattice is given not NULL, try to find similar (a, b, c) */
-  /* choises to the input (a, b, c) by flipping a, b, c axes. */
+  /* choices to the input (a, b, c) by flipping a, b, c axes. */
   /* Here flipping means a -> -a, and so on. */
   /* Note that flipping of axes doesn't change centring. */
   mat_copy_matrix_d3(change_of_basis, change_of_basis_ortho[i]);

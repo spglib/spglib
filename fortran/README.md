@@ -7,7 +7,7 @@ library. https://github.com/spglib/spglib/blob/develop/README.md gives
 simple instructions to compile with cmake. Here it is assumed that
 the `PREFIX` of the library is located at `../build`.
 
-In this directory that contains the fortran wrapper, to complie
+In this directory that contains the fortran wrapper, to compile
 `example_f08.f90` with gfortran, it is simply done by
 
 ```

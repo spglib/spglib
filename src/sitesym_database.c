@@ -2048,7 +2048,7 @@ int ssmdb_get_coordinate(int rot[3][3],
   int rows[3], trans_int[3];
 
   /* 'Coordinates' are compressed using ternary numerical system for */
-  /* rotation and base-24 system for translation. Elements of the first coloum */
+  /* rotation and base-24 system for translation. Elements of the first column */
   /* of rotation matrix can be one of {-2,-1,0,1,2} and the other elements can */
   /* be one of {-1,0,1}. Translation can have one of */
   /* {0,2,3,4,6,8,9,10,12,14,15,16,18,20,21,22} */
@@ -2077,7 +2077,7 @@ int ssmdb_get_coordinate(int rot[3][3],
   return multiplicities[index];
 }
 
-/* databases for layer group is directly added behind its spacegroup countparts */
+/* databases for layer group is directly added behind its spacegroup counterparts */
 void ssmdb_get_wyckoff_indices(int indices[2], const int index)
 {
   if (index > 0) {

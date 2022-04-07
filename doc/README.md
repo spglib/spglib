@@ -10,7 +10,7 @@ make html
 
 ## Source files
 
-* `conf.py` contains the sphinx setting confiuration.
+* `conf.py` contains the sphinx setting configuration.
 * `*.rst` are the usual sphinx documentation source and the filenames without `.rst` are the keys to link from toctree mainly in `index.rst`.
 * `*.inc` are the files included in the other `*.rst` files.
 

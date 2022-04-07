@@ -59,7 +59,7 @@ Crystallography (ITA).
 The serial number from 1 to 530 which are found at `list of space
 groups (Seto's web site)
 <http://pmsl.planet.sci.kobe-u.ac.jp/~seto/?page_id=37&lang=en>`_. Be
-sure that this is not a standard crystallographic defition as far as
+sure that this is not a standard crystallographic definition as far as
 the author of spglib knows.
 
 ``international_symbol``
@@ -239,7 +239,7 @@ This is available **at versions 1.10 or later**. This gives a list of
 atomic indices in the primitive cell of the standardized crystal
 structure, where the same number presents the same atom in the
 primitive cell. By collective the atoms having the same number, a set
-of relative lattice points in the the standardized crystal structure
+of relative lattice points in the standardized crystal structure
 is obtained.
 
 
@@ -267,7 +267,7 @@ point groups::
 Intermediate data in symmetry search
 ------------------------------------
 
-A primitive cell is searched from the translational symemtry. This
+A primitive cell is searched from the translational symmetry. This
 primitive cell is given by ``primitive_lattice`` and
 ``mapping_to_primitive`` below.
 
@@ -286,5 +286,4 @@ In version 1.10 or later, ``mapping_to_primitive`` is available. This
 gives a list of atomic indices in the primitive cell of the input
 crystal structure, where the same number presents the same atom in the
 primitive cell. By collective the atoms having the same number, a set
-of relative lattice points in the the input crystal structure is
-obtained.
+of relative lattice points in the input crystal structure is obtained.

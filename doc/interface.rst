@@ -33,7 +33,7 @@ work with the recent ruby.
 The ruby script ``symPoscar.rb`` in ``ruby`` directory reads a VASP
 POSCAR formatted file and finds the space-group type. The ``-l``
 option refines a slightly distorted structure within tolerance
-spacified with the ``-s`` option. The ``-o`` option gives the symmetry
+specified with the ``-s`` option. The ``-o`` option gives the symmetry
 operations of the input structure.
 
 ::

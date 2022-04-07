@@ -221,7 +221,7 @@ static int check_mesh_symmetry(const int mesh[3],
 /*     [-1  1  0]                                                   */
 /*     ....      ]                                                  */
 /*                                                                  */
-/* Each value of 'map' correspnds to the index of grid_point.       */
+/* Each value of 'map' corresponds to the index of grid_point.      */
 int kpt_get_irreducible_reciprocal_mesh(int grid_address[][3],
                                         int ir_mapping_table[],
                                         const int mesh[3],
@@ -875,7 +875,7 @@ static int check_mesh_symmetry(const int mesh[3],
   eq[1] = 0; /* b=c */
   eq[2] = 0; /* c=a */
 
-  /* Check 3 and 6 fold rotations and non-convensional choice of unit cells */
+  /* Check 3 and 6 fold rotations and non-conventional choice of unit cells */
   for (i = 0; i < rot_reciprocal->size; i++) {
     sum = 0;
     for (j = 0; j < 3; j++) {

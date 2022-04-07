@@ -136,7 +136,7 @@ basis vectors as follows
 where :math:`( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )` and :math:`(
 \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
 \mathbf{c}_\mathrm{s} )` are the basis vectors of an arbitrary system
-and of a starndardized system, respectively. In general, the
+and of a standardized system, respectively. In general, the
 transformation matrix is not limited for the transformation from the
 standardized system, but can be used in between any systems possibly
 transformed. It has to be emphasized that the transformation matrix
@@ -278,7 +278,7 @@ Choice of basis vectors
 
 Using the APIs ``spg_get_dataset``,
 ``spg_get_dataset_with_hall_number``, or ``spg_standardize_cell``, the
-starndardized unit cell is obtained. The "starndardized unit cell" in
+standardized unit cell is obtained. The "standardized unit cell" in
 this document means that the (conventional) unit cell structure is
 standardized by the crystal symmetry and lengths of basis
 vectors. This standardization in spglib is not unique, but upto space
@@ -366,7 +366,7 @@ cell structure to a space group type with some higher symmetry. Using
 obtained symmetry operations, the distortion is removed to idealize
 the unit cell structure. The coordinates of atomic points are
 idealized using respective site-symmetries (Grosse-Kunstleve *et
-al*. (2002)). The basis vectors are idealized by forceing them into
+al*. (2002)). The basis vectors are idealized by forcing them into
 respective lattice shapes as follows. In this treatment, except for
 triclinic crystals, crystals can be rotated in Cartesian coordinates,
 which is the different type of transformation from that of the
@@ -464,7 +464,7 @@ Rotation introduced by idealization
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 In the idealization step presented above, the input unit cell crystal
-strcuture can be rotated in the Cartesian coordinates.  The rotation
+structure can be rotated in the Cartesian coordinates.  The rotation
 matrix :math:`\boldsymbol{R}` of this rotation is defined by
 
 .. math::
@@ -837,7 +837,7 @@ which is (in row vectors)
 This is different from the standardized basis vectors **after**
 idealization :math:`( \bar{\mathbf{a}}_\mathrm{s} \;
 \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )`.  Unless
-this crystal strucutre is distorted from the crystal structure that
+this crystal structure is distorted from the crystal structure that
 has the ideal symmetry, this means that the crystal was rotated
 rigidly in the idealization step by
 
