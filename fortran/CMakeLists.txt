@@ -1,5 +1,5 @@
 if (USE_OMP)
-	find_package(OpenMP)
+	find_package(OpenMP COMPONENTS Fortran REQUIRED)
 	set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${OpenMP_Fortran_FLAGS}")
 endif()
 

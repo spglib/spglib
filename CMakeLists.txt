@@ -6,11 +6,12 @@ project(spglib C)
 option(WITH_Fortran "enable f08 interface" OFF)
 
 set(CMAKE_MACOSX_RPATH 1)
-set(CMAKE_C_FLAGS_RELEASE "-Wall -O2")
-set(CMAKE_C_FLAGS_DEBUG "-g -DSPGDEBUG -DSPGWARNING")
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif(NOT CMAKE_BUILD_TYPE)
+if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+  add_definitions(-DSPGDEBUG -DSPGWARNING)
+endif()
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 
 include(GNUInstallDirs)
@@ -20,10 +21,8 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 option(USE_OMP "Build with OpenMP support" ON)
 
 if (USE_OMP)
-  find_package(OpenMP)
-  if (OPENMP_FOUND)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-  endif()
+  find_package(OpenMP REQUIRED)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
 endif()
 
 # Version numbers
@@ -65,7 +64,7 @@ set(SOURCES ${PROJECT_SOURCE_DIR}/src/arithmetic.c
 add_library(symspg SHARED ${SOURCES})
 
 if(NOT MSVC)
-  target_link_libraries(symspg m)
+  target_link_libraries(symspg PUBLIC m)
 endif()
 set_property(TARGET symspg PROPERTY VERSION ${serial})
 set_property(TARGET symspg PROPERTY SOVERSION ${soserial})
@@ -86,7 +85,7 @@ install(FILES ${PROJECT_SOURCE_DIR}/src/spglib.h
 add_executable(spglibtest EXCLUDE_FROM_ALL ${PROJECT_SOURCE_DIR}/src/test.c ${SOURCES})
 
 if(NOT MSVC)
-  target_link_libraries(spglibtest m)
+  target_link_libraries(spglibtest PRIVATE m)
 endif()
 
 enable_testing()
