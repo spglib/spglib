@@ -57,9 +57,9 @@ class Atoms:
 
         # position
         self.scaled_positions = None
-        if (not self.cell is None) and  (not positions is None):
+        if (self.cell is not None) and (positions is not None):
             self.set_positions(positions)
-        if (not scaled_positions is None):
+        if (scaled_positions is not None):
             self.set_scaled_positions(scaled_positions)
 
         # Atom symbols
@@ -78,11 +78,11 @@ class Atoms:
         self.set_magnetic_moments(magmoms)
 
         # number --> symbol
-        if not self.numbers is None:
+        if self.numbers is not None:
             self._numbers_to_symbols()
 
         # symbol --> number
-        elif not self.symbols is None:
+        elif self.symbols is not None:
             self._symbols_to_numbers()
 
         # symbol --> mass
