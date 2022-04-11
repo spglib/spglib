@@ -286,12 +286,12 @@ atom_data = [
     [110, "Ds", "Darmstadtium", None], # 110
     [111, "Rg", "Roentgenium", None], # 111
     [112, "Cn", "Copernicium", None], # 112
-    [113, "Uut", "Ununtrium", None], # 113
-    [114, "Uuq", "Ununquadium", None], # 114
-    [115, "Uup", "Ununpentium", None], # 115
-    [116, "Uuh", "Ununhexium", None], # 116
-    [117, "Uus", "Ununseptium", None], # 117
-    [118, "Uuo", "Ununoctium", None], # 118
+    [113, "Nh", "Nihonium", None], # 113
+    [114, "Fl", "Flerovium", None], # 114
+    [115, "Mc", "Moscovium", None], # 115
+    [116, "Lv", "Livermorium", None], # 116
+    [117, "Ts", "Tennessine", None], # 117
+    [118, "Og", "Oganesson", None], # 118
     ]
 
 symbol_map = {
@@ -407,11 +407,11 @@ symbol_map = {
     "Ds":110,
     "Rg":111,
     "Cn":112,
-    "Uut":113,
-    "Uuq":114,
-    "Uup":115,
-    "Uuh":116,
-    "Uus":117,
-    "Uuo":118,
+    "Nh":113,
+    "Fl":114,
+    "Mc":115,
+    "Lv":116,
+    "Ts":117,
+    "Og":118,
     }
 
