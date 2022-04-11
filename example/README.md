@@ -26,5 +26,5 @@ spglib distribution. To compile `tetrahedron.c`:
 ```
 
 `tetrahedron.c` is written to work with OpenMP. To compile with
-`-lgomp -fopenmp`, the tetrahedon method calculation is distributed
+`-lgomp -fopenmp`, the tetrahedron method calculation is distributed
 into CPU cores.

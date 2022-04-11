@@ -9529,7 +9529,7 @@ int spgdb_get_operation(int rot[3][3], double trans[3], const int hall_number)
 }
 
 /* Use negative hall number to represent layer group. */
-/* databases for layer group is directly added behind its spacegroup countparts */
+/* databases for layer group is directly added behind its spacegroup counterparts */
 void spgdb_get_operation_index(int indices[2], const int hall_number)
 {
   if (hall_number > 0) {

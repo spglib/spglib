@@ -57,7 +57,7 @@ def get_symmetry(cell,
     Parameters
     ----------
     cell : tuple
-        Crystal structrue given either in tuple or Atoms object (deprecated).
+        Crystal structure given either in tuple or Atoms object (deprecated).
         In the case given by a tuple, it has to follow the form below,
 
         (basis vectors, atomic points, types in integer numbers, ...)
@@ -91,10 +91,10 @@ def get_symmetry(cell,
         Symmetry search tolerance in the unit of angle deg. If the value is
         negative, an internally optimized routine is used to judge symmetry.
     is_magnetic : bool
-        When optiona data (4th element of cell tuple) is given in case-II,
+        When optional data (4th element of cell tuple) is given in case-II,
         the symmetry search is performed considering magnetic symmetry, which
         may be corresponding to that for non-collinear calculation. Default is
-        True, but this does nothing unless optiona data is supplied.
+        True, but this does nothing unless optional data is supplied.
 
     Returns
     -------
@@ -200,7 +200,7 @@ def get_symmetry_dataset(cell,
             equivalent_atoms (n int): Symmetrically equivalent atoms, where
                 'symmetrically' means found symmetry operations. In spglib,
                 symmetry operations are given for the input cell. When a
-                non-primitive cell is inputed and the lattice made by the
+                non-primitive cell is inputted and the lattice made by the
                 non-primitive basis vectors breaks its point group,
                 the found symmetry operations may not correspond to the
                 crystallographic space group type.
@@ -213,7 +213,7 @@ def get_symmetry_dataset(cell,
                 primitive_lattice (3x3 float, row vectors):
                     Shape of cell by these basis vectors may not be nice.
                 mapping_to_primitive (n int):
-                    Atom index mapping from original cell to primivie cell
+                    Atom index mapping from original cell to primitive cell
             Idealized standardized unit cell:
                 std_lattice (3x3 float, row vectors),
                 std_positions (Nx3 float), std_types (N int)
@@ -222,7 +222,7 @@ def get_symmetry_dataset(cell,
                 vectors to idealized standardized basis vectors
                     L^idealized = R * L^standardized
             std_mapping_to_primitive (m int):
-                std_positions index mapping to those of primivie cell atoms
+                std_positions index mapping to those of primitive cell atoms
             pointgroup (str): Pointgroup symbol
 
         If it fails, None is returned.
@@ -553,7 +553,7 @@ def get_symmetry_from_database(hall_number):
 # k-points #
 ############
 def get_grid_point_from_address(grid_address, mesh):
-    """Return grid point index by tranlating grid address"""
+    """Return grid point index by translating grid address"""
     _set_no_error()
 
     return spg.grid_point_from_address(np.array(grid_address, dtype='intc'),
@@ -568,7 +568,7 @@ def get_ir_reciprocal_mesh(mesh,
                            is_dense=False):
     """Return k-points mesh and k-point map to the irreducible k-points.
 
-    The symmetry is serched from the input cell.
+    The symmetry is searched from the input cell.
 
     Parameters
     ----------
@@ -596,7 +596,7 @@ def get_ir_reciprocal_mesh(mesh,
         dtype='intc' or 'uintp', shape=(prod(mesh),)
     grid_address : ndarray
         Address of all grid points.
-        dtype='intc', shspe=(prod(mesh), 3)
+        dtype='intc', shape=(prod(mesh), 3)
 
     """
     _set_no_error()

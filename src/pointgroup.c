@@ -424,7 +424,7 @@ static int is_exist_axis(const int axis_vec[3], const int axis_index);
 static void sort_axes(int axes[3]);
 static void layer_check_and_sort_axes(int axes[3], const int aperiodic_axis);
 
-/* Retrun pointgroup.number = 0 if failed */
+/* Return pointgroup.number = 0 if failed */
 Pointgroup ptg_get_transformation_matrix(int transform_mat[3][3],
                                          SPGCONST int rotations[][3][3],
                                          const int num_rotations)
@@ -904,7 +904,7 @@ static int laue4m(int axes[3],
   for (i = 0; i < pointsym->size; i++) {
     get_proper_rotation(prop_rot, pointsym->rot[i]);
 
-    /* Search foud-fold rotation */
+    /* Search four-fold rotation */
     if ( mat_get_trace_i3(prop_rot) == 1) {
       /* The first axis */
       axes[2] = get_rotation_axis(prop_rot);
@@ -963,7 +963,7 @@ static int laue4mmm(int axes[3],
   for (i = 0; i < pointsym->size; i++) {
     get_proper_rotation(prop_rot, pointsym->rot[i]);
 
-    /* Search foud-fold rotation */
+    /* Search four-fold rotation */
     if (mat_get_trace_i3(prop_rot) == 1) {
       /* The first axis */
       axes[2] = get_rotation_axis(prop_rot);
@@ -1192,7 +1192,7 @@ static int laue_one_axis(int axes[3],
   for (i = 0; i < pointsym->size; i++) {
     get_proper_rotation(prop_rot, pointsym->rot[i]);
 
-    /* Search foud-fold rotation */
+    /* Search four-fold rotation */
     if (rot_order == 4) {
       if (mat_get_trace_i3(prop_rot) == 1) {
         /* The first axis */
@@ -1329,7 +1329,7 @@ static int get_rotation_axis(SPGCONST int proper_rot[3][3])
  end:
 #ifdef SPGDEBUG
   if (axis == -1) {
-    printf("rotation axis cound not found.\n");
+    printf("rotation axis could not be found.\n");
   }
 #endif
 
@@ -1468,7 +1468,7 @@ static void layer_check_and_sort_axes(int axes[3], const int aperiodic_axis)
       axes[1] = axis;
     }
   } else {
-    warning_print("spglib: Invaid axes were found ");
+    warning_print("spglib: Invalid axes were found ");
     warning_print("(line %d, %s).\n", __LINE__, __FILE__);
     for (i = 0; i < 3; i++) {
       axes[i] = 0;

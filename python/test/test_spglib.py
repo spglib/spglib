@@ -127,7 +127,7 @@ class TestSpglib(unittest.TestCase):
             self.assertEqual(dataset['number'], spgnum,
                              msg=("%s" % fname))
 
-            # The test for point group has to be done after standarization.
+            # The test for point group has to be done after standardization.
             ptg_symbol, _, _ = get_pointgroup(dataset['rotations'])
             self.assertEqual(dataset['pointgroup'],
                              ptg_symbol,

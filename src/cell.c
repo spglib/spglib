@@ -61,7 +61,7 @@ static int * get_overlap_table(const VecDBL * position,
                                const Cell * trimmed_cell,
                                const double symprec);
 
-/* NULL is returned if faied */
+/* NULL is returned if failed */
 Cell * cel_alloc_cell(const int size)
 {
   Cell *cell;

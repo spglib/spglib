@@ -237,7 +237,7 @@ static void get_delaunay_shortest_vectors(double basis[4][3],
         }
       }
     }
-  /* find the shortest 2 vectors inside period plane and the shorest one outside */
+  /* find the shortest 2 vectors inside period plane and the shortest one outside */
   } else {
     for (i = 0; i < 2; i++) {
       for (j = 0; j < 2; j++) {
@@ -259,7 +259,7 @@ static void get_delaunay_shortest_vectors(double basis[4][3],
     }
   }
 
-  /* for layer, i = 2, |tmpmat| = 0 is automately dropped */
+  /* for layer, i = 2, |tmpmat| = 0 is automatically dropped */
   for (i = 2; i < 7; i++) {
     for (j = 0; j < 3; j++) {
       tmpmat[j][0] = b[0][j];

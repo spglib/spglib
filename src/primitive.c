@@ -354,7 +354,7 @@ static Cell * get_primitive_cell(int * mapping_table,
 
   /* Primitive lattice vectors are searched. */
   /* To be consistent, sometimes tolerance is decreased iteratively. */
-  /* The descreased tolerance is stored in 'static double tolerance'. */
+  /* The decreased tolerance is stored in 'static double tolerance'. */
   multi = get_primitive_lattice_vectors(prim_lattice,
                                         cell,
                                         pure_trans,
@@ -567,7 +567,7 @@ static int find_primitive_lattice_vectors(double prim_lattice[3][3],
   }
 
   /* Not found */
-  warning_print("spglib: Primitive lattice vectors cound not be found ");
+  warning_print("spglib: Primitive lattice vectors could not be found ");
   warning_print("(line %d, %s).\n", __LINE__, __FILE__);
   return 0;
 

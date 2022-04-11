@@ -196,8 +196,8 @@ ref_get_exact_structure_and_symmetry(Spacegroup * spacegroup,
   symmetry = NULL;
   exact_structure = NULL;
 
-  /* spacegroup->bravais_lattice is overwirten. */
-  /* spacegroup->origin_shift is overwirten. */
+  /* spacegroup->bravais_lattice is overwritten. */
+  /* spacegroup->origin_shift is overwritten. */
   if (!find_similar_bravais_lattice(spacegroup, symprec)) {
     goto err;
   }

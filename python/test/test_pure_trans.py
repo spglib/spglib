@@ -1581,10 +1581,10 @@ sym_ops_str = """ 1  0  0  0  1  0  0  0  1    0.0000000    0.0000000    0.00000
 -1  0  0  0  0 -1  0  1  0    0.7500000    0.5000000    0.2500000"""
 
 class TestPureTrans(unittest.TestCase):
-    """This is a test for new implentation of search_pure_translations in
-    symmetry.c (ee97ad17) againt a previous version. The order of
-    symmetry oprations found by this new implementation may be
-    different from that obtaiend by the older version but the set must
+    """This is a test for new implementation of search_pure_translations in
+    symmetry.c (ee97ad17) against a previous version. The order of
+    symmetry operations found by this new implementation may be
+    different from that obtained by the older version but the set must
     be the same in rotations and very close in translations.
 
     """
