@@ -624,6 +624,7 @@ contains
        dset % n_atoms               = dset_c % n_atoms
        dset % n_std_atoms           = dset_c % n_std_atoms
        dset % std_lattice           = dset_c % std_lattice
+       dset % std_rotation_matrix   = dset_c % std_rotation_matrix
        dset % primitive_lattice     = dset_c % primitive_lattice
 
        ! Copy C strings to Fortran characters, converting C NULL to Fortran space padded strings
