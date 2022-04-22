@@ -287,7 +287,7 @@ or cell choice), ``spg_get_dataset_with_hall_number`` is used.
 where ``hall_number`` is used to specify the choice. The possible
 choices and those serial numbers are found at `list of space groups
 (Seto's web site)
-<http://pmsl.planet.sci.kobe-u.ac.jp/~seto/?page_id=37&lang=en>`_.
+<https://yseto.net/?page_id=29>`_.
 The crystal structure has to possess the space-group type of the Hall
 symbol. If the symmetry search fails or the specified ``hall_number``
 is not in the list of Hall symbols for the space group type of the

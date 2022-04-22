@@ -388,7 +388,7 @@ The arguments are:
   option (i.e., in the case of ``hall_number=0``), always the first one
   (the smallest serial number corresponding to the space-group-type in
   `list of space groups (Seto's web site)
-  <http://pmsl.planet.sci.kobe-u.ac.jp/~seto/?page_id=37&lang=en>`_)
+  <https://yseto.net/?page_id=29>`_)
   among possible choices and settings is chosen as default. This
   argument is useful when the other choice (or setting) is expected to
   be hooked. This affects to the obtained values of ``international``,
