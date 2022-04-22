@@ -58,7 +58,7 @@ Crystallography (ITA).
 
 The serial number from 1 to 530 which are found at `list of space
 groups (Seto's web site)
-<http://pmsl.planet.sci.kobe-u.ac.jp/~seto/?page_id=37&lang=en>`_. Be
+<https://yseto.net/?page_id=29>`_. Be
 sure that this is not a standard crystallographic definition as far as
 the author of spglib knows.
 
