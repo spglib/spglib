@@ -11,7 +11,7 @@
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
-    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Rust, Fortran, and Ruby interfaces" href="interface.html" />
@@ -340,7 +340,7 @@ as a list of N floating point values.</p>
 <span class="n">numbers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>        <span class="c1"># Al, Ni, Ni, Ni</span>
 </pre></div>
 </div>
-<p>Version 1.9.5 or later: The methods that use the crsytal strcutre
+<p>Version 1.9.5 or later: The methods that use the crystal structure
 will return <code class="docutils literal notranslate"><span class="pre">None</span></code> when a crystal structure is not properly given.</p>
 <div class="section" id="ase-atoms-like-input-is-deprecated">
 <h4>ASE Atoms-like input is deprecated.<a class="headerlink" href="#ase-atoms-like-input-is-deprecated" title="Permalink to this headline">¶</a></h4>
@@ -432,13 +432,13 @@ symmetrically equivalent atoms. The numbers contained are the indices
 of atoms starting from 0, i.e., the first atom is numbered as 0, and
 then 1, 2, 3, … <code class="docutils literal notranslate"><span class="pre">np.unique(equivalent_atoms)</span></code> gives representative
 symmetrically independent atoms. A list of atoms that are
-symmetrically euivalent to some independent atom (here for example 1
+symmetrically equivalent to some independent atom (here for example 1
 is in <code class="docutils literal notranslate"><span class="pre">equivalent_atom</span></code>) is found by
 <code class="docutils literal notranslate"><span class="pre">np.where(equivalent_atom=1)[0]</span></code>. When the search failed, <code class="docutils literal notranslate"><span class="pre">None</span></code>
 is returned.</p>
 <p>If <code class="docutils literal notranslate"><span class="pre">cell</span></code> is given as a tuple and collinear polarizations are given
 as the fourth element of this tuple, symmetry operations are searched
-considering this freedome. In ASE Atoms-class object, this is not supported.</p>
+considering this freedom. In ASE Atoms-class object, this is not supported.</p>
 </div>
 <div class="section" id="refine-cell">
 <h3><a class="toc-backref" href="#id18"><code class="docutils literal notranslate"><span class="pre">refine_cell</span></code></a><a class="headerlink" href="#refine-cell" title="Permalink to this headline">¶</a></h3>
@@ -480,7 +480,7 @@ cell, and <code class="docutils literal notranslate"><span class="pre">no_ideali
 of basis vectors and positions of atoms according to crystal
 symmetry. Now <code class="docutils literal notranslate"><span class="pre">refine_cell</span></code> and <code class="docutils literal notranslate"><span class="pre">find_primitive</span></code> are shorthands of
 this method with combinations of these options. When the search
-failed, <code class="docutils literal notranslate"><span class="pre">None</span></code> is returned.  is returned. About the default choice
+failed, <code class="docutils literal notranslate"><span class="pre">None</span></code> is returned.  About the default choice
 of the setting, see the documentation of <code class="docutils literal notranslate"><span class="pre">hall_number</span></code> argument of
 <a class="reference internal" href="#py-method-get-symmetry-dataset"><span class="std std-ref">get_symmetry_dataset</span></a>.  More detailed explanation is
 shown in the spglib (C-API) document.</p>
@@ -505,9 +505,9 @@ corresponding to it. The mapping from Hall symbols to a
 space-group-type is the many-to-one mapping. Without specifying this
 option (i.e., in the case of <code class="docutils literal notranslate"><span class="pre">hall_number=0</span></code>), always the first one
 (the smallest serial number corresponding to the space-group-type in
-<a class="reference external" href="http://pmsl.planet.sci.kobe-u.ac.jp/~seto/?page_id=37&amp;lang=en">list of space groups (Seto’s web site)</a>)
+<a class="reference external" href="https://yseto.net/?page_id=29">list of space groups (Seto’s web site)</a>)
 among possible choices and settings is chosen as default. This
-argument is useful when the other choice (or settting) is expected to
+argument is useful when the other choice (or setting) is expected to
 be hooked. This affects to the obtained values of <code class="docutils literal notranslate"><span class="pre">international</span></code>,
 <code class="docutils literal notranslate"><span class="pre">hall</span></code>, <code class="docutils literal notranslate"><span class="pre">hall_number</span></code>, <code class="docutils literal notranslate"><span class="pre">choice</span></code>, <code class="docutils literal notranslate"><span class="pre">transformation_matrix</span></code>,
 <code class="docutils literal notranslate"><span class="pre">origin</span> <span class="pre">shift</span></code>, <code class="docutils literal notranslate"><span class="pre">wyckoffs</span></code>, <code class="docutils literal notranslate"><span class="pre">std_lattice</span></code>, <code class="docutils literal notranslate"><span class="pre">std_positions</span></code>,
@@ -638,7 +638,7 @@ dot product being close to zero or not.  The detail is shown at
 <a class="reference external" href="https://atztogo.github.io/niggli/">https://atztogo.github.io/niggli/</a>.</p>
 <p>When the search failed, <code class="docutils literal notranslate"><span class="pre">None</span></code> is returned.</p>
 <p>The transformation from original basis vectors <span class="math notranslate nohighlight">\(( \mathbf{a}
-\; \mathbf{b} \; \mathbf{c} )\)</span> to final baiss vectors <span class="math notranslate nohighlight">\((
+\; \mathbf{b} \; \mathbf{c} )\)</span> to final basis vectors <span class="math notranslate nohighlight">\((
 \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )\)</span> is achieved by linear
 combination of basis vectors with integer coefficients without
 rotating coordinates. Therefore the transformation matrix is obtained
@@ -692,7 +692,7 @@ the irreducible k-point indices that are obtained by</p>
 </div>
 <p>Here <code class="docutils literal notranslate"><span class="pre">np</span></code> means the numpy module. The grid point is accessed by
 <code class="docutils literal notranslate"><span class="pre">grid[index]</span></code>.</p>
-<p>When the sesarch failed, <code class="docutils literal notranslate"><span class="pre">None</span></code> is returned.</p>
+<p>When the search failed, <code class="docutils literal notranslate"><span class="pre">None</span></code> is returned.</p>
 <p>An example is shown below:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">spglib</span>
@@ -758,7 +758,7 @@ the irreducible k-point indices that are obtained by</p>
     </p>
     <p>
         &copy; Copyright 2009, Atsushi Togo.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.3.0.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br/>
     </p>
   </div>
 </footer>

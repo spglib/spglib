@@ -11,7 +11,7 @@
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
-    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="Rust, Fortran, and Ruby interfaces" href="interface.html" />
@@ -261,7 +261,7 @@ basis vectors as follows</p>
 <p>where <span class="math notranslate nohighlight">\(( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )\)</span> and <span class="math notranslate nohighlight">\((
 \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
 \mathbf{c}_\mathrm{s} )\)</span> are the basis vectors of an arbitrary system
-and of a starndardized system, respectively. In general, the
+and of a standardized system, respectively. In general, the
 transformation matrix is not limited for the transformation from the
 standardized system, but can be used in between any systems possibly
 transformed. It has to be emphasized that the transformation matrix
@@ -351,7 +351,7 @@ coordinates.</p>
 <h3><a class="toc-backref" href="#id10">Choice of basis vectors</a><a class="headerlink" href="#choice-of-basis-vectors" title="Permalink to this headline">¶</a></h3>
 <p>Using the APIs <code class="docutils literal notranslate"><span class="pre">spg_get_dataset</span></code>,
 <code class="docutils literal notranslate"><span class="pre">spg_get_dataset_with_hall_number</span></code>, or <code class="docutils literal notranslate"><span class="pre">spg_standardize_cell</span></code>, the
-starndardized unit cell is obtained. The “starndardized unit cell” in
+standardized unit cell is obtained. The “standardized unit cell” in
 this document means that the (conventional) unit cell structure is
 standardized by the crystal symmetry and lengths of basis
 vectors. This standardization in spglib is not unique, but upto space
@@ -425,7 +425,7 @@ cell structure to a space group type with some higher symmetry. Using
 obtained symmetry operations, the distortion is removed to idealize
 the unit cell structure. The coordinates of atomic points are
 idealized using respective site-symmetries (Grosse-Kunstleve <em>et
-al</em>. (2002)). The basis vectors are idealized by forceing them into
+al</em>. (2002)). The basis vectors are idealized by forcing them into
 respective lattice shapes as follows. In this treatment, except for
 triclinic crystals, crystals can be rotated in Cartesian coordinates,
 which is the different type of transformation from that of the
@@ -521,7 +521,7 @@ respectively.</p></li>
 <div class="section" id="rotation-introduced-by-idealization">
 <h3><a class="toc-backref" href="#id13">Rotation introduced by idealization</a><a class="headerlink" href="#rotation-introduced-by-idealization" title="Permalink to this headline">¶</a></h3>
 <p>In the idealization step presented above, the input unit cell crystal
-strcuture can be rotated in the Cartesian coordinates.  The rotation
+structure can be rotated in the Cartesian coordinates.  The rotation
 matrix <span class="math notranslate nohighlight">\(\boldsymbol{R}\)</span> of this rotation is defined by</p>
 <div class="math notranslate nohighlight" id="equation-rigid-rotation-matrix">
 <span class="eqno">(12)<a class="headerlink" href="#equation-rigid-rotation-matrix" title="Permalink to this equation">¶</a></span>\[( \bar{\mathbf{a}}_\mathrm{s} \;
@@ -869,7 +869,7 @@ above, which is the one <span class="math notranslate nohighlight">\(45^\circ\)<
 <p>This is different from the standardized basis vectors <strong>after</strong>
 idealization <span class="math notranslate nohighlight">\(( \bar{\mathbf{a}}_\mathrm{s} \;
 \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )\)</span>.  Unless
-this crystal strucutre is distorted from the crystal structure that
+this crystal structure is distorted from the crystal structure that
 has the ideal symmetry, this means that the crystal was rotated
 rigidly in the idealization step by</p>
 <div class="math notranslate nohighlight">
@@ -940,7 +940,7 @@ rotation doesn’t affect them.</p>
     </p>
     <p>
         &copy; Copyright 2009, Atsushi Togo.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.3.0.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br/>
     </p>
   </div>
 </footer>
