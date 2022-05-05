@@ -221,7 +221,7 @@ static int check_mesh_symmetry(const int mesh[3],
 /*     [-1  1  0]                                                   */
 /*     ....      ]                                                  */
 /*                                                                  */
-/* Each value of 'map' correspnds to the index of grid_point.       */
+/* Each value of 'map' corresponds to the index of grid_point.      */
 int kpt_get_irreducible_reciprocal_mesh(int grid_address[][3],
                                         int ir_mapping_table[],
                                         const int mesh[3],
@@ -642,7 +642,8 @@ static size_t get_dense_ir_reciprocal_mesh_normal(int grid_address[][3],
   /* grid: reducible grid points */
   /* ir_mapping_table: the mapping from each point to ir-point. */
 
-  size_t i, grid_point_rot;
+  long i;
+  size_t grid_point_rot;
   int j;
   int address_double[3], address_double_rot[3];
 
@@ -681,7 +682,8 @@ get_dense_ir_reciprocal_mesh_distortion(int grid_address[][3],
                                         const int is_shift[3],
                                         const MatINT *rot_reciprocal)
 {
-  size_t i, grid_point_rot;
+  long i;
+  size_t grid_point_rot;
   int j, k, indivisible;
   int address_double[3], address_double_rot[3];
   long long_address_double[3], long_address_double_rot[3], divisor[3];
@@ -744,7 +746,8 @@ get_dense_ir_reciprocal_mesh_distortion(int grid_address[][3],
 
 static size_t get_dense_num_ir(size_t ir_mapping_table[], const int mesh[3])
 {
-  size_t i, num_ir;
+  long i;
+  size_t num_ir;
 
   num_ir = 0;
 
@@ -872,7 +875,7 @@ static int check_mesh_symmetry(const int mesh[3],
   eq[1] = 0; /* b=c */
   eq[2] = 0; /* c=a */
 
-  /* Check 3 and 6 fold rotations and non-convensional choice of unit cells */
+  /* Check 3 and 6 fold rotations and non-conventional choice of unit cells */
   for (i = 0; i < rot_reciprocal->size; i++) {
     sum = 0;
     for (j = 0; j < 3; j++) {

@@ -53,8 +53,8 @@ Atomic points (in fractional coordinates with respect to basis vectors)
 ``types``
 ----------
 
-Atomic species are differenciated by integers. The nubmers are just
-used to distinguishes atoms, and is not releated to atomic numbers.
+Atomic species are differentiated by integers. The numbers are just
+used to distinguishes atoms, and is not related to atomic numbers.
 
 ::
 
@@ -65,7 +65,7 @@ The number of elements is same as the number of atoms.
 ``rotation``
 --------------
 
-Rotation matricies (ingeger) of symmetry operations.
+Rotation matrices (integer) of symmetry operations.
 
 ::
 
@@ -126,5 +126,5 @@ These functions are called by the same way with an additional argument
 of ``const double angle_tolerance`` in degrees. By specifying a
 negative value, the behavior becomes the same as usual functions. The
 default value of ``angle_tolerance`` is a negative value. For
-python-API, the angle tolernce is given with a keyward argument of
+python-API, the angle tolerance is given with a keyword argument of
 `angle_tolerance`.

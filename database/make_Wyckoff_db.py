@@ -11,7 +11,9 @@ lattice_symbols = {
     'I': [[0, 0, 0], [12, 12, 12]],
     'R': [[0, 0, 0]],
     'H': [[0, 0, 0], [16, 8, 8], [8, 16, 16]],
-    'F': [[0, 0, 0], [0, 12, 12], [12, 0, 12], [12, 12, 0]]
+    'F': [[0, 0, 0], [0, 12, 12], [12, 0, 12], [12, 12, 0]],
+    'p': [[0, 0, 0]],
+    'c': [[0, 0, 0], [12, 12, 0]]
 }
 
 
@@ -400,7 +402,7 @@ if __name__ == '__main__':
                         action="store_true",
                         help="Encoded Wyckoff position operators")
     parser.add_argument("filename", nargs='?',
-                        help="Filename of cvs file")
+                        help="Filename of csv file")
     args = parser.parse_args()
     wyckoff = read_wyckoff_csv(args.filename)
     operations = get_wyckoff_positions(wyckoff)

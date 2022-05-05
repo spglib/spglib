@@ -56,6 +56,9 @@ typedef struct {
   double (*lattice)[3];
   double (*pos_sorted)[3];
   int * types_sorted;
+
+  /* Using array reference to avoid redundant loop */
+  int * periodic_axes;
 } OverlapChecker;
 
 OverlapChecker* ovl_overlap_checker_init(const Cell *cell);
@@ -65,5 +68,11 @@ int ovl_check_total_overlap(OverlapChecker *checker,
                             int rot[3][3],
                             const double symprec,
                             const int is_identity);
+
+int ovl_check_layer_total_overlap(OverlapChecker *checker,
+                                  const double test_trans[3],
+                                  int rot[3][3],
+                                  const double symprec,
+                                  const int is_identity);
 
 void ovl_overlap_checker_free(OverlapChecker *checker);

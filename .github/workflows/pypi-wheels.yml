@@ -26,7 +26,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.7'
+          python-version: '3.9'
       - name: Build sdist
         if: matrix.platform == 'manylinux2010_x86_64'
         run: |

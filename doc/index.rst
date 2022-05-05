@@ -7,7 +7,7 @@ written in C. There are the :ref:`python <python_spglib>`,
 Version history is found at `ChangeLog
 <https://github.com/spglib/spglib/blob/master/ChangeLog>`_.
 
-The detailed algorithm of spglib is describted the following text:
+The detailed algorithm of spglib is described the following text:
 
 * ":math:`\texttt{Spglib}`: a software library for crystal symmetry search",
   Atsushi Togo and Isao Tanaka,
@@ -23,7 +23,7 @@ The detailed algorithm of spglib is describted the following text:
    * Python module pyspglib is renamed to spglib in version 1.9.0.
 
      In versions 1.8.x or before, the python wrapper (pyspglib) was
-     considered as a special extention of spglib and separately maintained,
+     considered as a special extension of spglib and separately maintained,
      but in version 1.9.x and later, it starts to be a part of spglib as a
      usual extension, and this python wrapper will be maintained to work
      following every update of c-spglib. The package name is changed from
@@ -87,11 +87,12 @@ For more information
 * Repository: https://github.com/spglib/spglib
 * License: New BSD after version 1.0.beta-1
 * Contact: atz.togo@gmail.com
-* Authour: Atsushi Togo
+* Author: Atsushi Togo
 
 Acknowledgments
 ----------------
 
-Spglib project acknowledges Paweł T. Jochym for deployment and
-packaging, Yusuke Seto for the Crystallographic database, Dimitar
-Pashov for the Fortran interface, and many other contributers.
+Spglib project acknowledges Paweł T. Jochym for deployment and packaging, Yusuke
+Seto for the Crystallographic database, Jingheng Fu for layer group
+implementation, Dimitar Pashov for the Fortran interface, and many other
+contributors.

@@ -1,5 +1,5 @@
 
-## The package attribure specifies a binstar package namespace to build the package to. 
+## The package attribute specifies a binstar package namespace to build the package to.
 ## This can be specified here or on the command line
 package: spglib
 
@@ -20,7 +20,7 @@ package: spglib
 #  - linux-64
 #  - linux-32
 
-## The engine are the inital conda packages you want to run with 
+## The engine are the initial conda packages you want to run with
 engine:
  - python=2
  - python=3
@@ -49,11 +49,11 @@ script:
   - conda build .
 
 ## This will run after the script regardless of the result of script
-## BINSTAR_BUILD_RESULT=[succcess|failure] 
+## BINSTAR_BUILD_RESULT=[success|failure]
 after_script:
   - echo "The build was a $BINSTAR_BUILD_RESULT" | tee artifact1.txt
 
-## This will be run only after a successfull build
+## This will be run only after a successful build
 after_success:
   - echo "after_success!"
 
@@ -64,7 +64,7 @@ after_failure:
 #===============================================================================
 # Build Results
 # Build results are split into two categories: artifacts and targets
-# You may omit either key and stiff have a successfull build
+# You may omit either key and stiff have a successful build
 # They may be a string, list and contain any bash glob
 #===============================================================================
 

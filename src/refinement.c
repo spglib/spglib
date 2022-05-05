@@ -89,6 +89,9 @@ static void set_tricli(double lattice[3][3],
 static void set_monocli(double lattice[3][3],
                         SPGCONST double metric[3][3],
                         const char choice[6]);
+static void set_layer_monocli(double lattice[3][3],
+                              SPGCONST double metric[3][3],
+                              const char choice[6]);
 static void set_ortho(double lattice[3][3],
                       SPGCONST double metric[3][3]);
 static void set_tetra(double lattice[3][3],
@@ -127,11 +130,17 @@ static int search_equivalent_atom(const int atom_index,
                                   const Cell * cell,
                                   const Symmetry *symmetry,
                                   const double symprec);
+static int search_layer_equivalent_atom(const int atom_index,
+                                        const Cell * cell,
+                                        const Symmetry *symmetry,
+                                        const int periodic_axes[2],
+                                        const double symprec);
 static Symmetry *
 recover_symmetry_in_original_cell(const Symmetry *prim_sym,
                                   SPGCONST int t_mat[3][3],
                                   SPGCONST double lattice[3][3],
                                   const int multiplicity,
+                                  const int aperiodic_axis,
                                   const double symprec);
 static VecDBL * get_lattice_translations(const int frame[3],
                                          SPGCONST double inv_tmat[3][3]);
@@ -147,7 +156,8 @@ get_symmetry_in_original_cell(SPGCONST int t_mat[3][3],
                               const double symprec);
 static Symmetry *
 copy_symmetry_upon_lattice_points(const VecDBL *pure_trans,
-                                  const Symmetry *t_sym);
+                                  const Symmetry *t_sym,
+                                  const int aperiodic_axis);
 static int find_similar_bravais_lattice(Spacegroup *spacegroup,
                                         const double symprec);
 static void measure_rigid_rotation(double rotation[3][3],
@@ -186,8 +196,8 @@ ref_get_exact_structure_and_symmetry(Spacegroup * spacegroup,
   symmetry = NULL;
   exact_structure = NULL;
 
-  /* spacegroup->bravais_lattice is overwirten. */
-  /* spacegroup->origin_shift is overwirten. */
+  /* spacegroup->bravais_lattice is overwritten. */
+  /* spacegroup->origin_shift is overwritten. */
   if (!find_similar_bravais_lattice(spacegroup, symprec)) {
     goto err;
   }
@@ -531,6 +541,9 @@ get_bravais_exact_positions_and_lattice(int * wyckoffs,
   /* Lattice vectors are set. */
   get_conventional_lattice(conv_prim->lattice, spacegroup);
 
+  /* Aperiodic axis is set. */
+  conv_prim->aperiodic_axis = spacegroup->hall_number > 0 ? -1 : 2;
+
   if ((exact_positions = ssm_get_exact_positions(wyckoffs_prim,
                                                  equiv_atoms_prim,
                                                  site_symmetry_symbols_prim,
@@ -592,7 +605,7 @@ static Cell * expand_positions_in_bravais(int * wyckoffs,
                                           SPGCONST char (*site_symmetry_symbols_prim)[7],
                                           const int * equiv_atoms_prim)
 {
-  int i, j, k;
+  int i, j, k, lattice_rank;
   int num_atom;
   Cell * bravais;
 
@@ -612,8 +625,6 @@ static Cell * expand_positions_in_bravais(int * wyckoffs,
         mat_copy_vector_d3(bravais->position[num_atom], conv_prim->position[j]);
         for (k = 0; k < 3; k++) {
           bravais->position[num_atom][k] += conv_sym->trans[i][k];
-          bravais->position[num_atom][k] =
-            mat_Dmod1(bravais->position[num_atom][k]);
         }
         wyckoffs[num_atom] = wyckoffs_prim[j];
         for (k = 0; k < 7; k++) {
@@ -626,7 +637,15 @@ static Cell * expand_positions_in_bravais(int * wyckoffs,
     }
   }
 
+  lattice_rank = conv_prim->aperiodic_axis == -1 ? 3 : 2;
+  for (i = 0; i < num_atom; i++) {
+    for (k = 0; k < lattice_rank; k++) {
+      bravais->position[i][k] = mat_Dmod1(bravais->position[i][k]);
+    }
+  }
+
   mat_copy_matrix_d3(bravais->lattice, conv_prim->lattice);
+  bravais->aperiodic_axis = conv_prim->aperiodic_axis;
 
   return bravais;
 }
@@ -668,7 +687,9 @@ static Cell * get_conventional_primitive(SPGCONST Spacegroup * spacegroup,
                                   primitive->position[i]);
     for (j = 0; j < 3; j++) {
       conv_prim->position[i][j] += spacegroup->origin_shift[j];
-      conv_prim->position[i][j] = mat_Dmod1(conv_prim->position[i][j]);
+      if (primitive->aperiodic_axis == -1 || j != 2) {
+        conv_prim->position[i][j] = mat_Dmod1(conv_prim->position[i][j]);
+      }
     }
   }
 
@@ -715,8 +736,12 @@ static void get_conventional_lattice(double lattice[3][3],
   case TRICLI:
     set_tricli(lattice, metric);
     break;
-  case MONOCLI: /* b-axis is the unique axis. */
-    set_monocli(lattice, metric, spacegroup->choice);
+  case MONOCLI:
+    if (spacegroup->hall_number > 0) {/* b-axis is the unique axis. */
+      set_monocli(lattice, metric, spacegroup->choice);
+    } else {
+      set_layer_monocli(lattice, metric, spacegroup->choice);
+    }
     break;
   case ORTHO:
     set_ortho(lattice, metric);
@@ -817,6 +842,48 @@ static void set_monocli(double lattice[3][3],
   }
 
 
+}
+
+/* Monoclinic/Rectangular: a-axis is the unique axis */
+/* Monoclinic/Oblique: c-axis is the unique axis */
+static void set_layer_monocli(double lattice[3][3],
+                              SPGCONST double metric[3][3],
+                              const char choice[6])
+{
+  double a, b, c, angle;
+
+  debug_print("set_layer_monocli:\n");
+  debug_print_matrix_d3(metric);
+
+  a = sqrt(metric[0][0]);
+  b = sqrt(metric[1][1]);
+  c = sqrt(metric[2][2]);
+
+  switch (choice[0]) {
+  case 'a':
+    angle = acos(metric[1][2] / b / c);
+    lattice[0][0] = a;
+    lattice[1][1] = b;
+    lattice[1][2] = c * cos(angle);
+    lattice[2][2] = c * sin(angle);
+    break;
+  case 'b': /* This should not happen */
+    angle = acos(metric[0][2] / a / c);
+    lattice[0][0] = b;
+    lattice[1][1] = a;
+    lattice[0][2] = c * cos(angle);
+    lattice[2][2] = c * sin(angle);
+    break;
+  case 'c':
+    angle = acos(metric[0][1] / a / b);
+    lattice[0][0] = a;
+    lattice[0][1] = b * cos(angle);
+    lattice[1][1] = b * sin(angle);
+    lattice[2][2] = c;
+    break;
+  default:
+    warning_print("spglib: Monoclinic unique axis could not be found.");
+  }
 }
 
 static void set_ortho(double lattice[3][3],
@@ -957,6 +1024,7 @@ get_refined_symmetry_operations(const Cell * cell,
                                                t_mat_int,
                                                cell->lattice,
                                                cell->size / primitive->size,
+                                               cell->aperiodic_axis,
                                                symprec);
 
   sym_free_symmetry(prim_sym);
@@ -1006,21 +1074,50 @@ static void set_equivalent_atoms_broken_symmetry(int * equiv_atoms_cell,
                                                  const double symprec)
 {
   int i, j;
+  int periodic_axes[2];
 
-  for (i = 0; i < cell->size; i++) {
-    equiv_atoms_cell[i] = i;
-    for (j = 0; j < cell->size; j++) {
-      if (mapping_table[i] == mapping_table[j]) {
-        if (i == j) {
-          equiv_atoms_cell[i] =
-            equiv_atoms_cell[search_equivalent_atom(i,
-                                                    cell,
-                                                    symmetry,
-                                                    symprec)];
-        } else {
-          equiv_atoms_cell[i] = equiv_atoms_cell[j];
+  if (cell->aperiodic_axis == -1) {
+    for (i = 0; i < cell->size; i++) {
+      equiv_atoms_cell[i] = i;
+      for (j = 0; j < cell->size; j++) {
+        if (mapping_table[i] == mapping_table[j]) {
+          if (i == j) {
+            equiv_atoms_cell[i] =
+              equiv_atoms_cell[search_equivalent_atom(i,
+                                                      cell,
+                                                      symmetry,
+                                                      symprec)];
+          } else {
+            equiv_atoms_cell[i] = equiv_atoms_cell[j];
+          }
+          break;
         }
-        break;
+      }
+    }
+  } else {
+    j = 0;
+    for (i = 0; i < 3; i++) {
+      if (i == cell->aperiodic_axis) {
+        periodic_axes[j] = i;
+        j++;
+      }
+    }
+    for (i = 0; i < cell->size; i++) {
+      equiv_atoms_cell[i] = i;
+      for (j = 0; j < cell->size; j++) {
+        if (mapping_table[i] == mapping_table[j]) {
+          if (i == j) {
+            equiv_atoms_cell[i] =
+              equiv_atoms_cell[search_layer_equivalent_atom(i,
+                                                            cell,
+                                                            symmetry,
+                                                            periodic_axes,
+                                                            symprec)];
+          } else {
+            equiv_atoms_cell[i] = equiv_atoms_cell[j];
+          }
+          break;
+        }
       }
     }
   }
@@ -1055,6 +1152,36 @@ static int search_equivalent_atom(const int atom_index,
   return atom_index;
 }
 
+static int search_layer_equivalent_atom(const int atom_index,
+                                        const Cell * cell,
+                                        const Symmetry *symmetry,
+                                        const int periodic_axes[2],
+                                        const double symprec)
+{
+  int i, j;
+  double pos_rot[3];
+
+  for (i = 0; i < symmetry->size; i++) {
+    mat_multiply_matrix_vector_id3(pos_rot,
+                                   symmetry->rot[i],
+                                   cell->position[atom_index]);
+    for (j = 0; j < 3; j++) {
+      pos_rot[j] += symmetry->trans[i][j];
+    }
+    for (j = 0; j < atom_index; j++) {
+      if (cel_layer_is_overlap_with_same_type(cell->position[j],
+                                              pos_rot,
+                                              cell->types[j],
+                                              cell->types[atom_index],
+                                              cell->lattice,
+                                              periodic_axes,
+                                              symprec)) {
+        return j;
+      }
+    }
+  }
+  return atom_index;
+}
 
 static void set_translation_with_origin_shift(Symmetry *conv_sym,
                                               const double origin_shift[3])
@@ -1131,7 +1258,7 @@ static Symmetry * get_primitive_db_symmetry(SPGCONST double t_mat[3][3],
   for (i = 0; i < num_op; i++) {
     mat_copy_matrix_i3(prim_sym->rot[i], r_prim->mat[i]);
     for (j = 0; j < 3; j++) {
-      prim_sym->trans[i][j] = mat_Dmod1(t_prim->vec[i][j]);
+      prim_sym->trans[i][j] = t_prim->vec[i][j]; /* This is done in copy_symmetry_upon_lattice_points */
     }
   }
 
@@ -1202,6 +1329,7 @@ recover_symmetry_in_original_cell(const Symmetry *prim_sym,
                                   SPGCONST int t_mat[3][3],
                                   SPGCONST double lattice[3][3],
                                   const int multiplicity,
+                                  const int aperiodic_axis,
                                   const double symprec)
 {
   Symmetry *symmetry, *t_sym;
@@ -1243,7 +1371,7 @@ recover_symmetry_in_original_cell(const Symmetry *prim_sym,
   }
 
   if (pure_trans->size == multiplicity) {
-    symmetry = copy_symmetry_upon_lattice_points(pure_trans, t_sym);
+    symmetry = copy_symmetry_upon_lattice_points(pure_trans, t_sym, aperiodic_axis);
   }
 
   mat_free_VecDBL(lattice_trans);
@@ -1412,7 +1540,8 @@ get_symmetry_in_original_cell(SPGCONST int t_mat[3][3],
 /* Return NULL if failed */
 static Symmetry *
 copy_symmetry_upon_lattice_points(const VecDBL *pure_trans,
-                                  const Symmetry *t_sym)
+                                  const Symmetry *t_sym,
+                                  const int aperiodic_axis)
 {
   int i, j, k, size_sym_orig;
   Symmetry *symmetry;
@@ -1433,8 +1562,10 @@ copy_symmetry_upon_lattice_points(const VecDBL *pure_trans,
                          t_sym->trans[j]);
       for (k = 0; k < 3; k++) {
         symmetry->trans[size_sym_orig * i + j][k] += pure_trans->vec[i][k];
-        symmetry->trans[size_sym_orig * i + j][k] =
-          mat_Dmod1(symmetry->trans[size_sym_orig * i + j][k]);
+        if (k != aperiodic_axis) {
+          symmetry->trans[size_sym_orig * i + j][k] =
+            mat_Dmod1(symmetry->trans[size_sym_orig * i + j][k]);
+        }
       }
     }
   }
@@ -1445,7 +1576,7 @@ copy_symmetry_upon_lattice_points(const VecDBL *pure_trans,
 static int find_similar_bravais_lattice(Spacegroup *spacegroup,
                                         const double symprec)
 {
-  int i, j, k, rot_i;
+  int i, j, k, rot_i, lattice_rank;
   Symmetry *conv_sym;
   double min_length2, length2, diff, min_length, length;
   double tmp_mat[3][3], std_lattice[3][3];
@@ -1512,6 +1643,7 @@ static int find_similar_bravais_lattice(Spacegroup *spacegroup,
   /* Finally, */
   /* (W^-1, -W^-1 w)(P, p) x = W^-1Px+W^-1p-W^-1w = (W^-1P, W^-1p-W^-1w) */
   min_length = 2;
+  lattice_rank = spacegroup->hall_number > 0 ? 3 : 2;
   if (rot_i > -1) {
     for (i = 0; i < conv_sym->size; i++) {
       if (!mat_check_identity_matrix_i3(conv_sym->rot[i],
@@ -1522,14 +1654,17 @@ static int find_similar_bravais_lattice(Spacegroup *spacegroup,
       mat_inverse_matrix_d3(tmp_mat, tmp_mat, 0);
       mat_multiply_matrix_vector_d3(p, tmp_mat, spacegroup->origin_shift);
       mat_multiply_matrix_vector_d3(tmp_vec, tmp_mat, conv_sym->trans[i]);
-      for (j = 0; j < 3; j++) {
+      for (j = 0; j < lattice_rank; j++) {
         p[j] -= tmp_vec[j];
         p[j] -= mat_Nint(p[j]);
+      }
+      for (j = lattice_rank; j < 3; j++) {
+        p[j] -= tmp_vec[j];
       }
       length = sqrt(mat_norm_squared_d3(p));
       if (length < min_length - symprec) {
         min_length = length;
-        for (j = 0; j < 3; j++) {
+        for (j = 0; j < lattice_rank; j++) {
           p[j] = mat_Dmod1(p[j]);
         }
         mat_copy_vector_d3(shortest_p, p);

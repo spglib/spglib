@@ -386,6 +386,9 @@ static int get_orthogonal_axis(int ortho_axes[],
                                const int rot_order);
 static int laue2m(int axes[3],
                   SPGCONST PointSymmetry * pointsym);
+static int layer_laue2m(int axes[3],
+                        SPGCONST PointSymmetry * pointsym,
+                        const int aperiodic_axis);
 
 #ifdef SPGDEBUG
 static int lauemmm(int axes[3],
@@ -407,21 +410,33 @@ static int laue_one_axis(int axes[3],
                          const int rot_order);
 static int lauennn(int axes[3],
                    SPGCONST PointSymmetry * pointsym,
-                   const int rot_order);
+                   const int rot_order,
+                   const int aperiodic_axis);
 static int get_axes(int axes[3],
                     const Laue laue,
-                    SPGCONST PointSymmetry * pointsym);
+                    SPGCONST PointSymmetry * pointsym,
+                    const int aperiodic_axis);
 static void get_proper_rotation(int prop_rot[3][3],
                                 SPGCONST int rot[3][3]);
 static void set_transformation_matrix(int tmat[3][3],
                                       const int axes[3]);
 static int is_exist_axis(const int axis_vec[3], const int axis_index);
 static void sort_axes(int axes[3]);
+static void layer_check_and_sort_axes(int axes[3], const int aperiodic_axis);
 
-/* Retrun pointgroup.number = 0 if failed */
+/* Return pointgroup.number = 0 if failed */
 Pointgroup ptg_get_transformation_matrix(int transform_mat[3][3],
                                          SPGCONST int rotations[][3][3],
                                          const int num_rotations)
+{
+  return ptg_get_layer_transformation_matrix(transform_mat, rotations, num_rotations, -1);
+}
+
+/* Layer group does not have cubic point groups */
+Pointgroup ptg_get_layer_transformation_matrix(int transform_mat[3][3],
+                                               SPGCONST int rotations[][3][3],
+                                               const int num_rotations,
+                                               const int aperiodic_axis)
 {
   int i, j, pg_num;
   int axes[3];
@@ -438,10 +453,10 @@ Pointgroup ptg_get_transformation_matrix(int transform_mat[3][3],
 
   pg_num = get_pointgroup_number_by_rotations(rotations, num_rotations);
 
-  if (pg_num > 0) {
+  if (pg_num > 0 && (aperiodic_axis == -1 || pg_num < 28)) {
     pointgroup = ptg_get_pointgroup(pg_num);
     pointsym = ptg_get_pointsymmetry(rotations, num_rotations);
-    get_axes(axes, pointgroup.laue, &pointsym);
+    get_axes(axes, pointgroup.laue, &pointsym, aperiodic_axis);
     set_transformation_matrix(transform_mat, axes);
   } else {
     warning_print("spglib: No point group was found ");
@@ -632,7 +647,8 @@ static int get_rotation_type(SPGCONST int rot[3][3])
 
 static int get_axes(int axes[3],
                     const Laue laue,
-                    SPGCONST PointSymmetry * pointsym)
+                    SPGCONST PointSymmetry * pointsym,
+                    const int aperiodic_axis)
 {
   switch (laue) {
   case LAUE1:
@@ -641,10 +657,14 @@ static int get_axes(int axes[3],
     axes[2] = 2;
     break;
   case LAUE2M:
-    laue2m(axes, pointsym);
+    if (aperiodic_axis == -1) {
+      laue2m(axes, pointsym);
+    } else {
+      layer_laue2m(axes, pointsym, aperiodic_axis);
+    }
     break;
   case LAUEMMM:
-    lauennn(axes, pointsym, 2);
+    lauennn(axes, pointsym, 2, aperiodic_axis);
     break;
   case LAUE4M:
     laue_one_axis(axes, pointsym, 4);
@@ -665,10 +685,10 @@ static int get_axes(int axes[3],
     laue_one_axis(axes, pointsym, 3);
     break;
   case LAUEM3:
-    lauennn(axes, pointsym, 2);
+    lauennn(axes, pointsym, 2, -1);
     break;
   case LAUEM3M:
-    lauennn(axes, pointsym, 4);
+    lauennn(axes, pointsym, 4, -1);
     break;
   default:
     break;
@@ -680,9 +700,13 @@ static int get_axes(int axes[3],
 static int laue2m(int axes[3],
                   SPGCONST PointSymmetry * pointsym)
 {
-  int i, num_ortho_axis, norm, min_norm, is_found, tmpval;
-  int prop_rot[3][3], t_mat[3][3];
+  int i, num_ortho_axis, norm, min_norm, is_found;
+  int prop_rot[3][3];
   int ortho_axes[NUM_ROT_AXES];
+  /* Uncomment to pass original POSCAR-14-227-47-ref, POSCAR-15-230-prim-18-ref, POSCAR-15-bcc-18-ref */
+  /* This has been done in 2D delaunay reduce
+  int tmpval, t_mat[3][3];
+  */
 
   for (i = 0; i < pointsym->size; i++) {
     get_proper_rotation(prop_rot, pointsym->rot[i]);
@@ -726,12 +750,110 @@ static int laue2m(int axes[3],
   }
   if (! is_found) { goto err; }
 
-  set_transformation_matrix(t_mat, axes);
+  /* Uncomment to pass original POSCAR-14-227-47-ref, POSCAR-15-230-prim-18-ref, POSCAR-15-bcc-18-ref */
+  /* This has been done in 2D delaunay reduce
+  set_transformation_matrix(t_mat, axes); 
   if (mat_get_determinant_i3(t_mat) < 0) {
-    tmpval = axes[0];
-    axes[0] = axes[2];
-    axes[2] = tmpval;
+    tmpval = axes[0];                     
+    axes[0] = axes[2];                    
+    axes[2] = tmpval;                     
+  } 
+  */                                      
+
+  return 1;
+
+ err:
+  return 0;
+}
+
+static int layer_laue2m(int axes[3],
+                        SPGCONST PointSymmetry * pointsym,
+                        const int aperiodic_axis)
+{
+  int i, num_ortho_axis, norm, min_norm, is_found;
+  int prop_rot[3][3];
+  int ortho_axes[NUM_ROT_AXES];
+
+  for (i = 0; i < pointsym->size; i++) {
+    get_proper_rotation(prop_rot, pointsym->rot[i]);
+
+    /* Search two-fold rotation */
+    if (! (mat_get_trace_i3(prop_rot) == -1)) {
+      continue;
+    }
+
+    /* Monoclinic/Rectangular: The first axis is axis a according to ITE */
+    /* Monoclinic/Oblique: The first axis is moved to c in change_basis_monocli */
+    axes[0] = get_rotation_axis(prop_rot);
+    break;
   }
+
+  num_ortho_axis = get_orthogonal_axis(ortho_axes, prop_rot, 2);
+  if (! num_ortho_axis) { goto err; }
+
+  if (rot_axes[axes[0]][aperiodic_axis] == 1 ||
+      rot_axes[axes[0]][aperiodic_axis] == -1) {
+    /* For Monoclinic/Oblique. */
+    /* The second axis */
+    min_norm = 8;
+    is_found = 0;
+    for (i = 0; i < num_ortho_axis; i++) {
+      norm = mat_norm_squared_i3(rot_axes[ortho_axes[i]]);
+      if (norm < min_norm - ZERO_PREC) {
+        min_norm = norm;
+        axes[1] = ortho_axes[i];
+        is_found = 1;
+      }
+    }
+    if (! is_found) { goto err; }
+
+    /* The third axis */
+    min_norm = 8;
+    is_found = 0;
+    for (i = 0; i < num_ortho_axis; i++) {
+      norm = mat_norm_squared_i3(rot_axes[ortho_axes[i]]);
+      if ((norm < min_norm - ZERO_PREC) && (ortho_axes[i] != axes[1])) {
+        min_norm = norm;
+        axes[2] = ortho_axes[i];
+        is_found = 1;
+      }
+    }
+    if (! is_found) { goto err; }
+  } else if (rot_axes[axes[0]][aperiodic_axis] == 0) {
+    /* For Monoclinic/Rectangular. */
+    /* The second axis in the periodic plane */
+    min_norm = 8;
+    is_found = 0;
+    for (i = 0; i < num_ortho_axis; i++) {
+      if (rot_axes[ortho_axes[i]][aperiodic_axis] == 0) {
+        norm = mat_norm_squared_i3(rot_axes[ortho_axes[i]]);
+        if (norm < min_norm - ZERO_PREC) {
+          min_norm = norm;
+          axes[1] = ortho_axes[i];
+          is_found = 1;
+        }
+      }
+    }
+    if (! is_found) { goto err; }
+
+    /* The third axis outside the periodic plane */
+    min_norm = 8;
+    is_found = 0;
+    for (i = 0; i < num_ortho_axis; i++) {
+      if (rot_axes[ortho_axes[i]][aperiodic_axis] == 1 ||
+          rot_axes[ortho_axes[i]][aperiodic_axis] == -1) {
+        norm = mat_norm_squared_i3(rot_axes[ortho_axes[i]]);
+        if (norm < min_norm - ZERO_PREC) {
+          min_norm = norm;
+          axes[2] = ortho_axes[i];
+          is_found = 1;
+        }
+      }
+    }
+    if (! is_found) { goto err; }
+  } else { goto err; }
+
+  /* det(t_mat) > 0 in 2D delaunay reduce */
 
   return 1;
 
@@ -782,7 +904,7 @@ static int laue4m(int axes[3],
   for (i = 0; i < pointsym->size; i++) {
     get_proper_rotation(prop_rot, pointsym->rot[i]);
 
-    /* Search foud-fold rotation */
+    /* Search four-fold rotation */
     if ( mat_get_trace_i3(prop_rot) == 1) {
       /* The first axis */
       axes[2] = get_rotation_axis(prop_rot);
@@ -841,7 +963,7 @@ static int laue4mmm(int axes[3],
   for (i = 0; i < pointsym->size; i++) {
     get_proper_rotation(prop_rot, pointsym->rot[i]);
 
-    /* Search foud-fold rotation */
+    /* Search four-fold rotation */
     if (mat_get_trace_i3(prop_rot) == 1) {
       /* The first axis */
       axes[2] = get_rotation_axis(prop_rot);
@@ -1070,7 +1192,7 @@ static int laue_one_axis(int axes[3],
   for (i = 0; i < pointsym->size; i++) {
     get_proper_rotation(prop_rot, pointsym->rot[i]);
 
-    /* Search foud-fold rotation */
+    /* Search four-fold rotation */
     if (rot_order == 4) {
       if (mat_get_trace_i3(prop_rot) == 1) {
         /* The first axis */
@@ -1147,7 +1269,8 @@ static int laue_one_axis(int axes[3],
 
 static int lauennn(int axes[3],
                    SPGCONST PointSymmetry * pointsym,
-                   const int rot_order)
+                   const int rot_order,
+                   const int aperiodic_axis)
 {
   int i, count, axis;
   int prop_rot[3][3];
@@ -1173,7 +1296,11 @@ static int lauennn(int axes[3],
     }
   }
 
-  sort_axes(axes);
+  if (aperiodic_axis == -1) {
+    sort_axes(axes);
+  } else {
+    layer_check_and_sort_axes(axes, aperiodic_axis);
+  }
 
   return 1;
 }
@@ -1202,7 +1329,7 @@ static int get_rotation_axis(SPGCONST int proper_rot[3][3])
  end:
 #ifdef SPGDEBUG
   if (axis == -1) {
-    printf("rotation axis cound not found.\n");
+    printf("rotation axis could not be found.\n");
   }
 #endif
 
@@ -1307,5 +1434,44 @@ static void sort_axes(int axes[3])
     axis = axes[1];
     axes[1] = axes[2];
     axes[2] = axis;
+  }
+}
+
+/* Warning when rot_axes[axes[i]][aperiodic_axis] == -2, -3, 2, 3 */
+/* I am not sure if this would ever happen. */
+static void layer_check_and_sort_axes(int axes[3], const int aperiodic_axis)
+{
+  int i, lattice_rank, arank, axis, axis_i;
+  int t_mat[3][3];
+
+  lattice_rank = 0;
+  arank = 0;
+  for (i = 0; i < 3; i++) {
+    if (rot_axes[axes[i]][aperiodic_axis] == 0) {
+      lattice_rank++;
+    } else if (rot_axes[axes[i]][aperiodic_axis] == 1 ||
+               rot_axes[axes[i]][aperiodic_axis] == -1) {
+                 axis = axes[i];
+                 axis_i = i;
+                 arank++;
+               }
+  }
+
+  if (lattice_rank == 2 && arank == 1) {
+    axes[axis_i] = axes[2];
+    axes[2] = axis;
+
+    set_transformation_matrix(t_mat, axes);
+    if (mat_get_determinant_i3(t_mat) < 0) {
+      axis = axes[0];
+      axes[0] = axes[1];
+      axes[1] = axis;
+    }
+  } else {
+    warning_print("spglib: Invalid axes were found ");
+    warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+    for (i = 0; i < 3; i++) {
+      axes[i] = 0;
+    }  
   }
 }

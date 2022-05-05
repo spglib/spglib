@@ -145,7 +145,7 @@ static int test_spg_find_primitive_BCC(void)
   int num_primitive_atom;
   double symprec = 1e-5;
 
-  /* lattice, position, and types are overwirtten. */
+  /* lattice, position, and types are overwritten. */
   printf("*** spg_find_primitive (BCC unitcell --> primitive) ***:\n");
   num_primitive_atom = spg_find_primitive(lattice, position, types, num_atom, symprec);
   if (num_primitive_atom == 0) {
@@ -206,7 +206,7 @@ static int test_spg_find_primitive_corundum(void)
     types[i] = 2;
   }
 
-  /* lattice, position, and types are overwirtten. */
+  /* lattice, position, and types are overwritten. */
   printf("*** spg_find_primitive (Corundum) ***:\n");
   num_primitive_atom = spg_find_primitive(lattice, position, types, num_atom, symprec);
   if (num_primitive_atom == 0) {
@@ -235,7 +235,7 @@ static int test_spg_refine_cell_BCC(void)
   position[0][2] = 0;
   types[0] = 1;
 
-  /* lattice, position, and types are overwirtten. */
+  /* lattice, position, and types are overwritten. */
   printf("*** spg_refine_cell ***:\n");
   num_atom_bravais = spg_refine_cell(lattice,
                                      position,
@@ -263,7 +263,7 @@ static int test_spg_standardize_cell_BCC(void)
   int num_atom = 2;
   double symprec = 1e-1;
 
-  /* lattice, position, and types are overwirtten. */
+  /* lattice, position, and types are overwritten. */
   printf("*** spg_standardize_cell (BCC unitcell --> primitive) ***:\n");
   printf("------------------------------------------------------\n");
   for (j = 0; j < 2; j++) {
@@ -333,7 +333,7 @@ static int test_spg_standardize_cell_corundum(void)
     types[i] = 2;
   }
 
-  /* lattice, position, and types are overwirtten. */
+  /* lattice, position, and types are overwritten. */
   printf("*** spg_standardize_cell (Corundum) ***:\n");
   printf("------------------------------------------------------\n");
   for (j = 0; j < 2; j++) {
@@ -383,7 +383,7 @@ static int sub_spg_standardize_cell(double lattice[3][3],
     typ[i] = types[i];
   }
 
-  /* lattice, position, and types are overwirtten. */
+  /* lattice, position, and types are overwritten. */
   num_primitive_atom = spg_standardize_cell(lat,
                                             pos,
                                             typ,
@@ -1056,7 +1056,7 @@ static int test_spg_get_error_message(void)
   SpglibError error;
 
 
-  /* lattice, position, and types are overwirtten. */
+  /* lattice, position, and types are overwritten. */
   printf("*** Example of spg_get_error_message ***:\n");
   num_primitive_atom = spg_find_primitive(lattice, position, types, num_atom, symprec);
   if (num_primitive_atom == 0) {
