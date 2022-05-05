@@ -85,7 +85,7 @@ and ``translation[i]`` with same index give a symmetry operations,
 i.e., these have to be used together.
 
 As an exceptional case, if a supercell (or non-primitive cell) has the
-basis vectors whose lattice breaks crsytallographic point group, the
+basis vectors whose lattice breaks crystallographic point group, the
 crystallographic symmetry operations are searched within this broken
 symmetry, i.e., at most the crystallographic point group found in this
 case is the point group of the lattice. For example, this happens for
@@ -159,7 +159,7 @@ Number of atoms in the found standardized unit (primitive) cell is
 returned.
 
 ``to_primitive=1`` is used to create the standardized primitive cell
-with the transformation matricies shown at
+with the transformation matrices shown at
 :ref:`def_standardized_primitive_cell`, otherwise ``to_primitive=0``
 must be specified. The found basis vectors and
 atomic point coordinates and types are overwritten in ``lattice``,
@@ -176,7 +176,7 @@ rotated in Cartesian coordinates by the idealization of the basis
 vectors.  ``no_idealize=1`` disables this. The detail of the
 idealization (``no_idealize=0``) is written at
 :ref:`def_idealize_cell`. ``no_idealize=1`` may be useful when we want
-to leave basis vectors and atomic positions in Cartesianl coordinates
+to leave basis vectors and atomic positions in Cartesian coordinates
 fixed.
 
 |
@@ -247,7 +247,7 @@ those required for the input unit cell in general.
 **Changed in version 1.8.1**
 
 For an input unit cell structure, symmetry operations of the crystal
-are searched. Then they are compared with the crsytallographic
+are searched. Then they are compared with the crystallographic
 database and the space group type is determined.  The result is
 returned as the ``SpglibDataset`` structure as a dataset.
 
@@ -287,7 +287,7 @@ or cell choice), ``spg_get_dataset_with_hall_number`` is used.
 where ``hall_number`` is used to specify the choice. The possible
 choices and those serial numbers are found at `list of space groups
 (Seto's web site)
-<http://pmsl.planet.sci.kobe-u.ac.jp/~seto/?page_id=37&lang=en>`_.
+<https://yseto.net/?page_id=29>`_.
 The crystal structure has to possess the space-group type of the Hall
 symbol. If the symmetry search fails or the specified ``hall_number``
 is not in the list of Hall symbols for the space group type of the
@@ -302,7 +302,7 @@ Finally, its allocated memory space must be freed by calling
 ``spg_free_dataset``
 ---------------------
 
-Allocated memoery space of the C-structure of ``SpglibDataset`` is
+Allocated memory space of the C-structure of ``SpglibDataset`` is
 freed by calling ``spg_free_dataset``.
 
 ::
@@ -384,7 +384,7 @@ returned when it failed.
                            const int num_atom,
                            const double symprec);
 
-This function may be used in advance to allocate memoery space for
+This function may be used in advance to allocate memory space for
 symmetry operations.
 
 |
@@ -551,8 +551,9 @@ This function can be used to obtain all mesh grid points by setting
 
 **experimental**
 
-``hall_number`` is obtained from the set of symmetry operations.  The
-definition of ``hall_number`` is found at
+Return one of ``hall_number`` corresponding to a space-group type of the given set of symmetry operations.
+When multiple ``hall_number`` exist for the space-group type, the smallest one (the first description of the space-group type in International Tables for Crystallography) is chosen.
+The definition of ``hall_number`` is found at
 :ref:`dataset_spg_get_dataset_spacegroup_type` and the corresponding
 space-group-type information is obtained through
 :ref:`api_spg_spacegroup_type`.

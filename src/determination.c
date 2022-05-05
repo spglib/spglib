@@ -63,7 +63,7 @@ DataContainer * det_determine_all(const Cell * cell,
 
   container = NULL;
 
-  if (hall_number < 0 || hall_number > 530) {
+  if (hall_number > 530) {
     return NULL;
   }
 

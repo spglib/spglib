@@ -168,7 +168,7 @@ as a list of N floating point values.
                 ...]
    numbers = [n_1, n_2, n_3, ...]
    magmoms = [m_1, m_2, m_3, ...]  # Only works with get_symmetry
-   
+
 
 For example, the crystal structure (``cell``) of L1 `2`:sub: -type AlNi `3`:sub: is:
 
@@ -182,9 +182,9 @@ For example, the crystal structure (``cell``) of L1 `2`:sub: -type AlNi `3`:sub:
                [0.0, 0.5, 0.5], # Ni
                [0.5, 0.0, 0.5]] # Ni
   numbers = [1, 2, 2, 2]        # Al, Ni, Ni, Ni
-  
 
-Version 1.9.5 or later: The methods that use the crsytal strcutre
+
+Version 1.9.5 or later: The methods that use the crystal structure
 will return ``None`` when a crystal structure is not properly given.
 
 ASE Atoms-like input is deprecated.
@@ -297,14 +297,14 @@ symmetrically equivalent atoms. The numbers contained are the indices
 of atoms starting from 0, i.e., the first atom is numbered as 0, and
 then 1, 2, 3, ... ``np.unique(equivalent_atoms)`` gives representative
 symmetrically independent atoms. A list of atoms that are
-symmetrically euivalent to some independent atom (here for example 1
+symmetrically equivalent to some independent atom (here for example 1
 is in ``equivalent_atom``) is found by
 ``np.where(equivalent_atom=1)[0]``. When the search failed, ``None``
 is returned.
 
 If ``cell`` is given as a tuple and collinear polarizations are given
 as the fourth element of this tuple, symmetry operations are searched
-considering this freedome. In ASE Atoms-class object, this is not supported.
+considering this freedom. In ASE Atoms-class object, this is not supported.
 
 ``refine_cell``
 ^^^^^^^^^^^^^^^^
@@ -357,7 +357,7 @@ cell, and ``no_idealize=True`` disables to idealize lengths and angles
 of basis vectors and positions of atoms according to crystal
 symmetry. Now ``refine_cell`` and ``find_primitive`` are shorthands of
 this method with combinations of these options. When the search
-failed, ``None`` is returned.  is returned. About the default choice
+failed, ``None`` is returned.  About the default choice
 of the setting, see the documentation of ``hall_number`` argument of
 :ref:`py_method_get_symmetry_dataset`.  More detailed explanation is
 shown in the spglib (C-API) document.
@@ -388,9 +388,9 @@ The arguments are:
   option (i.e., in the case of ``hall_number=0``), always the first one
   (the smallest serial number corresponding to the space-group-type in
   `list of space groups (Seto's web site)
-  <http://pmsl.planet.sci.kobe-u.ac.jp/~seto/?page_id=37&lang=en>`_)
+  <https://yseto.net/?page_id=29>`_)
   among possible choices and settings is chosen as default. This
-  argument is useful when the other choice (or settting) is expected to
+  argument is useful when the other choice (or setting) is expected to
   be hooked. This affects to the obtained values of ``international``,
   ``hall``, ``hall_number``, ``choice``, ``transformation_matrix``,
   ``origin shift``, ``wyckoffs``, ``std_lattice``, ``std_positions``,
@@ -504,8 +504,9 @@ When something wrong happened, ``None`` is returned.
 
 **experimental**
 
-``hall_number`` is obtained from the set of symmetry operations.  The
-definition of ``hall_number`` is found at
+Return one of ``hall_number`` corresponding to a space-group type of the given set of symmetry operations.
+When multiple ``hall_number`` exist for the space-group type, the smallest one (the first description of the space-group type in International Tables for Crystallography) is chosen.
+The definition of ``hall_number`` is found at
 :ref:`dataset_spg_get_dataset_spacegroup_type` and the corresponding
 space-group-type information is obtained through
 :ref:`py_method_get_spacegroup_type`.
@@ -548,7 +549,7 @@ https://atztogo.github.io/niggli/.
 When the search failed, ``None`` is returned.
 
 The transformation from original basis vectors :math:`( \mathbf{a}
-\; \mathbf{b} \; \mathbf{c} )` to final baiss vectors :math:`(
+\; \mathbf{b} \; \mathbf{c} )` to final basis vectors :math:`(
 \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )` is achieved by linear
 combination of basis vectors with integer coefficients without
 rotating coordinates. Therefore the transformation matrix is obtained
@@ -611,7 +612,7 @@ the irreducible k-point indices that are obtained by ::
 Here ``np`` means the numpy module. The grid point is accessed by
 ``grid[index]``.
 
-When the sesarch failed, ``None`` is returned.
+When the search failed, ``None`` is returned.
 
 An example is shown below::
 

@@ -13,7 +13,9 @@ lattice_symbols = {
     'I': [[0, 0, 0], [1./2, 1./2, 1./2]],
     'R': [[0, 0, 0], [2./3, 1./3, 1./3], [1./3, 2./3, 2./3]],
     'H': [[0, 0, 0], [2./3, 1./3, 0], [1./3, 2./3, 0]],
-    'F': [[0, 0, 0], [0, 1./2, 1./2], [1./2, 0, 1./2], [1./2, 1./2, 0]]
+    'F': [[0, 0, 0], [0, 1./2, 1./2], [1./2, 0, 1./2], [1./2, 1./2, 0]],
+    'p': [[0, 0, 0]],
+    'c': [[0, 0, 0], [1./2, 1./2, 0]]
 }
 
 rotation_matrices = {
@@ -341,7 +343,7 @@ def dump_operations(filename):
     hall_symbols = read_spg_csv(filename)
     count = 0
     print("  0       ,  /* dummy */")
-    for i in range(530):
+    for i in range(len(hall_symbols)):
         hs = HallSymbol(hall_symbols[i][0])
         G_R, G_T = hs.get_operations()
         for j, (r, t) in enumerate(zip(G_R, G_T)):
@@ -394,7 +396,7 @@ def decode_trans(c):
 def get_reference_to_operations(filename):
     hall_symbols = read_spg_csv(filename)
     count = 0
-    for i in range(530):
+    for i in range(len(hall_symbols)):
         hs = HallSymbol(hall_symbols[i][0])
         G_R, G_T = hs.get_operations()
         print("  {%4d,%5d}, /* %3d */ " % (len(G_R), count + 1, i + 1))

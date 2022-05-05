@@ -66,7 +66,7 @@ extern "C" {
 
   [ type_1, type_2, type_3, ... ]
 
-  rotation: Rotation matricies of symmetry operations
+  rotation: Rotation matrices of symmetry operations
 
   each rotation is:
   [ [ r_aa, r_ab, r_ac ],
@@ -83,7 +83,7 @@ extern "C" {
 
   ------------------------------------------------------------------
 
-  Definitio of the operation:
+  Definition of the operation:
   r : rotation     3x3 matrix
   t : translation  vector
 
@@ -163,6 +163,14 @@ extern "C" {
                                   const int num_atom,
                                   const double symprec);
 
+  /* This is for test using */
+  SpglibDataset * spg_get_layer_dataset(SPGCONST double lattice[3][3],
+                                        SPGCONST double position[][3],
+                                        const int types[],
+                                        const int num_atom,
+                                        const int aperiodic_axis,
+                                        const double symprec);
+
   SpglibDataset * spgat_get_dataset(SPGCONST double lattice[3][3],
                                     SPGCONST double position[][3],
                                     const int types[],
@@ -191,11 +199,11 @@ extern "C" {
   void spg_free_dataset(SpglibDataset *dataset);
 
 /* Find symmetry operations. The operations are stored in */
-/* ``rotatiion`` and ``translation``. The number of operations is */
+/* ``rotation`` and ``translation``. The number of operations is */
 /* return as the return value. Rotations and translations are */
 /* given in fractional coordinates, and ``rotation[i]`` and */
-/* ``translation[i]`` with same index give a symmetry oprations, */
-/* i.e., these have to be used togather. */
+/* ``translation[i]`` with same index give a symmetry operations, */
+/* i.e., these have to be used together. */
   int spg_get_symmetry(int rotation[][3][3],
                        double translation[][3],
                        const int max_size,
@@ -240,7 +248,7 @@ extern "C" {
                                              const double angle_tolerance);
 
 /* Return 0 if failed */
-/* ``rotation`` and ``tranlation`` are used as input and output. */
+/* ``rotation`` and ``translation`` are used as input and output. */
 /* ``num_operations`` is the number of the symmetry operations of */
 /* input. */
   int spg_get_symmetry_with_site_tensors(int rotation[][3][3],
@@ -281,7 +289,7 @@ extern "C" {
                                         const double symprec);
 
 /* Return exact number of symmetry operations. This function may */
-/* be used in advance to allocate memoery space for symmetry */
+/* be used in advance to allocate memory space for symmetry */
 /* operations. */
   int spg_get_multiplicity(SPGCONST double lattice[3][3],
                            SPGCONST double position[][3],
@@ -339,7 +347,7 @@ extern "C" {
 
 /* Space-group operations in built-in database are accessed by index */
 /* of hall symbol. The index is defined as number from 1 to 530. */
-/* The muximum number of symmetry operations is 192. */
+/* The maximum number of symmetry operations is 192. */
   int spg_get_symmetry_from_database(int rotations[192][3][3],
                                      double translations[192][3],
                                      const int hall_number);
@@ -404,7 +412,7 @@ extern "C" {
                         const double angle_tolerance);
 
 /* Delaunay reduction for lattice parameters */
-/* ``lattice`` is overwritten when the redution ends succeeded. */
+/* ``lattice`` is overwritten when the reduction ends succeeded. */
   int spg_delaunay_reduce(double lattice[3][3], const double symprec);
 
 /*---------*/

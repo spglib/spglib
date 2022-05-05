@@ -258,7 +258,7 @@ module Vasp
       temp = @input.readline
       if temp =~ /^\s*s/i then           # check 's' or 'S' of the first word
         @selectiveDynamics = true
-        temp = @input.readline           # when this situation, reading one more line is nessesarry
+        temp = @input.readline           # when this situation, reading one more line is necessary
       end
       if (! temp =~ /^\s*d/i)
         # allow only 'Direct' now

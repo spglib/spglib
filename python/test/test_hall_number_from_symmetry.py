@@ -40,7 +40,7 @@ class TestGetHallNumberFromSymmetry(unittest.TestCase):
                         dataset['rotations'],
                         dataset['translations'],
                         symprec=1e-5)
-                    print("Using refinced cell: %d, %d in %s" %
+                    print("Using refined cell: %d, %d in %s" %
                           (hall_number, dataset['hall_number'], fname))
             else:
                 dataset = get_symmetry_dataset(cell, symprec=1e-5)
