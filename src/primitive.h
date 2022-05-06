@@ -40,26 +40,24 @@
 #include "symmetry.h"
 
 typedef struct {
-  Cell *cell;
-  int *mapping_table;
-  int size;
-  double tolerance;
-  double angle_tolerance;
-  double (*orig_lattice)[3]; /* 3x3 matrix */
+    Cell *cell;
+    int *mapping_table;
+    int size;
+    double tolerance;
+    double angle_tolerance;
+    double (*orig_lattice)[3]; /* 3x3 matrix */
 } Primitive;
 
-Primitive * prm_alloc_primitive(const int size);
-void prm_free_primitive(Primitive * primitive);
-Primitive * prm_get_primitive(const Cell * cell,
-                              const double symprec,
-                              const double angle_tolerance);
-Symmetry * prm_get_primitive_symmetry(const Symmetry *symmetry,
-                                      const double symprec);
+Primitive *prm_alloc_primitive(const int size);
+void prm_free_primitive(Primitive *primitive);
+Primitive *prm_get_primitive(const Cell *cell, const double symprec,
+                             const double angle_tolerance);
+Symmetry *prm_get_primitive_symmetry(const Symmetry *symmetry,
+                                     const double symprec);
 int prm_get_primitive_lattice_vectors(double prim_lattice[3][3],
-                                      const Cell * cell,
-                                      const VecDBL * pure_trans,
+                                      const Cell *cell,
+                                      const VecDBL *pure_trans,
                                       const double symprec,
                                       const double angle_tolerance);
-
 
 #endif
