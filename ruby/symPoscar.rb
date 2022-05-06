@@ -1,17 +1,17 @@
 #!/usr/bin/env ruby
 #   Copyright (C) 2008 Atsushi Togo
 #   togo.atsushi@gmail.com
-# 
+#
 #   This program is free software; you can redistribute it and/or
 #   modify it under the terms of the GNU General Public License
 #   as published by the Free Software Foundation; either version 2
 #   of the License, or (at your option) any later version.
-#   
+#
 #   This program is distributed in the hope that it will be useful,
 #   but WITHOUT ANY WARRANTY; without even the implied warranty of
 #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #   GNU General Public License for more details.
-#   
+#
 #   You should have received a copy of the GNU General Public License
 #   along with this program; if not, write to
 #   the Free Software Foundation, Inc., 51 Franklin Street,
@@ -76,7 +76,7 @@ def show_dataset(dataset, lattice, position, cell, nonewline, is_long_output, is
       end
 
       brv_types.size.times do |i|
-        printf("%d: %d  %10.5f %10.5f %10.5f\n", i+1, brv_types[i], 
+        printf("%d: %d  %10.5f %10.5f %10.5f\n", i+1, brv_types[i],
                brv_positions[i][0], brv_positions[i][1], brv_positions[i][2]);
       end
     end
@@ -89,7 +89,7 @@ def show_dataset(dataset, lattice, position, cell, nonewline, is_long_output, is
 
       puts "---------- origin shift ----------"
       printf("%10.5f %10.5f %10.5f\n", o_shift[0], o_shift[1], o_shift[2]);
-      
+
       puts "--------- Wyckoff position ----------"
       wl = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
       wyckoffs.each_with_index do |w, i|
@@ -151,7 +151,7 @@ HERE
   w.print <<HERE
   int num_spg, num_atom = #{types.size};
   char symbol[21];
-  
+
   num_spg = spg_get_international(symbol, lattice, position, types, num_atom, #{symprec});
   if (num_spg > 0) {
     printf("%s (%d)\\n", symbol, num_spg);
@@ -217,7 +217,7 @@ OptionParser.new do |opts|
     options.shift_string = v
   end
 
-  opts.on('-n', '--nonewline', 'Do not output the trailing newline') do 
+  opts.on('-n', '--nonewline', 'Do not output the trailing newline') do
     options.nonewline = true
   end
 
@@ -315,7 +315,7 @@ if options.show_primitive
           [lat_ary[0][1], lat_ary[1][1], lat_ary[2][1]],
           [lat_ary[0][2], lat_ary[1][2], lat_ary[2][2]]]
   cell = Crystal::Cell.new(axis, atoms, comment="")
-  
+
   Vasp::CellToPoscar.new(cell).print
 end
 

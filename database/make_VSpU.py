@@ -20,7 +20,7 @@ def get_VSpU( M ):
 def get_VSpU_sets(g1s, g2s):
     VSpU_sets = []
     generator_sets = []
-    
+
     for g3 in ( False, True ): # for inversion
         for g1 in g1s:
             for g2 in g2s:
@@ -117,7 +117,7 @@ def write_generators(generator_sets):
             print "},"
         print "  },"
     print "};"
-      
+
 def write_VSpU(VSpU_sets):
     print "{"
     for count, VSpU in enumerate( VSpU_sets ):
@@ -331,7 +331,7 @@ if options.is_rhombo: # hR
     g1s, g2s, g1s_old, g2s_old = get_rotation_primitive( g1s, g2s, RC )
     g1s_old = None
     g2s_old = None
-        
+
 if options.is_hexa:
     g1s = ( rot6z, rot6zi )
     g2s = ( False, hexa2_ab, hexa2_abi )

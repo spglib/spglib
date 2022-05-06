@@ -42,9 +42,8 @@
 int niggli_get_major_version(void);
 int niggli_get_minor_version(void);
 int niggli_get_micro_version(void);
-int niggli_reduce(double *lattice_, const double eps_);
-int periodic_niggli_reduce(double* lattice_,
-                                   const double eps_,
-                                   const int aperiodic_axis);
+int niggli_reduce(double* lattice_, const double eps_);
+int periodic_niggli_reduce(double* lattice_, const double eps_,
+                           const int aperiodic_axis);
 
 #endif

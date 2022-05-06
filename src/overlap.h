@@ -32,47 +32,44 @@
 /* ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE */
 /* POSSIBILITY OF SUCH DAMAGE. */
 
-#include "mathfunc.h"
 #include "cell.h"
+#include "mathfunc.h"
 
-/* Contains pre-allocated memory and precomputed data for check_total_overlap. */
+/* Contains pre-allocated memory and precomputed data for check_total_overlap.
+ */
 typedef struct {
-  /* Number of atoms. */
-  int size;
+    /* Number of atoms. */
+    int size;
 
-  /* Pre-allocated memory for various things. */
-  void * argsort_work;
-  void * blob;
+    /* Pre-allocated memory for various things. */
+    void *argsort_work;
+    void *blob;
 
-  /* Temp areas for writing stuff. (points into blob) */
-  double (*pos_temp_1)[3];
-  double (*pos_temp_2)[3];
+    /* Temp areas for writing stuff. (points into blob) */
+    double (*pos_temp_1)[3];
+    double (*pos_temp_2)[3];
 
-  /* Temp area for writing lattice point distances. (points into blob) */
-  double * distance_temp; /* for lattice point distances */
-  int * perm_temp; /* for permutations during sort */
+    /* Temp area for writing lattice point distances. (points into blob) */
+    double *distance_temp; /* for lattice point distances */
+    int *perm_temp;        /* for permutations during sort */
 
-  /* Sorted data of original cell. (points into blob)*/
-  double (*lattice)[3];
-  double (*pos_sorted)[3];
-  int * types_sorted;
+    /* Sorted data of original cell. (points into blob)*/
+    double (*lattice)[3];
+    double (*pos_sorted)[3];
+    int *types_sorted;
 
-  /* Using array reference to avoid redundant loop */
-  int * periodic_axes;
+    /* Using array reference to avoid redundant loop */
+    int *periodic_axes;
 } OverlapChecker;
 
-OverlapChecker* ovl_overlap_checker_init(const Cell *cell);
+OverlapChecker *ovl_overlap_checker_init(const Cell *cell);
 
-int ovl_check_total_overlap(OverlapChecker *checker,
-                            const double test_trans[3],
-                            int rot[3][3],
-                            const double symprec,
+int ovl_check_total_overlap(OverlapChecker *checker, const double test_trans[3],
+                            int rot[3][3], const double symprec,
                             const int is_identity);
 
 int ovl_check_layer_total_overlap(OverlapChecker *checker,
-                                  const double test_trans[3],
-                                  int rot[3][3],
-                                  const double symprec,
-                                  const int is_identity);
+                                  const double test_trans[3], int rot[3][3],
+                                  const double symprec, const int is_identity);
 
 void ovl_overlap_checker_free(OverlapChecker *checker);

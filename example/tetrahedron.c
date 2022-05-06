@@ -76,7 +76,7 @@ static void test_tetrahedron_method(void)
   double integral_dos[num_freqs];
   double omegas[num_freqs];
   double iw;
-  
+
   for (i = 0; i < num_gp; i++) {
     weights[i] = 0;
   }
@@ -98,7 +98,7 @@ static void test_tetrahedron_method(void)
   }
 
   printf("Number of irreducible k-points: %d\n", num_ir);
-  
+
   mat_inverse_matrix_d3(rec_lat, lattice, 1e-5);
   thm_get_relative_grid_address(relative_grid_address, rec_lat);
 
@@ -134,9 +134,9 @@ static void test_tetrahedron_method(void)
       min_f = frequency[i];
     }
   }
-  
+
   printf("Number of frequencies: %d\n", i);
-  
+
 
 #pragma omp parallel for private(j, k, l, q, r, g_addr, gp, t_omegas, iw)
   for (i = 0; i < num_freqs; i++) {
@@ -170,11 +170,11 @@ static void test_tetrahedron_method(void)
   }
 
   fprintf(fp, "\n\n");
-  
+
   for (i = 0; i < num_freqs; i++) {
     fprintf(fp, "%f %f\n", omegas[i], integral_dos[i] / num_gp);
   }
-    
+
   fclose(fp);
 }
 
@@ -218,4 +218,3 @@ static int mat_inverse_matrix_d3(double m[3][3],
   mat_copy_matrix_d3(m, c);
   return 1;
 }
-
