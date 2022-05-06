@@ -40,22 +40,21 @@
 #include "symmetry.h"
 
 typedef struct {
-  Cell *bravais;
-  Symmetry *symmetry;
-  int *wyckoffs;
-  char (*site_symmetry_symbols)[7];
-  int *equivalent_atoms;
-  int *crystallographic_orbits;
-  int *std_mapping_to_primitive;
-  double rotation[3][3];
+    Cell *bravais;
+    Symmetry *symmetry;
+    int *wyckoffs;
+    char (*site_symmetry_symbols)[7];
+    int *equivalent_atoms;
+    int *crystallographic_orbits;
+    int *std_mapping_to_primitive;
+    double rotation[3][3];
 } ExactStructure;
 
-ExactStructure *
-ref_get_exact_structure_and_symmetry(Spacegroup * spacegroup,
-                                     const Cell * primitive,
-                                     const Cell * cell,
-                                     const int * mapping_table,
-                                     const double symprec);
+ExactStructure *ref_get_exact_structure_and_symmetry(Spacegroup *spacegroup,
+                                                     const Cell *primitive,
+                                                     const Cell *cell,
+                                                     const int *mapping_table,
+                                                     const double symprec);
 void ref_free_exact_structure(ExactStructure *exstr);
 
 #endif

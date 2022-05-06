@@ -41,10 +41,10 @@ if __name__ == '__main__':
                       action="store_true",
                       help="Show site symmetries")
     (options, args) = parser.parse_args()
-    
+
     rotations, translations = get_Hall_operations( args[0], int( args[2] ) )
     operators = get_wyckoff_position_operators( args[1], int( args[2] ) )
-    
+
 
     if options.is_site:
         show_site_symmetries( rotations, translations, operators )
