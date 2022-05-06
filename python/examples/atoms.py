@@ -38,11 +38,11 @@ import numpy as np
 class Atoms:
     """Atoms class compatible with the ASE Atoms class
     Only the necessary stuffs to phonpy are implemented. """
-    
+
     def __init__(self,
                  symbols=None,
                  positions=None,
-                 numbers=None, 
+                 numbers=None,
                  masses=None,
                  magmoms=None,
                  scaled_positions=None,
@@ -157,14 +157,14 @@ class Atoms:
                      magmoms=self.magmoms,
                      symbols=self.symbols,
                      pbc=True)
-        
+
     def _numbers_to_symbols(self):
         self.symbols = [atom_data[n][1] for n in self.numbers]
-        
+
     def _symbols_to_numbers(self):
         self.numbers = np.array([symbol_map[s]
                                  for s in self.symbols], dtype='intc')
-        
+
     def _symbols_to_masses(self):
         masses = [atom_data[symbol_map[s]][3] for s in self.symbols]
         if None in masses:
@@ -172,7 +172,7 @@ class Atoms:
         else:
             self.masses = np.array(masses, dtype='double')
 
-atom_data = [ 
+atom_data = [
     [  0, "X", "X", None], # 0
     [  1, "H", "Hydrogen", 1.00794], # 1
     [  2, "He", "Helium", 4.002602], # 2
@@ -414,4 +414,3 @@ symbol_map = {
     "Ts":117,
     "Og":118,
     }
-

@@ -28,7 +28,10 @@ Or to install under the parent directory,
 
 A simple test is executed by
 
-```
+```bash
+% mkdir _build
+% cd _build
+% cmake .. -DUSE_SANITIZER="Address" -DCMAKE_BUILD_TYPE="Debug"
 % make check
 ```
 

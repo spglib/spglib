@@ -1,6 +1,6 @@
-! How to make 
+! How to make
 !
-! gcc -c spglib_f.c 
+! gcc -c spglib_f.c
 ! gfortran -c example.f90
 ! gfortran -o example example.o spglib_f.o ~/spglib/src/.libs/libsymspg.a
 
@@ -57,11 +57,11 @@ subroutine write_syminfo( max_num_sym, num_atom, &
 
 
   indent = 1
-  call spg_get_international( space_group, international, & 
+  call spg_get_international( space_group, international, &
        & lattice_t, positions, atom_types, num_atom, symprec );
 
   if (space_group /= 0) then
-     call spg_get_schoenflies( space_group, schoenflies, & 
+     call spg_get_schoenflies( space_group, schoenflies, &
           & lattice_t, positions, atom_types, num_atom, symprec );
 
      print('(a, "space_group: ", i3)'), space(1:indent*2), space_group
@@ -185,4 +185,3 @@ program spglib_example
        mesh, is_shift, is_time_reversal )
 
 end program spglib_example
-

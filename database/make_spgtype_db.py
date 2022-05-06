@@ -60,7 +60,7 @@ def get_pointgroup_number(spg_num):
     for n in spg_num_head:
         if spg_num >= n:
             pt_num += 1
-            
+
     return pt_num
 
 def get_centering(centering, setting):
