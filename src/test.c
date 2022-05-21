@@ -20,6 +20,7 @@ static int sub_spg_standardize_cell(double lattice[3][3], double position[][3],
 static int test_spg_get_international(void);
 static int test_spg_get_schoenflies(void);
 static int test_spg_get_spacegroup_type(void);
+static int test_spg_get_magnetic_spacegroup_type(void);
 static int test_spg_get_symmetry_from_database(void);
 static int test_spg_refine_cell_BCC(void);
 static int test_spg_get_dataset(void);
@@ -33,6 +34,8 @@ static int show_spg_dataset(double lattice[3][3], const double origin_shift[3],
                             double position[][3], const int num_atom,
                             const int types[]);
 static void show_spacegroup_type(const SpglibSpacegroupType spgtype);
+static void show_magnetic_spacegroup_type(
+    const SpglibMagneticSpacegroupType msgtype);
 static void show_cell(double lattice[3][3], double position[][3],
                       const int types[], const int num_atom);
 
@@ -47,6 +50,7 @@ int main(void) {
                             test_spg_get_international,
                             test_spg_get_schoenflies,
                             test_spg_get_spacegroup_type,
+                            test_spg_get_magnetic_spacegroup_type,
                             test_spg_get_symmetry_from_database,
                             test_spg_refine_cell_BCC,
                             test_spg_get_dataset,
@@ -432,6 +436,19 @@ static int test_spg_get_spacegroup_type(void) {
     printf("*** spg_get_spacegroup_type ***:\n");
     if (spgtype.number) {
         show_spacegroup_type(spgtype);
+        return 0;
+    } else {
+        return 1;
+    }
+}
+
+static int test_spg_get_magnetic_spacegroup_type(void) {
+    SpglibMagneticSpacegroupType msgtype;
+    msgtype = spg_get_magnetic_spacegroup_type(1279);
+
+    printf("*** spg_get_magnetic_spacegroup_type ***:\n");
+    if (msgtype.number) {
+        show_magnetic_spacegroup_type(msgtype);
         return 0;
     } else {
         return 1;
@@ -979,6 +996,15 @@ static void show_spacegroup_type(const SpglibSpacegroupType spgtype) {
     printf("Point group Schoe: %s\n", spgtype.pointgroup_schoenflies);
     printf("Arithmetic cc num. %d\n", spgtype.arithmetic_crystal_class_number);
     printf("Arithmetic cc sym. %s\n", spgtype.arithmetic_crystal_class_symbol);
+}
+
+static void show_magnetic_spacegroup_type(
+    const SpglibMagneticSpacegroupType msgtype) {
+    printf("UNI Number:    %d\n", msgtype.uni_number);
+    printf("Litvin Number: %d\n", msgtype.litvin_number);
+    printf("BNS Number:    %s\n", msgtype.bns_number);
+    printf("OG Number:     %s\n", msgtype.og_number);
+    printf("Number:        %d\n", msgtype.number);
 }
 
 static void show_cell(double lattice[3][3], double position[][3],

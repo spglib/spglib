@@ -47,6 +47,7 @@
 #include "kgrid.h"
 #include "kpoint.h"
 #include "mathfunc.h"
+#include "msg_database.h"
 #include "niggli.h"
 #include "pointgroup.h"
 #include "primitive.h"
@@ -579,6 +580,35 @@ SpglibSpacegroupType spg_get_spacegroup_type(const int hall_number) {
         memcpy(spglibtype.arithmetic_crystal_class_symbol, arth_symbol, 7);
         spglib_error_code = SPGLIB_SUCCESS;
     } else {
+        spglib_error_code = SPGERR_SPACEGROUP_SEARCH_FAILED;
+    }
+
+    return spglibtype;
+}
+
+SpglibMagneticSpacegroupType spg_get_magnetic_spacegroup_type(
+    const int uni_number) {
+    SpglibMagneticSpacegroupType spglibtype;
+    MagneticSpacegroupType msgtype;
+
+    /* Initialization */
+    spglibtype.uni_number = 0;
+    spglibtype.litvin_number = 0;
+    strcpy(spglibtype.bns_number, "");
+    strcpy(spglibtype.og_number, "");
+    spglibtype.number = 0;
+
+    if (uni_number > 0 && uni_number <= 1651) {
+        msgtype = spgdb_get_magnetic_spacegroup_type(uni_number);
+        spglibtype.uni_number = msgtype.uni_number;
+        spglibtype.litvin_number = msgtype.litvin_number;
+        memcpy(spglibtype.bns_number, msgtype.bns_number, 8);
+        memcpy(spglibtype.og_number, msgtype.og_number, 12);
+        spglibtype.number = msgtype.number;
+
+        spglib_error_code = SPGLIB_SUCCESS;
+    } else {
+        /* out of range */
         spglib_error_code = SPGERR_SPACEGROUP_SEARCH_FAILED;
     }
 

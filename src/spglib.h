@@ -47,53 +47,53 @@ extern "C" {
 #include <stddef.h>
 
 /*
-  ------------------------------------------------------------------
+   ------------------------------------------------------------------
 
-  lattice: Lattice vectors (in Cartesian)
+   lattice: Lattice vectors (in Cartesian)
 
-  [ [ a_x, b_x, c_x ],
-  [ a_y, b_y, c_y ],
-  [ a_z, b_z, c_z ] ]
+   [ [ a_x, b_x, c_x ],
+   [ a_y, b_y, c_y ],
+   [ a_z, b_z, c_z ] ]
 
-  position: Atomic positions (in fractional coordinates)
+   position: Atomic positions (in fractional coordinates)
 
-  [ [ x1_a, x1_b, x1_c ],
-  [ x2_a, x2_b, x2_c ],
-  [ x3_a, x3_b, x3_c ],
-  ...                   ]
+   [ [ x1_a, x1_b, x1_c ],
+   [ x2_a, x2_b, x2_c ],
+   [ x3_a, x3_b, x3_c ],
+   ...                   ]
 
-  types: Atom types, i.e., species identified by number
+   types: Atom types, i.e., species identified by number
 
-  [ type_1, type_2, type_3, ... ]
+   [ type_1, type_2, type_3, ... ]
 
-  rotation: Rotation matrices of symmetry operations
+   rotation: Rotation matrices of symmetry operations
 
-  each rotation is:
-  [ [ r_aa, r_ab, r_ac ],
-  [ r_ba, r_bb, r_bc ],
-  [ r_ca, r_cb, r_cc ] ]
+   each rotation is:
+   [ [ r_aa, r_ab, r_ac ],
+   [ r_ba, r_bb, r_bc ],
+   [ r_ca, r_cb, r_cc ] ]
 
-  translation: Translation vectors of symmetry operations
+   translation: Translation vectors of symmetry operations
 
-  each translation is:
-  [ t_a, t_b, t_c ]
+   each translation is:
+   [ t_a, t_b, t_c ]
 
-  symprec: Distance tolerance in Cartesian coordinates to find crystal
+   symprec: Distance tolerance in Cartesian coordinates to find crystal
            symmetry.
 
-  ------------------------------------------------------------------
+   ------------------------------------------------------------------
 
-  Definition of the operation:
-  r : rotation     3x3 matrix
-  t : translation  vector
+   Definition of the operation:
+   r : rotation     3x3 matrix
+   t : translation  vector
 
-  x_new = r * x + t:
-  [ x_new_a ]   [ r_aa, r_ab, r_ac ]   [ x_a ]   [ t_a ]
-  [ x_new_b ] = [ r_ba, r_bb, r_bc ] * [ x_b ] + [ t_b ]
-  [ x_new_c ]   [ r_ca, r_cb, r_cc ]   [ x_c ]   [ t_c ]
+   x_new = r * x + t:
+   [ x_new_a ]   [ r_aa, r_ab, r_ac ]   [ x_a ]   [ t_a ]
+   [ x_new_b ] = [ r_ba, r_bb, r_bc ] * [ x_b ] + [ t_b ]
+   [ x_new_c ]   [ r_ca, r_cb, r_cc ]   [ x_c ]   [ t_c ]
 
-  ------------------------------------------------------------------
-*/
+   ------------------------------------------------------------------
+ */
 
 typedef enum {
     SPGLIB_SUCCESS = 0,
@@ -149,6 +149,14 @@ typedef struct {
     int arithmetic_crystal_class_number;
     char arithmetic_crystal_class_symbol[7];
 } SpglibSpacegroupType;
+
+typedef struct {
+    int uni_number;
+    int litvin_number;
+    char bns_number[8];
+    char og_number[12];
+    int number;
+} SpglibMagneticSpacegroupType;
 
 int spg_get_major_version(void);
 int spg_get_minor_version(void);
@@ -294,6 +302,11 @@ int spg_get_symmetry_from_database(int rotations[192][3][3],
 /* Space-group type information is accessed by index of hall symbol. */
 /* The index is defined as number from 1 to 530. */
 SpglibSpacegroupType spg_get_spacegroup_type(const int hall_number);
+
+/* Magnetic space-group type information is accessed by index of UNI symbol. */
+/* The index is defined as number from 1 to 1651. */
+SpglibMagneticSpacegroupType spg_get_magnetic_spacegroup_type(
+    const int uni_number);
 
 int spg_standardize_cell(double lattice[3][3], double position[][3],
                          int types[], const int num_atom,

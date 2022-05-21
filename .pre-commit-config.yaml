@@ -4,18 +4,19 @@ repos:
   rev: master
   hooks:
   - id: clang-format
-    args: ["--style={BasedOnStyle: Google, IndentWidth: 4}"]
+    args: ["-i", "--style=file"]  # Use style set in .clang-format
     files: ^src/
   - id: clang-tidy
     files: ^src/
   # - id: oclint
   #   files: ^src/
-  - id: uncrustify
-    files: ^src/
-  - id: cppcheck
-    files: ^src/
-  - id: cpplint
-    files: ^src/
+  # - id: uncrustify
+  #   files: ^src/
+  #   args: ["--replace"]
+  # - id: cppcheck
+  #   files: ^src/
+  # - id: cpplint
+  #   files: ^src/
   # - id: include-what-you-use
   #   files: ^src/
 
