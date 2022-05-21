@@ -47,6 +47,7 @@
 static PyObject * py_get_version(PyObject *self, PyObject *args);
 static PyObject * py_get_dataset(PyObject *self, PyObject *args);
 static PyObject * py_get_spacegroup_type(PyObject *self, PyObject *args);
+static PyObject * py_get_magnetic_spacegroup_type(PyObject *self, PyObject *args);
 static PyObject * py_get_pointgroup(PyObject *self, PyObject *args);
 static PyObject * py_standardize_cell(PyObject *self, PyObject *args);
 static PyObject * py_refine_cell(PyObject *self, PyObject *args);
@@ -96,6 +97,7 @@ static PyMethodDef _spglib_methods[] = {
   {"version", py_get_version, METH_VARARGS, "Spglib version"},
   {"dataset", py_get_dataset, METH_VARARGS, "Dataset for crystal symmetry"},
   {"spacegroup_type", py_get_spacegroup_type, METH_VARARGS, "Space-group type symbols"},
+  {"magnetic_spacegroup_type", py_get_magnetic_spacegroup_type, METH_VARARGS, "Magnetic space-group type symbols"},
   {"symmetry_from_database", py_get_symmetry_from_database, METH_VARARGS,
    "Get symmetry operations from database"},
   {"pointgroup", py_get_pointgroup, METH_VARARGS,
@@ -490,6 +492,31 @@ static PyObject * py_get_spacegroup_type(PyObject *self, PyObject *args)
   n++;
   PyList_SetItem(array, n, PYUNICODE_FROMSTRING(spg_type.arithmetic_crystal_class_symbol));
   n++;
+
+  return array;
+}
+
+static PyObject *py_get_magnetic_spacegroup_type(PyObject *self, PyObject *args) {
+  int n, uni_number;
+  PyObject *array;
+  SpglibMagneticSpacegroupType msg_type;
+
+  if (!PyArg_ParseTuple(args, "i", &uni_number)) {
+    return NULL;
+  }
+
+  msg_type = spg_get_magnetic_spacegroup_type(uni_number);
+  if (msg_type.number == 0) {
+    Py_RETURN_NONE;
+  }
+
+  array = PyList_New(5);
+  n = 0;
+  PyList_SetItem(array, n++, PyLong_FromLong((long)msg_type.uni_number));
+  PyList_SetItem(array, n++, PyLong_FromLong((long)msg_type.litvin_number));
+  PyList_SetItem(array, n++, PYUNICODE_FROMSTRING(msg_type.bns_number));
+  PyList_SetItem(array, n++, PYUNICODE_FROMSTRING(msg_type.og_number));
+  PyList_SetItem(array, n++, PyLong_FromLong((long)msg_type.number));
 
   return array;
 }

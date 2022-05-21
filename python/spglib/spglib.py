@@ -367,6 +367,33 @@ def get_spacegroup_type(hall_number):
         return None
 
 
+def get_magnetic_spacegroup_type(uni_number):
+    """Translate UNI number to magnetic space group type information.
+
+    If it fails, return None
+    """
+    _set_no_error()
+
+    keys = (
+        'uni_number',
+        'litvin_number',
+        'bns_number',
+        'og_number',
+        'number',
+    )
+    msg_type_list = spg.magnetic_spacegroup_type(uni_number)
+    _set_error_message()
+
+    if msg_type_list is not None:
+        msg_type = dict(zip(keys, msg_type_list))
+        for key in msg_type:
+            if key not in ['uni_number', 'litvin_number', 'number']:
+                msg_type[key] = msg_type[key].strip()
+        return msg_type
+    else:
+        return None
+
+
 def get_pointgroup(rotations):
     """Return point group in international table symbol and number.
 

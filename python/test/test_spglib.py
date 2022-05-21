@@ -1,7 +1,7 @@
 import unittest
 from spglib import (get_symmetry_dataset, find_primitive,
-                    get_spacegroup_type, standardize_cell,
-                    get_pointgroup)
+                    get_spacegroup_type, get_magnetic_spacegroup_type,
+                    standardize_cell, get_pointgroup)
 from vasp import read_vasp
 import yaml
 import os
@@ -238,6 +238,17 @@ class TestSpglib(unittest.TestCase):
             self.assertEqual(len(dataset['std_types']),
                              len(primitive[2]) * multiplicity,
                              msg=("multi: %d, %s" % (multiplicity, fname)))
+
+    def test_magnetic_spacegroup_type(self):
+        actual = get_magnetic_spacegroup_type(1279)
+        expect = {
+            'uni_number': 1279,
+            'litvin_number': 1279,
+            'bns_number': '156.49',
+            'og_number': '156.1.1279',
+            'number': 156,
+        }
+        assert actual == expect
 
 
 if __name__ == '__main__':
