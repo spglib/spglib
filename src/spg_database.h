@@ -50,6 +50,7 @@ typedef struct {
     int pointgroup_number;
 } SpacegroupType;
 
+void spgdb_decode_symmetry(int rot[3][3], double trans[3], const int encoded);
 int spgdb_get_operation(int rot[3][3], double trans[3], const int hall_number);
 void spgdb_get_operation_index(int indices[2], const int hall_number);
 Symmetry* spgdb_get_spacegroup_operations(const int hall_number);
