@@ -4,11 +4,11 @@ from itertools import combinations
 
 import numpy as np
 import pytest
-from ruamel.yaml import YAML
 
 from operation import MagneticOperation, remainder1_symmetry_operation
 from magnetic_hall import MagneticHallSymbol
 from transform import Transformation, get_standard_hall_number
+from make_mhall_db import get_spg_table, get_msg_table
 
 
 def test_magnetic_operations():
@@ -37,24 +37,9 @@ def test_magnetic_hall_symbol(hall_symbol, order_expected):
     assert order_actual == order_expected
 
 
-@pytest.fixture
-def spg_table():
-    all_datum = {}
-    with open(Path("../spg.csv"), 'r') as f:
-        reader = csv.reader(f, delimiter=',')
-        for row in reader:
-            hall_number, choice, number, hall_symbol = int(row[0]), row[2], int(row[4]), row[6]
-            all_datum[hall_number] = {
-                'choice': choice,
-                'number': number,
-                'hall_symbol': hall_symbol,
-            }
+def test_transformation():
+    spg_table = get_spg_table()
 
-    assert len(all_datum) == 530
-    return all_datum
-
-
-def test_transformation(spg_table):
     for hall_number in range(1, 530 + 1):
         print(hall_number)
         choice = spg_table[hall_number]['choice']
@@ -73,15 +58,10 @@ def test_transformation(spg_table):
         assert set(coset_actual) == set(coset_expected)
 
 
-@pytest.fixture
-def msg_table():
-    with open(Path("./magnetic_hall_symbols.yaml"), 'r') as f:
-        all_datum = dict(YAML().load(f))
-    return all_datum
-
-
-def test_magnetic_hall_table(msg_table):
+def test_magnetic_hall_table():
     # Test MSG table with ITA standard settings
+    msg_table = get_msg_table()
+
     count = 0
     for number in range(1, 230 + 1):
         print(f"No. {number}")
@@ -112,3 +92,38 @@ def test_magnetic_hall_table(msg_table):
                 assert False
 
     assert count == 1651
+
+def test_all_msg_table():
+    msg_table = get_msg_table()
+    spg_table = get_spg_table()
+
+    for hall_number in range(1, 530 + 1):
+        number = spg_table[hall_number]['number']
+        choice = spg_table[hall_number]['choice']
+        hall_number_std = get_standard_hall_number(number)
+        # Transformation from ITA standard settings to the other settings
+        trns = Transformation.to_standard(hall_number, choice, number).inverse()
+
+        for bns_number, mhall_symbol in msg_table[hall_number_std].items():
+            mhs = MagneticHallSymbol(mhall_symbol)
+            coset = trns.transform_coset(mhs.coset)
+
+            # Check the order of coset
+            assert len(mhs.coset) % len(coset) == 0
+            if hall_number in [
+                434,
+                437,
+                445,
+                451,
+                453,
+                459,
+                461,
+            ]:
+                # seven rhombohedral space groups
+                assert len(mhs.coset) // len(coset) == 3
+            else:
+                assert len(mhs.coset) == len(coset)
+
+            for op in coset:
+                print(hall_number, bns_number, np.around(op.linear).astype(int))
+                assert np.isclose(np.abs(np.linalg.det(op.linear)), 1)

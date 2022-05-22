@@ -22,6 +22,7 @@ static int test_spg_get_schoenflies(void);
 static int test_spg_get_spacegroup_type(void);
 static int test_spg_get_magnetic_spacegroup_type(void);
 static int test_spg_get_symmetry_from_database(void);
+static int test_spg_get_magnetic_symmetry_from_database(void);
 static int test_spg_refine_cell_BCC(void);
 static int test_spg_get_dataset(void);
 static int test_spg_get_ir_reciprocal_mesh(void);
@@ -52,6 +53,7 @@ int main(void) {
                             test_spg_get_spacegroup_type,
                             test_spg_get_magnetic_spacegroup_type,
                             test_spg_get_symmetry_from_database,
+                            test_spg_get_magnetic_symmetry_from_database,
                             test_spg_refine_cell_BCC,
                             test_spg_get_dataset,
                             test_spg_get_ir_reciprocal_mesh,
@@ -479,6 +481,35 @@ static int test_spg_get_symmetry_from_database(void) {
     }
 }
 
+static int test_spg_get_magnetic_symmetry_from_database(void) {
+    int rotations[384][3][3];
+    double translations[384][3];
+    int time_reversals[384];
+    int i, j, size;
+
+    /* bns_number: 146.12, uni_number 1242 */
+    /* hall_number: 433 -> 146:h */
+    /* hall_number: 434 -> 146:r */
+    size = spg_get_magnetic_symmetry_from_database(rotations, translations,
+                                                   time_reversals, 1242, 434);
+
+    if (size) {
+        printf("*** spg_get_magnetic_symmetry_from_database ***:\n");
+        for (i = 0; i < size; i++) {
+            printf("--- %d ---\n", i + 1);
+            for (j = 0; j < 3; j++) {
+                printf("%2d %2d %2d\n", rotations[i][j][0], rotations[i][j][1],
+                       rotations[i][j][2]);
+            }
+            printf("%f %f %f\n", translations[i][0], translations[i][1],
+                   translations[i][2]);
+            printf("%2d\n", time_reversals[i]);
+        }
+        return 0;
+    } else {
+        return 1;
+    }
+}
 static int test_spg_get_multiplicity(void) {
     double lattice[3][3] = {{4, 0, 0}, {0, 4, 0}, {0, 0, 4}};
     double position[][3] = {{0, 0, 0}, {0.5, 0.5, 0.5}};

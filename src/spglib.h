@@ -299,6 +299,18 @@ int spg_get_symmetry_from_database(int rotations[192][3][3],
                                    double translations[192][3],
                                    const int hall_number);
 
+/* Magnetic space-group operations in built-in database are accessed by UNI */
+/* number, which is defined as number from 1 to 1651. Optionally alternative */
+/* settings can be specified with hall_number. For type-I, type-II, and type-III
+ */
+/* magnetic space groups, hall_number changes settings in family space group. */
+/* For type-IV, hall_number changes settings in maximal space group. */
+int spg_get_magnetic_symmetry_from_database(int rotations[384][3][3],
+                                            double translations[384][3],
+                                            int time_reversals[384],
+                                            const int uni_number,
+                                            const int hall_number);
+
 /* Space-group type information is accessed by index of hall symbol. */
 /* The index is defined as number from 1 to 530. */
 SpglibSpacegroupType spg_get_spacegroup_type(const int hall_number);

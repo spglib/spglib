@@ -166,6 +166,71 @@ void sym_free_symmetry(Symmetry *symmetry) {
 }
 
 /* Return NULL if failed */
+MagneticSymmetry *sym_alloc_magnetic_symmetry(const int size) {
+    MagneticSymmetry *symmetry;
+
+    symmetry = NULL;
+
+    if (size < 1) {
+        return NULL;
+    }
+
+    if ((symmetry = (MagneticSymmetry *)malloc(sizeof(MagneticSymmetry))) ==
+        NULL) {
+        warning_print("spglib: Memory could not be allocated ");
+        return NULL;
+    }
+
+    symmetry->size = size;
+    symmetry->rot = NULL;
+    symmetry->trans = NULL;
+    symmetry->timerev = NULL;
+
+    if ((symmetry->rot = (int(*)[3][3])malloc(sizeof(int[3][3]) * size)) ==
+        NULL) {
+        warning_print("spglib: Memory could not be allocated ");
+        warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+        free(symmetry);
+        symmetry = NULL;
+        return NULL;
+    }
+    if ((symmetry->trans = (double(*)[3])malloc(sizeof(double[3]) * size)) ==
+        NULL) {
+        warning_print("spglib: Memory could not be allocated ");
+        warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+        free(symmetry->rot);
+        symmetry->rot = NULL;
+        free(symmetry);
+        symmetry = NULL;
+        return NULL;
+    }
+    if ((symmetry->timerev = (int *)malloc(sizeof(int *) * size)) == NULL) {
+        warning_print("spglib: Memory could not be allocated ");
+        warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+        free(symmetry->rot);
+        symmetry->rot = NULL;
+        free(symmetry->trans);
+        symmetry->trans = NULL;
+        free(symmetry);
+        symmetry = NULL;
+        return NULL;
+    }
+    return symmetry;
+}
+
+void sym_free_magnetic_symmetry(MagneticSymmetry *symmetry) {
+    if (symmetry->size > 0) {
+        free(symmetry->rot);
+        symmetry->rot = NULL;
+        free(symmetry->trans);
+        symmetry->trans = NULL;
+        free(symmetry->timerev);
+        symmetry->timerev = NULL;
+    }
+    free(symmetry);
+}
+
+/* Return NULL if failed */
 Symmetry *sym_get_operation(const Cell *primitive, const double symprec,
                             const double angle_tolerance) {
     debug_print("sym_get_operations:\n");

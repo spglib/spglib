@@ -35,6 +35,8 @@
 #ifndef __msg_database_H__
 #define __msg_database_H__
 
+#include "symmetry.h"
+
 typedef struct {
     int uni_number;
     int litvin_number;
@@ -43,6 +45,8 @@ typedef struct {
     int number;
 } MagneticSpacegroupType;
 
-MagneticSpacegroupType spgdb_get_magnetic_spacegroup_type(const int uni_number);
+MagneticSpacegroupType msgdb_get_magnetic_spacegroup_type(const int uni_number);
+MagneticSymmetry* msgdb_get_spacegroup_operations(const int uni_number,
+                                                  const int hall_number);
 
 #endif /* __msg_database_H__ */

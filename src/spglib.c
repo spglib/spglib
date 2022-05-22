@@ -543,6 +543,37 @@ err:
     return 0;
 }
 
+/* Return 0 if failed */
+int spg_get_magnetic_symmetry_from_database(int rotations[384][3][3],
+                                            double translations[384][3],
+                                            int time_reversals[384],
+                                            const int uni_number,
+                                            const int hall_number) {
+    int i, size;
+    MagneticSymmetry *symmetry;
+
+    symmetry = NULL;
+
+    if ((symmetry = msgdb_get_spacegroup_operations(uni_number, hall_number)) ==
+        NULL) {
+        spglib_error_code = SPGERR_SPACEGROUP_SEARCH_FAILED;
+        return 0;
+    }
+
+    for (i = 0; i < symmetry->size; i++) {
+        mat_copy_matrix_i3(rotations[i], symmetry->rot[i]);
+        mat_copy_vector_d3(translations[i], symmetry->trans[i]);
+        time_reversals[i] = symmetry->timerev[i];
+    }
+    size = symmetry->size;
+
+    sym_free_magnetic_symmetry(symmetry);
+    symmetry = NULL;
+
+    spglib_error_code = SPGLIB_SUCCESS;
+    return size;
+}
+
 /* Return spglibtype.number = 0 if failed */
 SpglibSpacegroupType spg_get_spacegroup_type(const int hall_number) {
     SpglibSpacegroupType spglibtype;
@@ -599,7 +630,7 @@ SpglibMagneticSpacegroupType spg_get_magnetic_spacegroup_type(
     spglibtype.number = 0;
 
     if (uni_number > 0 && uni_number <= 1651) {
-        msgtype = spgdb_get_magnetic_spacegroup_type(uni_number);
+        msgtype = msgdb_get_magnetic_spacegroup_type(uni_number);
         spglibtype.uni_number = msgtype.uni_number;
         spglibtype.litvin_number = msgtype.litvin_number;
         memcpy(spglibtype.bns_number, msgtype.bns_number, 8);
