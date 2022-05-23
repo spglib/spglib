@@ -1,5 +1,3 @@
-from pathlib import Path
-import csv
 from itertools import combinations
 
 import numpy as np
@@ -8,7 +6,7 @@ import pytest
 from operation import MagneticOperation, remainder1_symmetry_operation
 from magnetic_hall import MagneticHallSymbol
 from transform import Transformation, get_standard_hall_number
-from make_mhall_db import get_spg_table, get_msg_table
+from load import get_spg_table, get_msg_table
 
 
 def test_magnetic_operations():

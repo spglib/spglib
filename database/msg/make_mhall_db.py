@@ -1,40 +1,14 @@
-from pathlib import Path
-import csv
 import sys
 
-from ruamel.yaml import YAML
 import numpy as np
 
 from operation import MagneticOperation
 from magnetic_hall import MagneticHallSymbol
 from transform import Transformation, get_standard_hall_number
-from make_msgtype_db import get_msg_numbers
+from load import get_msg_numbers, get_spg_table, get_msg_table
 
 sys.path.append('..')
 from hall2operations import encode_symmetry
-
-
-def get_spg_table():
-    all_datum = {}
-    with open(Path("../spg.csv"), 'r') as f:
-        reader = csv.reader(f, delimiter=',')
-        for row in reader:
-            hall_number, choice, number, hall_symbol = int(row[0]), row[2], int(row[4]), row[6]
-            all_datum[hall_number] = {
-                'choice': choice,
-                'number': number,
-                'hall_symbol': hall_symbol,
-            }
-
-    assert len(all_datum) == 530
-    return all_datum
-
-
-def get_msg_table():
-    # Load MSG for ITA standard settings
-    with open(Path("./magnetic_hall_symbols.yaml"), 'r') as f:
-        all_datum = dict(YAML().load(f))
-    return all_datum
 
 
 def get_all_msg_settings():

@@ -1,26 +1,4 @@
-from pathlib import Path
-import csv
-
-
-def get_msg_numbers():
-    all_datum = []
-    with open(Path(__file__).resolve().parent / "msg_numbers.csv", 'r') as f:
-        reader = csv.reader(f, delimiter=',')
-        next(reader)  # skip header
-        for row in reader:
-            if len(row) == 0:
-                break
-
-            litvin_number, bns_number, og_number, uni_number = row
-            all_datum.append((
-                int(litvin_number),
-                bns_number,
-                og_number,
-                int(uni_number),
-            ))
-
-    assert len(all_datum) == 1651
-    return all_datum
+from load import get_msg_numbers
 
 
 if __name__ == '__main__':

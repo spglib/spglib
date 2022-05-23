@@ -1,6 +1,5 @@
 from transform import  get_standard_hall_number
-from make_mhall_db import get_msg_table, get_spg_table
-from make_msgtype_db import get_msg_numbers
+from load import get_msg_numbers, get_spg_table, get_msg_table
 
 
 if __name__ == '__main__':
