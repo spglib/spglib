@@ -43,6 +43,7 @@ typedef struct {
     char bns_number[8];
     char og_number[12];
     int number;
+    int type;
 } MagneticSpacegroupType;
 
 MagneticSpacegroupType msgdb_get_magnetic_spacegroup_type(const int uni_number);

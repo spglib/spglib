@@ -241,15 +241,41 @@ class TestSpglib(unittest.TestCase):
                              msg=("multi: %d, %s" % (multiplicity, fname)))
 
     def test_magnetic_spacegroup_type(self):
-        actual = get_magnetic_spacegroup_type(1279)
-        expect = {
+        # P 3 -2"
+        actual1 = get_magnetic_spacegroup_type(1279)
+        expect1 = {
             'uni_number': 1279,
             'litvin_number': 1279,
             'bns_number': '156.49',
             'og_number': '156.1.1279',
             'number': 156,
+            'type': 1,
         }
-        assert actual == expect
+        assert actual1 == expect1
+
+        # -P 2 2ab 1'
+        actual2 = get_magnetic_spacegroup_type(452)
+        expect2 = {
+            'uni_number': 452,
+            'litvin_number': 442,
+            'bns_number': '55.354',
+            'og_number': '55.2.442',
+            'number': 55,
+            'type': 2,
+        }
+        assert actual2 == expect2
+
+        # P 31 2 1c' (0 0 1)
+        actual3 = get_magnetic_spacegroup_type(1262)
+        expect3 = {
+            'uni_number': 1262,
+            'litvin_number': 1270,
+            'bns_number': '151.32',
+            'og_number': '153.4.1270',
+            'number': 151,
+            'type': 4,
+        }
+        assert actual3 == expect3
 
     def test_magnetic_symmetry_database(self):
         # UNI: R31'_c[R3] (1242), BNS: R_I3 (146.12)

@@ -156,6 +156,7 @@ typedef struct {
     char bns_number[8];
     char og_number[12];
     int number;
+    int type;
 } SpglibMagneticSpacegroupType;
 
 int spg_get_major_version(void);

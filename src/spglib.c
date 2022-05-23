@@ -628,6 +628,7 @@ SpglibMagneticSpacegroupType spg_get_magnetic_spacegroup_type(
     strcpy(spglibtype.bns_number, "");
     strcpy(spglibtype.og_number, "");
     spglibtype.number = 0;
+    spglibtype.type = 0;
 
     if (uni_number > 0 && uni_number <= 1651) {
         msgtype = msgdb_get_magnetic_spacegroup_type(uni_number);
@@ -636,6 +637,7 @@ SpglibMagneticSpacegroupType spg_get_magnetic_spacegroup_type(
         memcpy(spglibtype.bns_number, msgtype.bns_number, 8);
         memcpy(spglibtype.og_number, msgtype.og_number, 12);
         spglibtype.number = msgtype.number;
+        spglibtype.type = msgtype.type;
 
         spglib_error_code = SPGLIB_SUCCESS;
     } else {

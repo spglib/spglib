@@ -380,6 +380,7 @@ def get_magnetic_spacegroup_type(uni_number):
         'bns_number',
         'og_number',
         'number',
+        'type',
     )
     msg_type_list = spg.magnetic_spacegroup_type(uni_number)
     _set_error_message()
@@ -387,7 +388,7 @@ def get_magnetic_spacegroup_type(uni_number):
     if msg_type_list is not None:
         msg_type = dict(zip(keys, msg_type_list))
         for key in msg_type:
-            if key not in ['uni_number', 'litvin_number', 'number']:
+            if key not in ['uni_number', 'litvin_number', 'number', 'type']:
                 msg_type[key] = msg_type[key].strip()
         return msg_type
     else:

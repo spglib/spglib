@@ -425,6 +425,7 @@ static void test_spg_get_magnetic_spacegroup_type(void) {
     printf("BNS Number:    %s\n", msgtype.bns_number);
     printf("OG Number:     %s\n", msgtype.og_number);
     printf("Number:        %d\n", msgtype.number);
+    printf("Type:          %d\n", msgtype.type);
 
 }
 

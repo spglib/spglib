@@ -543,13 +543,14 @@ static PyObject *py_get_magnetic_spacegroup_type(PyObject *self, PyObject *args)
     Py_RETURN_NONE;
   }
 
-  array = PyList_New(5);
+  array = PyList_New(6);
   n = 0;
   PyList_SetItem(array, n++, PyLong_FromLong((long)msg_type.uni_number));
   PyList_SetItem(array, n++, PyLong_FromLong((long)msg_type.litvin_number));
   PyList_SetItem(array, n++, PYUNICODE_FROMSTRING(msg_type.bns_number));
   PyList_SetItem(array, n++, PYUNICODE_FROMSTRING(msg_type.og_number));
   PyList_SetItem(array, n++, PyLong_FromLong((long)msg_type.number));
+  PyList_SetItem(array, n++, PyLong_FromLong((long)msg_type.type));
 
   return array;
 }

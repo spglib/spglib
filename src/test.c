@@ -1036,6 +1036,7 @@ static void show_magnetic_spacegroup_type(
     printf("BNS Number:    %s\n", msgtype.bns_number);
     printf("OG Number:     %s\n", msgtype.og_number);
     printf("Number:        %d\n", msgtype.number);
+    printf("Type:          %d\n", msgtype.type);
 }
 
 static void show_cell(double lattice[3][3], double position[][3],
