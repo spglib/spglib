@@ -1,6 +1,7 @@
 import unittest
 from spglib import (get_symmetry_dataset, find_primitive,
                     get_spacegroup_type, get_magnetic_spacegroup_type,
+                    get_magnetic_symmetry_from_database,
                     standardize_cell, get_pointgroup)
 from vasp import read_vasp
 import yaml
@@ -249,6 +250,70 @@ class TestSpglib(unittest.TestCase):
             'number': 156,
         }
         assert actual == expect
+
+    def test_magnetic_symmetry_database(self):
+        # UNI: R31'_c[R3] (1242), BNS: R_I3 (146.12)
+
+        # Hexagonal axes: hall_number: 433
+        data_h_actual = get_magnetic_symmetry_from_database(1242)
+        for key in ['rotations', 'translations', 'time_reversals']:
+            assert len(data_h_actual[key]) == 18
+
+        # Rhombohedral axes: hall_number: 434
+        data_r_actual = get_magnetic_symmetry_from_database(1242, hall_number=434)
+        data_r_expect = {
+            'rotations': np.array([
+                # x,y,z
+                [
+                    [1, 0, 0],
+                    [0, 1, 0],
+                    [0, 0, 1],
+                ],
+                # y,z,x
+                [
+                    [0, 0, 1],
+                    [1, 0, 0],
+                    [0, 1, 0],
+                ],
+                # y+1/2,z+1/2,x+1/2'
+                [
+                    [0, 0, 1],
+                    [1, 0, 0],
+                    [0, 1, 0],
+                ],
+                # z,x,y
+                [
+                    [0, 1, 0],
+                    [0, 0, 1],
+                    [1, 0, 0],
+                ],
+                # x+1/2,y+1/2,z+1/2'
+                [
+                    [1, 0, 0],
+                    [0, 1, 0],
+                    [0, 0, 1],
+                ],
+                # z+1/2,x+1/2,y+1/2'
+                [
+                    [0, 1, 0],
+                    [0, 0, 1],
+                    [1, 0, 0],
+                ],
+            ], dtype=np.int32),
+            'translations': np.array([
+                [0, 0, 0],
+                [0, 0, 0],
+                [0.5, 0.5, 0.5],
+                [0, 0, 0],
+                [0.5, 0.5, 0.5],
+                [0.5, 0.5, 0.5],
+            ]),
+            'time_reversals': np.array([
+                [0, 0, 1, 0, 1, 1],
+            ])
+        }
+        for key in ['rotations', 'translations', 'time_reversals']:
+            assert np.allclose(data_r_actual[key], data_r_expect[key])
 
 
 if __name__ == '__main__':

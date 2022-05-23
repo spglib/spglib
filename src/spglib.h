@@ -301,10 +301,12 @@ int spg_get_symmetry_from_database(int rotations[192][3][3],
 
 /* Magnetic space-group operations in built-in database are accessed by UNI */
 /* number, which is defined as number from 1 to 1651. Optionally alternative */
-/* settings can be specified with hall_number. For type-I, type-II, and type-III
- */
-/* magnetic space groups, hall_number changes settings in family space group. */
+/* settings can be specified with hall_number. For type-I, type-II, and */
+/* type-III magnetic space groups, hall_number changes settings in family space
+ * group. */
 /* For type-IV, hall_number changes settings in maximal space group. */
+/* When hall_number = 0, the smallest hall number corresponding to uni_number is
+ * used. */
 int spg_get_magnetic_symmetry_from_database(int rotations[384][3][3],
                                             double translations[384][3],
                                             int time_reversals[384],
