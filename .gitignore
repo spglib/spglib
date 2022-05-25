@@ -91,3 +91,5 @@ findsym.log
 
 spglib_test*
 test-suite.log
+
+.vscode/

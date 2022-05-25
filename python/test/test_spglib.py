@@ -1,7 +1,8 @@
 import unittest
 from spglib import (get_symmetry_dataset, find_primitive,
-                    get_spacegroup_type, standardize_cell,
-                    get_pointgroup)
+                    get_spacegroup_type, get_magnetic_spacegroup_type,
+                    get_magnetic_symmetry_from_database,
+                    standardize_cell, get_pointgroup)
 from vasp import read_vasp
 import yaml
 import os
@@ -238,6 +239,107 @@ class TestSpglib(unittest.TestCase):
             self.assertEqual(len(dataset['std_types']),
                              len(primitive[2]) * multiplicity,
                              msg=("multi: %d, %s" % (multiplicity, fname)))
+
+    def test_magnetic_spacegroup_type(self):
+        # P 3 -2"
+        actual1 = get_magnetic_spacegroup_type(1279)
+        expect1 = {
+            'uni_number': 1279,
+            'litvin_number': 1279,
+            'bns_number': '156.49',
+            'og_number': '156.1.1279',
+            'number': 156,
+            'type': 1,
+        }
+        assert actual1 == expect1
+
+        # -P 2 2ab 1'
+        actual2 = get_magnetic_spacegroup_type(452)
+        expect2 = {
+            'uni_number': 452,
+            'litvin_number': 442,
+            'bns_number': '55.354',
+            'og_number': '55.2.442',
+            'number': 55,
+            'type': 2,
+        }
+        assert actual2 == expect2
+
+        # P 31 2 1c' (0 0 1)
+        actual3 = get_magnetic_spacegroup_type(1262)
+        expect3 = {
+            'uni_number': 1262,
+            'litvin_number': 1270,
+            'bns_number': '151.32',
+            'og_number': '153.4.1270',
+            'number': 151,
+            'type': 4,
+        }
+        assert actual3 == expect3
+
+    def test_magnetic_symmetry_database(self):
+        # UNI: R31'_c[R3] (1242), BNS: R_I3 (146.12)
+
+        # Hexagonal axes: hall_number: 433
+        data_h_actual = get_magnetic_symmetry_from_database(1242)
+        for key in ['rotations', 'translations', 'time_reversals']:
+            assert len(data_h_actual[key]) == 18
+
+        # Rhombohedral axes: hall_number: 434
+        data_r_actual = get_magnetic_symmetry_from_database(1242, hall_number=434)
+        data_r_expect = {
+            'rotations': np.array([
+                # x,y,z
+                [
+                    [1, 0, 0],
+                    [0, 1, 0],
+                    [0, 0, 1],
+                ],
+                # y,z,x
+                [
+                    [0, 0, 1],
+                    [1, 0, 0],
+                    [0, 1, 0],
+                ],
+                # y+1/2,z+1/2,x+1/2'
+                [
+                    [0, 0, 1],
+                    [1, 0, 0],
+                    [0, 1, 0],
+                ],
+                # z,x,y
+                [
+                    [0, 1, 0],
+                    [0, 0, 1],
+                    [1, 0, 0],
+                ],
+                # x+1/2,y+1/2,z+1/2'
+                [
+                    [1, 0, 0],
+                    [0, 1, 0],
+                    [0, 0, 1],
+                ],
+                # z+1/2,x+1/2,y+1/2'
+                [
+                    [0, 1, 0],
+                    [0, 0, 1],
+                    [1, 0, 0],
+                ],
+            ], dtype=np.int32),
+            'translations': np.array([
+                [0, 0, 0],
+                [0, 0, 0],
+                [0.5, 0.5, 0.5],
+                [0, 0, 0],
+                [0.5, 0.5, 0.5],
+                [0.5, 0.5, 0.5],
+            ]),
+            'time_reversals': np.array([
+                [0, 0, 1, 0, 1, 1],
+            ])
+        }
+        for key in ['rotations', 'translations', 'time_reversals']:
+            assert np.allclose(data_r_actual[key], data_r_expect[key])
 
 
 if __name__ == '__main__':

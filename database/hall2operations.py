@@ -348,14 +348,15 @@ def dump_operations(filename):
         G_R, G_T = hs.get_operations()
         for j, (r, t) in enumerate(zip(G_R, G_T)):
             count += 1
-            r_encode = encode_rotation(r)
-            x = np.rint(t * 12).astype(int)
-            t_encode = x[0] * 144 + x[1] * 12 + x[2]
-            total = t_encode * 3 ** 9 + r_encode
+            total = encode_symmetry(r, t)
+            r_enc_dec, t_enc_dec = decode_symmetry(total)
+            assert np.allclose(r_enc_dec, r.reshape(-1).tolist())
+            assert np.allclose(t_enc_dec, t * 12)
+
             text = "  %-8d," % (total)
             text += " /* %4d (%3d) [" % (count, i + 1)
-            text += "%2d," * 9 % tuple(decode_rotation(total % (3**9)))
-            text += "%2d,%2d,%2d] */" % tuple(decode_trans(total // (3**9)))
+            text += "%2d," * 9 % tuple(r_enc_dec)
+            text += "%2d,%2d,%2d] */" % tuple(t_enc_dec)
             print(text)
 
 
@@ -375,11 +376,32 @@ def dump_operations_old(filename):
 
 
 # Ternary numerical system
+def encode_symmetry(r, t):
+    r_encode = encode_rotation(r)
+    t_encode = encode_trans(t)
+    total = t_encode * 3 ** 9 + r_encode
+    return total
+
+
 def encode_rotation(r):
     r_sum = 0
     for i, x in enumerate(r.ravel()):
         r_sum += (x + 1) * 3**(8 - i)
     return r_sum
+
+
+def encode_trans(t):
+    x = np.rint(t * 12).astype(int)
+    t_encode = x[0] * 144 + x[1] * 12 + x[2]
+    return t_encode
+
+
+def decode_symmetry(c):
+    r_encoded = c % (3 ** 9)
+    t_encoded = c // (3 ** 9)
+    r_aligned = decode_rotation(r_encoded)  # (9, )
+    t_multiplied = decode_trans(t_encoded)  # (3, )
+    return r_aligned, t_multiplied
 
 
 def decode_rotation(c):

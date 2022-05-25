@@ -367,6 +367,34 @@ def get_spacegroup_type(hall_number):
         return None
 
 
+def get_magnetic_spacegroup_type(uni_number):
+    """Translate UNI number to magnetic space group type information.
+
+    If it fails, return None
+    """
+    _set_no_error()
+
+    keys = (
+        'uni_number',
+        'litvin_number',
+        'bns_number',
+        'og_number',
+        'number',
+        'type',
+    )
+    msg_type_list = spg.magnetic_spacegroup_type(uni_number)
+    _set_error_message()
+
+    if msg_type_list is not None:
+        msg_type = dict(zip(keys, msg_type_list))
+        for key in msg_type:
+            if key not in ['uni_number', 'litvin_number', 'number', 'type']:
+                msg_type[key] = msg_type[key].strip()
+        return msg_type
+    else:
+        return None
+
+
 def get_pointgroup(rotations):
     """Return point group in international table symbol and number.
 
@@ -547,6 +575,33 @@ def get_symmetry_from_database(hall_number):
                 np.array(rotations[:num_sym], dtype='intc', order='C'),
                 'translations':
                 np.array(translations[:num_sym], dtype='double', order='C')}
+
+
+def get_magnetic_symmetry_from_database(uni_number, hall_number=0):
+    """Return magnetic symmetry operations corresponding to a UNI number between 1 and 1651.
+    Optionally alternative settings can be specified with Hall number.
+
+    The magnetic symmetry operations are given by a dictionary whose keys are
+    'rotations', 'translations', and 'time_reversals'.
+    For `time_reversals`, 0 and 1 indicate ordinary and anti-time-reversal operations, respectively.
+    If it fails, None is returned.
+    """
+    _set_no_error()
+
+    rotations = np.zeros((384, 3, 3), dtype='intc')
+    translations = np.zeros((384, 3), dtype='double')
+    time_reversals = np.zeros(384, dtype='intc')
+    num_sym = spg.magnetic_symmetry_from_database(rotations, translations, time_reversals, uni_number, hall_number)
+    _set_error_message()
+
+    if num_sym is None:
+        return None
+    else:
+        return {
+            'rotations': np.array(rotations[:num_sym], dtype='intc', order='C'),
+            'translations': np.array(translations[:num_sym], dtype='double', order='C'),
+            'time_reversals': np.array(time_reversals[:num_sym], dtype='intc', order='C'),
+        }
 
 
 ############

@@ -10148,7 +10148,7 @@ static const int layer_symmetry_operation_index[][2] = {
 
 static void replace_equal_char(char symbol[], const int position);
 
-int spgdb_get_operation(int rot[3][3], double trans[3], const int hall_number) {
+void spgdb_decode_symmetry(int rot[3][3], double trans[3], const int encoded) {
     int i, j, r, t, degit;
 
     /* A space group operation is compressed using ternary numerical system for
@@ -10161,8 +10161,8 @@ int spgdb_get_operation(int rot[3][3], double trans[3], const int hall_number) {
     /* group operations. In principle, octal numerical system can be used */
     /* for translation, but duodecimal system is more convenient. */
 
-    r = symmetry_operations[hall_number] % 19683; /* 19683 = 3**9 */
-    degit = 6561;                                 /* 6561 = 3**8 */
+    r = encoded % 19683; /* 19683 = 3**9 */
+    degit = 6561;        /* 6561 = 3**8 */
     for (i = 0; i < 3; i++) {
         for (j = 0; j < 3; j++) {
             rot[i][j] = (r % (degit * 3)) / degit - 1;
@@ -10170,13 +10170,16 @@ int spgdb_get_operation(int rot[3][3], double trans[3], const int hall_number) {
         }
     }
 
-    t = symmetry_operations[hall_number] / 19683; /* 19683 = 3**9 */
+    t = encoded / 19683; /* 19683 = 3**9 */
     degit = 144;
     for (i = 0; i < 3; i++) {
         trans[i] = ((double)((t % (degit * 12)) / degit)) / 12;
         degit /= 12;
     }
+}
 
+int spgdb_get_operation(int rot[3][3], double trans[3], const int hall_number) {
+    spgdb_decode_symmetry(rot, trans, symmetry_operations[hall_number]);
     return 1;
 }
 

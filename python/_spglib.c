@@ -47,6 +47,7 @@
 static PyObject * py_get_version(PyObject *self, PyObject *args);
 static PyObject * py_get_dataset(PyObject *self, PyObject *args);
 static PyObject * py_get_spacegroup_type(PyObject *self, PyObject *args);
+static PyObject * py_get_magnetic_spacegroup_type(PyObject *self, PyObject *args);
 static PyObject * py_get_pointgroup(PyObject *self, PyObject *args);
 static PyObject * py_standardize_cell(PyObject *self, PyObject *args);
 static PyObject * py_refine_cell(PyObject *self, PyObject *args);
@@ -69,6 +70,7 @@ static PyObject *
 py_get_BZ_grid_points_by_rotations(PyObject *self, PyObject *args);
 static PyObject * py_relocate_BZ_grid_address(PyObject *self, PyObject *args);
 static PyObject * py_get_symmetry_from_database(PyObject *self, PyObject *args);
+static PyObject * py_get_magnetic_symmetry_from_database(PyObject *self, PyObject *args);
 static PyObject * py_delaunay_reduce(PyObject *self, PyObject *args);
 static PyObject * py_niggli_reduce(PyObject *self, PyObject *args);
 static PyObject * py_get_error_message(PyObject *self, PyObject *args);
@@ -96,8 +98,10 @@ static PyMethodDef _spglib_methods[] = {
   {"version", py_get_version, METH_VARARGS, "Spglib version"},
   {"dataset", py_get_dataset, METH_VARARGS, "Dataset for crystal symmetry"},
   {"spacegroup_type", py_get_spacegroup_type, METH_VARARGS, "Space-group type symbols"},
-  {"symmetry_from_database", py_get_symmetry_from_database, METH_VARARGS,
-   "Get symmetry operations from database"},
+  {"magnetic_spacegroup_type", py_get_magnetic_spacegroup_type, METH_VARARGS, "Magnetic space-group type symbols"},
+  {"symmetry_from_database", py_get_symmetry_from_database, METH_VARARGS, "Get symmetry operations from database"},
+  {"magnetic_symmetry_from_database", py_get_magnetic_symmetry_from_database, METH_VARARGS,
+   "Get magnetic symmetry operations from database"},
   {"pointgroup", py_get_pointgroup, METH_VARARGS,
    "International symbol of pointgroup"},
   {"standardize_cell", py_standardize_cell, METH_VARARGS, "Standardize cell"},
@@ -451,6 +455,37 @@ static PyObject * py_get_symmetry_from_database(PyObject *self, PyObject *args)
   return PyLong_FromLong((long) num_sym);
 }
 
+static PyObject * py_get_magnetic_symmetry_from_database(PyObject *self, PyObject *args)
+{
+  PyArrayObject* py_rotations;
+  PyArrayObject* py_translations;
+  PyArrayObject* py_time_reversals;
+  int uni_number;
+  int hall_number;
+
+  int (*rot)[3][3];
+  double (*trans)[3];
+  int *timerev;
+  int num_sym;
+
+  if (!PyArg_ParseTuple(args, "OOOii",
+                        &py_rotations,
+                        &py_translations,
+                        &py_time_reversals,
+                        &uni_number,
+                        &hall_number)) {
+    return NULL;
+  }
+
+  rot = (int(*)[3][3])PyArray_DATA(py_rotations);
+  trans = (double(*)[3])PyArray_DATA(py_translations);
+  timerev = (int*)PyArray_DATA(py_time_reversals);
+
+  num_sym = spg_get_magnetic_symmetry_from_database(rot, trans, timerev, uni_number, hall_number);
+
+  return PyLong_FromLong((long) num_sym);
+}
+
 static PyObject * py_get_spacegroup_type(PyObject *self, PyObject *args)
 {
   int n, hall_number;
@@ -490,6 +525,32 @@ static PyObject * py_get_spacegroup_type(PyObject *self, PyObject *args)
   n++;
   PyList_SetItem(array, n, PYUNICODE_FROMSTRING(spg_type.arithmetic_crystal_class_symbol));
   n++;
+
+  return array;
+}
+
+static PyObject *py_get_magnetic_spacegroup_type(PyObject *self, PyObject *args) {
+  int n, uni_number;
+  PyObject *array;
+  SpglibMagneticSpacegroupType msg_type;
+
+  if (!PyArg_ParseTuple(args, "i", &uni_number)) {
+    return NULL;
+  }
+
+  msg_type = spg_get_magnetic_spacegroup_type(uni_number);
+  if (msg_type.number == 0) {
+    Py_RETURN_NONE;
+  }
+
+  array = PyList_New(6);
+  n = 0;
+  PyList_SetItem(array, n++, PyLong_FromLong((long)msg_type.uni_number));
+  PyList_SetItem(array, n++, PyLong_FromLong((long)msg_type.litvin_number));
+  PyList_SetItem(array, n++, PYUNICODE_FROMSTRING(msg_type.bns_number));
+  PyList_SetItem(array, n++, PYUNICODE_FROMSTRING(msg_type.og_number));
+  PyList_SetItem(array, n++, PyLong_FromLong((long)msg_type.number));
+  PyList_SetItem(array, n++, PyLong_FromLong((long)msg_type.type));
 
   return array;
 }
