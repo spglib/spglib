@@ -6,6 +6,7 @@ repos:
   - id: clang-format
     args: ["-i", "--style=file"]  # Use style set in .clang-format
     files: ^src/
+    exclude: src/msg_database.c  # Skip too large file to wait every time
   - id: clang-tidy
     files: ^src/
   # - id: oclint
