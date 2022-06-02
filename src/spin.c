@@ -43,48 +43,65 @@
 #include "primitive.h"
 #include "symmetry.h"
 
-static Symmetry *get_operations(int *spin_flips, const Symmetry *sym_nonspin,
-                                const Cell *cell, const double *tensors,
-                                const int tensor_rank, const int is_magnetic,
-                                const double symprec);
-static int set_equivalent_atoms(int *equiv_atoms, const Symmetry *symmetry,
+static MagneticSymmetry *get_operations(const Symmetry *sym_nonspin,
+                                        const Cell *cell, const double *tensors,
+                                        const int tensor_rank,
+                                        const int is_magnetic,
+                                        const int is_axial,
+                                        const double symprec);
+static int set_equivalent_atoms(int *equiv_atoms,
+                                const MagneticSymmetry *magnetic_symmetry,
                                 const Cell *cell, const double symprec);
-static int *get_mapping_table(const Symmetry *symmetry, const Cell *cell,
-                              const double symprec);
-static int check_spin(const double spin_j, const double spin_k, const int sign,
-                      const double symprec);
-static int check_vector(const int j, const int k, const double *spins,
-                        SPGCONST int rot[3][3], SPGCONST double lattice[3][3],
-                        const int is_magnetic, const double symprec);
+static int *get_mapping_table(const MagneticSymmetry *magnetic_symmetry,
+                              const Cell *cell, const double symprec);
+static int get_operation_sign_on_scalar(const double spin_j,
+                                        const double spin_k,
+                                        const double symprec);
+static int get_operation_sign_on_vector(
+    const int j, const int k, const double *vectors, SPGCONST int rot[3][3],
+    SPGCONST double lattice[3][3], const int is_axial, const double symprec);
+static int is_zero(const double a, const double symprec);
+static int is_zero_d3(const double a[3], const double symprec);
 
 /* Return NULL if failed */
-Symmetry *spn_get_operations_with_site_tensors(
-    int equiv_atoms[], double prim_lattice[3][3], int *spin_flips,
-    const Symmetry *sym_nonspin, const Cell *cell, const double *tensors,
-    const int tensor_rank, const int is_magnetic, const double symprec,
-    const double angle_tolerance) {
-    int i, num_pure_trans, multi;
-    Symmetry *symmetry;
+MagneticSymmetry *spn_get_operations_with_site_tensors(
+    int equiv_atoms[], double prim_lattice[3][3], const Symmetry *sym_nonspin,
+    const Cell *cell, const double *tensors, const int tensor_rank,
+    const int is_magnetic, const double symprec, const double angle_tolerance) {
+    int i, num_pure_trans, multi, is_axial;
+    MagneticSymmetry *magnetic_symmetry;
     VecDBL *pure_trans;
     int identity[3][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
 
-    symmetry = NULL;
+    magnetic_symmetry = NULL;
     pure_trans = NULL;
 
-    if ((symmetry = get_operations(spin_flips, sym_nonspin, cell, tensors,
-                                   tensor_rank, is_magnetic, symprec)) ==
-        NULL) {
+    /* TODO(shinohara): allow to select this flag from input */
+    if (tensor_rank == 1) {
+        is_axial = is_magnetic;
+    } else {
+        is_axial = 0;
+    }
+
+    if ((magnetic_symmetry =
+             get_operations(sym_nonspin, cell, tensors, tensor_rank,
+                            is_magnetic, is_axial, symprec)) == NULL) {
         return NULL;
     }
 
-    if ((set_equivalent_atoms(equiv_atoms, symmetry, cell, symprec)) == 0) {
-        sym_free_symmetry(symmetry);
-        symmetry = NULL;
+    if ((set_equivalent_atoms(equiv_atoms, magnetic_symmetry, cell, symprec)) ==
+        0) {
+        sym_free_magnetic_symmetry(magnetic_symmetry);
+        magnetic_symmetry = NULL;
     }
 
     num_pure_trans = 0;
-    for (i = 0; i < symmetry->size; i++) {
-        if (mat_check_identity_matrix_i3(identity, symmetry->rot[i])) {
+    for (i = 0; i < magnetic_symmetry->size; i++) {
+        /* Take translation with rot=identity and timerev=false */
+        /* time reversal should be considered for type-IV magnetic space group
+         */
+        if (mat_check_identity_matrix_i3(identity, magnetic_symmetry->rot[i]) &&
+            !magnetic_symmetry->timerev[i]) {
             num_pure_trans++;
         }
     }
@@ -94,10 +111,11 @@ Symmetry *spn_get_operations_with_site_tensors(
     }
 
     num_pure_trans = 0;
-    for (i = 0; i < symmetry->size; i++) {
-        if (mat_check_identity_matrix_i3(identity, symmetry->rot[i])) {
+    for (i = 0; i < magnetic_symmetry->size; i++) {
+        if (mat_check_identity_matrix_i3(identity, magnetic_symmetry->rot[i]) &&
+            !magnetic_symmetry->timerev[i]) {
             mat_copy_vector_d3(pure_trans->vec[num_pure_trans],
-                               symmetry->trans[i]);
+                               magnetic_symmetry->trans[i]);
             num_pure_trans++;
         }
     }
@@ -114,31 +132,49 @@ Symmetry *spn_get_operations_with_site_tensors(
     mat_free_VecDBL(pure_trans);
     pure_trans = NULL;
 
-    return symmetry;
+    return magnetic_symmetry;
 }
 
 /* Return NULL if failed */
-/* spin_flips can be NULL if tensor_rank != 0. */
-static Symmetry *get_operations(int *spin_flips, const Symmetry *sym_nonspin,
-                                const Cell *cell, const double *tensors,
-                                const int tensor_rank, const int is_magnetic,
-                                const double symprec) {
-    Symmetry *symmetry;
-    int i, j, k, sign, num_sym, is_found;
+/* returned MagneticSymmetry.timerev is NULL if is_magnetic==false. */
+/* is_axial: If true, tensors with tensor_rank==1 do not change by */
+/*           spatial inversion */
+static MagneticSymmetry *get_operations(const Symmetry *sym_nonspin,
+                                        const Cell *cell, const double *tensors,
+                                        const int tensor_rank,
+                                        const int is_magnetic,
+                                        const int is_axial,
+                                        const double symprec) {
+    MagneticSymmetry *magnetic_symmetry;
+    int i, j, k, sign, num_sym, found, determined, max_size;
     double pos[3];
     MatINT *rotations;
     VecDBL *trans;
+    int *spin_flips;
 
-    rotations = mat_alloc_MatINT(sym_nonspin->size);
-    trans = mat_alloc_VecDBL(sym_nonspin->size);
+    /* Need to reserve two times of nonspin symmetries for type-II magnetic
+     * space group */
+    max_size = 2 * sym_nonspin->size;
+    rotations = mat_alloc_MatINT(max_size);
+    trans = mat_alloc_VecDBL(max_size);
+    if ((spin_flips = (int *)malloc(sizeof(int) * max_size)) == NULL) {
+        return NULL;
+    }
+
     num_sym = 0;
 
-    is_found = 0;
-
     for (i = 0; i < sym_nonspin->size; i++) {
-        /* Set sign as undetermined (used for collinear spin case (rank = 0) */
+        /* When is_magnetic=true, found becomes true if (rot, trans) */
+        /* in family space group. */
+        /* When is_magnetic=false, found becomes true if (rot, trans) */
+        /* in maximal space subgroup. */
+        found = 1;
+
+        /* Set sign as undetermined */
+        determined = 0;
         sign = 0;
         for (j = 0; j < cell->size; j++) {
+            /* Find atom-k overlapped with atom-j by opration-i */
             mat_multiply_matrix_vector_id3(pos, sym_nonspin->rot[i],
                                            cell->position[j]);
             for (k = 0; k < 3; k++) {
@@ -148,59 +184,146 @@ static Symmetry *get_operations(int *spin_flips, const Symmetry *sym_nonspin,
                 if (cel_is_overlap_with_same_type(
                         cell->position[k], pos, cell->types[k], cell->types[j],
                         cell->lattice, symprec)) {
-                    if (tensor_rank == 0) {
-                        if (is_magnetic) {
-                            sign = check_spin(tensors[j], tensors[k], sign,
-                                              symprec);
-                            is_found = abs(sign);
-                        } else {
-                            if (mat_Dabs(tensors[j] - tensors[k]) < symprec) {
-                                is_found = 1;
-                            } else {
-                                is_found = 0;
-                            }
-                        }
-                    }
-                    if (tensor_rank == 1) {
-                        is_found =
-                            check_vector(j, k, tensors, sym_nonspin->rot[i],
-                                         cell->lattice, is_magnetic, symprec);
-                    }
                     /* Break because cel_is_overlap_with_same_type == true */
                     /* for only one atom. */
                     break;
                 }
             }
-            if (!is_found) {
-                break;
+            if (k == cell->size) {
+                /* Unreachable here! */
+                return NULL;
+            }
+
+            /* Skip if relevant tensors are zeros because they have nothing to
+             * do with magnetic symmetry search! */
+            if (tensor_rank == 0) {
+                if (is_zero(tensors[j], symprec) &&
+                    is_zero(tensors[k], symprec)) {
+                    continue;
+                }
+            }
+            if (tensor_rank == 1) {
+                if (is_zero(tensors[j * 3], symprec) &&
+                    is_zero(tensors[j * 3 + 1], symprec) &&
+                    is_zero(tensors[j * 3 + 2], symprec) &&
+                    is_zero(tensors[k * 3], symprec) &&
+                    is_zero(tensors[k * 3 + 1], symprec) &&
+                    is_zero(tensors[k * 3 + 2], symprec)) {
+                    continue;
+                }
+            }
+
+            if (!determined) {
+                /* Determine sign */
+                if (tensor_rank == 0) {
+                    sign = get_operation_sign_on_scalar(tensors[j], tensors[k],
+                                                        symprec);
+                }
+                if (tensor_rank == 1) {
+                    sign = get_operation_sign_on_vector(
+                        j, k, tensors, sym_nonspin->rot[i], cell->lattice,
+                        is_axial, symprec);
+                }
+                determined = 1;
+
+                if (sign == 0 || (!is_magnetic && sign != 1)) {
+                    /* When is_magnetic=false, only sign=1 operation is accepted
+                     */
+                    found = 0;
+                    break;
+                }
+            } else {
+                /* Check if `sign` is consistent */
+                if (tensor_rank == 0) {
+                    if (get_operation_sign_on_scalar(tensors[j], tensors[k],
+                                                     symprec) != sign) {
+                        found = 0;
+                        break;
+                    }
+                }
+                if (tensor_rank == 1) {
+                    if (get_operation_sign_on_vector(
+                            j, k, tensors, sym_nonspin->rot[i], cell->lattice,
+                            is_axial, symprec) != sign) {
+                        found = 0;
+                        break;
+                    }
+                }
             }
         }
-        if (is_found) {
-            mat_copy_matrix_i3(rotations->mat[num_sym], sym_nonspin->rot[i]);
-            mat_copy_vector_d3(trans->vec[num_sym], sym_nonspin->trans[i]);
-            if ((tensor_rank == 0) && (is_magnetic)) {
-                spin_flips[num_sym] = sign;
+        if (found) {
+            /* (is_magnetic, determined, sign) */
+            /* (true,        true,       1/-1) -> accept */
+            /* (true,        false,      0)    -> take both sign 1/-1 */
+            /* (false,       true,       1)    -> accept */
+            /* (false,       true,       -1)   -> not occurred */
+            /* (false,       false,      0)    -> accept */
+            if (determined) {
+                /* (is_magnetic, determined, sign) */
+                /* (true,        true,       1/-1) -> accept */
+                /* (false,       true,       1)    -> accept */
+                mat_copy_matrix_i3(rotations->mat[num_sym],
+                                   sym_nonspin->rot[i]);
+                mat_copy_vector_d3(trans->vec[num_sym], sym_nonspin->trans[i]);
+                if (is_magnetic) {
+                    spin_flips[num_sym] = sign;
+                }
+                num_sym++;
+            } else if (is_magnetic) {
+                /* (is_magnetic, determined, sign) */
+                /* (true,        false,      0)    -> take both sign 1/-1 */
+
+                /* sign=1 */
+                mat_copy_matrix_i3(rotations->mat[num_sym],
+                                   sym_nonspin->rot[i]);
+                mat_copy_vector_d3(trans->vec[num_sym], sym_nonspin->trans[i]);
+                spin_flips[num_sym] = 1;
+                num_sym++;
+
+                /* sign=-1 */
+                mat_copy_matrix_i3(rotations->mat[num_sym],
+                                   sym_nonspin->rot[i]);
+                mat_copy_vector_d3(trans->vec[num_sym], sym_nonspin->trans[i]);
+                spin_flips[num_sym] = -1;
+                num_sym++;
+            } else {
+                /* (is_magnetic, determined, sign) */
+                /* (false,       false,      0) */
+                mat_copy_matrix_i3(rotations->mat[num_sym],
+                                   sym_nonspin->rot[i]);
+                mat_copy_vector_d3(trans->vec[num_sym], sym_nonspin->trans[i]);
+                num_sym++;
             }
-            num_sym++;
         }
     }
 
-    symmetry = sym_alloc_symmetry(num_sym);
+    magnetic_symmetry = sym_alloc_magnetic_symmetry(num_sym);
     for (i = 0; i < num_sym; i++) {
-        mat_copy_matrix_i3(symmetry->rot[i], rotations->mat[i]);
-        mat_copy_vector_d3(symmetry->trans[i], trans->vec[i]);
+        mat_copy_matrix_i3(magnetic_symmetry->rot[i], rotations->mat[i]);
+        mat_copy_vector_d3(magnetic_symmetry->trans[i], trans->vec[i]);
+        if (is_magnetic) {
+            magnetic_symmetry->timerev[i] = (1 - spin_flips[i]) / 2;
+        } else {
+            /* fill as ordinary operation */
+            magnetic_symmetry->timerev[i] = 0;
+        }
     }
 
     mat_free_MatINT(rotations);
     rotations = NULL;
     mat_free_VecDBL(trans);
     trans = NULL;
+    free(spin_flips);
+    spin_flips = NULL;
 
-    return symmetry;
+    return magnetic_symmetry;
 }
 
 /* Return 0 if failed */
-static int set_equivalent_atoms(int *equiv_atoms, const Symmetry *symmetry,
+/* Though MagneticSymmetry is in arguments, spin_flip is not used in this
+ * function. */
+static int set_equivalent_atoms(int *equiv_atoms,
+                                const MagneticSymmetry *magnetic_symmetry,
                                 const Cell *cell, const double symprec) {
     int i, j, k, is_found;
     double pos[3];
@@ -208,7 +331,8 @@ static int set_equivalent_atoms(int *equiv_atoms, const Symmetry *symmetry,
 
     mapping_table = NULL;
 
-    if ((mapping_table = get_mapping_table(symmetry, cell, symprec)) == NULL) {
+    if ((mapping_table = get_mapping_table(magnetic_symmetry, cell, symprec)) ==
+        NULL) {
         return 0;
     }
 
@@ -217,11 +341,11 @@ static int set_equivalent_atoms(int *equiv_atoms, const Symmetry *symmetry,
             continue;
         }
         is_found = 0;
-        for (j = 0; j < symmetry->size; j++) {
-            mat_multiply_matrix_vector_id3(pos, symmetry->rot[j],
+        for (j = 0; j < magnetic_symmetry->size; j++) {
+            mat_multiply_matrix_vector_id3(pos, magnetic_symmetry->rot[j],
                                            cell->position[i]);
             for (k = 0; k < 3; k++) {
-                pos[k] += symmetry->trans[j][k];
+                pos[k] += magnetic_symmetry->trans[j][k];
             }
             for (k = 0; k < cell->size; k++) {
                 if (cel_is_overlap_with_same_type(
@@ -257,8 +381,10 @@ static int set_equivalent_atoms(int *equiv_atoms, const Symmetry *symmetry,
 }
 
 /* Return NULL if failed */
-static int *get_mapping_table(const Symmetry *symmetry, const Cell *cell,
-                              const double symprec) {
+/* Though MagneticSymmetry is in arguments, spin_flip is not used in this
+ * function. */
+static int *get_mapping_table(const MagneticSymmetry *magnetic_symmetry,
+                              const Cell *cell, const double symprec) {
     int i, j, k, is_found;
     double pos[3];
     int *mapping_table;
@@ -273,10 +399,11 @@ static int *get_mapping_table(const Symmetry *symmetry, const Cell *cell,
 
     for (i = 0; i < cell->size; i++) {
         is_found = 0;
-        for (j = 0; j < symmetry->size; j++) {
-            if (mat_check_identity_matrix_i3(symmetry->rot[j], I)) {
+        for (j = 0; j < magnetic_symmetry->size; j++) {
+            if (mat_check_identity_matrix_i3(magnetic_symmetry->rot[j], I)) {
                 for (k = 0; k < 3; k++) {
-                    pos[k] = cell->position[i][k] + symmetry->trans[j][k];
+                    pos[k] =
+                        cell->position[i][k] + magnetic_symmetry->trans[j][k];
                 }
                 for (k = 0; k < cell->size; k++) {
                     if (cel_is_overlap_with_same_type(
@@ -302,35 +429,31 @@ static int *get_mapping_table(const Symmetry *symmetry, const Cell *cell,
     return mapping_table;
 }
 
-static int check_spin(const double spin_j, const double spin_k, const int sign,
-                      const double symprec) {
-    if (sign == 0) {
-        if (mat_Dabs(spin_j - spin_k) < symprec) {
-            return 1;
-        }
-        if (mat_Dabs(spin_j + spin_k) < symprec) {
-            return -1;
-        }
-        return 0;
-    } else {
-        if (mat_Dabs(spin_j - spin_k * sign) < symprec) {
+/* Return sign in {-1, 1} such that `spin_j == sign * spin_k` */
+/* If spin_j and spin_k are not the same dimension, return 0 */
+static int get_operation_sign_on_scalar(const double spin_j,
+                                        const double spin_k,
+                                        const double symprec) {
+    int sign;
+    for (sign = -1; sign <= 1; sign += 2) {
+        if (is_zero(spin_j - sign * spin_k, symprec)) {
             return sign;
-        } else {
-            return 0;
         }
     }
+    return 0;
 }
 
 /* Work in Cartesian coordinates. */
-static int check_vector(const int j, const int k, const double *vectors,
-                        SPGCONST int rot[3][3], SPGCONST double lattice[3][3],
-                        const int is_magnetic, const double symprec) {
-    int i, detR;
+/* Return sign in {-1, 1} such that `v_j == sign * v_k` */
+/* If v_j and v_k are not transformed each other, return 0 */
+/* is_axial: Non-collinear magnetic moment m' = |detR|Rm */
+/* !is_axial: Usual vector: v' = Rv */
+static int get_operation_sign_on_vector(
+    const int j, const int k, const double *vectors, SPGCONST int rot[3][3],
+    SPGCONST double lattice[3][3], const int is_axial, const double symprec) {
+    int sign, i, detR;
     double vec_j[3], vec_jp[3], diff[3];
     double inv_lat[3][3], rot_cart[3][3];
-
-    /* is_magnetic: Non-collinear magnetic moment m' = |detR|Rm */
-    /* !is_magnetic: Usual vector: v' = Rv */
 
     mat_inverse_matrix_d3(inv_lat, lattice, 0);
     mat_multiply_matrix_id3(rot_cart, rot, inv_lat);
@@ -343,20 +466,35 @@ static int check_vector(const int j, const int k, const double *vectors,
     /* v_j' = R v_j */
     mat_multiply_matrix_vector_d3(vec_jp, rot_cart, vec_j);
 
-    if (is_magnetic) {
-        detR = mat_get_determinant_i3(rot);
-        for (i = 0; i < 3; i++) {
-            diff[i] = mat_Dabs(detR * vec_jp[i] - vectors[k * 3 + i]);
+    for (sign = -1; sign <= 1; sign += 2) {
+        if (is_axial) {
+            detR = mat_get_determinant_i3(rot);
+            for (i = 0; i < 3; i++) {
+                diff[i] = sign * detR * vec_jp[i] - vectors[k * 3 + i];
+            }
+        } else {
+            for (i = 0; i < 3; i++) {
+                diff[i] = sign * vec_jp[i] - vectors[k * 3 + i];
+            }
         }
-    } else {
-        for (i = 0; i < 3; i++) {
-            diff[i] = mat_Dabs(vec_jp[i] - vectors[k * 3 + i]);
-        }
-    }
 
-    if (diff[0] < symprec && diff[1] < symprec && diff[2] < symprec) {
-        return 1;
-    } else {
-        return 0;
+        if (is_zero_d3(diff, symprec)) {
+            return sign;
+        }
     }
+    return 0;
+}
+
+static int is_zero(const double a, const double symprec) {
+    return mat_Dabs(a) < symprec;
+}
+
+static int is_zero_d3(const double a[3], const double symprec) {
+    int i;
+    for (i = 0; i < 3; i++) {
+        if (mat_Dabs(a[i]) >= symprec) {
+            return 0;
+        }
+    }
+    return 1;
 }

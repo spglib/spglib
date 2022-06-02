@@ -375,6 +375,7 @@ int spgat_get_symmetry_with_collinear_spin(
 }
 
 /* Return 0 if failed */
+/* Need to get rotation and translation before calling this function. */
 int spg_get_symmetry_with_site_tensors(
     int rotation[][3][3], double translation[][3], int equivalent_atoms[],
     double primitive_lattice[3][3], int *spin_flips, const int num_operations,
@@ -387,6 +388,8 @@ int spg_get_symmetry_with_site_tensors(
         num_atom, is_magnetic, symprec, -1.0);
 }
 
+/* Return 0 if failed */
+/* Need to get rotation and translation before calling this function. */
 int spgat_get_symmetry_with_site_tensors(
     int rotation[][3][3], double translation[][3], int equivalent_atoms[],
     double primitive_lattice[3][3], int *spin_flips, const int num_operations,
@@ -1295,12 +1298,13 @@ static int get_symmetry_with_site_tensors(
     const int num_atom, const int is_magnetic, const double symprec,
     const double angle_tolerance) {
     int i, size;
-    Symmetry *symmetry, *sym_nonspin;
+    Symmetry *sym_nonspin;
+    MagneticSymmetry *magnetic_symmetry;
     Cell *cell;
     SpglibDataset *dataset;
 
     size = 0;
-    symmetry = NULL;
+    magnetic_symmetry = NULL;
     sym_nonspin = NULL;
     cell = NULL;
     dataset = NULL;
@@ -1337,37 +1341,39 @@ static int get_symmetry_with_site_tensors(
         goto err;
     }
     cel_set_cell(cell, lattice, position, types);
-    symmetry = spn_get_operations_with_site_tensors(
-        equivalent_atoms, primitive_lattice, spin_flips, sym_nonspin, cell,
-        tensors, tensor_rank, is_magnetic, symprec, angle_tolerance);
+    magnetic_symmetry = spn_get_operations_with_site_tensors(
+        equivalent_atoms, primitive_lattice, sym_nonspin, cell, tensors,
+        tensor_rank, is_magnetic, symprec, angle_tolerance);
 
     sym_free_symmetry(sym_nonspin);
     sym_nonspin = NULL;
     cel_free_cell(cell);
     cell = NULL;
 
-    if (symmetry == NULL) {
+    if (magnetic_symmetry == NULL) {
         goto err;
     }
 
-    if (symmetry->size > num_operations) {
+    if (magnetic_symmetry->size > num_operations) {
         fprintf(stderr, "spglib: Indicated max size(=%d) is less than number ",
                 num_operations);
         fprintf(stderr, "spglib: of symmetry operations(=%d).\n",
-                symmetry->size);
-        sym_free_symmetry(symmetry);
-        symmetry = NULL;
+                magnetic_symmetry->size);
+        sym_free_magnetic_symmetry(magnetic_symmetry);
+        magnetic_symmetry = NULL;
         goto array_size_shortage_err;
     }
 
-    for (i = 0; i < symmetry->size; i++) {
-        mat_copy_matrix_i3(rotation[i], symmetry->rot[i]);
-        mat_copy_vector_d3(translation[i], symmetry->trans[i]);
+    for (i = 0; i < magnetic_symmetry->size; i++) {
+        mat_copy_matrix_i3(rotation[i], magnetic_symmetry->rot[i]);
+        mat_copy_vector_d3(translation[i], magnetic_symmetry->trans[i]);
+        /* spin_flip=1 for timerev=true, spin_flip=-1 for timerev=false */
+        spin_flips[i] = 1 - 2 * magnetic_symmetry->timerev[i];
     }
-    size = symmetry->size;
+    size = magnetic_symmetry->size;
 
-    sym_free_symmetry(symmetry);
-    symmetry = NULL;
+    sym_free_magnetic_symmetry(magnetic_symmetry);
+    magnetic_symmetry = NULL;
     spglib_error_code = SPGLIB_SUCCESS;
 
     return size;
