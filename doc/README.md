@@ -4,7 +4,8 @@ This directory contains python-sphinx documentation source.
 
 ## How to compile
 
-```
+```shell
+pip install sphinx sphinx-bootstrap-theme
 make html
 ```
 
