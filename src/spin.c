@@ -43,12 +43,10 @@
 #include "primitive.h"
 #include "symmetry.h"
 
-static MagneticSymmetry *get_operations(const Symmetry *sym_nonspin,
-                                        const Cell *cell, const double *tensors,
-                                        const int tensor_rank,
-                                        const int is_magnetic,
-                                        const int is_axial,
-                                        const double symprec);
+static MagneticSymmetry *get_operations(
+    const Symmetry *sym_nonspin, const Cell *cell, const double *tensors,
+    const int tensor_rank, const int is_magnetic, const int is_axial,
+    const double symprec, const double mag_symprec);
 static int set_equivalent_atoms(int *equiv_atoms,
                                 const MagneticSymmetry *magnetic_symmetry,
                                 const Cell *cell, const double symprec);
@@ -56,12 +54,15 @@ static int *get_mapping_table(const MagneticSymmetry *magnetic_symmetry,
                               const Cell *cell, const double symprec);
 static int get_operation_sign_on_scalar(const double spin_j,
                                         const double spin_k,
-                                        const double symprec);
-static int get_operation_sign_on_vector(
-    const int j, const int k, const double *vectors, SPGCONST int rot[3][3],
-    SPGCONST double lattice[3][3], const int is_axial, const double symprec);
-static int is_zero(const double a, const double symprec);
-static int is_zero_d3(const double a[3], const double symprec);
+                                        const double mag_symprec);
+static int get_operation_sign_on_vector(const int j, const int k,
+                                        const double *vectors,
+                                        SPGCONST int rot[3][3],
+                                        SPGCONST double lattice[3][3],
+                                        const int is_axial,
+                                        const double mag_symprec);
+static int is_zero(const double a, const double mag_symprec);
+static int is_zero_d3(const double a[3], const double mag_symprec);
 
 /* Return NULL if failed */
 MagneticSymmetry *spn_get_operations_with_site_tensors(
@@ -69,6 +70,7 @@ MagneticSymmetry *spn_get_operations_with_site_tensors(
     const Cell *cell, const double *tensors, const int tensor_rank,
     const int is_magnetic, const double symprec, const double angle_tolerance) {
     int i, num_pure_trans, multi, is_axial;
+    double mag_symprec;
     MagneticSymmetry *magnetic_symmetry;
     VecDBL *pure_trans;
     int identity[3][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
@@ -83,9 +85,13 @@ MagneticSymmetry *spn_get_operations_with_site_tensors(
         is_axial = 0;
     }
 
-    if ((magnetic_symmetry =
-             get_operations(sym_nonspin, cell, tensors, tensor_rank,
-                            is_magnetic, is_axial, symprec)) == NULL) {
+    /* TODO(shinohara): allow to choose different tolerance for positions and
+     * magmoms */
+    mag_symprec = symprec;
+
+    if ((magnetic_symmetry = get_operations(sym_nonspin, cell, tensors,
+                                            tensor_rank, is_magnetic, is_axial,
+                                            symprec, mag_symprec)) == NULL) {
         return NULL;
     }
 
@@ -139,12 +145,10 @@ MagneticSymmetry *spn_get_operations_with_site_tensors(
 /* returned MagneticSymmetry.timerev is NULL if is_magnetic==false. */
 /* is_axial: If true, tensors with tensor_rank==1 do not change by */
 /*           spatial inversion */
-static MagneticSymmetry *get_operations(const Symmetry *sym_nonspin,
-                                        const Cell *cell, const double *tensors,
-                                        const int tensor_rank,
-                                        const int is_magnetic,
-                                        const int is_axial,
-                                        const double symprec) {
+static MagneticSymmetry *get_operations(
+    const Symmetry *sym_nonspin, const Cell *cell, const double *tensors,
+    const int tensor_rank, const int is_magnetic, const int is_axial,
+    const double symprec, const double mag_symprec) {
     MagneticSymmetry *magnetic_symmetry;
     int i, j, k, sign, num_sym, found, determined, max_size;
     double pos[3];
@@ -197,18 +201,18 @@ static MagneticSymmetry *get_operations(const Symmetry *sym_nonspin,
             /* Skip if relevant tensors are zeros because they have nothing to
              * do with magnetic symmetry search! */
             if (tensor_rank == 0) {
-                if (is_zero(tensors[j], symprec) &&
-                    is_zero(tensors[k], symprec)) {
+                if (is_zero(tensors[j], mag_symprec) &&
+                    is_zero(tensors[k], mag_symprec)) {
                     continue;
                 }
             }
             if (tensor_rank == 1) {
-                if (is_zero(tensors[j * 3], symprec) &&
-                    is_zero(tensors[j * 3 + 1], symprec) &&
-                    is_zero(tensors[j * 3 + 2], symprec) &&
-                    is_zero(tensors[k * 3], symprec) &&
-                    is_zero(tensors[k * 3 + 1], symprec) &&
-                    is_zero(tensors[k * 3 + 2], symprec)) {
+                if (is_zero(tensors[j * 3], mag_symprec) &&
+                    is_zero(tensors[j * 3 + 1], mag_symprec) &&
+                    is_zero(tensors[j * 3 + 2], mag_symprec) &&
+                    is_zero(tensors[k * 3], mag_symprec) &&
+                    is_zero(tensors[k * 3 + 1], mag_symprec) &&
+                    is_zero(tensors[k * 3 + 2], mag_symprec)) {
                     continue;
                 }
             }
@@ -217,12 +221,12 @@ static MagneticSymmetry *get_operations(const Symmetry *sym_nonspin,
                 /* Determine sign */
                 if (tensor_rank == 0) {
                     sign = get_operation_sign_on_scalar(tensors[j], tensors[k],
-                                                        symprec);
+                                                        mag_symprec);
                 }
                 if (tensor_rank == 1) {
                     sign = get_operation_sign_on_vector(
                         j, k, tensors, sym_nonspin->rot[i], cell->lattice,
-                        is_axial, symprec);
+                        is_axial, mag_symprec);
                 }
                 determined = 1;
 
@@ -236,7 +240,7 @@ static MagneticSymmetry *get_operations(const Symmetry *sym_nonspin,
                 /* Check if `sign` is consistent */
                 if (tensor_rank == 0) {
                     if (get_operation_sign_on_scalar(tensors[j], tensors[k],
-                                                     symprec) != sign) {
+                                                     mag_symprec) != sign) {
                         found = 0;
                         break;
                     }
@@ -244,7 +248,7 @@ static MagneticSymmetry *get_operations(const Symmetry *sym_nonspin,
                 if (tensor_rank == 1) {
                     if (get_operation_sign_on_vector(
                             j, k, tensors, sym_nonspin->rot[i], cell->lattice,
-                            is_axial, symprec) != sign) {
+                            is_axial, mag_symprec) != sign) {
                         found = 0;
                         break;
                     }
@@ -433,10 +437,10 @@ static int *get_mapping_table(const MagneticSymmetry *magnetic_symmetry,
 /* If spin_j and spin_k are not the same dimension, return 0 */
 static int get_operation_sign_on_scalar(const double spin_j,
                                         const double spin_k,
-                                        const double symprec) {
+                                        const double mag_symprec) {
     int sign;
     for (sign = -1; sign <= 1; sign += 2) {
-        if (is_zero(spin_j - sign * spin_k, symprec)) {
+        if (is_zero(spin_j - sign * spin_k, mag_symprec)) {
             return sign;
         }
     }
@@ -448,9 +452,12 @@ static int get_operation_sign_on_scalar(const double spin_j,
 /* If v_j and v_k are not transformed each other, return 0 */
 /* is_axial: Non-collinear magnetic moment m' = |detR|Rm */
 /* !is_axial: Usual vector: v' = Rv */
-static int get_operation_sign_on_vector(
-    const int j, const int k, const double *vectors, SPGCONST int rot[3][3],
-    SPGCONST double lattice[3][3], const int is_axial, const double symprec) {
+static int get_operation_sign_on_vector(const int j, const int k,
+                                        const double *vectors,
+                                        SPGCONST int rot[3][3],
+                                        SPGCONST double lattice[3][3],
+                                        const int is_axial,
+                                        const double mag_symprec) {
     int sign, i, detR;
     double vec_j[3], vec_jp[3], diff[3];
     double inv_lat[3][3], rot_cart[3][3];
@@ -478,21 +485,21 @@ static int get_operation_sign_on_vector(
             }
         }
 
-        if (is_zero_d3(diff, symprec)) {
+        if (is_zero_d3(diff, mag_symprec)) {
             return sign;
         }
     }
     return 0;
 }
 
-static int is_zero(const double a, const double symprec) {
-    return mat_Dabs(a) < symprec;
+static int is_zero(const double a, const double mag_symprec) {
+    return mat_Dabs(a) < mag_symprec;
 }
 
-static int is_zero_d3(const double a[3], const double symprec) {
+static int is_zero_d3(const double a[3], const double mag_symprec) {
     int i;
     for (i = 0; i < 3; i++) {
-        if (mat_Dabs(a[i]) >= symprec) {
+        if (!is_zero(a[i], mag_symprec)) {
             return 0;
         }
     }
