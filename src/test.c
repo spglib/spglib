@@ -118,6 +118,8 @@ static int test_spg_get_hall_number_from_symmetry(void) {
             retval = 1;
         }
     }
+    /* Im-3m (229) */
+    assert(hall_number == 529);
 
     if (dataset) {
         spg_free_dataset(dataset);
