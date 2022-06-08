@@ -38,15 +38,23 @@
 
 #include <stdlib.h>
 
+static int get_family_space_group_with_magnetic_symmetry(
+    Spacegroup **fsg, const MagneticSymmetry *magnetic_symmetry,
+    const double symprec);
+static int get_maximal_subspace_group_with_magnetic_symmetry(
+    Spacegroup **xsg, const MagneticSymmetry *magnetic_symmetry,
+    const double symprec);
 static int get_space_group_with_magnetic_symmetry(
     Spacegroup **spacegroup, const MagneticSymmetry *magnetic_symmetry,
     const int ignore_time_reversal, const double symprec);
+static MagneticSymmetry *get_representative(
+    const MagneticSymmetry *magnetic_symmetry, const double symprec);
 
 /* Get family space group (FSG) and return its order. */
 /* FSG is a non-magnetic space group obtained by ignoring primes in operations.
  */
 /* If failed, return 0. */
-int msg_get_family_space_group_with_magnetic_symmetry(
+int get_family_space_group_with_magnetic_symmetry(
     Spacegroup **fsg, const MagneticSymmetry *magnetic_symmetry,
     const double symprec) {
     return get_space_group_with_magnetic_symmetry(fsg, magnetic_symmetry, 1,
@@ -56,12 +64,79 @@ int msg_get_family_space_group_with_magnetic_symmetry(
 /* Get maximal subspace group (XSG) and return its order. */
 /* XSG is a space group obtained by removing primed operations. */
 /* If failed, return 0. */
-int msg_get_maximal_subspace_group_with_magnetic_symmetry(
+int get_maximal_subspace_group_with_magnetic_symmetry(
     Spacegroup **xsg, const MagneticSymmetry *magnetic_symmetry,
     const double symprec) {
     return get_space_group_with_magnetic_symmetry(xsg, magnetic_symmetry, 0,
                                                   symprec);
 }
+
+/* Return type of MSG. If failed, return 0. */
+int msg_get_magnetic_space_group_type(Spacegroup **fsg, Spacegroup **xsg,
+                                      MagneticSymmetry **representative,
+                                      const MagneticSymmetry *magnetic_symmetry,
+                                      const double symprec) {
+    int num_sym_fsg, num_sym_xsg, num_sym_msg, flag;
+    int msg_type;
+    int identity[3][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+
+    num_sym_msg = magnetic_symmetry->size;
+
+    /* Identify family space group (FSG) and maximal space group (XSG) */
+    /* TODO(shinohara): add option to specify hall_number in searching
+     * space-group type */
+    num_sym_fsg = get_family_space_group_with_magnetic_symmetry(
+        fsg, magnetic_symmetry, symprec);
+    num_sym_xsg = get_maximal_subspace_group_with_magnetic_symmetry(
+        xsg, magnetic_symmetry, symprec);
+    if (num_sym_fsg == 0 || num_sym_xsg == 0) return 0;
+
+    debug_print("MSG: order=%d\n", num_sym_msg);
+    debug_print("FSG: hall_number=%d, international=%s, order=%d\n",
+                (*fsg)->hall_number, (*fsg)->international_short, num_sym_fsg);
+    debug_print("XSG: hall_number=%d, international=%s, order=%d\n",
+                (*xsg)->hall_number, (*xsg)->international_short, num_sym_xsg);
+
+    if (num_sym_fsg == num_sym_xsg) {
+        if ((*representative = sym_alloc_magnetic_symmetry(1)) == NULL)
+            return 0;
+
+        mat_copy_matrix_i3((*representative)->rot[0], identity);
+        (*representative)->trans[0][0] = 0;
+        (*representative)->trans[0][1] = 0;
+        (*representative)->trans[0][2] = 0;
+
+        if (num_sym_msg == num_sym_fsg) {
+            (*representative)->timerev[0] = 0;
+            msg_type = 1; /* Type-I */
+        } else if (num_sym_msg == 2 * num_sym_fsg) {
+            (*representative)->timerev[0] = 1;
+            msg_type = 2; /* Type-II */
+        } else {
+            /* Unreachable */
+            return 0;
+        }
+    } else if (num_sym_fsg == 2 * num_sym_xsg) {
+        *representative = get_representative(magnetic_symmetry, symprec);
+        if (*representative == NULL) return 0;
+
+        /* If primed operation is translation, type-IV. Otherwise, type-III. */
+        if (mat_check_identity_matrix_i3(identity, (*representative)->rot[0])) {
+            msg_type = 4; /* Type-IV */
+        } else {
+            msg_type = 3; /* Type-III */
+        }
+    } else {
+        /* Unreachable */
+        return 0;
+    }
+
+    return msg_type;
+}
+
+/******************************************************************************/
+/* Local functions                                                            */
+/******************************************************************************/
 
 /* ignore_time_reversal=true  -> FSG */
 /* ignore_time_reversal=false -> XSG */
@@ -80,8 +155,7 @@ static int get_space_group_with_magnetic_symmetry(
         return 0;
     }
 
-    /* If and only if MSG is type-II, it has pure time-reversal operation (I,
-     * 0)1' */
+    /* If MSG is type-II, it has pure time-reversal operation (I, 0)1' */
     is_type2 = 0;
     for (i = 0; i < num_sym_msg; i++) {
         if (mat_check_identity_matrix_i3(identity, magnetic_symmetry->rot[i]) &&
@@ -128,4 +202,35 @@ static int get_space_group_with_magnetic_symmetry(
     }
 
     return num_sym;
+}
+
+/* Get coset representative of XSG in MSG. */
+/* Assume MSG is type-III or type-IV. */
+/* If failed, return NULL. */
+static MagneticSymmetry *get_representative(
+    const MagneticSymmetry *magnetic_symmetry, const double symprec) {
+    int i, j, k, num_pure_trans, contained;
+    MagneticSymmetry *representative;
+    int identity[3][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+
+    representative = NULL;
+
+    if ((representative = sym_alloc_magnetic_symmetry(1)) == NULL) {
+        return NULL;
+    }
+
+    /* If primed operation with identity linear part has translations other */
+    /* than centering vectors, MSG is type-IV. */
+    for (i = 0; i < magnetic_symmetry->size; i++) {
+        if (!magnetic_symmetry->timerev[i]) {
+            continue;
+        }
+
+        mat_copy_matrix_i3(representative->rot[0], magnetic_symmetry->rot[i]);
+        mat_copy_vector_d3(representative->trans[0],
+                           magnetic_symmetry->trans[i]);
+        representative->timerev[0] = 1;
+        break;
+    }
+    return representative;
 }

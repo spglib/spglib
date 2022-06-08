@@ -38,11 +38,14 @@
 #include "spacegroup.h"
 #include "symmetry.h"
 
-int msg_get_family_space_group_with_magnetic_symmetry(
-    Spacegroup **fsg, const MagneticSymmetry *magnetic_symmetry,
-    const double symprec);
-int msg_get_maximal_subspace_group_with_magnetic_symmetry(
-    Spacegroup **xsg, const MagneticSymmetry *magnetic_symmetry,
-    const double symprec);
+/* @param[out] fsg space-group information for family space group */
+/* @param[out] xsg space-group information for maximal subspace group */
+/* @param[out] representative one of symmetry operation not included in XSG. */
+/* @param[in] magnetic_symmetry */
+/* @param[in] symprec */
+int msg_get_magnetic_space_group_type(Spacegroup **fsg, Spacegroup **xsg,
+                                      MagneticSymmetry **representative,
+                                      const MagneticSymmetry *magnetic_symmetry,
+                                      const double symprec);
 
 #endif /*__msg_H__ */
