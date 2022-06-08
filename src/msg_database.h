@@ -49,5 +49,6 @@ typedef struct {
 MagneticSpacegroupType msgdb_get_magnetic_spacegroup_type(const int uni_number);
 MagneticSymmetry* msgdb_get_spacegroup_operations(const int uni_number,
                                                   const int hall_number);
+void msgdb_get_uni_candidates(int uni_number_range[2], const int hall_number);
 
 #endif /* __msg_database_H__ */
