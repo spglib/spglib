@@ -64,12 +64,14 @@ static int get_operation_sign_on_vector(const int j, const int k,
 static int is_zero(const double a, const double mag_symprec);
 static int is_zero_d3(const double a[3], const double mag_symprec);
 
+/******************************************************************************/
+
 /* Return NULL if failed */
 MagneticSymmetry *spn_get_operations_with_site_tensors(
     int equiv_atoms[], double prim_lattice[3][3], const Symmetry *sym_nonspin,
     const Cell *cell, const double *tensors, const int tensor_rank,
     const int is_magnetic, const double symprec, const double angle_tolerance) {
-    int i, num_pure_trans, multi, is_axial;
+    int i, multi, is_axial;
     double mag_symprec;
     MagneticSymmetry *magnetic_symmetry;
     VecDBL *pure_trans;
@@ -101,37 +103,16 @@ MagneticSymmetry *spn_get_operations_with_site_tensors(
         magnetic_symmetry = NULL;
     }
 
-    num_pure_trans = 0;
-    for (i = 0; i < magnetic_symmetry->size; i++) {
-        /* Take translation with rot=identity and timerev=false */
-        /* time reversal should be considered for type-IV magnetic space group
-         */
-        if (mat_check_identity_matrix_i3(identity, magnetic_symmetry->rot[i]) &&
-            !magnetic_symmetry->timerev[i]) {
-            num_pure_trans++;
-        }
-    }
-
-    if ((pure_trans = mat_alloc_VecDBL(num_pure_trans)) == NULL) {
+    if ((pure_trans = spn_collect_pure_translations_from_magnetic_symmetry(
+             magnetic_symmetry)) == NULL)
         return NULL;
-    }
-
-    num_pure_trans = 0;
-    for (i = 0; i < magnetic_symmetry->size; i++) {
-        if (mat_check_identity_matrix_i3(identity, magnetic_symmetry->rot[i]) &&
-            !magnetic_symmetry->timerev[i]) {
-            mat_copy_vector_d3(pure_trans->vec[num_pure_trans],
-                               magnetic_symmetry->trans[i]);
-            num_pure_trans++;
-        }
-    }
 
     multi = prm_get_primitive_lattice_vectors(prim_lattice, cell, pure_trans,
                                               symprec, angle_tolerance);
 
     /* By definition, change of number of pure translations would */
     /* not be allowed. */
-    if (multi != num_pure_trans) {
+    if (multi != pure_trans->size) {
         return NULL;
     }
 
@@ -140,6 +121,50 @@ MagneticSymmetry *spn_get_operations_with_site_tensors(
 
     return magnetic_symmetry;
 }
+
+VecDBL *spn_collect_pure_translations_from_magnetic_symmetry(
+    const MagneticSymmetry *sym_msg) {
+    int i, num_pure_trans;
+    VecDBL *pure_trans;
+    VecDBL *ret_pure_trans;
+    static int identity[3][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+    num_pure_trans = 0;
+    pure_trans = NULL;
+    ret_pure_trans = NULL;
+
+    if ((pure_trans = mat_alloc_VecDBL(sym_msg->size)) == NULL) return NULL;
+
+    for (i = 0; i < sym_msg->size; i++) {
+        /* Take translation with rot=identity and timerev=false */
+        /* time reversal should be considered for type-IV magnetic space group
+         */
+        if (mat_check_identity_matrix_i3(identity, sym_msg->rot[i]) &&
+            !sym_msg->timerev[i]) {
+            mat_copy_vector_d3(pure_trans->vec[num_pure_trans],
+                               sym_msg->trans[i]);
+            num_pure_trans++;
+        }
+    }
+
+    /* Shrink allocated size of VecDBL */
+    if ((ret_pure_trans = mat_alloc_VecDBL(num_pure_trans)) == NULL) {
+        mat_free_VecDBL(pure_trans);
+        pure_trans = NULL;
+        return NULL;
+    }
+
+    for (i = 0; i < num_pure_trans; i++) {
+        mat_copy_vector_d3(ret_pure_trans->vec[i], pure_trans->vec[i]);
+    }
+
+    mat_free_VecDBL(pure_trans);
+    pure_trans = NULL;
+
+    return ret_pure_trans;
+}
+/******************************************************************************/
+/* Local functions                                                            */
+/******************************************************************************/
 
 /* Return NULL if failed */
 /* returned MagneticSymmetry.timerev is NULL if is_magnetic==false. */
