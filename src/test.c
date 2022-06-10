@@ -738,7 +738,7 @@ static int test_spg_get_symmetry_with_site_tensors() {
     /* Find equivalent_atoms, primitive_lattice, spin_flips */
     size = spg_get_symmetry_with_site_tensors(
         rotation, translation, equivalent_atoms, primitive_lattice, spin_flips,
-        size, lattice, position, types, tensors, 1, num_atom, 1, 1e-5);
+        max_size, lattice, position, types, tensors, 1, num_atom, 1, 1e-5);
     assert(size == 8);
 
     printf("*** spg_get_symmetry_with_site_tensors (type-III) ***:\n");
