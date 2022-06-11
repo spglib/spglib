@@ -733,10 +733,6 @@ static int test_spg_get_symmetry_with_site_tensors() {
     translation = (double(*)[3])malloc(sizeof(double[3]) * max_size);
     spin_flips = (int *)malloc(sizeof(int *) * max_size);
 
-    /* Find rotations and translations */
-    size = spg_get_symmetry(rotation, translation, max_size, lattice, position,
-                            types, num_atom, 1e-5);
-
     /* Find equivalent_atoms, primitive_lattice, spin_flips */
     size = spg_get_symmetry_with_site_tensors(
         rotation, translation, equivalent_atoms, primitive_lattice, spin_flips,
