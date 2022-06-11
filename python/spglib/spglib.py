@@ -108,7 +108,7 @@ def get_symmetry(cell,
         'translations' : ndarray
             Translation (vector) parts of symmetry operations
             shape=(num_operations, 3), dtype='double'
-        'time_reversals': ndarray (exists when is_magnetic=True)
+        'time_reversals': ndarray (exists when the optional data is given)
             Time reversal part of magnetic symmetry operations.
             True indicates time reversal operation, and False indicates
             an ordinary operation.

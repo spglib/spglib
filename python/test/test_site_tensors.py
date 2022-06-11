@@ -40,7 +40,7 @@ class TestGetOperationsWithSiteTensors(unittest.TestCase):
         self.assertEqual(8, len(sym['rotations']))
         np.testing.assert_equal(sym['equivalent_atoms'], [0])
 
-        # type-II magnetic space group
+        # type-III magnetic space group
         sym2 = get_symmetry(self._cell_Ni)
         self.assertEqual(16, len(sym2['rotations']))
         self.assertEqual(16, len(sym2['translations']))
