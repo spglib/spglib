@@ -101,6 +101,21 @@ class TestGetOperationsWithSiteTensors(unittest.TestCase):
         self.assertTrue(np.allclose(sym3['translations'], sym['translations']))
         self.assertTrue(np.sum(sym3['time_reversals']), 4)
 
+        # Type-IV MSG
+        # https://github.com/spglib/spglib/issues/150
+        # -P 2 2 -> -P 2 2 1c' (47.254)
+        lat = [[1, 0, 0], [0, 2, 0], [0, 0, 3]]
+        pos = [[0., 0., 0.], [0., 0., 0.5]]
+        num = [0, 0]
+        magmom = [[0., 0., 1.], [0., 0., -1.]]
+        sym_gray = get_symmetry((lat, pos, num))
+        sym4 = get_symmetry((lat, pos, num, magmom))
+        self.assertTrue(np.allclose(sym_gray['rotations'], sym4['rotations']))
+        self.assertTrue(np.allclose(sym_gray['translations'], sym4['translations']))
+        self.assertTrue(sym4['time_reversals'].shape[0], 16)
+        self.assertTrue(np.sum(sym4['time_reversals']), 8)
+        self.assertTrue(np.allclose(sym4['primitive_lattice'], lat))
+
 
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(
