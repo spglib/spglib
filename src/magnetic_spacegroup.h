@@ -39,7 +39,17 @@
 #include "spacegroup.h"
 #include "symmetry.h"
 
-MagneticSpacegroupType *msg_identify_magnetic_space_group_type(
+typedef struct {
+    /* Magnetic space-group type */
+    int uni_number;
+    int msg_type;
+    int hall_number;
+    /* Transformation to standardized setting */
+    double transformation_matrix[3][3];
+    double origin_shift[3];
+} MagneticDataset;
+
+MagneticDataset *msg_identify_magnetic_space_group_type(
     const MagneticSymmetry *magnetic_symmetry, const double symprec);
 
 #endif /*__msg_H__ */

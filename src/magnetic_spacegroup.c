@@ -76,13 +76,14 @@ static int is_equal(const MagneticSymmetry *sym1, const MagneticSymmetry *sym2,
 /******************************************************************************/
 
 /* If failed, return NULL. */
-MagneticSpacegroupType *msg_identify_magnetic_space_group_type(
+MagneticDataset *msg_identify_magnetic_space_group_type(
     const MagneticSymmetry *magnetic_symmetry, const double symprec) {
-    int hall_number, uni_number, type;
+    int hall_number, uni_number, type, same, i;
     Spacegroup *fsg, *xsg;
     Symmetry *sym_fsg, *sym_xsg;
     MagneticSymmetry *representative, *msg_uni, *changed_symmetry;
-    MagneticSpacegroupType *ret_msgtype, msgtype;
+    MagneticSpacegroupType msgtype;
+    MagneticDataset *ret;
     int uni_number_range[2];
     double tmat[3][3];
     double shift[3];
@@ -94,7 +95,7 @@ MagneticSpacegroupType *msg_identify_magnetic_space_group_type(
     representative = NULL;
     msg_uni = NULL;
     changed_symmetry = NULL;
-    ret_msgtype = NULL;
+    ret = NULL;
 
     /* Identify family space group (FSG) and maximal space group (XSG) */
     /* TODO(shinohara): add option to specify hall_number in searching
@@ -103,7 +104,7 @@ MagneticSpacegroupType *msg_identify_magnetic_space_group_type(
         &fsg, magnetic_symmetry, symprec);
     sym_xsg = get_maximal_subspace_group_with_magnetic_symmetry(
         &xsg, magnetic_symmetry, symprec);
-    if (sym_fsg == NULL || sym_xsg == NULL) return 0;
+    if (sym_fsg == NULL || sym_xsg == NULL) goto err;
     debug_print("FSG: hall_number=%d, international=%s, order=%d\n",
                 fsg->hall_number, fsg->international_short, sym_fsg->size);
     debug_print("XSG: hall_number=%d, international=%s, order=%d\n",
@@ -139,38 +140,85 @@ MagneticSpacegroupType *msg_identify_magnetic_space_group_type(
     if ((changed_symmetry =
              get_changed_magnetic_symmetry(tmat, shift, representative, sym_xsg,
                                            magnetic_symmetry, symprec)) == NULL)
-        return NULL;
+        goto err;
 
     msgdb_get_uni_candidates(uni_number_range, hall_number);
     for (uni_number = uni_number_range[0]; uni_number <= uni_number_range[1];
          uni_number++) {
         msg_uni = msgdb_get_spacegroup_operations(uni_number, hall_number);
-        if (!is_equal(msg_uni, changed_symmetry, symprec)) continue;
-        break;
+        same = is_equal(msg_uni, changed_symmetry, symprec);
+        sym_free_magnetic_symmetry(msg_uni);
+        msg_uni = NULL;
+        if (same) break;
     }
     debug_print("UNI number: %d\n", uni_number);
 
     msgtype = msgdb_get_magnetic_spacegroup_type(uni_number);
-
-    /* Copy fields */
-    if ((ret_msgtype = (MagneticSpacegroupType *)(malloc(
-             sizeof(MagneticSpacegroupType)))) == NULL)
-        return NULL;
-    ret_msgtype->uni_number = msgtype.uni_number;
-    ret_msgtype->litvin_number = msgtype.litvin_number;
-    strcpy(ret_msgtype->bns_number, msgtype.bns_number);
-    strcpy(ret_msgtype->og_number, msgtype.og_number);
-    ret_msgtype->number = msgtype.number;
-    ret_msgtype->type = msgtype.type;
-    debug_print("BNS number: %s\n", msgtype.bns_number);
-
     if (msgtype.type != type) {
         warning_print("Inconsistent MSG type detected: %d %d\n", msgtype.type,
                       type);
-        return NULL;
+        goto err;
     }
 
-    return ret_msgtype;
+    /* Set MagneticDataset */
+    if ((ret = (MagneticDataset *)(malloc(sizeof(MagneticDataset)))) == NULL)
+        goto err;
+
+    ret->uni_number = msgtype.uni_number;
+    ret->msg_type = msgtype.type;
+    ret->hall_number = hall_number;
+    mat_copy_matrix_d3(ret->transformation_matrix, tmat);
+    mat_copy_vector_d3(ret->origin_shift, shift);
+
+    free(fsg);
+    fsg = NULL;
+    free(xsg);
+    xsg = NULL;
+    sym_free_symmetry(sym_fsg);
+    sym_fsg = NULL;
+    sym_free_symmetry(sym_xsg);
+    sym_xsg = NULL;
+    sym_free_magnetic_symmetry(representative);
+    representative = NULL;
+    /* msg_uni is already freed. */
+    sym_free_magnetic_symmetry(changed_symmetry);
+    changed_symmetry = NULL;
+
+    return ret;
+
+err:
+    if (fsg != NULL) {
+        free(fsg);
+        fsg = NULL;
+    }
+    if (xsg != NULL) {
+        free(xsg);
+        xsg = NULL;
+    }
+    if (sym_fsg != NULL) {
+        sym_free_symmetry(sym_fsg);
+        sym_fsg = NULL;
+    }
+    if (sym_xsg != NULL) {
+        sym_free_symmetry(sym_xsg);
+        sym_xsg = NULL;
+    }
+    if (representative != NULL) {
+        sym_free_magnetic_symmetry(representative);
+        representative = NULL;
+    }
+    if (msg_uni != NULL) {
+        sym_free_magnetic_symmetry(msg_uni);
+        msg_uni = NULL;
+    }
+    if (changed_symmetry != NULL) {
+        sym_free_magnetic_symmetry(changed_symmetry);
+        changed_symmetry = NULL;
+    }
+    if (ret != NULL) {
+        free(ret);
+        ret = NULL;
+    }
 }
 
 /******************************************************************************/
@@ -213,7 +261,7 @@ static Symmetry *get_space_group_with_magnetic_symmetry(
     num_sym_msg = magnetic_symmetry->size;
 
     if ((sym = sym_alloc_symmetry(num_sym_msg)) == NULL) {
-        return 0;
+        return NULL;
     }
 
     /* If MSG is type-II, it has pure time-reversal operation (I, 0)1' */
@@ -371,19 +419,19 @@ static MagneticSymmetry *get_changed_magnetic_symmetry(
     /* Additional operation in MSG */
     if ((changed_representatives = get_distinct_changed_magnetic_symmetry(
              tmat, shift, representatives)) == NULL)
-        return NULL;
+        goto err;
 
     /* centerings in conventional lattice */
     if ((pure_trans = spn_collect_pure_translations_from_magnetic_symmetry(
              magnetic_symmetry)) == NULL)
-        return NULL;
+        goto err;
     if ((changed_pure_trans =
              get_changed_pure_translations(tmat, pure_trans, symprec)) == NULL)
-        return NULL;
+        goto err;
 
     /* Collect factor group in conventional lattice */
     if ((factors = sym_alloc_magnetic_symmetry(sym_xsg->size)) == NULL)
-        return NULL;
+        goto err;
     for (i = 0; i < sym_xsg->size; i++) {
         if (is_contained_mat(sym_xsg->rot[i], factors, num_factors)) continue;
 
@@ -395,11 +443,11 @@ static MagneticSymmetry *get_changed_magnetic_symmetry(
     factors->size = num_factors;
     if ((changed_factors = get_distinct_changed_magnetic_symmetry(
              tmat, shift, factors)) == NULL)
-        return NULL;
+        goto err;
 
     /* Number of coset may change in conversion between hR and hP! */
     size = representatives->size * changed_pure_trans->size * num_factors;
-    if ((changed = sym_alloc_magnetic_symmetry(size)) == NULL) return NULL;
+    if ((changed = sym_alloc_magnetic_symmetry(size)) == NULL) goto err;
 
     for (i = 0; i < changed_pure_trans->size; i++) {
         for (j = 0; j < changed_representatives->size; j++) {
@@ -431,7 +479,39 @@ static MagneticSymmetry *get_changed_magnetic_symmetry(
         }
     }
 
+    mat_free_VecDBL(pure_trans);
+    pure_trans = NULL;
+    mat_free_VecDBL(changed_pure_trans);
+    changed_pure_trans = NULL;
+    sym_free_magnetic_symmetry(factors);
+    factors = NULL;
+    sym_free_magnetic_symmetry(changed_factors);
+    changed_factors = NULL;
+    sym_free_magnetic_symmetry(changed_representatives);
+    changed_representatives = NULL;
     return changed;
+err:
+    if (pure_trans != NULL) {
+        mat_free_VecDBL(pure_trans);
+        pure_trans = NULL;
+    }
+    if (changed_pure_trans != NULL) {
+        mat_free_VecDBL(changed_pure_trans);
+        changed_pure_trans = NULL;
+    }
+    if (factors != NULL) {
+        sym_free_magnetic_symmetry(factors);
+        factors = NULL;
+    }
+    if (changed_factors != NULL) {
+        sym_free_magnetic_symmetry(changed_factors);
+        changed_factors = NULL;
+    }
+    if (changed_representatives != NULL) {
+        sym_free_magnetic_symmetry(changed_representatives);
+        changed_representatives = NULL;
+    }
+    return NULL;
 }
 
 static VecDBL *get_changed_pure_translations(SPGCONST double tmat[3][3],
