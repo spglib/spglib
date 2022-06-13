@@ -124,8 +124,6 @@ static Symmetry *get_symmetry_in_original_cell(SPGCONST int t_mat[3][3],
 static Symmetry *copy_symmetry_upon_lattice_points(const VecDBL *pure_trans,
                                                    const Symmetry *t_sym,
                                                    const int aperiodic_axis);
-static int find_similar_bravais_lattice(Spacegroup *spacegroup,
-                                        const double symprec);
 static void measure_rigid_rotation(double rotation[3][3],
                                    SPGCONST double bravais_lattice[3][3],
                                    SPGCONST double std_lattice[3][3]);
@@ -138,6 +136,8 @@ static SPGCONST int identity[3][3] = {
 };
 
 /* Return NULL if failed */
+/* spacegroup->bravais_lattice and spacegroup->origin_shift are overwritten */
+/* by refined ones. */
 ExactStructure *ref_get_exact_structure_and_symmetry(Spacegroup *spacegroup,
                                                      const Cell *primitive,
                                                      const Cell *cell,
@@ -160,9 +160,7 @@ ExactStructure *ref_get_exact_structure_and_symmetry(Spacegroup *spacegroup,
     symmetry = NULL;
     exact_structure = NULL;
 
-    /* spacegroup->bravais_lattice is overwritten. */
-    /* spacegroup->origin_shift is overwritten. */
-    if (!find_similar_bravais_lattice(spacegroup, symprec)) {
+    if (!ref_find_similar_bravais_lattice(spacegroup, symprec)) {
         goto err;
     }
 
@@ -1429,8 +1427,10 @@ static Symmetry *copy_symmetry_upon_lattice_points(const VecDBL *pure_trans,
     return symmetry;
 }
 
-static int find_similar_bravais_lattice(Spacegroup *spacegroup,
-                                        const double symprec) {
+/* spacegroup->bravais_lattice and spacegroup->origin_shift are overwritten */
+/* by refined ones. Return 0 if failed. */
+int ref_find_similar_bravais_lattice(Spacegroup *spacegroup,
+                                     const double symprec) {
     int i, j, k, rot_i, lattice_rank;
     Symmetry *conv_sym;
     double min_length2, length2, diff, min_length, length;
