@@ -77,11 +77,11 @@ static int is_equal(const MagneticSymmetry *sym1, const MagneticSymmetry *sym2,
 
 /* If failed, return NULL. */
 MagneticDataset *msg_identify_magnetic_space_group_type(
-    Spacegroup **fsg, Spacegroup **xsg,
+    Spacegroup **fsg, Spacegroup **xsg, MagneticSymmetry **representatives,
     const MagneticSymmetry *magnetic_symmetry, const double symprec) {
     int hall_number, uni_number, type, same, i;
     Symmetry *sym_fsg, *sym_xsg;
-    MagneticSymmetry *representative, *msg_uni, *changed_symmetry;
+    MagneticSymmetry *msg_uni, *changed_symmetry;
     MagneticSpacegroupType msgtype;
     MagneticDataset *ret;
     int uni_number_range[2];
@@ -90,7 +90,6 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
 
     sym_fsg = NULL;
     sym_xsg = NULL;
-    representative = NULL;
     msg_uni = NULL;
     changed_symmetry = NULL;
     ret = NULL;
@@ -111,7 +110,7 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
                 sym_xsg->size);
 
     /* Determine type of MSG and generator of factor group of MSG over XSG */
-    type = get_magnetic_space_group_type(&representative, magnetic_symmetry,
+    type = get_magnetic_space_group_type(representatives, magnetic_symmetry,
                                          sym_fsg->size, sym_xsg->size);
 
     /* Choose reference setting */
@@ -133,9 +132,9 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
     debug_print_matrix_d3(tmat);
     debug_print_vector_d3(shift);
 
-    if ((changed_symmetry =
-             get_changed_magnetic_symmetry(tmat, shift, representative, sym_xsg,
-                                           magnetic_symmetry, symprec)) == NULL)
+    if ((changed_symmetry = get_changed_magnetic_symmetry(
+             tmat, shift, *representatives, sym_xsg, magnetic_symmetry,
+             symprec)) == NULL)
         goto err;
 
     msgdb_get_uni_candidates(uni_number_range, hall_number);
@@ -170,8 +169,6 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
     sym_fsg = NULL;
     sym_free_symmetry(sym_xsg);
     sym_xsg = NULL;
-    sym_free_magnetic_symmetry(representative);
-    representative = NULL;
     /* msg_uni is already freed. */
     sym_free_magnetic_symmetry(changed_symmetry);
     changed_symmetry = NULL;
@@ -194,10 +191,6 @@ err:
     if (sym_xsg != NULL) {
         sym_free_symmetry(sym_xsg);
         sym_xsg = NULL;
-    }
-    if (representative != NULL) {
-        sym_free_magnetic_symmetry(representative);
-        representative = NULL;
     }
     if (msg_uni != NULL) {
         sym_free_magnetic_symmetry(msg_uni);
