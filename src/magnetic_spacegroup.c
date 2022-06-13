@@ -77,9 +77,9 @@ static int is_equal(const MagneticSymmetry *sym1, const MagneticSymmetry *sym2,
 
 /* If failed, return NULL. */
 MagneticDataset *msg_identify_magnetic_space_group_type(
+    Spacegroup **fsg, Spacegroup **xsg,
     const MagneticSymmetry *magnetic_symmetry, const double symprec) {
     int hall_number, uni_number, type, same, i;
-    Spacegroup *fsg, *xsg;
     Symmetry *sym_fsg, *sym_xsg;
     MagneticSymmetry *representative, *msg_uni, *changed_symmetry;
     MagneticSpacegroupType msgtype;
@@ -88,8 +88,6 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
     double tmat[3][3];
     double shift[3];
 
-    fsg = NULL;
-    xsg = NULL;
     sym_fsg = NULL;
     sym_xsg = NULL;
     representative = NULL;
@@ -101,22 +99,20 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
     /* TODO(shinohara): add option to specify hall_number in searching
      * space-group type */
     sym_fsg = get_family_space_group_with_magnetic_symmetry(
-        &fsg, magnetic_symmetry, symprec);
+        fsg, magnetic_symmetry, symprec);
     sym_xsg = get_maximal_subspace_group_with_magnetic_symmetry(
-        &xsg, magnetic_symmetry, symprec);
+        xsg, magnetic_symmetry, symprec);
     if (sym_fsg == NULL || sym_xsg == NULL) goto err;
     debug_print("FSG: hall_number=%d, international=%s, order=%d\n",
-                fsg->hall_number, fsg->international_short, sym_fsg->size);
+                (*fsg)->hall_number, (*fsg)->international_short,
+                sym_fsg->size);
     debug_print("XSG: hall_number=%d, international=%s, order=%d\n",
-                xsg->hall_number, xsg->international_short, sym_xsg->size);
+                (*xsg)->hall_number, (*xsg)->international_short,
+                sym_xsg->size);
 
     /* Determine type of MSG and generator of factor group of MSG over XSG */
     type = get_magnetic_space_group_type(&representative, magnetic_symmetry,
                                          sym_fsg->size, sym_xsg->size);
-    debug_print("Representative of MSG over XSG\n");
-    debug_print_matrix_i3(representative->rot[1]);
-    debug_print_vector_d3(representative->trans[1]);
-    debug_print("%d\n", representative->timerev[1]);
 
     /* Choose reference setting */
     /* For type-IV, use setting from Hall symbol of XSG. */
@@ -124,13 +120,13 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
     /* transformation matrix `tmat` should be double not integer for
      * rhombohedral setting of trigonal space groups! */
     if (type == 4) {
-        hall_number = xsg->hall_number;
-        mat_copy_matrix_d3(tmat, xsg->bravais_lattice);
-        mat_copy_vector_d3(shift, xsg->origin_shift);
+        hall_number = (*xsg)->hall_number;
+        mat_copy_matrix_d3(tmat, (*xsg)->bravais_lattice);
+        mat_copy_vector_d3(shift, (*xsg)->origin_shift);
     } else {
-        hall_number = fsg->hall_number;
-        mat_copy_matrix_d3(tmat, fsg->bravais_lattice);
-        mat_copy_vector_d3(shift, fsg->origin_shift);
+        hall_number = (*fsg)->hall_number;
+        mat_copy_matrix_d3(tmat, (*fsg)->bravais_lattice);
+        mat_copy_vector_d3(shift, (*fsg)->origin_shift);
     }
     debug_print("MSG type: %d\n", type);
     debug_print("Hall number: %d\n", hall_number);
@@ -170,10 +166,6 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
     mat_copy_matrix_d3(ret->transformation_matrix, tmat);
     mat_copy_vector_d3(ret->origin_shift, shift);
 
-    free(fsg);
-    fsg = NULL;
-    free(xsg);
-    xsg = NULL;
     sym_free_symmetry(sym_fsg);
     sym_fsg = NULL;
     sym_free_symmetry(sym_xsg);
