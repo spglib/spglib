@@ -52,15 +52,30 @@ static int set_equivalent_atoms(int *equiv_atoms,
                                 const Cell *cell, const double symprec);
 static int *get_mapping_table(const MagneticSymmetry *magnetic_symmetry,
                               const Cell *cell, const double symprec);
-static int get_operation_sign_on_scalar(const double spin_j,
-                                        const double spin_k,
-                                        const double mag_symprec);
+static int get_operation_sign_on_scalar(
+    const double spin_j, const double spin_k, SPGCONST double rot_cart[3][3],
+    const int is_magnetic, const int is_axial, const double mag_symprec);
 static int get_operation_sign_on_vector(const int j, const int k,
                                         const double *vectors,
-                                        SPGCONST int rot[3][3],
-                                        SPGCONST double lattice[3][3],
+                                        SPGCONST double rot_cart[3][3],
+                                        const int is_magnetic,
                                         const int is_axial,
                                         const double mag_symprec);
+static void apply_symmetry_to_position(double pos_dst[3],
+                                       SPGCONST double pos_src[3],
+                                       SPGCONST int rot[3][3],
+                                       SPGCONST double trans[3]);
+static void apply_symmetry_to_site_scalar(double *dst, const double src,
+                                          SPGCONST double rot_cart[3][3],
+                                          const int timerev,
+                                          const int is_magnetic,
+                                          const int is_axial);
+static void apply_symmetry_to_site_vector(double *dst, const int idx,
+                                          const double *tensors,
+                                          SPGCONST double rot_cart[3][3],
+                                          const int timerev,
+                                          const int is_magnetic,
+                                          const int is_axial);
 static int is_zero(const double a, const double mag_symprec);
 static int is_zero_d3(const double a[3], const double mag_symprec);
 
@@ -75,6 +90,7 @@ MagneticSymmetry *spn_get_operations_with_site_tensors(
     double mag_symprec;
     MagneticSymmetry *magnetic_symmetry;
     VecDBL *pure_trans;
+
     int identity[3][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
 
     magnetic_symmetry = NULL;
@@ -94,7 +110,7 @@ MagneticSymmetry *spn_get_operations_with_site_tensors(
     if ((magnetic_symmetry = get_operations(sym_nonspin, cell, tensors,
                                             tensor_rank, is_magnetic, is_axial,
                                             symprec, mag_symprec)) == NULL) {
-        return NULL;
+        goto err;
     }
 
     if ((set_equivalent_atoms(equiv_atoms, magnetic_symmetry, cell, symprec)) ==
@@ -105,21 +121,26 @@ MagneticSymmetry *spn_get_operations_with_site_tensors(
 
     if ((pure_trans = spn_collect_pure_translations_from_magnetic_symmetry(
              magnetic_symmetry)) == NULL)
-        return NULL;
+        goto err;
 
     multi = prm_get_primitive_lattice_vectors(prim_lattice, cell, pure_trans,
                                               symprec, angle_tolerance);
 
     /* By definition, change of number of pure translations would */
     /* not be allowed. */
-    if (multi != pure_trans->size) {
-        return NULL;
-    }
+    if (multi != pure_trans->size) goto err;
 
     mat_free_VecDBL(pure_trans);
     pure_trans = NULL;
 
     return magnetic_symmetry;
+
+err:
+    if (pure_trans != NULL) {
+        mat_free_VecDBL(pure_trans);
+        pure_trans = NULL;
+    }
+    return NULL;
 }
 
 VecDBL *spn_collect_pure_translations_from_magnetic_symmetry(
@@ -180,6 +201,24 @@ static MagneticSymmetry *get_operations(
     MatINT *rotations;
     VecDBL *trans;
     int *spin_flips;
+    double(*rotations_cart)[3][3];
+    double inv_lat[3][3];
+
+    rotations_cart = NULL;
+
+    /* Site tensors in cartesian */
+    if ((rotations_cart = (double(*)[3][3])malloc(sizeof(double[3][3]) *
+                                                  sym_nonspin->size)) == NULL) {
+        goto err;
+    }
+    mat_inverse_matrix_d3(inv_lat, cell->lattice, 0);
+    for (i = 0; i < sym_nonspin->size; i++) {
+        /* rot_cart = lattice @ rot @ lattice^-1 */
+        mat_multiply_matrix_id3(rotations_cart[i], sym_nonspin->rot[i],
+                                inv_lat);
+        mat_multiply_matrix_d3(rotations_cart[i], cell->lattice,
+                               rotations_cart[i]);
+    }
 
     /* Need to reserve two times of nonspin symmetries for type-II magnetic
      * space group */
@@ -187,7 +226,7 @@ static MagneticSymmetry *get_operations(
     rotations = mat_alloc_MatINT(max_size);
     trans = mat_alloc_VecDBL(max_size);
     if ((spin_flips = (int *)malloc(sizeof(int) * max_size)) == NULL) {
-        return NULL;
+        goto err;
     }
 
     num_sym = 0;
@@ -204,11 +243,9 @@ static MagneticSymmetry *get_operations(
         sign = 0;
         for (j = 0; j < cell->size; j++) {
             /* Find atom-k overlapped with atom-j by opration-i */
-            mat_multiply_matrix_vector_id3(pos, sym_nonspin->rot[i],
-                                           cell->position[j]);
-            for (k = 0; k < 3; k++) {
-                pos[k] += sym_nonspin->trans[i][k];
-            }
+            apply_symmetry_to_position(pos, cell->position[j],
+                                       sym_nonspin->rot[i],
+                                       sym_nonspin->trans[i]);
             for (k = 0; k < cell->size; k++) {
                 if (cel_is_overlap_with_same_type(
                         cell->position[k], pos, cell->types[k], cell->types[j],
@@ -245,13 +282,14 @@ static MagneticSymmetry *get_operations(
             if (!determined) {
                 /* Determine sign */
                 if (tensor_rank == 0) {
-                    sign = get_operation_sign_on_scalar(tensors[j], tensors[k],
-                                                        mag_symprec);
+                    sign = get_operation_sign_on_scalar(
+                        tensors[j], tensors[k], rotations_cart[i], is_magnetic,
+                        is_axial, mag_symprec);
                 }
                 if (tensor_rank == 1) {
                     sign = get_operation_sign_on_vector(
-                        j, k, tensors, sym_nonspin->rot[i], cell->lattice,
-                        is_axial, mag_symprec);
+                        j, k, tensors, rotations_cart[i], is_magnetic, is_axial,
+                        mag_symprec);
                 }
                 determined = 1;
 
@@ -264,15 +302,16 @@ static MagneticSymmetry *get_operations(
             } else {
                 /* Check if `sign` is consistent */
                 if (tensor_rank == 0) {
-                    if (get_operation_sign_on_scalar(tensors[j], tensors[k],
-                                                     mag_symprec) != sign) {
+                    if (get_operation_sign_on_scalar(
+                            tensors[j], tensors[k], rotations_cart[i],
+                            is_magnetic, is_axial, mag_symprec) != sign) {
                         found = 0;
                         break;
                     }
                 }
                 if (tensor_rank == 1) {
                     if (get_operation_sign_on_vector(
-                            j, k, tensors, sym_nonspin->rot[i], cell->lattice,
+                            j, k, tensors, rotations_cart[i], is_magnetic,
                             is_axial, mag_symprec) != sign) {
                         found = 0;
                         break;
@@ -338,6 +377,8 @@ static MagneticSymmetry *get_operations(
         }
     }
 
+    free(rotations_cart);
+    rotations_cart = NULL;
     mat_free_MatINT(rotations);
     rotations = NULL;
     mat_free_VecDBL(trans);
@@ -346,6 +387,13 @@ static MagneticSymmetry *get_operations(
     spin_flips = NULL;
 
     return magnetic_symmetry;
+
+err:
+    if (rotations_cart != NULL) {
+        free(rotations_cart);
+        rotations_cart = NULL;
+    }
+    return NULL;
 }
 
 /* Return 0 if failed */
@@ -371,11 +419,11 @@ static int set_equivalent_atoms(int *equiv_atoms,
         }
         is_found = 0;
         for (j = 0; j < magnetic_symmetry->size; j++) {
-            mat_multiply_matrix_vector_id3(pos, magnetic_symmetry->rot[j],
-                                           cell->position[i]);
-            for (k = 0; k < 3; k++) {
-                pos[k] += magnetic_symmetry->trans[j][k];
-            }
+            /* pos <- rot[j] @ position[i] + trans[j] */
+            apply_symmetry_to_position(pos, cell->position[i],
+                                       magnetic_symmetry->rot[j],
+                                       magnetic_symmetry->trans[j]);
+
             for (k = 0; k < cell->size; k++) {
                 if (cel_is_overlap_with_same_type(
                         pos, cell->position[k], cell->types[i], cell->types[k],
@@ -412,6 +460,10 @@ static int set_equivalent_atoms(int *equiv_atoms,
 /* Return NULL if failed */
 /* Though MagneticSymmetry is in arguments, spin_flip is not used in this
  * function. */
+/* mapping_table[i] = i if site-i is not translationally equivalent to any
+ * site-j (j < i). */
+/* mapping_table[i] = mapping_table[k] if site-i is translationally equivalent
+ * to site-k */
 static int *get_mapping_table(const MagneticSymmetry *magnetic_symmetry,
                               const Cell *cell, const double symprec) {
     int i, j, k, is_found;
@@ -460,15 +512,20 @@ static int *get_mapping_table(const MagneticSymmetry *magnetic_symmetry,
 
 /* Return sign in {-1, 1} such that `spin_j == sign * spin_k` */
 /* If spin_j and spin_k are not the same dimension, return 0 */
-static int get_operation_sign_on_scalar(const double spin_j,
-                                        const double spin_k,
-                                        const double mag_symprec) {
-    int sign;
-    for (sign = -1; sign <= 1; sign += 2) {
-        if (is_zero(spin_j - sign * spin_k, mag_symprec)) {
-            return sign;
+static int get_operation_sign_on_scalar(
+    const double spin_j, const double spin_k, SPGCONST double rot_cart[3][3],
+    const int is_magnetic, const int is_axial, const double mag_symprec) {
+    int timerev;
+    double spin_k_ops;
+
+    for (timerev = 0; timerev <= 1; timerev += 1) {
+        apply_symmetry_to_site_scalar(&spin_k_ops, spin_k, rot_cart, timerev,
+                                      is_magnetic, is_axial);
+        if (is_zero(spin_j - spin_k_ops, mag_symprec)) {
+            return 1 - 2 * timerev; /* Spin-flip */
         }
     }
+
     return 0;
 }
 
@@ -479,42 +536,84 @@ static int get_operation_sign_on_scalar(const double spin_j,
 /* !is_axial: Usual vector: v' = Rv */
 static int get_operation_sign_on_vector(const int j, const int k,
                                         const double *vectors,
-                                        SPGCONST int rot[3][3],
-                                        SPGCONST double lattice[3][3],
+                                        SPGCONST double rot_cart[3][3],
+                                        const int is_magnetic,
                                         const int is_axial,
                                         const double mag_symprec) {
-    int sign, i, detR;
-    double vec_j[3], vec_jp[3], diff[3];
-    double inv_lat[3][3], rot_cart[3][3];
-
-    mat_inverse_matrix_d3(inv_lat, lattice, 0);
-    mat_multiply_matrix_id3(rot_cart, rot, inv_lat);
-    mat_multiply_matrix_d3(rot_cart, lattice, rot_cart);
+    int i, timerev;
+    double vec_k[3], vec_k_ops[3], diff[3];
 
     for (i = 0; i < 3; i++) {
-        vec_j[i] = vectors[j * 3 + i];
+        vec_k[i] = vectors[3 * k + i];
     }
 
-    /* v_j' = R v_j */
-    mat_multiply_matrix_vector_d3(vec_jp, rot_cart, vec_j);
-
-    for (sign = -1; sign <= 1; sign += 2) {
-        if (is_axial) {
-            detR = mat_get_determinant_i3(rot);
-            for (i = 0; i < 3; i++) {
-                diff[i] = sign * detR * vec_jp[i] - vectors[k * 3 + i];
-            }
-        } else {
-            for (i = 0; i < 3; i++) {
-                diff[i] = sign * vec_jp[i] - vectors[k * 3 + i];
-            }
+    for (timerev = 0; timerev <= 1; timerev++) {
+        apply_symmetry_to_site_vector(vec_k_ops, k, vectors, rot_cart, timerev,
+                                      is_magnetic, is_axial);
+        for (i = 0; i < 3; i++) {
+            diff[i] = vectors[3 * j + i] - vec_k_ops[i];
         }
-
         if (is_zero_d3(diff, mag_symprec)) {
-            return sign;
+            return 1 - 2 * timerev; /* Spin-flip */
         }
     }
+
     return 0;
+}
+
+/* Apply `idx`th operation in `magnetic_symmetry` to position. */
+static void apply_symmetry_to_position(double pos_dst[3],
+                                       SPGCONST double pos_src[3],
+                                       SPGCONST int rot[3][3],
+                                       SPGCONST double trans[3]) {
+    int k;
+    mat_multiply_matrix_vector_id3(pos_dst, rot, pos_src);
+    for (k = 0; k < 3; k++) {
+        pos_dst[k] += trans[k];
+    }
+}
+
+/* tensor_rank=1 case */
+static void apply_symmetry_to_site_scalar(double *dst, const double src,
+                                          SPGCONST double rot_cart[3][3],
+                                          const int timerev,
+                                          const int is_magnetic,
+                                          const int is_axial) {
+    double det;
+
+    *dst = (is_magnetic && timerev) ? -src : src;
+
+    if (is_axial) {
+        det = mat_get_determinant_d3(rot_cart);
+        *dst *= det;
+    }
+}
+
+/* tensor_rank=2 case */
+static void apply_symmetry_to_site_vector(double *dst, const int idx,
+                                          const double *tensors,
+                                          SPGCONST double rot_cart[3][3],
+                                          const int timerev,
+                                          const int is_magnetic,
+                                          const int is_axial) {
+    int k;
+    double det;
+    double vec[3];
+
+    for (k = 0; k < 3; k++) {
+        vec[k] = tensors[3 * idx + k];
+    }
+
+    det = mat_get_determinant_d3(rot_cart);
+    mat_multiply_matrix_vector_d3(dst, rot_cart, vec);
+    for (k = 0; k < 3; k++) {
+        if (is_magnetic && timerev) {
+            dst[k] *= -1;
+        }
+        if (is_axial) {
+            dst[k] *= det;
+        }
+    }
 }
 
 static int is_zero(const double a, const double mag_symprec) {
