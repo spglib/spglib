@@ -47,11 +47,14 @@ static MagneticSymmetry *get_operations(
     const Symmetry *sym_nonspin, const Cell *cell, const double *tensors,
     const int tensor_rank, const int is_magnetic, const int is_axial,
     const double symprec, const double mag_symprec);
-static int set_equivalent_atoms(int *equiv_atoms,
-                                const MagneticSymmetry *magnetic_symmetry,
-                                const Cell *cell, const double symprec);
-static int *get_mapping_table(const MagneticSymmetry *magnetic_symmetry,
-                              const Cell *cell, const double symprec);
+static int *get_symmetry_permutations(const MagneticSymmetry *magnetic_symmetry,
+                                      const Cell *cell, const double *tensors,
+                                      const int tensor_rank,
+                                      const int is_magnetic, const int is_axial,
+                                      const double symprec,
+                                      const double mag_symprec);
+static int *get_orbits(const int *permutations, const int num_sym,
+                       const int num_atoms);
 static int get_operation_sign_on_scalar(
     const double spin_j, const double spin_k, SPGCONST double rot_cart[3][3],
     const int is_magnetic, const int is_axial, const double mag_symprec);
@@ -81,11 +84,14 @@ static int is_zero_d3(const double a[3], const double mag_symprec);
 
 /******************************************************************************/
 
+/* `permutations`: such that the p-th operation in `magnetic_symmetry` maps */
+/* site-`i` to site-`permutations[p * cell->size + i]`. */
 /* Return NULL if failed */
 MagneticSymmetry *spn_get_operations_with_site_tensors(
-    int equiv_atoms[], double prim_lattice[3][3], const Symmetry *sym_nonspin,
-    const Cell *cell, const double *tensors, const int tensor_rank,
-    const int is_magnetic, const double symprec, const double angle_tolerance) {
+    int **equivalent_atoms, int **permutations, double prim_lattice[3][3],
+    const Symmetry *sym_nonspin, const Cell *cell, const double *tensors,
+    const int tensor_rank, const int is_magnetic, const double symprec,
+    const double angle_tolerance) {
     int i, multi, is_axial;
     double mag_symprec;
     MagneticSymmetry *magnetic_symmetry;
@@ -97,11 +103,7 @@ MagneticSymmetry *spn_get_operations_with_site_tensors(
     pure_trans = NULL;
 
     /* TODO(shinohara): allow to select this flag from input */
-    if (tensor_rank == 1) {
-        is_axial = is_magnetic;
-    } else {
-        is_axial = 0;
-    }
+    is_axial = (tensor_rank == 1) ? is_magnetic : 0;
 
     /* TODO(shinohara): allow to choose different tolerance for positions and
      * magmoms */
@@ -113,10 +115,15 @@ MagneticSymmetry *spn_get_operations_with_site_tensors(
         goto err;
     }
 
-    if ((set_equivalent_atoms(equiv_atoms, magnetic_symmetry, cell, symprec)) ==
-        0) {
-        sym_free_magnetic_symmetry(magnetic_symmetry);
-        magnetic_symmetry = NULL;
+    /* equivalent atoms */
+    if ((*permutations = get_symmetry_permutations(
+             magnetic_symmetry, cell, tensors, tensor_rank, is_magnetic,
+             is_axial, symprec, mag_symprec)) == NULL) {
+        goto err;
+    }
+    if ((*equivalent_atoms = get_orbits(*permutations, magnetic_symmetry->size,
+                                        cell->size)) == NULL) {
+        goto err;
     }
 
     if ((pure_trans = spn_collect_pure_translations_from_magnetic_symmetry(
@@ -396,118 +403,133 @@ err:
     return NULL;
 }
 
-/* Return 0 if failed */
-/* Though MagneticSymmetry is in arguments, spin_flip is not used in this
- * function. */
-static int set_equivalent_atoms(int *equiv_atoms,
-                                const MagneticSymmetry *magnetic_symmetry,
-                                const Cell *cell, const double symprec) {
-    int i, j, k, is_found;
-    double pos[3];
-    int *mapping_table;
+/* Return permutation tables `permutations` such that the p-th operation */
+/* in `magnetic_symmetry` maps site-`i` to site-`permutations[p * cell->size +
+ * i]`. */
+static int *get_symmetry_permutations(const MagneticSymmetry *magnetic_symmetry,
+                                      const Cell *cell, const double *tensors,
+                                      const int tensor_rank,
+                                      const int is_magnetic, const int is_axial,
+                                      const double symprec,
+                                      const double mag_symprec) {
+    int p, i, j;
+    int *permutations;
+    double scalar;
+    double pos[3], vector[3], diff[3];
+    double(*rotations_cart)[3][3];
+    double inv_lat[3][3];
 
-    mapping_table = NULL;
+    rotations_cart = NULL;
+    permutations = NULL;
 
-    if ((mapping_table = get_mapping_table(magnetic_symmetry, cell, symprec)) ==
-        NULL) {
-        return 0;
-    }
-
-    for (i = 0; i < cell->size; i++) {
-        if (mapping_table[i] != i) {
-            continue;
-        }
-        is_found = 0;
-        for (j = 0; j < magnetic_symmetry->size; j++) {
-            /* pos <- rot[j] @ position[i] + trans[j] */
-            apply_symmetry_to_position(pos, cell->position[i],
-                                       magnetic_symmetry->rot[j],
-                                       magnetic_symmetry->trans[j]);
-
-            for (k = 0; k < cell->size; k++) {
-                if (cel_is_overlap_with_same_type(
-                        pos, cell->position[k], cell->types[i], cell->types[k],
-                        cell->lattice, symprec)) {
-                    if (mapping_table[k] < i) {
-                        equiv_atoms[i] = equiv_atoms[mapping_table[k]];
-                        is_found = 1;
-                        break;
-                    }
-                }
-            }
-            if (is_found) {
-                break;
-            }
-        }
-        if (!is_found) {
-            equiv_atoms[i] = i;
-        }
-    }
-
-    for (i = 0; i < cell->size; i++) {
-        if (mapping_table[i] == i) {
-            continue;
-        }
-        equiv_atoms[i] = equiv_atoms[mapping_table[i]];
-    }
-
-    free(mapping_table);
-    mapping_table = NULL;
-
-    return 1;
-}
-
-/* Return NULL if failed */
-/* Though MagneticSymmetry is in arguments, spin_flip is not used in this
- * function. */
-/* mapping_table[i] = i if site-i is not translationally equivalent to any
- * site-j (j < i). */
-/* mapping_table[i] = mapping_table[k] if site-i is translationally equivalent
- * to site-k */
-static int *get_mapping_table(const MagneticSymmetry *magnetic_symmetry,
-                              const Cell *cell, const double symprec) {
-    int i, j, k, is_found;
-    double pos[3];
-    int *mapping_table;
-    SPGCONST int I[3][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
-
-    mapping_table = NULL;
-
-    if ((mapping_table = (int *)malloc(sizeof(int) * cell->size)) == NULL) {
-        warning_print("spglib: Memory could not be allocated.");
+    if ((permutations = (int *)malloc(sizeof(int) * magnetic_symmetry->size *
+                                      cell->size)) == NULL) {
         return NULL;
     }
 
-    for (i = 0; i < cell->size; i++) {
-        is_found = 0;
-        for (j = 0; j < magnetic_symmetry->size; j++) {
-            if (mat_check_identity_matrix_i3(magnetic_symmetry->rot[j], I)) {
-                for (k = 0; k < 3; k++) {
-                    pos[k] =
-                        cell->position[i][k] + magnetic_symmetry->trans[j][k];
+    /* Site tensors in cartesian */
+    if ((rotations_cart = (double(*)[3][3])malloc(
+             sizeof(double[3][3]) * magnetic_symmetry->size)) == NULL) {
+        free(permutations);
+        permutations = NULL;
+        return NULL;
+    }
+    mat_inverse_matrix_d3(inv_lat, cell->lattice, 0);
+    for (i = 0; i < magnetic_symmetry->size; i++) {
+        /* rot_cart = lattice @ rot @ lattice^-1 */
+        mat_multiply_matrix_id3(rotations_cart[i], magnetic_symmetry->rot[i],
+                                inv_lat);
+        mat_multiply_matrix_d3(rotations_cart[i], cell->lattice,
+                               rotations_cart[i]);
+    }
+
+    for (p = 0; p < magnetic_symmetry->size; p++) {
+        for (i = 0; i < cell->size; i++) {
+            permutations[p * cell->size + i] = -1;
+
+            /* Apply operation on site-i */
+            apply_symmetry_to_position(pos, cell->position[i],
+                                       magnetic_symmetry->rot[p],
+                                       magnetic_symmetry->trans[p]);
+            if (tensor_rank == 0) {
+                apply_symmetry_to_site_scalar(
+                    &scalar, tensors[i], rotations_cart[p],
+                    magnetic_symmetry->timerev[p], is_magnetic, is_axial);
+            } else if (tensor_rank == 1) {
+                apply_symmetry_to_site_vector(
+                    vector, i, tensors, rotations_cart[p],
+                    magnetic_symmetry->timerev[p], is_magnetic, is_axial);
+            }
+
+            for (j = 0; j < cell->size; j++) {
+                if (!cel_is_overlap_with_same_type(
+                        pos, cell->position[j], cell->types[i], cell->types[j],
+                        cell->lattice, symprec)) {
+                    continue;
                 }
-                for (k = 0; k < cell->size; k++) {
-                    if (cel_is_overlap_with_same_type(
-                            pos, cell->position[k], cell->types[i],
-                            cell->types[k], cell->lattice, symprec)) {
-                        if (k < i) {
-                            mapping_table[i] = mapping_table[k];
-                            is_found = 1;
-                            break;
-                        }
+                if (tensor_rank == 0 &&
+                    !is_zero(tensors[j] - scalar, mag_symprec)) {
+                    continue;
+                }
+                if (tensor_rank == 1) {
+                    diff[0] = tensors[3 * j] - vector[0];
+                    diff[1] = tensors[3 * j + 1] - vector[1];
+                    diff[2] = tensors[3 * j + 2] - vector[2];
+                    if (!is_zero_d3(diff, mag_symprec)) {
+                        continue;
                     }
                 }
-            }
-            if (is_found) {
+
+                /* Now, operation-p maps site-i to site-j */
+                permutations[p * cell->size + i] = j;
                 break;
             }
+
+            if (permutations[p * cell->size + i] == -1) {
+                debug_print("Failed to map site-%d by operation-%d\n", i, p);
+                return NULL; /* Unreachable */
+            }
         }
-        if (!is_found) {
-            mapping_table[i] = i;
+
+        debug_print("Operation %d\n", p);
+        for (i = 0; i < cell->size; i++) {
+            debug_print(" %d", permutations[p * cell->size + i]);
+        }
+        debug_print("\n");
+    }
+
+    free(rotations_cart);
+    rotations_cart = NULL;
+
+    return permutations;
+}
+
+/* Return equivalent_atoms */
+static int *get_orbits(const int *permutations, const int num_sym,
+                       const int num_atoms) {
+    int s, i;
+    int *equivalent_atoms;
+
+    if ((equivalent_atoms = (int *)malloc(sizeof(int) * num_atoms)) == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < num_atoms; i++) {
+        equivalent_atoms[i] = -1;
+    }
+
+    for (i = 0; i < num_atoms; i++) {
+        if (equivalent_atoms[i] != -1) {
+            continue;
+        }
+
+        equivalent_atoms[i] = i;
+        for (s = 0; s < num_sym; s++) {
+            equivalent_atoms[permutations[s * num_atoms + i]] = i;
         }
     }
 
-    return mapping_table;
+    return equivalent_atoms;
 }
 
 /* Return sign in {-1, 1} such that `spin_j == sign * spin_k` */
@@ -573,7 +595,7 @@ static void apply_symmetry_to_position(double pos_dst[3],
     }
 }
 
-/* tensor_rank=1 case */
+/* tensor_rank=0 case */
 static void apply_symmetry_to_site_scalar(double *dst, const double src,
                                           SPGCONST double rot_cart[3][3],
                                           const int timerev,
@@ -589,7 +611,7 @@ static void apply_symmetry_to_site_scalar(double *dst, const double src,
     }
 }
 
-/* tensor_rank=2 case */
+/* tensor_rank=1 case */
 static void apply_symmetry_to_site_vector(double *dst, const int idx,
                                           const double *tensors,
                                           SPGCONST double rot_cart[3][3],

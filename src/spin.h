@@ -40,9 +40,10 @@
 #include "symmetry.h"
 
 MagneticSymmetry *spn_get_operations_with_site_tensors(
-    int equiv_atoms[], double prim_lattice[3][3], const Symmetry *sym_nonspin,
-    const Cell *cell, const double *tensors, const int tensor_rank,
-    const int is_magnetic, const double symprec, const double angle_tolerance);
+    int **equivalent_atoms, int **permutations, double prim_lattice[3][3],
+    const Symmetry *sym_nonspin, const Cell *cell, const double *tensors,
+    const int tensor_rank, const int is_magnetic, const double symprec,
+    const double angle_tolerance);
 VecDBL *spn_collect_pure_translations_from_magnetic_symmetry(
     const MagneticSymmetry *sym_msg);
 
