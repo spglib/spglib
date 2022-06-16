@@ -46,5 +46,9 @@ MagneticSymmetry *spn_get_operations_with_site_tensors(
     const double symprec, const double angle_tolerance);
 VecDBL *spn_collect_pure_translations_from_magnetic_symmetry(
     const MagneticSymmetry *sym_msg);
+Cell *spn_get_idealized_cell_and_site_tensors(
+    double **exact_tensors, const int *permutations, const Cell *cell,
+    const double *tensors, const MagneticSymmetry *magnetic_symmetry,
+    const int tensor_rank, const int is_magnetic, const int is_axial);
 
 #endif

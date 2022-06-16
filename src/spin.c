@@ -79,6 +79,9 @@ static void apply_symmetry_to_site_vector(double *dst, const int idx,
                                           const int timerev,
                                           const int is_magnetic,
                                           const int is_axial);
+void set_rotations_in_cartesian(double (**rotations_cart)[3][3],
+                                SPGCONST double lattice[3][3],
+                                const MagneticSymmetry *magnetic_symmetry);
 static int is_zero(const double a, const double mag_symprec);
 static int is_zero_d3(const double a[3], const double mag_symprec);
 
@@ -187,6 +190,135 @@ VecDBL *spn_collect_pure_translations_from_magnetic_symmetry(
 
     return ret_pure_trans;
 }
+
+/* Apply special position operator to `cell` and `tensors`. */
+Cell *spn_get_idealized_cell_and_site_tensors(
+    double **exact_tensors, const int *permutations, const Cell *cell,
+    const double *tensors, const MagneticSymmetry *magnetic_symmetry,
+    const int tensor_rank, const int is_magnetic, const int is_axial) {
+    int i, j, s, p;
+    Cell *exact_cell;
+    double scalar_tmp, scalar_res;
+    double pos_tmp[3], pos_res[3], vector_tmp[3], vector_res[3];
+    double(*rotations_cart)[3][3];
+    int *inv_perm;
+
+    exact_cell = NULL;
+    rotations_cart = NULL;
+
+    if ((inv_perm = (int *)malloc(sizeof(int) * cell->size)) == NULL) {
+        return NULL;
+    }
+
+    if (tensor_rank == 0) {
+        if ((*exact_tensors = (double *)malloc(sizeof(double) * cell->size)) ==
+            NULL) {
+            return NULL;
+        }
+    } else if (tensor_rank == 1) {
+        if ((*exact_tensors =
+                 (double *)malloc(sizeof(double) * cell->size * 3)) == NULL) {
+            return NULL;
+        }
+    }
+
+    if ((exact_cell = cel_alloc_cell(cell->size)) == NULL) {
+        return NULL;
+    }
+    mat_copy_matrix_d3(exact_cell->lattice, cell->lattice);
+    exact_cell->aperiodic_axis = cell->aperiodic_axis;
+    exact_cell->size = cell->size;
+
+    if ((rotations_cart = (double(*)[3][3])malloc(
+             sizeof(double[3][3]) * magnetic_symmetry->size)) == NULL) {
+        return NULL;
+    }
+    set_rotations_in_cartesian(&rotations_cart, cell->lattice,
+                               magnetic_symmetry);
+
+    for (i = 0; i < cell->size; i++) {
+        exact_cell->types[i] = cell->types[i];
+
+        /* Initialize correction for site-i */
+        for (s = 0; s < 3; s++) {
+            pos_res[s] = 0;
+        }
+        if (tensor_rank == 0) {
+            scalar_res = 0;
+        } else if (tensor_rank == 1) {
+            for (s = 0; s < 3; s++) {
+                vector_res[s] = 0;
+            }
+        }
+
+        for (p = 0; p < magnetic_symmetry->size; p++) {
+            /* Inverse of the p-th permutation */
+            for (j = 0; j < cell->size; j++) {
+                inv_perm[permutations[p * cell->size + j]] = j;
+            }
+
+            j = inv_perm[i]; /* p-th operation maps site-j to site-i */
+            apply_symmetry_to_position(pos_tmp, cell->position[j],
+                                       magnetic_symmetry->rot[p],
+                                       magnetic_symmetry->trans[p]);
+            for (s = 0; s < 3; s++) {
+                /* To minimize rounding error, subtract by the original
+                 * position[i][s]. */
+                /* `pos_tmp[s] - cell->position[i][s]` should be close to
+                 * integer. */
+                pos_res[s] += pos_tmp[s] - cell->position[i][s] -
+                              mat_Nint(pos_tmp[s] - cell->position[i][s]);
+            }
+
+            if (tensor_rank == 0) {
+                apply_symmetry_to_site_scalar(
+                    &scalar_tmp, tensors[j], rotations_cart[p],
+                    magnetic_symmetry->timerev[p], is_magnetic, is_axial);
+                scalar_res +=
+                    scalar_tmp - tensors[i] - mat_Nint(scalar_tmp - tensors[i]);
+            } else if (tensor_rank == 1) {
+                apply_symmetry_to_site_vector(
+                    vector_tmp, j, tensors, rotations_cart[p],
+                    magnetic_symmetry->timerev[p], is_magnetic, is_axial);
+                for (s = 0; s < 3; s++) {
+                    vector_res[s] +=
+                        vector_tmp[s] - tensors[3 * i + s] -
+                        mat_Nint(vector_tmp[s] - tensors[3 * i + s]);
+                }
+            }
+        }
+
+        for (s = 0; s < 3; s++) {
+            exact_cell->position[i][s] =
+                cell->position[i][s] + pos_res[s] / magnetic_symmetry->size;
+        }
+        debug_print("Idealize position\n");
+        debug_print_vector_d3(cell->position[i]);
+        debug_print_vector_d3(exact_cell->position[i]);
+
+        debug_print("Idealize site tensor\n");
+        if (tensor_rank == 0) {
+            (*exact_tensors)[i] =
+                tensors[i] + scalar_res / magnetic_symmetry->size;
+            debug_print("%f\n", tensors[i]);
+            debug_print("%f\n", (*exact_tensors)[i]);
+        } else if (tensor_rank == 1) {
+            for (s = 0; s < 3; s++) {
+                (*exact_tensors)[3 * i + s] =
+                    tensors[3 * i + s] +
+                    vector_res[s] / magnetic_symmetry->size;
+            }
+        }
+    }
+
+    free(rotations_cart);
+    rotations_cart = NULL;
+    free(inv_perm);
+    inv_perm = NULL;
+
+    return exact_cell;
+}
+
 /******************************************************************************/
 /* Local functions                                                            */
 /******************************************************************************/
@@ -414,7 +546,6 @@ static int *get_symmetry_permutations(const MagneticSymmetry *magnetic_symmetry,
     double scalar;
     double pos[3], vector[3], diff[3];
     double(*rotations_cart)[3][3];
-    double inv_lat[3][3];
 
     rotations_cart = NULL;
     permutations = NULL;
@@ -431,14 +562,8 @@ static int *get_symmetry_permutations(const MagneticSymmetry *magnetic_symmetry,
         permutations = NULL;
         return NULL;
     }
-    mat_inverse_matrix_d3(inv_lat, cell->lattice, 0);
-    for (i = 0; i < magnetic_symmetry->size; i++) {
-        /* rot_cart = lattice @ rot @ lattice^-1 */
-        mat_multiply_matrix_id3(rotations_cart[i], magnetic_symmetry->rot[i],
-                                inv_lat);
-        mat_multiply_matrix_d3(rotations_cart[i], cell->lattice,
-                               rotations_cart[i]);
-    }
+    set_rotations_in_cartesian(&rotations_cart, cell->lattice,
+                               magnetic_symmetry);
 
     for (p = 0; p < magnetic_symmetry->size; p++) {
         for (i = 0; i < cell->size; i++) {
@@ -632,6 +757,22 @@ static void apply_symmetry_to_site_vector(double *dst, const int idx,
         if (is_axial) {
             dst[k] *= det;
         }
+    }
+}
+
+void set_rotations_in_cartesian(double (**rotations_cart)[3][3],
+                                SPGCONST double lattice[3][3],
+                                const MagneticSymmetry *magnetic_symmetry) {
+    int i;
+    double inv_lat[3][3];
+
+    mat_inverse_matrix_d3(inv_lat, lattice, 0);
+    for (i = 0; i < magnetic_symmetry->size; i++) {
+        /* rot_cart = lattice @ rot @ lattice^-1 */
+        mat_multiply_matrix_id3((*rotations_cart)[i], magnetic_symmetry->rot[i],
+                                inv_lat);
+        mat_multiply_matrix_d3((*rotations_cart)[i], lattice,
+                               (*rotations_cart)[i]);
     }
 }
 
