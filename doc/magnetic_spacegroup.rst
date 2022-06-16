@@ -6,6 +6,8 @@ Magnetic Space group (MSG)
 Definition
 ----------
 
+For more details, we refer to [Lit14]_ and [SC22]_.
+
 A **magnetic space group** :math:`\mathcal{M}` is a subgroup of direct product of space group :math:`\mathcal{G}` and :math:`\mathbb{Z}_{2} \simeq \{1, 1' \}`.
 
 A **family space group** (FSG) :math:`\mathcal{F}(\mathcal{M})` is a non-magnetic space group obtained by ignoring primes in operations,
@@ -132,8 +134,8 @@ Then, :code:`spn_get_operations_with_site_tensors` computes :math:`\mathcal{M}` 
     - :code:`is_magnetic=false`: :math:`1' \circ \mathbf{m} = \mathbf{m}, (\mathbf{R}, \mathbf{v}) \circ \mathbf{m} = (\mathrm{det} \mathbf{R}) \mathbf{R} \mathbf{m}`
 
 
-Procedure to standardize MSG setting
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Procedure to identify MSG
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 :code:`spglib.c:get_magnetic_dataset`
 
@@ -148,8 +150,49 @@ Procedure to standardize MSG setting
 #. Choose reference setting
     - Type-I, II, III -> Hall symbol of :math:`\mathcal{F}`
     - Type-IV -> Hall symbol of :math:`\mathcal{D}`
-#. Compare :math:`\mathcal{M}` with MSGs in database after applying a transformation to the Hall symbol's setting
-#. Standardize cell
+#. Compare :math:`\mathcal{M}` with MSGs in database after applying a transformation to the Hall symbol's setting [GPKRC21]_
+
+Procedure to idealize positions and site tensors
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Suppose we have a factor group of MSG, :math:`\overline{\mathcal{M}} := \mathcal{M} / \mathcal{T}(\mathcal{M})`.
+Now we consider to idealize positions and site tensors to possess the symmetry :math:`\overline{\mathcal{M}}`.
+The action of :math:`\overline{\mathcal{M}}` on positions can be defined as
+
+.. math::
+    g \circ (\mathbf{x}_{1}, \dots, \mathbf{x}_{n})
+    :=
+    \left( g \circ \mathbf{x}_{ g^{-1} \circ i } \right)_{i=1, \cdots, n}
+    \quad
+    (g \in \overline{\mathcal{M}}).
+
+The invariant subspace of :math:`(\mathbf{x}_{1}, \dots, \mathbf{x}_{N})` is obtained by the projection operator on the identity representation (also known as Reynolds operator) as
+
+.. math::
+    R_{\overline{\mathcal{M}}} \circ (\mathbf{x}_{1}, \dots, \mathbf{x}_{n})
+    :=
+    \left(
+        \frac{1}{|\overline{\mathcal{M}}|} \sum_{g \in \overline{\mathcal{M}}} g \circ \mathbf{x}_{ g^{-1} \circ i }
+    \right)_{i=1, \dots, n}.
+
+In practice, we average out the residual to avoid rounding error as
+
+.. math::
+    R_{\overline{\mathcal{M}}} \circ (\mathbf{x}_{1}, \dots, \mathbf{x}_{n})
+    =
+    \left(
+        \mathbf{x}_{i}
+        + \frac{1}{|\overline{\mathcal{M}}|}
+          \sum_{g \in \overline{\mathcal{M}}}
+            \left[
+                g \circ \mathbf{x}_{ g^{-1} \circ i } - \mathbf{x}_{i}
+            \right]
+    \right)_{i=1, \dots, n}.
+
+Although we can obtain the invariant subspace by computing kernel of the above operator, we merely apply it on given positions since the positions are assumed to be close to an idealized ones.
+An idealization of site tensors can be performed as well.
+
+Note that this idealization is extension of special position operators presented in [GKA02]_, which considers only site-symmetry group of each site.
 
 Transformation of space group :math:`\mathcal{G}`
 -------------------------------------------------
@@ -230,8 +273,10 @@ Each element in factor group :math:`\mathcal{D} / \mathcal{T}_{\mathrm{conv}}(\m
 References
 ----------
 
-[Lit14] D. B. Litvin, Magnetic Group Tables 1-, 2- and 3-Dimensional Magnetic Subperiodic Groups and Magnetic Space Groups (IUCr, 2014).
+.. [Lit14] D. B. Litvin, Magnetic Group Tables 1-, 2- and 3-Dimensional Magnetic Subperiodic Groups and Magnetic Space Groups (IUCr, 2014).
 
-[SC22] Harold T. Stokes and Branton J. Campbell, [ISO-MAG Table of Magnetic Space Groups](https://stokes.byu.edu/iso/magneticspacegroups.php).
+.. [SC22] Harold T. Stokes and Branton J. Campbell, [ISO-MAG Table of Magnetic Space Groups](https://stokes.byu.edu/iso/magneticspacegroups.php).
 
-[GPKRC21] J. González-Platas, N. A. Katcho and J. Rodríguez-Carvajal, J. Appl. Crystallogr. 54, 1, 338-342 (2021).
+.. [GPKRC21] J. González-Platas, N. A. Katcho and J. Rodríguez-Carvajal, J. Appl. Crystallogr. 54, 1, 338-342 (2021).
+
+.. [GKA02] R. W. Grosse-Kunstleve and P. D. Adams, Acta Cryst. A 58, 60-65 (2002).
