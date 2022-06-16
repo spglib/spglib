@@ -24,6 +24,7 @@ lib
 include
 lib64
 
+
 # Installer logs
 pip-log.txt
 
@@ -78,6 +79,14 @@ stamp-h1
 autoscan.log
 configure.scan
 test-driver
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+CTestTestfile.cmake
+cmake_install.cmake
+null.d
+*.pc
 
 example/a.out
 example/defs_basis.mod

@@ -274,16 +274,13 @@ Cell *spn_get_idealized_cell_and_site_tensors(
                 apply_symmetry_to_site_scalar(
                     &scalar_tmp, tensors[j], rotations_cart[p],
                     magnetic_symmetry->timerev[p], is_magnetic, is_axial);
-                scalar_res +=
-                    scalar_tmp - tensors[i] - mat_Nint(scalar_tmp - tensors[i]);
+                scalar_res += scalar_tmp - tensors[i];
             } else if (tensor_rank == 1) {
                 apply_symmetry_to_site_vector(
                     vector_tmp, j, tensors, rotations_cart[p],
                     magnetic_symmetry->timerev[p], is_magnetic, is_axial);
                 for (s = 0; s < 3; s++) {
-                    vector_res[s] +=
-                        vector_tmp[s] - tensors[3 * i + s] -
-                        mat_Nint(vector_tmp[s] - tensors[3 * i + s]);
+                    vector_res[s] += vector_tmp[s] - tensors[3 * i + s];
                 }
             }
         }
