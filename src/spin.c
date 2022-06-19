@@ -209,17 +209,9 @@ Cell *spn_get_idealized_cell_and_site_tensors(
     if ((inv_perm = (int *)malloc(sizeof(int) * cell->size)) == NULL) {
         return NULL;
     }
-
-    if (tensor_rank == 0) {
-        if ((*exact_tensors = (double *)malloc(sizeof(double) * cell->size)) ==
-            NULL) {
-            return NULL;
-        }
-    } else if (tensor_rank == 1) {
-        if ((*exact_tensors =
-                 (double *)malloc(sizeof(double) * cell->size * 3)) == NULL) {
-            return NULL;
-        }
+    if ((*exact_tensors = spn_alloc_site_tensors(cell->size, tensor_rank)) ==
+        NULL) {
+        return NULL;
     }
 
     if ((exact_cell = cel_alloc_cell(cell->size)) == NULL) {
@@ -314,6 +306,24 @@ Cell *spn_get_idealized_cell_and_site_tensors(
     inv_perm = NULL;
 
     return exact_cell;
+}
+
+/* If failed, return NULL. */
+double *spn_alloc_site_tensors(const int num_atoms, const int tensor_rank) {
+    double *ret;
+    if (tensor_rank == 0) {
+        if ((ret = (double *)malloc(sizeof(double) * num_atoms)) == NULL) {
+            return NULL;
+        }
+    } else if (tensor_rank == 1) {
+        if ((ret = (double *)malloc(sizeof(double) * num_atoms * 3)) == NULL) {
+            return NULL;
+        }
+    } else {
+        /* NotImplemented */
+        return NULL;
+    }
+    return ret;
 }
 
 /******************************************************************************/

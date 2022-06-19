@@ -50,5 +50,6 @@ Cell *spn_get_idealized_cell_and_site_tensors(
     double **exact_tensors, const int *permutations, const Cell *cell,
     const double *tensors, const MagneticSymmetry *magnetic_symmetry,
     const int tensor_rank, const int is_magnetic, const int is_axial);
+double *spn_alloc_site_tensors(const int num_atoms, const int tensor_rank);
 
 #endif
