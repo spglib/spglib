@@ -58,5 +58,7 @@ ExactStructure *ref_get_exact_structure_and_symmetry(Spacegroup *spacegroup,
 void ref_free_exact_structure(ExactStructure *exstr);
 int ref_find_similar_bravais_lattice(Spacegroup *spacegroup,
                                      const double symprec);
+void ref_get_conventional_lattice(double lattice[3][3],
+                                  SPGCONST Spacegroup *spacegroup);
 
 #endif

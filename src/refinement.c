@@ -68,8 +68,6 @@ static Cell *expand_positions_in_bravais(
 static Cell *get_conventional_primitive(SPGCONST Spacegroup *spacegroup,
                                         const Cell *primitive);
 static int get_number_of_pure_translation(const Symmetry *conv_sym);
-static void get_conventional_lattice(double lattice[3][3],
-                                     SPGCONST Spacegroup *spacegroup);
 static void set_tricli(double lattice[3][3], SPGCONST double metric[3][3]);
 static void set_monocli(double lattice[3][3], SPGCONST double metric[3][3],
                         const char choice[6]);
@@ -470,7 +468,7 @@ static Cell *get_bravais_exact_positions_and_lattice(
     num_pure_trans = get_number_of_pure_translation(conv_sym);
 
     /* Lattice vectors are set. */
-    get_conventional_lattice(conv_prim->lattice, spacegroup);
+    ref_get_conventional_lattice(conv_prim->lattice, spacegroup);
 
     /* Aperiodic axis is set. */
     conv_prim->aperiodic_axis = spacegroup->hall_number > 0 ? -1 : 2;
@@ -615,8 +613,10 @@ static Cell *get_conventional_primitive(SPGCONST Spacegroup *spacegroup,
     return conv_prim;
 }
 
-static void get_conventional_lattice(double lattice[3][3],
-                                     SPGCONST Spacegroup *spacegroup) {
+/* Return standardized transformation matrix for given space-group type and
+ * settings. */
+void ref_get_conventional_lattice(double lattice[3][3],
+                                  SPGCONST Spacegroup *spacegroup) {
     int i, j;
     double metric[3][3];
     Pointgroup pointgroup;
@@ -1445,7 +1445,7 @@ int ref_find_similar_bravais_lattice(Spacegroup *spacegroup,
         return 0;
     }
 
-    get_conventional_lattice(std_lattice, spacegroup);
+    ref_get_conventional_lattice(std_lattice, spacegroup);
 
     min_length2 = 0;
     for (i = 0; i < 3; i++) {
