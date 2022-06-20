@@ -90,9 +90,9 @@ static int is_zero_d3(const double a[3], const double mag_symprec);
 MagneticSymmetry *spn_get_operations_with_site_tensors(
     int **equivalent_atoms, int **permutations, double prim_lattice[3][3],
     const Symmetry *sym_nonspin, const Cell *cell, const double *tensors,
-    const int tensor_rank, const int is_magnetic, const double symprec,
-    const double angle_tolerance) {
-    int i, multi, is_axial;
+    const int tensor_rank, const int is_magnetic, const int is_axial,
+    const double symprec, const double angle_tolerance) {
+    int i, multi;
     double mag_symprec;
     MagneticSymmetry *magnetic_symmetry;
     VecDBL *pure_trans;
@@ -101,9 +101,6 @@ MagneticSymmetry *spn_get_operations_with_site_tensors(
 
     magnetic_symmetry = NULL;
     pure_trans = NULL;
-
-    /* TODO(shinohara): allow to select this flag from input */
-    is_axial = (tensor_rank == 1) ? is_magnetic : 0;
 
     /* TODO(shinohara): allow to choose different tolerance for positions and
      * magmoms */

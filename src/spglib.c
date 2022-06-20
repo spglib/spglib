@@ -108,7 +108,7 @@ static MagneticSymmetry *get_symmetry_with_site_tensors(
     const int max_size, SPGCONST double lattice[3][3],
     SPGCONST double position[][3], const int types[], const double *tensors,
     const int tensor_rank, const int num_atom, const int is_magnetic,
-    const double symprec, const double angle_tolerance);
+    const int is_axial, const double symprec, const double angle_tolerance);
 static int get_multiplicity(SPGCONST double lattice[3][3],
                             SPGCONST double position[][3], const int types[],
                             const int num_atom, const double symprec,
@@ -380,17 +380,20 @@ int spgat_get_symmetry_with_site_tensors(
     const int types[], const double *tensors, const int tensor_rank,
     const int num_atom, const int is_magnetic, const double symprec,
     const double angle_tolerance) {
-    int i, size;
+    int i, size, is_axial;
     MagneticSymmetry *magnetic_symmetry;
     int *permutations;
 
     magnetic_symmetry = NULL;
     permutations = NULL;
 
+    /* TODO(shinohara): allow to select this flag from input */
+    is_axial = (tensor_rank == 1) ? 1 : 0;
+
     if ((magnetic_symmetry = get_symmetry_with_site_tensors(
              equivalent_atoms, &permutations, primitive_lattice, max_size,
              lattice, position, types, tensors, tensor_rank, num_atom,
-             is_magnetic, symprec, angle_tolerance)) == NULL) {
+             is_magnetic, is_axial, symprec, angle_tolerance)) == NULL) {
         /* spglib_error_code is filled in get_symmetry_with_tensors */
         return 0;
     }
@@ -1320,7 +1323,7 @@ static MagneticSymmetry *get_symmetry_with_site_tensors(
     const int max_size, SPGCONST double lattice[3][3],
     SPGCONST double position[][3], const int types[], const double *tensors,
     const int tensor_rank, const int num_atom, const int is_magnetic,
-    const double symprec, const double angle_tolerance) {
+    const int is_axial, const double symprec, const double angle_tolerance) {
     int i;
     MagneticSymmetry *magnetic_symmetry;
     Symmetry *sym_nonspin;
@@ -1357,9 +1360,10 @@ static MagneticSymmetry *get_symmetry_with_site_tensors(
         goto err;
     }
     cel_set_cell(cell, lattice, position, types);
+
     magnetic_symmetry = spn_get_operations_with_site_tensors(
         &equiv_atoms, permutations, primitive_lattice, sym_nonspin, cell,
-        tensors, tensor_rank, is_magnetic, symprec, angle_tolerance);
+        tensors, tensor_rank, is_magnetic, is_axial, symprec, angle_tolerance);
     /* Set equivalent_atoms */
     for (i = 0; i < cell->size; i++) {
         equivalent_atoms[i] = equiv_atoms[i];
