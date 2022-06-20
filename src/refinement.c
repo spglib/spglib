@@ -1532,7 +1532,7 @@ int ref_find_similar_bravais_lattice(Spacegroup *spacegroup,
     return 1;
 }
 
-/* Calculate `rotation` s.t. bravais_lattice = rotation @ std_lattice */
+/* Calculate `rotation` s.t. std_lattice = rotation @ bravais_lattice */
 void ref_measure_rigid_rotation(double rotation[3][3],
                                 SPGCONST double bravais_lattice[3][3],
                                 SPGCONST double std_lattice[3][3]) {

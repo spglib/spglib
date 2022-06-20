@@ -222,6 +222,171 @@ err:
     }
 }
 
+/* Return transformed cell. Note that site tensors do not need to be transformed
+ */
+/* since they are in cartesian coordiantes. Return NULL if failed. */
+/* To transform cell and site tensors with cell-size changing cases, */
+/*   1. transform `cell` to primitive */
+/*   2. compute pure translations after given transformation */
+/*   3. apply the pure translations to the primitive */
+Cell *msg_get_transformed_cell(
+    double **changed_tensors, const Cell *cell, SPGCONST double *tensors,
+    SPGCONST double tmat[3][3], SPGCONST double origin_shift[3],
+    SPGCONST double rigid_rot[3][3], const MagneticSymmetry *magnetic_symmetry,
+    const int tensor_rank, const double symprec, const double angle_tolerance) {
+    int i, p, ip, s, changed_num_atoms;
+    VecDBL *pure_trans, *prm_pure_trans, *changed_pure_trans;
+    Primitive *primitive;
+    Cell *rot_cell, *changed_cell;
+    int *remapping;
+    double tmat_prm[3][3];
+    double pos_tmp[3];
+
+    pure_trans = NULL;
+    prm_pure_trans = NULL;
+    changed_pure_trans = NULL;
+    primitive = NULL;
+    changed_cell = NULL;
+
+    /* Rotate cell->lattice */
+    if ((rot_cell = cel_alloc_cell(cell->size)) == NULL) goto err;
+    rot_cell->aperiodic_axis = cell->aperiodic_axis;
+    mat_multiply_matrix_d3(rot_cell->lattice, rigid_rot, cell->lattice);
+    for (i = 0; i < cell->size; i++) {
+        mat_copy_vector_d3(rot_cell->position[i], cell->position[i]);
+        rot_cell->types[i] = cell->types[i];
+    }
+
+    /* 1. transform `cell` to primitive */
+    if ((pure_trans = spn_collect_pure_translations_from_magnetic_symmetry(
+             magnetic_symmetry)) == NULL)
+        goto err;
+    /* Supposedly, primitive->mapping_table maps cell to primitive->cell */
+    if ((primitive = prm_alloc_primitive(rot_cell->size)) == NULL) {
+        goto err;
+    }
+    if (prm_get_primitive_with_pure_trans(primitive, rot_cell, pure_trans,
+                                          symprec, angle_tolerance) == 0)
+        goto err;
+    /* cell->lattice = (a_std, b_std, c_std) @ tmat */
+    /* primitive->cell->lattice = (a_std, b_std, c_std) @ tmat_prm */
+    /* tmat_prm = tmat @ cell->lattice^{-1} @ primitive->cell->lattice */
+    mat_inverse_matrix_d3(tmat_prm, rot_cell->lattice, 0);
+    mat_multiply_matrix_d3(tmat_prm, tmat_prm, primitive->cell->lattice);
+
+    /* mapping from original cell to primitive is one-to-many */
+    /* Thus, its inverse mapping does not exist. */
+    /* However, because site tensors do not change by pure translations, */
+    /* it is safe to pick out one site from preimage in original cell. */
+    if ((remapping = (int *)malloc(sizeof(int) * primitive->cell->size)) ==
+        NULL)
+        goto err;
+    for (i = 0; i < primitive->cell->size; i++) {
+        remapping[i] = -1;
+    }
+    for (i = 0; i < rot_cell->size; i++) {
+        if (remapping[primitive->mapping_table[i]] != -1) continue;
+        remapping[primitive->mapping_table[i]] = i;
+    }
+
+    /* 2. compute pure translations in transformed cell */
+    if ((prm_pure_trans = mat_alloc_VecDBL(1)) == NULL) goto err;
+    for (s = 0; s < 3; s++) {
+        prm_pure_trans->vec[0][s] = 0;
+    }
+    if ((changed_pure_trans = get_changed_pure_translations(
+             tmat_prm, prm_pure_trans, symprec)) == NULL)
+        goto err;
+
+    /* 3. apply the pure translations to the primitive */
+    changed_num_atoms = primitive->cell->size * changed_pure_trans->size;
+    if ((changed_cell = cel_alloc_cell(changed_num_atoms)) == NULL) goto err;
+    if ((*changed_tensors =
+             spn_alloc_site_tensors(changed_num_atoms, tensor_rank)) == NULL)
+        goto err;
+
+    for (i = 0; i < primitive->cell->size; i++) {
+        /* x_std = (tmat_prm, origin_shift) x_prm  */
+        mat_multiply_matrix_vector_d3(pos_tmp, tmat_prm,
+                                      primitive->cell->position[i]);
+        for (s = 0; s < 3; s++) {
+            pos_tmp[s] += origin_shift[s];
+        }
+
+        for (p = 0; p < changed_pure_trans->size; p++) {
+            ip = i * changed_pure_trans->size + p;
+            changed_cell->types[ip] = primitive->cell->types[i];
+            for (s = 0; s < 3; s++) {
+                changed_cell->position[ip][s] =
+                    mat_Dmod1(pos_tmp[s] + changed_pure_trans->vec[p][s]);
+            }
+
+            /* TODO(shinohara): Need to apply rigid rotation to site tensors? */
+
+            /* No need to apply transformation for cartesian coordinates */
+            if (tensor_rank == 0) {
+                (*changed_tensors)[ip] = tensors[remapping[i]];
+            } else if (tensor_rank == 1) {
+                for (s = 0; s < 3; s++) {
+                    (*changed_tensors)[ip * 3 + s] =
+                        tensors[remapping[i] * 3 + s];
+                }
+            }
+        }
+    }
+
+    changed_cell->aperiodic_axis = -1;
+    mat_inverse_matrix_d3(changed_cell->lattice, tmat, 0);
+    mat_multiply_matrix_d3(changed_cell->lattice, rot_cell->lattice,
+                           changed_cell->lattice);
+
+    free(remapping);
+    remapping = NULL;
+    mat_free_VecDBL(pure_trans);
+    pure_trans = NULL;
+    mat_free_VecDBL(prm_pure_trans);
+    prm_pure_trans = NULL;
+    mat_free_VecDBL(changed_pure_trans);
+    changed_pure_trans = NULL;
+    prm_free_primitive(primitive);
+    primitive = NULL;
+    cel_free_cell(rot_cell);
+    rot_cell = NULL;
+
+    return changed_cell;
+
+err:
+    if (remapping != NULL) {
+        free(remapping);
+        remapping = NULL;
+    }
+    if (pure_trans != NULL) {
+        mat_free_VecDBL(pure_trans);
+        pure_trans = NULL;
+    }
+    if (prm_pure_trans != NULL) {
+        mat_free_VecDBL(prm_pure_trans);
+        prm_pure_trans = NULL;
+    }
+    if (changed_pure_trans != NULL) {
+        mat_free_VecDBL(changed_pure_trans);
+        changed_pure_trans = NULL;
+    }
+    if (primitive != NULL) {
+        prm_free_primitive(primitive);
+        primitive = NULL;
+    }
+    if (rot_cell != NULL) {
+        cel_free_cell(rot_cell);
+        rot_cell = NULL;
+    }
+    if (changed_cell != NULL) {
+        cel_free_cell(changed_cell);
+        changed_cell = NULL;
+    }
+    return NULL;
+}
+
 /******************************************************************************/
 /* Local functions                                                            */
 /******************************************************************************/
@@ -515,6 +680,8 @@ err:
     return NULL;
 }
 
+/* (I, w) = (tmat, shift)^-1 (I, w_std) (tmat, shift) */
+/* w_std = tmat @ w */
 static VecDBL *get_changed_pure_translations(SPGCONST double tmat[3][3],
                                              const VecDBL *pure_trans,
                                              const double symprec) {
