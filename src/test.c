@@ -27,6 +27,8 @@ static int test_spg_get_symmetry_from_database(void);
 static int test_spg_get_magnetic_symmetry_from_database(void);
 static int test_spg_refine_cell_BCC(void);
 static int test_spg_get_dataset(void);
+static int test_spg_get_magnetic_dataset(void);
+static int test_spg_get_magnetic_dataset_type4(void);
 static int test_spg_get_ir_reciprocal_mesh(void);
 static int test_spg_get_stabilized_reciprocal_mesh(void);
 static int test_spg_relocate_BZ_grid_address(void);
@@ -36,6 +38,7 @@ static int test_spg_get_hall_number_from_symmetry(void);
 static int show_spg_dataset(double lattice[3][3], const double origin_shift[3],
                             double position[][3], const int num_atom,
                             const int types[]);
+static int show_spg_magnetic_dataset(const SpglibMagneticDataset *dataset);
 static void show_spacegroup_type(const SpglibSpacegroupType spgtype);
 static void show_magnetic_spacegroup_type(
     const SpglibMagneticSpacegroupType msgtype);
@@ -59,6 +62,8 @@ int main(void) {
                             test_spg_get_magnetic_symmetry_from_database,
                             test_spg_refine_cell_BCC,
                             test_spg_get_dataset,
+                            test_spg_get_magnetic_dataset,
+                            test_spg_get_magnetic_dataset_type4,
                             test_spg_get_ir_reciprocal_mesh,
                             test_spg_get_stabilized_reciprocal_mesh,
                             test_spg_relocate_BZ_grid_address,
@@ -801,6 +806,120 @@ static int test_spg_get_dataset(void) {
     return 0;
 }
 
+static int test_spg_get_magnetic_dataset(void) {
+    /* Rutile structure (P4_2/mnm) */
+    /* Generators: -y+1/2,x+1/2,z+1/2; -x+1/2,y+1/2,-z+1/2; -x,-y,-z */
+    double lattice[3][3] = {{5, 0, 0}, {0, 5, 0}, {0, 0, 3}};
+    double position[][3] = {
+        /* Ti (2a) */
+        {0, 0, 0},
+        {0.5, 0.5, 0.5},
+        /* O (4f) */
+        {0.3, 0.3, 0},
+        {0.7, 0.7, 0},
+        {0.2, 0.8, 0.5},
+        {0.8, 0.2, 0.5},
+    };
+    int types[] = {1, 1, 2, 2, 2, 2};
+    double spins[6];
+    int num_atom = 6;
+    SpglibMagneticDataset *dataset;
+
+    /* Type-I, 136.495: -P 4n 2n */
+    {
+        printf("*** spg_get_magnetic_dataset (type-I, ferro) ***:\n");
+        spins[0] = 0.3;
+        spins[1] = 0.3;
+        spins[2] = 0;
+        spins[3] = 0;
+        spins[4] = 0;
+        spins[5] = 0;
+        dataset = spg_get_magnetic_dataset(lattice, position, types, spins,
+                                           0 /* tensor_rank */, num_atom, 1e-5);
+        assert(dataset->msg_type == 1);
+        assert(dataset->uni_number == 1155);
+        show_spg_magnetic_dataset(dataset);
+
+        spg_free_magnetic_dataset(dataset);
+    }
+
+    /* Type-II, "136.496": -P 4n 2n 1' */
+    {
+        printf("*** spg_get_magnetic_dataset (type-II, gray) ***:\n");
+        spins[0] = 0;
+        spins[1] = 0;
+        spins[2] = 0;
+        spins[3] = 0;
+        spins[4] = 0;
+        spins[5] = 0;
+        dataset = spg_get_magnetic_dataset(lattice, position, types, spins,
+                                           0 /* tensor_rank */, num_atom, 1e-5);
+        assert(dataset->msg_type == 2);
+        assert(dataset->uni_number == 1156);
+        show_spg_magnetic_dataset(dataset);
+
+        spg_free_magnetic_dataset(dataset);
+    }
+
+    /* Type-III, "136.498": -P 4n' 2n' */
+    {
+        printf("*** spg_get_magnetic_dataset (type-III, antiferro) ***:\n");
+        spins[0] = 0.7;
+        spins[1] = -0.7;
+        spins[2] = 0;
+        spins[3] = 0;
+        spins[4] = 0;
+        spins[5] = 0;
+        dataset = spg_get_magnetic_dataset(lattice, position, types, spins,
+                                           0 /* tensor_rank */, num_atom, 1e-5);
+        assert(dataset->msg_type == 3);
+        assert(dataset->uni_number == 1158);
+        show_spg_magnetic_dataset(dataset);
+
+        spg_free_magnetic_dataset(dataset);
+    }
+    return 0;
+}
+
+static int test_spg_get_magnetic_dataset_type4(void) {
+    /* double Rutile structure (P4_2/mnm) */
+    double lattice[3][3] = {{5, 0, 0}, {0, 5, 0}, {0, 0, 6}};
+    double position[][3] = {
+        /* Ti (2a) */
+        {0, 0, 0},
+        {0.500001, 0.5, 0.25}, /* Test with small displacement */
+        /* O (4f) */
+        {0.3, 0.3, 0},
+        {0.7, 0.7, 0},
+        {0.2, 0.8, 0.25},
+        {0.8, 0.2, 0.25},
+        /* Ti (2a) */
+        {0, 0, 0.5},
+        {0.5, 0.5, 0.75},
+        /* O (4f) */
+        {0.3, 0.3, 0.5},
+        {0.7, 0.7, 0.5},
+        {0.2, 0.8, 0.75},
+        {0.8, 0.2, 0.75},
+    };
+    int types[] = {1, 1, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2};
+    double spins[] = {0.300001, 0.299999, 0, 0, 0, 0, -0.3, -0.3, 0, 0, 0, 0};
+    int num_atom = 12;
+    SpglibMagneticDataset *dataset;
+
+    printf("*** spg_get_magnetic_dataset_type4 ***:\n");
+
+    /* "136.504": -P 4n 2n 1c' */
+    dataset = spg_get_magnetic_dataset(lattice, position, types, spins,
+                                       0 /* tensor_rank */, num_atom, 1e-5);
+    assert(dataset->msg_type == 4);
+    assert(dataset->uni_number == 932);
+    show_spg_magnetic_dataset(dataset);
+
+    spg_free_magnetic_dataset(dataset);
+    return 0;
+}
+
 static int test_spg_get_ir_reciprocal_mesh(void) {
     double lattice[3][3] = {{4, 0, 0}, {0, 4, 0}, {0, 0, 3}};
     double position[][3] = {
@@ -1112,6 +1231,67 @@ static int show_spg_dataset(double lattice[3][3], const double origin_shift[3],
 
 end:
     return retval;
+}
+
+static int show_spg_magnetic_dataset(const SpglibMagneticDataset *dataset) {
+    int i, p, s;
+    printf("UNI number: %d\n", dataset->uni_number);
+    printf("Type: %d\n", dataset->msg_type);
+    printf("Hall number: %d\n", dataset->hall_number);
+
+    printf("\nSymmetry operations\n");
+    for (p = 0; p < dataset->n_operations; p++) {
+        printf("--- %d ---\n", p + 1);
+        for (s = 0; s < 3; s++) {
+            printf("%2d %2d %2d\n", dataset->rotations[p][s][0],
+                   dataset->rotations[p][s][1], dataset->rotations[p][s][2]);
+        }
+        printf("%f %f %f\n", dataset->translations[p][0],
+               dataset->translations[p][1], dataset->translations[p][2]);
+        printf("%d\n", dataset->time_reversals[p]);
+    }
+
+    printf("\nEquivalent atoms:\n");
+    for (i = 0; i < dataset->n_atoms; i++) {
+        printf(" %d", dataset->equivalent_atoms[i]);
+    }
+    printf("\n");
+
+    printf("\nTransformation matrix:\n");
+    for (s = 0; s < 3; s++) {
+        printf("%f %f %f\n", dataset->transformation_matrix[s][0],
+               dataset->transformation_matrix[s][1],
+               dataset->transformation_matrix[s][2]);
+    }
+    printf("Origin shift:\n");
+    printf("%f %f %f\n", dataset->origin_shift[0], dataset->origin_shift[1],
+           dataset->origin_shift[2]);
+
+    printf("\nStandardization\n");
+    printf("Rigid rotation\n");
+    for (s = 0; s < 3; s++) {
+        printf("%f %f %f\n", dataset->std_rotation_matrix[s][0],
+               dataset->std_rotation_matrix[s][1],
+               dataset->std_rotation_matrix[s][2]);
+    }
+    printf("Lattice\n");
+    for (s = 0; s < 3; s++) {
+        printf("%f %f %f\n", dataset->std_lattice[s][0],
+               dataset->std_lattice[s][1], dataset->std_lattice[s][2]);
+    }
+    printf("Positions, types, site tensors \n");
+    for (i = 0; i < dataset->n_std_atoms; i++) {
+        printf("[%f %f %f], types=%d, ", dataset->std_positions[i][0],
+               dataset->std_positions[i][1], dataset->std_positions[i][2],
+               dataset->std_types[i]);
+        if (dataset->tensor_rank == 0) {
+            printf("%f\n", dataset->std_tensors[i]);
+        } else if (dataset->tensor_rank == 1) {
+            printf("%f %f %f \n", dataset->std_tensors[i * 3],
+                   dataset->std_tensors[i * 3 + 1],
+                   dataset->std_tensors[i * 3 + 2]);
+        }
+    }
 }
 
 static void show_spacegroup_type(const SpglibSpacegroupType spgtype) {
