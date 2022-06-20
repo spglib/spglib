@@ -50,7 +50,6 @@ typedef struct {
 } MagneticDataset;
 
 MagneticDataset *msg_identify_magnetic_space_group_type(
-    Spacegroup **fsg, Spacegroup **xsg, MagneticSymmetry **representatives,
     const MagneticSymmetry *magnetic_symmetry, const double symprec);
 
 #endif /*__msg_H__ */
