@@ -34,6 +34,7 @@
 
 #include "magnetic_spacegroup.h"
 #include "msg_database.h"
+#include "refinement.h"
 #include "spin.h"
 
 #include "debug.h"
@@ -85,7 +86,7 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
     MagneticSpacegroupType msgtype;
     MagneticDataset *ret;
     int uni_number_range[2];
-    double tmat[3][3];
+    double tmat[3][3], tmat_bravais[3][3], rigid_rot[3][3];
     double shift[3];
 
     sym_fsg = NULL;
@@ -118,13 +119,23 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
      * rhombohedral setting of trigonal space groups! */
     if (type == 4) {
         hall_number = xsg->hall_number;
+        /* refine tmat and shift */
+        ref_find_similar_bravais_lattice(xsg, symprec);
         mat_copy_matrix_d3(tmat, xsg->bravais_lattice);
         mat_copy_vector_d3(shift, xsg->origin_shift);
+        ref_get_conventional_lattice(tmat_bravais, xsg);
     } else {
         hall_number = fsg->hall_number;
+        /* refine tmat and shift */
+        ref_find_similar_bravais_lattice(fsg, symprec);
         mat_copy_matrix_d3(tmat, fsg->bravais_lattice);
         mat_copy_vector_d3(shift, fsg->origin_shift);
+        ref_get_conventional_lattice(tmat_bravais, fsg);
     }
+
+    /* Rigid rotation to standardized lattice */
+    /* tmat_bravais = rigid_rot @ tmat */
+    ref_measure_rigid_rotation(rigid_rot, tmat, tmat_bravais);
 
     if ((changed_symmetry = get_changed_magnetic_symmetry(
              tmat, shift, representatives, sym_xsg, magnetic_symmetry,
@@ -158,6 +169,7 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
     ret->hall_number = hall_number;
     mat_copy_matrix_d3(ret->transformation_matrix, tmat);
     mat_copy_vector_d3(ret->origin_shift, shift);
+    mat_copy_matrix_d3(ret->std_rotation_matrix, rigid_rot);
 
     free(fsg);
     fsg = NULL;

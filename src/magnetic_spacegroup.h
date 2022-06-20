@@ -47,6 +47,8 @@ typedef struct {
     /* Transformation to standardized setting */
     double transformation_matrix[3][3];
     double origin_shift[3];
+    /* Rigid rotation to standardized lattice */
+    double std_rotation_matrix[3][3];
 } MagneticDataset;
 
 MagneticDataset *msg_identify_magnetic_space_group_type(
