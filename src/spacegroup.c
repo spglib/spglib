@@ -516,6 +516,7 @@ Spacegroup *spa_search_spacegroup(const Primitive *primitive,
 }
 
 /* Return NULL if failed */
+/* Assume symmetry is transformed in primitive cell. */
 Spacegroup *spa_search_spacegroup_with_symmetry(const Symmetry *symmetry,
                                                 const double symprec) {
     int i, hall_number;
