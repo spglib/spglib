@@ -104,11 +104,11 @@ static int get_symmetry_from_dataset(
     const int types[], const int num_atom, const double symprec,
     const double angle_tolerance);
 static MagneticSymmetry *get_symmetry_with_site_tensors(
-    int equivalent_atoms[], double primitive_lattice[3][3], const int max_size,
-    SPGCONST double lattice[3][3], SPGCONST double position[][3],
-    const int types[], const double *tensors, const int tensor_rank,
-    const int num_atom, const int is_magnetic, const double symprec,
-    const double angle_tolerance);
+    int equivalent_atoms[], int **permutations, double primitive_lattice[3][3],
+    const int max_size, SPGCONST double lattice[3][3],
+    SPGCONST double position[][3], const int types[], const double *tensors,
+    const int tensor_rank, const int num_atom, const int is_magnetic,
+    const double symprec, const double angle_tolerance);
 static int get_multiplicity(SPGCONST double lattice[3][3],
                             SPGCONST double position[][3], const int types[],
                             const int num_atom, const double symprec,
@@ -382,13 +382,15 @@ int spgat_get_symmetry_with_site_tensors(
     const double angle_tolerance) {
     int i, size;
     MagneticSymmetry *magnetic_symmetry;
+    int *permutations;
 
     magnetic_symmetry = NULL;
+    permutations = NULL;
 
     if ((magnetic_symmetry = get_symmetry_with_site_tensors(
-             equivalent_atoms, primitive_lattice, max_size, lattice, position,
-             types, tensors, tensor_rank, num_atom, is_magnetic, symprec,
-             angle_tolerance)) == NULL) {
+             equivalent_atoms, &permutations, primitive_lattice, max_size,
+             lattice, position, types, tensors, tensor_rank, num_atom,
+             is_magnetic, symprec, angle_tolerance)) == NULL) {
         /* spglib_error_code is filled in get_symmetry_with_tensors */
         return 0;
     }
@@ -414,6 +416,8 @@ int spgat_get_symmetry_with_site_tensors(
 
     sym_free_magnetic_symmetry(magnetic_symmetry);
     magnetic_symmetry = NULL;
+    free(permutations);
+    permutations = NULL;
 
     spglib_error_code = SPGLIB_SUCCESS;
     return size;
@@ -1312,21 +1316,23 @@ err:
 
 /* Return NULL if failed */
 static MagneticSymmetry *get_symmetry_with_site_tensors(
-    int equivalent_atoms[], double primitive_lattice[3][3], const int max_size,
-    SPGCONST double lattice[3][3], SPGCONST double position[][3],
-    const int types[], const double *tensors, const int tensor_rank,
-    const int num_atom, const int is_magnetic, const double symprec,
-    const double angle_tolerance) {
+    int equivalent_atoms[], int **permutations, double primitive_lattice[3][3],
+    const int max_size, SPGCONST double lattice[3][3],
+    SPGCONST double position[][3], const int types[], const double *tensors,
+    const int tensor_rank, const int num_atom, const int is_magnetic,
+    const double symprec, const double angle_tolerance) {
     int i;
     MagneticSymmetry *magnetic_symmetry;
     Symmetry *sym_nonspin;
     Cell *cell;
     SpglibDataset *dataset;
+    int *equiv_atoms;
 
     magnetic_symmetry = NULL;
     sym_nonspin = NULL;
     cell = NULL;
     dataset = NULL;
+    equiv_atoms = NULL;
 
     if ((dataset = get_dataset(lattice, position, types, num_atom, 0, symprec,
                                angle_tolerance)) == NULL) {
@@ -1352,8 +1358,14 @@ static MagneticSymmetry *get_symmetry_with_site_tensors(
     }
     cel_set_cell(cell, lattice, position, types);
     magnetic_symmetry = spn_get_operations_with_site_tensors(
-        equivalent_atoms, primitive_lattice, sym_nonspin, cell, tensors,
-        tensor_rank, is_magnetic, symprec, angle_tolerance);
+        &equiv_atoms, permutations, primitive_lattice, sym_nonspin, cell,
+        tensors, tensor_rank, is_magnetic, symprec, angle_tolerance);
+    /* Set equivalent_atoms */
+    for (i = 0; i < cell->size; i++) {
+        equivalent_atoms[i] = equiv_atoms[i];
+    }
+    free(equiv_atoms);
+    equiv_atoms = NULL;
 
     sym_free_symmetry(sym_nonspin);
     sym_nonspin = NULL;
