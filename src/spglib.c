@@ -1115,14 +1115,14 @@ static SpglibMagneticDataset *get_magnetic_dataset(
     SPGCONST double lattice[3][3], SPGCONST double position[][3],
     const int types[], const double *tensors, const int tensor_rank,
     const int num_atom, const double symprec, const double angle_tolerance) {
-    int max_size, num_sym_fsg, num_sym_xsg, is_axial;
+    int max_size, is_axial;
     Cell *cell, *exact_cell, *exact_cell_std;
     Spacegroup *fsg, *xsg;
     MagneticSymmetry *magnetic_symmetry, *representatives;
     MagneticDataset *msgdata;
     SpglibMagneticDataset *dataset;
     int *equivalent_atoms, *permutations;
-    double primitive_lattice[3][3], tmat_std[3][3];
+    double primitive_lattice[3][3];
     double *exact_tensors, *exact_tensors_std;
 
     cell = NULL;
@@ -1137,6 +1137,7 @@ static SpglibMagneticDataset *get_magnetic_dataset(
     permutations = NULL;
     exact_tensors = NULL;
     exact_tensors_std = NULL;
+    equivalent_atoms = NULL;
 
     max_size = num_atom * 96;
 

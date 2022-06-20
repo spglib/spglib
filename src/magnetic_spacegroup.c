@@ -79,7 +79,7 @@ static int is_equal(const MagneticSymmetry *sym1, const MagneticSymmetry *sym2,
 /* If failed, return NULL. */
 MagneticDataset *msg_identify_magnetic_space_group_type(
     const MagneticSymmetry *magnetic_symmetry, const double symprec) {
-    int hall_number, uni_number, type, same, i;
+    int hall_number, uni_number, type, same;
     Spacegroup *fsg, *xsg;
     Symmetry *sym_fsg, *sym_xsg;
     MagneticSymmetry *representatives, *msg_uni, *changed_symmetry;
@@ -89,6 +89,7 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
     double tmat[3][3], tmat_bravais[3][3], rigid_rot[3][3];
     double shift[3];
 
+    representatives = NULL;
     sym_fsg = NULL;
     sym_xsg = NULL;
     msg_uni = NULL;
@@ -220,6 +221,8 @@ err:
         free(ret);
         ret = NULL;
     }
+
+    return NULL;
 }
 
 /* Return transformed cell. Note that site tensors do not need to be transformed
@@ -247,6 +250,7 @@ Cell *msg_get_transformed_cell(
     changed_pure_trans = NULL;
     primitive = NULL;
     changed_cell = NULL;
+    remapping = NULL;
 
     /* Rotate cell->lattice */
     if ((rot_cell = cel_alloc_cell(cell->size)) == NULL) goto err;
@@ -575,6 +579,8 @@ static MagneticSymmetry *get_changed_magnetic_symmetry(
         *changed_representatives;
     double trans_tmp[3];
 
+    pure_trans = NULL;
+    factors = NULL;
     changed = NULL;
     changed_pure_trans = NULL;
     changed_representatives = NULL;

@@ -95,12 +95,10 @@ MagneticSymmetry *spn_get_operations_with_site_tensors(
     const Symmetry *sym_nonspin, const Cell *cell, const double *tensors,
     const int tensor_rank, const int is_magnetic, const int is_axial,
     const double symprec, const double angle_tolerance) {
-    int i, multi;
+    int multi;
     double mag_symprec;
     MagneticSymmetry *magnetic_symmetry;
     VecDBL *pure_trans;
-
-    int identity[3][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
 
     magnetic_symmetry = NULL;
     pure_trans = NULL;
@@ -203,8 +201,10 @@ Cell *spn_get_idealized_cell_and_site_tensors(
     double(*rotations_cart)[3][3];
     int *inv_perm;
 
+    scalar_res = 0;
     exact_cell = NULL;
     rotations_cart = NULL;
+    inv_perm = NULL;
 
     if ((inv_perm = (int *)malloc(sizeof(int) * cell->size)) == NULL) {
         return NULL;
@@ -692,11 +692,7 @@ static int get_operation_sign_on_vector(const int j, const int k,
                                         const int is_axial,
                                         const double mag_symprec) {
     int i, timerev;
-    double vec_k[3], vec_k_ops[3], diff[3];
-
-    for (i = 0; i < 3; i++) {
-        vec_k[i] = vectors[3 * k + i];
-    }
+    double vec_k_ops[3], diff[3];
 
     for (timerev = 0; timerev <= 1; timerev++) {
         apply_symmetry_to_site_vector(vec_k_ops, k, vectors, rot_cart, timerev,
