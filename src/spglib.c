@@ -485,6 +485,7 @@ int spg_get_hall_number_from_symmetry(SPGCONST int rotation[][3][3],
     Symmetry *symmetry;
     Symmetry *prim_symmetry;
     Spacegroup *spacegroup;
+    double t_mat[3][3];
 
     symmetry = NULL;
     prim_symmetry = NULL;
@@ -500,7 +501,7 @@ int spg_get_hall_number_from_symmetry(SPGCONST int rotation[][3][3],
         mat_copy_vector_d3(symmetry->trans[i], translation[i]);
     }
 
-    prim_symmetry = prm_get_primitive_symmetry(symmetry, symprec);
+    prim_symmetry = prm_get_primitive_symmetry(t_mat, symmetry, symprec);
     sym_free_symmetry(symmetry);
     symmetry = NULL;
 
@@ -1177,8 +1178,11 @@ static SpglibMagneticDataset *get_magnetic_dataset(
     debug_print("MSG: order=%d\n", magnetic_symmetry->size);
 
     /* Identify family space group (FSG) and maximal space group (XSG) */
-    msgdata =
-        msg_identify_magnetic_space_group_type(magnetic_symmetry, symprec);
+    if ((msgdata = msg_identify_magnetic_space_group_type(
+             cell->lattice, magnetic_symmetry, symprec)) == NULL) {
+        spglib_error_code = SPGERR_SPACEGROUP_SEARCH_FAILED;
+        goto finalize;
+    }
 
     /* Idealize positions and site tensors */
     if ((exact_cell = spn_get_idealized_cell_and_site_tensors(

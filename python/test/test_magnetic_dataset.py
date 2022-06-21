@@ -85,6 +85,60 @@ class TestMagneticDataset(unittest.TestCase):
         assert dataset['msg_type'] == 3
         assert dataset['uni_number'] == 544
 
+    def test_monoclinic(self):
+        # MAGNDATA 0.103_Mn2GeO4.mcif
+        # Type-I
+        # unique axis-c
+        a = 10.69260000
+        b = 6.28510000
+        c = 5.05570000
+        lattice = np.diag([a, b, c])
+        positions = np.array([
+            [0.00000000, 0.00000000, 0.00000000],
+            [0.50000000, 0.00000000, 0.50000000],
+            [0.00000000, 0.50000000, 0.00000000],
+            [0.50000000, 0.50000000, 0.50000000],
+            [0.27940000, 0.25000000, 0.99030000],
+            [0.22060000, 0.75000000, 0.49030000],
+            [0.72060000, 0.75000000, 0.00970000],
+            [0.77940000, 0.25000000, 0.50970000],
+        ])
+        numbers = np.array([0, 0, 0, 0, 0, 0, 0, 0])
+        magmoms = np.array([
+            [1.90000000, 2.80000000, 0.30000000],
+            [-1.90000000, -2.80000000, 0.30000000],
+            [1.70000000, 2.40000000, -0.30000000],
+            [-1.70000000, -2.40000000, -0.30000000],
+            [2.90000000, 3.40000000, 0.00000000],
+            [-2.90000000, -3.40000000, 0.00000000],
+            [2.90000000, 3.40000000, 0.00000000],
+            [-2.90000000, -3.40000000, 0.00000000],
+        ])
+
+        dataset = get_magnetic_symmetry_dataset((lattice, positions, numbers, magmoms))
+        assert dataset['msg_type'] == 1
+        assert dataset['uni_number'] == 82  # BNS: 14.75
+        assert np.allclose(dataset['transformation_matrix'], np.array([[0, 1, 0], [0, 0, 1], [1, 0, 0]]))
+        assert np.allclose(dataset['std_rotation_matrix'], np.eye(3))
+        std_lattice_expect = np.array([
+            [0, b, 0],
+            [0, 0, c],  # unique-axis
+            [a, 0, 0]
+        ])
+        assert np.allclose(dataset['std_lattice'], std_lattice_expect)
+        std_positions_expect = np.array([
+            [0.00000000, 0.00000000, 0.00000000],
+            [0.00000000, 0.50000000, 0.50000000],
+            [0.50000000, 0.00000000, 0.00000000],
+            [0.50000000, 0.50000000, 0.50000000],
+            [0.25000000, 0.99030000, 0.27940000],
+            [0.75000000, 0.49030000, 0.22060000],
+            [0.75000000, 0.00970000, 0.72060000],
+            [0.25000000, 0.50970000, 0.77940000],
+        ])
+        assert np.allclose(dataset['std_positions'], std_positions_expect)
+        assert np.allclose(dataset['std_tensors'], magmoms)
+
 
 if __name__ == "__main__":
     suite = unittest.TestLoader().loadTestsFromTestCase(TestMagneticDataset)

@@ -630,20 +630,6 @@ void ref_get_conventional_lattice(double lattice[3][3],
 
     debug_print("[line %d, %s]\n", __LINE__, __FILE__);
     debug_print("bravais lattice\n");
-
-    /* printf("%f %f %f\n", */
-    /*        spacegroup->bravais_lattice[0][0], */
-    /*        spacegroup->bravais_lattice[0][1], */
-    /*        spacegroup->bravais_lattice[0][2]); */
-    /* printf("%f %f %f\n", */
-    /*        spacegroup->bravais_lattice[1][0], */
-    /*        spacegroup->bravais_lattice[1][1], */
-    /*        spacegroup->bravais_lattice[1][2]); */
-    /* printf("%f %f %f\n", */
-    /*        spacegroup->bravais_lattice[2][0], */
-    /*        spacegroup->bravais_lattice[2][1], */
-    /*        spacegroup->bravais_lattice[2][2]); */
-
     debug_print_matrix_d3(spacegroup->bravais_lattice);
     debug_print("%s\n", spacegroup->choice);
 

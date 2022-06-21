@@ -171,12 +171,15 @@ int prm_get_primitive_with_pure_trans(Primitive *primitive, const Cell *cell,
     return 1;
 }
 
-Symmetry *prm_get_primitive_symmetry(const Symmetry *symmetry,
+/* t_mat transforms primitive cell to conventional: */
+/* (a_p, b_p, c_p) t_mat = (a_c, b_c, c_c) */
+Symmetry *prm_get_primitive_symmetry(double t_mat[3][3],
+                                     const Symmetry *symmetry,
                                      const double symprec) {
     int i, primsym_size;
     VecDBL *pure_trans;
     Symmetry *prim_symmetry;
-    double t_mat[3][3], t_mat_inv[3][3], tmp_mat[3][3];
+    double t_mat_inv[3][3], tmp_mat[3][3];
 
     pure_trans = NULL;
     prim_symmetry = NULL;
@@ -207,7 +210,7 @@ Symmetry *prm_get_primitive_symmetry(const Symmetry *symmetry,
         return NULL;
     }
 
-    /* Overwrite prim_symmetry by R_p = TRT^-1, t_p = T.t */
+    /* Overwrite prim_symmetry by (T, 0) (R, t) (T, 0)^-1 = (T R T^-1, T t) */
     for (i = 0; i < prim_symmetry->size; i++) {
         mat_multiply_matrix_di3(tmp_mat, t_mat, prim_symmetry->rot[i]);
         mat_multiply_matrix_d3(tmp_mat, tmp_mat, t_mat_inv);

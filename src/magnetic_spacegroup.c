@@ -78,15 +78,18 @@ static int is_equal(const MagneticSymmetry *sym1, const MagneticSymmetry *sym2,
 
 /* If failed, return NULL. */
 MagneticDataset *msg_identify_magnetic_space_group_type(
-    const MagneticSymmetry *magnetic_symmetry, const double symprec) {
-    int hall_number, uni_number, type, same;
-    Spacegroup *fsg, *xsg;
+    SPGCONST double lattice[3][3], const MagneticSymmetry *magnetic_symmetry,
+    const double symprec) {
+    int i, hall_number, uni_number, type, same;
+    Spacegroup *fsg, *xsg, *ref_sg;
     Symmetry *sym_fsg, *sym_xsg;
     MagneticSymmetry *representatives, *msg_uni, *changed_symmetry;
     MagneticSpacegroupType msgtype;
     MagneticDataset *ret;
     int uni_number_range[2];
-    double tmat[3][3], tmat_bravais[3][3], rigid_rot[3][3];
+    double rigid_rot[3][3];
+    double inv_latt[3][3], ideal_latt[3][3], inv_ideal_latt[3][3];
+    double tmat[3][3], tmat_bravais[3][3], inv_tmat_bravais[3][3];
     double shift[3];
 
     representatives = NULL;
@@ -116,32 +119,56 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
     /* Choose reference setting */
     /* For type-IV, use setting from Hall symbol of XSG. */
     /* For other types, use setting from Hall symbol of FSG. */
-    /* transformation matrix `tmat` should be double not integer for
-     * rhombohedral setting of trigonal space groups! */
-    if (type == 4) {
-        hall_number = xsg->hall_number;
-        /* refine tmat and shift */
-        ref_find_similar_bravais_lattice(xsg, symprec);
-        mat_copy_matrix_d3(tmat, xsg->bravais_lattice);
-        mat_copy_vector_d3(shift, xsg->origin_shift);
-        ref_get_conventional_lattice(tmat_bravais, xsg);
-    } else {
-        hall_number = fsg->hall_number;
-        /* refine tmat and shift */
-        ref_find_similar_bravais_lattice(fsg, symprec);
-        mat_copy_matrix_d3(tmat, fsg->bravais_lattice);
-        mat_copy_vector_d3(shift, fsg->origin_shift);
-        ref_get_conventional_lattice(tmat_bravais, fsg);
-    }
+    ref_sg = (type == 4) ? xsg : fsg;
+    hall_number = ref_sg->hall_number;
+    mat_inverse_matrix_d3(tmat, ref_sg->bravais_lattice, 0);
+    mat_copy_vector_d3(shift, ref_sg->origin_shift);
+
+    /* Refine lattice with metric tensor */
+    mat_multiply_matrix_d3(ref_sg->bravais_lattice, lattice,
+                           ref_sg->bravais_lattice);
+    ref_get_conventional_lattice(ideal_latt, ref_sg);
+    mat_inverse_matrix_d3(inv_ideal_latt, ideal_latt, 0);
+    mat_multiply_matrix_d3(tmat_bravais, lattice, inv_ideal_latt);
+
+    /* Now, x_std = (tmat, -shift) x */
+    /*      (a_std, b_std, c_std) = (a, b, c) @ tmat^-1 */
+    /*      x_std' = (tmat_bravais, -shift) x */
+    /*      (a_std', b_std', c_std') = (a, b, c) @ tmat_bravais^-1 */
+
+    debug_print("Transformation\n");
+    debug_print_matrix_d3(tmat);
+    debug_print_vector_d3(shift);
+    debug_print("det = %f\n", mat_get_determinant_d3(tmat));
+
+    debug_print("Transformation (ref)\n");
+    debug_print_matrix_d3(tmat_bravais);
+    debug_print("det = %f\n", mat_get_determinant_d3(tmat_bravais));
 
     /* Rigid rotation to standardized lattice */
-    /* tmat_bravais = rigid_rot @ tmat */
-    ref_measure_rigid_rotation(rigid_rot, tmat, tmat_bravais);
+    /* (a_std', b_std', c_std') = rigid_rot @ (a_std, b_std, c_std) */
+    /* => (a, b, c) @ tmat_bravais^-1 = rigid_rot @ (a, b, c) @ tmat^-1 */
+    /* => rigid_rot = (a, b, c) @ tmat_bravais^-1 @ tmat @ (a, b, c)^-1 */
+    mat_inverse_matrix_d3(inv_latt, lattice, 0);
+    mat_inverse_matrix_d3(inv_tmat_bravais, tmat, 0);
+    mat_multiply_matrix_d3(rigid_rot, lattice, inv_tmat_bravais);
+    mat_multiply_matrix_d3(rigid_rot, rigid_rot, tmat);
+    mat_multiply_matrix_d3(rigid_rot, rigid_rot, inv_latt);
+    debug_print("Rigid rotation\n");
+    debug_print_matrix_d3(rigid_rot);
+    debug_print("det = %f\n", mat_get_determinant_d3(rigid_rot));
 
     if ((changed_symmetry = get_changed_magnetic_symmetry(
              tmat, shift, representatives, sym_xsg, magnetic_symmetry,
              symprec)) == NULL)
         goto err;
+
+    for (i = 0; i < changed_symmetry->size; i++) {
+        debug_print("-- %d --\n", i);
+        debug_print_matrix_i3(changed_symmetry->rot[i]);
+        debug_print_vector_d3(changed_symmetry->trans[i]);
+        debug_print("%d\n", changed_symmetry->timerev[i]);
+    }
 
     msgdb_get_uni_candidates(uni_number_range, hall_number);
     debug_print("Search UNI number over between %d to %d\n",
@@ -247,9 +274,9 @@ Cell *msg_get_transformed_cell(
     int i, p, ip, s, changed_num_atoms;
     VecDBL *pure_trans, *prm_pure_trans, *changed_pure_trans;
     Primitive *primitive;
-    Cell *rot_cell, *changed_cell;
+    Cell *changed_cell;
     int *remapping;
-    double tmat_prm[3][3];
+    double tmat_prm[3][3], inv_latt[3][3], tmat_inv[3][3];
     double pos_tmp[3];
 
     pure_trans = NULL;
@@ -259,30 +286,22 @@ Cell *msg_get_transformed_cell(
     changed_cell = NULL;
     remapping = NULL;
 
-    /* Rotate cell->lattice */
-    if ((rot_cell = cel_alloc_cell(cell->size)) == NULL) goto err;
-    rot_cell->aperiodic_axis = cell->aperiodic_axis;
-    mat_multiply_matrix_d3(rot_cell->lattice, rigid_rot, cell->lattice);
-    for (i = 0; i < cell->size; i++) {
-        mat_copy_vector_d3(rot_cell->position[i], cell->position[i]);
-        rot_cell->types[i] = cell->types[i];
-    }
-
     /* 1. transform `cell` to primitive */
     if ((pure_trans = spn_collect_pure_translations_from_magnetic_symmetry(
              magnetic_symmetry)) == NULL)
         goto err;
     /* Supposedly, primitive->mapping_table maps cell to primitive->cell */
-    if ((primitive = prm_alloc_primitive(rot_cell->size)) == NULL) {
+    if ((primitive = prm_alloc_primitive(cell->size)) == NULL) {
         goto err;
     }
-    if (prm_get_primitive_with_pure_trans(primitive, rot_cell, pure_trans,
-                                          symprec, angle_tolerance) == 0)
+    if (prm_get_primitive_with_pure_trans(primitive, cell, pure_trans, symprec,
+                                          angle_tolerance) == 0)
         goto err;
     /* cell->lattice = (a_std, b_std, c_std) @ tmat */
     /* primitive->cell->lattice = (a_std, b_std, c_std) @ tmat_prm */
-    /* tmat_prm = tmat @ cell->lattice^{-1} @ primitive->cell->lattice */
-    mat_inverse_matrix_d3(tmat_prm, rot_cell->lattice, 0);
+    /* => tmat_prm = tmat @ cell->lattice^{-1} @ primitive->cell->lattice */
+    mat_inverse_matrix_d3(inv_latt, cell->lattice, 0);
+    mat_multiply_matrix_d3(tmat_prm, tmat, inv_latt);
     mat_multiply_matrix_d3(tmat_prm, tmat_prm, primitive->cell->lattice);
 
     /* mapping from original cell to primitive is one-to-many */
@@ -295,7 +314,7 @@ Cell *msg_get_transformed_cell(
     for (i = 0; i < primitive->cell->size; i++) {
         remapping[i] = -1;
     }
-    for (i = 0; i < rot_cell->size; i++) {
+    for (i = 0; i < cell->size; i++) {
         if (remapping[primitive->mapping_table[i]] != -1) continue;
         remapping[primitive->mapping_table[i]] = i;
     }
@@ -331,25 +350,28 @@ Cell *msg_get_transformed_cell(
                 changed_cell->position[ip][s] =
                     mat_Dmod1(pos_tmp[s] + changed_pure_trans->vec[p][s]);
             }
+            debug_print_vector_d3(changed_cell->position[ip]);
 
-            /* TODO(shinohara): Need to apply rigid rotation to site tensors? */
-
-            /* No need to apply transformation for cartesian coordinates */
+            /* No need to apply transformation for cartesian coordinates. */
+            /* On the other hand, need to apply rigid rotation to site tensors.
+             */
             if (tensor_rank == 0) {
                 (*changed_tensors)[ip] = tensors[remapping[i]];
             } else if (tensor_rank == 1) {
-                for (s = 0; s < 3; s++) {
-                    (*changed_tensors)[ip * 3 + s] =
-                        tensors[remapping[i] * 3 + s];
-                }
+                /* Assume rigid_rot is proper. */
+                mat_multiply_matrix_vector_d3(*changed_tensors + 3 * ip,
+                                              rigid_rot,
+                                              tensors + 3 * remapping[i]);
             }
         }
     }
 
     changed_cell->aperiodic_axis = -1;
-    mat_inverse_matrix_d3(changed_cell->lattice, tmat, 0);
-    mat_multiply_matrix_d3(changed_cell->lattice, rot_cell->lattice,
-                           changed_cell->lattice);
+    /* Rotate cell->lattice. Note that rigid_rot is in cartesian. */
+    mat_multiply_matrix_d3(changed_cell->lattice, rigid_rot, cell->lattice);
+    mat_inverse_matrix_d3(tmat_inv, tmat, 0);
+    mat_multiply_matrix_d3(changed_cell->lattice, changed_cell->lattice,
+                           tmat_inv);
 
     free(remapping);
     remapping = NULL;
@@ -361,8 +383,6 @@ Cell *msg_get_transformed_cell(
     changed_pure_trans = NULL;
     prm_free_primitive(primitive);
     primitive = NULL;
-    cel_free_cell(rot_cell);
-    rot_cell = NULL;
 
     return changed_cell;
 
@@ -386,10 +406,6 @@ err:
     if (primitive != NULL) {
         prm_free_primitive(primitive);
         primitive = NULL;
-    }
-    if (rot_cell != NULL) {
-        cel_free_cell(rot_cell);
-        rot_cell = NULL;
     }
     if (changed_cell != NULL) {
         cel_free_cell(changed_cell);
@@ -432,6 +448,7 @@ static Symmetry *get_space_group_with_magnetic_symmetry(
     int i, num_sym_msg, num_sym, is_type2;
     Symmetry *sym, *prim_sym;
     int identity[3][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+    double tmat[3][3], inv_tmat[3][3];
 
     sym = NULL;
     prim_sym = NULL;
@@ -474,9 +491,26 @@ static Symmetry *get_space_group_with_magnetic_symmetry(
     }
     sym->size = num_sym;
 
-    prim_sym = prm_get_primitive_symmetry(sym, symprec);
+    /* (a, b, c) = (a_prim, b_prim, c_prim) @ tmat */
+    prim_sym = prm_get_primitive_symmetry(tmat, sym, symprec);
 
     *spacegroup = spa_search_spacegroup_with_symmetry(prim_sym, symprec);
+    /* refine bravais_lattice and origin_shift */
+    ref_find_similar_bravais_lattice(*spacegroup, symprec);
+    /* At this point, let P = spacegroup->bravais_lattice, p =
+     * spacegroup->origin_shift: */
+    /*     x_std = (P^-1, -p) x_prim */
+    /*     (a_std, b_std, c_std) = (a_prim, b_prim, c_prim) @ P */
+
+    /* Change basis from primitive to original */
+    /* x = (tmat, 0)^-1 x_prim */
+    /* => x_std = (P^-1, -p) (tmat, 0) x */
+    /*          = ( P^-1 @ tmat, -p) x */
+    /*          = ( (tmat^-1 @ P)^-1, -p) x */
+    /*    (a_std, b_std, c_std) = (a, b, c) @ tmat^-1 @ P */
+    mat_inverse_matrix_d3(inv_tmat, tmat, 0);
+    mat_multiply_matrix_d3((*spacegroup)->bravais_lattice, inv_tmat,
+                           (*spacegroup)->bravais_lattice);
 
     sym_free_symmetry(prim_sym);
     prim_sym = NULL;
@@ -709,7 +743,7 @@ static VecDBL *get_changed_pure_translations(SPGCONST double tmat[3][3],
     det = mat_get_determinant_d3(tmat);
     size = pure_trans->size * mat_Nint(1 / det);
 
-    if ((changed_pure_trans = mat_alloc_VecDBL(size)) == NULL) return NULL;
+    if ((changed_pure_trans = mat_alloc_VecDBL(size)) == NULL) goto err;
 
     if (mat_Dabs(det - 1) <= symprec) {
         for (i = 0; i < pure_trans->size; i++) {
@@ -762,10 +796,17 @@ static VecDBL *get_changed_pure_translations(SPGCONST double tmat[3][3],
     if (count != size) {
         warning_print(
             "spglib: Failed to find pure translations after transformation.");
-        return NULL;
+        goto err;
     }
 
     return changed_pure_trans;
+
+err:
+    if (changed_pure_trans != NULL) {
+        mat_free_VecDBL(changed_pure_trans);
+        changed_pure_trans = NULL;
+    }
+    return NULL;
 }
 
 /* Return 1 iff `v` is contained in `trans`. */
