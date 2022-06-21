@@ -21,6 +21,7 @@ def get_all_msg_settings():
         mapping[bns_number] = uni_number
 
     all_datum = []
+    offset = 1
     for hall_number in range(1, 530 + 1):
         number = spg_table[hall_number]['number']
         choice = spg_table[hall_number]['choice']
@@ -32,7 +33,8 @@ def get_all_msg_settings():
             mhs = MagneticHallSymbol(mhall_symbol)
             coset = trns.transform_coset(mhs.coset)
             uni_number = mapping[bns_number]
-            all_datum.append((coset, uni_number, hall_number))
+            all_datum.append((coset, uni_number, hall_number, offset))
+            offset += len(coset)
 
     return all_datum
 
@@ -58,7 +60,7 @@ if __name__ == "__main__":
     contents.append("static const int magnetic_symmetry_operations[] = {")
     contents.append("           0, /*dummy*/")
     count = 1
-    for i, (coset, uni_number, _) in enumerate(all_datum):
+    for i, (coset, uni_number, _, _) in enumerate(all_datum):
         for ops in coset:
             encoded = encode_magnetic_operation(ops)
             linear = np.around(ops.linear).astype(int)
@@ -72,23 +74,21 @@ if __name__ == "__main__":
 
     # Dump `magnetic_spacegroup_operation_index`
     # magnetic_spacegroup_operation_index[uni_number][18][2] = array of {order, offset} of the Hall number in `magnetic_symmetry_operations`
-    mapping = {}
-    for coset, uni_number, hall_number in all_datum:
+    mapping = {uni_number: [] for uni_number in range(1, 1651 + 1)}
+    for coset, uni_number, hall_number, offset in all_datum:
         order = len(coset)
-        if uni_number in mapping:
-            mapping[uni_number].append((hall_number, order))
-        else:
-            mapping[uni_number] = [(hall_number, order), ]
+        mapping[uni_number].append((hall_number, order, offset))
 
     contents.append("static const int magnetic_spacegroup_operation_index[][18][2] = {")
     contents.append("    { {0, 0} }, /* dummy */")
     count = 1
-    for uni_number, hall_numbers_and_orders in mapping.items():
-        assert len(hall_numbers_and_orders) <= 18
+    for uni_number in range(1, 1651 + 1):
+        hall_order_offset = mapping[uni_number]
+        assert len(hall_order_offset) <= 18
+
         orders_offsets = []
-        for hall_number, order in hall_numbers_and_orders:
-            orders_offsets.append((order, count))
-            count += order
+        for _, order, offset in hall_order_offset:
+            orders_offsets.append((order, offset))
 
         orders_offsets_str = ", ".join([f"{{ {order}, {offset} }}" for order, offset in orders_offsets])
         contents.append(f"    {{ {orders_offsets_str} }}, /* {uni_number} */")

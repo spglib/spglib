@@ -144,6 +144,8 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
         goto err;
 
     msgdb_get_uni_candidates(uni_number_range, hall_number);
+    debug_print("Search UNI number over between %d to %d\n",
+                uni_number_range[0], uni_number_range[1]);
     for (uni_number = uni_number_range[0]; uni_number <= uni_number_range[1];
          uni_number++) {
         msg_uni = msgdb_get_spacegroup_operations(uni_number, hall_number);
@@ -152,12 +154,17 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
         msg_uni = NULL;
         if (same) break;
     }
+    if (uni_number > uni_number_range[1]) {
+        warning_print("Failed to match with UNI number!\n");
+        goto err;
+    }
     debug_print("UNI number: %d\n", uni_number);
 
     msgtype = msgdb_get_magnetic_spacegroup_type(uni_number);
     if (msgtype.type != type) {
-        warning_print("Inconsistent MSG type detected: %d %d\n", msgtype.type,
-                      type);
+        warning_print("Inconsistent MSG type:\n");
+        warning_print("  From FSG and XSG: %d\n", type);
+        warning_print("  From DB matching: %d\n", msgtype.type);
         goto err;
     }
 
