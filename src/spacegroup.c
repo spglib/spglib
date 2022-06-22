@@ -680,6 +680,20 @@ ret:
     return trimmed_cell;
 }
 
+void spa_copy_spacegroup(Spacegroup *dst, SPGCONST Spacegroup *src) {
+    dst->number = src->number;
+    dst->hall_number = src->hall_number;
+    dst->pointgroup_number = src->pointgroup_number;
+    strcpy(dst->schoenflies, src->schoenflies);
+    strcpy(dst->hall_symbol, src->hall_symbol);
+    strcpy(dst->international, src->international);
+    strcpy(dst->international_long, src->international_long);
+    strcpy(dst->international_short, src->international_short);
+    strcpy(dst->choice, src->choice);
+    mat_copy_matrix_d3(dst->bravais_lattice, src->bravais_lattice);
+    mat_copy_vector_d3(dst->origin_shift, src->origin_shift);
+}
+
 /* Return NULL if failed */
 static Spacegroup *search_spacegroup_with_symmetry(
     const Primitive *primitive, const int candidates[],

@@ -121,7 +121,12 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
     /* Choose reference setting */
     /* For type-IV, use setting from Hall symbol of XSG. */
     /* For other types, use setting from Hall symbol of FSG. */
-    ref_sg = (type == 4) ? xsg : fsg;
+    if ((ref_sg = (Spacegroup *)malloc(sizeof(Spacegroup))) == NULL) goto err;
+    if (type == 4) {
+        spa_copy_spacegroup(ref_sg, xsg);
+    } else {
+        spa_copy_spacegroup(ref_sg, fsg);
+    }
     hall_number = ref_sg->hall_number;
     mat_inverse_matrix_d3(tmat, ref_sg->bravais_lattice, 0);
     mat_copy_vector_d3(shift, ref_sg->origin_shift);
@@ -214,6 +219,8 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
     fsg = NULL;
     free(xsg);
     xsg = NULL;
+    free(ref_sg);
+    ref_sg = NULL;
     sym_free_symmetry(sym_fsg);
     sym_fsg = NULL;
     sym_free_symmetry(sym_xsg);
@@ -234,6 +241,10 @@ err:
     if (xsg != NULL) {
         free(xsg);
         xsg = NULL;
+    }
+    if (ref_sg != NULL) {
+        free(ref_sg);
+        ref_sg = NULL;
     }
     if (sym_fsg != NULL) {
         sym_free_symmetry(sym_fsg);
