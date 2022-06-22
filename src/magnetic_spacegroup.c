@@ -75,6 +75,9 @@ static MagneticSymmetry *get_distinct_changed_magnetic_symmetry(
     const MagneticSymmetry *sym_msg);
 static int is_equal(const MagneticSymmetry *sym1, const MagneticSymmetry *sym2,
                     const double symprec);
+void get_rigid_rotation(double rigid_rot[3][3], SPGCONST double lattice[3][3],
+                        SPGCONST double tmat[3][3],
+                        SPGCONST Spacegroup *ref_sg);
 
 /******************************************************************************/
 
@@ -90,8 +93,7 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
     MagneticDataset *ret;
     int uni_number_range[2];
     double rigid_rot[3][3];
-    double inv_latt[3][3], ideal_latt[3][3], inv_ideal_latt[3][3];
-    double tmat[3][3], tmat_bravais[3][3], inv_tmat_bravais[3][3];
+    double tmat[3][3];
     double shift[3];
 
     representatives = NULL;
@@ -119,6 +121,7 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
     /* Determine type of MSG and generator of factor group of MSG over XSG */
     type = get_magnetic_space_group_type(&representatives, magnetic_symmetry,
                                          sym_fsg->size, sym_xsg->size);
+    debug_print("type=%d\n", type);
 
     /* Choose reference setting */
     /* For type-IV, use setting from Hall symbol of XSG. */
@@ -133,43 +136,10 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
     mat_inverse_matrix_d3(tmat, ref_sg->bravais_lattice, 0);
     mat_copy_vector_d3(shift, ref_sg->origin_shift);
 
-    debug_print("type=%d\n", type);
-
-    /* TODO(shinohara): current implementation seems not to obey the */
-    /* standardizing convention w.r.t. cartesian. */
-    /* Refine lattice with metric tensor */
-    mat_multiply_matrix_d3(ref_sg->bravais_lattice, lattice,
-                           ref_sg->bravais_lattice);
-    ref_get_conventional_lattice(ideal_latt, ref_sg);
-    mat_inverse_matrix_d3(inv_ideal_latt, ideal_latt, 0);
-    mat_multiply_matrix_d3(tmat_bravais, lattice, inv_ideal_latt);
-
-    /* Now, x_std = (tmat, -shift) x */
-    /*      (a_std, b_std, c_std) = (a, b, c) @ tmat^-1 */
-    /*      x_std' = (tmat_bravais, -shift) x */
-    /*      (a_std', b_std', c_std') = (a, b, c) @ tmat_bravais^-1 */
-
     debug_print("Transformation\n");
     debug_print_matrix_d3(tmat);
     debug_print_vector_d3(shift);
     debug_print("det = %f\n", mat_get_determinant_d3(tmat));
-
-    debug_print("Transformation (ref)\n");
-    debug_print_matrix_d3(tmat_bravais);
-    debug_print("det = %f\n", mat_get_determinant_d3(tmat_bravais));
-
-    /* Rigid rotation to standardized lattice */
-    /* (a_std', b_std', c_std') = rigid_rot @ (a_std, b_std, c_std) */
-    /* => (a, b, c) @ tmat_bravais^-1 = rigid_rot @ (a, b, c) @ tmat^-1 */
-    /* => rigid_rot = (a, b, c) @ tmat_bravais^-1 @ tmat @ (a, b, c)^-1 */
-    mat_inverse_matrix_d3(inv_latt, lattice, 0);
-    mat_inverse_matrix_d3(inv_tmat_bravais, tmat, 0);
-    mat_multiply_matrix_d3(rigid_rot, lattice, inv_tmat_bravais);
-    mat_multiply_matrix_d3(rigid_rot, rigid_rot, tmat);
-    mat_multiply_matrix_d3(rigid_rot, rigid_rot, inv_latt);
-    debug_print("Rigid rotation\n");
-    debug_print_matrix_d3(rigid_rot);
-    debug_print("det = %f\n", mat_get_determinant_d3(rigid_rot));
 
     if ((changed_symmetry = get_changed_magnetic_symmetry(
              tmat, shift, representatives, sym_xsg, magnetic_symmetry,
@@ -207,6 +177,13 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
         warning_print("  From DB matching: %d\n", msgtype.type);
         goto err;
     }
+
+    /* TODO(shinohara): current implementation seems not to obey the */
+    /* standardizing convention w.r.t. cartesian. */
+    mat_multiply_matrix_d3(ref_sg->bravais_lattice, lattice,
+                           ref_sg->bravais_lattice);
+    /* Rigid rotation to standardized lattice */
+    get_rigid_rotation(rigid_rot, lattice, tmat, ref_sg);
 
     /* Set MagneticDataset */
     if ((ret = (MagneticDataset *)(malloc(sizeof(MagneticDataset)))) == NULL)
@@ -945,4 +922,37 @@ static int is_equal(const MagneticSymmetry *sym1, const MagneticSymmetry *sym2,
     }
 
     return 1;
+}
+
+void get_rigid_rotation(double rigid_rot[3][3], SPGCONST double lattice[3][3],
+                        SPGCONST double tmat[3][3],
+                        SPGCONST Spacegroup *ref_sg) {
+    double ideal_latt[3][3], inv_ideal_latt[3][3], inv_latt[3][3];
+    double tmat_bravais[3][3], inv_tmat_bravais[3][3];
+
+    /* Refine lattice with metric tensor */
+    ref_get_conventional_lattice(ideal_latt, ref_sg);
+    mat_inverse_matrix_d3(inv_ideal_latt, ideal_latt, 0);
+    mat_multiply_matrix_d3(tmat_bravais, lattice, inv_ideal_latt);
+
+    /* Now, x_std = (tmat, -shift) x */
+    /*      (a_std, b_std, c_std) = (a, b, c) @ tmat^-1 */
+    /*      x_std' = (tmat_bravais, -shift) x */
+    /*      (a_std', b_std', c_std') = (a, b, c) @ tmat_bravais^-1 */
+    debug_print("Transformation (ref)\n");
+    debug_print_matrix_d3(tmat_bravais);
+    debug_print("det = %f\n", mat_get_determinant_d3(tmat_bravais));
+
+    /* (a_std', b_std', c_std') = rigid_rot @ (a_std, b_std, c_std) */
+    /* => (a, b, c) @ tmat_bravais^-1 = rigid_rot @ (a, b, c) @ tmat^-1 */
+    /* => rigid_rot = (a, b, c) @ tmat_bravais^-1 @ tmat @ (a, b, c)^-1 */
+    mat_inverse_matrix_d3(inv_latt, lattice, 0);
+    mat_inverse_matrix_d3(inv_tmat_bravais, tmat, 0);
+    mat_multiply_matrix_d3(rigid_rot, lattice, inv_tmat_bravais);
+    mat_multiply_matrix_d3(rigid_rot, rigid_rot, tmat);
+    mat_multiply_matrix_d3(rigid_rot, rigid_rot, inv_latt);
+
+    debug_print("Rigid rotation\n");
+    debug_print_matrix_d3(rigid_rot);
+    debug_print("det = %f\n", mat_get_determinant_d3(rigid_rot));
 }

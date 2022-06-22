@@ -38,7 +38,7 @@ static int test_spg_get_hall_number_from_symmetry(void);
 static int show_spg_dataset(double lattice[3][3], const double origin_shift[3],
                             double position[][3], const int num_atom,
                             const int types[]);
-static int show_spg_magnetic_dataset(const SpglibMagneticDataset *dataset);
+static void show_spg_magnetic_dataset(const SpglibMagneticDataset *dataset);
 static void show_spacegroup_type(const SpglibSpacegroupType spgtype);
 static void show_magnetic_spacegroup_type(
     const SpglibMagneticSpacegroupType msgtype);
@@ -1233,7 +1233,7 @@ end:
     return retval;
 }
 
-static int show_spg_magnetic_dataset(const SpglibMagneticDataset *dataset) {
+static void show_spg_magnetic_dataset(const SpglibMagneticDataset *dataset) {
     int i, p, s;
     printf("UNI number: %d\n", dataset->uni_number);
     printf("Type: %d\n", dataset->msg_type);
