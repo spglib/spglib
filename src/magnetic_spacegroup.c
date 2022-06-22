@@ -111,8 +111,10 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
     if (sym_fsg == NULL || sym_xsg == NULL) goto err;
     debug_print("FSG: hall_number=%d, international=%s, order=%d\n",
                 fsg->hall_number, fsg->international_short, sym_fsg->size);
+    debug_print_matrix_d3(fsg->bravais_lattice);
     debug_print("XSG: hall_number=%d, international=%s, order=%d\n",
                 xsg->hall_number, xsg->international_short, sym_xsg->size);
+    debug_print_matrix_d3(xsg->bravais_lattice);
 
     /* Determine type of MSG and generator of factor group of MSG over XSG */
     type = get_magnetic_space_group_type(&representatives, magnetic_symmetry,
@@ -130,6 +132,8 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
     hall_number = ref_sg->hall_number;
     mat_inverse_matrix_d3(tmat, ref_sg->bravais_lattice, 0);
     mat_copy_vector_d3(shift, ref_sg->origin_shift);
+
+    debug_print("type=%d\n", type);
 
     /* TODO(shinohara): current implementation seems not to obey the */
     /* standardizing convention w.r.t. cartesian. */
@@ -608,6 +612,20 @@ static MagneticSymmetry *get_representative(
 
     /* If primed operation with identity linear part has translations other */
     /* than centering vectors, MSG is type-IV. */
+    for (i = 0; i < magnetic_symmetry->size; i++) {
+        if (mat_check_identity_matrix_i3(magnetic_symmetry->rot[i], identity) &&
+            magnetic_symmetry->timerev[i]) {
+            /* Type-IV: anti translation */
+            mat_copy_matrix_i3(representative->rot[1],
+                               magnetic_symmetry->rot[i]);
+            mat_copy_vector_d3(representative->trans[1],
+                               magnetic_symmetry->trans[i]);
+            representative->timerev[1] = 1;
+            return representative;
+        }
+    }
+
+    /* Now, this MSG should be type-III. */
     for (i = 0; i < magnetic_symmetry->size; i++) {
         if (!magnetic_symmetry->timerev[i]) continue;
 
