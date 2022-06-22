@@ -139,6 +139,105 @@ class TestMagneticDataset(unittest.TestCase):
         assert np.allclose(dataset['std_positions'], std_positions_expect)
         assert np.allclose(dataset['std_tensors'], magmoms)
 
+    def test_trigonal(self):
+        # MAGNDATA: 0.108_Mn3Ir.mcif
+        # hall_number=459 (166:R)
+        # Type-III, BNS: 166.101
+        lattice = np.array([
+            [3.77000000, 0.00000000, 0.00000000],
+            [0.00000000, 3.77000000, 0.00000000],
+            [0.00000000, 0.00000000, 3.77000000],
+        ])
+        positions = np.array([
+            [0.00000000, 0.00000000, 0.00000000],
+            [0.00000000, 0.50000000, 0.50000000],
+            [0.50000000, 0.00000000, 0.50000000],
+            [0.50000000, 0.50000000, 0.00000000],
+        ])
+        numbers = np.array([0, 1, 1, 1])
+        magmoms = np.array([
+            [0.00000000, 0.00000000, 0.00000000],
+            [2.00000000, -1.00000000, -1.00000000],
+            [-1.00000000, 2.00000000, -1.00000000],
+            [-1.00000000, -1.00000000, 2.00000000],
+        ])
+
+        dataset = get_magnetic_symmetry_dataset((lattice, positions, numbers, magmoms))
+        assert dataset['uni_number'] == 1331
+        assert dataset['hall_number'] == 458  # choose hexagonal axes in default
+        assert dataset['msg_type'] == 3
+        assert len(dataset['time_reversals']) == 12
+        # Use hexagonal axes for standardized cell
+        assert np.around(1 / np.linalg.det(dataset['transformation_matrix'])) == 3
+        assert dataset['std_positions'].shape[0] == positions.shape[0] * 3
+        assert dataset['std_types'].shape[0] == numbers.shape[0] * 3
+        assert dataset['std_tensors'].shape[0] == magmoms.shape[0] * 3
+
+        # Test hR with the standardized cell
+        std_cell = (dataset['std_lattice'], dataset['std_positions'], dataset['std_types'], dataset['std_tensors'])
+        dataset2 = get_magnetic_symmetry_dataset(std_cell)
+        assert dataset2['uni_number'] == 1331
+        assert dataset2['hall_number'] == 458
+        assert dataset2['n_operations'] == 12 * 3
+        assert np.isclose(np.linalg.det(dataset2['primitive_lattice']), np.linalg.det(lattice))
+
+    def test_conventional(self):
+        # MAGNDATA: 0.110_Cr2O3.mcif
+        # BNS: 15.87, MHall: C 2yc' -1'
+        lattice = np.array([
+            [4.95700000, 0.00000000, 0.00000000],
+            [-2.47850000, 4.29288793, 0.00000000],
+            [0.00000000, 0.00000000, 13.59230000],
+        ])
+        positions = np.array([
+            [0.00000000, 0.00000000, 0.34751000],
+            [0.33333333, 0.66666667, 0.01417667],
+            [0.66666667, 0.33333333, 0.68084333],
+            [0.33333333, 0.66666667, 0.51417667],
+            [0.66666667, 0.33333333, 0.18084333],
+            [0.00000000, 0.00000000, 0.84751000],
+            [0.33333333, 0.66666667, 0.81915667],
+            [0.00000000, 0.00000000, 0.15249000],
+            [0.66666667, 0.33333333, 0.48582333],
+            [0.00000000, 0.00000000, 0.65249000],
+            [0.66666667, 0.33333333, 0.98582333],
+            [0.33333333, 0.66666667, 0.31915667],
+            [0.30570000, 0.00000000, 0.25000000],
+            [0.63903333, 0.66666667, 0.91666667],
+            [0.97236667, 0.33333333, 0.58333333],
+            [0.02763333, 0.66666667, 0.41666667],
+            [0.36096667, 0.33333333, 0.08333333],
+            [0.69430000, 0.00000000, 0.75000000],
+        ])
+        numbers = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1])
+        magmoms = np.array([
+            [-1.00000000, 0.00000000, 0.00000000],
+            [-1.00000000, 0.00000000, 0.00000000],
+            [-1.00000000, 0.00000000, 0.00000000],
+            [-1.00000000, 0.00000000, 0.00000000],
+            [-1.00000000, 0.00000000, 0.00000000],
+            [-1.00000000, 0.00000000, 0.00000000],
+            [1.00000000, 0.00000000, 0.00000000],
+            [1.00000000, 0.00000000, 0.00000000],
+            [1.00000000, 0.00000000, 0.00000000],
+            [1.00000000, 0.00000000, 0.00000000],
+            [1.00000000, 0.00000000, 0.00000000],
+            [1.00000000, 0.00000000, 0.00000000],
+            [0.00000000, 0.00000000, 0.00000000],
+            [0.00000000, 0.00000000, 0.00000000],
+            [0.00000000, 0.00000000, 0.00000000],
+            [0.00000000, 0.00000000, 0.00000000],
+            [0.00000000, 0.00000000, 0.00000000],
+            [0.00000000, 0.00000000, 0.00000000],
+        ])
+
+        dataset = get_magnetic_symmetry_dataset((lattice, positions, numbers, magmoms))
+        assert dataset['uni_number'] == 94
+        assert dataset['hall_number'] == 90
+        assert dataset['rotations'].shape[0] == 12
+        # Original hP setting with 18 atoms are converted to mS with 12 (= 18 / 3 * 2) atoms
+        assert dataset['n_std_atoms'] == 12
+
 
 if __name__ == "__main__":
     suite = unittest.TestLoader().loadTestsFromTestCase(TestMagneticDataset)

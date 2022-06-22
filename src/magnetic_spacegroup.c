@@ -42,6 +42,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define MAX_DENOMINATOR 100
+
 static Symmetry *get_family_space_group_with_magnetic_symmetry(
     Spacegroup **fsg, const MagneticSymmetry *magnetic_symmetry,
     const double symprec);
@@ -124,6 +126,8 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
     mat_inverse_matrix_d3(tmat, ref_sg->bravais_lattice, 0);
     mat_copy_vector_d3(shift, ref_sg->origin_shift);
 
+    /* TODO(shinohara): current implementation seems not to obey the */
+    /* standardizing convention w.r.t. cartesian. */
     /* Refine lattice with metric tensor */
     mat_multiply_matrix_d3(ref_sg->bravais_lattice, lattice,
                            ref_sg->bravais_lattice);
@@ -732,7 +736,7 @@ err:
 static VecDBL *get_changed_pure_translations(SPGCONST double tmat[3][3],
                                              const VecDBL *pure_trans,
                                              const double symprec) {
-    int size, count, denominator, i, n0, n1, n2;
+    int size, count, denominator, i, n0, n1, n2, s, t, ok;
     double det;
     double trans_tmp[3], trans_shifted[3];
     VecDBL *changed_pure_trans;
@@ -741,7 +745,7 @@ static VecDBL *get_changed_pure_translations(SPGCONST double tmat[3][3],
     count = 0;
 
     det = mat_get_determinant_d3(tmat);
-    size = pure_trans->size * mat_Nint(1 / det);
+    size = mat_Nint(pure_trans->size / det);
 
     if ((changed_pure_trans = mat_alloc_VecDBL(size)) == NULL) goto err;
 
@@ -750,25 +754,29 @@ static VecDBL *get_changed_pure_translations(SPGCONST double tmat[3][3],
             mat_copy_vector_d3(changed_pure_trans->vec[count++],
                                pure_trans->vec[i]);
         }
-    } else if (mat_Dabs(det) > 1 + symprec) {
-        /* Find unique translations after transformation */
-        for (i = 0; i < pure_trans->size; i++) {
-            mat_multiply_matrix_vector_d3(trans_tmp, tmat, pure_trans->vec[i]);
-            trans_tmp[0] = mat_Dmod1(trans_tmp[0]);
-            trans_tmp[1] = mat_Dmod1(trans_tmp[1]);
-            trans_tmp[2] = mat_Dmod1(trans_tmp[2]);
-
-            if (is_contained_vec(trans_tmp, changed_pure_trans, count, symprec))
-                continue;
-            mat_copy_vector_d3(changed_pure_trans->vec[count++],
-                               pure_trans->vec[i]);
-        }
     } else {
-        /* Unit cell is enlarged */
-        denominator = (int)(1 / det + 1);
-        for (n0 = 0; n0 < denominator; n0++) {
-            for (n1 = 0; n1 < denominator; n1++) {
-                for (n2 = 0; n2 < denominator; n2++) {
+        /* Find least common denominator of elements in tmat */
+        /* determinant of tmat may not be integer! */
+        for (denominator = 1; denominator <= MAX_DENOMINATOR; denominator++) {
+            ok = 1;
+            for (s = 0; s < 3; s++) {
+                for (t = 0; t < 3; t++) {
+                    if (mat_Dabs(tmat[s][t] * denominator -
+                                 mat_Nint(tmat[s][t] * denominator)) >
+                        symprec) {
+                        ok = 0;
+                        break;
+                    }
+                }
+            }
+            if (ok) break;
+        }
+        debug_print("denominator=%d\n", denominator);
+
+        /* Find unique translations after transformation */
+        for (n0 = 0; n0 <= denominator; n0++) {
+            for (n1 = 0; n1 <= denominator; n1++) {
+                for (n2 = 0; n2 <= denominator; n2++) {
                     for (i = 0; i < pure_trans->size; i++) {
                         /* Try additional lattice points to recover translations
                          * in conventional cell */
@@ -777,15 +785,15 @@ static VecDBL *get_changed_pure_translations(SPGCONST double tmat[3][3],
                         trans_shifted[2] = pure_trans->vec[i][2] + n2;
                         mat_multiply_matrix_vector_d3(trans_tmp, tmat,
                                                       trans_shifted);
-                        trans_tmp[0] = mat_Dmod1(trans_tmp[0]);
-                        trans_tmp[1] = mat_Dmod1(trans_tmp[1]);
-                        trans_tmp[2] = mat_Dmod1(trans_tmp[2]);
+                        for (s = 0; s < 3; s++) {
+                            trans_tmp[s] = mat_Dmod1(trans_tmp[s]);
+                        }
 
                         if (is_contained_vec(trans_tmp, changed_pure_trans,
                                              count, symprec))
                             continue;
                         mat_copy_vector_d3(changed_pure_trans->vec[count++],
-                                           pure_trans->vec[i]);
+                                           trans_tmp);
                     }
                 }
             }
@@ -795,7 +803,8 @@ static VecDBL *get_changed_pure_translations(SPGCONST double tmat[3][3],
     /* Sanity check */
     if (count != size) {
         warning_print(
-            "spglib: Failed to find pure translations after transformation.");
+            "spglib: Failed to find pure translations after transformation.\n");
+        warning_print("Expect=%d, Actual=%d\n", size, count);
         goto err;
     }
 
@@ -812,14 +821,17 @@ err:
 /* Return 1 iff `v` is contained in `trans`. */
 static int is_contained_vec(SPGCONST double v[3], const VecDBL *trans,
                             const int size, const double symprec) {
-    int i;
+    int i, s, equivalent;
 
     for (i = 0; i < size; i++) {
-        if (mat_Dabs(v[0] - trans->vec[i][0]) < symprec &&
-            mat_Dabs(v[1] - trans->vec[i][1]) < symprec &&
-            mat_Dabs(v[2] - trans->vec[i][2]) < symprec) {
-            return 1;
+        equivalent = 1;
+        for (s = 0; s < 3; s++) {
+            if (mat_Dabs(v[s] - trans->vec[i][s]) >= symprec) {
+                equivalent = 0;
+                break;
+            }
         }
+        if (equivalent) return 1;
     }
 
     return 0;
