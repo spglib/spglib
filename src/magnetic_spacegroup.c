@@ -44,6 +44,12 @@
 
 #define MAX_DENOMINATOR 100
 
+static int get_reference_space_group(Spacegroup **ref_sg,
+                                     MagneticSymmetry **changed_symmetry,
+                                     SPGCONST double tmat[3][3],
+                                     SPGCONST double shift[3],
+                                     const MagneticSymmetry *magnetic_symmetry,
+                                     const double symprec);
 static Symmetry *get_family_space_group_with_magnetic_symmetry(
     Spacegroup **fsg, const MagneticSymmetry *magnetic_symmetry,
     const double symprec);
@@ -86,9 +92,8 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
     SPGCONST double lattice[3][3], const MagneticSymmetry *magnetic_symmetry,
     const double symprec) {
     int i, hall_number, uni_number, type, same;
-    Spacegroup *fsg, *xsg, *ref_sg;
-    Symmetry *sym_fsg, *sym_xsg;
-    MagneticSymmetry *representatives, *msg_uni, *changed_symmetry;
+    Spacegroup *ref_sg;
+    MagneticSymmetry *msg_uni, *changed_symmetry;
     MagneticSpacegroupType msgtype;
     MagneticDataset *ret;
     int uni_number_range[2];
@@ -96,55 +101,17 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
     double tmat[3][3];
     double shift[3];
 
-    representatives = NULL;
-    sym_fsg = NULL;
-    sym_xsg = NULL;
+    ref_sg = NULL;
     msg_uni = NULL;
     changed_symmetry = NULL;
     ret = NULL;
 
-    /* Identify family space group (FSG) and maximal space group (XSG) */
     /* TODO(shinohara): add option to specify hall_number in searching
      * space-group type */
-    sym_fsg = get_family_space_group_with_magnetic_symmetry(
-        &fsg, magnetic_symmetry, symprec);
-    sym_xsg = get_maximal_subspace_group_with_magnetic_symmetry(
-        &xsg, magnetic_symmetry, symprec);
-    if (sym_fsg == NULL || sym_xsg == NULL) goto err;
-    debug_print("FSG: hall_number=%d, international=%s, order=%d\n",
-                fsg->hall_number, fsg->international_short, sym_fsg->size);
-    debug_print_matrix_d3(fsg->bravais_lattice);
-    debug_print("XSG: hall_number=%d, international=%s, order=%d\n",
-                xsg->hall_number, xsg->international_short, sym_xsg->size);
-    debug_print_matrix_d3(xsg->bravais_lattice);
-
-    /* Determine type of MSG and generator of factor group of MSG over XSG */
-    type = get_magnetic_space_group_type(&representatives, magnetic_symmetry,
-                                         sym_fsg->size, sym_xsg->size);
-    debug_print("type=%d\n", type);
-
-    /* Choose reference setting */
-    /* For type-IV, use setting from Hall symbol of XSG. */
-    /* For other types, use setting from Hall symbol of FSG. */
-    if ((ref_sg = (Spacegroup *)malloc(sizeof(Spacegroup))) == NULL) goto err;
-    if (type == 4) {
-        spa_copy_spacegroup(ref_sg, xsg);
-    } else {
-        spa_copy_spacegroup(ref_sg, fsg);
-    }
+    type = get_reference_space_group(&ref_sg, &changed_symmetry, tmat, shift,
+                                     magnetic_symmetry, symprec);
+    if (type == 0) goto err;
     hall_number = ref_sg->hall_number;
-    mat_inverse_matrix_d3(tmat, ref_sg->bravais_lattice, 0);
-    mat_copy_vector_d3(shift, ref_sg->origin_shift);
-
-    debug_print("Transformation\n");
-    debug_print_matrix_d3(tmat);
-    debug_print_vector_d3(shift);
-    debug_print("det = %f\n", mat_get_determinant_d3(tmat));
-
-    if ((changed_symmetry = get_changed_magnetic_symmetry(
-             tmat, shift, representatives, sym_xsg, magnetic_symmetry,
-             symprec)) == NULL)
-        goto err;
 
     for (i = 0; i < changed_symmetry->size; i++) {
         debug_print("-- %d --\n", i);
@@ -196,44 +163,18 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
     mat_copy_vector_d3(ret->origin_shift, shift);
     mat_copy_matrix_d3(ret->std_rotation_matrix, rigid_rot);
 
-    free(fsg);
-    fsg = NULL;
-    free(xsg);
-    xsg = NULL;
     free(ref_sg);
     ref_sg = NULL;
-    sym_free_symmetry(sym_fsg);
-    sym_fsg = NULL;
-    sym_free_symmetry(sym_xsg);
-    sym_xsg = NULL;
     /* msg_uni is already freed. */
     sym_free_magnetic_symmetry(changed_symmetry);
     changed_symmetry = NULL;
-    sym_free_magnetic_symmetry(representatives);
-    representatives = NULL;
 
     return ret;
 
 err:
-    if (fsg != NULL) {
-        free(fsg);
-        fsg = NULL;
-    }
-    if (xsg != NULL) {
-        free(xsg);
-        xsg = NULL;
-    }
     if (ref_sg != NULL) {
         free(ref_sg);
         ref_sg = NULL;
-    }
-    if (sym_fsg != NULL) {
-        sym_free_symmetry(sym_fsg);
-        sym_fsg = NULL;
-    }
-    if (sym_xsg != NULL) {
-        sym_free_symmetry(sym_xsg);
-        sym_xsg = NULL;
     }
     if (msg_uni != NULL) {
         sym_free_magnetic_symmetry(msg_uni);
@@ -242,10 +183,6 @@ err:
     if (changed_symmetry != NULL) {
         sym_free_magnetic_symmetry(changed_symmetry);
         changed_symmetry = NULL;
-    }
-    if (representatives != NULL) {
-        sym_free_magnetic_symmetry(representatives);
-        representatives = NULL;
     }
     if (ret != NULL) {
         free(ret);
@@ -414,6 +351,103 @@ err:
 /* Local functions                                                            */
 /******************************************************************************/
 
+/* Return type of MSG. Return 0 if failed. */
+static int get_reference_space_group(Spacegroup **ref_sg,
+                                     MagneticSymmetry **changed_symmetry,
+                                     SPGCONST double tmat[3][3],
+                                     SPGCONST double shift[3],
+                                     const MagneticSymmetry *magnetic_symmetry,
+                                     const double symprec) {
+    int type;
+    Symmetry *sym_fsg, *sym_xsg;
+    Spacegroup *fsg, *xsg;
+    MagneticSymmetry *representatives;
+
+    sym_fsg = NULL;
+    sym_xsg = NULL;
+    fsg = NULL;
+    xsg = NULL;
+    representatives = NULL;
+
+    /* Identify family space group (FSG) and maximal space group (XSG) */
+    if ((sym_fsg = get_family_space_group_with_magnetic_symmetry(
+             &fsg, magnetic_symmetry, symprec)) == NULL)
+        goto err;
+    debug_print("FSG: hall_number=%d, international=%s, order=%d\n",
+                fsg->hall_number, fsg->international_short, sym_fsg->size);
+    if ((sym_xsg = get_maximal_subspace_group_with_magnetic_symmetry(
+             &xsg, magnetic_symmetry, symprec)) == NULL)
+        goto err;
+    debug_print("XSG: hall_number=%d, international=%s, order=%d\n",
+                xsg->hall_number, xsg->international_short, sym_xsg->size);
+
+    /* Determine type of MSG and generator of factor group of MSG over XSG */
+    type = get_magnetic_space_group_type(&representatives, magnetic_symmetry,
+                                         sym_fsg->size, sym_xsg->size);
+    debug_print("type=%d\n", type);
+
+    /* Choose reference setting */
+    /* For type-IV, use setting from Hall symbol of XSG. */
+    /* For other types, use setting from Hall symbol of FSG. */
+    if ((*ref_sg = (Spacegroup *)malloc(sizeof(Spacegroup))) == NULL) goto err;
+    if (type == 4) {
+        spa_copy_spacegroup(*ref_sg, xsg);
+    } else {
+        spa_copy_spacegroup(*ref_sg, fsg);
+    }
+    mat_inverse_matrix_d3(tmat, (*ref_sg)->bravais_lattice, 0);
+    mat_copy_vector_d3(shift, (*ref_sg)->origin_shift);
+
+    debug_print("Transformation\n");
+    debug_print_matrix_d3(tmat);
+    debug_print_vector_d3(shift);
+    debug_print("det = %f\n", mat_get_determinant_d3(tmat));
+
+    if ((*changed_symmetry = get_changed_magnetic_symmetry(
+             tmat, shift, representatives, sym_xsg, magnetic_symmetry,
+             symprec)) == NULL)
+        goto err;
+
+    sym_free_symmetry(sym_fsg);
+    sym_fsg = NULL;
+    sym_free_symmetry(sym_xsg);
+    sym_xsg = NULL;
+    free(fsg);
+    fsg = NULL;
+    free(xsg);
+    xsg = NULL;
+    sym_free_magnetic_symmetry(representatives);
+    representatives = NULL;
+
+    return type;
+err:
+    if (sym_fsg != NULL) {
+        sym_free_symmetry(sym_fsg);
+        sym_fsg = NULL;
+    }
+    if (sym_xsg != NULL) {
+        sym_free_symmetry(sym_xsg);
+        sym_xsg = NULL;
+    }
+    if (fsg != NULL) {
+        free(fsg);
+        fsg = NULL;
+    }
+    if (xsg != NULL) {
+        free(xsg);
+        xsg = NULL;
+    }
+    if (representatives != NULL) {
+        sym_free_magnetic_symmetry(representatives);
+        representatives = NULL;
+    }
+
+    if (ref_sg != NULL) {
+        free(ref_sg);
+        ref_sg = NULL;
+    }
+    return 0;
+}
 /* Get family space group (FSG) and return its order. */
 /* FSG is a non-magnetic space group obtained by ignoring primes in operations.
  */
