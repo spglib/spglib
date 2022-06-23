@@ -91,19 +91,22 @@ void get_rigid_rotation(double rigid_rot[3][3], SPGCONST double lattice[3][3],
 MagneticDataset *msg_identify_magnetic_space_group_type(
     SPGCONST double lattice[3][3], const MagneticSymmetry *magnetic_symmetry,
     const double symprec) {
-    int i, hall_number, uni_number, type, same;
+    int i, j, s, hall_number, uni_number, type, same;
     Spacegroup *ref_sg;
-    MagneticSymmetry *msg_uni, *changed_symmetry;
-    MagneticSpacegroupType msgtype;
+    Symmetry *transformations;
+    MagneticSymmetry *msg_uni, *changed_symmetry, *symmetry_cor;
+    MagneticSpacegroupType msgtype, msgtype_db;
     MagneticDataset *ret;
     int uni_number_range[2];
     double rigid_rot[3][3];
-    double tmat[3][3];
-    double shift[3];
+    double tmat[3][3], tmat_cor[3][3];
+    double shift[3], shift_cor[3];
 
+    transformations = NULL;
     ref_sg = NULL;
     msg_uni = NULL;
     changed_symmetry = NULL;
+    symmetry_cor = NULL;
     ret = NULL;
 
     /* TODO(shinohara): add option to specify hall_number in searching
@@ -113,20 +116,54 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
     if (type == 0) goto err;
     hall_number = ref_sg->hall_number;
 
-    for (i = 0; i < changed_symmetry->size; i++) {
-        debug_print("-- %d --\n", i);
-        debug_print_matrix_i3(changed_symmetry->rot[i]);
-        debug_print_vector_d3(changed_symmetry->trans[i]);
-        debug_print("%d\n", changed_symmetry->timerev[i]);
-    }
-
     msgdb_get_uni_candidates(uni_number_range, hall_number);
     debug_print("Search UNI number over between %d to %d\n",
                 uni_number_range[0], uni_number_range[1]);
     for (uni_number = uni_number_range[0]; uni_number <= uni_number_range[1];
          uni_number++) {
+        /* Check type and order */
+        msgtype_db = msgdb_get_magnetic_spacegroup_type(uni_number);
+        if (msgtype_db.type != type) continue;
+
         msg_uni = msgdb_get_spacegroup_operations(uni_number, hall_number);
-        same = is_equal(msg_uni, changed_symmetry, symprec);
+        if (msg_uni->size != changed_symmetry->size) continue;
+
+        /* Correction transformation */
+        /* x_uni = (tmat_cor, shift_cor) x_changed */
+        if ((transformations = msgdb_get_std_transformations(
+                 uni_number, hall_number)) == NULL)
+            goto err;
+
+        for (i = 0; i < transformations->size; i++) {
+            same = 0;
+
+            mat_cast_matrix_3i_to_3d(tmat_cor, transformations->rot[i]);
+            mat_copy_vector_d3(shift_cor, transformations->trans[i]);
+
+            /* Since det(tmat_corr) = 1, no need to care about duplicated
+             * operations */
+            if ((symmetry_cor = get_distinct_changed_magnetic_symmetry(
+                     tmat_cor, shift_cor, changed_symmetry)) == NULL)
+                goto err;
+
+            debug_print("\e[33mCorrection\e[0m\n");
+            debug_print_matrix_d3(tmat_cor);
+            debug_print_vector_d3(shift_cor);
+            for (j = 0; j < symmetry_cor->size; j++) {
+                debug_print("-- %d --\n", j);
+                debug_print_matrix_i3(symmetry_cor->rot[j]);
+                debug_print_vector_d3(symmetry_cor->trans[j]);
+                debug_print("timerev=%d\n", symmetry_cor->timerev[j]);
+            }
+
+            same = is_equal(msg_uni, symmetry_cor, symprec);
+            sym_free_magnetic_symmetry(symmetry_cor);
+            symmetry_cor = NULL;
+            if (same) break;
+        }
+
+        sym_free_symmetry(transformations);
+        transformations = NULL;
         sym_free_magnetic_symmetry(msg_uni);
         msg_uni = NULL;
         if (same) break;
@@ -143,6 +180,16 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
         warning_print("  From FSG and XSG: %d\n", type);
         warning_print("  From DB matching: %d\n", msgtype.type);
         goto err;
+    }
+
+    /* Update transformation */
+    /* x_changed = (tmat, shift) x, x_uni = (tmat_cor, shift_cor) x_changed */
+    /* => (tmat, shift) => (tmat_cor, shift_cor) (tmat, shift) */
+    mat_multiply_matrix_d3(tmat, tmat_cor, tmat);
+    /* tmat_cor * shift + shift_cor */
+    mat_multiply_matrix_vector_d3(shift, tmat_cor, shift);
+    for (s = 0; s < 3; s++) {
+        shift[s] += shift_cor[s];
     }
 
     /* TODO(shinohara): current implementation seems not to obey the */
@@ -165,7 +212,8 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
 
     free(ref_sg);
     ref_sg = NULL;
-    /* msg_uni is already freed. */
+    /* msg_uni is already freed */
+    /* symmetry_cor is already freed */
     sym_free_magnetic_symmetry(changed_symmetry);
     changed_symmetry = NULL;
 
@@ -179,6 +227,14 @@ err:
     if (msg_uni != NULL) {
         sym_free_magnetic_symmetry(msg_uni);
         msg_uni = NULL;
+    }
+    if (transformations != NULL) {
+        sym_free_symmetry(transformations);
+        transformations = NULL;
+    }
+    if (symmetry_cor != NULL) {
+        sym_free_magnetic_symmetry(symmetry_cor);
+        symmetry_cor = NULL;
     }
     if (changed_symmetry != NULL) {
         sym_free_magnetic_symmetry(changed_symmetry);
@@ -472,6 +528,10 @@ static Symmetry *get_maximal_subspace_group_with_magnetic_symmetry(
 /* ignore_time_reversal=true  -> FSG */
 /* ignore_time_reversal=false -> XSG */
 /* If failed, return NULL. */
+/* Output's `spacegroup` is w.r.t. input setting: */
+/*     x_std = (P^-1, p) x */
+/*    (a_std, b_std, c_std) = (a, b, c) @ P */
+/* where P := spacegroup->bravais_lattice, p := spacegroup->origin_shift. */
 static Symmetry *get_space_group_with_magnetic_symmetry(
     Spacegroup **spacegroup, const MagneticSymmetry *magnetic_symmetry,
     const int ignore_time_reversal, const double symprec) {
@@ -529,14 +589,14 @@ static Symmetry *get_space_group_with_magnetic_symmetry(
     ref_find_similar_bravais_lattice(*spacegroup, symprec);
     /* At this point, let P = spacegroup->bravais_lattice, p =
      * spacegroup->origin_shift: */
-    /*     x_std = (P^-1, -p) x_prim */
+    /*     x_std = (P^-1, p) x_prim */
     /*     (a_std, b_std, c_std) = (a_prim, b_prim, c_prim) @ P */
 
     /* Change basis from primitive to original */
     /* x = (tmat, 0)^-1 x_prim */
-    /* => x_std = (P^-1, -p) (tmat, 0) x */
-    /*          = ( P^-1 @ tmat, -p) x */
-    /*          = ( (tmat^-1 @ P)^-1, -p) x */
+    /* => x_std = (P^-1, p) (tmat, 0) x */
+    /*          = ( P^-1 @ tmat, p) x */
+    /*          = ( (tmat^-1 @ P)^-1, p) x */
     /*    (a_std, b_std, c_std) = (a, b, c) @ tmat^-1 @ P */
     mat_inverse_matrix_d3(inv_tmat, tmat, 0);
     mat_multiply_matrix_d3((*spacegroup)->bravais_lattice, inv_tmat,
@@ -654,6 +714,7 @@ static MagneticSymmetry *get_representative(
 /* x = (tmat, shift)^-1 x_std */
 /* (W, w) = (tmat, shift)^-1 (W_std, w_std) (tmat, shift) */
 /* If failed, return NULL. */
+/* Be careful the correspondence: tmat = spacegroup->bravais_lattice^-1 */
 static MagneticSymmetry *get_changed_magnetic_symmetry(
     SPGCONST double tmat[3][3], SPGCONST double shift[3],
     const MagneticSymmetry *representatives, const Symmetry *sym_xsg,
@@ -894,6 +955,8 @@ static int is_contained_mat(SPGCONST int a[3][3],
 
 /* Transform magnetic symmetry operations by (tmat, shift) */
 /* This function does not check duplicated operations after transformation. */
+/* x_std = (tmat, shift) x */
+/* (W, w) -> (tmat, shift) (W, w) (tmat, shift)^-1 */
 static MagneticSymmetry *get_distinct_changed_magnetic_symmetry(
     SPGCONST double tmat[3][3], SPGCONST double shift[3],
     const MagneticSymmetry *sym_msg) {
@@ -951,6 +1014,7 @@ static int is_equal(const MagneticSymmetry *sym1, const MagneticSymmetry *sym2,
                 mat_Dmod1(sym1->trans[i][2] - sym2->trans[j][2]) < symprec &&
                 sym1->timerev[i] == sym2->timerev[j]) {
                 found = 1;
+                debug_print("sym1[%d] -> sym2[%d]\n", i, j);
                 break;
             }
         }
