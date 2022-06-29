@@ -150,7 +150,31 @@ Procedure to identify MSG
 #. Choose reference setting
     - Type-I, II, III -> Hall symbol of :math:`\mathcal{F}`
     - Type-IV -> Hall symbol of :math:`\mathcal{D}`
-#. Compare :math:`\mathcal{M}` with MSGs in database after applying a transformation to the Hall symbol's setting [GPKRC21]_
+
+Suppose we have transformed MSG :math:`\mathcal{M}` and try to compare it with :math:`\mathcal{M}_{std}` in database.
+
+When :math:`\mathcal{M}` is type-I or type-II
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Just compare :math:`\mathcal{M}` with :math:`\mathcal{M}_{std}`.
+
+When :math:`\mathcal{M}` is type-III
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+After applying the Hall symbol's setting [GPKRC21]_, we can assume :math:`\mathcal{F}(\mathcal{M}) = \mathcal{F}(\mathcal{M}_{std})`.
+However, this does not imply :math:`\mathcal{M} = \mathcal{M}_{std}` in general!
+We also need to adjust coordinate systems such that :math:`\mathcal{D}(\mathcal{M}^{g}) = \mathcal{D}(\mathcal{M}_{std})`, where :math:`g` is in Affine normalizer of :math:`\mathcal{F}(\mathcal{M}_{std})`.
+For triclinic and monoclinic type-III MSGs, there is no such a conjugate XSG with :math:`\mathcal{D}(\mathcal{M}_{std})`.
+For other crystal systems, we need to compute factor group of the Affine normalizer :math:`\mathcal{N}_{\mathcal{A}}(\mathcal{F}(\mathcal{M}_{std})) / \mathcal{D}(\mathcal{M}_{std})`, which is a finite group in this case, and check with each operation.
+We pre-compute such a conjugator :math:`g` by Cryst [EGN97]_.
+
+When :math:`\mathcal{M}` is type-IV
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+After applying the Hall symbol's setting, we can assume :math:`\mathcal{D}(\mathcal{M}) = \mathcal{D}(\mathcal{M}_{std})`.
+We enumerate integer matrices :math:`\mathbf{P}` whose elements are -1, 0, or 1, and determinant is equal to 1.
+Then, apply :math:`(\mathbf{P}, \mathbf{p})` and search conjugated FSG.
+Here, denominators of origin shift :math:`\mathbf{p}` are at most four because all elements of origin shifts of further generators described in ITA are one of :math:`0, \frac{1}{4}, \frac{1}{2}, \frac{3}{4}`.
 
 Procedure to idealize positions and site tensors
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -270,6 +294,25 @@ We need care for anti-translation.
 
 Each element in factor group :math:`\mathcal{D} / \mathcal{T}_{\mathrm{conv}}(\mathcal{D})` has a unique linear part.
 
+Code reading on symmetry transformation
+---------------------------------------
+
+Based on :code:`refinement.c:get_refined_symmetry_operations`
+
+For given space group :math:`\mathcal{G}_{p}` with primitive cell, :code:`spa_search_spacegroup_with_symmetry` gives :code:`Spacegroup` object.
+
+Corresponding space group :math:`\mathcal{G}_{std}` in DB
+
+Let :code:`P := Spacegroup.bravais_lattice` (after changing basis to primitive) and :code:`p := Spacegroup.origin_shift`.
+
+.. math::
+    A_{std} &=  A_{p} P \\
+    \mathcal{G}_{p} &= (P^{-1}, p)^{-1} \mathcal{G}_{std} (P^{-1}, p) \\
+    x_{p} &= (P^{-1}, p)^{-1} x_{std}
+
+N.B. :code:`set_translation_with_origin_shift` computes :math:`(I, p)^{-1} \mathcal{G}_{std} (I, p)`.
+:code:`get_primitive_db_symmetry` computes :math:`(P, 0) (I, p)^{-1} \mathcal{G}_{std} (I, p) (P, 0)^{-1}` on :math:`(I, p)^{-1} \mathcal{G}_{std} (I, p)`.
+
 References
 ----------
 
@@ -280,3 +323,5 @@ References
 .. [GPKRC21] J. González-Platas, N. A. Katcho and J. Rodríguez-Carvajal, J. Appl. Crystallogr. 54, 1, 338-342 (2021).
 
 .. [GKA02] R. W. Grosse-Kunstleve and P. D. Adams, Acta Cryst. A 58, 60-65 (2002).
+
+.. [EGN97] F. G¨ahler, B. Eick and W. Nickel. Computing maximal subgroups and wyckoff positions of space groups. Acta Cryst A 53, 467–474 (1997).
