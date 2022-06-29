@@ -791,8 +791,11 @@ static VecDBL *get_changed_pure_translations(SPGCONST double tmat[3][3],
 
     if (mat_Dabs(det - 1) <= symprec) {
         for (i = 0; i < pure_trans->size; i++) {
-            mat_copy_vector_d3(changed_pure_trans->vec[count++],
-                               pure_trans->vec[i]);
+            mat_multiply_matrix_vector_d3(trans_tmp, tmat, pure_trans->vec[i]);
+            for (s = 0; s < 3; s++) {
+                trans_tmp[s] = mat_Dmod1(trans_tmp[s]);
+            }
+            mat_copy_vector_d3(changed_pure_trans->vec[count++], trans_tmp);
         }
     } else {
         /* Find least common denominator of elements in tmat */
