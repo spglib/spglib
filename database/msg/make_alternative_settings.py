@@ -24,6 +24,7 @@ from hall2operations import encode_symmetry
 
 
 MAX_ENCODED = (3 ** 9) * (12 ** 3)
+MAX_DENOMINATOR = 4
 
 
 TYPE3_SEARCH = """LoadPackage( "cryst" );;
@@ -172,25 +173,39 @@ def get_conjugator_type3(gap_path, coset: list[MagneticOperation]) -> list[NDArr
 
 def get_conjugator_type4(coset: list[MagneticOperation], linears) -> list[NDArray]:
     """
-    Return conjugators with no origin shift s.t.
-        (P, 0)^-1 * coset * (P, 0)
+    Return conjugators s.t.
+        (P, p)^-1 * coset * (P, p)
     is conjugate with `coset`.
     """
     xsg = set(get_maximal_space_subgroup(coset))
+    pg = set([ops._linear_tuple for ops in xsg])
 
     found = [set(coset)]
     conjugators = []
     for linear in linears:
-        t = Transformation(linear=linear)
-        coset2 = t.transform_coset(coset)
-        xsg2 = set(get_maximal_space_subgroup(coset2))
-        if xsg2 != xsg:
+        t_no_shift = Transformation(linear=linear)
+        coset2_no_shift = t_no_shift.transform_coset(coset)
+        xsg2_no_shift = set(get_maximal_space_subgroup(coset2_no_shift))
+        pg2_no_shift = set([ops._linear_tuple for ops in xsg2_no_shift])
+
+        # At least, point groups should be equal
+        if pg2_no_shift != pg:
             continue
-        coset2 = set(coset2)
-        if coset2 in found:
-            continue
-        found.append(coset2)
-        conjugators.append(t._augmented_matrix.tolist())
+
+        for ishift in product(range(MAX_DENOMINATOR), repeat=3):
+            origin_shift = np.array(ishift) / MAX_DENOMINATOR
+            t = Transformation(linear=linear, origin_shift=origin_shift)
+            coset2 = t.transform_coset(coset)
+            xsg2 = set(get_maximal_space_subgroup(coset2))
+
+            if xsg2 != xsg:
+                continue
+            coset2 = set(coset2)
+            if coset2 in found:
+                continue
+            found.append(coset2)
+            conjugators.append(t._augmented_matrix.tolist())
+            break
 
     return conjugators
 
@@ -308,15 +323,19 @@ def main(output, gap_path, dump):
 
 def debug():
     # Testing
-    hall_symbol ="P 2ac 2ab'"
-    mhs = MagneticHallSymbol(hall_symbol)
-    ret = get_conjugator_type3("./gap-4.11.1/bin/gap.sh", mhs.coset)
-    print(ret)
-
-    # hall_symbol = "P 2ac 2ab 1c'"
+    # hall_symbol ="P 2ac 2ab'"
+    # hall_symbol = "P 2ac' 2ab -1'"  # 61.435
+    # hall_symbol = "-P 2 2'"  # 47.252
     # mhs = MagneticHallSymbol(hall_symbol)
-    # linears = enumerate_linears()
-    # ret = get_conjugator_type4(mhs.coset, linears)
+    # ret = get_conjugator_type3("./gap-4.11.1/bin/gap.sh", mhs.coset)
+    # print(ret)
+
+    hall_symbol = "P 2ac 2ab 1c'"
+    hall_symbol = "-C 2yc 1c'"
+    mhs = MagneticHallSymbol(hall_symbol)
+    linears = enumerate_linears()
+    ret = get_conjugator_type4(mhs.coset, linears)
+    print(ret)
 
 
 if __name__ == '__main__':
