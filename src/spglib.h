@@ -231,18 +231,16 @@ int spgat_get_symmetry_with_collinear_spin(
 
 /* Return 0 if failed */
 /* ``rotation`` and ``translation`` are used as input and output. */
-/* ``num_operations`` is the number of the symmetry operations of */
-/* input. */
 int spg_get_symmetry_with_site_tensors(
     int rotation[][3][3], double translation[][3], int equivalent_atoms[],
-    double primitive_lattice[3][3], int *spin_flips, const int num_operations,
+    double primitive_lattice[3][3], int *spin_flips, const int max_size,
     SPGCONST double lattice[3][3], SPGCONST double position[][3],
     const int types[], const double *tensors, const int tensor_rank,
     const int num_atom, const int is_magnetic, const double symprec);
 
 int spgat_get_symmetry_with_site_tensors(
     int rotation[][3][3], double translation[][3], int equivalent_atoms[],
-    double primitive_lattice[3][3], int *spin_flips, const int num_operations,
+    double primitive_lattice[3][3], int *spin_flips, const int max_size,
     SPGCONST double lattice[3][3], SPGCONST double position[][3],
     const int types[], const double *tensors, const int tensor_rank,
     const int num_atom, const int is_magnetic, const double symprec,

@@ -39,10 +39,9 @@
 #include "mathfunc.h"
 #include "symmetry.h"
 
-Symmetry *spn_get_operations_with_site_tensors(
-    int equiv_atoms[], double prim_lattice[3][3], int *spin_flips,
-    const Symmetry *sym_nonspin, const Cell *cell, const double *tensors,
-    const int tensor_rank, const int is_magnetic, const double symprec,
-    const double angle_tolerance);
+MagneticSymmetry *spn_get_operations_with_site_tensors(
+    int equiv_atoms[], double prim_lattice[3][3], const Symmetry *sym_nonspin,
+    const Cell *cell, const double *tensors, const int tensor_rank,
+    const int is_magnetic, const double symprec, const double angle_tolerance);
 
 #endif

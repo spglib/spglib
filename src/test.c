@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <math.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -7,6 +8,7 @@
 
 static int test_spg_get_symmetry(void);
 static int test_spg_get_symmetry_with_collinear_spin(void);
+static int test_spg_get_symmetry_with_site_tensors(void);
 static int test_spg_get_multiplicity(void);
 static int test_spg_find_primitive_BCC(void);
 static int test_spg_find_primitive_corundum(void);
@@ -48,6 +50,7 @@ int main(void) {
                             test_spg_get_multiplicity,
                             test_spg_get_symmetry,
                             test_spg_get_symmetry_with_collinear_spin,
+                            test_spg_get_symmetry_with_site_tensors,
                             test_spg_get_international,
                             test_spg_get_schoenflies,
                             test_spg_get_spacegroup_type,
@@ -115,6 +118,8 @@ static int test_spg_get_hall_number_from_symmetry(void) {
             retval = 1;
         }
     }
+    /* Im-3m (229) */
+    assert(hall_number == 529);
 
     if (dataset) {
         spg_free_dataset(dataset);
@@ -663,6 +668,99 @@ end:
     translation = NULL;
 
     return retval;
+}
+
+static int test_spg_get_symmetry_with_site_tensors() {
+    /* MAGNDATA #0.1: LaMnO3 */
+    /* BNS: Pn'ma' (62.448), MHall: -P 2ac' 2n' (509) */
+    int max_size, size, i, j;
+    double lattice[][3] = {{5.7461, 0, 0}, {0, 7.6637, 0}, {0, 0, 5.5333}};
+    /* clang-format off */
+    double position[][3] = {
+        {0.051300, 0.250000, 0.990500}, /* La */
+        {0.948700, 0.750000, 0.009500},
+        {0.551300, 0.250000, 0.509500},
+        {0.448700, 0.750000, 0.490500},
+        {0.000000, 0.000000, 0.500000}, /* Mn */
+        {0.000000, 0.500000, 0.500000},
+        {0.500000, 0.500000, 0.000000},
+        {0.500000, 0.000000, 0.000000},
+        {0.484900, 0.250000, 0.077700}, /* O1 */
+        {0.515100, 0.750000, 0.922300},
+        {0.984900, 0.250000, 0.422300},
+        {0.015100, 0.750000, 0.577700},
+        {0.308500, 0.040800, 0.722700}, /* O2 */
+        {0.691500, 0.540800, 0.277300},
+        {0.691500, 0.959200, 0.277300},
+        {0.308500, 0.459200, 0.722700},
+        {0.808500, 0.459200, 0.777300},
+        {0.191500, 0.959200, 0.222700},
+        {0.191500, 0.540800, 0.222700},
+        {0.808500, 0.040800, 0.777300},
+    };
+    int types[] = {1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3};
+    double tensors[] = {
+        0, 0, 0, /* La */
+        0, 0, 0,
+        0, 0, 0,
+        0, 0, 0,
+        3.87, 0, 0, /* Mn */
+        -3.87, 0, 0,
+        -3.87, 0, 0,
+        3.87, 0, 0,
+        0, 0, 0, /* O1 */
+        0, 0, 0,
+        0, 0, 0,
+        0, 0, 0,
+        0, 0, 0, /* O2 */
+        0, 0, 0,
+        0, 0, 0,
+        0, 0, 0,
+        0, 0, 0,
+        0, 0, 0,
+        0, 0, 0,
+        0, 0, 0,
+    };
+    /* clang-format on */
+    int num_atom = 20;
+
+    int equivalent_atoms[20];
+    double primitive_lattice[3][3];
+    int(*rotation)[3][3];
+    double(*translation)[3];
+    int *spin_flips;
+
+    max_size = num_atom * 96;
+    rotation = (int(*)[3][3])malloc(sizeof(int[3][3]) * max_size);
+    translation = (double(*)[3])malloc(sizeof(double[3]) * max_size);
+    spin_flips = (int *)malloc(sizeof(int *) * max_size);
+
+    /* Find equivalent_atoms, primitive_lattice, spin_flips */
+    size = spg_get_symmetry_with_site_tensors(
+        rotation, translation, equivalent_atoms, primitive_lattice, spin_flips,
+        max_size, lattice, position, types, tensors, 1, num_atom, 1, 1e-5);
+    assert(size == 8);
+
+    printf("*** spg_get_symmetry_with_site_tensors (type-III) ***:\n");
+    for (i = 0; i < size; i++) {
+        printf("--- %d ---\n", i + 1);
+        for (j = 0; j < 3; j++) {
+            printf("%2d %2d %2d\n", rotation[i][j][0], rotation[i][j][1],
+                   rotation[i][j][2]);
+        }
+        printf("%f %f %f\n", translation[i][0], translation[i][1],
+               translation[i][2]);
+        printf("%d\n", spin_flips[i]);
+    }
+
+    free(rotation);
+    rotation = NULL;
+    free(translation);
+    translation = NULL;
+    free(spin_flips);
+    spin_flips = NULL;
+
+    return 0;
 }
 
 static int test_spg_get_dataset(void) {

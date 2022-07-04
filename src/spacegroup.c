@@ -474,7 +474,7 @@ static int is_equivalent_lattice(double tmat[3][3], const int allow_flip,
                                  SPGCONST double orig_lattice[3][3],
                                  const double symprec);
 
-/* Return spacegroup.number = 0 if failed */
+/* Return NULL if failed */
 Spacegroup *spa_search_spacegroup(const Primitive *primitive,
                                   const int hall_number, const double symprec,
                                   const double angle_tolerance) {
@@ -515,9 +515,9 @@ Spacegroup *spa_search_spacegroup(const Primitive *primitive,
     return spacegroup;
 }
 
-/* Return 0 if failed */
-int spa_search_spacegroup_with_symmetry(const Symmetry *symmetry,
-                                        const double symprec) {
+/* Return NULL if failed */
+Spacegroup *spa_search_spacegroup_with_symmetry(const Symmetry *symmetry,
+                                                const double symprec) {
     int i, hall_number;
     Spacegroup *spacegroup;
     Primitive *primitive;
@@ -539,14 +539,7 @@ int spa_search_spacegroup_with_symmetry(const Symmetry *symmetry,
     prm_free_primitive(primitive);
     primitive = NULL;
 
-    if (spacegroup != NULL) {
-        hall_number = spacegroup->hall_number;
-        free(spacegroup);
-        spacegroup = NULL;
-        return hall_number;
-    } else {
-        return 0;
-    }
+    return spacegroup;
 }
 
 /* Return NULL if failed */

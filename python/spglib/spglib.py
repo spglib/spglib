@@ -108,6 +108,11 @@ def get_symmetry(cell,
         'translations' : ndarray
             Translation (vector) parts of symmetry operations
             shape=(num_operations, 3), dtype='double'
+        'time_reversals': ndarray (exists when the optional data is given)
+            Time reversal part of magnetic symmetry operations.
+            True indicates time reversal operation, and False indicates
+            an ordinary operation.
+            shape=(num_operations, ), dtype='bool_'
         'equivalent_atoms' : ndarray
             shape=(num_atoms, ), dtype='intc'
 
@@ -118,28 +123,30 @@ def get_symmetry(cell,
     if lattice is None:
         return None
 
-    # Get symmetry operations without on-site tensors (i.e. normal crystal)
-    dataset = get_symmetry_dataset(cell,
-                                   symprec=symprec,
-                                   angle_tolerance=angle_tolerance)
-    if dataset is None:
-        return None
-
     if magmoms is None:
+        # Get symmetry operations without on-site tensors (i.e. normal crystal)
+        dataset = get_symmetry_dataset(cell,
+                                       symprec=symprec,
+                                       angle_tolerance=angle_tolerance)
+        if dataset is None:
+            return None
+
         return {'rotations': dataset['rotations'],
                 'translations': dataset['translations'],
                 'equivalent_atoms': dataset['equivalent_atoms']}
     else:
-        rotations = dataset['rotations']
-        translations = dataset['translations']
+        max_size = len(positions) * 96
+        rotations = np.zeros((max_size, 3, 3), dtype='intc', order='C')
+        translations = np.zeros((max_size, 3), dtype='double', order='C')
         equivalent_atoms = np.zeros(len(magmoms), dtype='intc')
         primitive_lattice = np.zeros((3, 3), dtype='double', order='C')
         # (magmoms.ndim - 1) has to be equal to the rank of physical
         # tensors, e.g., ndim=1 for collinear, ndim=2 for non-collinear.
-        if magmoms.ndim == 1:
-            spin_flips = np.zeros(len(rotations), dtype='intc')
+        if magmoms.ndim == 1 or magmoms.ndim == 2:
+            spin_flips = np.zeros(max_size, dtype='intc')
         else:
             spin_flips = None
+
         num_sym = spg.symmetry_with_site_tensors(rotations,
                                                  translations,
                                                  equivalent_atoms,
@@ -157,10 +164,14 @@ def get_symmetry(cell,
         if num_sym == 0:
             return None
         else:
+            spin_flips = np.array(spin_flips[:num_sym], dtype='intc', order='C')
+            # True for time reversal operation, False for ordinary operation
+            time_reversals = (spin_flips == -1)
             return {'rotations': np.array(rotations[:num_sym],
                                           dtype='intc', order='C'),
                     'translations': np.array(translations[:num_sym],
                                              dtype='double', order='C'),
+                    'time_reversals': time_reversals,
                     'equivalent_atoms': equivalent_atoms,
                     'primitive_lattice': primitive_lattice}
 

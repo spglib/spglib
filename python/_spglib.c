@@ -878,7 +878,7 @@ static PyObject * py_get_symmetry_with_site_tensors(PyObject *self,
   primitive_lattice = (double(*)[3])PyArray_DATA(py_primitive_lattice);
   num_sym_from_array_size = PyArray_DIMS(py_rotations)[0];
   tensor_rank = PyArray_NDIM(py_tensors) - 1;
-  if (tensor_rank == 0) {
+  if (tensor_rank == 0 || tensor_rank == 1) {
     spin_flips = (int*)PyArray_DATA(py_spin_flips);
   } else {
     spin_flips = NULL;
