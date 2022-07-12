@@ -96,3 +96,11 @@ Spglib project acknowledges Paweł T. Jochym for deployment and packaging, Yusuk
 Seto for the Crystallographic database, Jingheng Fu for layer group
 implementation, Dimitar Pashov for the Fortran interface, and many other
 contributors.
+
+Developer Documentation
+-----------------------
+
+.. toctree::
+  :maxdepth: 1
+
+  Magnetic space group <magnetic_spacegroup>
