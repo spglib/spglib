@@ -46,6 +46,7 @@
 
 static PyObject * py_get_version(PyObject *self, PyObject *args);
 static PyObject * py_get_dataset(PyObject *self, PyObject *args);
+static PyObject * py_get_magnetic_dataset(PyObject *self, PyObject *args);
 static PyObject * py_get_spacegroup_type(PyObject *self, PyObject *args);
 static PyObject * py_get_magnetic_spacegroup_type(PyObject *self, PyObject *args);
 static PyObject * py_get_pointgroup(PyObject *self, PyObject *args);
@@ -97,6 +98,7 @@ static PyMethodDef _spglib_methods[] = {
   {"error_out", (PyCFunction)error_out, METH_NOARGS, NULL},
   {"version", py_get_version, METH_VARARGS, "Spglib version"},
   {"dataset", py_get_dataset, METH_VARARGS, "Dataset for crystal symmetry"},
+  {"magnetic_dataset", py_get_magnetic_dataset, METH_VARARGS, "Magnetic dataset for crystal symmetry"},
   {"spacegroup_type", py_get_spacegroup_type, METH_VARARGS, "Space-group type symbols"},
   {"magnetic_spacegroup_type", py_get_magnetic_spacegroup_type, METH_VARARGS, "Magnetic space-group type symbols"},
   {"symmetry_from_database", py_get_symmetry_from_database, METH_VARARGS, "Get symmetry operations from database"},
@@ -421,6 +423,187 @@ static PyObject * py_get_dataset(PyObject *self, PyObject *args)
   assert(n == len_list);
 
   spg_free_dataset(dataset);
+
+  return array;
+}
+
+static PyObject *py_get_magnetic_dataset(PyObject *self, PyObject *args) {
+  int tensor_rank;
+  double symprec;
+  PyArrayObject *py_lattice, *py_positions, *py_atom_types, *py_magmoms;
+
+  int num_atom;
+  double (*lat)[3];
+  double (*pos)[3];
+  int *typeat;
+  double *tensors;
+  SpglibMagneticDataset *dataset;
+
+  PyObject *array, *rot, *trans, *timerev, *equiv_atoms, *mat, *vec;
+  PyObject *std_lattice, *std_types, *std_positions, *std_tensors;
+  PyObject *std_rotation;
+  PyObject *primitive_lattice;
+  int len_list, n, i, j, k, n_tensors;
+
+  if (!PyArg_ParseTuple(args, "OOOOid",
+                        &py_lattice,
+                        &py_positions,
+                        &py_atom_types,
+                        &py_magmoms,
+                        &tensor_rank,
+                        &symprec)) {
+    return NULL;
+  }
+
+  lat = (double(*)[3])PyArray_DATA(py_lattice);
+  pos = (double(*)[3])PyArray_DATA(py_positions);
+  num_atom = PyArray_DIMS(py_positions)[0];
+  typeat = (int *)PyArray_DATA(py_atom_types);
+  tensors = (double *)PyArray_DATA(py_magmoms);
+
+  if ((dataset = spg_get_magnetic_dataset(
+            lat, pos, typeat, tensors, tensor_rank, num_atom, symprec)) ==
+      NULL) {
+    Py_RETURN_NONE;
+  }
+
+  len_list = 19;
+  array = PyList_New(len_list);
+  n = 0;
+
+  /* Magnetic space-group type */
+  PyList_SetItem(array, n++, PyLong_FromLong((long)dataset->uni_number));
+  PyList_SetItem(array, n++, PyLong_FromLong((long)dataset->msg_type));
+  PyList_SetItem(array, n++, PyLong_FromLong((long)dataset->hall_number));
+  PyList_SetItem(array, n++, PyLong_FromLong((long)dataset->tensor_rank));
+
+  /* Magnetic symmetry operations */
+  PyList_SetItem(array, n++, PyLong_FromLong((long)dataset->n_operations));
+
+  /* Rotation */
+  rot = PyList_New(dataset->n_operations);
+  for (i = 0; i < dataset->n_operations; i++) {
+    mat = PyList_New(3);
+    for (j = 0; j < 3; j++) {
+      vec = PyList_New(3);
+      for (k = 0; k < 3; k++) {
+        PyList_SetItem(vec, k, PyLong_FromLong((long) dataset->rotations[i][j][k]));
+      }
+      PyList_SetItem(mat, j, vec);
+    }
+    PyList_SetItem(rot, i, mat);
+  }
+  PyList_SetItem(array, n++, rot);
+
+  /* Translation vectors */
+  trans = PyList_New(dataset->n_operations);
+  for (i = 0; i < dataset->n_operations; i++) {
+    vec = PyList_New(3);
+    for (j = 0; j < 3; j++) {
+      PyList_SetItem(vec, j, PyFloat_FromDouble(dataset->translations[i][j]));
+    }
+    PyList_SetItem(trans, i, vec);
+  }
+  PyList_SetItem(array, n++, trans);
+
+  /* Time reversals */
+  timerev = PyList_New(dataset->n_operations);
+  for (i = 0; i < dataset->n_operations; i++) {
+    PyList_SetItem(timerev, i, PyLong_FromLong((long)dataset->time_reversals[i]));
+  }
+  PyList_SetItem(array, n++, timerev);
+
+  /* Equivalent atoms */
+  PyList_SetItem(array, n++, PyLong_FromLong((long)dataset->n_atoms));
+  equiv_atoms = PyList_New(dataset->n_atoms);
+  for (i = 0; i < dataset->n_atoms; i++) {
+    PyList_SetItem(equiv_atoms, i,
+                   PyLong_FromLong((long) dataset->equivalent_atoms[i]));
+  }
+  PyList_SetItem(array, n++, equiv_atoms);
+
+  /* Transformation matrix to standardized setting */
+  mat = PyList_New(3);
+  for (i = 0; i < 3; i++) {
+    vec = PyList_New(3);
+    for (j = 0; j < 3; j++) {
+      PyList_SetItem(vec, j, PyFloat_FromDouble(dataset->transformation_matrix[i][j]));
+    }
+    PyList_SetItem(mat, i, vec);
+  }
+  PyList_SetItem(array, n++, mat);
+
+  /* Origin shift */
+  vec = PyList_New(3);
+  for (i = 0; i < 3; i++) {
+    PyList_SetItem(vec, i, PyFloat_FromDouble(dataset->origin_shift[i]));
+  }
+  PyList_SetItem(array, n++, vec);
+
+  /* Standardized crystal structure */
+  PyList_SetItem(array, n++, PyLong_FromLong((long)dataset->n_std_atoms));
+
+  std_lattice = PyList_New(3);
+  for (i = 0; i < 3; i++) {
+    vec = PyList_New(3);
+    for (j = 0; j < 3; j++) {
+      PyList_SetItem(vec, j, PyFloat_FromDouble(dataset->std_lattice[i][j]));
+    }
+    PyList_SetItem(std_lattice, i, vec);
+  }
+  PyList_SetItem(array, n++, std_lattice);
+
+  std_types = PyList_New(dataset->n_std_atoms);
+  std_positions = PyList_New(dataset->n_std_atoms);
+  for (i = 0; i < dataset->n_std_atoms; i++) {
+    vec = PyList_New(3);
+    for (j = 0; j < 3; j++) {
+      PyList_SetItem(vec, j, PyFloat_FromDouble(dataset->std_positions[i][j]));
+    }
+    PyList_SetItem(std_types, i, PyLong_FromLong((long) dataset->std_types[i]));
+    PyList_SetItem(std_positions, i, vec);
+  }
+  PyList_SetItem(array, n++, std_types);
+  PyList_SetItem(array, n++, std_positions);
+
+  if (tensor_rank == 0) {
+    n_tensors = dataset->n_std_atoms;
+  } else if (tensor_rank == 1) {
+    n_tensors = 3 * dataset->n_std_atoms;
+  } else {
+    Py_RETURN_NONE;
+  }
+  std_tensors = PyList_New(n_tensors);
+  for (i = 0; i < n_tensors; i++) {
+    PyList_SetItem(std_tensors, i, PyFloat_FromDouble(dataset->std_tensors[i]));
+  }
+  PyList_SetItem(array, n++, std_tensors);
+
+  std_rotation = PyList_New(3);
+  for (i = 0; i < 3; i++) {
+    vec = PyList_New(3);
+    for (j = 0; j < 3; j++) {
+      PyList_SetItem(vec, j,
+                     PyFloat_FromDouble(dataset->std_rotation_matrix[i][j]));
+    }
+    PyList_SetItem(std_rotation, i, vec);
+  }
+  PyList_SetItem(array, n++, std_rotation);
+
+  /* Intermidiate datum in symmetry search */
+  primitive_lattice = PyList_New(3);
+  for (i = 0; i < 3; i++) {
+    vec = PyList_New(3);
+    for (j = 0; j < 3; j++) {
+      PyList_SetItem(vec, j, PyFloat_FromDouble(dataset->primitive_lattice[i][j]));
+    }
+    PyList_SetItem(primitive_lattice, i, vec);
+  }
+  PyList_SetItem(array, n++, primitive_lattice);
+
+  assert(n == len_list);
+
+  spg_free_magnetic_dataset(dataset);
 
   return array;
 }

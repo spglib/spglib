@@ -315,6 +315,75 @@ def get_symmetry_dataset(cell,
     return dataset
 
 
+def get_magnetic_symmetry_dataset(cell, symprec=1e-5):
+    _set_no_error()
+
+    lattice, positions, numbers, magmoms = _expand_cell(cell)
+    if lattice is None:
+        return None
+
+    tensor_rank = magmoms.ndim - 1
+    spg_ds = spg.magnetic_dataset(lattice, positions, numbers, magmoms, tensor_rank, symprec)
+    if spg_ds is None:
+        _set_error_message()
+        return None
+
+    keys = (
+        # Magnetic space-group type
+        "uni_number",
+        "msg_type",
+        "hall_number",
+        "tensor_rank",
+        # Magnetic symmetry operations
+        "n_operations",
+        "rotations",
+        "translations",
+        "time_reversals",
+        # Equivalent atoms
+        "n_atoms",
+        "equivalent_atoms",
+        # Transformation to standardized setting
+        "transformation_matrix",
+        "origin_shift",
+        # Standardized crystal structure
+        "n_std_atoms",
+        "std_lattice",
+        "std_types",
+        "std_positions",
+        "std_tensors",
+        "std_rotation_matrix",
+        # Intermidiate datum in symmetry search
+        "primitive_lattice",
+    )
+    dataset = {}
+    for key, data in zip(keys, spg_ds):
+        dataset[key] = data
+    dataset['rotations'] = np.array(dataset['rotations'], dtype='intc', order='C')
+    dataset['translations'] = np.array(dataset['translations'], dtype='double', order='C')
+    dataset['time_reversals'] = np.array(dataset['time_reversals'], dtype='intc', order='C') == 1
+    dataset['equivalent_atoms'] = np.array(dataset['equivalent_atoms'], dtype='intc')
+    dataset['transformation_matrix'] = np.array(
+        dataset['transformation_matrix'], dtype='double', order='C')
+    dataset['origin_shift'] = np.array(dataset['origin_shift'], dtype='double')
+    dataset['std_lattice'] = np.array(np.transpose(dataset['std_lattice']),
+                                      dtype='double', order='C')
+    dataset['std_types'] = np.array(dataset['std_types'], dtype='intc')
+    dataset['std_positions'] = np.array(dataset['std_positions'],
+                                        dtype='double', order='C')
+    dataset['std_rotation_matrix'] = np.array(dataset['std_rotation_matrix'],
+                                              dtype='double', order='C')
+    dataset['primitive_lattice'] = np.array(
+        np.transpose(dataset['primitive_lattice']),
+        dtype='double', order='C')
+
+    dataset['std_tensors'] = np.array(dataset['std_tensors'], dtype='double', order='C')
+    if tensor_rank == 1:
+        dataset['std_tensors'] = dataset['std_tensors'].reshape(-1, 3)
+
+    _set_error_message()
+    return dataset
+
+
 def get_spacegroup(cell, symprec=1e-5, angle_tolerance=-1.0, symbol_type=0):
     """Return space group in international table symbol and number as a string.
 

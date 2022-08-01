@@ -52,7 +52,12 @@ Primitive *prm_alloc_primitive(const int size);
 void prm_free_primitive(Primitive *primitive);
 Primitive *prm_get_primitive(const Cell *cell, const double symprec,
                              const double angle_tolerance);
-Symmetry *prm_get_primitive_symmetry(const Symmetry *symmetry,
+int prm_get_primitive_with_pure_trans(Primitive *primitive, const Cell *cell,
+                                      const VecDBL *pure_trans,
+                                      const double symprec,
+                                      const double angle_tolerance);
+Symmetry *prm_get_primitive_symmetry(double t_mat[3][3],
+                                     const Symmetry *symmetry,
                                      const double symprec);
 int prm_get_primitive_lattice_vectors(double prim_lattice[3][3],
                                       const Cell *cell,

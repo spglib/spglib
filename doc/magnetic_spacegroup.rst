@@ -6,6 +6,8 @@ Magnetic Space group (MSG)
 Definition
 ----------
 
+For more details, we refer to [Lit14]_ and [SC22]_.
+
 A **magnetic space group** :math:`\mathcal{M}` is a subgroup of direct product of space group :math:`\mathcal{G}` and :math:`\mathbb{Z}_{2} \simeq \{1, 1' \}`.
 
 A **family space group** (FSG) :math:`\mathcal{F}(\mathcal{M})` is a non-magnetic space group obtained by ignoring primes in operations,
@@ -132,8 +134,8 @@ Then, :code:`spn_get_operations_with_site_tensors` computes :math:`\mathcal{M}` 
     - :code:`is_magnetic=false`: :math:`1' \circ \mathbf{m} = \mathbf{m}, (\mathbf{R}, \mathbf{v}) \circ \mathbf{m} = (\mathrm{det} \mathbf{R}) \mathbf{R} \mathbf{m}`
 
 
-Procedure to standardize MSG setting
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Procedure to identify MSG
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 :code:`spglib.c:get_magnetic_dataset`
 
@@ -148,8 +150,73 @@ Procedure to standardize MSG setting
 #. Choose reference setting
     - Type-I, II, III -> Hall symbol of :math:`\mathcal{F}`
     - Type-IV -> Hall symbol of :math:`\mathcal{D}`
-#. Compare :math:`\mathcal{M}` with MSGs in database after applying a transformation to the Hall symbol's setting
-#. Standardize cell
+
+Suppose we have transformed MSG :math:`\mathcal{M}` and try to compare it with :math:`\mathcal{M}_{std}` in database.
+
+When :math:`\mathcal{M}` is type-I or type-II
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Just compare :math:`\mathcal{M}` with :math:`\mathcal{M}_{std}`.
+
+When :math:`\mathcal{M}` is type-III
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+After applying the Hall symbol's setting [GPKRC21]_, we can assume :math:`\mathcal{F}(\mathcal{M}) = \mathcal{F}(\mathcal{M}_{std})`.
+However, this does not imply :math:`\mathcal{M} = \mathcal{M}_{std}` in general!
+We also need to adjust coordinate systems such that :math:`\mathcal{D}(\mathcal{M}^{g}) = \mathcal{D}(\mathcal{M}_{std})`, where :math:`g` is in Affine normalizer of :math:`\mathcal{F}(\mathcal{M}_{std})`.
+For triclinic and monoclinic type-III MSGs, there is no such a conjugate XSG with :math:`\mathcal{D}(\mathcal{M}_{std})`.
+For other crystal systems, we need to compute factor group of the Affine normalizer :math:`\mathcal{N}_{\mathcal{A}}(\mathcal{F}(\mathcal{M}_{std})) / \mathcal{D}(\mathcal{M}_{std})`, which is a finite group in this case, and check with each operation.
+We enumerate integer matrices :math:`\mathbf{P}` whose elements are -1, 0, or 1, and determinant is equal to 1.
+
+When :math:`\mathcal{M}` is type-IV
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+After applying the Hall symbol's setting, we can assume :math:`\mathcal{D}(\mathcal{M}) = \mathcal{D}(\mathcal{M}_{std})`.
+We enumerate integer matrices :math:`\mathbf{P}` whose elements are -1, 0, or 1, and determinant is equal to 1.
+Then, apply :math:`(\mathbf{P}, \mathbf{p})` and search conjugated FSG.
+Here, denominators of origin shift :math:`\mathbf{p}` are at most four because all elements of origin shifts of further generators described in ITA are one of :math:`0, \frac{1}{4}, \frac{1}{2}, \frac{3}{4}`.
+
+Procedure to idealize positions and site tensors
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Suppose we have a factor group of MSG, :math:`\overline{\mathcal{M}} := \mathcal{M} / \mathcal{T}(\mathcal{M})`.
+Now we consider to idealize positions and site tensors to possess the symmetry :math:`\overline{\mathcal{M}}`.
+The action of :math:`\overline{\mathcal{M}}` on positions can be defined as
+
+.. math::
+    g \circ (\mathbf{x}_{1}, \dots, \mathbf{x}_{n})
+    :=
+    \left( g \circ \mathbf{x}_{ g^{-1} \circ i } \right)_{i=1, \cdots, n}
+    \quad
+    (g \in \overline{\mathcal{M}}).
+
+The invariant subspace of :math:`(\mathbf{x}_{1}, \dots, \mathbf{x}_{N})` is obtained by the projection operator on the identity representation (also known as Reynolds operator) as
+
+.. math::
+    R_{\overline{\mathcal{M}}} \circ (\mathbf{x}_{1}, \dots, \mathbf{x}_{n})
+    :=
+    \left(
+        \frac{1}{|\overline{\mathcal{M}}|} \sum_{g \in \overline{\mathcal{M}}} g \circ \mathbf{x}_{ g^{-1} \circ i }
+    \right)_{i=1, \dots, n}.
+
+In practice, we average out the residual to avoid rounding error as
+
+.. math::
+    R_{\overline{\mathcal{M}}} \circ (\mathbf{x}_{1}, \dots, \mathbf{x}_{n})
+    =
+    \left(
+        \mathbf{x}_{i}
+        + \frac{1}{|\overline{\mathcal{M}}|}
+          \sum_{g \in \overline{\mathcal{M}}}
+            \left[
+                g \circ \mathbf{x}_{ g^{-1} \circ i } - \mathbf{x}_{i}
+            \right]
+    \right)_{i=1, \dots, n}.
+
+Although we can obtain the invariant subspace by computing kernel of the above operator, we merely apply it on given positions since the positions are assumed to be close to an idealized ones.
+An idealization of site tensors can be performed as well.
+
+Note that this idealization is extension of special position operators presented in [GKA02]_, which considers only site-symmetry group of each site.
 
 Transformation of space group :math:`\mathcal{G}`
 -------------------------------------------------
@@ -227,11 +294,34 @@ We need care for anti-translation.
 
 Each element in factor group :math:`\mathcal{D} / \mathcal{T}_{\mathrm{conv}}(\mathcal{D})` has a unique linear part.
 
+Code reading on symmetry transformation
+---------------------------------------
+
+Based on :code:`refinement.c:get_refined_symmetry_operations`
+
+For given space group :math:`\mathcal{G}_{p}` with primitive cell, :code:`spa_search_spacegroup_with_symmetry` gives :code:`Spacegroup` object.
+
+Corresponding space group :math:`\mathcal{G}_{std}` in DB
+
+Let :code:`P := Spacegroup.bravais_lattice` (after changing basis to primitive) and :code:`p := Spacegroup.origin_shift`.
+
+.. math::
+    A_{std} &=  A_{p} P \\
+    \mathcal{G}_{p} &= (P^{-1}, p)^{-1} \mathcal{G}_{std} (P^{-1}, p) \\
+    x_{p} &= (P^{-1}, p)^{-1} x_{std}
+
+N.B. :code:`set_translation_with_origin_shift` computes :math:`(I, p)^{-1} \mathcal{G}_{std} (I, p)`.
+:code:`get_primitive_db_symmetry` computes :math:`(P, 0) (I, p)^{-1} \mathcal{G}_{std} (I, p) (P, 0)^{-1}` on :math:`(I, p)^{-1} \mathcal{G}_{std} (I, p)`.
+
 References
 ----------
 
-[Lit14] D. B. Litvin, Magnetic Group Tables 1-, 2- and 3-Dimensional Magnetic Subperiodic Groups and Magnetic Space Groups (IUCr, 2014).
+.. [Lit14] D. B. Litvin, Magnetic Group Tables 1-, 2- and 3-Dimensional Magnetic Subperiodic Groups and Magnetic Space Groups (IUCr, 2014).
 
-[SC22] Harold T. Stokes and Branton J. Campbell, [ISO-MAG Table of Magnetic Space Groups](https://stokes.byu.edu/iso/magneticspacegroups.php).
+.. [SC22] Harold T. Stokes and Branton J. Campbell, [ISO-MAG Table of Magnetic Space Groups](https://stokes.byu.edu/iso/magneticspacegroups.php).
 
-[GPKRC21] J. González-Platas, N. A. Katcho and J. Rodríguez-Carvajal, J. Appl. Crystallogr. 54, 1, 338-342 (2021).
+.. [GPKRC21] J. González-Platas, N. A. Katcho and J. Rodríguez-Carvajal, J. Appl. Crystallogr. 54, 1, 338-342 (2021).
+
+.. [GKA02] R. W. Grosse-Kunstleve and P. D. Adams, Acta Cryst. A 58, 60-65 (2002).
+
+.. [EGN97] F. G¨ahler, B. Eick and W. Nickel. Computing maximal subgroups and wyckoff positions of space groups. Acta Cryst A 53, 467–474 (1997).

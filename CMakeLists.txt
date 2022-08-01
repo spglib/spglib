@@ -64,6 +64,7 @@ set(SOURCES ${PROJECT_SOURCE_DIR}/src/arithmetic.c
             ${PROJECT_SOURCE_DIR}/src/hall_symbol.c
             ${PROJECT_SOURCE_DIR}/src/kgrid.c
             ${PROJECT_SOURCE_DIR}/src/kpoint.c
+            ${PROJECT_SOURCE_DIR}/src/magnetic_spacegroup.c
             ${PROJECT_SOURCE_DIR}/src/mathfunc.c
             ${PROJECT_SOURCE_DIR}/src/msg_database.c
             ${PROJECT_SOURCE_DIR}/src/niggli.c
