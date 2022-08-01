@@ -166,7 +166,7 @@ However, this does not imply :math:`\mathcal{M} = \mathcal{M}_{std}` in general!
 We also need to adjust coordinate systems such that :math:`\mathcal{D}(\mathcal{M}^{g}) = \mathcal{D}(\mathcal{M}_{std})`, where :math:`g` is in Affine normalizer of :math:`\mathcal{F}(\mathcal{M}_{std})`.
 For triclinic and monoclinic type-III MSGs, there is no such a conjugate XSG with :math:`\mathcal{D}(\mathcal{M}_{std})`.
 For other crystal systems, we need to compute factor group of the Affine normalizer :math:`\mathcal{N}_{\mathcal{A}}(\mathcal{F}(\mathcal{M}_{std})) / \mathcal{D}(\mathcal{M}_{std})`, which is a finite group in this case, and check with each operation.
-We pre-compute such a conjugator :math:`g` by Cryst [EGN97]_.
+We enumerate integer matrices :math:`\mathbf{P}` whose elements are -1, 0, or 1, and determinant is equal to 1.
 
 When :math:`\mathcal{M}` is type-IV
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

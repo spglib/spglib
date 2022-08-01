@@ -1,3 +1,8 @@
+# Work around for virtualenv with python=3.10
+# https://github.com/pre-commit/pre-commit/issues/1375
+default_language_version:
+  python: python3
+
 fail_fast: false
 repos:
 - repo: https://github.com/pocc/pre-commit-hooks

@@ -33,14 +33,14 @@
 /* POSSIBILITY OF SUCH DAMAGE. */
 
 #include "magnetic_spacegroup.h"
-#include "msg_database.h"
-#include "refinement.h"
-#include "spin.h"
-
-#include "debug.h"
 
 #include <stdlib.h>
 #include <string.h>
+
+#include "debug.h"
+#include "msg_database.h"
+#include "refinement.h"
+#include "spin.h"
 
 #define MAX_DENOMINATOR 100
 

@@ -27,62 +27,6 @@ MAX_ENCODED = (3 ** 9) * (12 ** 3)
 MAX_DENOMINATOR = 4
 
 
-TYPE3_SEARCH = """LoadPackage( "cryst" );;
-SetCrystGroupDefaultAction(LeftAction);;
-
-tx := [ [1, 0, 0, 1], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1], ];;
-ty := [ [1, 0, 0, 0], [0, 1, 0, 1], [0, 0, 1, 0], [0, 0, 0, 1], ];;
-tz := [ [1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 1], [0, 0, 0, 1], ];;
-
-F := AffineCrystGroup([
-    tx, ty, tz,
-    $fsg_str
-]);;
-D1 := AffineCrystGroup([
-    tx, ty, tz,
-    $xsg_str
-]);;
-
-AF_F := AffineNormalizer(F);;
-T_gens := [];;
-identity := IdentityMat(3);;
-for g in GeneratorsOfGroup(AF_F) do
-    linear := g{[1..3]}{[1..3]};;
-    if linear <> identity then
-        continue;
-    fi;
-    Add(T_gens, g);
-od;
-T_AF_F := AffineCrystGroup(T_gens);;
-coset := RightCosetsNC(AF_F, T_AF_F);;
-
-gens := [];;
-found := [];;
-for c in coset do
-    r := Representative(c);;
-    if Determinant(r) <> 1 then
-        continue;
-    fi;
-    D2 := D1^r;;
-    if D2 in found then
-        continue;
-    fi;
-    Add(gens, r);
-    Add(found, D2);
-
-    rinv := r^-1;;
-    if not rinv in gens then
-        Add(gens, rinv);
-    fi;
-od;
-
-for g in gens do
-    Print(g, "\\n");
-od;
-
-quit;
-"""
-
 def enumerate_linears(max_element=1):
     # Enumerate interger matrix with determinant=1
     linears = []
@@ -129,46 +73,38 @@ def dump_operation(g: MagneticOperation) -> str:
     return ret
 
 
-def get_conjugator_type3(gap_path, coset: list[MagneticOperation]) -> list[NDArray]:
-    fsg = get_family_space_group(coset)
-    xsg = get_maximal_space_subgroup(coset)
+def get_conjugator_type3(coset: list[MagneticOperation], linears) -> list[NDArray]:
+    fsg = set(get_family_space_group(coset))
+    pg = set([ops._linear_tuple for ops in fsg])
 
-    fsg_str = ",\n    ".join(map(dump_operation, fsg))
-    xsg_str = ",\n    ".join(map(dump_operation, xsg))
-    with TemporaryDirectory() as tempdir:
-        fin_path = os.path.join(tempdir, "input.g")
+    found = [set(coset)]
+    conjugators = []
+    for linear in linears:
+        t_no_shift = Transformation(linear=linear)
+        coset2_no_shift = t_no_shift.transform_coset(coset)
+        fsg2_no_shift = set(get_family_space_group(coset2_no_shift))
+        pg2_no_shift = set([ops._linear_tuple for ops in fsg2_no_shift])
 
-        t = Template(TYPE3_SEARCH)
-        fin = t.substitute(fsg_str=fsg_str, xsg_str=xsg_str)
-
-        with open(fin_path, 'w') as f:
-            f.write(fin)
-
-        # Ref: https://stackoverflow.com/questions/66808682/how-do-you-use-gap-in-batch-mode
-        result = subprocess.run([
-            gap_path,
-            "-A",
-            "--banner",
-            "--quiet",
-            "--quitonbreak",
-        ], input=fin, text=True, capture_output=True)
-
-    # Remove unwanted output like "> > > > > > > > > > > > > > > > > > >"
-    out = result.stdout.replace(" ", '').replace('>', '').split('\n')
-
-    ret = []
-    for e in out:
-        if e == "":
-            continue
-        arr = np.array(eval(e))
-
-        # Skip pure origin shift or identity
-        if np.allclose(arr[:-1, :-1], np.eye(3)):
+        # At least, point groups should be equal
+        if pg2_no_shift != pg:
             continue
 
-        ret.append(arr.tolist())
+        for ishift in product(range(MAX_DENOMINATOR), repeat=3):
+            origin_shift = np.array(ishift) / MAX_DENOMINATOR
+            t = Transformation(linear=linear, origin_shift=origin_shift)
+            coset2 = t.transform_coset(coset)
+            fsg2 = set(get_family_space_group(coset2))
 
-    return ret
+            if fsg2 != fsg:
+                continue
+            coset2 = set(coset2)
+            if coset2 in found:
+                continue
+            found.append(coset2)
+            conjugators.append(t._augmented_matrix.tolist())
+            break
+
+    return conjugators
 
 
 def get_conjugator_type4(coset: list[MagneticOperation], linears) -> list[NDArray]:
@@ -210,7 +146,7 @@ def get_conjugator_type4(coset: list[MagneticOperation], linears) -> list[NDArra
     return conjugators
 
 
-def get_conjugator(hall_number, spg_table, msg_table, mapping, linears, gap_path):
+def get_conjugator(hall_number, spg_table, msg_table, mapping, linears):
     data = {}
     number = spg_table[hall_number]['number']
     choice = spg_table[hall_number]['choice']
@@ -226,7 +162,7 @@ def get_conjugator(hall_number, spg_table, msg_table, mapping, linears, gap_path
 
         if msg_type == 3 and number >= 16:
             # Triclinic and monoclinic seem to have no alternative setting for type-III
-            ret = get_conjugator_type3(gap_path, coset)
+            ret = get_conjugator_type3(coset, linears)
         elif msg_type == 4:
             ret = get_conjugator_type4(coset, linears)
         else:
@@ -285,9 +221,8 @@ def dump_cpp(raw_all_datum):
 
 @click.command()
 @click.option('--output', default="conjugators.json")
-@click.option('--gap_path', default="./gap-4.11.1/bin/gap.sh")
 @click.option('--dump', is_flag=True, default=False)
-def main(output, gap_path, dump):
+def main(output, dump):
     if dump:
         with open(output, 'r') as f:
             all_datum = json.load(f)
@@ -304,7 +239,7 @@ def main(output, gap_path, dump):
 
     linears = enumerate_linears()
 
-    ret = Parallel(n_jobs=-1, verbose=11)(delayed(get_conjugator)(hall_number, spg_table, msg_table, mapping, linears, gap_path) for hall_number in range(1, 530 + 1))
+    ret = Parallel(n_jobs=-1, verbose=11)(delayed(get_conjugator)(hall_number, spg_table, msg_table, mapping, linears) for hall_number in range(1, 530 + 1))
 
     all_datum = []
     for r in ret:
@@ -322,20 +257,23 @@ def main(output, gap_path, dump):
 
 
 def debug():
+    linears = enumerate_linears()
+
     # Testing
     # hall_symbol ="P 2ac 2ab'"
     # hall_symbol = "P 2ac' 2ab -1'"  # 61.435
     # hall_symbol = "-P 2 2'"  # 47.252
-    # mhs = MagneticHallSymbol(hall_symbol)
-    # ret = get_conjugator_type3("./gap-4.11.1/bin/gap.sh", mhs.coset)
-    # print(ret)
+    hall_symbol = "P 2' 2'"  # 16.3
 
-    hall_symbol = "P 2ac 2ab 1c'"
-    hall_symbol = "-C 2yc 1c'"
     mhs = MagneticHallSymbol(hall_symbol)
-    linears = enumerate_linears()
-    ret = get_conjugator_type4(mhs.coset, linears)
+    ret = get_conjugator_type3(mhs.coset, linears)
     print(ret)
+
+    # hall_symbol = "P 2ac 2ab 1c'"
+    # hall_symbol = "-C 2yc 1c'"
+    # mhs = MagneticHallSymbol(hall_symbol)
+    # ret = get_conjugator_type4(mhs.coset, linears)
+    # print(ret)
 
 
 if __name__ == '__main__':
