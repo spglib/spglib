@@ -46,7 +46,6 @@ static void show_cell(double lattice[3][3], double position[][3],
                       const int types[], const int num_atom);
 
 int main(void) {
-#ifdef HOGE
     int (*funcs[])(void) = {test_spg_find_primitive_BCC,
                             test_spg_find_primitive_corundum,
                             test_spg_standardize_cell_BCC,

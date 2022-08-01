@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 
-from spglib import get_magnetic_symmetry_dataset
+from spglib import get_magnetic_symmetry_dataset, get_symmetry_dataset
 
 
 class TestMagneticDataset(unittest.TestCase):
@@ -519,6 +519,39 @@ class TestMagneticDataset(unittest.TestCase):
 
         dataset = get_magnetic_symmetry_dataset((lattice, positions, numbers, magmoms))
         assert dataset['uni_number'] == 97
+
+    def test_std_rotation(self):
+        # Cmce
+        rigid_rotation = np.array([
+            [1 / np.sqrt(2), -1 / np.sqrt(2), 0],
+            [1 / np.sqrt(2), 1 / np.sqrt(2), 0],
+            [0, 0, 1],
+        ])
+        a = 7.17851431
+        b = 3.99943947
+        c = 8.57154746
+        lattice = np.diag([a, b, c]) @ rigid_rotation.T
+        positions = [
+            [0.0, 0.84688439, 0.1203133],
+            [0.0, 0.65311561, 0.6203133],
+            [0.0, 0.34688439, 0.3796867],
+            [0.0, 0.15311561, 0.8796867],
+            [0.5, 0.34688439, 0.1203133],
+            [0.5, 0.15311561, 0.6203133],
+            [0.5, 0.84688439, 0.3796867],
+            [0.5, 0.65311561, 0.8796867],
+        ]
+        numbers = [35,] * len(positions)
+        dataset_sg = get_symmetry_dataset((lattice, positions, numbers))
+        assert np.allclose(dataset_sg['std_lattice'], np.diag([a, b, c]))
+        assert np.allclose(dataset_sg['transformation_matrix'], np.eye(3))
+        assert np.allclose(dataset_sg['std_rotation_matrix'], rigid_rotation.T)
+
+        magmoms = [1.0] * len(positions)
+        dataset_msg = get_symmetry_dataset((lattice, positions, numbers, magmoms))
+        assert np.allclose(dataset_msg['std_lattice'], np.diag([a, b, c]))
+        assert np.allclose(dataset_msg['transformation_matrix'], np.eye(3))
+        assert np.allclose(dataset_msg['std_rotation_matrix'], rigid_rotation.T)
 
 
 if __name__ == "__main__":

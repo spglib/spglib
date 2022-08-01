@@ -192,8 +192,6 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
         shift[s] += shift_cor[s];
     }
 
-    /* TODO(shinohara): current implementation seems not to obey the */
-    /* standardizing convention w.r.t. cartesian. */
     mat_multiply_matrix_d3(ref_sg->bravais_lattice, lattice,
                            ref_sg->bravais_lattice);
     /* Rigid rotation to standardized lattice */
