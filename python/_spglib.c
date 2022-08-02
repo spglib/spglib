@@ -429,7 +429,7 @@ static PyObject * py_get_dataset(PyObject *self, PyObject *args)
 
 static PyObject *py_get_magnetic_dataset(PyObject *self, PyObject *args) {
   int tensor_rank;
-  double symprec;
+  double symprec, angle_tolerance, mag_symprec;
   PyArrayObject *py_lattice, *py_positions, *py_atom_types, *py_magmoms;
 
   int num_atom;
@@ -445,13 +445,15 @@ static PyObject *py_get_magnetic_dataset(PyObject *self, PyObject *args) {
   PyObject *primitive_lattice;
   int len_list, n, i, j, k, n_tensors;
 
-  if (!PyArg_ParseTuple(args, "OOOOid",
+  if (!PyArg_ParseTuple(args, "OOOOiddd",
                         &py_lattice,
                         &py_positions,
                         &py_atom_types,
                         &py_magmoms,
                         &tensor_rank,
-                        &symprec)) {
+                        &symprec,
+                        &angle_tolerance,
+                        &mag_symprec)) {
     return NULL;
   }
 
@@ -461,8 +463,8 @@ static PyObject *py_get_magnetic_dataset(PyObject *self, PyObject *args) {
   typeat = (int *)PyArray_DATA(py_atom_types);
   tensors = (double *)PyArray_DATA(py_magmoms);
 
-  if ((dataset = spg_get_magnetic_dataset(
-            lat, pos, typeat, tensors, tensor_rank, num_atom, symprec)) ==
+  if ((dataset = spgms_get_magnetic_dataset(
+            lat, pos, typeat, tensors, tensor_rank, num_atom, symprec, angle_tolerance, mag_symprec)) ==
       NULL) {
     Py_RETURN_NONE;
   }
@@ -1007,7 +1009,7 @@ static PyObject * py_get_symmetry_with_collinear_spin(PyObject *self,
 static PyObject * py_get_symmetry_with_site_tensors(PyObject *self,
                                                     PyObject *args)
 {
-  double symprec, angle_tolerance;
+  double symprec, angle_tolerance, mag_symprec;
   PyArrayObject* py_lattice;
   PyArrayObject* py_positions;
   PyArrayObject* py_rotations;
@@ -1034,7 +1036,7 @@ static PyObject * py_get_symmetry_with_site_tensors(PyObject *self,
   int num_sym;
   int tensor_rank;
 
-  if (!PyArg_ParseTuple(args, "OOOOOOOOOidd",
+  if (!PyArg_ParseTuple(args, "OOOOOOOOOiddd",
                         &py_rotations,
                         &py_translations,
                         &py_equiv_atoms,
@@ -1046,7 +1048,8 @@ static PyObject * py_get_symmetry_with_site_tensors(PyObject *self,
                         &py_tensors,
                         &is_magnetic,
                         &symprec,
-                        &angle_tolerance)) {
+                        &angle_tolerance,
+                        &mag_symprec)) {
     return NULL;
   }
 
@@ -1068,7 +1071,7 @@ static PyObject * py_get_symmetry_with_site_tensors(PyObject *self,
   }
 
   /* num_sym has to be larger than num_sym_from_array_size. */
-  num_sym = spgat_get_symmetry_with_site_tensors(rot,
+  num_sym = spgms_get_symmetry_with_site_tensors(rot,
                                                  trans,
                                                  equiv_atoms,
                                                  primitive_lattice,
@@ -1082,7 +1085,8 @@ static PyObject * py_get_symmetry_with_site_tensors(PyObject *self,
                                                  num_atom,
                                                  is_magnetic,
                                                  symprec,
-                                                 angle_tolerance);
+                                                 angle_tolerance,
+                                                 mag_symprec);
   return PyLong_FromLong((long) num_sym);
 }
 

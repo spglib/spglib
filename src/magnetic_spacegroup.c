@@ -87,7 +87,8 @@ void get_rigid_rotation(double rigid_rot[3][3], SPGCONST double lattice[3][3],
 
 /******************************************************************************/
 
-/* If failed, return NULL. */
+/// @brief Identify magnetic space-group type with database
+/// If failed, return NULL.
 MagneticDataset *msg_identify_magnetic_space_group_type(
     SPGCONST double lattice[3][3], const MagneticSymmetry *magnetic_symmetry,
     const double symprec) {
@@ -253,11 +254,12 @@ err:
 /*   1. transform `cell` to primitive */
 /*   2. compute pure translations after given transformation */
 /*   3. apply the pure translations to the primitive */
-Cell *msg_get_transformed_cell(
-    double **changed_tensors, const Cell *cell, SPGCONST double *tensors,
-    SPGCONST double tmat[3][3], SPGCONST double origin_shift[3],
-    SPGCONST double rigid_rot[3][3], const MagneticSymmetry *magnetic_symmetry,
-    const int tensor_rank, const double symprec, const double angle_tolerance) {
+Cell *msg_get_transformed_cell(const Cell *cell, SPGCONST double tmat[3][3],
+                               SPGCONST double origin_shift[3],
+                               SPGCONST double rigid_rot[3][3],
+                               const MagneticSymmetry *magnetic_symmetry,
+                               const double symprec,
+                               const double angle_tolerance) {
     int i, p, ip, s, changed_num_atoms;
     VecDBL *pure_trans, *prm_pure_trans, *changed_pure_trans;
     Primitive *primitive;
@@ -317,9 +319,8 @@ Cell *msg_get_transformed_cell(
 
     /* 3. apply the pure translations to the primitive */
     changed_num_atoms = primitive->cell->size * changed_pure_trans->size;
-    if ((changed_cell = cel_alloc_cell(changed_num_atoms)) == NULL) goto err;
-    if ((*changed_tensors =
-             spn_alloc_site_tensors(changed_num_atoms, tensor_rank)) == NULL)
+    if ((changed_cell = cel_alloc_cell(changed_num_atoms, cell->tensor_rank)) ==
+        NULL)
         goto err;
 
     for (i = 0; i < primitive->cell->size; i++) {
@@ -342,18 +343,17 @@ Cell *msg_get_transformed_cell(
             /* No need to apply transformation for cartesian coordinates. */
             /* On the other hand, need to apply rigid rotation to site tensors.
              */
-            if (tensor_rank == 0) {
-                (*changed_tensors)[ip] = tensors[remapping[i]];
-            } else if (tensor_rank == 1) {
+            if (cell->tensor_rank == COLLINEAR) {
+                changed_cell->tensors[ip] = cell->tensors[remapping[i]];
+            } else if (cell->tensor_rank == NONCOLLINEAR) {
                 /* Assume rigid_rot is proper. */
-                mat_multiply_matrix_vector_d3(*changed_tensors + 3 * ip,
+                mat_multiply_matrix_vector_d3(changed_cell->tensors + 3 * ip,
                                               rigid_rot,
-                                              tensors + 3 * remapping[i]);
+                                              cell->tensors + 3 * remapping[i]);
             }
         }
     }
 
-    changed_cell->aperiodic_axis = -1;
     /* Rotate cell->lattice. Note that rigid_rot is in cartesian. */
     mat_multiply_matrix_d3(changed_cell->lattice, rigid_rot, cell->lattice);
     mat_inverse_matrix_d3(tmat_inv, tmat, 0);

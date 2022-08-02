@@ -116,6 +116,19 @@ class TestGetOperationsWithSiteTensors(unittest.TestCase):
         self.assertTrue(np.sum(sym4['time_reversals']), 8)
         self.assertTrue(np.allclose(sym4['primitive_lattice'], lat))
 
+    def test_with_distorted_magmom(self):
+        magmoms = [
+            [0, 0, 1.001],
+            [0, 0, 0.999],
+            [0, 0, 0],
+            [0, 0, 0],
+            [0, 0, 0],
+            [0, 0, 0],
+        ]
+        sym = get_symmetry(self._cell_CrCl2 + (magmoms, ), mag_symprec=1e-2)
+        expect = [0, 0, 2, 2, 2, 2]
+        assert np.allclose(sym['equivalent_atoms'], expect)
+
 
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(

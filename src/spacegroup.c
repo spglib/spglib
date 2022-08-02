@@ -528,7 +528,7 @@ Spacegroup *spa_search_spacegroup_with_symmetry(const Symmetry *symmetry,
     if ((primitive = prm_alloc_primitive(1)) == NULL) {
         return 0;
     }
-    if ((primitive->cell = cel_alloc_cell(1)) == NULL) {
+    if ((primitive->cell = cel_alloc_cell(1, NOSPIN)) == NULL) {
         return 0;
     }
     mat_copy_matrix_d3(primitive->cell->lattice, identity);
@@ -641,7 +641,8 @@ Cell *spa_transform_from_primitive(const Cell *primitive,
         goto ret;
     }
 
-    if ((std_cell = cel_alloc_cell(primitive->size * multi)) == NULL) {
+    if ((std_cell = cel_alloc_cell(primitive->size * multi,
+                                   primitive->tensor_rank)) == NULL) {
         free(mapping_table);
         mapping_table = NULL;
         goto ret;

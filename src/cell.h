@@ -37,21 +37,42 @@
 
 #include "mathfunc.h"
 
+typedef enum {
+    NOSPIN = -1,
+    COLLINEAR = 0,
+    NONCOLLINEAR = 1,
+} SiteTensorType;
+
 typedef struct {
+    /* Number of atoms */
     int size;
+    /* Used for layer group. Set -1 for space-group search */
     int aperiodic_axis;
-    double (*lattice)[3]; /* 3x3 matrix */
+    /* 3x3 matrix */
+    double (*lattice)[3];
+    /* Atomic types with length (size, ) */
     int *types;
+    /* Scaled positions with length (size, 3) */
     double (*position)[3];
+    /* Rank of site tensors. Set COLLINEAR for scalar, */
+    /* and NONCOLLINEAR for vector. */
+    /* If no site tensors, set SiteTensorType.NOSPIN. */
+    SiteTensorType tensor_rank;
+    /* For tensor_rank=COLLINEAR, site tensors with (size, ).*/
+    /* For tensor_rank=NONCOLLINEAR, site tensors with (size * 3, ).*/
+    double *tensors;
 } Cell;
 
-Cell *cel_alloc_cell(const int size);
+Cell *cel_alloc_cell(const int size, const SiteTensorType tensor_rank);
 void cel_free_cell(Cell *cell);
 void cel_set_cell(Cell *cell, SPGCONST double lattice[3][3],
                   SPGCONST double position[][3], const int types[]);
 void cel_set_layer_cell(Cell *cell, SPGCONST double lattice[3][3],
                         SPGCONST double position[][3], const int types[],
                         const int aperiodic_axis);
+void cel_set_cell_with_tensors(Cell *cell, SPGCONST double lattice[3][3],
+                               SPGCONST double position[][3], const int types[],
+                               const double *tensors);
 Cell *cel_copy_cell(const Cell *cell);
 int cel_is_overlap(const double a[3], const double b[3],
                    SPGCONST double lattice[3][3], const double symprec);

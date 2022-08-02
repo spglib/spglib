@@ -43,15 +43,14 @@
 #include "primitive.h"
 #include "symmetry.h"
 
-static MagneticSymmetry *get_operations(
-    const Symmetry *sym_nonspin, const Cell *cell, const double *tensors,
-    const int tensor_rank, const int is_magnetic, const int is_axial,
-    const double symprec, const double mag_symprec);
+static MagneticSymmetry *get_operations(const Symmetry *sym_nonspin,
+                                        const Cell *cell, const int is_magnetic,
+                                        const int is_axial,
+                                        const double symprec,
+                                        const double mag_symprec);
 static int *get_symmetry_permutations(const MagneticSymmetry *magnetic_symmetry,
-                                      const Cell *cell, const double *tensors,
-                                      const int tensor_rank,
-                                      const int is_magnetic, const int is_axial,
-                                      const double symprec,
+                                      const Cell *cell, const int is_magnetic,
+                                      const int is_axial, const double symprec,
                                       const double mag_symprec);
 static int *get_orbits(const int *permutations, const int num_sym,
                        const int num_atoms);
@@ -87,14 +86,25 @@ static int is_zero_d3(const double a[3], const double mag_symprec);
 
 /******************************************************************************/
 
-/* `permutations`: such that the p-th operation in `magnetic_symmetry` maps */
-/* site-`i` to site-`permutations[p * cell->size + i]`. */
-/* Return NULL if failed */
+/// Return NULL if failed
+/// @param[out] equivalent_atoms
+/// @param[out] permutations such that the p-th operation in `magnetic_symmetry`
+/// maps
+///             site-`i` to site-`permutations[p * cell->size + i]`.
+/// @param[out] prim_lattice
+/// @param[in] sym_nonspin Symmetry operations with ignoring spin
+/// @param[in] cell
+/// @param[in] is_magnetic true if consider time reversal operation
+/// @param[in] is_axil true if site tensors are axial w.r.t. time-reversal
+/// operations
+/// @param[in] symprec
+/// @param[in] angle_tolerance
+/// @param[in] mag_symprec if mag_sympprec < 0, use symprec instead
 MagneticSymmetry *spn_get_operations_with_site_tensors(
     int **equivalent_atoms, int **permutations, double prim_lattice[3][3],
-    const Symmetry *sym_nonspin, const Cell *cell, const double *tensors,
-    const int tensor_rank, const int is_magnetic, const int is_axial,
-    const double symprec, const double angle_tolerance) {
+    const Symmetry *sym_nonspin, const Cell *cell, const int is_magnetic,
+    const int is_axial, const double symprec, const double angle_tolerance,
+    const double mag_symprec_) {
     int multi;
     double mag_symprec;
     MagneticSymmetry *magnetic_symmetry;
@@ -103,20 +113,23 @@ MagneticSymmetry *spn_get_operations_with_site_tensors(
     magnetic_symmetry = NULL;
     pure_trans = NULL;
 
-    /* TODO(shinohara): allow to choose different tolerance for positions and
-     * magmoms */
-    mag_symprec = symprec;
+    // TODO: More robust way to guess mag_symprec
+    if (mag_symprec_ < 0) {
+        mag_symprec = symprec;
+    } else {
+        mag_symprec = mag_symprec_;
+    }
 
-    if ((magnetic_symmetry = get_operations(sym_nonspin, cell, tensors,
-                                            tensor_rank, is_magnetic, is_axial,
-                                            symprec, mag_symprec)) == NULL) {
+    if ((magnetic_symmetry = get_operations(sym_nonspin, cell, is_magnetic,
+                                            is_axial, symprec, mag_symprec)) ==
+        NULL) {
         goto err;
     }
 
     /* equivalent atoms */
     if ((*permutations = get_symmetry_permutations(
-             magnetic_symmetry, cell, tensors, tensor_rank, is_magnetic,
-             is_axial, symprec, mag_symprec)) == NULL) {
+             magnetic_symmetry, cell, is_magnetic, is_axial, symprec,
+             mag_symprec)) == NULL) {
         goto err;
     }
     if ((*equivalent_atoms = get_orbits(*permutations, magnetic_symmetry->size,
@@ -189,11 +202,10 @@ VecDBL *spn_collect_pure_translations_from_magnetic_symmetry(
     return ret_pure_trans;
 }
 
-/* Apply special position operator to `cell` and `tensors`. */
-Cell *spn_get_idealized_cell_and_site_tensors(
-    double **exact_tensors, const int *permutations, const Cell *cell,
-    const double *tensors, const MagneticSymmetry *magnetic_symmetry,
-    const int tensor_rank, const int is_magnetic, const int is_axial) {
+/* Apply special position operator to `cell`. */
+Cell *spn_get_idealized_cell(const int *permutations, const Cell *cell,
+                             const MagneticSymmetry *magnetic_symmetry,
+                             const int is_magnetic, const int is_axial) {
     int i, j, s, p;
     Cell *exact_cell;
     double scalar_tmp, scalar_res;
@@ -209,12 +221,8 @@ Cell *spn_get_idealized_cell_and_site_tensors(
     if ((inv_perm = (int *)malloc(sizeof(int) * cell->size)) == NULL) {
         return NULL;
     }
-    if ((*exact_tensors = spn_alloc_site_tensors(cell->size, tensor_rank)) ==
-        NULL) {
-        return NULL;
-    }
 
-    if ((exact_cell = cel_alloc_cell(cell->size)) == NULL) {
+    if ((exact_cell = cel_alloc_cell(cell->size, cell->tensor_rank)) == NULL) {
         return NULL;
     }
     mat_copy_matrix_d3(exact_cell->lattice, cell->lattice);
@@ -235,9 +243,9 @@ Cell *spn_get_idealized_cell_and_site_tensors(
         for (s = 0; s < 3; s++) {
             pos_res[s] = 0;
         }
-        if (tensor_rank == 0) {
+        if (cell->tensor_rank == COLLINEAR) {
             scalar_res = 0;
-        } else if (tensor_rank == 1) {
+        } else if (cell->tensor_rank == NONCOLLINEAR) {
             for (s = 0; s < 3; s++) {
                 vector_res[s] = 0;
             }
@@ -263,17 +271,17 @@ Cell *spn_get_idealized_cell_and_site_tensors(
                               mat_Nint(pos_tmp[s] - cell->position[i][s]);
             }
 
-            if (tensor_rank == 0) {
+            if (cell->tensor_rank == COLLINEAR) {
                 apply_symmetry_to_site_scalar(
-                    &scalar_tmp, tensors[j], rotations_cart[p],
+                    &scalar_tmp, cell->tensors[j], rotations_cart[p],
                     magnetic_symmetry->timerev[p], is_magnetic, is_axial);
-                scalar_res += scalar_tmp - tensors[i];
-            } else if (tensor_rank == 1) {
+                scalar_res += scalar_tmp - cell->tensors[i];
+            } else if (cell->tensor_rank == NONCOLLINEAR) {
                 apply_symmetry_to_site_vector(
-                    &vector_tmp, j, tensors, rotations_cart[p],
+                    &vector_tmp, j, cell->tensors, rotations_cart[p],
                     magnetic_symmetry->timerev[p], is_magnetic, is_axial);
                 for (s = 0; s < 3; s++) {
-                    vector_res[s] += vector_tmp[s] - tensors[3 * i + s];
+                    vector_res[s] += vector_tmp[s] - cell->tensors[3 * i + s];
                 }
             }
         }
@@ -287,15 +295,15 @@ Cell *spn_get_idealized_cell_and_site_tensors(
         debug_print_vector_d3(exact_cell->position[i]);
 
         debug_print("Idealize site tensor\n");
-        if (tensor_rank == 0) {
-            (*exact_tensors)[i] =
-                tensors[i] + scalar_res / magnetic_symmetry->size;
-            debug_print("%f\n", tensors[i]);
-            debug_print("%f\n", (*exact_tensors)[i]);
-        } else if (tensor_rank == 1) {
+        if (cell->tensor_rank == COLLINEAR) {
+            exact_cell->tensors[i] =
+                cell->tensors[i] + scalar_res / magnetic_symmetry->size;
+            debug_print("%f\n", cell->tensors[i]);
+            debug_print("%f\n", exact_cell->tensors[i]);
+        } else if (cell->tensor_rank == NONCOLLINEAR) {
             for (s = 0; s < 3; s++) {
-                (*exact_tensors)[3 * i + s] =
-                    tensors[3 * i + s] +
+                exact_cell->tensors[3 * i + s] =
+                    cell->tensors[3 * i + s] +
                     vector_res[s] / magnetic_symmetry->size;
             }
         }
@@ -335,10 +343,11 @@ double *spn_alloc_site_tensors(const int num_atoms, const int tensor_rank) {
 /* returned MagneticSymmetry.timerev is NULL if is_magnetic==false. */
 /* is_axial: If true, tensors with tensor_rank==1 do not change by */
 /*           spatial inversion */
-static MagneticSymmetry *get_operations(
-    const Symmetry *sym_nonspin, const Cell *cell, const double *tensors,
-    const int tensor_rank, const int is_magnetic, const int is_axial,
-    const double symprec, const double mag_symprec) {
+static MagneticSymmetry *get_operations(const Symmetry *sym_nonspin,
+                                        const Cell *cell, const int is_magnetic,
+                                        const int is_axial,
+                                        const double symprec,
+                                        const double mag_symprec) {
     MagneticSymmetry *magnetic_symmetry;
     int i, j, k, sign, num_sym, found, determined, max_size;
     double pos[3];
@@ -406,34 +415,34 @@ static MagneticSymmetry *get_operations(
 
             /* Skip if relevant tensors are zeros because they have nothing to
              * do with magnetic symmetry search! */
-            if (tensor_rank == 0) {
-                if (is_zero(tensors[j], mag_symprec) &&
-                    is_zero(tensors[k], mag_symprec)) {
+            if (cell->tensor_rank == COLLINEAR) {
+                if (is_zero(cell->tensors[j], mag_symprec) &&
+                    is_zero(cell->tensors[k], mag_symprec)) {
                     continue;
                 }
             }
-            if (tensor_rank == 1) {
-                if (is_zero(tensors[j * 3], mag_symprec) &&
-                    is_zero(tensors[j * 3 + 1], mag_symprec) &&
-                    is_zero(tensors[j * 3 + 2], mag_symprec) &&
-                    is_zero(tensors[k * 3], mag_symprec) &&
-                    is_zero(tensors[k * 3 + 1], mag_symprec) &&
-                    is_zero(tensors[k * 3 + 2], mag_symprec)) {
+            if (cell->tensor_rank == NONCOLLINEAR) {
+                if (is_zero(cell->tensors[j * 3], mag_symprec) &&
+                    is_zero(cell->tensors[j * 3 + 1], mag_symprec) &&
+                    is_zero(cell->tensors[j * 3 + 2], mag_symprec) &&
+                    is_zero(cell->tensors[k * 3], mag_symprec) &&
+                    is_zero(cell->tensors[k * 3 + 1], mag_symprec) &&
+                    is_zero(cell->tensors[k * 3 + 2], mag_symprec)) {
                     continue;
                 }
             }
 
             if (!determined) {
                 /* Determine sign */
-                if (tensor_rank == 0) {
+                if (cell->tensor_rank == COLLINEAR) {
                     sign = get_operation_sign_on_scalar(
-                        tensors[j], tensors[k], rotations_cart[i], is_magnetic,
-                        is_axial, mag_symprec);
+                        cell->tensors[j], cell->tensors[k], rotations_cart[i],
+                        is_magnetic, is_axial, mag_symprec);
                 }
-                if (tensor_rank == 1) {
+                if (cell->tensor_rank == NONCOLLINEAR) {
                     sign = get_operation_sign_on_vector(
-                        j, k, tensors, rotations_cart[i], is_magnetic, is_axial,
-                        mag_symprec);
+                        j, k, cell->tensors, rotations_cart[i], is_magnetic,
+                        is_axial, mag_symprec);
                 }
                 determined = 1;
 
@@ -445,17 +454,18 @@ static MagneticSymmetry *get_operations(
                 }
             } else {
                 /* Check if `sign` is consistent */
-                if (tensor_rank == 0) {
+                if (cell->tensor_rank == COLLINEAR) {
                     if (get_operation_sign_on_scalar(
-                            tensors[j], tensors[k], rotations_cart[i],
-                            is_magnetic, is_axial, mag_symprec) != sign) {
+                            cell->tensors[j], cell->tensors[k],
+                            rotations_cart[i], is_magnetic, is_axial,
+                            mag_symprec) != sign) {
                         found = 0;
                         break;
                     }
                 }
-                if (tensor_rank == 1) {
+                if (cell->tensor_rank == NONCOLLINEAR) {
                     if (get_operation_sign_on_vector(
-                            j, k, tensors, rotations_cart[i], is_magnetic,
+                            j, k, cell->tensors, rotations_cart[i], is_magnetic,
                             is_axial, mag_symprec) != sign) {
                         found = 0;
                         break;
@@ -548,10 +558,8 @@ err:
 /* in `magnetic_symmetry` maps site-`i` to site-`permutations[p * cell->size +
  * i]`. */
 static int *get_symmetry_permutations(const MagneticSymmetry *magnetic_symmetry,
-                                      const Cell *cell, const double *tensors,
-                                      const int tensor_rank,
-                                      const int is_magnetic, const int is_axial,
-                                      const double symprec,
+                                      const Cell *cell, const int is_magnetic,
+                                      const int is_axial, const double symprec,
                                       const double mag_symprec) {
     int p, i, j;
     int *permutations;
@@ -585,13 +593,13 @@ static int *get_symmetry_permutations(const MagneticSymmetry *magnetic_symmetry,
             apply_symmetry_to_position(pos, cell->position[i],
                                        magnetic_symmetry->rot[p],
                                        magnetic_symmetry->trans[p]);
-            if (tensor_rank == 0) {
+            if (cell->tensor_rank == COLLINEAR) {
                 apply_symmetry_to_site_scalar(
-                    &scalar, tensors[i], rotations_cart[p],
+                    &scalar, cell->tensors[i], rotations_cart[p],
                     magnetic_symmetry->timerev[p], is_magnetic, is_axial);
-            } else if (tensor_rank == 1) {
+            } else if (cell->tensor_rank == NONCOLLINEAR) {
                 apply_symmetry_to_site_vector(
-                    &vector, i, tensors, rotations_cart[p],
+                    &vector, i, cell->tensors, rotations_cart[p],
                     magnetic_symmetry->timerev[p], is_magnetic, is_axial);
             }
 
@@ -601,14 +609,14 @@ static int *get_symmetry_permutations(const MagneticSymmetry *magnetic_symmetry,
                         cell->lattice, symprec)) {
                     continue;
                 }
-                if (tensor_rank == 0 &&
-                    !is_zero(tensors[j] - scalar, mag_symprec)) {
+                if (cell->tensor_rank == COLLINEAR &&
+                    !is_zero(cell->tensors[j] - scalar, mag_symprec)) {
                     continue;
                 }
-                if (tensor_rank == 1) {
-                    diff[0] = tensors[3 * j] - vector[0];
-                    diff[1] = tensors[3 * j + 1] - vector[1];
-                    diff[2] = tensors[3 * j + 2] - vector[2];
+                if (cell->tensor_rank == NONCOLLINEAR) {
+                    diff[0] = cell->tensors[3 * j] - vector[0];
+                    diff[1] = cell->tensors[3 * j + 1] - vector[1];
+                    diff[2] = cell->tensors[3 * j + 2] - vector[2];
                     if (!is_zero_d3(diff, mag_symprec)) {
                         continue;
                     }

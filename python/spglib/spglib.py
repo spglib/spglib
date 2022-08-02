@@ -51,6 +51,7 @@ def get_version():
 def get_symmetry(cell,
                  symprec=1e-5,
                  angle_tolerance=-1.0,
+                 mag_symprec=-1.0,
                  is_magnetic=True):
     """Find symmetry operations from a crystal structure and site tensors
 
@@ -90,6 +91,9 @@ def get_symmetry(cell,
     angle_tolerance : float
         Symmetry search tolerance in the unit of angle deg. If the value is
         negative, an internally optimized routine is used to judge symmetry.
+    mag_symprec : float
+        Tolerance for magnetic symmetry search in the unit of magnetic moments.
+        If not specified, use the same value as symprec.
     is_magnetic : bool
         When optional data (4th element of cell tuple) is given in case-II,
         the symmetry search is performed considering magnetic symmetry, which
@@ -158,7 +162,8 @@ def get_symmetry(cell,
                                                  magmoms,
                                                  is_magnetic * 1,
                                                  symprec,
-                                                 angle_tolerance)
+                                                 angle_tolerance,
+                                                 mag_symprec)
 
         _set_error_message()
         if num_sym == 0:
@@ -315,7 +320,76 @@ def get_symmetry_dataset(cell,
     return dataset
 
 
-def get_magnetic_symmetry_dataset(cell, symprec=1e-5):
+def get_magnetic_symmetry_dataset(
+    cell,
+    symprec=1e-5,
+    angle_tolerance=-1.0,
+    mag_symprec=-1.0,
+):
+    """Search magnetic symmetry dataset from an input cell.
+
+    Args:
+        cell, symprec, angle_tolerance, mag_symprec:
+            See the docstring of get_symmetry.
+
+    Return:
+        A dictionary is returned. Dictionary keys:
+            Magnetic space-group type
+                uni_number: int
+                    UNI number between 1 to 1651
+                msg_type: int
+                    Magnetic space groups (MSG) is classified by its family space group (FSG)
+                    and maximal space subgroup (XSG). FSG is a non-magnetic space group
+                    obtained by ignoring time-reversal term in MSG. XSG is a space group
+                    obtained by picking out non time-reversal operations in MSG.
+
+                    msg_type==1 (type-I): MSG, XSG, FSG are all isomorphic.
+                    msg_type==2 (type-II): XSG and FSG are isomorphic, and MSG is generated
+                                           from XSG and pure time reversal operations
+                    msg_type==3 (type-III): XSG is a proper subgroup of MSG with isomorphic
+                                            translational subgroups.
+                    msg_type==4 (type-IV): XSG is a proper subgroup of MSG with isomorphic
+                                           point group.
+                hall_number: int
+                    For type-I, II, III, Hall number of FSG; for type-IV, that of XSG
+                tensor_rank: int
+            Magnetic symmetry operations
+                n_operations: int
+                rotations: array, (n_operations, 3, 3)
+                    Rotation (matrix) parts of symmetry operations
+                translations: array, (n_operations, 3)
+                    Translation (vector) parts of symmetry operations
+                time_reversals: array, (n_operations, )
+                    Time reversal part of magnetic symmetry operations.
+                    True indicates time reversal operation, and False indicates
+                    an ordinary operation.
+            Equivalent atoms
+                n_atoms: int
+                equivalent_atoms: array
+                    See the docstring of get_symmetry_dataset
+            Transformation to standardized setting
+                transformation_matrix: array, (3, 3)
+                    Transformation matrix from input lattice to standardized
+                origin_shift: array, (3, )
+                    Origin shift from standardized to input origin
+            Standardized crystal structure
+                n_std_atoms: int
+                    Number of atoms in standardized unit cell
+                std_lattice: array, (3, 3)
+                    Row-wise lattice vectors
+                std_types: array, (n_std_atoms, )
+                std_positions: array, (n_std_atoms, 3)
+                std_tensors: array
+                    (n_std_atoms, ) for collinear magnetic moments.
+                    (n_std_atoms, 3) for vector non-collinear magnetic moments.
+                std_rotation_matrix
+                    Rigid rotation matrix to rotate from standardized basis
+                    vectors to idealized standardized basis vectors
+            Intermediate data in symmetry search
+                primitive_lattice: array, (3, 3)
+
+        If it fails, None is returned.
+    """
     _set_no_error()
 
     lattice, positions, numbers, magmoms = _expand_cell(cell)
@@ -323,7 +397,7 @@ def get_magnetic_symmetry_dataset(cell, symprec=1e-5):
         return None
 
     tensor_rank = magmoms.ndim - 1
-    spg_ds = spg.magnetic_dataset(lattice, positions, numbers, magmoms, tensor_rank, symprec)
+    spg_ds = spg.magnetic_dataset(lattice, positions, numbers, magmoms, tensor_rank, symprec, angle_tolerance, mag_symprec)
     if spg_ds is None:
         _set_error_message()
         return None

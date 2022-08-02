@@ -3,10 +3,6 @@
 Spglib dataset
 ===============
 
-.. contents::
-   :depth: 2
-   :local:
-
 **At version 1.9.4, SpglibDataset was modified.** The member
 name ``setting`` is changed to ``choice`` and ``pointgroup_number`` is
 removed.

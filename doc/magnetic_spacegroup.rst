@@ -1,8 +1,6 @@
 Magnetic Space group (MSG)
 ==========================
 
-.. contents::
-
 Definition
 ----------
 

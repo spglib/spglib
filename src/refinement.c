@@ -522,7 +522,8 @@ static Cell *expand_positions_in_bravais(
 
     bravais = NULL;
 
-    if ((bravais = cel_alloc_cell(conv_prim->size * num_pure_trans)) == NULL) {
+    if ((bravais = cel_alloc_cell(conv_prim->size * num_pure_trans,
+                                  conv_prim->tensor_rank)) == NULL) {
         return NULL;
     }
 
@@ -587,7 +588,8 @@ static Cell *get_conventional_primitive(SPGCONST Spacegroup *spacegroup,
 
     conv_prim = NULL;
 
-    if ((conv_prim = cel_alloc_cell(primitive->size)) == NULL) {
+    if ((conv_prim = cel_alloc_cell(primitive->size, primitive->tensor_rank)) ==
+        NULL) {
         return NULL;
     }
 
