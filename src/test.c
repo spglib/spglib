@@ -71,6 +71,9 @@ int main(void) {
                             test_spg_get_error_message,
                             test_spg_get_hall_number_from_symmetry,
                             NULL};
+    /*
+    int (*funcs[])(void) = {test_spg_get_symmetry_with_site_tensors, NULL};
+    */
 
     int i, result;
 
