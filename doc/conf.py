@@ -116,7 +116,7 @@ myst_dmath_double_inline = True
 # The theme to use for HTML and HTML Help pages.  Major themes that come with
 # Sphinx are currently 'default' and 'sphinxdoc'.
 html_theme = "sphinx_book_theme"
-html_title = 'Spglig v.%s' % release
+html_title = 'Spglib v.%s' % release
 html_theme_options = {
     "navigation_with_keys": True,
 
