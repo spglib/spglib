@@ -86,13 +86,25 @@ static int is_zero_d3(const double a[3], const double mag_symprec);
 
 /******************************************************************************/
 
-/* `permutations`: such that the p-th operation in `magnetic_symmetry` maps */
-/* site-`i` to site-`permutations[p * cell->size + i]`. */
-/* Return NULL if failed */
+/// Return NULL if failed
+/// @param[out] equivalent_atoms
+/// @param[out] permutations such that the p-th operation in `magnetic_symmetry`
+/// maps
+///             site-`i` to site-`permutations[p * cell->size + i]`.
+/// @param[out] prim_lattice
+/// @param[in] sym_nonspin Symmetry operations with ignoring spin
+/// @param[in] cell
+/// @param[in] is_magnetic true if consider time reversal operation
+/// @param[in] is_axil true if site tensors are axial w.r.t. time-reversal
+/// operations
+/// @param[in] symprec
+/// @param[in] angle_tolerance
+/// @param[in] mag_symprec if mag_sympprec < 0, use symprec instead
 MagneticSymmetry *spn_get_operations_with_site_tensors(
     int **equivalent_atoms, int **permutations, double prim_lattice[3][3],
     const Symmetry *sym_nonspin, const Cell *cell, const int is_magnetic,
-    const int is_axial, const double symprec, const double angle_tolerance) {
+    const int is_axial, const double symprec, const double angle_tolerance,
+    const double mag_symprec_) {
     int multi;
     double mag_symprec;
     MagneticSymmetry *magnetic_symmetry;
@@ -101,9 +113,12 @@ MagneticSymmetry *spn_get_operations_with_site_tensors(
     magnetic_symmetry = NULL;
     pure_trans = NULL;
 
-    /* TODO(shinohara): allow to choose different tolerance for positions and
-     * magmoms */
-    mag_symprec = symprec;
+    // TODO: More robust way to guess mag_symprec
+    if (mag_symprec_ < 0) {
+        mag_symprec = symprec;
+    } else {
+        mag_symprec = mag_symprec_;
+    }
 
     if ((magnetic_symmetry = get_operations(sym_nonspin, cell, is_magnetic,
                                             is_axial, symprec, mag_symprec)) ==

@@ -87,7 +87,8 @@ void get_rigid_rotation(double rigid_rot[3][3], SPGCONST double lattice[3][3],
 
 /******************************************************************************/
 
-/* If failed, return NULL. */
+/// @brief Identify magnetic space-group type with database
+/// If failed, return NULL.
 MagneticDataset *msg_identify_magnetic_space_group_type(
     SPGCONST double lattice[3][3], const MagneticSymmetry *magnetic_symmetry,
     const double symprec) {

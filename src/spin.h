@@ -42,7 +42,8 @@
 MagneticSymmetry *spn_get_operations_with_site_tensors(
     int **equivalent_atoms, int **permutations, double prim_lattice[3][3],
     const Symmetry *sym_nonspin, const Cell *cell, const int is_magnetic,
-    const int is_axial, const double symprec, const double angle_tolerance);
+    const int is_axial, const double symprec, const double angle_tolerance,
+    const double mag_symprec);
 VecDBL *spn_collect_pure_translations_from_magnetic_symmetry(
     const MagneticSymmetry *sym_msg);
 Cell *spn_get_idealized_cell(const int *permutations, const Cell *cell,

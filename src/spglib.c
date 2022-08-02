@@ -98,7 +98,8 @@ static SpglibDataset *get_layer_dataset(
 static SpglibMagneticDataset *get_magnetic_dataset(
     SPGCONST double lattice[3][3], SPGCONST double position[][3],
     const int types[], const double *tensors, const int tensor_rank,
-    const int num_atom, const double symprec, const double angle_tolerance);
+    const int num_atom, const double symprec, const double angle_tolerance,
+    const double mag_symprec);
 static SpglibDataset *init_dataset(void);
 static SpglibMagneticDataset *init_magnetic_dataset(void);
 static int set_dataset(SpglibDataset *dataset, const Cell *cell,
@@ -118,7 +119,8 @@ static int get_symmetry_from_dataset(
 static MagneticSymmetry *get_symmetry_with_site_tensors(
     int equivalent_atoms[], int **permutations, double primitive_lattice[3][3],
     const int max_size, const Cell *cell, const int is_magnetic,
-    const int is_axial, const double symprec, const double angle_tolerance);
+    const int is_axial, const double symprec, const double angle_tolerance,
+    const double mag_symprec);
 static int get_multiplicity(SPGCONST double lattice[3][3],
                             SPGCONST double position[][3], const int types[],
                             const int num_atom, const double symprec,
@@ -244,7 +246,17 @@ SpglibMagneticDataset *spg_get_magnetic_dataset(
     const int types[], const double *tensors, const int tensor_rank,
     const int num_atom, const double symprec) {
     return get_magnetic_dataset(lattice, position, types, tensors, tensor_rank,
-                                num_atom, symprec, -1.0);
+                                num_atom, symprec, -1.0, -1.0);
+}
+
+SpglibMagneticDataset *spgms_get_magnetic_dataset(
+    SPGCONST double lattice[3][3], SPGCONST double position[][3],
+    const int types[], const double *tensors, const int tensor_rank,
+    const int num_atom, const double symprec, const double angle_tolerance,
+    const double mag_symprec) {
+    return get_magnetic_dataset(lattice, position, types, tensors, tensor_rank,
+                                num_atom, symprec, angle_tolerance,
+                                mag_symprec);
 }
 
 /* Return NULL if failed */
@@ -377,9 +389,9 @@ int spg_get_symmetry_with_collinear_spin(
     const int max_size, SPGCONST double lattice[3][3],
     SPGCONST double position[][3], const int types[], const double spins[],
     const int num_atom, const double symprec) {
-    return spgat_get_symmetry_with_collinear_spin(
+    return spgms_get_symmetry_with_collinear_spin(
         rotation, translation, equivalent_atoms, max_size, lattice, position,
-        types, spins, num_atom, symprec, -1.0);
+        types, spins, num_atom, symprec, -1.0, -1.0);
 }
 
 /* Return 0 if failed */
@@ -388,6 +400,17 @@ int spgat_get_symmetry_with_collinear_spin(
     const int max_size, SPGCONST double lattice[3][3],
     SPGCONST double position[][3], const int types[], const double spins[],
     const int num_atom, const double symprec, const double angle_tolerance) {
+    return spgms_get_symmetry_with_collinear_spin(
+        rotation, translation, equivalent_atoms, max_size, lattice, position,
+        types, spins, num_atom, symprec, angle_tolerance, -1.0);
+}
+
+int spgms_get_symmetry_with_collinear_spin(
+    int rotation[][3][3], double translation[][3], int equivalent_atoms[],
+    const int max_size, SPGCONST double lattice[3][3],
+    SPGCONST double position[][3], const int types[], const double spins[],
+    const int num_atom, const double symprec, const double angle_tolerance,
+    const double mag_symprec) {
     int succeeded;
     double primitive_lattice[3][3];
     int *spin_flips;
@@ -397,10 +420,10 @@ int spgat_get_symmetry_with_collinear_spin(
         return 0;
     }
 
-    succeeded = spgat_get_symmetry_with_site_tensors(
+    succeeded = spgms_get_symmetry_with_site_tensors(
         rotation, translation, equivalent_atoms, primitive_lattice, spin_flips,
         max_size, lattice, position, types, spins, 0 /* tensor_rank */,
-        num_atom, 1 /* is_magnetic */, symprec, angle_tolerance);
+        num_atom, 1 /* is_magnetic */, symprec, angle_tolerance, mag_symprec);
 
     free(spin_flips);
     spin_flips = NULL;
@@ -416,10 +439,10 @@ int spg_get_symmetry_with_site_tensors(
     SPGCONST double lattice[3][3], SPGCONST double position[][3],
     const int types[], const double *tensors, const int tensor_rank,
     const int num_atom, const int is_magnetic, const double symprec) {
-    return spgat_get_symmetry_with_site_tensors(
+    return spgms_get_symmetry_with_site_tensors(
         rotation, translation, equivalent_atoms, primitive_lattice, spin_flips,
         max_size, lattice, position, types, tensors, tensor_rank, num_atom,
-        is_magnetic, symprec, -1.0);
+        is_magnetic, symprec, -1.0, -1.0);
 }
 
 /* Return 0 if failed */
@@ -430,6 +453,20 @@ int spgat_get_symmetry_with_site_tensors(
     const int types[], const double *tensors, const int tensor_rank,
     const int num_atom, const int is_magnetic, const double symprec,
     const double angle_tolerance) {
+    return spgms_get_symmetry_with_site_tensors(
+        rotation, translation, equivalent_atoms, primitive_lattice, spin_flips,
+        max_size, lattice, position, types, tensors, tensor_rank, num_atom,
+        is_magnetic, symprec, angle_tolerance, -1.0);
+}
+
+/* Return 0 if failed */
+int spgms_get_symmetry_with_site_tensors(
+    int rotation[][3][3], double translation[][3], int equivalent_atoms[],
+    double primitive_lattice[3][3], int *spin_flips, const int max_size,
+    SPGCONST double lattice[3][3], SPGCONST double position[][3],
+    const int types[], const double *tensors, const int tensor_rank,
+    const int num_atom, const int is_magnetic, const double symprec,
+    const double angle_tolerance, const double mag_symprec) {
     int i, size, is_axial;
     MagneticSymmetry *magnetic_symmetry;
     int *permutations;
@@ -448,7 +485,8 @@ int spgat_get_symmetry_with_site_tensors(
 
     if ((magnetic_symmetry = get_symmetry_with_site_tensors(
              equivalent_atoms, &permutations, primitive_lattice, max_size, cell,
-             is_magnetic, is_axial, symprec, angle_tolerance)) == NULL) {
+             is_magnetic, is_axial, symprec, angle_tolerance, mag_symprec)) ==
+        NULL) {
         /* spglib_error_code is filled in get_symmetry_with_tensors */
         return 0;
     }
@@ -1121,7 +1159,8 @@ found:
 static SpglibMagneticDataset *get_magnetic_dataset(
     SPGCONST double lattice[3][3], SPGCONST double position[][3],
     const int types[], const double *tensors, const int tensor_rank,
-    const int num_atom, const double symprec, const double angle_tolerance) {
+    const int num_atom, const double symprec, const double angle_tolerance,
+    const double mag_symprec) {
     int max_size, is_axial;
     Cell *cell, *exact_cell, *exact_cell_std;
     Spacegroup *fsg, *xsg;
@@ -1173,7 +1212,7 @@ static SpglibMagneticDataset *get_magnetic_dataset(
     if ((magnetic_symmetry = get_symmetry_with_site_tensors(
              equivalent_atoms, &permutations, primitive_lattice, max_size, cell,
              1, /* is_magnetic */
-             is_axial, symprec, angle_tolerance)) == NULL) {
+             is_axial, symprec, angle_tolerance, mag_symprec)) == NULL) {
         spglib_error_code = SPGERR_SYMMETRY_OPERATION_SEARCH_FAILED;
         goto finalize;
     }
@@ -1684,7 +1723,8 @@ err:
 static MagneticSymmetry *get_symmetry_with_site_tensors(
     int equivalent_atoms[], int **permutations, double primitive_lattice[3][3],
     const int max_size, const Cell *cell, const int is_magnetic,
-    const int is_axial, const double symprec, const double angle_tolerance) {
+    const int is_axial, const double symprec, const double angle_tolerance,
+    const double mag_symprec) {
     int i;
     MagneticSymmetry *magnetic_symmetry;
     Symmetry *sym_nonspin;
@@ -1718,7 +1758,7 @@ static MagneticSymmetry *get_symmetry_with_site_tensors(
 
     magnetic_symmetry = spn_get_operations_with_site_tensors(
         &equiv_atoms, permutations, primitive_lattice, sym_nonspin, cell,
-        is_magnetic, is_axial, symprec, angle_tolerance);
+        is_magnetic, is_axial, symprec, angle_tolerance, mag_symprec);
     /* Set equivalent_atoms */
     for (i = 0; i < cell->size; i++) {
         equivalent_atoms[i] = equiv_atoms[i];
