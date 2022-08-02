@@ -3,10 +3,6 @@
 Spglib for Python
 ==================
 
-.. contents::
-   :depth: 2
-   :local:
-
 Installation
 -------------
 

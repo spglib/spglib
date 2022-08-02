@@ -5,15 +5,16 @@ This directory contains python-sphinx documentation source.
 ## How to compile
 
 ```shell
-pip install sphinx sphinx-bootstrap-theme
+pip install -r requirements.txt
 make html
 ```
 
 ## Source files
 
-* `conf.py` contains the sphinx setting configuration.
-* `*.rst` are the usual sphinx documentation source and the filenames without `.rst` are the keys to link from toctree mainly in `index.rst`.
-* `*.inc` are the files included in the other `*.rst` files.
+- `conf.py` contains the sphinx setting configuration.
+- `*.rst` are the usual sphinx documentation source and the filenames without `.rst` are the keys to link from toctree mainly in `index.rst`.
+- `*.inc` are the files included in the other `*.rst` files.
+- `references.bib` contains citation entries for [sphinxcontrib-bibtex](https://sphinxcontrib-bibtex.readthedocs.io/en/latest/index.html)
 
 ## How to publish
 

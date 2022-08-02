@@ -1,10 +1,6 @@
 C-APIs
 ======
 
-.. contents:: List of C-APIs
-   :depth: 3
-   :local:
-
 ``spg_get_major_version``, ``spg_get_minor_version``, ``spg_get_micro_version``
 --------------------------------------------------------------------------------
 
