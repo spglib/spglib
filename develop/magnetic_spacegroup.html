@@ -1,0 +1,856 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Magnetic Space group (MSG) &#8212; Spglib v.1.16.0</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Developer document" href="develop.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="index.html">
+      
+      
+      
+      <h1 class="site-logo" id="site-title">Spglib v.1.16.0</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="install.html">
+   How to install spglib C-API
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="api.html">
+   C-APIs
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="dataset.html">
+   Spglib dataset
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="variable.html">
+   Variables
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="python-spglib.html">
+   Spglib for Python
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="interface.html">
+   Rust, Fortran, and Ruby interfaces
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="definition.html">
+   Definitions and conventions
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="references.html">
+   References
+  </a>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="develop.html">
+   Developer Documentation
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     Magnetic space group
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="_sources/magnetic_spacegroup.rst.txt"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.rst</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#definition">
+   Definition
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#action-of-msg-operations">
+   Action of MSG operations
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#msg-detection-for-crystal-structure">
+   MSG detection for crystal structure
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#procedure-to-detect-msg-operations">
+     Procedure to detect MSG operations
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#procedure-to-identify-msg">
+     Procedure to identify MSG
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#when-mathcal-m-is-type-i-or-type-ii">
+       When
+       <span class="math notranslate nohighlight">
+        \(\mathcal{M}\)
+       </span>
+       is type-I or type-II
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#when-mathcal-m-is-type-iii">
+       When
+       <span class="math notranslate nohighlight">
+        \(\mathcal{M}\)
+       </span>
+       is type-III
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#when-mathcal-m-is-type-iv">
+       When
+       <span class="math notranslate nohighlight">
+        \(\mathcal{M}\)
+       </span>
+       is type-IV
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#procedure-to-idealize-positions-and-site-tensors">
+     Procedure to idealize positions and site tensors
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#transformation-of-space-group-mathcal-g">
+   Transformation of space group
+   <span class="math notranslate nohighlight">
+    \(\mathcal{G}\)
+   </span>
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#transformation-of-magnetic-space-group-mathcal-m">
+   Transformation of magnetic space group
+   <span class="math notranslate nohighlight">
+    \(\mathcal{M}\)
+   </span>
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#code-reading-on-symmetry-transformation">
+   Code reading on symmetry transformation
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#references">
+   References
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Magnetic Space group (MSG)</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#definition">
+   Definition
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#action-of-msg-operations">
+   Action of MSG operations
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#msg-detection-for-crystal-structure">
+   MSG detection for crystal structure
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#procedure-to-detect-msg-operations">
+     Procedure to detect MSG operations
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#procedure-to-identify-msg">
+     Procedure to identify MSG
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#when-mathcal-m-is-type-i-or-type-ii">
+       When
+       <span class="math notranslate nohighlight">
+        \(\mathcal{M}\)
+       </span>
+       is type-I or type-II
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#when-mathcal-m-is-type-iii">
+       When
+       <span class="math notranslate nohighlight">
+        \(\mathcal{M}\)
+       </span>
+       is type-III
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#when-mathcal-m-is-type-iv">
+       When
+       <span class="math notranslate nohighlight">
+        \(\mathcal{M}\)
+       </span>
+       is type-IV
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#procedure-to-idealize-positions-and-site-tensors">
+     Procedure to idealize positions and site tensors
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#transformation-of-space-group-mathcal-g">
+   Transformation of space group
+   <span class="math notranslate nohighlight">
+    \(\mathcal{G}\)
+   </span>
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#transformation-of-magnetic-space-group-mathcal-m">
+   Transformation of magnetic space group
+   <span class="math notranslate nohighlight">
+    \(\mathcal{M}\)
+   </span>
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#code-reading-on-symmetry-transformation">
+   Code reading on symmetry transformation
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#references">
+   References
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section id="magnetic-space-group-msg">
+<h1>Magnetic Space group (MSG)<a class="headerlink" href="#magnetic-space-group-msg" title="Permalink to this headline">#</a></h1>
+<section id="definition">
+<h2>Definition<a class="headerlink" href="#definition" title="Permalink to this headline">#</a></h2>
+<p>For more details, we refer to <a class="reference internal" href="#lit14" id="id1"><span>[Lit14]</span></a> and <a class="reference internal" href="#sc22" id="id2"><span>[SC22]</span></a>.</p>
+<p>A <strong>magnetic space group</strong> <span class="math notranslate nohighlight">\(\mathcal{M}\)</span> is a subgroup of direct product of space group <span class="math notranslate nohighlight">\(\mathcal{G}\)</span> and <span class="math notranslate nohighlight">\(\mathbb{Z}_{2} \simeq \{1, 1' \}\)</span>.</p>
+<p>A <strong>family space group</strong> (FSG) <span class="math notranslate nohighlight">\(\mathcal{F}(\mathcal{M})\)</span> is a non-magnetic space group obtained by ignoring primes in operations,</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{F}(\mathcal{M}) = \left\{ (\mathbf{R}, \mathbf{v}) \mid (\mathbf{R}, \mathbf{v}) \in \mathcal{M} \vee (\mathbf{R}, \mathbf{v})1' \in \mathcal{M} \right\}.\]</div>
+<p>A <strong>maximal space subgroup</strong> (XSG) <span class="math notranslate nohighlight">\(\mathcal{D}(\mathcal{M})\)</span> is a space group obtained by removing primed operations,</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{D}(\mathcal{M}) = \left\{ (\mathbf{R}, \mathbf{v}) \mid (\mathbf{R}, \mathbf{v}) \in \mathcal{M} \right\}.\]</div>
+<p>Magnetic space groups are classified to the following four types:</p>
+<ul>
+<li><p>(type-I) <span class="math notranslate nohighlight">\(\mathcal{M} \simeq \mathcal{F}(\mathcal{M}) \simeq \mathcal{D}(\mathcal{M})\)</span>.</p></li>
+<li><p>(type-II) <span class="math notranslate nohighlight">\(\mathcal{M} \simeq \mathcal{F}(\mathcal{M}) \times \{1, 1'\}, \mathcal{F}(\mathcal{M}) \simeq \mathcal{D}(\mathcal{M})\)</span>.</p></li>
+<li><p>(type-III)
+<span class="math notranslate nohighlight">\(\mathcal{D}(\mathcal{M})\)</span> is a translationengleiche subgroup of index two of <span class="math notranslate nohighlight">\(\mathcal{F}(\mathcal{M})\)</span>.</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{M} \simeq \mathcal{D}(\mathcal{M}) \sqcup (\mathcal{F}(\mathcal{M}) \backslash \mathcal{D}(\mathcal{M})) 1'\]</div>
+</li>
+<li><p>(type-IV)
+<span class="math notranslate nohighlight">\(\mathcal{D}(\mathcal{M})\)</span> is a klessengleichesubgroup of index two of <span class="math notranslate nohighlight">\(\mathcal{F}(\mathcal{M})\)</span>.</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{M} \simeq \mathcal{D}(\mathcal{M}) \sqcup (\mathcal{F}(\mathcal{M}) \backslash \mathcal{D}(\mathcal{M})) 1'\]</div>
+</li>
+</ul>
+<table class="table" id="id5">
+<caption><span class="caption-text">Number of (3-dimensional) magnetic space groups</span><a class="headerlink" href="#id5" title="Permalink to this table">#</a></caption>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>type-I</p></th>
+<th class="head"><p>type-II</p></th>
+<th class="head"><p>type-III</p></th>
+<th class="head"><p>type-IV</p></th>
+<th class="head"><p>Total</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>230</p></td>
+<td><p>230</p></td>
+<td><p>674</p></td>
+<td><p>517</p></td>
+<td><p>1651</p></td>
+</tr>
+</tbody>
+</table>
+<p>For type-I, II, III MSG, both OG and BNS symbols use a setting of <span class="math notranslate nohighlight">\(\mathcal{F}(\mathcal{M})\)</span>.
+For type-IV MSG, OG symbols use a setting of <span class="math notranslate nohighlight">\(\mathcal{F}(\mathcal{M})\)</span> and BNS symbols use that of <span class="math notranslate nohighlight">\(\mathcal{D}(\mathcal{M})\)</span>.</p>
+</section>
+<section id="action-of-msg-operations">
+<h2>Action of MSG operations<a class="headerlink" href="#action-of-msg-operations" title="Permalink to this headline">#</a></h2>
+<p>In general, we can arbitrarily choose how MSG operation acts on objects as long as it satisfies the definition of left actions.
+Here are the examples of objects and actions on them:</p>
+<ul class="simple">
+<li><p>Collinear magnetic moment <span class="math notranslate nohighlight">\(m_{z}\)</span> without spin-orbit coupling</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[\begin{split}(\mathbf{R}, \mathbf{v}) \circ m_{z} &amp;= m_{z} \\
+1' \circ m_{z} &amp;= -m_{z}\end{split}\]</div>
+<ul class="simple">
+<li><p>Magnetic moment <span class="math notranslate nohighlight">\(\mathbf{m}\)</span></p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[\begin{split}(\mathbf{R}, \mathbf{v}) \circ \mathbf{m} &amp;= (\mathrm{det} \mathbf{R}) \mathbf{R} \mathbf{m} \\
+1' \circ \mathbf{m} &amp;= -\mathbf{m}\end{split}\]</div>
+<ul class="simple">
+<li><p>Grain boundary made of “black” and “white” crystals</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[\begin{split}(\mathbf{R}, \mathbf{v}) \circ (\mathbf{r}, \mathrm{black}) &amp;= ( \mathbf{R}\mathbf{r} + \mathbf{v}, \mathrm{black} ) \\
+(\mathbf{R}, \mathbf{v}) \circ (\mathbf{r}, \mathrm{white}) &amp;= ( \mathbf{R}\mathbf{r} + \mathbf{v}, \mathrm{white} ) \\
+1' \circ (\mathbf{r}, \mathrm{black}) &amp;= (\mathbf{r}, \mathrm{white}) \\
+1' \circ (\mathbf{r}, \mathrm{white}) &amp;= (\mathbf{r}, \mathrm{black}) \\\end{split}\]</div>
+</section>
+<section id="msg-detection-for-crystal-structure">
+<h2>MSG detection for crystal structure<a class="headerlink" href="#msg-detection-for-crystal-structure" title="Permalink to this headline">#</a></h2>
+<p>Formally, <code class="code docutils literal notranslate"><span class="pre">cell</span></code> consists of</p>
+<ul class="simple">
+<li><p>column-wise lattice matrix <span class="math notranslate nohighlight">\(\mathbf{A}\)</span></p></li>
+<li><p>fractional coordinates <span class="math notranslate nohighlight">\(\mathbf{X}\)</span></p></li>
+<li><p>atomic types <span class="math notranslate nohighlight">\(\mathbf{T}\)</span></p></li>
+<li><p>magmoms <span class="math notranslate nohighlight">\(\mathbf{M}\)</span></p></li>
+</ul>
+<p>SG corresponds to the following equivalence relation (implemented in <code class="code docutils literal notranslate"><span class="pre">cel_is_overlap_with_same_type</span></code>) as <span class="math notranslate nohighlight">\(\mathcal{S} := \mathrm{Stab}_{\mathrm{E}(3)} \, (\mathbf{X}, \mathbf{T}) / \sim_{\mathcal{S}}\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[(X_{i}, T_{i}) \sim_{\mathcal{S}} (X_{j}, T_{j})
+\overset{\mathrm{def}}{\iff}
+\exists g \in \mathrm{E}(3) \, s.t. \,  g \circ X_{i} = X_{j} \,\mathrm{and}\,  T_{i} = T_{j}.\]</div>
+<p>XSG corresponds to the following equivalence relation as <span class="math notranslate nohighlight">\(\mathcal{D} := \mathrm{Stab}_{ \mathcal{S} } \, (\mathbf{X}, \mathbf{T}, \mathbf{M}) / \sim_{\mathcal{D}}\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[(X_{i}, T_{i}, M_{i}) \sim_{\mathcal{D}} (X_{j}, T_{j}, M_{j})
+\overset{\mathrm{def}}{\iff}
+\exists g \in \mathcal{S} \, s.t. \, g \circ M_{i} = M_{j}.\]</div>
+<p>MSG corresponds to the following equivalence relation as <span class="math notranslate nohighlight">\(\mathcal{M} = \mathrm{Stab}_{ \mathcal{S} \times \{ 1, 1' \} } \, (\mathbf{X}, \mathbf{T}, \mathbf{M}) / \sim_{\mathcal{M}}\)</span></p>
+<div class="math notranslate nohighlight">
+\[(X_{i}, T_{i}, M_{i}) \sim_{\mathcal{M}} (X_{j}, T_{j}, M_{j})
+\overset{\mathrm{def}}{\iff}
+\exists g\theta \in \mathcal{S} \times \{ 1, 1' \} \, s.t. \, g \theta \circ M_{i} = M_{j}\]</div>
+<p><span class="math notranslate nohighlight">\(\mathcal{S}\)</span> may not be index-two supergroup of <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> because the former ignores magmom configurations.
+Thus, we compute FSG via MSG as <span class="math notranslate nohighlight">\(\mathcal{F} := \mathcal{M}  / \{ 1, 1' \}\)</span>.</p>
+<section id="procedure-to-detect-msg-operations">
+<h3>Procedure to detect MSG operations<a class="headerlink" href="#procedure-to-detect-msg-operations" title="Permalink to this headline">#</a></h3>
+<p>In actual implementation in <code class="code docutils literal notranslate"><span class="pre">spn_get_operations_with_site_tensors</span></code>, the following steps two, three, and four are performed at the same time.</p>
+<ol class="arabic simple">
+<li><p>Compute SG <span class="math notranslate nohighlight">\(\mathcal{S}\)</span> by just ignoring magmoms.</p></li>
+<li><p>Compute XSG <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> by checking <span class="math notranslate nohighlight">\(g \circ M_{i} = M_{g \circ i}\)</span> one by one for <span class="math notranslate nohighlight">\(g \in \mathcal{S}\)</span>.</p></li>
+<li><p>Compute MSG <span class="math notranslate nohighlight">\(\mathcal{M}\)</span> by checking <span class="math notranslate nohighlight">\(g \theta \circ M_{i} = M_{g \circ i}\)</span> one by one for <span class="math notranslate nohighlight">\(g \theta \in \mathcal{S} \times \{ 1, 1' \}\)</span>.</p></li>
+<li><p>Compute FSG <span class="math notranslate nohighlight">\(\mathcal{F}\)</span> by ignoring primes in <span class="math notranslate nohighlight">\(\mathcal{M}\)</span></p></li>
+</ol>
+<p>In <code class="code docutils literal notranslate"><span class="pre">spgat_get_symmetry_with_site_tensors</span></code>, <code class="code docutils literal notranslate"><span class="pre">sym_nonspin</span></code> corresponds to <span class="math notranslate nohighlight">\(\mathcal{S}\)</span>.
+Then, <code class="code docutils literal notranslate"><span class="pre">spn_get_operations_with_site_tensors</span></code> computes <span class="math notranslate nohighlight">\(\mathcal{M}\)</span> under the following actions:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt><code class="code docutils literal notranslate"><span class="pre">tensor_rank=0</span></code></dt><dd><ul>
+<li><p><code class="code docutils literal notranslate"><span class="pre">is_magnetic=true</span></code>: <span class="math notranslate nohighlight">\(1' \circ m = -m, (\mathbf{R}, \mathbf{v}) \circ m = m\)</span></p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">is_magnetic=false</span></code>: <span class="math notranslate nohighlight">\(1' \circ m_{z} = m_{z}, (\mathbf{R}, \mathbf{v}) \circ m = m\)</span></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="code docutils literal notranslate"><span class="pre">tensor_rank=1</span></code> (currently only support axial vector)</dt><dd><ul>
+<li><p><code class="code docutils literal notranslate"><span class="pre">is_magnetic=true</span></code>: <span class="math notranslate nohighlight">\(1' \circ \mathbf{m} = -\mathbf{m}, (\mathbf{R}, \mathbf{v}) \circ \mathbf{m} = (\mathrm{det} \mathbf{R}) \mathbf{R} \mathbf{m}\)</span></p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">is_magnetic=false</span></code>: <span class="math notranslate nohighlight">\(1' \circ \mathbf{m} = \mathbf{m}, (\mathbf{R}, \mathbf{v}) \circ \mathbf{m} = (\mathrm{det} \mathbf{R}) \mathbf{R} \mathbf{m}\)</span></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+<section id="procedure-to-identify-msg">
+<h3>Procedure to identify MSG<a class="headerlink" href="#procedure-to-identify-msg" title="Permalink to this headline">#</a></h3>
+<p><code class="code docutils literal notranslate"><span class="pre">spglib.c:get_magnetic_dataset</span></code></p>
+<ol class="arabic simple">
+<li><dl class="simple">
+<dt>Determine type of MSG</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>When <span class="math notranslate nohighlight">\([\mathcal{F}:\mathcal{D}] = 1\)</span></dt><dd><ul>
+<li><p><span class="math notranslate nohighlight">\([\mathcal{M}:\mathcal{F}] = 1\)</span> -&gt; Type-I</p></li>
+<li><p><span class="math notranslate nohighlight">\([\mathcal{M}:\mathcal{F}] = 2\)</span> -&gt; Type-II</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>When <span class="math notranslate nohighlight">\([\mathcal{F}:\mathcal{D}] = 2\)</span></dt><dd><ul>
+<li><p>Find a coset decomposition <span class="math notranslate nohighlight">\(\mathcal{M} = \mathcal{D} \sqcup g \mathcal{D}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(g\)</span> is not translation -&gt; Type-III</p></li>
+<li><p><span class="math notranslate nohighlight">\(g\)</span> is translation -&gt; Type-IV</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Choose reference setting</dt><dd><ul class="simple">
+<li><p>Type-I, II, III -&gt; Hall symbol of <span class="math notranslate nohighlight">\(\mathcal{F}\)</span></p></li>
+<li><p>Type-IV -&gt; Hall symbol of <span class="math notranslate nohighlight">\(\mathcal{D}\)</span></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ol>
+<p>Suppose we have transformed MSG <span class="math notranslate nohighlight">\(\mathcal{M}\)</span> and try to compare it with <span class="math notranslate nohighlight">\(\mathcal{M}_{std}\)</span> in database.</p>
+<section id="when-mathcal-m-is-type-i-or-type-ii">
+<h4>When <span class="math notranslate nohighlight">\(\mathcal{M}\)</span> is type-I or type-II<a class="headerlink" href="#when-mathcal-m-is-type-i-or-type-ii" title="Permalink to this headline">#</a></h4>
+<p>Just compare <span class="math notranslate nohighlight">\(\mathcal{M}\)</span> with <span class="math notranslate nohighlight">\(\mathcal{M}_{std}\)</span>.</p>
+</section>
+<section id="when-mathcal-m-is-type-iii">
+<h4>When <span class="math notranslate nohighlight">\(\mathcal{M}\)</span> is type-III<a class="headerlink" href="#when-mathcal-m-is-type-iii" title="Permalink to this headline">#</a></h4>
+<p>After applying the Hall symbol’s setting <a class="reference internal" href="#gpkrc21" id="id3"><span>[GPKRC21]</span></a>, we can assume <span class="math notranslate nohighlight">\(\mathcal{F}(\mathcal{M}) = \mathcal{F}(\mathcal{M}_{std})\)</span>.
+However, this does not imply <span class="math notranslate nohighlight">\(\mathcal{M} = \mathcal{M}_{std}\)</span> in general!
+We also need to adjust coordinate systems such that <span class="math notranslate nohighlight">\(\mathcal{D}(\mathcal{M}^{g}) = \mathcal{D}(\mathcal{M}_{std})\)</span>, where <span class="math notranslate nohighlight">\(g\)</span> is in Affine normalizer of <span class="math notranslate nohighlight">\(\mathcal{F}(\mathcal{M}_{std})\)</span>.
+For triclinic and monoclinic type-III MSGs, there is no such a conjugate XSG with <span class="math notranslate nohighlight">\(\mathcal{D}(\mathcal{M}_{std})\)</span>.
+For other crystal systems, we need to compute factor group of the Affine normalizer <span class="math notranslate nohighlight">\(\mathcal{N}_{\mathcal{A}}(\mathcal{F}(\mathcal{M}_{std})) / \mathcal{D}(\mathcal{M}_{std})\)</span>, which is a finite group in this case, and check with each operation.
+We enumerate integer matrices <span class="math notranslate nohighlight">\(\mathbf{P}\)</span> whose elements are -1, 0, or 1, and determinant is equal to 1.</p>
+</section>
+<section id="when-mathcal-m-is-type-iv">
+<h4>When <span class="math notranslate nohighlight">\(\mathcal{M}\)</span> is type-IV<a class="headerlink" href="#when-mathcal-m-is-type-iv" title="Permalink to this headline">#</a></h4>
+<p>After applying the Hall symbol’s setting, we can assume <span class="math notranslate nohighlight">\(\mathcal{D}(\mathcal{M}) = \mathcal{D}(\mathcal{M}_{std})\)</span>.
+We enumerate integer matrices <span class="math notranslate nohighlight">\(\mathbf{P}\)</span> whose elements are -1, 0, or 1, and determinant is equal to 1.
+Then, apply <span class="math notranslate nohighlight">\((\mathbf{P}, \mathbf{p})\)</span> and search conjugated FSG.
+Here, denominators of origin shift <span class="math notranslate nohighlight">\(\mathbf{p}\)</span> are at most four because all elements of origin shifts of further generators described in ITA are one of <span class="math notranslate nohighlight">\(0, \frac{1}{4}, \frac{1}{2}, \frac{3}{4}\)</span>.</p>
+</section>
+</section>
+<section id="procedure-to-idealize-positions-and-site-tensors">
+<h3>Procedure to idealize positions and site tensors<a class="headerlink" href="#procedure-to-idealize-positions-and-site-tensors" title="Permalink to this headline">#</a></h3>
+<p>Suppose we have a factor group of MSG, <span class="math notranslate nohighlight">\(\overline{\mathcal{M}} := \mathcal{M} / \mathcal{T}(\mathcal{M})\)</span>.
+Now we consider to idealize positions and site tensors to possess the symmetry <span class="math notranslate nohighlight">\(\overline{\mathcal{M}}\)</span>.
+The action of <span class="math notranslate nohighlight">\(\overline{\mathcal{M}}\)</span> on positions can be defined as</p>
+<div class="math notranslate nohighlight">
+\[g \circ (\mathbf{x}_{1}, \dots, \mathbf{x}_{n})
+:=
+\left( g \circ \mathbf{x}_{ g^{-1} \circ i } \right)_{i=1, \cdots, n}
+\quad
+(g \in \overline{\mathcal{M}}).\]</div>
+<p>The invariant subspace of <span class="math notranslate nohighlight">\((\mathbf{x}_{1}, \dots, \mathbf{x}_{N})\)</span> is obtained by the projection operator on the identity representation (also known as Reynolds operator) as</p>
+<div class="math notranslate nohighlight">
+\[R_{\overline{\mathcal{M}}} \circ (\mathbf{x}_{1}, \dots, \mathbf{x}_{n})
+:=
+\left(
+    \frac{1}{|\overline{\mathcal{M}}|} \sum_{g \in \overline{\mathcal{M}}} g \circ \mathbf{x}_{ g^{-1} \circ i }
+\right)_{i=1, \dots, n}.\]</div>
+<p>In practice, we average out the residual to avoid rounding error as</p>
+<div class="math notranslate nohighlight">
+\[R_{\overline{\mathcal{M}}} \circ (\mathbf{x}_{1}, \dots, \mathbf{x}_{n})
+=
+\left(
+    \mathbf{x}_{i}
+    + \frac{1}{|\overline{\mathcal{M}}|}
+      \sum_{g \in \overline{\mathcal{M}}}
+        \left[
+            g \circ \mathbf{x}_{ g^{-1} \circ i } - \mathbf{x}_{i}
+        \right]
+\right)_{i=1, \dots, n}.\]</div>
+<p>Although we can obtain the invariant subspace by computing kernel of the above operator, we merely apply it on given positions since the positions are assumed to be close to an idealized ones.
+An idealization of site tensors can be performed as well.</p>
+<p>Note that this idealization is extension of special position operators presented in <a class="reference internal" href="#gka02" id="id4"><span>[GKA02]</span></a>, which considers only site-symmetry group of each site.</p>
+</section>
+</section>
+<section id="transformation-of-space-group-mathcal-g">
+<h2>Transformation of space group <span class="math notranslate nohighlight">\(\mathcal{G}\)</span><a class="headerlink" href="#transformation-of-space-group-mathcal-g" title="Permalink to this headline">#</a></h2>
+<p>We denote a primitive lattice as <span class="math notranslate nohighlight">\(L_{\mathrm{prim}}\)</span> and a conventional lattice as <span class="math notranslate nohighlight">\(L_{\mathrm{conv}}\)</span>.
+Here the centering vectors correspond to <span class="math notranslate nohighlight">\(L_{\mathrm{conv}} / L_{\mathrm{prim}}\)</span>.
+For example, trigonal space groups with hexagonal cell (obverse) give</p>
+<div class="math notranslate nohighlight">
+\[L_{\mathrm{conv}} / L_{\mathrm{prim}} =
+\left\{
+    (0, 0, 0),
+    (2/3, 1/3, 1/3),
+    (1/3, 2/3, 2/3)
+\right\}.\]</div>
+<p>We write translation group formed by <span class="math notranslate nohighlight">\(L_{\mathrm{prim}}\)</span> as <span class="math notranslate nohighlight">\(\mathcal{T}_{\mathrm{prim}}\)</span>, and translation group formed by <span class="math notranslate nohighlight">\(L_{\mathrm{conv}}\)</span> as <span class="math notranslate nohighlight">\(\mathcal{T}_{\mathrm{conv}}\)</span>.
+Space group <span class="math notranslate nohighlight">\(\mathcal{G}\)</span> can be written by finite factor group <span class="math notranslate nohighlight">\(\mathcal{G} / \mathcal{T}_{\mathrm{conv}}\)</span> and the centerings:</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{G} / \mathcal{T}_{\mathrm{prim}}
+=
+\left\{
+    (\mathbf{I}, \mathbf{c}) (\mathbf{W}, \mathbf{w})
+    \mid
+    (\mathbf{W}, \mathbf{w}) \in \mathcal{G} / \mathcal{T}_{\mathrm{conv}},
+    \mathbf{c} \in L_{\mathrm{conv}} / L_{\mathrm{prim}}
+\right\}\]</div>
+<p>Consider a transformation matrix <span class="math notranslate nohighlight">\(\mathbf{P}\)</span> (corresponds to <code class="code docutils literal notranslate"><span class="pre">Spacegroup.bravais_lattice</span></code>) and origin shift <span class="math notranslate nohighlight">\(\mathbf{p}\)</span> (corresponds to <code class="code docutils literal notranslate"><span class="pre">Spacegroup.origin_shift</span></code>).
+This transformation convert the factor group <span class="math notranslate nohighlight">\(\mathcal{G} / \mathcal{T}_{\mathrm{conv}}\)</span> to</p>
+<div class="math notranslate nohighlight">
+\[\left\{
+    (\mathbf{P}, \mathbf{p}) (\mathbf{W}, \mathbf{w}) (\mathbf{P}, \mathbf{p})^{-1}
+    \mid
+    (\mathbf{W}, \mathbf{w}) \in \mathcal{G} / \mathcal{T}_{\mathrm{conv}}
+\right\}\]</div>
+<p>If the conventional lattice is properly chosen, each operation in <span class="math notranslate nohighlight">\(\mathcal{G} / \mathcal{T}_{\mathrm{conv}}\)</span> has a unique linear part.
+Then, the above transformed factor group has the same order as <span class="math notranslate nohighlight">\(\mathcal{G} / \mathcal{T}_{\mathrm{conv}}\)</span>.</p>
+<p>The centering vectors are transformed as</p>
+<div class="math notranslate nohighlight">
+\[\left\{
+    \mathbf{P} (\mathbf{c} + \mathbf{n}) \, \mathrm{mod}\, 1
+    \mid
+    \mathbf{c} \in L_{\mathrm{conv}} / L_{\mathrm{prim}}, \mathbf{n} \in \mathbb{Z}^{3}
+\right\}.\]</div>
+<p>When <span class="math notranslate nohighlight">\(|\det \mathbf{P}| = 1\)</span>, the transformed centering vectors give the same conventional lattice.
+When <span class="math notranslate nohighlight">\(|\det \mathbf{P}| &gt; 1\)</span>, some centering vectors become duplicated.
+When <span class="math notranslate nohighlight">\(|\det \mathbf{P}| &lt; 1\)</span>, we need to additionally find lattice points.
+We can confirm the range of <span class="math notranslate nohighlight">\(\mathbf{n}\)</span> to <span class="math notranslate nohighlight">\([0, d)^{3}\)</span>, where <span class="math notranslate nohighlight">\(d\)</span> is maximum denominator of <span class="math notranslate nohighlight">\(\mathbf{P}\)</span>.</p>
+</section>
+<section id="transformation-of-magnetic-space-group-mathcal-m">
+<h2>Transformation of magnetic space group <span class="math notranslate nohighlight">\(\mathcal{M}\)</span><a class="headerlink" href="#transformation-of-magnetic-space-group-mathcal-m" title="Permalink to this headline">#</a></h2>
+<p>We need care for anti-translation.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\mathcal{M}
+    &amp;= \mathcal{D} \sqcup g \mathcal{D} \\
+\mathcal{M} / \mathcal{T}_{\mathrm{prim}}(\mathcal{M})
+    &amp;=
+    \langle g \rangle
+    \cdot ( \mathcal{T}_{\mathrm{conv}}(\mathcal{M}) / \mathcal{T}_{\mathrm{prim}}(\mathcal{M}) )
+    \cdot ( \mathcal{M} / \langle g \rangle / \mathcal{T}_{\mathrm{conv}}(\mathcal{M}) ) \\
+    &amp;=
+    \langle g \rangle
+    \cdot ( \mathcal{T}_{\mathrm{conv}}(\mathcal{M}) / \mathcal{T}_{\mathrm{prim}}(\mathcal{M}) )
+    \cdot ( \mathcal{D} / \mathcal{T}_{\mathrm{conv}}(\mathcal{M}) ) \\\end{split}\]</div>
+<p>Each element in factor group <span class="math notranslate nohighlight">\(\mathcal{D} / \mathcal{T}_{\mathrm{conv}}(\mathcal{D})\)</span> has a unique linear part.</p>
+</section>
+<section id="code-reading-on-symmetry-transformation">
+<h2>Code reading on symmetry transformation<a class="headerlink" href="#code-reading-on-symmetry-transformation" title="Permalink to this headline">#</a></h2>
+<p>Based on <code class="code docutils literal notranslate"><span class="pre">refinement.c:get_refined_symmetry_operations</span></code></p>
+<p>For given space group <span class="math notranslate nohighlight">\(\mathcal{G}_{p}\)</span> with primitive cell, <code class="code docutils literal notranslate"><span class="pre">spa_search_spacegroup_with_symmetry</span></code> gives <code class="code docutils literal notranslate"><span class="pre">Spacegroup</span></code> object.</p>
+<p>Corresponding space group <span class="math notranslate nohighlight">\(\mathcal{G}_{std}\)</span> in DB</p>
+<p>Let <code class="code docutils literal notranslate"><span class="pre">P</span> <span class="pre">:=</span> <span class="pre">Spacegroup.bravais_lattice</span></code> (after changing basis to primitive) and <code class="code docutils literal notranslate"><span class="pre">p</span> <span class="pre">:=</span> <span class="pre">Spacegroup.origin_shift</span></code>.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}A_{std} &amp;=  A_{p} P \\
+\mathcal{G}_{p} &amp;= (P^{-1}, p)^{-1} \mathcal{G}_{std} (P^{-1}, p) \\
+x_{p} &amp;= (P^{-1}, p)^{-1} x_{std}\end{split}\]</div>
+<p>N.B. <code class="code docutils literal notranslate"><span class="pre">set_translation_with_origin_shift</span></code> computes <span class="math notranslate nohighlight">\((I, p)^{-1} \mathcal{G}_{std} (I, p)\)</span>.
+<code class="code docutils literal notranslate"><span class="pre">get_primitive_db_symmetry</span></code> computes <span class="math notranslate nohighlight">\((P, 0) (I, p)^{-1} \mathcal{G}_{std} (I, p) (P, 0)^{-1}\)</span> on <span class="math notranslate nohighlight">\((I, p)^{-1} \mathcal{G}_{std} (I, p)\)</span>.</p>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">#</a></h2>
+<dl class="citation">
+<dt class="label" id="lit14"><span class="brackets"><a class="fn-backref" href="#id1">Lit14</a></span></dt>
+<dd><ol class="upperalpha simple" start="4">
+<li><ol class="upperalpha simple" start="2">
+<li><p>Litvin, Magnetic Group Tables 1-, 2- and 3-Dimensional Magnetic Subperiodic Groups and Magnetic Space Groups (IUCr, 2014).</p></li>
+</ol>
+</li>
+</ol>
+</dd>
+<dt class="label" id="sc22"><span class="brackets"><a class="fn-backref" href="#id2">SC22</a></span></dt>
+<dd><p>Harold T. Stokes and Branton J. Campbell, [ISO-MAG Table of Magnetic Space Groups](<a class="reference external" href="https://stokes.byu.edu/iso/magneticspacegroups.php">https://stokes.byu.edu/iso/magneticspacegroups.php</a>).</p>
+</dd>
+<dt class="label" id="gpkrc21"><span class="brackets"><a class="fn-backref" href="#id3">GPKRC21</a></span></dt>
+<dd><ol class="upperalpha simple" start="10">
+<li><p>González-Platas, N. A. Katcho and J. Rodríguez-Carvajal, J. Appl. Crystallogr. 54, 1, 338-342 (2021).</p></li>
+</ol>
+</dd>
+<dt class="label" id="gka02"><span class="brackets"><a class="fn-backref" href="#id4">GKA02</a></span></dt>
+<dd><ol class="upperalpha simple" start="18">
+<li><ol class="upperalpha simple" start="23">
+<li><p>Grosse-Kunstleve and P. D. Adams, Acta Cryst. A 58, 60-65 (2002).</p></li>
+</ol>
+</li>
+</ol>
+</dd>
+<dt class="label" id="egn97"><span class="brackets">EGN97</span></dt>
+<dd><ol class="upperalpha simple" start="6">
+<li><p>G¨ahler, B. Eick and W. Nickel. Computing maximal subgroups and wyckoff positions of space groups. Acta Cryst A 53, 467–474 (1997).</p></li>
+</ol>
+</dd>
+</dl>
+</section>
+</section>
+
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="develop.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Developer document</p>
+        </div>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+      &copy; Copyright 2009, Atsushi Togo.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>
