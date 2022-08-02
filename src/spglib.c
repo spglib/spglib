@@ -978,7 +978,7 @@ static SpglibDataset *get_dataset(SPGCONST double lattice[3][3],
         goto not_found;
     }
 
-    if ((cell = cel_alloc_cell(num_atom)) == NULL) {
+    if ((cell = cel_alloc_cell(num_atom, NOSPIN)) == NULL) {
         free(dataset);
         dataset = NULL;
         goto not_found;
@@ -1045,7 +1045,7 @@ static SpglibDataset *get_layer_dataset(
         goto not_found;
     }
 
-    if ((cell = cel_alloc_cell(num_atom)) == NULL) {
+    if ((cell = cel_alloc_cell(num_atom, NOSPIN)) == NULL) {
         free(dataset);
         dataset = NULL;
         goto not_found;
@@ -1146,7 +1146,7 @@ static SpglibMagneticDataset *get_magnetic_dataset(
     is_axial = (tensor_rank == 1) ? 1 : 0;
 
     /* Set cell and check overlapped atoms */
-    if ((cell = cel_alloc_cell(num_atom)) == NULL) {
+    if ((cell = cel_alloc_cell(num_atom, tensor_rank)) == NULL) {
         spglib_error_code = SPGERR_SPACEGROUP_SEARCH_FAILED;
         goto finalize;
     }
@@ -1727,7 +1727,7 @@ static MagneticSymmetry *get_symmetry_with_site_tensors(
     spg_free_dataset(dataset);
     dataset = NULL;
 
-    if ((cell = cel_alloc_cell(num_atom)) == NULL) {
+    if ((cell = cel_alloc_cell(num_atom, tensor_rank)) == NULL) {
         goto err;
     }
     cel_set_cell(cell, lattice, position, types);
@@ -1811,7 +1811,7 @@ static int standardize_primitive(double lattice[3][3], double position[][3],
         goto err;
     }
 
-    if ((bravais = cel_alloc_cell(dataset->n_std_atoms)) == NULL) {
+    if ((bravais = cel_alloc_cell(dataset->n_std_atoms, NOSPIN)) == NULL) {
         spg_free_dataset(dataset);
         dataset = NULL;
         goto err;
@@ -1940,7 +1940,7 @@ static int get_standardized_cell(double lattice[3][3], double position[][3],
         goto err;
     }
 
-    if ((cell = cel_alloc_cell(num_atom)) == NULL) {
+    if ((cell = cel_alloc_cell(num_atom, NOSPIN)) == NULL) {
         spg_free_dataset(dataset);
         dataset = NULL;
         goto err;

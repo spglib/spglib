@@ -317,7 +317,8 @@ Cell *msg_get_transformed_cell(
 
     /* 3. apply the pure translations to the primitive */
     changed_num_atoms = primitive->cell->size * changed_pure_trans->size;
-    if ((changed_cell = cel_alloc_cell(changed_num_atoms)) == NULL) goto err;
+    if ((changed_cell = cel_alloc_cell(changed_num_atoms, tensor_rank)) == NULL)
+        goto err;
     if ((*changed_tensors =
              spn_alloc_site_tensors(changed_num_atoms, tensor_rank)) == NULL)
         goto err;

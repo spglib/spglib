@@ -214,7 +214,7 @@ Cell *spn_get_idealized_cell_and_site_tensors(
         return NULL;
     }
 
-    if ((exact_cell = cel_alloc_cell(cell->size)) == NULL) {
+    if ((exact_cell = cel_alloc_cell(cell->size, tensor_rank)) == NULL) {
         return NULL;
     }
     mat_copy_matrix_d3(exact_cell->lattice, cell->lattice);

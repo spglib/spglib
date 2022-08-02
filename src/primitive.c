@@ -318,7 +318,8 @@ static Cell *get_cell_with_smallest_lattice(const Cell *cell,
     mat_inverse_matrix_d3(inv_lat, min_lat, 0);
     mat_multiply_matrix_d3(trans_mat, inv_lat, cell->lattice);
 
-    if ((smallest_cell = cel_alloc_cell(cell->size)) == NULL) {
+    if ((smallest_cell = cel_alloc_cell(cell->size, cell->tensor_rank)) ==
+        NULL) {
         return NULL;
     }
 
@@ -656,7 +657,7 @@ static int get_primitive_in_translation_space(double t_mat_inv[3][3],
     cell = NULL;
     primitive = NULL;
 
-    if ((cell = cel_alloc_cell(pure_trans->size)) == NULL) {
+    if ((cell = cel_alloc_cell(pure_trans->size, NOSPIN)) == NULL) {
         return 0;
     }
 
