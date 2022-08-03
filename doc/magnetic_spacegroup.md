@@ -15,7 +15,7 @@ A **maximal space subgroup** (XSG) {math}`\mathcal{D}(\mathcal{M})` is a space g
     \mathcal{D}(\mathcal{M}) = \left\{ (\mathbf{R}, \mathbf{v}) \mid (\mathbf{R}, \mathbf{v}) \in \mathcal{M} \right\}.
 ```
 
-Magnetic space groups are classified to the following four types:
+Magnetic space groups are classified to the following four types [^notation]:
 
 - (type-I) {math}`\mathcal{M} \simeq \mathcal{F}(\mathcal{M}) \simeq \mathcal{D}(\mathcal{M})`.
 - (type-II) {math}`\mathcal{M} \simeq \mathcal{F}(\mathcal{M}) \times \{1, 1'\}, \mathcal{F}(\mathcal{M}) \simeq \mathcal{D}(\mathcal{M})`.
@@ -29,6 +29,9 @@ Magnetic space groups are classified to the following four types:
   ```{math}
     \mathcal{M} \simeq \mathcal{D}(\mathcal{M}) \sqcup (\mathcal{F}(\mathcal{M}) \backslash \mathcal{D}(\mathcal{M})) 1'
   ```
+
+[^notation]: {math}`A \backslash B` represents the set difference, which is a set of elements in {math}`A` which are not element of {math}`B`.
+    {math}`A \sqcup B` represents union of disjoint sets {math}`A` and {math}`B`.
 
 ```{list-table} Number of (3-dimensional) magnetic space groups
 :header-rows: 1
@@ -51,7 +54,7 @@ For type-IV MSG, OG symbols use a setting of {math}`\mathcal{F}(\mathcal{M})` an
 ## Action of MSG operations
 
 In general, we can arbitrarily choose how MSG operation acts on objects as long as it satisfies the definition of left actions.
-Here are the examples of objects and actions on them:
+Here are the examples of objects and actions on them [^notation2]:
 
 - Collinear magnetic moment {math}`m_{z}` without spin-orbit coupling
     ```{math}
@@ -72,6 +75,8 @@ Here are the examples of objects and actions on them:
     1' \circ (\mathbf{r}, \mathrm{white}) &= (\mathbf{r}, \mathrm{black}) \\
     ```
 
+[^notation2]: We write action of group element {math}`g` on object {math}`x` as {math}`g \circ x`.
+
 ## MSG detection for crystal structure
 
 Formally, `cell` consists of
@@ -80,12 +85,15 @@ Formally, `cell` consists of
 - atomic types {math}`\mathbf{T}`
 - magmoms {math}`\mathbf{M}`
 
-SG corresponds to the following equivalence relation (implemented in `cel_is_overlap_with_same_type`) as {math}`\mathcal{S} := \mathrm{Stab}_{\mathrm{E}(3)} \, (\mathbf{X}, \mathbf{T}) / \sim_{\mathcal{S}}`,
+SG corresponds to the following equivalence relation (equivalent to `cel_is_overlap_with_same_type`) as {math}`\mathcal{S} := \mathrm{Stab}_{\mathrm{E}(3)} \, (\mathbf{X}, \mathbf{T}) / \sim_{\mathcal{S}}` [^notation3],
 ```{math}
     (X_{i}, T_{i}) \sim_{\mathcal{S}} (X_{j}, T_{j})
     \overset{\mathrm{def}}{\iff}
     \exists g \in \mathrm{E}(3) \, s.t. \,  g \circ X_{i} = X_{j} \,\mathrm{and}\,  T_{i} = T_{j}.
 ```
+
+[^notation3]: {math}`\mathrm{E}(3)` is three dimensional Euclidean group.
+    When group {math}`G` acts on elements in {math}`X`, we write the stabilizer as {math}`\mathrm{Stab}_{G} X`.
 
 XSG corresponds to the following equivalence relation as {math}`\mathcal{D} := \mathrm{Stab}_{ \mathcal{S} } \, (\mathbf{X}, \mathbf{T}, \mathbf{M}) / \sim_{\mathcal{D}}`,
 ```{math}
@@ -98,7 +106,7 @@ MSG corresponds to the following equivalence relation as {math}`\mathcal{M} = \m
 ```{math}
     (X_{i}, T_{i}, M_{i}) \sim_{\mathcal{M}} (X_{j}, T_{j}, M_{j})
     \overset{\mathrm{def}}{\iff}
-    \exists g\theta \in \mathcal{S} \times \{ 1, 1' \} \, s.t. \, g \theta \circ M_{i} = M_{j}
+    \exists g \in \mathcal{S}, \exists \theta \in \{ 1, 1' \} \, s.t. \, g \theta \circ M_{i} = M_{j}
 ```
 
 {math}`\mathcal{S}` may not be index-two supergroup of {math}`\mathcal{D}` because the former ignores magmom configurations.
@@ -139,28 +147,40 @@ Then, `spn_get_operations_with_site_tensors` computes {math}`\mathcal{M}` under 
 2. Choose reference setting
     - Type-I, II, III -> Hall symbol of {math}`\mathcal{F}`
     - Type-IV -> Hall symbol of {math}`\mathcal{D}`
+3. Get transformation {math}`(\mathbf{P}, \mathbf{p})` to the reference setting by `spa_search_spacegroup_with_symmetry`.
+    - Type-I, II, III: Obtain transformation {math}`(\mathbf{P}, \mathbf{p})` such that {math}`\mathcal{F}(\mathcal{M})' := (\mathbf{P}, \mathbf{p})^{-1} \mathcal{F}(\mathcal{M}) (\mathbf{P}, \mathbf{p})` is standardized.
+    - Type-IV: Obtain transformation {math}`(\mathbf{P}, \mathbf{p})` such that {math}`\mathcal{D}(\mathcal{M})' := (\mathbf{P}, \mathbf{p})^{-1} \mathcal{D}(\mathcal{M}) (\mathbf{P}, \mathbf{p})` is standardized.
 
-Suppose we have transformed MSG {math}`\mathcal{M}` and try to compare it with {math}`\mathcal{M}_{\mathrm{std}}` in database.
+We denote a transformed MSG by {math}`(\mathbf{P}, \mathbf{p})` as {math}`\mathcal{M}' := (\mathbf{P}, \mathbf{p})^{-1} \mathcal{M} (\mathbf{P}, \mathbf{p})`.
+Then, we try to compare {math}`\mathcal{M}'` with {math}`\mathcal{M}_{\mathrm{std}}` in database.
 
 ### When {math}`\mathcal{M}` is type-I or type-II
 
-Just compare {math}`\mathcal{M}` with {math}`\mathcal{M}_{\mathrm{std}}`.
+Just compare {math}`\mathcal{M}'` with {math}`\mathcal{M}_{\mathrm{std}}`.
 
 ### When {math}`\mathcal{M}` is type-III
 
-After applying the Hall symbol's setting {cite}`Gonzalez-Platas:tu5004`, we can assume {math}`\mathcal{F}(\mathcal{M}) = \mathcal{F}(\mathcal{M}_{\mathrm{std}})`.
-However, this does not imply {math}`\mathcal{M} = \mathcal{M}_{std}` in general!
-We also need to adjust coordinate systems such that {math}`\mathcal{D}(\mathcal{M}^{g}) = \mathcal{D}(\mathcal{M}_{std})`, where {math}`g` is in Affine normalizer of {math}`\mathcal{F}(\mathcal{M}_{std})`.
-For triclinic and monoclinic type-III MSGs, there is no such a conjugate XSG with {math}`\mathcal{D}(\mathcal{M}_{std})`.
-For other crystal systems, we need to compute factor group of the Affine normalizer {math}`\mathcal{N}_{\mathcal{A}}(\mathcal{F}(\mathcal{M}_{std})) / \mathcal{D}(\mathcal{M}_{std})`, which is a finite group in this case, and check with each operation.
-We enumerate integer matrices {math}`\mathbf{P}` whose elements are -1, 0, or 1, and determinant is equal to 1.
+By construction, we can assume {math}`\mathcal{F}(\mathcal{M}') = \mathcal{F}(\mathcal{M}_{\mathrm{std}})`.
+However, this does not imply {math}`\mathcal{M}' = \mathcal{M}_{\mathrm{std}}` in general!
+We also need to try a correction transformation {math}`(\mathbf{P}_{\mathrm{corr}}, \mathbf{p}_{\mathrm{corr}})` such that
+```{math}
+    (\mathbf{P}_{\mathrm{corr}}, \mathbf{p}_{\mathrm{corr}})^{-1} \mathcal{F}(\mathcal{M}_{\mathrm{std}}) (\mathbf{P}_{\mathrm{corr}}, \mathbf{p}_{\mathrm{corr}}) = \mathcal{F}(\mathcal{M}_{\mathrm{std}}) \\
+    (\mathbf{P}_{\mathrm{corr}}, \mathbf{p}_{\mathrm{corr}})^{-1} \mathcal{D}(\mathcal{M}') (\mathbf{P}_{\mathrm{corr}}, \mathbf{p}_{\mathrm{corr}}) = \mathcal{D}(\mathcal{M}_{\mathrm{std}}).
+```
+
+For triclinic and monoclinic type-III MSGs, there is no such a conjugate XSG, {math}`\mathcal{D}' \neq \mathcal{D}_{\mathrm{std}}`, with {math}`\mathcal{D}(\mathcal{M}_{\mathrm{std}})`, because point groups of triclinic and monoclinic space groups do not have proper conjugate subgroups.
+
+For other crystal systems, we need to compute factor group of the Affine normalizer {math}`\mathcal{N}_{\mathcal{A}}(\mathcal{F}(\mathcal{M}_{\mathrm{std}})) / \mathcal{D}(\mathcal{M}_{\mathrm{std}})`, which is a finite group in this case, and check with each operation.
+Instead of
+We enumerate integer matrices {math}`\mathbf{P}_{\mathrm{corr}}` whose elements are -1, 0, or 1, and determinant is equal to 1.
+Also, we enumerate candidates of origin shifts {math}`\mathbf{p}_{\mathrm{corr}}` by restricting their values are one of {math}`0, \frac{1}{4}, \frac{1}{2}, \frac{3}{4}`.
+These will be sufficient to cover all conjugated XSG because they cover all additional generators of Affine normalizer of space groups in standardized setting shown in ITA Table 3.5.2.5.
+Because the correction transformation {math}`(\mathbf{P}_{\mathrm{corr}}, \mathbf{p}_{\mathrm{corr}})` can be tabulated for each standardized space group, we pre-compute them and store the results in `msg_database.c`.
 
 ### When {math}`\mathcal{M}` is type-IV
 
-After applying the Hall symbol's setting, we can assume {math}`\mathcal{D}(\mathcal{M}) = \mathcal{D}(\mathcal{M}_{std})`.
-We enumerate integer matrices {math}`\mathbf{P}` whose elements are -1, 0, or 1, and determinant is equal to 1.
-Then, apply {math}`(\mathbf{P}, \mathbf{p})` and search conjugated FSG.
-Here, denominators of origin shift {math}`\mathbf{p}` are at most four because all elements of origin shifts of further generators described in ITA are one of {math}`0, \frac{1}{4}, \frac{1}{2}, \frac{3}{4}`.
+By construction, we can assume {math}`\mathcal{D}(\mathcal{M}') = \mathcal{D}(\mathcal{M}_{\mathrm{std}})`.
+We try a correction transformation {math}`(\mathbf{P}_{\mathrm{corr}}, \mathbf{p}_{\mathrm{corr}})` as well as the type-III case.
 
 ## Standardization of magnetic crystal structure
 
