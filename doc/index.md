@@ -77,5 +77,5 @@ mailing list:
 
 Spglib project acknowledges Paweł T. Jochym for deployment and packaging, Yusuke
 Seto for the Crystallographic database, Jingheng Fu for layer group
-implementation, Dimitar Pashov for the Fortran interface, and many other
-contributors.
+implementation, Juan Rodriguez-Carvajal for the Magnetic space-group database,
+Dimitar Pashov for the Fortran interface, and many other contributors.
