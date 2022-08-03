@@ -71,9 +71,6 @@ int main(void) {
                             test_spg_get_error_message,
                             test_spg_get_hall_number_from_symmetry,
                             NULL};
-    /*
-    int (*funcs[])(void) = {test_spg_get_symmetry_with_site_tensors, NULL};
-    */
 
     int i, result;
 
@@ -746,7 +743,8 @@ static int test_spg_get_symmetry_with_site_tensors() {
     /* Find equivalent_atoms, primitive_lattice, spin_flips */
     size = spg_get_symmetry_with_site_tensors(
         rotation, translation, equivalent_atoms, primitive_lattice, spin_flips,
-        max_size, lattice, position, types, tensors, 1, num_atom, 1, 1e-5);
+        max_size, lattice, position, types, tensors, 1, num_atom,
+        1 /* with_time_reversal */, 1 /* is_axial */, 1e-5);
     assert(size == 8);
 
     printf("*** spg_get_symmetry_with_site_tensors (type-III) ***:\n");
@@ -838,7 +836,8 @@ static int test_spg_get_magnetic_dataset(void) {
         spins[4] = 0;
         spins[5] = 0;
         dataset = spg_get_magnetic_dataset(lattice, position, types, spins,
-                                           0 /* tensor_rank */, num_atom, 1e-5);
+                                           0 /* tensor_rank */, num_atom,
+                                           0 /* is_axial */, 1e-5);
         assert(dataset->msg_type == 1);
         assert(dataset->uni_number == 1155);
         show_spg_magnetic_dataset(dataset);
@@ -856,7 +855,8 @@ static int test_spg_get_magnetic_dataset(void) {
         spins[4] = 0;
         spins[5] = 0;
         dataset = spg_get_magnetic_dataset(lattice, position, types, spins,
-                                           0 /* tensor_rank */, num_atom, 1e-5);
+                                           0 /* tensor_rank */, num_atom,
+                                           0 /* is_axial */, 1e-5);
         assert(dataset->msg_type == 2);
         assert(dataset->uni_number == 1156);
         show_spg_magnetic_dataset(dataset);
@@ -874,7 +874,8 @@ static int test_spg_get_magnetic_dataset(void) {
         spins[4] = 0;
         spins[5] = 0;
         dataset = spg_get_magnetic_dataset(lattice, position, types, spins,
-                                           0 /* tensor_rank */, num_atom, 1e-5);
+                                           0 /* tensor_rank */, num_atom,
+                                           0 /* is_axial */, 1e-5);
         assert(dataset->msg_type == 3);
         assert(dataset->uni_number == 1158);
         show_spg_magnetic_dataset(dataset);
@@ -914,7 +915,8 @@ static int test_spg_get_magnetic_dataset_type4(void) {
 
     /* "136.504": -P 4n 2n 1c' */
     dataset = spg_get_magnetic_dataset(lattice, position, types, spins,
-                                       0 /* tensor_rank */, num_atom, 1e-5);
+                                       0 /* tensor_rank */, num_atom,
+                                       0 /* is_axial */, 1e-5);
     assert(dataset->msg_type == 4);
     assert(dataset->uni_number == 932);
     show_spg_magnetic_dataset(dataset);
