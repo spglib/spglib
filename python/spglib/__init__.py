@@ -34,6 +34,7 @@
 
 from .spglib import (get_version,
                      get_symmetry,
+                     get_magnetic_symmetry,
                      get_symmetry_dataset,
                      get_magnetic_symmetry_dataset,
                      get_spacegroup,
