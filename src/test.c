@@ -677,7 +677,7 @@ end:
 
 static int test_spg_get_symmetry_with_site_tensors() {
     /* MAGNDATA #0.1: LaMnO3 */
-    /* BNS: Pn'ma' (62.448), MHall: -P 2ac' 2n' (509) */
+    /* BNS: Pn'ma' (62.448), MHall: -P 2ac' 2n' (546) */
     int max_size, size, i, j;
     double lattice[][3] = {{5.7461, 0, 0}, {0, 7.6637, 0}, {0, 0, 5.5333}};
     /* clang-format off */
@@ -746,6 +746,17 @@ static int test_spg_get_symmetry_with_site_tensors() {
         max_size, lattice, position, types, tensors, 1, num_atom,
         1 /* with_time_reversal */, 1 /* is_axial */, 1e-5);
     assert(size == 8);
+
+    // Test spg_get_magnetic_spacegroup_type_from_symmetry
+    int *time_reversals;
+    time_reversals = (int *)malloc(sizeof(int *) * size);
+    for (i = 0; i < size; i++) {
+        time_reversals[i] = (1 - spin_flips[i]) / 2;
+    }
+    SpglibMagneticSpacegroupType msgtype =
+        spg_get_magnetic_spacegroup_type_from_symmetry(
+            rotation, translation, time_reversals, lattice, size, 1e-5);
+    assert(msgtype.uni_number == 546);
 
     printf("*** spg_get_symmetry_with_site_tensors (type-III) ***:\n");
     for (i = 0; i < size; i++) {

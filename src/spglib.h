@@ -310,6 +310,11 @@ int spg_get_hall_number_from_symmetry(SPGCONST int rotation[][3][3],
                                       const int num_operations,
                                       const double symprec);
 
+SpglibMagneticSpacegroupType spg_get_magnetic_spacegroup_type_from_symmetry(
+    SPGCONST int rotations[][3][3], SPGCONST double translations[][3],
+    SPGCONST int *time_reversals, SPGCONST double lattice[3][3],
+    const int num_operations, const double symprec);
+
 /* Return exact number of symmetry operations. This function may */
 /* be used in advance to allocate memory space for symmetry */
 /* operations. */

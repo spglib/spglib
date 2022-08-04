@@ -571,6 +571,59 @@ int spg_get_hall_number_from_symmetry(SPGCONST int rotation[][3][3],
     return hall_number;
 }
 
+SpglibMagneticSpacegroupType spg_get_magnetic_spacegroup_type_from_symmetry(
+    SPGCONST int rotations[][3][3], SPGCONST double translations[][3],
+    SPGCONST int *time_reversals, SPGCONST double lattice[3][3],
+    const int num_operations, const double symprec) {
+    int i;
+    MagneticSymmetry *magnetic_symmetry;
+    MagneticDataset *msgdata;
+    SpglibMagneticSpacegroupType spglibtype, matched;
+
+    /* Initialization */
+    spglibtype.uni_number = 0;
+    spglibtype.litvin_number = 0;
+    strcpy(spglibtype.bns_number, "");
+    strcpy(spglibtype.og_number, "");
+    spglibtype.number = 0;
+    spglibtype.type = 0;
+
+    magnetic_symmetry = NULL;
+    msgdata = NULL;
+
+    if ((magnetic_symmetry = sym_alloc_magnetic_symmetry(num_operations)) ==
+        NULL) {
+        return spglibtype;
+    }
+    for (i = 0; i < num_operations; i++) {
+        mat_copy_matrix_i3(magnetic_symmetry->rot[i], rotations[i]);
+        mat_copy_vector_d3(magnetic_symmetry->trans[i], translations[i]);
+        magnetic_symmetry->timerev[i] = time_reversals[i];
+    }
+
+    if ((msgdata = msg_identify_magnetic_space_group_type(
+             lattice, magnetic_symmetry, symprec)) == NULL) {
+        sym_free_magnetic_symmetry(magnetic_symmetry);
+        magnetic_symmetry = NULL;
+        return spglibtype;
+    }
+
+    matched = spg_get_magnetic_spacegroup_type(msgdata->uni_number);
+    spglibtype.uni_number = matched.uni_number;
+    spglibtype.litvin_number = matched.litvin_number;
+    strcpy(spglibtype.bns_number, matched.bns_number);
+    strcpy(spglibtype.og_number, matched.og_number);
+    spglibtype.number = matched.number;
+    spglibtype.type = matched.type;
+
+    sym_free_magnetic_symmetry(magnetic_symmetry);
+    magnetic_symmetry = NULL;
+    free(msgdata);
+    msgdata = NULL;
+
+    return spglibtype;
+}
+
 /* Return 0 if failed */
 int spg_get_multiplicity(SPGCONST double lattice[3][3],
                          SPGCONST double position[][3], const int types[],
@@ -1223,6 +1276,8 @@ static SpglibMagneticDataset *get_magnetic_dataset(
     }
 
     /* Idealize positions and site tensors */
+    // TODO: cell->position may be highly distorted. Use idealized positions by
+    // only space groups for input of `spn_get_idealized_cell`
     if ((exact_cell = spn_get_idealized_cell(
              permutations, cell, magnetic_symmetry, 1, is_axial)) == NULL) {
         spglib_error_code = SPGERR_SYMMETRY_OPERATION_SEARCH_FAILED;

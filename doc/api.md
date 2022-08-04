@@ -500,6 +500,21 @@ typedef struct {
 - `number` ITA's serial number of space group for reference setting
 - `type` Type of MSG from 1 to 4
 
+### `spg_get_magnetic_spacegroup_type_from_symmetry`
+
+Return magnetic space-group type information from magnetic symmetry operations.
+`time_reversals` takes 0 for ordinary operations and 1 for time-reversal operations.
+
+```c
+SpglibMagneticSpacegroupType spg_get_magnetic_spacegroup_type_from_symmetry(
+    SPGCONST int rotations[][3][3], SPGCONST double translations[][3],
+    SPGCONST int *time_reversals, SPGCONST double lattice[3][3],
+    const int num_operations, const double symprec
+);
+```
+
+See {ref}`api_get_magnetic_spacegroup_type` for returned `SpglibMagneticSpacegroupType`.
+
 ## Lattice reduction
 ### ``spg_niggli_reduce``
 
