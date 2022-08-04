@@ -755,7 +755,7 @@ static int test_spg_get_symmetry_with_site_tensors() {
     }
     SpglibMagneticSpacegroupType msgtype =
         spg_get_magnetic_spacegroup_type_from_symmetry(
-            rotation, translation, time_reversals, lattice, size, 1e-5);
+            rotation, translation, time_reversals, size, lattice, 1e-5);
     assert(msgtype.uni_number == 546);
 
     printf("*** spg_get_symmetry_with_site_tensors (type-III) ***:\n");
