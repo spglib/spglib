@@ -56,7 +56,7 @@ printf("%s\n", spg_get_error_message(error));
 
 ## General
 
-(_api_spg_get_symmetry)=
+(api_spg_get_symmetry)=
 ### ``spg_get_symmetry``
 
 This function finds a set of representative symmetry operations for
@@ -124,7 +124,7 @@ int spg_get_schoenflies(char symbol[7],
 The standardized unit cell (see {ref}`def_standardized_unit_cell`) is
 generated from an input unit cell structure and its symmetry found by
 the symmetry search. The choice of the setting for each space group
-type is as explained for {ref}`spg_get_dataset <_api_spg_get_dataset>`.
+type is as explained for {ref}`spg_get_dataset <api_spg_get_dataset>`.
 Usually ``to_primitive=0`` and ``no_idealize=0`` are recommended to
 set and this setting results in the same behavior as
 ``spg_refine_cell``. 0 is returned if it failed.
@@ -215,7 +215,7 @@ space) of these variables, the array size (memory space) for
 ``position`` and ``types`` should be prepared **four times more** than
 those required for the input unit cell in general.
 
-(_api_spg_get_dataset)=
+(api_spg_get_dataset)=
 ### ``spg_get_dataset`` and ``spg_get_dataset_with_hall_number``
 
 **Changed in version 1.8.1**
@@ -260,7 +260,7 @@ SpglibDataset * spg_get_dataset_with_hall_number(SPGCONST double lattice[3][3],
 
 where ``hall_number`` is used to specify the choice. The possible
 choices and those serial numbers are found at [list of space groups
-(Seto's web site)](https://yseto.net/?page_id=29).
+(Seto's web site)](https://yseto.net/?page_id=29&lang=en).
 The crystal structure has to possess the space-group type of the Hall
 symbol. If the symmetry search fails or the specified ``hall_number``
 is not in the list of Hall symbols for the space group type of the
@@ -279,7 +279,7 @@ freed by calling ``spg_free_dataset``.
 void spg_free_dataset(SpglibDataset *dataset);
 ```
 
-(_api_spg_spacegroup_type)=
+(api_spg_spacegroup_type)=
 ### ``spg_get_spacegroup_type``
 
 **Changed at version 1.9.4: Some members are added and the member name 'setting' is changed to 'choice'.**
