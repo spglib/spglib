@@ -776,6 +776,8 @@ static int test_spg_get_symmetry_with_site_tensors() {
     translation = NULL;
     free(spin_flips);
     spin_flips = NULL;
+    free(time_reversals);
+    time_reversals = NULL;
 
     return 0;
 }
