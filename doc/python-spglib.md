@@ -232,17 +232,7 @@ This method is used to see roughly why spglib failed.
 error_message = get_error_message()
 ```
 
-## Methods (general)
-
-### ``get_spacegroup``
-
-```python
-spacegroup = get_spacegroup(cell, symprec=1e-5)
-```
-
-International space group short symbol and number are obtained as a
-string. With ``symbol_type=1``, Schoenflies symbol is given instead of
-international symbol.
+## Method (space-group symmetry search)
 
 (py_method_get_symmetry)=
 ### ``get_symmetry``
@@ -289,58 +279,6 @@ If ``cell`` is given as a tuple and collinear polarizations are given
 as the fourth element of this tuple, symmetry operations are searched
 considering this freedom. In ASE Atoms-class object, this is not supported.
 
-### ``refine_cell``
-
-**Behaviour changed in version 1.8.x**
-
-```python
-lattice, scaled_positions, numbers = refine_cell(cell, symprec=1e-5)
-```
-
-Standardized crystal structure is obtained as a tuple of lattice (a
-3x3 numpy array), atomic scaled positions (a numpy array of
-[number_of_atoms,3]), and atomic numbers (a 1D numpy array) that are
-symmetrized following space group type. When the search failed,
-``None`` is returned. About the default choice of the setting, see the
-documentation of ``hall_number`` argument of
-{ref}`py_method_get_symmetry_dataset`.
-
-The detailed control of standardization of unit cell is achieved using
-``standardize_cell``.
-
-### ``find_primitive``
-
-**Behaviour changed in version 1.8.x**
-
-```python
-lattice, scaled_positions, numbers = find_primitive(cell, symprec=1e-5)
-```
-
-When a primitive cell is found, lattice parameters (a 3x3 numpy array),
-scaled positions (a numpy array of [number_of_atoms,3]), and atomic
-numbers (a 1D numpy array) is returned. When the search failed,
-``None`` is returned.
-
-The detailed control of standardization of unit cell can be done using
-``standardize_cell``.
-
-### ``standardize_cell``
-
-**New in version 1.8.x**
-
-```python
-lattice, scaled_positions, numbers = standardize_cell(bulk, to_primitive=False, no_idealize=False, symprec=1e-5)
-```
-
-``to_primitive=True`` is used to create the standardized primitive
-cell, and ``no_idealize=True`` disables to idealize lengths and angles
-of basis vectors and positions of atoms according to crystal
-symmetry. Now ``refine_cell`` and ``find_primitive`` are shorthands of
-this method with combinations of these options. When the search
-failed, ``None`` is returned.  About the default choice
-of the setting, see the documentation of ``hall_number`` argument of
-{ref}`py_method_get_symmetry_dataset`.  More detailed explanation is
-shown in the spglib (C-API) document.
 
 (py_method_get_symmetry_dataset)=
 ### ``get_symmetry_dataset``
@@ -417,6 +355,75 @@ keys are shown below. More details are found at {ref}`spglib_dataset`.
 
 When the search failed, ``None`` is returned.
 
+## Method (space-group type search)
+
+### ``get_spacegroup``
+
+```python
+spacegroup = get_spacegroup(cell, symprec=1e-5)
+```
+
+International space group short symbol and number are obtained as a
+string. With ``symbol_type=1``, Schoenflies symbol is given instead of
+international symbol.
+
+## Method (standardization and finding primitive)
+
+### ``standardize_cell``
+
+**New in version 1.8.x**
+
+```python
+lattice, scaled_positions, numbers = standardize_cell(bulk, to_primitive=False, no_idealize=False, symprec=1e-5)
+```
+
+``to_primitive=True`` is used to create the standardized primitive
+cell, and ``no_idealize=True`` disables to idealize lengths and angles
+of basis vectors and positions of atoms according to crystal
+symmetry. Now ``refine_cell`` and ``find_primitive`` are shorthands of
+this method with combinations of these options. When the search
+failed, ``None`` is returned.  About the default choice
+of the setting, see the documentation of ``hall_number`` argument of
+{ref}`py_method_get_symmetry_dataset`.  More detailed explanation is
+shown in the spglib (C-API) document.
+
+### ``find_primitive``
+
+**Behaviour changed in version 1.8.x**
+
+```python
+lattice, scaled_positions, numbers = find_primitive(cell, symprec=1e-5)
+```
+
+When a primitive cell is found, lattice parameters (a 3x3 numpy array),
+scaled positions (a numpy array of [number_of_atoms,3]), and atomic
+numbers (a 1D numpy array) is returned. When the search failed,
+``None`` is returned.
+
+The detailed control of standardization of unit cell can be done using
+``standardize_cell``.
+
+### ``refine_cell``
+
+**Behaviour changed in version 1.8.x**
+
+```python
+lattice, scaled_positions, numbers = refine_cell(cell, symprec=1e-5)
+```
+
+Standardized crystal structure is obtained as a tuple of lattice (a
+3x3 numpy array), atomic scaled positions (a numpy array of
+[number_of_atoms,3]), and atomic numbers (a 1D numpy array) that are
+symmetrized following space group type. When the search failed,
+``None`` is returned. About the default choice of the setting, see the
+documentation of ``hall_number`` argument of
+{ref}`py_method_get_symmetry_dataset`.
+
+The detailed control of standardization of unit cell is achieved using
+``standardize_cell``.
+
+## Method (space-group dataset access)
+
 (py_method_get_symmetry_from_database)=
 ### ``get_symmetry_from_database``
 
@@ -471,29 +478,11 @@ Here ``spacegroup_type['international_short']`` is equivalent to
 
 When something wrong happened, ``None`` is returned.
 
-### ``get_hall_number_from_symmetry``
+### ``get_spacegroup_type_from_symmetry``
 
-**experimental**
+This replaces ``get_hall_number_from_symmetry``, but ``lattice`` is necessary.
 
-Return one of ``hall_number`` corresponding to a space-group type of the given set of symmetry operations.
-When multiple ``hall_number`` exist for the space-group type, the smallest one (the first description of the space-group type in International Tables for Crystallography) is chosen.
-The definition of ``hall_number`` is found at
-{ref}`dataset_spg_get_dataset_spacegroup_type` and the corresponding
-space-group-type information is obtained through
-{ref}`py_method_get_spacegroup_type`.
 
-This is expected to work well for the set of symmetry operations whose
-distortion is small. The aim of making this feature is to find
-space-group-type for the set of symmetry operations given by the other
-source than spglib.
-
-Note that the definition of ``symprec`` is
-different from usual one, but is given in the fractional
-coordinates and so it should be small like ``1e-5``.
-
-```python
-get_hall_number_from_symmetry(rotations, translations, symprec=1e-5)
-```
 
 ## Methods (magnetic symmetry)
 
@@ -729,3 +718,28 @@ An example is shown below:
    print("Number of ir-kpoints: %d" % len(np.unique(mapping)))
    print((grid[np.unique(mapping)] + [0.5, 0.5, 0.5]) / mesh)
    ```
+
+## Method (deprecated)
+### ``get_hall_number_from_symmetry``
+
+**Deprecated.**
+
+Return one of ``hall_number`` corresponding to a space-group type of the given set of symmetry operations.
+When multiple ``hall_number`` exist for the space-group type, the smallest one (the first description of the space-group type in International Tables for Crystallography) is chosen.
+The definition of ``hall_number`` is found at
+{ref}`dataset_spg_get_dataset_spacegroup_type` and the corresponding
+space-group-type information is obtained through
+{ref}`py_method_get_spacegroup_type`.
+
+This is expected to work well for the set of symmetry operations whose
+distortion is small. The aim of making this feature is to find
+space-group-type for the set of symmetry operations given by the other
+source than spglib.
+
+Note that the definition of ``symprec`` is
+different from usual one, but is given in the fractional
+coordinates and so it should be small like ``1e-5``.
+
+```python
+get_hall_number_from_symmetry(rotations, translations, symprec=1e-5)
+```
