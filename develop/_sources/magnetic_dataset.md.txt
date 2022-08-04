@@ -97,8 +97,8 @@ See {ref}`dataset_origin_shift_and_transformation`.
 See {ref}`dataset_idealized_cell`.
 
 ### `std_tensors`
-    Site tensors of the standardized crystal structure {ref}`idealization
-<def_idealize_cell>`.
+
+Site tensors of the standardized crystal structure {ref}`idealization <def_idealize_cell>`.
 
 ## Intermediate data in symmetry search
 
