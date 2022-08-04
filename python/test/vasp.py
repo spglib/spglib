@@ -34,6 +34,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import numpy as np
+
 try:
     from StringIO import StringIO
 except ImportError:
@@ -75,12 +76,11 @@ def _get_cell(lines):
 
     numbers = _expand_symbols(num_atoms, symbols)
 
-    if lines[line_at][0].lower() == 's':
+    if lines[line_at][0].lower() == "s":
         line_at += 1
 
     is_cartesian = False
-    if (lines[line_at][0].lower() == 'c' or
-        lines[line_at][0].lower() == 'k'):
+    if lines[line_at][0].lower() == "c" or lines[line_at][0].lower() == "k":
         is_cartesian = True
 
     line_at += 1
@@ -111,10 +111,14 @@ def _expand_symbols(num_atoms, symbols=None):
 
     if is_symbols:
         for s, num in zip(symbols, num_atoms):
-            expanded_symbols += [symbol_map[s], ] * num
+            expanded_symbols += [
+                symbol_map[s],
+            ] * num
     else:
         for i, num in enumerate(num_atoms):
-            expanded_symbols += [i + 1, ] * num
+            expanded_symbols += [
+                i + 1,
+            ] * num
 
     return expanded_symbols
 
@@ -245,4 +249,4 @@ symbol_map = {
     "Lv": 116,
     "Ts": 117,
     "Og": 118,
-    }
+}
