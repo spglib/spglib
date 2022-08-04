@@ -504,7 +504,7 @@ Return magnetic space-group type information from magnetic symmetry operations.
 ```c
 SpglibMagneticSpacegroupType spg_get_magnetic_spacegroup_type_from_symmetry(
     SPGCONST int rotations[][3][3], SPGCONST double translations[][3],
-    const int num_operations, SPGCONST int *time_reversals,
+    SPGCONST int *time_reversals, const int num_operations,
     SPGCONST double lattice[3][3], const double symprec
 );
 ```
