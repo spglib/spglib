@@ -68,7 +68,7 @@ jobs:
     # Require CMake>=3.14 for the following build procedure
     - name: Test
       run: |
-        cmake -S . -B build -DUSE_SANITIZER="Address" -DCMAKE_BUILD_TYPE="Debug"
+        cmake -S . -B build -DUSE_SANITIZER="Address"
         cmake --build build -t check
 
   docs:
