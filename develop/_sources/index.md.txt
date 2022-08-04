@@ -7,6 +7,7 @@
    How to install spglib C-API <install>
    C-APIs <api>
    Spglib dataset <dataset>
+   Magnetic spglib dataset (Experimental) <magnetic_dataset>
    Variables <variable>
    Spglib for Python <python-spglib>
    Rust, Fortran, and Ruby interfaces <interface>
@@ -66,9 +67,16 @@ mailing list:
 - Contact: atz.togo@gmail.com
 - Author: Atsushi Togo
 
+## Links
+
+- Document (this page): <https://spglib.github.io/spglib/>
+- Document (develop): <https://spglib.github.io/spglib/develop>
+- Conda: <https://anaconda.org/conda-forge/spglib>
+- PyPI: <https://pypi.org/project/spglib/>
+
 ## Acknowledgments
 
 Spglib project acknowledges Paweł T. Jochym for deployment and packaging, Yusuke
 Seto for the Crystallographic database, Jingheng Fu for layer group
-implementation, Dimitar Pashov for the Fortran interface, and many other
-contributors.
+implementation, Juan Rodriguez-Carvajal for the Magnetic space-group database,
+Dimitar Pashov for the Fortran interface, and many other contributors.
