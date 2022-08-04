@@ -7,6 +7,7 @@
    How to install spglib C-API <install>
    C-APIs <api>
    Spglib dataset <dataset>
+   Magnetic spglib dataset (Experimental) <magnetic_dataset>
    Variables <variable>
    Spglib for Python <python-spglib>
    Rust, Fortran, and Ruby interfaces <interface>

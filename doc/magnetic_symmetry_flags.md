@@ -1,4 +1,5 @@
-# Proposal for new flags on MSG
+(magnetic_action_flags)=
+# Flags to control action of magnetic symmetry operations
 
 - Narrow functionality of `is_magnetic` and rename to `with_time_reversal`
 - Add `is_axial`

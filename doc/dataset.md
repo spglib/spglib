@@ -44,6 +44,7 @@ typedef struct {
 The space group type number defined in International Tables for
 Crystallography (ITA).
 
+(spglib_dataset_hall_number)=
 ### ``hall_number``
 
 The serial number from 1 to 530 which are found at [list of space
@@ -102,6 +103,7 @@ space group type, the same set of the symbols is returned.
 
 This is determined from the symmetry of the primitive cell.
 
+(spglib_dataset_equivalent_atoms)=
 ### ``equivalent_atoms``
 
 This gives the mapping table from the atomic indices of the input unit
@@ -233,6 +235,7 @@ A primitive cell is searched from the translational symmetry. This
 primitive cell is given by ``primitive_lattice`` and
 ``mapping_to_primitive`` below.
 
+(spglib_dataset_primitive_lattice)=
 ### ``primitive_lattice``
 
 **New at version 1.15**

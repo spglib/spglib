@@ -397,6 +397,107 @@ int spg_get_symmetry_with_collinear_spin(int rotation[][3][3],
                                          const double symprec);
 ```
 
+### `spg_get_symmetry_with_site_tensors`
+
+**Changed in version 2.0: new argument `is_axial` is now required.**
+
+Returns magnetic symmetry operations represented by `rotation`, `translation`, and `spin_flips`
+from crystal structure with `lattice`, `position`, `types`, and `tensors`.
+When you need magnetic symmetry operations of non-collinear spins, set `tensor_rank=1`, `is_axial=1`,
+and `tensors` with length `num_atom * 3` (ordered by {math}`[ m_{1x}, m_{1y}, m_{1z}, \dots ]`)
+in cartesian coordinates.
+For other combinations of `tensor_rank` and `is_axial`, see {ref}`magnetic_action_flags`.
+Returned `spin_flips` represents sign of site tensors after applying time-reversal operations:
+1 for non time reversal, and -1 for time reversal.
+
+```c
+int spg_get_symmetry_with_site_tensors(
+    int rotation[][3][3], double translation[][3], int equivalent_atoms[],
+    double primitive_lattice[3][3], int *spin_flips, const int max_size,
+    SPGCONST double lattice[3][3], SPGCONST double position[][3],
+    const int types[], const double *tensors, const int tensor_rank,
+    const int num_atom, const int with_time_reversal, const int is_axial,
+    const double symprec);
+```
+
+### `spg_get_magnetic_dataset`
+
+**Experimental: new at version 2.0**
+
+Return magnetic symmetry operations and standardized structure of given structure with site tensors.
+- To search magnetic symmetry operations of a structure with collinear spins, set `tensor_rank=0`,
+`is_axial=0`, and `tensors` with length `num_atom`
+- To search magnetic symmetry operations of a structure with non-collinear spins, set `tensor_rank=1`,
+`is_axial=1`, and `tensors` with length `num_atom * 3` in cartesian coordinates.
+
+The description of returned dataset is given at {ref}`magnetic_spglib_dataset`.
+
+```c
+SpglibMagneticDataset *spg_get_magnetic_dataset(
+    SPGCONST double lattice[3][3], SPGCONST double position[][3],
+    const int types[], const double *tensors, const int tensor_rank,
+    const int num_atom, const int is_axial, const double symprec);
+```
+
+### `spg_get_magnetic_symmetry_from_database`
+
+**Experimental: new at version 2.0**
+
+Magnetic space-group operations in built-in database are accessed by UNI
+number, which is defined as number from 1 to 1651.
+Optionally alternative settings can be specified with hall_number.
+For type-I, type-II, and type-III magnetic space groups, `hall_number`
+changes settings in family space group.
+For type-IV, `hall_number` changes settings in maximal space group.
+When `hall_number = 0`, the smallest hall number corresponding to uni_number is
+used.
+
+```c
+int spg_get_magnetic_symmetry_from_database(int rotations[384][3][3],
+                                            double translations[384][3],
+                                            int time_reversals[384],
+                                            const int uni_number,
+                                            const int hall_number);
+```
+
+### `spg_free_magnetic_dataset`
+
+**Experimental: new at version 2.0**
+
+```c
+void spg_free_magnetic_dataset(SpglibMagneticDataset *dataset);
+```
+
+### `spg_get_magnetic_spacegroup_type`
+
+**Experimental: new at version 2.0**
+
+Magnetic space-group type information is accessed by serial number of UNI (or BNS) symbols.
+The serial number is between 1 and 1651.
+
+```c
+SpglibMagneticSpacegroupType spg_get_magnetic_spacegroup_type(
+    const int uni_number);
+```
+
+Returned `SpglibMagneticSpacegroupType` is the following C-structure:
+```c
+typedef struct {
+    int uni_number;
+    int litvin_number;
+    char bns_number[8];
+    char og_number[12];
+    int number;
+    int type;
+} SpglibMagneticSpacegroupType;
+```
+
+- `uni_number` serial number of UNI (or BNS) symbols
+- `litvin_number` serial number in Litvin's [Magnetic group tables](https://www.iucr.org/publ/978-0-9553602-2-0)
+- `bns_number` BNS number e.g. "156.32"
+- `og_number` OG number e.g. "153.4.1270"
+- `number` ITA's serial number of space group for reference setting
+- `type` Type of MSG from 1 to 4
 
 ## Lattice reduction
 ### ``spg_niggli_reduce``
