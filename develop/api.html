@@ -333,8 +333,8 @@ title="Print to PDF"
   </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#general">
-   General
+  <a class="reference internal nav-link" href="#space-group-symmetry-search">
+   Space-group symmetry search
   </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
@@ -342,51 +342,6 @@ title="Print to PDF"
      <code class="docutils literal notranslate">
       <span class="pre">
        spg_get_symmetry
-      </span>
-     </code>
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#spg-get-international">
-     <code class="docutils literal notranslate">
-      <span class="pre">
-       spg_get_international
-      </span>
-     </code>
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#spg-get-schoenflies">
-     <code class="docutils literal notranslate">
-      <span class="pre">
-       spg_get_schoenflies
-      </span>
-     </code>
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#spg-standardize-cell">
-     <code class="docutils literal notranslate">
-      <span class="pre">
-       spg_standardize_cell
-      </span>
-     </code>
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#spg-find-primitive">
-     <code class="docutils literal notranslate">
-      <span class="pre">
-       spg_find_primitive
-      </span>
-     </code>
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#spg-refine-cell">
-     <code class="docutils literal notranslate">
-      <span class="pre">
-       spg_refine_cell
       </span>
      </code>
     </a>
@@ -416,14 +371,80 @@ title="Print to PDF"
     </a>
    </li>
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#spg-get-spacegroup-type">
+    <a class="reference internal nav-link" href="#spg-get-multiplicity">
      <code class="docutils literal notranslate">
       <span class="pre">
-       spg_get_spacegroup_type
+       spg_get_multiplicity
       </span>
      </code>
     </a>
    </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#space-group-type-search">
+   Space-group type search
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#spg-get-international">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       spg_get_international
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#spg-get-schoenflies">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       spg_get_schoenflies
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#standardization-and-finding-primitive-cell">
+   Standardization and finding primitive cell
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#spg-standardize-cell">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       spg_standardize_cell
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#spg-find-primitive">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       spg_find_primitive
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#spg-refine-cell">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       spg_refine_cell
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#space-group-dataset-access">
+   Space-group dataset access
+  </a>
+  <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#spg-get-symmetry-from-database">
      <code class="docutils literal notranslate">
@@ -434,19 +455,19 @@ title="Print to PDF"
     </a>
    </li>
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#spg-get-multiplicity">
+    <a class="reference internal nav-link" href="#spg-get-spacegroup-type">
      <code class="docutils literal notranslate">
       <span class="pre">
-       spg_get_multiplicity
+       spg_get_spacegroup_type
       </span>
      </code>
     </a>
    </li>
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#spg-get-hall-number-from-symmetry">
+    <a class="reference internal nav-link" href="#spg-get-spacegroup-type-from-symmetry">
      <code class="docutils literal notranslate">
       <span class="pre">
-       spg_get_hall_number_from_symmetry
+       spg_get_spacegroup_type_from_symmetry
       </span>
      </code>
     </a>
@@ -567,6 +588,22 @@ title="Print to PDF"
      <code class="docutils literal notranslate">
       <span class="pre">
        spg_get_stabilized_reciprocal_mesh
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#deprecated">
+   Deprecated
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#spg-get-hall-number-from-symmetry">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       spg_get_hall_number_from_symmetry
       </span>
      </code>
     </a>
@@ -643,8 +680,8 @@ title="Print to PDF"
   </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#general">
-   General
+  <a class="reference internal nav-link" href="#space-group-symmetry-search">
+   Space-group symmetry search
   </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
@@ -652,51 +689,6 @@ title="Print to PDF"
      <code class="docutils literal notranslate">
       <span class="pre">
        spg_get_symmetry
-      </span>
-     </code>
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#spg-get-international">
-     <code class="docutils literal notranslate">
-      <span class="pre">
-       spg_get_international
-      </span>
-     </code>
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#spg-get-schoenflies">
-     <code class="docutils literal notranslate">
-      <span class="pre">
-       spg_get_schoenflies
-      </span>
-     </code>
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#spg-standardize-cell">
-     <code class="docutils literal notranslate">
-      <span class="pre">
-       spg_standardize_cell
-      </span>
-     </code>
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#spg-find-primitive">
-     <code class="docutils literal notranslate">
-      <span class="pre">
-       spg_find_primitive
-      </span>
-     </code>
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#spg-refine-cell">
-     <code class="docutils literal notranslate">
-      <span class="pre">
-       spg_refine_cell
       </span>
      </code>
     </a>
@@ -726,14 +718,80 @@ title="Print to PDF"
     </a>
    </li>
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#spg-get-spacegroup-type">
+    <a class="reference internal nav-link" href="#spg-get-multiplicity">
      <code class="docutils literal notranslate">
       <span class="pre">
-       spg_get_spacegroup_type
+       spg_get_multiplicity
       </span>
      </code>
     </a>
    </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#space-group-type-search">
+   Space-group type search
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#spg-get-international">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       spg_get_international
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#spg-get-schoenflies">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       spg_get_schoenflies
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#standardization-and-finding-primitive-cell">
+   Standardization and finding primitive cell
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#spg-standardize-cell">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       spg_standardize_cell
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#spg-find-primitive">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       spg_find_primitive
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#spg-refine-cell">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       spg_refine_cell
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#space-group-dataset-access">
+   Space-group dataset access
+  </a>
+  <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#spg-get-symmetry-from-database">
      <code class="docutils literal notranslate">
@@ -744,19 +802,19 @@ title="Print to PDF"
     </a>
    </li>
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#spg-get-multiplicity">
+    <a class="reference internal nav-link" href="#spg-get-spacegroup-type">
      <code class="docutils literal notranslate">
       <span class="pre">
-       spg_get_multiplicity
+       spg_get_spacegroup_type
       </span>
      </code>
     </a>
    </li>
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#spg-get-hall-number-from-symmetry">
+    <a class="reference internal nav-link" href="#spg-get-spacegroup-type-from-symmetry">
      <code class="docutils literal notranslate">
       <span class="pre">
-       spg_get_hall_number_from_symmetry
+       spg_get_spacegroup_type_from_symmetry
       </span>
      </code>
     </a>
@@ -883,6 +941,22 @@ title="Print to PDF"
    </li>
   </ul>
  </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#deprecated">
+   Deprecated
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#spg-get-hall-number-from-symmetry">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       spg_get_hall_number_from_symmetry
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
 </ul>
 
                         </nav>
@@ -941,8 +1015,8 @@ when calling one spglib function per process.</strong></p>
 </div>
 </section>
 </section>
-<section id="general">
-<h2>General<a class="headerlink" href="#general" title="Permalink to this headline">#</a></h2>
+<section id="space-group-symmetry-search">
+<h2>Space-group symmetry search<a class="headerlink" href="#space-group-symmetry-search" title="Permalink to this headline">#</a></h2>
 <section id="spg-get-symmetry">
 <span id="api-spg-get-symmetry"></span><h3><code class="docutils literal notranslate"><span class="pre">spg_get_symmetry</span></code><a class="headerlink" href="#spg-get-symmetry" title="Permalink to this headline">#</a></h3>
 <p>This function finds a set of representative symmetry operations for
@@ -973,6 +1047,77 @@ cell. This may not be understandable in crystallographic sense, but is
 practically useful treatment for research in computational materials
 science.</p>
 </section>
+<section id="spg-get-dataset-and-spg-get-dataset-with-hall-number">
+<span id="api-spg-get-dataset"></span><h3><code class="docutils literal notranslate"><span class="pre">spg_get_dataset</span></code> and <code class="docutils literal notranslate"><span class="pre">spg_get_dataset_with_hall_number</span></code><a class="headerlink" href="#spg-get-dataset-and-spg-get-dataset-with-hall-number" title="Permalink to this headline">#</a></h3>
+<p><strong>Changed in version 1.8.1</strong></p>
+<p>For an input unit cell structure, symmetry operations of the crystal
+are searched. Then they are compared with the crystallographic
+database and the space group type is determined.  The result is
+returned as the <code class="docutils literal notranslate"><span class="pre">SpglibDataset</span></code> structure as a dataset.</p>
+<p>The detail of the dataset is given at <a class="reference internal" href="dataset.html#spglib-dataset"><span class="std std-ref">Spglib dataset</span></a>.</p>
+<p>Dataset corresponding to the space group type in the standard setting
+is obtained by <code class="docutils literal notranslate"><span class="pre">spg_get_dataset</span></code>. Here the standard setting means
+the first top one among the Hall symbols listed for each space group
+type. For example, H setting (hexagonal lattice) is chosen for
+rhombohedral crystals. <code class="docutils literal notranslate"><span class="pre">spg_get_dataset_with_hall_number</span></code> explained
+below is used to choose different settings such as R setting of
+rhombohedral crystals. If this symmetry search fails, <code class="docutils literal notranslate"><span class="pre">NULL</span></code> is
+returned in version 1.8.1 or later (spacegroup_number = 0 is returned
+in the previous versions). In this function, the other
+crystallographic setting is not obtained.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">SpglibDataset</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nf">spg_get_dataset</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span><span class="w"></span>
+<span class="w">                                </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">position</span><span class="p">[][</span><span class="mi">3</span><span class="p">],</span><span class="w"></span>
+<span class="w">                                </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">types</span><span class="p">[],</span><span class="w"></span>
+<span class="w">                                </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">num_atom</span><span class="p">,</span><span class="w"></span>
+<span class="w">                                </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">symprec</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+<p>To specify the other crystallographic choice (setting, origin, axis,
+or cell choice), <code class="docutils literal notranslate"><span class="pre">spg_get_dataset_with_hall_number</span></code> is used.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">SpglibDataset</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">spg_get_dataset_with_hall_number</span><span class="p">(</span><span class="n">SPGCONST</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span><span class="w"></span>
+<span class="w">                                                 </span><span class="n">SPGCONST</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">position</span><span class="p">[][</span><span class="mi">3</span><span class="p">],</span><span class="w"></span>
+<span class="w">                                                 </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">types</span><span class="p">[],</span><span class="w"></span>
+<span class="w">                                                 </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">num_atom</span><span class="p">,</span><span class="w"></span>
+<span class="w">                                                 </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">hall_number</span><span class="p">,</span><span class="w"></span>
+<span class="w">                                                 </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">symprec</span><span class="p">)</span><span class="w"></span>
+</pre></div>
+</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">hall_number</span></code> is used to specify the choice. The possible
+choices and those serial numbers are found at <a class="reference external" href="https://yseto.net/?page_id=29&amp;lang=en">list of space groups
+(Seto’s web site)</a>.
+The crystal structure has to possess the space-group type of the Hall
+symbol. If the symmetry search fails or the specified <code class="docutils literal notranslate"><span class="pre">hall_number</span></code>
+is not in the list of Hall symbols for the space group type of the
+crystal structure, <code class="docutils literal notranslate"><span class="pre">spacegroup_number</span></code> in the <code class="docutils literal notranslate"><span class="pre">SpglibDataset</span></code>
+structure is set 0.</p>
+<p>Finally, its allocated memory space must be freed by calling
+<code class="docutils literal notranslate"><span class="pre">spg_free_dataset</span></code>.</p>
+</section>
+<section id="spg-free-dataset">
+<h3><code class="docutils literal notranslate"><span class="pre">spg_free_dataset</span></code><a class="headerlink" href="#spg-free-dataset" title="Permalink to this headline">#</a></h3>
+<p>Allocated memory space of the C-structure of <code class="docutils literal notranslate"><span class="pre">SpglibDataset</span></code> is
+freed by calling <code class="docutils literal notranslate"><span class="pre">spg_free_dataset</span></code>.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">spg_free_dataset</span><span class="p">(</span><span class="n">SpglibDataset</span><span class="w"> </span><span class="o">*</span><span class="n">dataset</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+</section>
+<section id="spg-get-multiplicity">
+<h3><code class="docutils literal notranslate"><span class="pre">spg_get_multiplicity</span></code><a class="headerlink" href="#spg-get-multiplicity" title="Permalink to this headline">#</a></h3>
+<p>This function returns exact number of symmetry operations. 0 is
+returned when it failed.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="nf">spg_get_multiplicity</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span><span class="w"></span>
+<span class="w">                         </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">position</span><span class="p">[][</span><span class="mi">3</span><span class="p">],</span><span class="w"></span>
+<span class="w">                         </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">types</span><span class="p">[],</span><span class="w"></span>
+<span class="w">                         </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">num_atom</span><span class="p">,</span><span class="w"></span>
+<span class="w">                         </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">symprec</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+<p>This function may be used in advance to allocate memory space for
+symmetry operations.</p>
+</section>
+</section>
+<section id="space-group-type-search">
+<h2>Space-group type search<a class="headerlink" href="#space-group-type-search" title="Permalink to this headline">#</a></h2>
 <section id="spg-get-international">
 <h3><code class="docutils literal notranslate"><span class="pre">spg_get_international</span></code><a class="headerlink" href="#spg-get-international" title="Permalink to this headline">#</a></h3>
 <p>Space group type is found and returned in international table symbol
@@ -1000,6 +1145,9 @@ and also as a number (return value). 0 is returned if it failed.</p>
 </pre></div>
 </div>
 </section>
+</section>
+<section id="standardization-and-finding-primitive-cell">
+<h2>Standardization and finding primitive cell<a class="headerlink" href="#standardization-and-finding-primitive-cell" title="Permalink to this headline">#</a></h2>
 <section id="spg-standardize-cell">
 <h3><code class="docutils literal notranslate"><span class="pre">spg_standardize_cell</span></code><a class="headerlink" href="#spg-standardize-cell" title="Permalink to this headline">#</a></h3>
 <p>The standardized unit cell (see <a class="reference internal" href="definition.html#def-standardized-unit-cell"><span class="std std-ref">Spglib conventions of standardized unit cell</span></a>) is
@@ -1086,59 +1234,24 @@ space) of these variables, the array size (memory space) for
 <code class="docutils literal notranslate"><span class="pre">position</span></code> and <code class="docutils literal notranslate"><span class="pre">types</span></code> should be prepared <strong>four times more</strong> than
 those required for the input unit cell in general.</p>
 </section>
-<section id="spg-get-dataset-and-spg-get-dataset-with-hall-number">
-<span id="api-spg-get-dataset"></span><h3><code class="docutils literal notranslate"><span class="pre">spg_get_dataset</span></code> and <code class="docutils literal notranslate"><span class="pre">spg_get_dataset_with_hall_number</span></code><a class="headerlink" href="#spg-get-dataset-and-spg-get-dataset-with-hall-number" title="Permalink to this headline">#</a></h3>
-<p><strong>Changed in version 1.8.1</strong></p>
-<p>For an input unit cell structure, symmetry operations of the crystal
-are searched. Then they are compared with the crystallographic
-database and the space group type is determined.  The result is
-returned as the <code class="docutils literal notranslate"><span class="pre">SpglibDataset</span></code> structure as a dataset.</p>
-<p>The detail of the dataset is given at <a class="reference internal" href="dataset.html#spglib-dataset"><span class="std std-ref">Spglib dataset</span></a>.</p>
-<p>Dataset corresponding to the space group type in the standard setting
-is obtained by <code class="docutils literal notranslate"><span class="pre">spg_get_dataset</span></code>. Here the standard setting means
-the first top one among the Hall symbols listed for each space group
-type. For example, H setting (hexagonal lattice) is chosen for
-rhombohedral crystals. <code class="docutils literal notranslate"><span class="pre">spg_get_dataset_with_hall_number</span></code> explained
-below is used to choose different settings such as R setting of
-rhombohedral crystals. If this symmetry search fails, <code class="docutils literal notranslate"><span class="pre">NULL</span></code> is
-returned in version 1.8.1 or later (spacegroup_number = 0 is returned
-in the previous versions). In this function, the other
-crystallographic setting is not obtained.</p>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">SpglibDataset</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nf">spg_get_dataset</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span><span class="w"></span>
-<span class="w">                                </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">position</span><span class="p">[][</span><span class="mi">3</span><span class="p">],</span><span class="w"></span>
-<span class="w">                                </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">types</span><span class="p">[],</span><span class="w"></span>
-<span class="w">                                </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">num_atom</span><span class="p">,</span><span class="w"></span>
-<span class="w">                                </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">symprec</span><span class="p">);</span><span class="w"></span>
-</pre></div>
-</div>
-<p>To specify the other crystallographic choice (setting, origin, axis,
-or cell choice), <code class="docutils literal notranslate"><span class="pre">spg_get_dataset_with_hall_number</span></code> is used.</p>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">SpglibDataset</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">spg_get_dataset_with_hall_number</span><span class="p">(</span><span class="n">SPGCONST</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span><span class="w"></span>
-<span class="w">                                                 </span><span class="n">SPGCONST</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">position</span><span class="p">[][</span><span class="mi">3</span><span class="p">],</span><span class="w"></span>
-<span class="w">                                                 </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">types</span><span class="p">[],</span><span class="w"></span>
-<span class="w">                                                 </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">num_atom</span><span class="p">,</span><span class="w"></span>
-<span class="w">                                                 </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">hall_number</span><span class="p">,</span><span class="w"></span>
-<span class="w">                                                 </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">symprec</span><span class="p">)</span><span class="w"></span>
-</pre></div>
-</div>
-<p>where <code class="docutils literal notranslate"><span class="pre">hall_number</span></code> is used to specify the choice. The possible
-choices and those serial numbers are found at <a class="reference external" href="https://yseto.net/?page_id=29&amp;lang=en">list of space groups
-(Seto’s web site)</a>.
-The crystal structure has to possess the space-group type of the Hall
-symbol. If the symmetry search fails or the specified <code class="docutils literal notranslate"><span class="pre">hall_number</span></code>
-is not in the list of Hall symbols for the space group type of the
-crystal structure, <code class="docutils literal notranslate"><span class="pre">spacegroup_number</span></code> in the <code class="docutils literal notranslate"><span class="pre">SpglibDataset</span></code>
-structure is set 0.</p>
-<p>Finally, its allocated memory space must be freed by calling
-<code class="docutils literal notranslate"><span class="pre">spg_free_dataset</span></code>.</p>
 </section>
-<section id="spg-free-dataset">
-<h3><code class="docutils literal notranslate"><span class="pre">spg_free_dataset</span></code><a class="headerlink" href="#spg-free-dataset" title="Permalink to this headline">#</a></h3>
-<p>Allocated memory space of the C-structure of <code class="docutils literal notranslate"><span class="pre">SpglibDataset</span></code> is
-freed by calling <code class="docutils literal notranslate"><span class="pre">spg_free_dataset</span></code>.</p>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">spg_free_dataset</span><span class="p">(</span><span class="n">SpglibDataset</span><span class="w"> </span><span class="o">*</span><span class="n">dataset</span><span class="p">);</span><span class="w"></span>
+<section id="space-group-dataset-access">
+<h2>Space-group dataset access<a class="headerlink" href="#space-group-dataset-access" title="Permalink to this headline">#</a></h2>
+<section id="spg-get-symmetry-from-database">
+<h3><code class="docutils literal notranslate"><span class="pre">spg_get_symmetry_from_database</span></code><a class="headerlink" href="#spg-get-symmetry-from-database" title="Permalink to this headline">#</a></h3>
+<p>This function allows to directly access to the space group operations
+in the spglib database (spg_database.c). To specify the space group
+type with a specific choice, <code class="docutils literal notranslate"><span class="pre">hall_number</span></code> is used. The definition
+of <code class="docutils literal notranslate"><span class="pre">hall_number</span></code> is found at
+<a class="reference internal" href="dataset.html#dataset-spg-get-dataset-spacegroup-type"><span class="std std-ref">Space group type</span></a>. 0 is returned when it
+failed.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="nf">spg_get_symmetry_from_database</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">rotations</span><span class="p">[</span><span class="mi">192</span><span class="p">][</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span><span class="w"></span>
+<span class="w">                                   </span><span class="kt">double</span><span class="w"> </span><span class="n">translations</span><span class="p">[</span><span class="mi">192</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span><span class="w"></span>
+<span class="w">                                   </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">hall_number</span><span class="p">);</span><span class="w"></span>
 </pre></div>
 </div>
+<p>The returned value is the number of space group operations. The space
+group operations are stored in <code class="docutils literal notranslate"><span class="pre">rotations</span></code> and <code class="docutils literal notranslate"><span class="pre">translations</span></code>.</p>
 </section>
 <section id="spg-get-spacegroup-type">
 <span id="api-spg-spacegroup-type"></span><h3><code class="docutils literal notranslate"><span class="pre">spg_get_spacegroup_type</span></code><a class="headerlink" href="#spg-get-spacegroup-type" title="Permalink to this headline">#</a></h3>
@@ -1169,56 +1282,13 @@ with a specific choice, <code class="docutils literal notranslate"><span class="
 </pre></div>
 </div>
 </section>
-<section id="spg-get-symmetry-from-database">
-<h3><code class="docutils literal notranslate"><span class="pre">spg_get_symmetry_from_database</span></code><a class="headerlink" href="#spg-get-symmetry-from-database" title="Permalink to this headline">#</a></h3>
-<p>This function allows to directly access to the space group operations
-in the spglib database (spg_database.c). To specify the space group
-type with a specific choice, <code class="docutils literal notranslate"><span class="pre">hall_number</span></code> is used. The definition
-of <code class="docutils literal notranslate"><span class="pre">hall_number</span></code> is found at
-<a class="reference internal" href="dataset.html#dataset-spg-get-dataset-spacegroup-type"><span class="std std-ref">Space group type</span></a>. 0 is returned when it
-failed.</p>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="nf">spg_get_symmetry_from_database</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">rotations</span><span class="p">[</span><span class="mi">192</span><span class="p">][</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span><span class="w"></span>
-<span class="w">                                   </span><span class="kt">double</span><span class="w"> </span><span class="n">translations</span><span class="p">[</span><span class="mi">192</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span><span class="w"></span>
-<span class="w">                                   </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">hall_number</span><span class="p">);</span><span class="w"></span>
-</pre></div>
-</div>
-<p>The returned value is the number of space group operations. The space
-group operations are stored in <code class="docutils literal notranslate"><span class="pre">rotations</span></code> and <code class="docutils literal notranslate"><span class="pre">translations</span></code>.</p>
-</section>
-<section id="spg-get-multiplicity">
-<h3><code class="docutils literal notranslate"><span class="pre">spg_get_multiplicity</span></code><a class="headerlink" href="#spg-get-multiplicity" title="Permalink to this headline">#</a></h3>
-<p>This function returns exact number of symmetry operations. 0 is
-returned when it failed.</p>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="nf">spg_get_multiplicity</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span><span class="w"></span>
-<span class="w">                         </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">position</span><span class="p">[][</span><span class="mi">3</span><span class="p">],</span><span class="w"></span>
-<span class="w">                         </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">types</span><span class="p">[],</span><span class="w"></span>
-<span class="w">                         </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">num_atom</span><span class="p">,</span><span class="w"></span>
-<span class="w">                         </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">symprec</span><span class="p">);</span><span class="w"></span>
-</pre></div>
-</div>
-<p>This function may be used in advance to allocate memory space for
-symmetry operations.</p>
-</section>
-<section id="spg-get-hall-number-from-symmetry">
-<h3><code class="docutils literal notranslate"><span class="pre">spg_get_hall_number_from_symmetry</span></code><a class="headerlink" href="#spg-get-hall-number-from-symmetry" title="Permalink to this headline">#</a></h3>
-<p><strong>experimental</strong></p>
-<p>Return one of <code class="docutils literal notranslate"><span class="pre">hall_number</span></code> corresponding to a space-group type of the given set of symmetry operations.
-When multiple <code class="docutils literal notranslate"><span class="pre">hall_number</span></code> exist for the space-group type, the smallest one (the first description of the space-group type in International Tables for Crystallography) is chosen.
-The definition of <code class="docutils literal notranslate"><span class="pre">hall_number</span></code> is found at
-<a class="reference internal" href="dataset.html#dataset-spg-get-dataset-spacegroup-type"><span class="std std-ref">Space group type</span></a> and the corresponding
-space-group-type information is obtained through
-<a class="reference internal" href="#api-spg-spacegroup-type"><span class="std std-ref">spg_get_spacegroup_type</span></a>.</p>
-<p>This is expected to work well for the set of symmetry operations whose
-distortion is small. The aim of making this feature is to find
-space-group-type for the set of symmetry operations given by the other
-source than spglib.</p>
-<p>Note that the definition of <code class="docutils literal notranslate"><span class="pre">symprec</span></code> is
-different from usual one, but is given in the fractional
-coordinates and so it should be small like <code class="docutils literal notranslate"><span class="pre">1e-5</span></code>.</p>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="n">spg_get_hall_number_from_symmetry</span><span class="p">(</span><span class="n">SPGCONST</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">rotation</span><span class="p">[][</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span><span class="w"></span>
-<span class="w">                                       </span><span class="n">SPGCONST</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">translation</span><span class="p">[][</span><span class="mi">3</span><span class="p">],</span><span class="w"></span>
-<span class="w">                                       </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">num_operations</span><span class="p">,</span><span class="w"></span>
-<span class="w">                                       </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">symprec</span><span class="p">)</span><span class="w"></span>
+<section id="spg-get-spacegroup-type-from-symmetry">
+<span id="api-spg-get-spacegroup-type-from-symmetry"></span><h3><code class="docutils literal notranslate"><span class="pre">spg_get_spacegroup_type_from_symmetry</span></code><a class="headerlink" href="#spg-get-spacegroup-type-from-symmetry" title="Permalink to this headline">#</a></h3>
+<p>Return space-group type information from symmetry operations.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">SpglibSpacegroupType</span><span class="w"> </span><span class="nf">spg_get_spacegroup_type_from_symmetry</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">SPGCONST</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">rotations</span><span class="p">[][</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span><span class="w"> </span><span class="n">SPGCONST</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">translations</span><span class="p">[][</span><span class="mi">3</span><span class="p">],</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">num_operations</span><span class="p">,</span><span class="w"> </span><span class="n">SPGCONST</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">symprec</span><span class="w"></span>
+<span class="p">);</span><span class="w"></span>
 </pre></div>
 </div>
 </section>
@@ -1346,8 +1416,8 @@ The serial number is between 1 and 1651.</p>
 <code class="docutils literal notranslate"><span class="pre">time_reversals</span></code> takes 0 for ordinary operations and 1 for time-reversal operations.</p>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">SpglibMagneticSpacegroupType</span><span class="w"> </span><span class="nf">spg_get_magnetic_spacegroup_type_from_symmetry</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">SPGCONST</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">rotations</span><span class="p">[][</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span><span class="w"> </span><span class="n">SPGCONST</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">translations</span><span class="p">[][</span><span class="mi">3</span><span class="p">],</span><span class="w"></span>
-<span class="w">    </span><span class="n">SPGCONST</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">time_reversals</span><span class="p">,</span><span class="w"> </span><span class="n">SPGCONST</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">num_operations</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">symprec</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">num_operations</span><span class="p">,</span><span class="w"> </span><span class="n">SPGCONST</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">time_reversals</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">SPGCONST</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">symprec</span><span class="w"></span>
 <span class="p">);</span><span class="w"></span>
 </pre></div>
 </div>
@@ -1459,6 +1529,33 @@ are returned as the return value.</p>
 <p>This function can be used to obtain all mesh grid points by setting
 <code class="docutils literal notranslate"><span class="pre">num_rot</span> <span class="pre">=</span> <span class="pre">1</span></code>, <code class="docutils literal notranslate"><span class="pre">rotations</span> <span class="pre">=</span> <span class="pre">{{1,</span> <span class="pre">0,</span> <span class="pre">0},</span> <span class="pre">{0,</span> <span class="pre">1,</span> <span class="pre">0},</span> <span class="pre">{0,</span> <span class="pre">0,</span> <span class="pre">1}}</span></code>,
 <code class="docutils literal notranslate"><span class="pre">num_q</span> <span class="pre">=</span> <span class="pre">1</span></code>, and <code class="docutils literal notranslate"><span class="pre">qpoints</span> <span class="pre">=</span> <span class="pre">{0,</span> <span class="pre">0,</span> <span class="pre">0}</span></code>.</p>
+</section>
+</section>
+<section id="deprecated">
+<h2>Deprecated<a class="headerlink" href="#deprecated" title="Permalink to this headline">#</a></h2>
+<section id="spg-get-hall-number-from-symmetry">
+<h3><code class="docutils literal notranslate"><span class="pre">spg_get_hall_number_from_symmetry</span></code><a class="headerlink" href="#spg-get-hall-number-from-symmetry" title="Permalink to this headline">#</a></h3>
+<p><strong>Deprecated. This function is replaced by <a class="reference internal" href="#api-spg-get-spacegroup-type-from-symmetry"><span class="std std-ref">spg_get_spacegroup_type_from_symmetry</span></a>.</strong></p>
+<p>Return one of <code class="docutils literal notranslate"><span class="pre">hall_number</span></code> corresponding to a space-group type of the given
+set of symmetry operations. When multiple <code class="docutils literal notranslate"><span class="pre">hall_number</span></code> exist for the
+space-group type, the smallest one (the first description of the space-group
+type in International Tables for Crystallography) is chosen. The definition of
+<code class="docutils literal notranslate"><span class="pre">hall_number</span></code> is found at <a class="reference internal" href="dataset.html#dataset-spg-get-dataset-spacegroup-type"><span class="std std-ref">Space group type</span></a> and
+the corresponding space-group-type information is obtained through
+<a class="reference internal" href="#api-spg-spacegroup-type"><span class="std std-ref">spg_get_spacegroup_type</span></a>.</p>
+<p>This is expected to work well for the set of symmetry operations whose
+distortion is small. The aim of making this feature is to find
+space-group-type for the set of symmetry operations given by the other
+source than spglib.</p>
+<p>Note that the definition of <code class="docutils literal notranslate"><span class="pre">symprec</span></code> is
+different from usual one, but is given in the fractional
+coordinates and so it should be small like <code class="docutils literal notranslate"><span class="pre">1e-5</span></code>.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="n">spg_get_hall_number_from_symmetry</span><span class="p">(</span><span class="n">SPGCONST</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">rotation</span><span class="p">[][</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span><span class="w"></span>
+<span class="w">                                       </span><span class="n">SPGCONST</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">translation</span><span class="p">[][</span><span class="mi">3</span><span class="p">],</span><span class="w"></span>
+<span class="w">                                       </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">num_operations</span><span class="p">,</span><span class="w"></span>
+<span class="w">                                       </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">symprec</span><span class="p">)</span><span class="w"></span>
+</pre></div>
+</div>
 </section>
 </section>
 </section>

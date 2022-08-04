@@ -54,7 +54,7 @@ error = spg_get_error_code();
 printf("%s\n", spg_get_error_message(error));
 ```
 
-## General
+## Space-group symmetry search
 
 (api_spg_get_symmetry)=
 ### ``spg_get_symmetry``
@@ -90,6 +90,89 @@ cell. This may not be understandable in crystallographic sense, but is
 practically useful treatment for research in computational materials
 science.
 
+(api_spg_get_dataset)=
+### ``spg_get_dataset`` and ``spg_get_dataset_with_hall_number``
+
+**Changed in version 1.8.1**
+
+For an input unit cell structure, symmetry operations of the crystal
+are searched. Then they are compared with the crystallographic
+database and the space group type is determined.  The result is
+returned as the ``SpglibDataset`` structure as a dataset.
+
+The detail of the dataset is given at {ref}`spglib_dataset`.
+
+Dataset corresponding to the space group type in the standard setting
+is obtained by ``spg_get_dataset``. Here the standard setting means
+the first top one among the Hall symbols listed for each space group
+type. For example, H setting (hexagonal lattice) is chosen for
+rhombohedral crystals. ``spg_get_dataset_with_hall_number`` explained
+below is used to choose different settings such as R setting of
+rhombohedral crystals. If this symmetry search fails, ``NULL`` is
+returned in version 1.8.1 or later (spacegroup_number = 0 is returned
+in the previous versions). In this function, the other
+crystallographic setting is not obtained.
+
+```c
+SpglibDataset * spg_get_dataset(const double lattice[3][3],
+                                const double position[][3],
+                                const int types[],
+                                const int num_atom,
+                                const double symprec);
+```
+
+To specify the other crystallographic choice (setting, origin, axis,
+or cell choice), ``spg_get_dataset_with_hall_number`` is used.
+
+```c
+SpglibDataset * spg_get_dataset_with_hall_number(SPGCONST double lattice[3][3],
+                                                 SPGCONST double position[][3],
+                                                 const int types[],
+                                                 const int num_atom,
+                                                 const int hall_number,
+                                                 const double symprec)
+```
+
+where ``hall_number`` is used to specify the choice. The possible
+choices and those serial numbers are found at [list of space groups
+(Seto's web site)](https://yseto.net/?page_id=29&lang=en).
+The crystal structure has to possess the space-group type of the Hall
+symbol. If the symmetry search fails or the specified ``hall_number``
+is not in the list of Hall symbols for the space group type of the
+crystal structure, ``spacegroup_number`` in the ``SpglibDataset``
+structure is set 0.
+
+Finally, its allocated memory space must be freed by calling
+``spg_free_dataset``.
+
+### ``spg_free_dataset``
+
+Allocated memory space of the C-structure of ``SpglibDataset`` is
+freed by calling ``spg_free_dataset``.
+
+```c
+void spg_free_dataset(SpglibDataset *dataset);
+```
+
+
+### ``spg_get_multiplicity``
+
+This function returns exact number of symmetry operations. 0 is
+returned when it failed.
+
+```c
+int spg_get_multiplicity(const double lattice[3][3],
+                         const double position[][3],
+                         const int types[],
+                         const int num_atom,
+                         const double symprec);
+```
+
+This function may be used in advance to allocate memory space for
+symmetry operations.
+
+## Space-group type search
+
 ### ``spg_get_international``
 
 Space group type is found and returned in international table symbol
@@ -118,6 +201,10 @@ int spg_get_schoenflies(char symbol[7],
                         const int num_atom,
                         const double symprec);
 ```
+
+
+
+## Standardization and finding primitive cell
 
 ### ``spg_standardize_cell``
 
@@ -215,69 +302,26 @@ space) of these variables, the array size (memory space) for
 ``position`` and ``types`` should be prepared **four times more** than
 those required for the input unit cell in general.
 
-(api_spg_get_dataset)=
-### ``spg_get_dataset`` and ``spg_get_dataset_with_hall_number``
 
-**Changed in version 1.8.1**
+## Space-group dataset access
 
-For an input unit cell structure, symmetry operations of the crystal
-are searched. Then they are compared with the crystallographic
-database and the space group type is determined.  The result is
-returned as the ``SpglibDataset`` structure as a dataset.
+### ``spg_get_symmetry_from_database``
 
-The detail of the dataset is given at {ref}`spglib_dataset`.
-
-Dataset corresponding to the space group type in the standard setting
-is obtained by ``spg_get_dataset``. Here the standard setting means
-the first top one among the Hall symbols listed for each space group
-type. For example, H setting (hexagonal lattice) is chosen for
-rhombohedral crystals. ``spg_get_dataset_with_hall_number`` explained
-below is used to choose different settings such as R setting of
-rhombohedral crystals. If this symmetry search fails, ``NULL`` is
-returned in version 1.8.1 or later (spacegroup_number = 0 is returned
-in the previous versions). In this function, the other
-crystallographic setting is not obtained.
+This function allows to directly access to the space group operations
+in the spglib database (spg_database.c). To specify the space group
+type with a specific choice, ``hall_number`` is used. The definition
+of ``hall_number`` is found at
+{ref}`dataset_spg_get_dataset_spacegroup_type`. 0 is returned when it
+failed.
 
 ```c
-SpglibDataset * spg_get_dataset(const double lattice[3][3],
-                                const double position[][3],
-                                const int types[],
-                                const int num_atom,
-                                const double symprec);
+int spg_get_symmetry_from_database(int rotations[192][3][3],
+                                   double translations[192][3],
+                                   const int hall_number);
 ```
 
-To specify the other crystallographic choice (setting, origin, axis,
-or cell choice), ``spg_get_dataset_with_hall_number`` is used.
-
-```c
-SpglibDataset * spg_get_dataset_with_hall_number(SPGCONST double lattice[3][3],
-                                                 SPGCONST double position[][3],
-                                                 const int types[],
-                                                 const int num_atom,
-                                                 const int hall_number,
-                                                 const double symprec)
-```
-
-where ``hall_number`` is used to specify the choice. The possible
-choices and those serial numbers are found at [list of space groups
-(Seto's web site)](https://yseto.net/?page_id=29&lang=en).
-The crystal structure has to possess the space-group type of the Hall
-symbol. If the symmetry search fails or the specified ``hall_number``
-is not in the list of Hall symbols for the space group type of the
-crystal structure, ``spacegroup_number`` in the ``SpglibDataset``
-structure is set 0.
-
-Finally, its allocated memory space must be freed by calling
-``spg_free_dataset``.
-
-### ``spg_free_dataset``
-
-Allocated memory space of the C-structure of ``SpglibDataset`` is
-freed by calling ``spg_free_dataset``.
-
-```c
-void spg_free_dataset(SpglibDataset *dataset);
-```
+The returned value is the number of space group operations. The space
+group operations are stored in ``rotations`` and ``translations``.
 
 (api_spg_spacegroup_type)=
 ### ``spg_get_spacegroup_type``
@@ -312,66 +356,18 @@ typedef struct {
 } SpglibSpacegroupType;
 ```
 
-### ``spg_get_symmetry_from_database``
+(api_spg_get_spacegroup_type_from_symmetry)=
+### `spg_get_spacegroup_type_from_symmetry`
 
-This function allows to directly access to the space group operations
-in the spglib database (spg_database.c). To specify the space group
-type with a specific choice, ``hall_number`` is used. The definition
-of ``hall_number`` is found at
-{ref}`dataset_spg_get_dataset_spacegroup_type`. 0 is returned when it
-failed.
+Return space-group type information from symmetry operations.
 
 ```c
-int spg_get_symmetry_from_database(int rotations[192][3][3],
-                                   double translations[192][3],
-                                   const int hall_number);
+SpglibSpacegroupType spg_get_spacegroup_type_from_symmetry(
+    SPGCONST int rotations[][3][3], SPGCONST double translations[][3],
+    const int num_operations, SPGCONST double lattice[3][3], const double symprec
+);
 ```
 
-The returned value is the number of space group operations. The space
-group operations are stored in ``rotations`` and ``translations``.
-
-### ``spg_get_multiplicity``
-
-This function returns exact number of symmetry operations. 0 is
-returned when it failed.
-
-```c
-int spg_get_multiplicity(const double lattice[3][3],
-                         const double position[][3],
-                         const int types[],
-                         const int num_atom,
-                         const double symprec);
-```
-
-This function may be used in advance to allocate memory space for
-symmetry operations.
-
-### ``spg_get_hall_number_from_symmetry``
-
-**experimental**
-
-Return one of ``hall_number`` corresponding to a space-group type of the given set of symmetry operations.
-When multiple ``hall_number`` exist for the space-group type, the smallest one (the first description of the space-group type in International Tables for Crystallography) is chosen.
-The definition of ``hall_number`` is found at
-{ref}`dataset_spg_get_dataset_spacegroup_type` and the corresponding
-space-group-type information is obtained through
-{ref}`api_spg_spacegroup_type`.
-
-This is expected to work well for the set of symmetry operations whose
-distortion is small. The aim of making this feature is to find
-space-group-type for the set of symmetry operations given by the other
-source than spglib.
-
-Note that the definition of ``symprec`` is
-different from usual one, but is given in the fractional
-coordinates and so it should be small like ``1e-5``.
-
-```c
-int spg_get_hall_number_from_symmetry(SPGCONST int rotation[][3][3],
-                                       SPGCONST double translation[][3],
-                                       const int num_operations,
-                                       const double symprec)
-```
 
 ## Magnetic symmetry
 
@@ -508,8 +504,8 @@ Return magnetic space-group type information from magnetic symmetry operations.
 ```c
 SpglibMagneticSpacegroupType spg_get_magnetic_spacegroup_type_from_symmetry(
     SPGCONST int rotations[][3][3], SPGCONST double translations[][3],
-    SPGCONST int *time_reversals, SPGCONST double lattice[3][3],
-    const int num_operations, const double symprec
+    const int num_operations, SPGCONST int *time_reversals,
+    SPGCONST double lattice[3][3], const double symprec
 );
 ```
 
@@ -639,3 +635,33 @@ are returned as the return value.
 This function can be used to obtain all mesh grid points by setting
 ``num_rot = 1``, ``rotations = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}}``,
 ``num_q = 1``, and ``qpoints = {0, 0, 0}``.
+
+
+## Deprecated
+### ``spg_get_hall_number_from_symmetry``
+
+**Deprecated. This function is replaced by {ref}`api_spg_get_spacegroup_type_from_symmetry`.**
+
+Return one of ``hall_number`` corresponding to a space-group type of the given
+set of symmetry operations. When multiple ``hall_number`` exist for the
+space-group type, the smallest one (the first description of the space-group
+type in International Tables for Crystallography) is chosen. The definition of
+``hall_number`` is found at {ref}`dataset_spg_get_dataset_spacegroup_type` and
+the corresponding space-group-type information is obtained through
+{ref}`api_spg_spacegroup_type`.
+
+This is expected to work well for the set of symmetry operations whose
+distortion is small. The aim of making this feature is to find
+space-group-type for the set of symmetry operations given by the other
+source than spglib.
+
+Note that the definition of ``symprec`` is
+different from usual one, but is given in the fractional
+coordinates and so it should be small like ``1e-5``.
+
+```c
+int spg_get_hall_number_from_symmetry(SPGCONST int rotation[][3][3],
+                                       SPGCONST double translation[][3],
+                                       const int num_operations,
+                                       const double symprec)
+```
