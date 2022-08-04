@@ -216,9 +216,9 @@ is obtained.
 
 **New in version 1.8.1**
 
-``pointgroup_number`` is the serial number of the crystallographic
-   point group, which refers [list of space
-   groups (Seto's web site)](http://pmsl.planet.sci.kobe-u.ac.jp/~seto/?page_id=37&lang=en).
+% ``pointgroup_number`` is the serial number of the crystallographic
+%    point group, which refers [list of space
+%    groups (Seto's web site)](http://pmsl.planet.sci.kobe-u.ac.jp/~seto/?page_id=37&lang=en).
 
 ``pointgroup_symbol`` is the symbol of the crystallographic point
 group in the Hermann–Mauguin notation. There are 32 crystallographic

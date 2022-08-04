@@ -468,6 +468,7 @@ int spg_get_magnetic_symmetry_from_database(int rotations[384][3][3],
 void spg_free_magnetic_dataset(SpglibMagneticDataset *dataset);
 ```
 
+(api_get_magnetic_spacegroup_type)=
 ### `spg_get_magnetic_spacegroup_type`
 
 **Experimental: new at version 2.0**
