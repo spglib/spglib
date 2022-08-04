@@ -209,13 +209,13 @@ SpglibDataset *spg_get_layer_dataset(SPGCONST double lattice[3][3],
 SpglibMagneticDataset *spg_get_magnetic_dataset(
     SPGCONST double lattice[3][3], SPGCONST double position[][3],
     const int types[], const double *tensors, const int tensor_rank,
-    const int num_atom, const double symprec);
+    const int num_atom, const int is_axial, const double symprec);
 
 SpglibMagneticDataset *spgms_get_magnetic_dataset(
     SPGCONST double lattice[3][3], SPGCONST double position[][3],
     const int types[], const double *tensors, const int tensor_rank,
-    const int num_atom, const double symprec, const double angle_tolerance,
-    const double mag_symprec);
+    const int num_atom, const int is_axial, const double symprec,
+    const double angle_tolerance, const double mag_symprec);
 
 SpglibDataset *spgat_get_dataset(SPGCONST double lattice[3][3],
                                  SPGCONST double position[][3],
@@ -284,29 +284,36 @@ int spg_get_symmetry_with_site_tensors(
     double primitive_lattice[3][3], int *spin_flips, const int max_size,
     SPGCONST double lattice[3][3], SPGCONST double position[][3],
     const int types[], const double *tensors, const int tensor_rank,
-    const int num_atom, const int is_magnetic, const double symprec);
+    const int num_atom, const int with_time_reversal, const int is_axial,
+    const double symprec);
 
 int spgat_get_symmetry_with_site_tensors(
     int rotation[][3][3], double translation[][3], int equivalent_atoms[],
     double primitive_lattice[3][3], int *spin_flips, const int max_size,
     SPGCONST double lattice[3][3], SPGCONST double position[][3],
     const int types[], const double *tensors, const int tensor_rank,
-    const int num_atom, const int is_magnetic, const double symprec,
-    const double angle_tolerance);
+    const int num_atom, const int with_time_reversal, const int is_axial,
+    const double symprec, const double angle_tolerance);
 
 int spgms_get_symmetry_with_site_tensors(
     int rotation[][3][3], double translation[][3], int equivalent_atoms[],
     double primitive_lattice[3][3], int *spin_flips, const int max_size,
     SPGCONST double lattice[3][3], SPGCONST double position[][3],
     const int types[], const double *tensors, const int tensor_rank,
-    const int num_atom, const int is_magnetic, const double symprec,
-    const double angle_tolerance, const double mag_symprec);
+    const int num_atom, const int with_time_reversal, const int is_axial,
+    const double symprec, const double angle_tolerance,
+    const double mag_symprec);
 
 /* Space group type (hall_number) is searched from symmetry operations. */
 int spg_get_hall_number_from_symmetry(SPGCONST int rotation[][3][3],
                                       SPGCONST double translation[][3],
                                       const int num_operations,
                                       const double symprec);
+
+SpglibMagneticSpacegroupType spg_get_magnetic_spacegroup_type_from_symmetry(
+    SPGCONST int rotations[][3][3], SPGCONST double translations[][3],
+    SPGCONST int *time_reversals, SPGCONST double lattice[3][3],
+    const int num_operations, const double symprec);
 
 /* Return exact number of symmetry operations. This function may */
 /* be used in advance to allocate memory space for symmetry */

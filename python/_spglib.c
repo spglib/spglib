@@ -428,7 +428,7 @@ static PyObject * py_get_dataset(PyObject *self, PyObject *args)
 }
 
 static PyObject *py_get_magnetic_dataset(PyObject *self, PyObject *args) {
-  int tensor_rank;
+  int tensor_rank, is_axial;
   double symprec, angle_tolerance, mag_symprec;
   PyArrayObject *py_lattice, *py_positions, *py_atom_types, *py_magmoms;
 
@@ -445,12 +445,13 @@ static PyObject *py_get_magnetic_dataset(PyObject *self, PyObject *args) {
   PyObject *primitive_lattice;
   int len_list, n, i, j, k, n_tensors;
 
-  if (!PyArg_ParseTuple(args, "OOOOiddd",
+  if (!PyArg_ParseTuple(args, "OOOOiiddd",
                         &py_lattice,
                         &py_positions,
                         &py_atom_types,
                         &py_magmoms,
                         &tensor_rank,
+                        &is_axial,
                         &symprec,
                         &angle_tolerance,
                         &mag_symprec)) {
@@ -464,7 +465,8 @@ static PyObject *py_get_magnetic_dataset(PyObject *self, PyObject *args) {
   tensors = (double *)PyArray_DATA(py_magmoms);
 
   if ((dataset = spgms_get_magnetic_dataset(
-            lat, pos, typeat, tensors, tensor_rank, num_atom, symprec, angle_tolerance, mag_symprec)) ==
+            lat, pos, typeat, tensors, tensor_rank, num_atom, is_axial,
+            symprec, angle_tolerance, mag_symprec)) ==
       NULL) {
     Py_RETURN_NONE;
   }
@@ -1020,7 +1022,7 @@ static PyObject * py_get_symmetry_with_site_tensors(PyObject *self,
   PyArrayObject* py_primitive_lattice;
   PyArrayObject* py_spin_flips;
 
-  int is_magnetic;
+  int with_time_reversal, is_axial;
 
   double (*lat)[3];
   double (*pos)[3];
@@ -1036,7 +1038,7 @@ static PyObject * py_get_symmetry_with_site_tensors(PyObject *self,
   int num_sym;
   int tensor_rank;
 
-  if (!PyArg_ParseTuple(args, "OOOOOOOOOiddd",
+  if (!PyArg_ParseTuple(args, "OOOOOOOOOiiddd",
                         &py_rotations,
                         &py_translations,
                         &py_equiv_atoms,
@@ -1046,7 +1048,8 @@ static PyObject * py_get_symmetry_with_site_tensors(PyObject *self,
                         &py_positions,
                         &py_atom_types,
                         &py_tensors,
-                        &is_magnetic,
+                        &with_time_reversal,
+                        &is_axial,
                         &symprec,
                         &angle_tolerance,
                         &mag_symprec)) {
@@ -1083,7 +1086,8 @@ static PyObject * py_get_symmetry_with_site_tensors(PyObject *self,
                                                  tensors,
                                                  tensor_rank,
                                                  num_atom,
-                                                 is_magnetic,
+                                                 with_time_reversal,
+                                                 is_axial,
                                                  symprec,
                                                  angle_tolerance,
                                                  mag_symprec);

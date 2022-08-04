@@ -34,6 +34,7 @@
 
 from . import _spglib as spg
 import numpy as np
+import warnings
 
 
 class SpglibError(object):
@@ -123,7 +124,7 @@ def get_symmetry(cell,
     """
     _set_no_error()
 
-    lattice, positions, numbers, magmoms = _expand_cell(cell)
+    lattice, _, _, magmoms = _expand_cell(cell)
     if lattice is None:
         return None
 
@@ -139,46 +140,155 @@ def get_symmetry(cell,
                 'translations': dataset['translations'],
                 'equivalent_atoms': dataset['equivalent_atoms']}
     else:
-        max_size = len(positions) * 96
-        rotations = np.zeros((max_size, 3, 3), dtype='intc', order='C')
-        translations = np.zeros((max_size, 3), dtype='double', order='C')
-        equivalent_atoms = np.zeros(len(magmoms), dtype='intc')
-        primitive_lattice = np.zeros((3, 3), dtype='double', order='C')
-        # (magmoms.ndim - 1) has to be equal to the rank of physical
-        # tensors, e.g., ndim=1 for collinear, ndim=2 for non-collinear.
-        if magmoms.ndim == 1 or magmoms.ndim == 2:
-            spin_flips = np.zeros(max_size, dtype='intc')
-        else:
-            spin_flips = None
+        warnings.warn(
+            "Use get_magnetic_symmetry() for cell with magnetic moments.",
+            DeprecationWarning,
+        )
+        return get_magnetic_symmetry(cell,
+                                     symprec=symprec,
+                                     angle_tolerance=angle_tolerance,
+                                     mag_symprec=mag_symprec,
+                                     is_axial=None,
+                                     with_time_reversal=is_magnetic)
 
-        num_sym = spg.symmetry_with_site_tensors(rotations,
-                                                 translations,
-                                                 equivalent_atoms,
-                                                 primitive_lattice,
-                                                 spin_flips,
-                                                 lattice,
-                                                 positions,
-                                                 numbers,
-                                                 magmoms,
-                                                 is_magnetic * 1,
-                                                 symprec,
-                                                 angle_tolerance,
-                                                 mag_symprec)
 
-        _set_error_message()
-        if num_sym == 0:
-            return None
-        else:
-            spin_flips = np.array(spin_flips[:num_sym], dtype='intc', order='C')
-            # True for time reversal operation, False for ordinary operation
-            time_reversals = (spin_flips == -1)
-            return {'rotations': np.array(rotations[:num_sym],
-                                          dtype='intc', order='C'),
-                    'translations': np.array(translations[:num_sym],
-                                             dtype='double', order='C'),
-                    'time_reversals': time_reversals,
-                    'equivalent_atoms': equivalent_atoms,
-                    'primitive_lattice': primitive_lattice}
+def get_magnetic_symmetry(
+    cell,
+    symprec=1e-5,
+    angle_tolerance=-1.0,
+    mag_symprec=-1.0,
+    is_axial=None,
+    with_time_reversal=True,
+):
+    """Find magnetic symmetry operations from a crystal structure and site tensors
+
+    Parameters
+    ----------
+    cell : tuple
+        Crystal structure given either in tuple or Atoms object (deprecated).
+        In the case given by a tuple, it has to follow the form below,
+
+        (basis vectors, atomic points, types in integer numbers, ...)
+
+        basis vectors : array_like
+            [[a_x, a_y, a_z],
+             [b_x, b_y, b_z],
+             [c_x, c_y, c_z]]
+            shape=(3, 3), order='C', dtype='double'
+        atomic points : array_like
+            Atomic position vectors with respect to basis vectors, i.e.,
+            given in  fractional coordinates.
+            shape=(num_atom, 3), order='C', dtype='double'
+        types : array_like
+            Integer numbers to distinguish species.
+            shape=(num_atom, ), dtype='intc'
+        magmoms:
+            case-I: Scalar
+                Each atomic site has a scalar value. With is_magnetic=True,
+                values are included in the symmetry search in a way of
+                collinear magnetic moments.
+                shape=(num_atom, ), dtype='double'
+            case-II: Vectors
+                Each atomic site has a vector. With is_magnetic=True,
+                vectors are included in the symmetry search in a way of
+                non-collinear magnetic moments.
+                shape=(num_atom, 3), order='C', dtype='double'
+    symprec : float
+        Symmetry search tolerance in the unit of length.
+    angle_tolerance : float
+        Symmetry search tolerance in the unit of angle deg. If the value is
+        negative, an internally optimized routine is used to judge symmetry.
+    mag_symprec : float
+        Tolerance for magnetic symmetry search in the unit of magnetic moments.
+        If not specified, use the same value as symprec.
+    is_axial: None or bool
+        Set `is_axial=True` if `magmoms` does not change their sign by improper rotations.
+        If not specified, set `is_axial=False` when `magmoms.shape==(num_atoms, )`, and
+        set `is_axial=True` when `magmoms.shape==(num_atoms, 3)`. These default settings
+        correspond to collinear and non-collinear spins.
+    with_time_reversal: bool
+        Set `with_time_reversal=True` if `magmoms` change their sign by time-reversal
+        operations. Default is True.
+
+    Returns
+    -------
+    dictionary
+        Rotation parts and translation parts of symmetry operations represented
+        with respect to basis vectors and atom index mapping by symmetry
+        operations.
+        'rotations' : ndarray
+            Rotation (matrix) parts of symmetry operations
+            shape=(num_operations, 3, 3), order='C', dtype='intc'
+        'translations' : ndarray
+            Translation (vector) parts of symmetry operations
+            shape=(num_operations, 3), dtype='double'
+        'time_reversals': ndarray (exists when the optional data is given)
+            Time reversal part of magnetic symmetry operations.
+            True indicates time reversal operation, and False indicates
+            an ordinary operation.
+            shape=(num_operations, ), dtype='bool_'
+        'equivalent_atoms' : ndarray
+            shape=(num_atoms, ), dtype='intc'
+    """
+    _set_no_error()
+
+    lattice, positions, numbers, magmoms = _expand_cell(cell)
+    if lattice is None:
+        return None
+    if magmoms is None:
+        warnings.warn(
+            "Specify magnetic moments in cell."
+        )
+        return None
+
+    max_size = len(positions) * 96
+    rotations = np.zeros((max_size, 3, 3), dtype='intc', order='C')
+    translations = np.zeros((max_size, 3), dtype='double', order='C')
+    equivalent_atoms = np.zeros(len(magmoms), dtype='intc')
+    primitive_lattice = np.zeros((3, 3), dtype='double', order='C')
+    # (magmoms.ndim - 1) has to be equal to the rank of physical
+    # tensors, e.g., ndim=1 for collinear, ndim=2 for non-collinear.
+    if magmoms.ndim == 1 or magmoms.ndim == 2:
+        spin_flips = np.zeros(max_size, dtype='intc')
+    else:
+        spin_flips = None
+
+    # Infer is_axial value from tensor_rank to keep backward compatibility
+    if is_axial is None:
+        if magmoms.ndim == 1:
+            is_axial = False  # Collinear spin
+        elif magmoms.ndim == 2:
+            is_axial = True  # Non-collinear spin
+
+    num_sym = spg.symmetry_with_site_tensors(rotations,
+                                                translations,
+                                                equivalent_atoms,
+                                                primitive_lattice,
+                                                spin_flips,
+                                                lattice,
+                                                positions,
+                                                numbers,
+                                                magmoms,
+                                                with_time_reversal * 1,
+                                                is_axial * 1,
+                                                symprec,
+                                                angle_tolerance,
+                                                mag_symprec)
+
+    _set_error_message()
+    if num_sym == 0:
+        return None
+    else:
+        spin_flips = np.array(spin_flips[:num_sym], dtype='intc', order='C')
+        # True for time reversal operation, False for ordinary operation
+        time_reversals = (spin_flips == -1)
+        return {'rotations': np.array(rotations[:num_sym],
+                                        dtype='intc', order='C'),
+                'translations': np.array(translations[:num_sym],
+                                            dtype='double', order='C'),
+                'time_reversals': time_reversals,
+                'equivalent_atoms': equivalent_atoms,
+                'primitive_lattice': primitive_lattice}
 
 
 def get_symmetry_dataset(cell,
@@ -322,6 +432,7 @@ def get_symmetry_dataset(cell,
 
 def get_magnetic_symmetry_dataset(
     cell,
+    is_axial=None,
     symprec=1e-5,
     angle_tolerance=-1.0,
     mag_symprec=-1.0,
@@ -329,8 +440,8 @@ def get_magnetic_symmetry_dataset(
     """Search magnetic symmetry dataset from an input cell.
 
     Args:
-        cell, symprec, angle_tolerance, mag_symprec:
-            See the docstring of get_symmetry.
+        cell, is_axial, symprec, angle_tolerance, mag_symprec:
+            See the docstring of get_magnetic_symmetry.
 
     Return:
         A dictionary is returned. Dictionary keys:
@@ -397,7 +508,17 @@ def get_magnetic_symmetry_dataset(
         return None
 
     tensor_rank = magmoms.ndim - 1
-    spg_ds = spg.magnetic_dataset(lattice, positions, numbers, magmoms, tensor_rank, symprec, angle_tolerance, mag_symprec)
+
+    # If is_axial is not specified, select collinear or non-collinear spin cases
+    if is_axial is None:
+        if tensor_rank == 0:
+            is_axial = False  # Collinear spin
+        elif tensor_rank == 1:
+            is_axial = True  # Non-collinear spin
+
+    spg_ds = spg.magnetic_dataset(lattice, positions, numbers, magmoms,
+                                  tensor_rank, is_axial,
+                                  symprec, angle_tolerance, mag_symprec)
     if spg_ds is None:
         _set_error_message()
         return None
@@ -1169,7 +1290,6 @@ def _expand_cell(cell):
         else:
             magmoms = None
     else:
-        import warnings
         warnings.warn("ASE Atoms-like input is deprecated.",
                       DeprecationWarning)
         lattice = np.array(cell.get_cell().T, dtype='double', order='C')

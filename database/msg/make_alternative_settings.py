@@ -36,6 +36,12 @@ def enumerate_linears(max_element=1):
             linears.append(arr.astype(int))
     return linears
 
+def enumerate_origin_shifts():
+    shifts = []
+    for shift in product([0, 1 / 4, 1 / 3, 1 / 2, 2 / 3, 3 / 4], repeat=3):
+        shifts.append(np.array(shift))
+    return shifts
+
 
 def get_family_space_group(coset: list[MagneticOperation]) -> list[MagneticOperation]:
     fsg = []
@@ -73,7 +79,7 @@ def dump_operation(g: MagneticOperation) -> str:
     return ret
 
 
-def get_conjugator_type3(coset: list[MagneticOperation], linears) -> list[NDArray]:
+def get_conjugator_type3(coset: list[MagneticOperation], linears, shifts) -> list[NDArray]:
     fsg = set(get_family_space_group(coset))
     pg = set([ops._linear_tuple for ops in fsg])
 
@@ -89,8 +95,7 @@ def get_conjugator_type3(coset: list[MagneticOperation], linears) -> list[NDArra
         if pg2_no_shift != pg:
             continue
 
-        for ishift in product(range(MAX_DENOMINATOR), repeat=3):
-            origin_shift = np.array(ishift) / MAX_DENOMINATOR
+        for origin_shift in shifts:
             t = Transformation(linear=linear, origin_shift=origin_shift)
             coset2 = t.transform_coset(coset)
             fsg2 = set(get_family_space_group(coset2))
@@ -107,7 +112,7 @@ def get_conjugator_type3(coset: list[MagneticOperation], linears) -> list[NDArra
     return conjugators
 
 
-def get_conjugator_type4(coset: list[MagneticOperation], linears) -> list[NDArray]:
+def get_conjugator_type4(coset: list[MagneticOperation], linears, shifts) -> list[NDArray]:
     """
     Return conjugators s.t.
         (P, p)^-1 * coset * (P, p)
@@ -128,8 +133,7 @@ def get_conjugator_type4(coset: list[MagneticOperation], linears) -> list[NDArra
         if pg2_no_shift != pg:
             continue
 
-        for ishift in product(range(MAX_DENOMINATOR), repeat=3):
-            origin_shift = np.array(ishift) / MAX_DENOMINATOR
+        for origin_shift in shifts:
             t = Transformation(linear=linear, origin_shift=origin_shift)
             coset2 = t.transform_coset(coset)
             xsg2 = set(get_maximal_space_subgroup(coset2))
@@ -146,7 +150,7 @@ def get_conjugator_type4(coset: list[MagneticOperation], linears) -> list[NDArra
     return conjugators
 
 
-def get_conjugator(hall_number, spg_table, msg_table, mapping, linears):
+def get_conjugator(hall_number, spg_table, msg_table, mapping, linears, shifts):
     data = {}
     number = spg_table[hall_number]['number']
     choice = spg_table[hall_number]['choice']
@@ -162,9 +166,9 @@ def get_conjugator(hall_number, spg_table, msg_table, mapping, linears):
 
         if msg_type == 3 and number >= 16:
             # Triclinic and monoclinic seem to have no alternative setting for type-III
-            ret = get_conjugator_type3(coset, linears)
+            ret = get_conjugator_type3(coset, linears, shifts)
         elif msg_type == 4:
-            ret = get_conjugator_type4(coset, linears)
+            ret = get_conjugator_type4(coset, linears, shifts)
         else:
             ret = []
 
@@ -238,8 +242,9 @@ def main(output, dump):
         mapping[bns_number] = uni_number
 
     linears = enumerate_linears()
+    shifts = enumerate_origin_shifts()
 
-    ret = Parallel(n_jobs=-1, verbose=11)(delayed(get_conjugator)(hall_number, spg_table, msg_table, mapping, linears) for hall_number in range(1, 530 + 1))
+    ret = Parallel(n_jobs=-1, verbose=11)(delayed(get_conjugator)(hall_number, spg_table, msg_table, mapping, linears, shifts) for hall_number in range(1, 530 + 1))
 
     all_datum = []
     for r in ret:
@@ -258,6 +263,7 @@ def main(output, dump):
 
 def debug():
     linears = enumerate_linears()
+    shifts = enumerate_origin_shifts()
 
     # Testing
     # hall_symbol ="P 2ac 2ab'"
@@ -266,7 +272,7 @@ def debug():
     hall_symbol = "P 2' 2'"  # 16.3
 
     mhs = MagneticHallSymbol(hall_symbol)
-    ret = get_conjugator_type3(mhs.coset, linears)
+    ret = get_conjugator_type3(mhs.coset, linears, shifts)
     print(ret)
 
     # hall_symbol = "P 2ac 2ab 1c'"
