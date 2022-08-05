@@ -46,6 +46,7 @@
 
 #define NUM_ATOMS_CRITERION_FOR_OPENMP 1000
 #define ANGLE_REDUCE_RATE 0.95
+#define SIN_DTHETA2_CUTOFF 1e-12
 #define NUM_ATTEMPT 100
 #define PI 3.14159265358979323846
 /* Tolerance of angle between lattice vectors in degrees */
@@ -1049,7 +1050,7 @@ static int is_identity_metric(SPGCONST double metric_rotated[3][3],
             length_ave2 = ((length_orig[j] + length_rot[j]) *
                            (length_orig[k] + length_rot[k])) /
                           4;
-            if (sin_dtheta2 > 1e-12) {
+            if (sin_dtheta2 > SIN_DTHETA2_CUTOFF) {
                 if (sin_dtheta2 * length_ave2 > symprec * symprec) {
                     goto fail;
                 }
