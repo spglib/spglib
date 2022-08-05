@@ -1,8 +1,9 @@
 import os
 import unittest
-import numpy as np
-from spglib import niggli_reduce, delaunay_reduce
 
+import numpy as np
+
+from spglib import delaunay_reduce, niggli_reduce
 
 data_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -18,14 +19,16 @@ def get_angles(lattice):
     gamma = np.arccos(np.vdot(lattice[0, :], lattice[1, :]) / a / b)
     return np.array([alpha, beta, gamma]) / np.pi * 180
 
+
 class TestNiggliDelaunay(unittest.TestCase):
     def setUp(self):
-        self._input_lattices = self._read_file(
-            os.path.join(data_dir, "lattices.dat"))
+        self._input_lattices = self._read_file(os.path.join(data_dir, "lattices.dat"))
         self._niggli_lattices = self._read_file(
-            os.path.join(data_dir, "niggli_lattices.dat"))
+            os.path.join(data_dir, "niggli_lattices.dat")
+        )
         self._delaunay_lattices = self._read_file(
-            os.path.join(data_dir, "delaunay_lattices.dat"))
+            os.path.join(data_dir, "delaunay_lattices.dat")
+        )
 
     def tearDown(self):
         pass
@@ -33,9 +36,10 @@ class TestNiggliDelaunay(unittest.TestCase):
     def test_niggli_angles(self):
         for i, reference_lattice in enumerate(self._niggli_lattices):
             angles = np.array(get_angles(reference_lattice))
-            self.assertTrue((angles > 90 - 1e-3).all() or
-                            (angles < 90 + 1e-3).all(),
-                            msg=("%d %s" % (i + 1, angles)))
+            self.assertTrue(
+                (angles > 90 - 1e-3).all() or (angles < 90 + 1e-3).all(),
+                msg=("%d %s" % (i + 1, angles)),
+            )
 
     def test_niggli_reduce(self):
         self._reduce(niggli_reduce, self._niggli_lattices)
@@ -45,35 +49,45 @@ class TestNiggliDelaunay(unittest.TestCase):
 
     def _reduce(self, func, ref_data):
         for i, (input_lattice, reference_lattice) in enumerate(
-                zip(self._input_lattices, ref_data)):
+            zip(self._input_lattices, ref_data)
+        ):
             reduced_lattice = func(input_lattice)
             # self._show_lattice(i, reduced_lattice)
-            self.assertTrue(np.allclose([np.linalg.det(input_lattice)],
-                                        [np.linalg.det(reduced_lattice)]))
+            self.assertTrue(
+                np.allclose(
+                    [np.linalg.det(input_lattice)], [np.linalg.det(reduced_lattice)]
+                )
+            )
             T = np.dot(np.linalg.inv(reference_lattice.T), input_lattice.T)
             self.assertTrue(np.allclose(T, np.rint(T)))
             self.assertTrue(
-                np.allclose(self._metric_tensor(reduced_lattice),
-                            self._metric_tensor(reference_lattice)),
+                np.allclose(
+                    self._metric_tensor(reduced_lattice),
+                    self._metric_tensor(reference_lattice),
+                ),
                 msg="\n".join(
-                    ["# %d" % (i + 1),
-                     "Input lattice",
-                     "%s" % input_lattice,
-                     " angles: %s" % np.array(get_angles(input_lattice)),
-                     "Reduced lattice in reference data",
-                     "%s" % reference_lattice,
-                     " angles: %s" % np.array(get_angles(reference_lattice)),
-                     "Reduced lattice",
-                     "%s" % reduced_lattice,
-                     " angles: %s" % np.array(get_angles(reduced_lattice)),
-                     self._str_lattice(reduced_lattice)]))
+                    [
+                        "# %d" % (i + 1),
+                        "Input lattice",
+                        "%s" % input_lattice,
+                        " angles: %s" % np.array(get_angles(input_lattice)),
+                        "Reduced lattice in reference data",
+                        "%s" % reference_lattice,
+                        " angles: %s" % np.array(get_angles(reference_lattice)),
+                        "Reduced lattice",
+                        "%s" % reduced_lattice,
+                        " angles: %s" % np.array(get_angles(reduced_lattice)),
+                        self._str_lattice(reduced_lattice),
+                    ]
+                ),
+            )
 
     def _read_file(self, filename):
         all_lattices = []
         with open(filename) as f:
             lattice = []
             for line in f:
-                if line[0] == '#':
+                if line[0] == "#":
                     continue
                 lattice.append([float(x) for x in line.split()])
                 if len(lattice) == 3:
@@ -109,7 +123,7 @@ class TestNiggliDelaunay(unittest.TestCase):
         return np.dot(lattice, np.transpose(lattice))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     suite = unittest.TestLoader().loadTestsFromTestCase(TestNiggliDelaunay)
     unittest.TextTestRunner(verbosity=2).run(suite)
     # unittest.main()

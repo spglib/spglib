@@ -102,3 +102,4 @@ spglib_test*
 test-suite.log
 
 .vscode/
+docs_build/

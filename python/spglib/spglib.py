@@ -1,3 +1,4 @@
+"""Python bindings for C library for finding and handling crystal."""
 # Copyright (C) 2015 Atsushi Togo
 # All rights reserved.
 #
@@ -32,12 +33,16 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from . import _spglib as spg
-import numpy as np
 import warnings
+
+import numpy as np
+
+from . import _spglib as spg
 
 
 class SpglibError(object):
+    """Error message why spglib failed."""
+
     message = "no error"
 
 
@@ -45,16 +50,15 @@ spglib_error = SpglibError()
 
 
 def get_version():
+    """Version number of spglib."""
     _set_no_error()
     return tuple(spg.version())
 
 
-def get_symmetry(cell,
-                 symprec=1e-5,
-                 angle_tolerance=-1.0,
-                 mag_symprec=-1.0,
-                 is_magnetic=True):
-    """Find symmetry operations from a crystal structure and site tensors
+def get_symmetry(
+    cell, symprec=1e-5, angle_tolerance=-1.0, mag_symprec=-1.0, is_magnetic=True
+):
+    """Find symmetry operations from a crystal structure and site tensors.
 
     Parameters
     ----------
@@ -130,26 +134,30 @@ def get_symmetry(cell,
 
     if magmoms is None:
         # Get symmetry operations without on-site tensors (i.e. normal crystal)
-        dataset = get_symmetry_dataset(cell,
-                                       symprec=symprec,
-                                       angle_tolerance=angle_tolerance)
+        dataset = get_symmetry_dataset(
+            cell, symprec=symprec, angle_tolerance=angle_tolerance
+        )
         if dataset is None:
             return None
 
-        return {'rotations': dataset['rotations'],
-                'translations': dataset['translations'],
-                'equivalent_atoms': dataset['equivalent_atoms']}
+        return {
+            "rotations": dataset["rotations"],
+            "translations": dataset["translations"],
+            "equivalent_atoms": dataset["equivalent_atoms"],
+        }
     else:
         warnings.warn(
             "Use get_magnetic_symmetry() for cell with magnetic moments.",
             DeprecationWarning,
         )
-        return get_magnetic_symmetry(cell,
-                                     symprec=symprec,
-                                     angle_tolerance=angle_tolerance,
-                                     mag_symprec=mag_symprec,
-                                     is_axial=None,
-                                     with_time_reversal=is_magnetic)
+        return get_magnetic_symmetry(
+            cell,
+            symprec=symprec,
+            angle_tolerance=angle_tolerance,
+            mag_symprec=mag_symprec,
+            is_axial=None,
+            with_time_reversal=is_magnetic,
+        )
 
 
 def get_magnetic_symmetry(
@@ -160,7 +168,7 @@ def get_magnetic_symmetry(
     is_axial=None,
     with_time_reversal=True,
 ):
-    """Find magnetic symmetry operations from a crystal structure and site tensors
+    """Find magnetic symmetry operations from a crystal structure and site tensors.
 
     Parameters
     ----------
@@ -202,10 +210,11 @@ def get_magnetic_symmetry(
         Tolerance for magnetic symmetry search in the unit of magnetic moments.
         If not specified, use the same value as symprec.
     is_axial: None or bool
-        Set `is_axial=True` if `magmoms` does not change their sign by improper rotations.
-        If not specified, set `is_axial=False` when `magmoms.shape==(num_atoms, )`, and
-        set `is_axial=True` when `magmoms.shape==(num_atoms, 3)`. These default settings
-        correspond to collinear and non-collinear spins.
+        Set `is_axial=True` if `magmoms` does not change their sign by improper
+        rotations. If not specified, set `is_axial=False` when
+        `magmoms.shape==(num_atoms, )`, and set `is_axial=True` when
+        `magmoms.shape==(num_atoms, 3)`. These default settings correspond to
+        collinear and non-collinear spins.
     with_time_reversal: bool
         Set `with_time_reversal=True` if `magmoms` change their sign by time-reversal
         operations. Default is True.
@@ -236,20 +245,18 @@ def get_magnetic_symmetry(
     if lattice is None:
         return None
     if magmoms is None:
-        warnings.warn(
-            "Specify magnetic moments in cell."
-        )
+        warnings.warn("Specify magnetic moments in cell.")
         return None
 
     max_size = len(positions) * 96
-    rotations = np.zeros((max_size, 3, 3), dtype='intc', order='C')
-    translations = np.zeros((max_size, 3), dtype='double', order='C')
-    equivalent_atoms = np.zeros(len(magmoms), dtype='intc')
-    primitive_lattice = np.zeros((3, 3), dtype='double', order='C')
+    rotations = np.zeros((max_size, 3, 3), dtype="intc", order="C")
+    translations = np.zeros((max_size, 3), dtype="double", order="C")
+    equivalent_atoms = np.zeros(len(magmoms), dtype="intc")
+    primitive_lattice = np.zeros((3, 3), dtype="double", order="C")
     # (magmoms.ndim - 1) has to be equal to the rank of physical
     # tensors, e.g., ndim=1 for collinear, ndim=2 for non-collinear.
     if magmoms.ndim == 1 or magmoms.ndim == 2:
-        spin_flips = np.zeros(max_size, dtype='intc')
+        spin_flips = np.zeros(max_size, dtype="intc")
     else:
         spin_flips = None
 
@@ -260,41 +267,40 @@ def get_magnetic_symmetry(
         elif magmoms.ndim == 2:
             is_axial = True  # Non-collinear spin
 
-    num_sym = spg.symmetry_with_site_tensors(rotations,
-                                                translations,
-                                                equivalent_atoms,
-                                                primitive_lattice,
-                                                spin_flips,
-                                                lattice,
-                                                positions,
-                                                numbers,
-                                                magmoms,
-                                                with_time_reversal * 1,
-                                                is_axial * 1,
-                                                symprec,
-                                                angle_tolerance,
-                                                mag_symprec)
+    num_sym = spg.symmetry_with_site_tensors(
+        rotations,
+        translations,
+        equivalent_atoms,
+        primitive_lattice,
+        spin_flips,
+        lattice,
+        positions,
+        numbers,
+        magmoms,
+        with_time_reversal * 1,
+        is_axial * 1,
+        symprec,
+        angle_tolerance,
+        mag_symprec,
+    )
 
     _set_error_message()
     if num_sym == 0:
         return None
     else:
-        spin_flips = np.array(spin_flips[:num_sym], dtype='intc', order='C')
+        spin_flips = np.array(spin_flips[:num_sym], dtype="intc", order="C")
         # True for time reversal operation, False for ordinary operation
-        time_reversals = (spin_flips == -1)
-        return {'rotations': np.array(rotations[:num_sym],
-                                        dtype='intc', order='C'),
-                'translations': np.array(translations[:num_sym],
-                                            dtype='double', order='C'),
-                'time_reversals': time_reversals,
-                'equivalent_atoms': equivalent_atoms,
-                'primitive_lattice': primitive_lattice}
+        time_reversals = spin_flips == -1
+        return {
+            "rotations": np.array(rotations[:num_sym], dtype="intc", order="C"),
+            "translations": np.array(translations[:num_sym], dtype="double", order="C"),
+            "time_reversals": time_reversals,
+            "equivalent_atoms": equivalent_atoms,
+            "primitive_lattice": primitive_lattice,
+        }
 
 
-def get_symmetry_dataset(cell,
-                         symprec=1e-5,
-                         angle_tolerance=-1.0,
-                         hall_number=0):
+def get_symmetry_dataset(cell, symprec=1e-5, angle_tolerance=-1.0, hall_number=0):
     """Search symmetry dataset from an input cell.
 
     Args:
@@ -360,71 +366,81 @@ def get_symmetry_dataset(cell,
     if lattice is None:
         return None
 
-    spg_ds = spg.dataset(lattice, positions, numbers, hall_number,
-                         symprec, angle_tolerance)
+    spg_ds = spg.dataset(
+        lattice, positions, numbers, hall_number, symprec, angle_tolerance
+    )
     if spg_ds is None:
         _set_error_message()
         return None
 
-    keys = ('number',
-            'hall_number',
-            'international',
-            'hall',
-            'choice',
-            'transformation_matrix',
-            'origin_shift',
-            'rotations',
-            'translations',
-            'wyckoffs',
-            'site_symmetry_symbols',
-            'crystallographic_orbits',
-            'equivalent_atoms',
-            'primitive_lattice',
-            'mapping_to_primitive',
-            'std_lattice',
-            'std_types',
-            'std_positions',
-            'std_rotation_matrix',
-            'std_mapping_to_primitive',
-            # 'pointgroup_number',
-            'pointgroup')
+    keys = (
+        "number",
+        "hall_number",
+        "international",
+        "hall",
+        "choice",
+        "transformation_matrix",
+        "origin_shift",
+        "rotations",
+        "translations",
+        "wyckoffs",
+        "site_symmetry_symbols",
+        "crystallographic_orbits",
+        "equivalent_atoms",
+        "primitive_lattice",
+        "mapping_to_primitive",
+        "std_lattice",
+        "std_types",
+        "std_positions",
+        "std_rotation_matrix",
+        "std_mapping_to_primitive",
+        # 'pointgroup_number',
+        "pointgroup",
+    )
     dataset = {}
     for key, data in zip(keys, spg_ds):
         dataset[key] = data
 
-    dataset['international'] = dataset['international'].strip()
-    dataset['hall'] = dataset['hall'].strip()
-    dataset['choice'] = dataset['choice'].strip()
-    dataset['transformation_matrix'] = np.array(
-        dataset['transformation_matrix'], dtype='double', order='C')
-    dataset['origin_shift'] = np.array(dataset['origin_shift'], dtype='double')
-    dataset['rotations'] = np.array(dataset['rotations'],
-                                    dtype='intc', order='C')
-    dataset['translations'] = np.array(dataset['translations'],
-                                       dtype='double', order='C')
+    dataset["international"] = dataset["international"].strip()
+    dataset["hall"] = dataset["hall"].strip()
+    dataset["choice"] = dataset["choice"].strip()
+    dataset["transformation_matrix"] = np.array(
+        dataset["transformation_matrix"], dtype="double", order="C"
+    )
+    dataset["origin_shift"] = np.array(dataset["origin_shift"], dtype="double")
+    dataset["rotations"] = np.array(dataset["rotations"], dtype="intc", order="C")
+    dataset["translations"] = np.array(
+        dataset["translations"], dtype="double", order="C"
+    )
     letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    dataset['wyckoffs'] = [letters[x] for x in dataset['wyckoffs']]
-    dataset['site_symmetry_symbols'] = [
-        s.strip() for s in dataset['site_symmetry_symbols']]
-    dataset['crystallographic_orbits'] = np.array(
-        dataset['crystallographic_orbits'], dtype='intc')
-    dataset['equivalent_atoms'] = np.array(dataset['equivalent_atoms'],
-                                           dtype='intc')
-    dataset['primitive_lattice'] = np.array(
-        np.transpose(dataset['primitive_lattice']),
-        dtype='double', order='C')
-    dataset['mapping_to_primitive'] = np.array(dataset['mapping_to_primitive'],
-                                               dtype='intc')
-    dataset['std_lattice'] = np.array(np.transpose(dataset['std_lattice']),
-                                      dtype='double', order='C')
-    dataset['std_types'] = np.array(dataset['std_types'], dtype='intc')
-    dataset['std_positions'] = np.array(dataset['std_positions'],
-                                        dtype='double', order='C')
-    dataset['std_rotation_matrix'] = np.array(dataset['std_rotation_matrix'],
-                                              dtype='double', order='C')
-    dataset['std_mapping_to_primitive'] = np.array(
-        dataset['std_mapping_to_primitive'], dtype='intc')
-    dataset['pointgroup'] = dataset['pointgroup'].strip()
+    dataset["wyckoffs"] = [letters[x] for x in dataset["wyckoffs"]]
+    dataset["site_symmetry_symbols"] = [
+        s.strip() for s in dataset["site_symmetry_symbols"]
+    ]
+    dataset["crystallographic_orbits"] = np.array(
+        dataset["crystallographic_orbits"], dtype="intc"
+    )
+    dataset["equivalent_atoms"] = np.array(dataset["equivalent_atoms"], dtype="intc")
+    dataset["primitive_lattice"] = np.array(
+        np.transpose(dataset["primitive_lattice"]), dtype="double", order="C"
+    )
+    dataset["mapping_to_primitive"] = np.array(
+        dataset["mapping_to_primitive"], dtype="intc"
+    )
+    dataset["std_lattice"] = np.array(
+        np.transpose(dataset["std_lattice"]), dtype="double", order="C"
+    )
+    dataset["std_types"] = np.array(dataset["std_types"], dtype="intc")
+    dataset["std_positions"] = np.array(
+        dataset["std_positions"], dtype="double", order="C"
+    )
+    dataset["std_rotation_matrix"] = np.array(
+        dataset["std_rotation_matrix"], dtype="double", order="C"
+    )
+    dataset["std_mapping_to_primitive"] = np.array(
+        dataset["std_mapping_to_primitive"], dtype="intc"
+    )
+    dataset["pointgroup"] = dataset["pointgroup"].strip()
 
     _set_error_message()
     return dataset
@@ -449,18 +465,20 @@ def get_magnetic_symmetry_dataset(
                 uni_number: int
                     UNI number between 1 to 1651
                 msg_type: int
-                    Magnetic space groups (MSG) is classified by its family space group (FSG)
-                    and maximal space subgroup (XSG). FSG is a non-magnetic space group
-                    obtained by ignoring time-reversal term in MSG. XSG is a space group
-                    obtained by picking out non time-reversal operations in MSG.
+                    Magnetic space groups (MSG) is classified by its family space
+                    group (FSG) and maximal space subgroup (XSG). FSG is a non-magnetic
+                    space group obtained by ignoring time-reversal term in MSG. XSG is
+                    a space group obtained by picking out non time-reversal operations
+                    in MSG.
 
                     msg_type==1 (type-I): MSG, XSG, FSG are all isomorphic.
-                    msg_type==2 (type-II): XSG and FSG are isomorphic, and MSG is generated
-                                           from XSG and pure time reversal operations
-                    msg_type==3 (type-III): XSG is a proper subgroup of MSG with isomorphic
-                                            translational subgroups.
-                    msg_type==4 (type-IV): XSG is a proper subgroup of MSG with isomorphic
-                                           point group.
+                    msg_type==2 (type-II): XSG and FSG are isomorphic, and MSG is
+                                           generated from XSG and pure time reversal
+                                           operations.
+                    msg_type==3 (type-III): XSG is a proper subgroup of MSG with
+                                            isomorphic translational subgroups.
+                    msg_type==4 (type-IV): XSG is a proper subgroup of MSG with
+                                           isomorphic point group.
                 hall_number: int
                     For type-I, II, III, Hall number of FSG; for type-IV, that of XSG
                 tensor_rank: int
@@ -516,9 +534,17 @@ def get_magnetic_symmetry_dataset(
         elif tensor_rank == 1:
             is_axial = True  # Non-collinear spin
 
-    spg_ds = spg.magnetic_dataset(lattice, positions, numbers, magmoms,
-                                  tensor_rank, is_axial,
-                                  symprec, angle_tolerance, mag_symprec)
+    spg_ds = spg.magnetic_dataset(
+        lattice,
+        positions,
+        numbers,
+        magmoms,
+        tensor_rank,
+        is_axial,
+        symprec,
+        angle_tolerance,
+        mag_symprec,
+    )
     if spg_ds is None:
         _set_error_message()
         return None
@@ -553,27 +579,35 @@ def get_magnetic_symmetry_dataset(
     dataset = {}
     for key, data in zip(keys, spg_ds):
         dataset[key] = data
-    dataset['rotations'] = np.array(dataset['rotations'], dtype='intc', order='C')
-    dataset['translations'] = np.array(dataset['translations'], dtype='double', order='C')
-    dataset['time_reversals'] = np.array(dataset['time_reversals'], dtype='intc', order='C') == 1
-    dataset['equivalent_atoms'] = np.array(dataset['equivalent_atoms'], dtype='intc')
-    dataset['transformation_matrix'] = np.array(
-        dataset['transformation_matrix'], dtype='double', order='C')
-    dataset['origin_shift'] = np.array(dataset['origin_shift'], dtype='double')
-    dataset['std_lattice'] = np.array(np.transpose(dataset['std_lattice']),
-                                      dtype='double', order='C')
-    dataset['std_types'] = np.array(dataset['std_types'], dtype='intc')
-    dataset['std_positions'] = np.array(dataset['std_positions'],
-                                        dtype='double', order='C')
-    dataset['std_rotation_matrix'] = np.array(dataset['std_rotation_matrix'],
-                                              dtype='double', order='C')
-    dataset['primitive_lattice'] = np.array(
-        np.transpose(dataset['primitive_lattice']),
-        dtype='double', order='C')
+    dataset["rotations"] = np.array(dataset["rotations"], dtype="intc", order="C")
+    dataset["translations"] = np.array(
+        dataset["translations"], dtype="double", order="C"
+    )
+    dataset["time_reversals"] = (
+        np.array(dataset["time_reversals"], dtype="intc", order="C") == 1
+    )
+    dataset["equivalent_atoms"] = np.array(dataset["equivalent_atoms"], dtype="intc")
+    dataset["transformation_matrix"] = np.array(
+        dataset["transformation_matrix"], dtype="double", order="C"
+    )
+    dataset["origin_shift"] = np.array(dataset["origin_shift"], dtype="double")
+    dataset["std_lattice"] = np.array(
+        np.transpose(dataset["std_lattice"]), dtype="double", order="C"
+    )
+    dataset["std_types"] = np.array(dataset["std_types"], dtype="intc")
+    dataset["std_positions"] = np.array(
+        dataset["std_positions"], dtype="double", order="C"
+    )
+    dataset["std_rotation_matrix"] = np.array(
+        dataset["std_rotation_matrix"], dtype="double", order="C"
+    )
+    dataset["primitive_lattice"] = np.array(
+        np.transpose(dataset["primitive_lattice"]), dtype="double", order="C"
+    )
 
-    dataset['std_tensors'] = np.array(dataset['std_tensors'], dtype='double', order='C')
+    dataset["std_tensors"] = np.array(dataset["std_tensors"], dtype="double", order="C")
     if tensor_rank == 1:
-        dataset['std_tensors'] = dataset['std_tensors'].reshape(-1, 3)
+        dataset["std_tensors"] = dataset["std_tensors"].reshape(-1, 3)
 
     _set_error_message()
     return dataset
@@ -586,17 +620,17 @@ def get_spacegroup(cell, symprec=1e-5, angle_tolerance=-1.0, symbol_type=0):
     """
     _set_no_error()
 
-    dataset = get_symmetry_dataset(cell,
-                                   symprec=symprec,
-                                   angle_tolerance=angle_tolerance)
+    dataset = get_symmetry_dataset(
+        cell, symprec=symprec, angle_tolerance=angle_tolerance
+    )
     if dataset is None:
         return None
 
-    spg_type = get_spacegroup_type(dataset['hall_number'])
+    spg_type = get_spacegroup_type(dataset["hall_number"])
     if symbol_type == 1:
-        return "%s (%d)" % (spg_type['schoenflies'], dataset['number'])
+        return "%s (%d)" % (spg_type["schoenflies"], dataset["number"])
     else:
-        return "%s (%d)" % (spg_type['international_short'], dataset['number'])
+        return "%s (%d)" % (spg_type["international_short"], dataset["number"])
 
 
 def get_hall_number_from_symmetry(rotations, translations, symprec=1e-5):
@@ -604,9 +638,8 @@ def get_hall_number_from_symmetry(rotations, translations, symprec=1e-5):
 
     If it fails, None is returned.
     """
-
-    r = np.array(rotations, dtype='intc', order='C')
-    t = np.array(translations, dtype='double', order='C')
+    r = np.array(rotations, dtype="intc", order="C")
+    t = np.array(translations, dtype="double", order="C")
     hall_number = spg.hall_number_from_symmetry(r, t, symprec)
     return hall_number
 
@@ -618,24 +651,26 @@ def get_spacegroup_type(hall_number):
     """
     _set_no_error()
 
-    keys = ('number',
-            'international_short',
-            'international_full',
-            'international',
-            'schoenflies',
-            'hall_symbol',
-            'choice',
-            'pointgroup_international',
-            'pointgroup_schoenflies',
-            'arithmetic_crystal_class_number',
-            'arithmetic_crystal_class_symbol')
+    keys = (
+        "number",
+        "international_short",
+        "international_full",
+        "international",
+        "schoenflies",
+        "hall_symbol",
+        "choice",
+        "pointgroup_international",
+        "pointgroup_schoenflies",
+        "arithmetic_crystal_class_number",
+        "arithmetic_crystal_class_symbol",
+    )
     spg_type_list = spg.spacegroup_type(hall_number)
     _set_error_message()
 
     if spg_type_list is not None:
         spg_type = dict(zip(keys, spg_type_list))
         for key in spg_type:
-            if key != 'number' and key != 'arithmetic_crystal_class_number':
+            if key != "number" and key != "arithmetic_crystal_class_number":
                 spg_type[key] = spg_type[key].strip()
         return spg_type
     else:
@@ -650,12 +685,12 @@ def get_magnetic_spacegroup_type(uni_number):
     _set_no_error()
 
     keys = (
-        'uni_number',
-        'litvin_number',
-        'bns_number',
-        'og_number',
-        'number',
-        'type',
+        "uni_number",
+        "litvin_number",
+        "bns_number",
+        "og_number",
+        "number",
+        "type",
     )
     msg_type_list = spg.magnetic_spacegroup_type(uni_number)
     _set_error_message()
@@ -663,7 +698,7 @@ def get_magnetic_spacegroup_type(uni_number):
     if msg_type_list is not None:
         msg_type = dict(zip(keys, msg_type_list))
         for key in msg_type:
-            if key not in ['uni_number', 'litvin_number', 'number', 'type']:
+            if key not in ["uni_number", "litvin_number", "number", "type"]:
                 msg_type[key] = msg_type[key].strip()
         return msg_type
     else:
@@ -710,16 +745,14 @@ def get_pointgroup(rotations):
     _set_no_error()
 
     # (symbol, pointgroup_number, transformation_matrix)
-    pointgroup = spg.pointgroup(np.array(rotations, dtype='intc', order='C'))
+    pointgroup = spg.pointgroup(np.array(rotations, dtype="intc", order="C"))
     _set_error_message()
     return pointgroup
 
 
-def standardize_cell(cell,
-                     to_primitive=False,
-                     no_idealize=False,
-                     symprec=1e-5,
-                     angle_tolerance=-1.0):
+def standardize_cell(
+    cell, to_primitive=False, no_idealize=False, symprec=1e-5, angle_tolerance=-1.0
+):
     """Return standardized cell.
 
     Args:
@@ -744,24 +777,28 @@ def standardize_cell(cell,
 
     # Atomic positions have to be specified by scaled positions for spglib.
     num_atom = len(_positions)
-    positions = np.zeros((num_atom * 4, 3), dtype='double', order='C')
+    positions = np.zeros((num_atom * 4, 3), dtype="double", order="C")
     positions[:num_atom] = _positions
-    numbers = np.zeros(num_atom * 4, dtype='intc')
+    numbers = np.zeros(num_atom * 4, dtype="intc")
     numbers[:num_atom] = _numbers
-    num_atom_std = spg.standardize_cell(lattice,
-                                        positions,
-                                        numbers,
-                                        num_atom,
-                                        to_primitive * 1,
-                                        no_idealize * 1,
-                                        symprec,
-                                        angle_tolerance)
+    num_atom_std = spg.standardize_cell(
+        lattice,
+        positions,
+        numbers,
+        num_atom,
+        to_primitive * 1,
+        no_idealize * 1,
+        symprec,
+        angle_tolerance,
+    )
     _set_error_message()
 
     if num_atom_std > 0:
-        return (np.array(lattice.T, dtype='double', order='C'),
-                np.array(positions[:num_atom_std], dtype='double', order='C'),
-                np.array(numbers[:num_atom_std], dtype='intc'))
+        return (
+            np.array(lattice.T, dtype="double", order="C"),
+            np.array(positions[:num_atom_std], dtype="double", order="C"),
+            np.array(numbers[:num_atom_std], dtype="intc"),
+        )
     else:
         return None
 
@@ -781,22 +818,21 @@ def refine_cell(cell, symprec=1e-5, angle_tolerance=-1.0):
 
     # Atomic positions have to be specified by scaled positions for spglib.
     num_atom = len(_positions)
-    positions = np.zeros((num_atom * 4, 3), dtype='double', order='C')
+    positions = np.zeros((num_atom * 4, 3), dtype="double", order="C")
     positions[:num_atom] = _positions
-    numbers = np.zeros(num_atom * 4, dtype='intc')
+    numbers = np.zeros(num_atom * 4, dtype="intc")
     numbers[:num_atom] = _numbers
-    num_atom_std = spg.refine_cell(lattice,
-                                   positions,
-                                   numbers,
-                                   num_atom,
-                                   symprec,
-                                   angle_tolerance)
+    num_atom_std = spg.refine_cell(
+        lattice, positions, numbers, num_atom, symprec, angle_tolerance
+    )
     _set_error_message()
 
     if num_atom_std > 0:
-        return (np.array(lattice.T, dtype='double', order='C'),
-                np.array(positions[:num_atom_std], dtype='double', order='C'),
-                np.array(numbers[:num_atom_std], dtype='intc'))
+        return (
+            np.array(lattice.T, dtype="double", order="C"),
+            np.array(positions[:num_atom_std], dtype="double", order="C"),
+            np.array(numbers[:num_atom_std], dtype="intc"),
+        )
     else:
         return None
 
@@ -813,17 +849,15 @@ def find_primitive(cell, symprec=1e-5, angle_tolerance=-1.0):
     if lattice is None:
         return None
 
-    num_atom_prim = spg.primitive(lattice,
-                                  positions,
-                                  numbers,
-                                  symprec,
-                                  angle_tolerance)
+    num_atom_prim = spg.primitive(lattice, positions, numbers, symprec, angle_tolerance)
     _set_error_message()
 
     if num_atom_prim > 0:
-        return (np.array(lattice.T, dtype='double', order='C'),
-                np.array(positions[:num_atom_prim], dtype='double', order='C'),
-                np.array(numbers[:num_atom_prim], dtype='intc'))
+        return (
+            np.array(lattice.T, dtype="double", order="C"),
+            np.array(positions[:num_atom_prim], dtype="double", order="C"),
+            np.array(numbers[:num_atom_prim], dtype="intc"),
+        )
     else:
         return None
 
@@ -838,44 +872,50 @@ def get_symmetry_from_database(hall_number):
     """
     _set_no_error()
 
-    rotations = np.zeros((192, 3, 3), dtype='intc')
-    translations = np.zeros((192, 3), dtype='double')
+    rotations = np.zeros((192, 3, 3), dtype="intc")
+    translations = np.zeros((192, 3), dtype="double")
     num_sym = spg.symmetry_from_database(rotations, translations, hall_number)
     _set_error_message()
 
     if num_sym is None:
         return None
     else:
-        return {'rotations':
-                np.array(rotations[:num_sym], dtype='intc', order='C'),
-                'translations':
-                np.array(translations[:num_sym], dtype='double', order='C')}
+        return {
+            "rotations": np.array(rotations[:num_sym], dtype="intc", order="C"),
+            "translations": np.array(translations[:num_sym], dtype="double", order="C"),
+        }
 
 
 def get_magnetic_symmetry_from_database(uni_number, hall_number=0):
-    """Return magnetic symmetry operations corresponding to a UNI number between 1 and 1651.
+    """Return magnetic symmetry operations from UNI number between 1 and 1651.
+
     Optionally alternative settings can be specified with Hall number.
 
     The magnetic symmetry operations are given by a dictionary whose keys are
     'rotations', 'translations', and 'time_reversals'.
-    For `time_reversals`, 0 and 1 indicate ordinary and anti-time-reversal operations, respectively.
+    For `time_reversals`, 0 and 1 indicate ordinary and anti-time-reversal
+    operations, respectively.
     If it fails, None is returned.
     """
     _set_no_error()
 
-    rotations = np.zeros((384, 3, 3), dtype='intc')
-    translations = np.zeros((384, 3), dtype='double')
-    time_reversals = np.zeros(384, dtype='intc')
-    num_sym = spg.magnetic_symmetry_from_database(rotations, translations, time_reversals, uni_number, hall_number)
+    rotations = np.zeros((384, 3, 3), dtype="intc")
+    translations = np.zeros((384, 3), dtype="double")
+    time_reversals = np.zeros(384, dtype="intc")
+    num_sym = spg.magnetic_symmetry_from_database(
+        rotations, translations, time_reversals, uni_number, hall_number
+    )
     _set_error_message()
 
     if num_sym is None:
         return None
     else:
         return {
-            'rotations': np.array(rotations[:num_sym], dtype='intc', order='C'),
-            'translations': np.array(translations[:num_sym], dtype='double', order='C'),
-            'time_reversals': np.array(time_reversals[:num_sym], dtype='intc', order='C'),
+            "rotations": np.array(rotations[:num_sym], dtype="intc", order="C"),
+            "translations": np.array(translations[:num_sym], dtype="double", order="C"),
+            "time_reversals": np.array(
+                time_reversals[:num_sym], dtype="intc", order="C"
+            ),
         }
 
 
@@ -883,19 +923,17 @@ def get_magnetic_symmetry_from_database(uni_number, hall_number=0):
 # k-points #
 ############
 def get_grid_point_from_address(grid_address, mesh):
-    """Return grid point index by translating grid address"""
+    """Return grid point index by translating grid address."""
     _set_no_error()
 
-    return spg.grid_point_from_address(np.array(grid_address, dtype='intc'),
-                                       np.array(mesh, dtype='intc'))
+    return spg.grid_point_from_address(
+        np.array(grid_address, dtype="intc"), np.array(mesh, dtype="intc")
+    )
 
 
-def get_ir_reciprocal_mesh(mesh,
-                           cell,
-                           is_shift=None,
-                           is_time_reversal=True,
-                           symprec=1e-5,
-                           is_dense=False):
+def get_ir_reciprocal_mesh(
+    mesh, cell, is_shift=None, is_time_reversal=True, symprec=1e-5, is_dense=False
+):
     """Return k-points mesh and k-point map to the irreducible k-points.
 
     The symmetry is searched from the input cell.
@@ -936,34 +974,35 @@ def get_ir_reciprocal_mesh(mesh,
         return None
 
     if is_dense:
-        dtype = 'uintp'
+        dtype = "uintp"
     else:
-        dtype = 'intc'
+        dtype = "intc"
     grid_mapping_table = np.zeros(np.prod(mesh), dtype=dtype)
-    grid_address = np.zeros((np.prod(mesh), 3), dtype='intc')
+    grid_address = np.zeros((np.prod(mesh), 3), dtype="intc")
     if is_shift is None:
         is_shift = [0, 0, 0]
-    if spg.ir_reciprocal_mesh(
+    if (
+        spg.ir_reciprocal_mesh(
             grid_address,
             grid_mapping_table,
-            np.array(mesh, dtype='intc'),
-            np.array(is_shift, dtype='intc'),
+            np.array(mesh, dtype="intc"),
+            np.array(is_shift, dtype="intc"),
             is_time_reversal * 1,
             lattice,
             positions,
             numbers,
-            symprec) > 0:
+            symprec,
+        )
+        > 0
+    ):
         return grid_mapping_table, grid_address
     else:
         return None
 
 
-def get_stabilized_reciprocal_mesh(mesh,
-                                   rotations,
-                                   is_shift=None,
-                                   is_time_reversal=True,
-                                   qpoints=None,
-                                   is_dense=False):
+def get_stabilized_reciprocal_mesh(
+    mesh, rotations, is_shift=None, is_time_reversal=True, qpoints=None, is_dense=False
+):
     """Return k-point map to the irreducible k-points and k-point grid points.
 
     The symmetry is searched from the input rotation matrices in real space.
@@ -1003,39 +1042,41 @@ def get_stabilized_reciprocal_mesh(mesh,
     _set_no_error()
 
     if is_dense:
-        dtype = 'uintp'
+        dtype = "uintp"
     else:
-        dtype = 'intc'
+        dtype = "intc"
     mapping_table = np.zeros(np.prod(mesh), dtype=dtype)
-    grid_address = np.zeros((np.prod(mesh), 3), dtype='intc')
+    grid_address = np.zeros((np.prod(mesh), 3), dtype="intc")
     if is_shift is None:
         is_shift = [0, 0, 0]
     if qpoints is None:
-        qpoints = np.array([[0, 0, 0]], dtype='double', order='C')
+        qpoints = np.array([[0, 0, 0]], dtype="double", order="C")
     else:
-        qpoints = np.array(qpoints, dtype='double', order='C')
+        qpoints = np.array(qpoints, dtype="double", order="C")
         if qpoints.shape == (3,):
-            qpoints = np.array([qpoints], dtype='double', order='C')
+            qpoints = np.array([qpoints], dtype="double", order="C")
 
-    if spg.stabilized_reciprocal_mesh(
+    if (
+        spg.stabilized_reciprocal_mesh(
             grid_address,
             mapping_table,
-            np.array(mesh, dtype='intc'),
-            np.array(is_shift, dtype='intc'),
+            np.array(mesh, dtype="intc"),
+            np.array(is_shift, dtype="intc"),
             is_time_reversal * 1,
-            np.array(rotations, dtype='intc', order='C'),
-            qpoints) > 0:
+            np.array(rotations, dtype="intc", order="C"),
+            qpoints,
+        )
+        > 0
+    ):
         return mapping_table, grid_address
     else:
         return None
 
 
-def get_grid_points_by_rotations(address_orig,
-                                 reciprocal_rotations,
-                                 mesh,
-                                 is_shift=None,
-                                 is_dense=False):
-    """Returns grid points obtained after rotating input grid address
+def get_grid_points_by_rotations(
+    address_orig, reciprocal_rotations, mesh, is_shift=None, is_dense=False
+):
+    """Return grid points obtained after rotating input grid address.
 
     Parameters
     ----------
@@ -1063,35 +1104,32 @@ def get_grid_points_by_rotations(address_orig,
         dtype='intc' or 'uintp', shape=(rotations,)
 
     """
-
     _set_no_error()
 
     if is_shift is None:
-        _is_shift = np.zeros(3, dtype='intc')
+        _is_shift = np.zeros(3, dtype="intc")
     else:
-        _is_shift = np.array(is_shift, dtype='intc')
+        _is_shift = np.array(is_shift, dtype="intc")
 
-    rot_grid_points = np.zeros(len(reciprocal_rotations), dtype='uintp')
+    rot_grid_points = np.zeros(len(reciprocal_rotations), dtype="uintp")
     spg.grid_points_by_rotations(
         rot_grid_points,
-        np.array(address_orig, dtype='intc'),
-        np.array(reciprocal_rotations, dtype='intc', order='C'),
-        np.array(mesh, dtype='intc'),
-        _is_shift)
+        np.array(address_orig, dtype="intc"),
+        np.array(reciprocal_rotations, dtype="intc", order="C"),
+        np.array(mesh, dtype="intc"),
+        _is_shift,
+    )
 
     if is_dense:
         return rot_grid_points
     else:
-        return np.array(rot_grid_points, dtype='intc')
+        return np.array(rot_grid_points, dtype="intc")
 
 
-def get_BZ_grid_points_by_rotations(address_orig,
-                                    reciprocal_rotations,
-                                    mesh,
-                                    bz_map,
-                                    is_shift=None,
-                                    is_dense=False):
-    """Returns grid points obtained after rotating input grid address
+def get_BZ_grid_points_by_rotations(
+    address_orig, reciprocal_rotations, mesh, bz_map, is_shift=None, is_dense=False
+):
+    """Return grid points obtained after rotating input grid address.
 
     Parameters
     ----------
@@ -1119,39 +1157,41 @@ def get_BZ_grid_points_by_rotations(address_orig,
         dtype='intc' or 'uintp', shape=(rotations,)
 
     """
-
     _set_no_error()
 
     if is_shift is None:
-        _is_shift = np.zeros(3, dtype='intc')
+        _is_shift = np.zeros(3, dtype="intc")
     else:
-        _is_shift = np.array(is_shift, dtype='intc')
+        _is_shift = np.array(is_shift, dtype="intc")
 
-    if bz_map.dtype == 'uintp' and bz_map.flags.c_contiguous:
+    if bz_map.dtype == "uintp" and bz_map.flags.c_contiguous:
         _bz_map = bz_map
     else:
-        _bz_map = np.array(bz_map, dtype='uintp')
+        _bz_map = np.array(bz_map, dtype="uintp")
 
-    rot_grid_points = np.zeros(len(reciprocal_rotations), dtype='uintp')
+    rot_grid_points = np.zeros(len(reciprocal_rotations), dtype="uintp")
     spg.BZ_grid_points_by_rotations(
         rot_grid_points,
-        np.array(address_orig, dtype='intc'),
-        np.array(reciprocal_rotations, dtype='intc', order='C'),
-        np.array(mesh, dtype='intc'),
+        np.array(address_orig, dtype="intc"),
+        np.array(reciprocal_rotations, dtype="intc", order="C"),
+        np.array(mesh, dtype="intc"),
         _is_shift,
-        _bz_map)
+        _bz_map,
+    )
 
     if is_dense:
         return rot_grid_points
     else:
-        return np.array(rot_grid_points, dtype='intc')
+        return np.array(rot_grid_points, dtype="intc")
 
 
-def relocate_BZ_grid_address(grid_address,
-                             mesh,
-                             reciprocal_lattice,  # column vectors
-                             is_shift=None,
-                             is_dense=False):
+def relocate_BZ_grid_address(
+    grid_address,
+    mesh,
+    reciprocal_lattice,  # column vectors
+    is_shift=None,
+    is_dense=False,
+):
     """Grid addresses are relocated to be inside first Brillouin zone.
 
     Number of ir-grid-points inside Brillouin zone is returned.
@@ -1186,27 +1226,28 @@ def relocate_BZ_grid_address(grid_address,
     _set_no_error()
 
     if is_shift is None:
-        _is_shift = np.zeros(3, dtype='intc')
+        _is_shift = np.zeros(3, dtype="intc")
     else:
-        _is_shift = np.array(is_shift, dtype='intc')
-    bz_grid_address = np.zeros((np.prod(np.add(mesh, 1)), 3), dtype='intc')
-    bz_map = np.zeros(np.prod(np.multiply(mesh, 2)), dtype='uintp')
+        _is_shift = np.array(is_shift, dtype="intc")
+    bz_grid_address = np.zeros((np.prod(np.add(mesh, 1)), 3), dtype="intc")
+    bz_map = np.zeros(np.prod(np.multiply(mesh, 2)), dtype="uintp")
     num_bz_ir = spg.BZ_grid_address(
         bz_grid_address,
         bz_map,
         grid_address,
-        np.array(mesh, dtype='intc'),
-        np.array(reciprocal_lattice, dtype='double', order='C'),
-        _is_shift)
+        np.array(mesh, dtype="intc"),
+        np.array(reciprocal_lattice, dtype="double", order="C"),
+        _is_shift,
+    )
 
     if is_dense:
         return bz_grid_address[:num_bz_ir], bz_map
     else:
-        return bz_grid_address[:num_bz_ir], np.array(bz_map, dtype='intc')
+        return bz_grid_address[:num_bz_ir], np.array(bz_map, dtype="intc")
 
 
 def delaunay_reduce(lattice, eps=1e-5):
-    """Run Delaunay reduction
+    """Run Delaunay reduction.
 
     Args:
         lattice: Lattice parameters in the form of
@@ -1228,20 +1269,18 @@ def delaunay_reduce(lattice, eps=1e-5):
     """
     _set_no_error()
 
-    delaunay_lattice = np.array(np.transpose(lattice),
-                                dtype='double', order='C')
+    delaunay_lattice = np.array(np.transpose(lattice), dtype="double", order="C")
     result = spg.delaunay_reduce(delaunay_lattice, float(eps))
     _set_error_message()
 
     if result == 0:
         return None
     else:
-        return np.array(np.transpose(delaunay_lattice),
-                        dtype='double', order='C')
+        return np.array(np.transpose(delaunay_lattice), dtype="double", order="C")
 
 
 def niggli_reduce(lattice, eps=1e-5):
-    """Run Niggli reduction
+    """Run Niggli reduction.
 
     Args:
         lattice: Lattice parameters in the form of
@@ -1265,37 +1304,35 @@ def niggli_reduce(lattice, eps=1e-5):
     """
     _set_no_error()
 
-    niggli_lattice = np.array(np.transpose(lattice), dtype='double', order='C')
+    niggli_lattice = np.array(np.transpose(lattice), dtype="double", order="C")
     result = spg.niggli_reduce(niggli_lattice, float(eps))
     _set_error_message()
 
     if result == 0:
         return None
     else:
-        return np.array(np.transpose(niggli_lattice),
-                        dtype='double', order='C')
+        return np.array(np.transpose(niggli_lattice), dtype="double", order="C")
 
 
 def get_error_message():
+    """Return error message why spglib failed."""
     return spglib_error.message
 
 
 def _expand_cell(cell):
     if isinstance(cell, tuple):
-        lattice = np.array(np.transpose(cell[0]), dtype='double', order='C')
-        positions = np.array(cell[1], dtype='double', order='C')
-        numbers = np.array(cell[2], dtype='intc')
+        lattice = np.array(np.transpose(cell[0]), dtype="double", order="C")
+        positions = np.array(cell[1], dtype="double", order="C")
+        numbers = np.array(cell[2], dtype="intc")
         if len(cell) > 3:
-            magmoms = np.array(cell[3], order='C', dtype='double')
+            magmoms = np.array(cell[3], order="C", dtype="double")
         else:
             magmoms = None
     else:
-        warnings.warn("ASE Atoms-like input is deprecated.",
-                      DeprecationWarning)
-        lattice = np.array(cell.get_cell().T, dtype='double', order='C')
-        positions = np.array(cell.get_scaled_positions(),
-                             dtype='double', order='C')
-        numbers = np.array(cell.get_atomic_numbers(), dtype='intc')
+        warnings.warn("ASE Atoms-like input is deprecated.", DeprecationWarning)
+        lattice = np.array(cell.get_cell().T, dtype="double", order="C")
+        positions = np.array(cell.get_scaled_positions(), dtype="double", order="C")
+        numbers = np.array(cell.get_atomic_numbers(), dtype="intc")
         magmoms = None
 
     if _check(lattice, positions, numbers, magmoms):

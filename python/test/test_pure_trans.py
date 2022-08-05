@@ -1,7 +1,9 @@
 import unittest
+
 import numpy as np
-from spglib import get_symmetry
 from vasp import read_vasp_from_strings
+
+from spglib import get_symmetry
 
 Al222 = """Al
    1.0
@@ -1580,6 +1582,7 @@ sym_ops_str = """ 1  0  0  0  1  0  0  0  1    0.0000000    0.0000000    0.00000
  1  0  0  0  0  1  0 -1  0    0.7500000    0.5000000    0.2500000
 -1  0  0  0  0 -1  0  1  0    0.7500000    0.5000000    0.2500000"""
 
+
 class TestPureTrans(unittest.TestCase):
     """This is a test for new implementation of search_pure_translations in
     symmetry.c (ee97ad17) against a previous version. The order of
@@ -1594,7 +1597,7 @@ class TestPureTrans(unittest.TestCase):
         self._sym_ops = get_symmetry(cell)
         rot = []
         trans = []
-        for i, line in enumerate(sym_ops_str.split('\n')):
+        for i, line in enumerate(sym_ops_str.split("\n")):
             arr = line.split()
             rot += [int(x) for x in arr[:9]]
             trans += [float(x) for x in arr[9:]]
@@ -1606,17 +1609,18 @@ class TestPureTrans(unittest.TestCase):
 
     def test_pure_trans(self):
         nums = []
-        for i, (r, t) in enumerate(zip(self._sym_ops['rotations'],
-                                       self._sym_ops['translations'])):
+        for i, (r, t) in enumerate(
+            zip(self._sym_ops["rotations"], self._sym_ops["translations"])
+        ):
             for j, (rr, tr) in enumerate(zip(self._rot_ref, self._trans_ref)):
                 if (r == rr).all() and (np.abs(t - tr) < 1e-5).all():
                     nums.append(j)
                     break
 
-        np.testing.assert_array_equal(np.sort(nums),
-                                      np.arange(len(self._rot_ref)))
+        np.testing.assert_array_equal(np.sort(nums), np.arange(len(self._rot_ref)))
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     suite = unittest.TestLoader().loadTestsFromTestCase(TestPureTrans)
     unittest.TextTestRunner(verbosity=2).run(suite)
     # unittest.main()
