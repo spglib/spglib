@@ -3,6 +3,8 @@ import os
 from pathlib import Path
 from typing import Callable, List
 
+import pytest
+
 from spglib import (
     get_spacegroup_type,
     get_spacegroup_type_from_symmetry,
@@ -12,16 +14,23 @@ from spglib import (
 data_dir = os.path.dirname(os.path.abspath(__file__))
 
 
-def test_spacegroup_type_from_symmetry(all_filenames: List[Path], read_vasp: Callable):
+@pytest.mark.parametrize("lattice_None", [True, False])
+def test_spacegroup_type_from_symmetry(
+    all_filenames: List[Path], read_vasp: Callable, lattice_None: bool
+):
     """Test spacegroup_type_from_symmetry."""
     for fname in all_filenames:
         cell = read_vasp(fname)
+        if lattice_None:
+            lattice = None
+        else:
+            lattice = cell[0]
         if "distorted" in str(fname):
             dataset = get_symmetry_dataset(cell, symprec=1e-1)
             spgtype = get_spacegroup_type_from_symmetry(
                 dataset["rotations"],
                 dataset["translations"],
-                lattice=cell[0],
+                lattice=lattice,
                 symprec=1e-1,
             )
             if spgtype["number"] != dataset["number"]:
@@ -35,7 +44,7 @@ def test_spacegroup_type_from_symmetry(all_filenames: List[Path], read_vasp: Cal
                 spgtype = get_spacegroup_type_from_symmetry(
                     dataset["rotations"],
                     dataset["translations"],
-                    lattice=cell[0],
+                    lattice=lattice,
                     symprec=1e-5,
                 )
                 print(
@@ -47,7 +56,7 @@ def test_spacegroup_type_from_symmetry(all_filenames: List[Path], read_vasp: Cal
             spgtype = get_spacegroup_type_from_symmetry(
                 dataset["rotations"],
                 dataset["translations"],
-                lattice=cell[0],
+                lattice=lattice,
                 symprec=1e-5,
             )
 
