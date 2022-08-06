@@ -2313,6 +2313,7 @@ SpglibSpacegroupType get_spacegroup_type(const int hall_number) {
     char arth_symbol[7];
 
     spglibtype.number = 0;
+    spglibtype.hall_number = 0;
     strcpy(spglibtype.schoenflies, "");
     strcpy(spglibtype.hall_symbol, "");
     strcpy(spglibtype.choice, "");
@@ -2327,6 +2328,7 @@ SpglibSpacegroupType get_spacegroup_type(const int hall_number) {
     if (0 < hall_number && hall_number < 531) {
         spgtype = spgdb_get_spacegroup_type(hall_number);
         spglibtype.number = spgtype.number;
+        spglibtype.hall_number = hall_number;
         memcpy(spglibtype.schoenflies, spgtype.schoenflies, 7);
         memcpy(spglibtype.hall_symbol, spgtype.hall_symbol, 17);
         memcpy(spglibtype.choice, spgtype.choice, 6);
@@ -2355,7 +2357,6 @@ static int get_hall_number_from_symmetry(SPGCONST int rotation[][3][3],
     Symmetry *prim_symmetry;
     Spacegroup *spacegroup;
     double t_mat[3][3], t_mat_inv[3][3], prim_lat[3][3];
-    SpglibSpacegroupType spglibtype;
 
     symmetry = NULL;
     prim_symmetry = NULL;

@@ -142,6 +142,7 @@ typedef struct {
     char international_full[20];
     char international[32];
     char schoenflies[7];
+    int hall_number;
     char hall_symbol[17];
     char choice[6];
     char pointgroup_international[6];
