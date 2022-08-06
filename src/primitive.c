@@ -251,7 +251,7 @@ int prm_get_primitive_lattice_vectors(double prim_lattice[3][3],
 /* Return NULL if failed */
 static Primitive *get_primitive(const Cell *cell, const double symprec,
                                 const double angle_tolerance) {
-    int i, attempt;
+    int attempt;
     double tolerance;
     Primitive *primitive;
     VecDBL *pure_trans;

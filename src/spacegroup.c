@@ -520,7 +520,7 @@ Spacegroup *spa_search_spacegroup(const Primitive *primitive,
 Spacegroup *spa_search_spacegroup_with_symmetry(const Symmetry *symmetry,
                                                 SPGCONST double prim_lat[3][3],
                                                 const double symprec) {
-    int i, hall_number;
+    int i;
     Spacegroup *spacegroup;
     Primitive *primitive;
 
