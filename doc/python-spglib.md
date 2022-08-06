@@ -442,7 +442,8 @@ When something wrong happened, ``None`` is returned.
 (py_method_get_spacegroup_type)=
 ### ``get_spacegroup_type``
 
-**New at version 1.9.4**
+- **New at version 1.9.4**
+- **`hall_number` member is added at version 2.0.**
 
 ```python
 spacegroup_type = get_spacegroup_type(hall_number)
@@ -462,6 +463,7 @@ international_full
 international
 schoenflies
 hall_symbol
+hall_number
 choice
 pointgroup_schoenflies
 pointgroup_international
@@ -478,11 +480,24 @@ Here ``spacegroup_type['international_short']`` is equivalent to
 
 When something wrong happened, ``None`` is returned.
 
+(py_method_get_spacegroup_type_from_symmetry)=
 ### ``get_spacegroup_type_from_symmetry``
 
-This replaces ``get_hall_number_from_symmetry``, but ``lattice`` is necessary.
+**New at version 2.0**
 
+```python
+spacegroup_type = get_spacegroup_type_from_symmetry(rotations, translations, lattice=None, symprec=1e-5)
+```
 
+Return space-group type information (see {ref}`py_method_get_spacegroup_type`)
+from symmetry operations. This is the replacement of
+``get_hall_number_from_symmetry`` (deprecated at v2.0).
+
+This is expected to work well for the set of symmetry operations whose
+distortion is small. The aim of making this feature is to find space-group-type
+for the set of symmetry operations given by the other source than spglib. The
+parameter ``lattice`` is used as the distance measure for ``symprec``. If this
+is not given, the cubic basis vector whose lengths are one is used.
 
 ## Methods (magnetic symmetry)
 
@@ -722,13 +737,15 @@ An example is shown below:
 ## Method (deprecated)
 ### ``get_hall_number_from_symmetry``
 
-**Deprecated.**
+**Deprecated at version 2.0. This function is replaced by
+{ref}`py_method_get_spacegroup_type_from_symmetry`.**
 
-Return one of ``hall_number`` corresponding to a space-group type of the given set of symmetry operations.
-When multiple ``hall_number`` exist for the space-group type, the smallest one (the first description of the space-group type in International Tables for Crystallography) is chosen.
-The definition of ``hall_number`` is found at
-{ref}`dataset_spg_get_dataset_spacegroup_type` and the corresponding
-space-group-type information is obtained through
+Return one of ``hall_number`` corresponding to a space-group type of the given
+set of symmetry operations. When multiple ``hall_number`` exist for the
+space-group type, the smallest one (the first description of the space-group
+type in International Tables for Crystallography) is chosen. The definition of
+``hall_number`` is found at {ref}`dataset_spg_get_dataset_spacegroup_type` and
+the corresponding space-group-type information is obtained through
 {ref}`py_method_get_spacegroup_type`.
 
 This is expected to work well for the set of symmetry operations whose
