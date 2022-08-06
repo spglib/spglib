@@ -10,7 +10,11 @@ repos:
   hooks:
   - id: clang-format
     args: ["-i", "--style=file"]  # Use style set in .clang-format
-    files: ^src/
+    files: |
+      (?x)^(
+        ^src/.+\.(c|h)|
+        ^python/_spglib.c
+      )$
     exclude: src/msg_database.c  # Skip too large file to wait every time
   - id: clang-tidy
     files: ^src/
