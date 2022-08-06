@@ -50,6 +50,7 @@ from .spglib import (  # noqa: F401
     get_pointgroup,
     get_spacegroup,
     get_spacegroup_type,
+    get_spacegroup_type_from_symmetry,
     get_stabilized_reciprocal_mesh,
     get_symmetry,
     get_symmetry_dataset,
