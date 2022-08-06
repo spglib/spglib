@@ -536,6 +536,7 @@ static Symmetry *get_space_group_with_magnetic_symmetry(
     int i, num_sym_msg, num_sym, is_type2;
     Symmetry *sym, *prim_sym;
     int identity[3][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+    double unit_lat[3][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
     double tmat[3][3], inv_tmat[3][3];
 
     sym = NULL;
@@ -581,8 +582,8 @@ static Symmetry *get_space_group_with_magnetic_symmetry(
 
     /* (a, b, c) = (a_prim, b_prim, c_prim) @ tmat */
     prim_sym = prm_get_primitive_symmetry(tmat, sym, symprec);
-
-    *spacegroup = spa_search_spacegroup_with_symmetry(prim_sym, symprec);
+    *spacegroup =
+        spa_search_spacegroup_with_symmetry(prim_sym, unit_lat, symprec);
     /* refine bravais_lattice and origin_shift */
     ref_find_similar_bravais_lattice(*spacegroup, symprec);
     /* At this point, let P = spacegroup->bravais_lattice, p =

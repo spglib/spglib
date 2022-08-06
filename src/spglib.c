@@ -149,6 +149,13 @@ static int get_schoenflies(char symbol[7], SPGCONST double lattice[3][3],
                            SPGCONST double position[][3], const int types[],
                            const int num_atom, const double symprec,
                            const double angle_tolerance);
+static SpglibSpacegroupType get_spacegroup_type(const int hall_number);
+static int get_hall_number_from_symmetry(SPGCONST int rotation[][3][3],
+                                         SPGCONST double translation[][3],
+                                         const int num_operations,
+                                         SPGCONST double lattice[3][3],
+                                         const int transform_lattice_by_tmat,
+                                         const double symprec);
 
 /*---------*/
 /* kpoints */
@@ -521,54 +528,48 @@ int spgms_get_symmetry_with_site_tensors(
     return size;
 }
 
+/* Deprecated at v2.0 */
 int spg_get_hall_number_from_symmetry(SPGCONST int rotation[][3][3],
                                       SPGCONST double translation[][3],
-                                      const int max_size,
+                                      const int num_operations,
                                       const double symprec) {
-    int i, hall_number;
-    Symmetry *symmetry;
-    Symmetry *prim_symmetry;
-    Spacegroup *spacegroup;
-    double t_mat[3][3];
+    int hall_number;
+    double lattice[3][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
 
-    symmetry = NULL;
-    prim_symmetry = NULL;
-    spacegroup = NULL;
-    hall_number = 0;
+    hall_number = get_hall_number_from_symmetry(
+        rotation, translation, num_operations, lattice, 0, symprec);
 
-    if ((symmetry = sym_alloc_symmetry(max_size)) == NULL) {
+    if (hall_number) {
+        spglib_error_code = SPGLIB_SUCCESS;
+        return hall_number;
+    } else {
+        spglib_error_code = SPGERR_SPACEGROUP_SEARCH_FAILED;
         return 0;
     }
+}
 
-    for (i = 0; i < max_size; i++) {
-        mat_copy_matrix_i3(symmetry->rot[i], rotation[i]);
-        mat_copy_vector_d3(symmetry->trans[i], translation[i]);
-    }
+SpglibSpacegroupType spg_get_spacegroup_type_from_symmetry(
+    SPGCONST int rotation[][3][3], SPGCONST double translation[][3],
+    const int num_operations, SPGCONST double lattice[3][3],
+    const double symprec) {
+    int hall_number;
+    SpglibSpacegroupType spglibtype;
 
-    prim_symmetry = prm_get_primitive_symmetry(t_mat, symmetry, symprec);
-    sym_free_symmetry(symmetry);
-    symmetry = NULL;
+    hall_number = get_hall_number_from_symmetry(
+        rotation, translation, num_operations, lattice, 1, symprec);
 
-    if (prim_symmetry == NULL) {
-        return 0;
-    }
-
-    spacegroup = spa_search_spacegroup_with_symmetry(prim_symmetry, symprec);
-
-    if (spacegroup) {
-        hall_number = spacegroup->hall_number;
+    if (hall_number) {
+        spglibtype = get_spacegroup_type(hall_number);
         spglib_error_code = SPGLIB_SUCCESS;
     } else {
-        hall_number = 0;
-        spglib_error_code = SPGERR_SPACEGROUP_SEARCH_FAILED;
+        goto err;
     }
 
-    sym_free_symmetry(prim_symmetry);
-    prim_symmetry = NULL;
-    free(spacegroup);
-    spacegroup = NULL;
+    return spglibtype;
 
-    return hall_number;
+err:
+    spglib_error_code = SPGERR_SPACEGROUP_SEARCH_FAILED;
+    return get_spacegroup_type(0);
 }
 
 SpglibMagneticSpacegroupType spg_get_magnetic_spacegroup_type_from_symmetry(
@@ -758,38 +759,8 @@ int spg_get_magnetic_symmetry_from_database(int rotations[384][3][3],
 /* Return spglibtype.number = 0 if failed */
 SpglibSpacegroupType spg_get_spacegroup_type(const int hall_number) {
     SpglibSpacegroupType spglibtype;
-    SpacegroupType spgtype;
-    Pointgroup pointgroup;
-    int arth_number;
-    char arth_symbol[7];
-
-    spglibtype.number = 0;
-    strcpy(spglibtype.schoenflies, "");
-    strcpy(spglibtype.hall_symbol, "");
-    strcpy(spglibtype.choice, "");
-    strcpy(spglibtype.international, "");
-    strcpy(spglibtype.international_full, "");
-    strcpy(spglibtype.international_short, "");
-    strcpy(spglibtype.pointgroup_international, "");
-    strcpy(spglibtype.pointgroup_schoenflies, "");
-    spglibtype.arithmetic_crystal_class_number = 0;
-    strcpy(spglibtype.arithmetic_crystal_class_symbol, "");
-
+    spglibtype = get_spacegroup_type(hall_number);
     if (0 < hall_number && hall_number < 531) {
-        spgtype = spgdb_get_spacegroup_type(hall_number);
-        spglibtype.number = spgtype.number;
-        memcpy(spglibtype.schoenflies, spgtype.schoenflies, 7);
-        memcpy(spglibtype.hall_symbol, spgtype.hall_symbol, 17);
-        memcpy(spglibtype.choice, spgtype.choice, 6);
-        memcpy(spglibtype.international, spgtype.international, 32);
-        memcpy(spglibtype.international_full, spgtype.international_full, 20);
-        memcpy(spglibtype.international_short, spgtype.international_short, 11);
-        pointgroup = ptg_get_pointgroup(spgtype.pointgroup_number);
-        memcpy(spglibtype.pointgroup_international, pointgroup.symbol, 6);
-        memcpy(spglibtype.pointgroup_schoenflies, pointgroup.schoenflies, 4);
-        arth_number = arth_get_symbol(arth_symbol, spgtype.number);
-        spglibtype.arithmetic_crystal_class_number = arth_number;
-        memcpy(spglibtype.arithmetic_crystal_class_symbol, arth_symbol, 7);
         spglib_error_code = SPGLIB_SUCCESS;
     } else {
         spglib_error_code = SPGERR_SPACEGROUP_SEARCH_FAILED;
@@ -2332,4 +2303,104 @@ static size_t get_dense_stabilized_reciprocal_mesh(
     rot_real = NULL;
 
     return num_ir;
+}
+
+SpglibSpacegroupType get_spacegroup_type(const int hall_number) {
+    SpglibSpacegroupType spglibtype;
+    SpacegroupType spgtype;
+    Pointgroup pointgroup;
+    int arth_number;
+    char arth_symbol[7];
+
+    spglibtype.number = 0;
+    strcpy(spglibtype.schoenflies, "");
+    strcpy(spglibtype.hall_symbol, "");
+    strcpy(spglibtype.choice, "");
+    strcpy(spglibtype.international, "");
+    strcpy(spglibtype.international_full, "");
+    strcpy(spglibtype.international_short, "");
+    strcpy(spglibtype.pointgroup_international, "");
+    strcpy(spglibtype.pointgroup_schoenflies, "");
+    spglibtype.arithmetic_crystal_class_number = 0;
+    strcpy(spglibtype.arithmetic_crystal_class_symbol, "");
+
+    if (0 < hall_number && hall_number < 531) {
+        spgtype = spgdb_get_spacegroup_type(hall_number);
+        spglibtype.number = spgtype.number;
+        memcpy(spglibtype.schoenflies, spgtype.schoenflies, 7);
+        memcpy(spglibtype.hall_symbol, spgtype.hall_symbol, 17);
+        memcpy(spglibtype.choice, spgtype.choice, 6);
+        memcpy(spglibtype.international, spgtype.international, 32);
+        memcpy(spglibtype.international_full, spgtype.international_full, 20);
+        memcpy(spglibtype.international_short, spgtype.international_short, 11);
+        pointgroup = ptg_get_pointgroup(spgtype.pointgroup_number);
+        memcpy(spglibtype.pointgroup_international, pointgroup.symbol, 6);
+        memcpy(spglibtype.pointgroup_schoenflies, pointgroup.schoenflies, 4);
+        arth_number = arth_get_symbol(arth_symbol, spgtype.number);
+        spglibtype.arithmetic_crystal_class_number = arth_number;
+        memcpy(spglibtype.arithmetic_crystal_class_symbol, arth_symbol, 7);
+    }
+
+    return spglibtype;
+}
+
+static int get_hall_number_from_symmetry(SPGCONST int rotation[][3][3],
+                                         SPGCONST double translation[][3],
+                                         const int num_operations,
+                                         SPGCONST double lattice[3][3],
+                                         const int transform_lattice_by_tmat,
+                                         const double symprec) {
+    int i, hall_number;
+    Symmetry *symmetry;
+    Symmetry *prim_symmetry;
+    Spacegroup *spacegroup;
+    double t_mat[3][3], t_mat_inv[3][3], prim_lat[3][3];
+    SpglibSpacegroupType spglibtype;
+
+    symmetry = NULL;
+    prim_symmetry = NULL;
+    spacegroup = NULL;
+
+    if ((symmetry = sym_alloc_symmetry(num_operations)) == NULL) {
+        goto err;
+    }
+
+    for (i = 0; i < num_operations; i++) {
+        mat_copy_matrix_i3(symmetry->rot[i], rotation[i]);
+        mat_copy_vector_d3(symmetry->trans[i], translation[i]);
+    }
+
+    prim_symmetry = prm_get_primitive_symmetry(t_mat, symmetry, symprec);
+    sym_free_symmetry(symmetry);
+    symmetry = NULL;
+
+    if (prim_symmetry == NULL) {
+        goto err;
+    }
+
+    if (transform_lattice_by_tmat) {
+        if (!mat_inverse_matrix_d3(t_mat_inv, t_mat, symprec)) {
+            goto err;
+        }
+        mat_multiply_matrix_d3(prim_lat, lattice, t_mat_inv);
+    } else {
+        mat_copy_matrix_d3(prim_lat, lattice);
+    }
+
+    spacegroup =
+        spa_search_spacegroup_with_symmetry(prim_symmetry, prim_lat, symprec);
+    sym_free_symmetry(prim_symmetry);
+    prim_symmetry = NULL;
+    if (spacegroup) {
+        hall_number = spacegroup->hall_number;
+        free(spacegroup);
+        spacegroup = NULL;
+    } else {
+        goto err;
+    }
+
+    return hall_number;
+
+err:
+    return 0;
 }
