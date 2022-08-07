@@ -1351,7 +1351,10 @@ found at <a class="reference internal" href="dataset.html#dataset-spg-get-datase
 </section>
 <section id="get-spacegroup-type">
 <span id="py-method-get-spacegroup-type"></span><h3><code class="docutils literal notranslate"><span class="pre">get_spacegroup_type</span></code><a class="headerlink" href="#get-spacegroup-type" title="Permalink to this headline">#</a></h3>
-<p><strong>New at version 1.9.4</strong></p>
+<ul class="simple">
+<li><p><strong>New at version 1.9.4</strong></p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">hall_number</span></code> member is added at version 2.0.</strong></p></li>
+</ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">spacegroup_type</span> <span class="o">=</span> <span class="n">get_spacegroup_type</span><span class="p">(</span><span class="n">hall_number</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1367,6 +1370,7 @@ dictionary is as follows:</p>
 <span class="n">international</span>
 <span class="n">schoenflies</span>
 <span class="n">hall_symbol</span>
+<span class="n">hall_number</span>
 <span class="n">choice</span>
 <span class="n">pointgroup_schoenflies</span>
 <span class="n">pointgroup_international</span>
@@ -1383,8 +1387,19 @@ dictionary is as follows:</p>
 <p>When something wrong happened, <code class="docutils literal notranslate"><span class="pre">None</span></code> is returned.</p>
 </section>
 <section id="get-spacegroup-type-from-symmetry">
-<h3><code class="docutils literal notranslate"><span class="pre">get_spacegroup_type_from_symmetry</span></code><a class="headerlink" href="#get-spacegroup-type-from-symmetry" title="Permalink to this headline">#</a></h3>
-<p>This replaces <code class="docutils literal notranslate"><span class="pre">get_hall_number_from_symmetry</span></code>, but <code class="docutils literal notranslate"><span class="pre">lattice</span></code> is necessary.</p>
+<span id="py-method-get-spacegroup-type-from-symmetry"></span><h3><code class="docutils literal notranslate"><span class="pre">get_spacegroup_type_from_symmetry</span></code><a class="headerlink" href="#get-spacegroup-type-from-symmetry" title="Permalink to this headline">#</a></h3>
+<p><strong>New at version 2.0</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">spacegroup_type</span> <span class="o">=</span> <span class="n">get_spacegroup_type_from_symmetry</span><span class="p">(</span><span class="n">rotations</span><span class="p">,</span> <span class="n">translations</span><span class="p">,</span> <span class="n">lattice</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Return space-group type information (see <a class="reference internal" href="#py-method-get-spacegroup-type"><span class="std std-ref">get_spacegroup_type</span></a>)
+from symmetry operations. This is the replacement of
+<code class="docutils literal notranslate"><span class="pre">get_hall_number_from_symmetry</span></code> (deprecated at v2.0).</p>
+<p>This is expected to work well for the set of symmetry operations whose
+distortion is small. The aim of making this feature is to find space-group-type
+for the set of symmetry operations given by the other source than spglib. The
+parameter <code class="docutils literal notranslate"><span class="pre">lattice</span></code> is used as the distance measure for <code class="docutils literal notranslate"><span class="pre">symprec</span></code>. If this
+is not given, the cubic basis vector whose lengths are one is used.</p>
 </section>
 </section>
 <section id="methods-magnetic-symmetry">
@@ -1601,12 +1616,14 @@ the irreducible k-point indices that are obtained by</p>
 <h2>Method (deprecated)<a class="headerlink" href="#method-deprecated" title="Permalink to this headline">#</a></h2>
 <section id="get-hall-number-from-symmetry">
 <h3><code class="docutils literal notranslate"><span class="pre">get_hall_number_from_symmetry</span></code><a class="headerlink" href="#get-hall-number-from-symmetry" title="Permalink to this headline">#</a></h3>
-<p><strong>Deprecated.</strong></p>
-<p>Return one of <code class="docutils literal notranslate"><span class="pre">hall_number</span></code> corresponding to a space-group type of the given set of symmetry operations.
-When multiple <code class="docutils literal notranslate"><span class="pre">hall_number</span></code> exist for the space-group type, the smallest one (the first description of the space-group type in International Tables for Crystallography) is chosen.
-The definition of <code class="docutils literal notranslate"><span class="pre">hall_number</span></code> is found at
-<a class="reference internal" href="dataset.html#dataset-spg-get-dataset-spacegroup-type"><span class="std std-ref">Space group type</span></a> and the corresponding
-space-group-type information is obtained through
+<p><strong>Deprecated at version 2.0. This function is replaced by
+<a class="reference internal" href="#py-method-get-spacegroup-type-from-symmetry"><span class="std std-ref">get_spacegroup_type_from_symmetry</span></a>.</strong></p>
+<p>Return one of <code class="docutils literal notranslate"><span class="pre">hall_number</span></code> corresponding to a space-group type of the given
+set of symmetry operations. When multiple <code class="docutils literal notranslate"><span class="pre">hall_number</span></code> exist for the
+space-group type, the smallest one (the first description of the space-group
+type in International Tables for Crystallography) is chosen. The definition of
+<code class="docutils literal notranslate"><span class="pre">hall_number</span></code> is found at <a class="reference internal" href="dataset.html#dataset-spg-get-dataset-spacegroup-type"><span class="std std-ref">Space group type</span></a> and
+the corresponding space-group-type information is obtained through
 <a class="reference internal" href="#py-method-get-spacegroup-type"><span class="std std-ref">get_spacegroup_type</span></a>.</p>
 <p>This is expected to work well for the set of symmetry operations whose
 distortion is small. The aim of making this feature is to find

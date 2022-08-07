@@ -327,6 +327,7 @@ group operations are stored in ``rotations`` and ``translations``.
 ### ``spg_get_spacegroup_type``
 
 **Changed at version 1.9.4: Some members are added and the member name 'setting' is changed to 'choice'.**
+**Changed at version 2.0: Add 'hall_number' member.**
 
 This function allows to directly access to the space-group-type
 database in spglib (spg_database.c). To specify the space group type
@@ -348,6 +349,7 @@ typedef struct {
     char international[32];
     char schoenflies[7];
     char hall_symbol[17];
+    int hall_number;
     char choice[6];
     char pointgroup_schoenflies[4];
     char pointgroup_international[6];
@@ -359,7 +361,15 @@ typedef struct {
 (api_spg_get_spacegroup_type_from_symmetry)=
 ### `spg_get_spacegroup_type_from_symmetry`
 
+**New at version 2.0**
+
 Return space-group type information from symmetry operations.
+This is the replacement of ``spg_get_hall_number_from_symmetry`` (deprecated at v2.0).
+
+This is expected to work well for the set of symmetry operations whose
+distortion is small. The aim of making this feature is to find
+space-group-type for the set of symmetry operations given by the other
+source than spglib.
 
 ```c
 SpglibSpacegroupType spg_get_spacegroup_type_from_symmetry(
@@ -367,6 +377,13 @@ SpglibSpacegroupType spg_get_spacegroup_type_from_symmetry(
     const int num_operations, SPGCONST double lattice[3][3], const double symprec
 );
 ```
+
+The parameter ``lattice`` is used as the distance measure for ``symprec``. If it
+is unknown,
+```
+lattice[3][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+```
+may be a good choice though ``symprec`` works under this ``lattice``.
 
 
 ## Magnetic symmetry
@@ -640,7 +657,8 @@ This function can be used to obtain all mesh grid points by setting
 ## Deprecated
 ### ``spg_get_hall_number_from_symmetry``
 
-**Deprecated. This function is replaced by {ref}`api_spg_get_spacegroup_type_from_symmetry`.**
+**Deprecated at version 2.0. This function is replaced by
+{ref}`api_spg_get_spacegroup_type_from_symmetry`.**
 
 Return one of ``hall_number`` corresponding to a space-group type of the given
 set of symmetry operations. When multiple ``hall_number`` exist for the

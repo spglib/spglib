@@ -1255,7 +1255,8 @@ group operations are stored in <code class="docutils literal notranslate"><span 
 </section>
 <section id="spg-get-spacegroup-type">
 <span id="api-spg-spacegroup-type"></span><h3><code class="docutils literal notranslate"><span class="pre">spg_get_spacegroup_type</span></code><a class="headerlink" href="#spg-get-spacegroup-type" title="Permalink to this headline">#</a></h3>
-<p><strong>Changed at version 1.9.4: Some members are added and the member name ‘setting’ is changed to ‘choice’.</strong></p>
+<p><strong>Changed at version 1.9.4: Some members are added and the member name ‘setting’ is changed to ‘choice’.</strong>
+<strong>Changed at version 2.0: Add ‘hall_number’ member.</strong></p>
 <p>This function allows to directly access to the space-group-type
 database in spglib (spg_database.c). To specify the space group type
 with a specific choice, <code class="docutils literal notranslate"><span class="pre">hall_number</span></code> is used. The definition of
@@ -1273,6 +1274,7 @@ with a specific choice, <code class="docutils literal notranslate"><span class="
 <span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">international</span><span class="p">[</span><span class="mi">32</span><span class="p">];</span><span class="w"></span>
 <span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">schoenflies</span><span class="p">[</span><span class="mi">7</span><span class="p">];</span><span class="w"></span>
 <span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">hall_symbol</span><span class="p">[</span><span class="mi">17</span><span class="p">];</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">hall_number</span><span class="p">;</span><span class="w"></span>
 <span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">choice</span><span class="p">[</span><span class="mi">6</span><span class="p">];</span><span class="w"></span>
 <span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">pointgroup_schoenflies</span><span class="p">[</span><span class="mi">4</span><span class="p">];</span><span class="w"></span>
 <span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">pointgroup_international</span><span class="p">[</span><span class="mi">6</span><span class="p">];</span><span class="w"></span>
@@ -1284,13 +1286,25 @@ with a specific choice, <code class="docutils literal notranslate"><span class="
 </section>
 <section id="spg-get-spacegroup-type-from-symmetry">
 <span id="api-spg-get-spacegroup-type-from-symmetry"></span><h3><code class="docutils literal notranslate"><span class="pre">spg_get_spacegroup_type_from_symmetry</span></code><a class="headerlink" href="#spg-get-spacegroup-type-from-symmetry" title="Permalink to this headline">#</a></h3>
-<p>Return space-group type information from symmetry operations.</p>
+<p><strong>New at version 2.0</strong></p>
+<p>Return space-group type information from symmetry operations.
+This is the replacement of <code class="docutils literal notranslate"><span class="pre">spg_get_hall_number_from_symmetry</span></code> (deprecated at v2.0).</p>
+<p>This is expected to work well for the set of symmetry operations whose
+distortion is small. The aim of making this feature is to find
+space-group-type for the set of symmetry operations given by the other
+source than spglib.</p>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">SpglibSpacegroupType</span><span class="w"> </span><span class="nf">spg_get_spacegroup_type_from_symmetry</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">SPGCONST</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">rotations</span><span class="p">[][</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span><span class="w"> </span><span class="n">SPGCONST</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">translations</span><span class="p">[][</span><span class="mi">3</span><span class="p">],</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">num_operations</span><span class="p">,</span><span class="w"> </span><span class="n">SPGCONST</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">symprec</span><span class="w"></span>
 <span class="p">);</span><span class="w"></span>
 </pre></div>
 </div>
+<p>The parameter <code class="docutils literal notranslate"><span class="pre">lattice</span></code> is used as the distance measure for <code class="docutils literal notranslate"><span class="pre">symprec</span></code>. If it
+is unknown,</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">{{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">},</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">},</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">}};</span>
+</pre></div>
+</div>
+<p>may be a good choice though <code class="docutils literal notranslate"><span class="pre">symprec</span></code> works under this <code class="docutils literal notranslate"><span class="pre">lattice</span></code>.</p>
 </section>
 </section>
 <section id="magnetic-symmetry">
@@ -1535,7 +1549,8 @@ are returned as the return value.</p>
 <h2>Deprecated<a class="headerlink" href="#deprecated" title="Permalink to this headline">#</a></h2>
 <section id="spg-get-hall-number-from-symmetry">
 <h3><code class="docutils literal notranslate"><span class="pre">spg_get_hall_number_from_symmetry</span></code><a class="headerlink" href="#spg-get-hall-number-from-symmetry" title="Permalink to this headline">#</a></h3>
-<p><strong>Deprecated. This function is replaced by <a class="reference internal" href="#api-spg-get-spacegroup-type-from-symmetry"><span class="std std-ref">spg_get_spacegroup_type_from_symmetry</span></a>.</strong></p>
+<p><strong>Deprecated at version 2.0. This function is replaced by
+<a class="reference internal" href="#api-spg-get-spacegroup-type-from-symmetry"><span class="std std-ref">spg_get_spacegroup_type_from_symmetry</span></a>.</strong></p>
 <p>Return one of <code class="docutils literal notranslate"><span class="pre">hall_number</span></code> corresponding to a space-group type of the given
 set of symmetry operations. When multiple <code class="docutils literal notranslate"><span class="pre">hall_number</span></code> exist for the
 space-group type, the smallest one (the first description of the space-group
