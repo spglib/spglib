@@ -34,7 +34,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import warnings
-from typing import Dict, Optional
 
 import numpy as np
 
@@ -745,7 +744,7 @@ def get_spacegroup_type(hall_number):
 
 def get_spacegroup_type_from_symmetry(
     rotations, translations, lattice=None, symprec=1e-5
-) -> Optional[Dict]:
+):
     """Space group type information is obtained from a set of symmetry operations.
 
     Parameters

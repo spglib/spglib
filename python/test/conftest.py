@@ -1,7 +1,8 @@
 """Pytest configuration."""
-from io import StringIO
+from __future__ import annotations
+
 from pathlib import Path
-from typing import Callable, List, Tuple
+from typing import Callable
 
 import numpy as np
 import pytest
@@ -22,13 +23,13 @@ _data_dir = Path(__file__).parent.absolute() / "data"
 
 
 @pytest.fixture(scope="session")
-def dirnames() -> Tuple:
+def dirnames() -> list[Path]:
     """Return test directory names."""
-    return (_data_dir / d for d in _dirnames)
+    return [_data_dir / d for d in _dirnames]
 
 
 @pytest.fixture(scope="session")
-def all_filenames() -> List:
+def all_filenames() -> list:
     """Return all filenames in test directories."""
     all_filenames = []
     for d in (_data_dir / _d for _d in _dirnames):
@@ -44,13 +45,12 @@ def read_vasp() -> Callable:
         with open(filename) as f:
             lines = f.readlines()
             return _get_cell(lines)
-        return None
 
     return _read_vasp
 
 
-def read_vasp_from_strings(strings):
-    return _get_cell(StringIO(strings).readlines())
+# def read_vasp_from_strings(strings):
+#     return _get_cell(StringIO(strings).readlines())
 
 
 def _get_cell(lines):

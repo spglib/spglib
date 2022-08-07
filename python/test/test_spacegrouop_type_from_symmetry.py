@@ -1,7 +1,9 @@
 """Test of spacegroup_type_from_symmetry."""
+from __future__ import annotations
+
 import os
 from pathlib import Path
-from typing import Callable, List
+from typing import Callable
 
 import pytest
 
@@ -16,7 +18,7 @@ data_dir = os.path.dirname(os.path.abspath(__file__))
 
 @pytest.mark.parametrize("lattice_None", [True, False])
 def test_spacegroup_type_from_symmetry(
-    all_filenames: List[Path], read_vasp: Callable, lattice_None: bool
+    all_filenames: list[Path], read_vasp: Callable, lattice_None: bool
 ):
     """Test spacegroup_type_from_symmetry."""
     for fname in all_filenames:
