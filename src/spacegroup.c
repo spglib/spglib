@@ -518,8 +518,9 @@ Spacegroup *spa_search_spacegroup(const Primitive *primitive,
 /* Return NULL if failed */
 /* Assume symmetry is transformed in primitive cell. */
 Spacegroup *spa_search_spacegroup_with_symmetry(const Symmetry *symmetry,
+                                                SPGCONST double prim_lat[3][3],
                                                 const double symprec) {
-    int i, hall_number;
+    int i;
     Spacegroup *spacegroup;
     Primitive *primitive;
 
@@ -531,7 +532,7 @@ Spacegroup *spa_search_spacegroup_with_symmetry(const Symmetry *symmetry,
     if ((primitive->cell = cel_alloc_cell(1, NOSPIN)) == NULL) {
         return 0;
     }
-    mat_copy_matrix_d3(primitive->cell->lattice, identity);
+    mat_copy_matrix_d3(primitive->cell->lattice, prim_lat);
     for (i = 0; i < 3; i++) {
         primitive->cell->position[0][i] = 0;
     }

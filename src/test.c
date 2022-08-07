@@ -35,6 +35,7 @@ static int test_spg_relocate_BZ_grid_address(void);
 static int test_spg_relocate_dense_BZ_grid_address(void);
 static int test_spg_get_error_message(void);
 static int test_spg_get_hall_number_from_symmetry(void);
+static int test_spg_get_spacegroup_type_from_symmetry(void);
 static int show_spg_dataset(double lattice[3][3], const double origin_shift[3],
                             double position[][3], const int num_atom,
                             const int types[]);
@@ -57,6 +58,7 @@ int main(void) {
                             test_spg_get_international,
                             test_spg_get_schoenflies,
                             test_spg_get_spacegroup_type,
+                            test_spg_get_spacegroup_type_from_symmetry,
                             test_spg_get_magnetic_spacegroup_type,
                             test_spg_get_symmetry_from_database,
                             test_spg_get_magnetic_symmetry_from_database,
@@ -452,6 +454,49 @@ static int test_spg_get_spacegroup_type(void) {
     } else {
         return 1;
     }
+}
+static int test_spg_get_spacegroup_type_from_symmetry(void) {
+    double lattice[3][3] = {{4, 0, 0}, {0, 4, 0}, {0, 0, 4}};
+    double position[][3] = {{0, 0, 0}, {0.5, 0.5, 0.5}};
+    int types[] = {1, 1};
+    int num_atom = 2;
+    int retval = 0;
+    double symprec = 1e-5;
+
+    int hall_number;
+    SpglibSpacegroupType spgtype;
+    SpglibDataset *dataset;
+
+    dataset = NULL;
+
+    printf("*** spg_get_spacegroup_type_from_symmetry ***:\n");
+    if ((dataset = spg_get_dataset(lattice, position, types, num_atom,
+                                   symprec)) == NULL) {
+        goto end;
+    }
+    printf("hall_number = %d is found by spg_get_dataset.\n",
+           dataset->hall_number);
+    spgtype = spg_get_spacegroup_type_from_symmetry(
+        dataset->rotations, dataset->translations, dataset->n_operations,
+        lattice, symprec);
+    printf("number = %d is found by spg_get_spacegroup_type_from_symmetry.\n",
+           spgtype.number);
+    if (spgtype.number == dataset->spacegroup_number) {
+        if (spgtype.number) {
+            show_spacegroup_type(spgtype);
+        } else {
+            retval = 1;
+        }
+    }
+    /* Im-3m (229) */
+    assert(spgtype.number == 229);
+
+    if (dataset) {
+        spg_free_dataset(dataset);
+    }
+
+end:
+    return retval;
 }
 
 static int test_spg_get_magnetic_spacegroup_type(void) {

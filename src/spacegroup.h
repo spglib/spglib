@@ -70,6 +70,7 @@ Spacegroup *spa_search_spacegroup(const Primitive *primitive,
                                   const int hall_number, const double symprec,
                                   const double angle_tolerance);
 Spacegroup *spa_search_spacegroup_with_symmetry(const Symmetry *symmetry,
+                                                SPGCONST double prim_lat[3][3],
                                                 const double symprec);
 Cell *spa_transform_to_primitive(int *mapping_table, const Cell *cell,
                                  SPGCONST double trans_mat[3][3],
