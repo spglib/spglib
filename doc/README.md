@@ -5,8 +5,11 @@ This directory contains python-sphinx documentation source.
 ## How to compile
 
 ```shell
-pip install -r requirements.txt
+cd python
+pip install -e ".[doc]"
+cd ../doc
 make html
+# sphinx-autobuild . _build
 ```
 
 ## Source files
