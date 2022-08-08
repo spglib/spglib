@@ -310,9 +310,11 @@ as follows:
    \frac{{1}}{2} & \frac{{1}}{2} & 0
    \end{pmatrix}.
 
-The choice of transformation matrix depends on purposes. These
-transformation matrices above are just the spglib choices and may not
-be the best.
+The choice of transformation matrix is a matter of convention. The transformation
+matrices above transform from a conventional ITA basis to the primitive
+setting adopted in the reference work of Cracknell, Davies, Miller, and Love
+(CDML). Other primitive setting choices exist: of note, the CDML choice is not
+the primitive setting choice made in the International Tables of Crystallography.
 
 For rhombohedral lattice systems with the H setting (hexagonal
 lattice), :math:`\boldsymbol{P}_\mathrm{R}` is applied to obtain
