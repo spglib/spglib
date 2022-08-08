@@ -412,7 +412,7 @@ int spg_get_symmetry_with_collinear_spin(int rotation[][3][3],
 
 ### `spg_get_symmetry_with_site_tensors`
 
-**Changed in version 2.0: new argument `is_axial` is now required.**
+**Experimental: new at version 2.0**
 
 Returns magnetic symmetry operations represented by `rotation`, `translation`, and `spin_flips`
 from crystal structure with `lattice`, `position`, `types`, and `tensors`.
@@ -514,6 +514,8 @@ typedef struct {
 - `type` Type of MSG from 1 to 4
 
 ### `spg_get_magnetic_spacegroup_type_from_symmetry`
+
+**Experimental: new at version 2.0**
 
 Return magnetic space-group type information from magnetic symmetry operations.
 `time_reversals` takes 0 for ordinary operations and 1 for time-reversal operations.

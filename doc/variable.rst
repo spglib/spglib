@@ -118,9 +118,20 @@ functions are prepared for C-API as follows
    spgat_get_schoenflies
    spgat_refine_cell
 
+``mag_symprec``
+---------------
 These functions are called by the same way with an additional argument
 of ``const double angle_tolerance`` in degrees. By specifying a
 negative value, the behavior becomes the same as usual functions. The
 default value of ``angle_tolerance`` is a negative value. For
 python-API, the angle tolerance is given with a keyword argument of
 `angle_tolerance`.
+
+
+Tolerance for magnetic symmetry search in the unit of spins or magmoms.
+By specifying a negative value, the same value as symprec is used to
+compare magnetic moments.
+The default value of mag_symprec is a negative value.
+- spgms_get_magnetic_dataset
+- spgms_get_symmetry_with_collinear_spin
+- spgms_get_symmetry_with_site_tensors
