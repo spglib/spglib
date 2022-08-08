@@ -940,14 +940,15 @@ static PointSymmetry get_lattice_symmetry(const Cell *cell,
 
     aperiodic_axis = cell->aperiodic_axis;
 
-    /* input cell of get_lattice_symmetry seems always to be primitive cell, */
-    /* then del_delaunay_reduce and transform_pointsymmetry are useless. */
-    if ((aperiodic_axis == -1 &&
-         !del_delaunay_reduce(min_lattice, cell->lattice, symprec)) ||
-        (aperiodic_axis != -1 &&
-         !del_layer_delaunay_reduce(min_lattice, cell->lattice, aperiodic_axis,
-                                    symprec))) {
-        goto err;
+    if (aperiodic_axis == -1) {
+        if (!del_delaunay_reduce(min_lattice, cell->lattice, symprec)) {
+            goto err;
+        }
+    } else {
+        if (!del_layer_delaunay_reduce(min_lattice, cell->lattice,
+                                       aperiodic_axis, symprec)) {
+            goto err;
+        }
     }
 
     mat_get_metric(metric_orig, min_lattice);

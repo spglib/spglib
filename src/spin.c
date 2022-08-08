@@ -66,18 +66,18 @@ static void apply_symmetry_to_position(double pos_dst[3],
                                        SPGCONST double pos_src[3],
                                        SPGCONST int rot[3][3],
                                        SPGCONST double trans[3]);
-static void apply_symmetry_to_site_scalar(double *dst, const double src,
-                                          SPGCONST double rot_cart[3][3],
-                                          const int timerev,
-                                          const int with_time_reversal,
-                                          const int is_axial);
-static void apply_symmetry_to_site_vector(double (*dst)[3], const int idx,
+static double apply_symmetry_to_site_scalar(const double src,
+                                            SPGCONST double rot_cart[3][3],
+                                            const int timerev,
+                                            const int with_time_reversal,
+                                            const int is_axial);
+static void apply_symmetry_to_site_vector(double dst[3], const int idx,
                                           const double *tensors,
                                           SPGCONST double rot_cart[3][3],
                                           const int timerev,
                                           const int with_time_reversal,
                                           const int is_axial);
-void set_rotations_in_cartesian(double (**rotations_cart)[3][3],
+void set_rotations_in_cartesian(double (*rotations_cart)[3][3],
                                 SPGCONST double lattice[3][3],
                                 const MagneticSymmetry *magnetic_symmetry);
 static int is_zero(const double a, const double mag_symprec);
@@ -232,7 +232,7 @@ Cell *spn_get_idealized_cell(const int *permutations, const Cell *cell,
              sizeof(double[3][3]) * magnetic_symmetry->size)) == NULL) {
         return NULL;
     }
-    set_rotations_in_cartesian(&rotations_cart, cell->lattice,
+    set_rotations_in_cartesian(rotations_cart, cell->lattice,
                                magnetic_symmetry);
 
     for (i = 0; i < cell->size; i++) {
@@ -271,13 +271,13 @@ Cell *spn_get_idealized_cell(const int *permutations, const Cell *cell,
             }
 
             if (cell->tensor_rank == COLLINEAR) {
-                apply_symmetry_to_site_scalar(&scalar_tmp, cell->tensors[j],
-                                              rotations_cart[p],
-                                              magnetic_symmetry->timerev[p],
-                                              with_time_reversal, is_axial);
+                scalar_tmp = apply_symmetry_to_site_scalar(
+                    cell->tensors[j], rotations_cart[p],
+                    magnetic_symmetry->timerev[p], with_time_reversal,
+                    is_axial);
                 scalar_res += scalar_tmp - cell->tensors[i];
             } else if (cell->tensor_rank == NONCOLLINEAR) {
-                apply_symmetry_to_site_vector(&vector_tmp, j, cell->tensors,
+                apply_symmetry_to_site_vector(vector_tmp, j, cell->tensors,
                                               rotations_cart[p],
                                               magnetic_symmetry->timerev[p],
                                               with_time_reversal, is_axial);
@@ -584,7 +584,7 @@ static int *get_symmetry_permutations(const MagneticSymmetry *magnetic_symmetry,
         permutations = NULL;
         return NULL;
     }
-    set_rotations_in_cartesian(&rotations_cart, cell->lattice,
+    set_rotations_in_cartesian(rotations_cart, cell->lattice,
                                magnetic_symmetry);
 
     for (p = 0; p < magnetic_symmetry->size; p++) {
@@ -596,12 +596,12 @@ static int *get_symmetry_permutations(const MagneticSymmetry *magnetic_symmetry,
                                        magnetic_symmetry->rot[p],
                                        magnetic_symmetry->trans[p]);
             if (cell->tensor_rank == COLLINEAR) {
-                apply_symmetry_to_site_scalar(&scalar, cell->tensors[i],
-                                              rotations_cart[p],
-                                              magnetic_symmetry->timerev[p],
-                                              with_time_reversal, is_axial);
+                scalar = apply_symmetry_to_site_scalar(
+                    cell->tensors[i], rotations_cart[p],
+                    magnetic_symmetry->timerev[p], with_time_reversal,
+                    is_axial);
             } else if (cell->tensor_rank == NONCOLLINEAR) {
-                apply_symmetry_to_site_vector(&vector, i, cell->tensors,
+                apply_symmetry_to_site_vector(vector, i, cell->tensors,
                                               rotations_cart[p],
                                               magnetic_symmetry->timerev[p],
                                               with_time_reversal, is_axial);
@@ -690,8 +690,8 @@ static int get_operation_sign_on_scalar(const double spin_j,
     double spin_j_ops;
 
     for (timerev = 0; timerev <= 1; timerev += 1) {
-        apply_symmetry_to_site_scalar(&spin_j_ops, spin_j, rot_cart, timerev,
-                                      with_time_reversal, is_axial);
+        spin_j_ops = apply_symmetry_to_site_scalar(
+            spin_j, rot_cart, timerev, with_time_reversal, is_axial);
         if (is_zero(spin_k - spin_j_ops, mag_symprec)) {
             return 1 - 2 * timerev; /* Spin-flip */
         }
@@ -715,7 +715,7 @@ static int get_operation_sign_on_vector(const int j, const int k,
     double vec_j_ops[3], diff[3];
 
     for (timerev = 0; timerev <= 1; timerev++) {
-        apply_symmetry_to_site_vector(&vec_j_ops, j, vectors, rot_cart, timerev,
+        apply_symmetry_to_site_vector(vec_j_ops, j, vectors, rot_cart, timerev,
                                       with_time_reversal, is_axial);
         for (s = 0; s < 3; s++) {
             diff[s] = vectors[3 * k + s] - vec_j_ops[s];
@@ -741,23 +741,24 @@ static void apply_symmetry_to_position(double pos_dst[3],
 }
 
 /* tensor_rank=0 case */
-static void apply_symmetry_to_site_scalar(double *dst, const double src,
-                                          SPGCONST double rot_cart[3][3],
-                                          const int timerev,
-                                          const int with_time_reversal,
-                                          const int is_axial) {
-    double det;
+static double apply_symmetry_to_site_scalar(const double src,
+                                            SPGCONST double rot_cart[3][3],
+                                            const int timerev,
+                                            const int with_time_reversal,
+                                            const int is_axial) {
+    double det, dst;
 
-    *dst = (with_time_reversal && timerev) ? -src : src;
+    dst = (with_time_reversal && timerev) ? -src : src;
 
     if (is_axial) {
         det = mat_get_determinant_d3(rot_cart);
-        *dst *= det;
+        dst *= det;
     }
+    return dst;
 }
 
 /* tensor_rank=1 case */
-static void apply_symmetry_to_site_vector(double (*dst)[3], const int idx,
+static void apply_symmetry_to_site_vector(double dst[3], const int idx,
                                           const double *tensors,
                                           SPGCONST double rot_cart[3][3],
                                           const int timerev,
@@ -772,18 +773,18 @@ static void apply_symmetry_to_site_vector(double (*dst)[3], const int idx,
     }
 
     det = mat_get_determinant_d3(rot_cart);
-    mat_multiply_matrix_vector_d3(*dst, rot_cart, vec);
+    mat_multiply_matrix_vector_d3(dst, rot_cart, vec);
     for (s = 0; s < 3; s++) {
         if (with_time_reversal && timerev) {
-            (*dst)[s] *= -1;
+            dst[s] *= -1;
         }
         if (is_axial) {
-            (*dst)[s] *= det;
+            dst[s] *= det;
         }
     }
 }
 
-void set_rotations_in_cartesian(double (**rotations_cart)[3][3],
+void set_rotations_in_cartesian(double (*rotations_cart)[3][3],
                                 SPGCONST double lattice[3][3],
                                 const MagneticSymmetry *magnetic_symmetry) {
     int i;
@@ -792,10 +793,9 @@ void set_rotations_in_cartesian(double (**rotations_cart)[3][3],
     mat_inverse_matrix_d3(inv_lat, lattice, 0);
     for (i = 0; i < magnetic_symmetry->size; i++) {
         /* rot_cart = lattice @ rot @ lattice^-1 */
-        mat_multiply_matrix_id3((*rotations_cart)[i], magnetic_symmetry->rot[i],
+        mat_multiply_matrix_id3(rotations_cart[i], magnetic_symmetry->rot[i],
                                 inv_lat);
-        mat_multiply_matrix_d3((*rotations_cart)[i], lattice,
-                               (*rotations_cart)[i]);
+        mat_multiply_matrix_d3(rotations_cart[i], lattice, rotations_cart[i]);
     }
 }
 
