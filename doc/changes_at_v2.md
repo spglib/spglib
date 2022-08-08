@@ -1,4 +1,14 @@
-# Summary of changes at release v2.0
+# Summary of changes at release v2.0 and future plan
+
+This release contains functions to search magnetic space group types which are
+provided as experimental features. The behaviours of these magnetic related
+functions (`*_magnetic_*`) with respect to the tolerance parameter (`symprec` or
+{ref}`variables_mag_symprec`) may be changed in the future.
+
+We are planning to separate irreducible k-points search from spglib. At spglib
+version 4.0, those functions will be removed if we succeed to provide an
+alternative package (hopefully with better functionalities) until then.
+
 ## C functions and structures
 ### `spg_get_spacegroup_type`
 - Add `hall_number` member at version 2.0
