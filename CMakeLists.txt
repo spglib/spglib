@@ -132,5 +132,5 @@ endif()
 configure_file(spglib.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/spglib.pc)
 install(
   FILES  ${CMAKE_CURRENT_BINARY_DIR}/spglib.pc
-  DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig
+  DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/pkgconfig
   COMPONENT pkgconfig)
