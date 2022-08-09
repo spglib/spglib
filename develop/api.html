@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>C-APIs &#8212; Spglib v.1.16.5</title>
+    <title>C-APIs &#8212; Spglib v.2.0.0</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -74,7 +74,7 @@
       
       
       
-      <h1 class="site-logo" id="site-title">Spglib v.1.16.5</h1>
+      <h1 class="site-logo" id="site-title">Spglib v.2.0.0</h1>
       
     </a>
 </div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
@@ -126,6 +126,11 @@
  <li class="toctree-l1">
   <a class="reference internal" href="references.html">
    References
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="releases.html">
+   Summary of releases
   </a>
  </li>
  <li class="toctree-l1 has-children">
@@ -1299,12 +1304,12 @@ source than spglib.</p>
 <span class="p">);</span><span class="w"></span>
 </pre></div>
 </div>
-<p>The parameter <code class="docutils literal notranslate"><span class="pre">lattice</span></code> is used as the distance measure for <code class="docutils literal notranslate"><span class="pre">symprec</span></code>. If it
-is unknown,</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">SpglibSpacegroupType</span></code> structure is explained at <a class="reference internal" href="#api-spg-spacegroup-type"><span class="std std-ref">spg_get_spacegroup_type</span></a>.
+The parameter <code class="docutils literal notranslate"><span class="pre">lattice</span></code> is used as the distance measure for <code class="docutils literal notranslate"><span class="pre">symprec</span></code>. If it
+is unknown, the following may be a reasonable choice.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">{{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">},</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">},</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">}};</span>
 </pre></div>
 </div>
-<p>may be a good choice though <code class="docutils literal notranslate"><span class="pre">symprec</span></code> works under this <code class="docutils literal notranslate"><span class="pre">lattice</span></code>.</p>
 </section>
 </section>
 <section id="magnetic-symmetry">
@@ -1332,7 +1337,7 @@ for the definition <code class="docutils literal notranslate"><span class="pre">
 </section>
 <section id="spg-get-symmetry-with-site-tensors">
 <h3><code class="docutils literal notranslate"><span class="pre">spg_get_symmetry_with_site_tensors</span></code><a class="headerlink" href="#spg-get-symmetry-with-site-tensors" title="Permalink to this headline">#</a></h3>
-<p><strong>Changed in version 2.0: new argument <code class="docutils literal notranslate"><span class="pre">is_axial</span></code> is now required.</strong></p>
+<p><strong>Experimental: new at version 2.0</strong></p>
 <p>Returns magnetic symmetry operations represented by <code class="docutils literal notranslate"><span class="pre">rotation</span></code>, <code class="docutils literal notranslate"><span class="pre">translation</span></code>, and <code class="docutils literal notranslate"><span class="pre">spin_flips</span></code>
 from crystal structure with <code class="docutils literal notranslate"><span class="pre">lattice</span></code>, <code class="docutils literal notranslate"><span class="pre">position</span></code>, <code class="docutils literal notranslate"><span class="pre">types</span></code>, and <code class="docutils literal notranslate"><span class="pre">tensors</span></code>.
 When you need magnetic symmetry operations of non-collinear spins, set <code class="docutils literal notranslate"><span class="pre">tensor_rank=1</span></code>, <code class="docutils literal notranslate"><span class="pre">is_axial=1</span></code>,
@@ -1426,6 +1431,7 @@ The serial number is between 1 and 1651.</p>
 </section>
 <section id="spg-get-magnetic-spacegroup-type-from-symmetry">
 <h3><code class="docutils literal notranslate"><span class="pre">spg_get_magnetic_spacegroup_type_from_symmetry</span></code><a class="headerlink" href="#spg-get-magnetic-spacegroup-type-from-symmetry" title="Permalink to this headline">#</a></h3>
+<p><strong>Experimental: new at version 2.0</strong></p>
 <p>Return magnetic space-group type information from magnetic symmetry operations.
 <code class="docutils literal notranslate"><span class="pre">time_reversals</span></code> takes 0 for ordinary operations and 1 for time-reversal operations.</p>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">SpglibMagneticSpacegroupType</span><span class="w"> </span><span class="nf">spg_get_magnetic_spacegroup_type_from_symmetry</span><span class="p">(</span><span class="w"></span>

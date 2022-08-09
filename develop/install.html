@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>How to install spglib C-API &#8212; Spglib v.1.16.5</title>
+    <title>How to install spglib C-API &#8212; Spglib v.2.0.0</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -73,7 +73,7 @@
       
       
       
-      <h1 class="site-logo" id="site-title">Spglib v.1.16.5</h1>
+      <h1 class="site-logo" id="site-title">Spglib v.2.0.0</h1>
       
     </a>
 </div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
@@ -125,6 +125,11 @@
  <li class="toctree-l1">
   <a class="reference internal" href="references.html">
    References
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="releases.html">
+   Summary of releases
   </a>
  </li>
  <li class="toctree-l1 has-children">
@@ -222,7 +227,7 @@ title="Fullscreen mode"
   <div class="menu-dropdown__content">
     <ul>
       <li>
-        <a href="_sources/install.rst.txt"
+        <a href="_sources/install.md.txt"
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -233,7 +238,7 @@ title="Download source file"
 <span class="headerbtn__icon-container">
   <i class="fas fa-file"></i>
   </span>
-<span class="headerbtn__text-container">.rst</span>
+<span class="headerbtn__text-container">.md</span>
 </a>
 
       </li>
@@ -378,8 +383,7 @@ title="Print to PDF"
 <h1>How to install spglib C-API<a class="headerlink" href="#how-to-install-spglib-c-api" title="Permalink to this headline">#</a></h1>
 <section id="download">
 <h2>Download<a class="headerlink" href="#download" title="Permalink to this headline">#</a></h2>
-<p>The source code is downloaded at
-<a class="reference external" href="https://github.com/spglib/spglib/archive/master.zip">https://github.com/spglib/spglib/archive/master.zip</a> or you can
+<p>The source code is downloaded at <a class="reference external" href="https://github.com/spglib/spglib/archive/master.zip">https://github.com/spglib/spglib/archive/master.zip</a> or you can
 git-clone the spglib repository by</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">spglib</span><span class="o">/</span><span class="n">spglib</span><span class="o">.</span><span class="n">git</span>
 </pre></div>
@@ -390,31 +394,38 @@ git-clone the spglib repository by</p>
 <section id="unix-like">
 <h3>Unix-like<a class="headerlink" href="#unix-like" title="Permalink to this headline">#</a></h3>
 <p>After expanding source code, go into the source code directory:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">tar</span> <span class="n">xvfz</span> <span class="n">spglib</span><span class="o">-</span><span class="mf">1.9.8</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
-<span class="o">%</span> <span class="n">cd</span> <span class="n">spglib</span><span class="o">-</span><span class="mf">1.9.8</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">tar</span> <span class="n">xvfz</span> <span class="n">spglib</span><span class="o">-</span><span class="mf">2.0.0</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
+<span class="o">%</span> <span class="n">cd</span> <span class="n">spglib</span><span class="o">-</span><span class="mf">2.0.0</span>
 </pre></div>
 </div>
 <p>Build and install in <code class="docutils literal notranslate"><span class="pre">_build</span></code> directory by</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">mkdir</span> <span class="n">_build</span> <span class="o">&amp;&amp;</span> <span class="n">cd</span> <span class="n">_build</span>
-<span class="o">%</span> <span class="n">cmake</span> <span class="o">-</span><span class="n">DCMAKE_INSTALL_PREFIX</span><span class="o">=</span><span class="s2">&quot;&quot;</span> <span class="o">..</span>
-<span class="o">%</span> <span class="n">make</span>
-<span class="o">%</span> <span class="n">make</span> <span class="n">DESTDIR</span><span class="o">=/</span><span class="n">some</span><span class="o">/</span><span class="n">where</span> <span class="n">install</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>% mkdir _build
+% <span class="nb">cd</span> _build
+% cmake ..
+% cmake --build .
+% cmake --install <span class="o">(</span>probably installed under /usr/local<span class="o">)</span>
 </pre></div>
 </div>
-<p>The libraries are installed at <code class="docutils literal notranslate"><span class="pre">/some/where/lib</span></code> and the
-header file is installed at <code class="docutils literal notranslate"><span class="pre">/some/where/include</span></code>.</p>
+<p>Or to install under the parent directory,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>% mkdir _build
+% <span class="nb">cd</span> _build
+% cmake -DCMAKE_INSTALL_PREFIX<span class="o">=</span>.. ..
+% cmake --build .
+% cmake --install . --prefix ..
+</pre></div>
+</div>
 </section>
 <section id="windows-cygwin">
 <h3>Windows &amp; Cygwin<a class="headerlink" href="#windows-cygwin" title="Permalink to this headline">#</a></h3>
 <p>For windows, cmake behaves slightly differently and the following
 way is recommended</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>% cmake -DCMAKE_INSTALL_PREFIX=&quot;$(shell cygpath -w &quot;${BUILD_DIR}&quot;)&quot; ..
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>% cmake -DCMAKE_INSTALL_PREFIX<span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span>shell cygpath -w <span class="s2">&quot;</span><span class="si">${</span><span class="nv">BUILD_DIR</span><span class="si">}</span><span class="s2">&quot;</span><span class="k">)</span><span class="s2">&quot;</span> ..
 % cmake --build . --config Release
 % cmake --install . --config Release
 </pre></div>
 </div>
 <p>The detail of the windows installation process is discussed at
-<a class="reference external" href="https://github.com/spglib/spglib/issues/118">https://github.com/spglib/spglib/issues/118</a>.</p>
+https://github.com/spglib/spglib/issues/118.</p>
 </section>
 </section>
 <section id="usage">
@@ -422,7 +433,8 @@ way is recommended</p>
 <ol class="arabic simple">
 <li><p>Include <code class="docutils literal notranslate"><span class="pre">spglib.h</span></code></p></li>
 <li><p>Link <code class="docutils literal notranslate"><span class="pre">libsymspg.a</span></code> or <code class="docutils literal notranslate"><span class="pre">libsymspg.so</span></code></p></li>
-<li><p>A compilation example is shown in  <a class="reference external" href="https://github.com/spglib/spglib/blob/master/example/README">example/README</a>.</p></li>
+<li><p>A compilation example is shown in
+<a class="reference external" href="https://github.com/spglib/spglib/tree/master/example/README.md">example/README.md</a>.</p></li>
 </ol>
 </section>
 <section id="example">

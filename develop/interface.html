@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Rust, Fortran, and Ruby interfaces &#8212; Spglib v.1.16.5</title>
+    <title>Rust, Fortran, and Ruby interfaces &#8212; Spglib v.2.0.0</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -73,7 +73,7 @@
       
       
       
-      <h1 class="site-logo" id="site-title">Spglib v.1.16.5</h1>
+      <h1 class="site-logo" id="site-title">Spglib v.2.0.0</h1>
       
     </a>
 </div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
@@ -125,6 +125,11 @@
  <li class="toctree-l1">
   <a class="reference internal" href="references.html">
    References
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="releases.html">
+   Summary of releases
   </a>
  </li>
  <li class="toctree-l1 has-children">
@@ -222,7 +227,7 @@ title="Fullscreen mode"
   <div class="menu-dropdown__content">
     <ul>
       <li>
-        <a href="_sources/interface.rst.txt"
+        <a href="_sources/interface.md.txt"
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -233,7 +238,7 @@ title="Download source file"
 <span class="headerbtn__icon-container">
   <i class="fas fa-file"></i>
   </span>
-<span class="headerbtn__text-container">.rst</span>
+<span class="headerbtn__text-container">.md</span>
 </a>
 
       </li>
@@ -346,10 +351,11 @@ title="Print to PDF"
 level, but not supported as well as the Python interface.</p>
 <section id="fortran-interface">
 <h2>Fortran interface<a class="headerlink" href="#fortran-interface" title="Permalink to this headline">#</a></h2>
-<p>Fortran interface <a class="reference external" href="https://github.com/spglib/spglib/blob/master/example/example_f08.f90">spglib_f08.f90</a>
-is found in <a class="reference external" href="https://github.com/spglib/spglib/tree/master/example">example</a>
-directory. This fortran interface is originally contributed by Dimitar
-Pashov and has been updated by some other people. <a class="reference external" href="https://github.com/spglib/spglib/blob/master/src/spglib_f.c">spglib_f.c</a> is
+<p>Fortran interface <a class="reference external" href="https://github.com/spglib/spglib/blob/master/example/example.f90">spglib.f90</a> is found
+in <a class="reference external" href="https://github.com/spglib/spglib/tree/master/example">example</a> directory.
+This fortran interface is originally contributed by Dimitar Pashov and has been
+updated by some other people.
+<a class="reference external" href="https://github.com/spglib/spglib/blob/master/src/spglib_f.c">spglib_f.c</a> is
 obsolete and is not recommended to use.</p>
 </section>
 <section id="rust-interface">
@@ -366,11 +372,11 @@ POSCAR formatted file and finds the space-group type. The <code class="docutils 
 option refines a slightly distorted structure within tolerance
 specified with the <code class="docutils literal notranslate"><span class="pre">-s</span></code> option. The <code class="docutils literal notranslate"><span class="pre">-o</span></code> option gives the symmetry
 operations of the input structure.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ruby</span> <span class="n">symPoscar</span><span class="o">.</span><span class="n">rb</span> <span class="n">POSCAR</span> <span class="o">-</span><span class="n">s</span> <span class="mf">0.1</span> <span class="o">-</span><span class="n">o</span> <span class="o">-</span><span class="n">l</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>% ruby symPoscar.rb POSCAR -s <span class="m">0</span>.1 -o -l
 </pre></div>
 </div>
 <p>Some more options are shown with <code class="docutils literal notranslate"><span class="pre">--help</span></code> option:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ruby</span> <span class="n">symPoscar</span><span class="o">.</span><span class="n">rb</span> <span class="o">--</span><span class="n">help</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>% ruby symPoscar.rb --help
 </pre></div>
 </div>
 <p>The way to compile the ruby module is explained in

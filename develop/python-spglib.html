@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Spglib for Python &#8212; Spglib v.1.16.5</title>
+    <title>Spglib for Python &#8212; Spglib v.2.0.0</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -74,7 +74,7 @@
       
       
       
-      <h1 class="site-logo" id="site-title">Spglib v.1.16.5</h1>
+      <h1 class="site-logo" id="site-title">Spglib v.2.0.0</h1>
       
     </a>
 </div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
@@ -126,6 +126,11 @@
  <li class="toctree-l1">
   <a class="reference internal" href="references.html">
    References
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="releases.html">
+   Summary of releases
   </a>
  </li>
  <li class="toctree-l1 has-children">
@@ -348,11 +353,23 @@ title="Print to PDF"
     </ul>
    </li>
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#symmetry-tolerance-symprec">
+    <a class="reference internal nav-link" href="#symmetry-tolerance-symprec-angle-tolerance-mag-symprec">
      Symmetry tolerance (
      <code class="docutils literal notranslate">
       <span class="pre">
        symprec
+      </span>
+     </code>
+     ,
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       angle_tolerance
+      </span>
+     </code>
+     ,
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       mag_symprec
       </span>
      </code>
      )
@@ -686,11 +703,23 @@ title="Print to PDF"
     </ul>
    </li>
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#symmetry-tolerance-symprec">
+    <a class="reference internal nav-link" href="#symmetry-tolerance-symprec-angle-tolerance-mag-symprec">
      Symmetry tolerance (
      <code class="docutils literal notranslate">
       <span class="pre">
        symprec
+      </span>
+     </code>
+     ,
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       angle_tolerance
+      </span>
+     </code>
+     ,
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       mag_symprec
       </span>
      </code>
      )
@@ -1125,19 +1154,22 @@ from the ASE Atoms-class instance::</p>
    <span class="n">magmoms</span> <span class="o">=</span> <span class="kc">None</span>
 </pre></div>
 </div>
-<p>for which the corresponding code is written out of API and it is found
-at <a class="reference external" href="https://github.com/spglib/spglib/blob/e0851894ccdad1abb87d519b228d056128b56806/python/spglib/spglib.py#L737-L741">here</a>.
-Nevertheless the ASE Atoms-like input will be accepted for a while.  An alternative
-Atoms class (<a class="reference external" href="https://github.com/spglib/spglib/blob/master/python/examples/atoms.py">atoms.py</a>)
-that contains minimum set of methods is prepared in the <a class="reference external" href="https://github.com/spglib/spglib/tree/master/python/examples">examples</a>
-directory. <code class="docutils literal notranslate"><span class="pre">get_symmetry</span></code> with collinear polarizations is not
-supported when ASE Atoms-class instance.</p>
+<p>for which the corresponding code is written out of API and it is found at
+<a class="reference external" href="https://github.com/spglib/spglib/blob/e0851894ccdad1abb87d519b228d056128b56806/python/spglib/spglib.py#L737-L741">here</a>.
+Nevertheless the ASE Atoms-like input will be accepted for a while.  An
+alternative Atoms class
+(<a class="reference external" href="https://github.com/spglib/spglib/blob/master/python/examples/atoms.py">atoms.py</a>)
+that contains minimum set of methods is prepared in the
+<a class="reference external" href="https://github.com/spglib/spglib/tree/master/python/examples">examples</a>
+directory. <code class="docutils literal notranslate"><span class="pre">get_symmetry</span></code> with collinear polarizations is not supported when
+ASE Atoms-class instance.</p>
 </section>
 </section>
-<section id="symmetry-tolerance-symprec">
-<h3>Symmetry tolerance (<code class="docutils literal notranslate"><span class="pre">symprec</span></code>)<a class="headerlink" href="#symmetry-tolerance-symprec" title="Permalink to this headline">#</a></h3>
-<p>Distance tolerance in Cartesian coordinates to find crystal
-symmetry. For more details, see <a class="reference internal" href="variable.html#variables-symprec"><span class="std std-ref">symprec</span></a></p>
+<section id="symmetry-tolerance-symprec-angle-tolerance-mag-symprec">
+<h3>Symmetry tolerance (<code class="docutils literal notranslate"><span class="pre">symprec</span></code>, <code class="docutils literal notranslate"><span class="pre">angle_tolerance</span></code>, <code class="docutils literal notranslate"><span class="pre">mag_symprec</span></code>)<a class="headerlink" href="#symmetry-tolerance-symprec-angle-tolerance-mag-symprec" title="Permalink to this headline">#</a></h3>
+<p>Distance tolerance in Cartesian coordinates to find crystal symmetry. For more
+details, see <a class="reference internal" href="variable.html#variables-symprec"><span class="std std-ref">symprec</span></a>, <a class="reference internal" href="variable.html#variables-angle-tolerance"><span class="std std-ref">angle_tolerance</span></a>, and
+<a class="reference internal" href="variable.html#variables-mag-symprec"><span class="std std-ref">mag_symprec</span></a>.</p>
 </section>
 </section>
 <section id="methods-version">
@@ -1169,7 +1201,7 @@ when calling one spglib method per process.</strong></p>
 <section id="get-symmetry">
 <span id="py-method-get-symmetry"></span><h3><code class="docutils literal notranslate"><span class="pre">get_symmetry</span></code><a class="headerlink" href="#get-symmetry" title="Permalink to this headline">#</a></h3>
 <p><strong><code class="docutils literal notranslate"><span class="pre">get_symmetry</span></code> with <code class="docutils literal notranslate"><span class="pre">is_magnetic=True</span></code> is deprecated at version 2.0. Use <a class="reference internal" href="#py-get-magnetic-symmetry"><span class="std std-ref">get_magnetic_symmetry</span></a> for magnetic symmetry search.</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">symmetry</span> <span class="o">=</span> <span class="n">get_symmetry</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">symmetry</span> <span class="o">=</span> <span class="n">get_symmetry</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">angle_tolerance</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">mag_symprec</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Symmetry operations are obtained as a dictionary. The key <code class="docutils literal notranslate"><span class="pre">rotation</span></code>
@@ -1279,7 +1311,7 @@ standardized crystal structure to the atoms in the primitive cell.</p></li>
 <h2>Method (space-group type search)<a class="headerlink" href="#method-space-group-type-search" title="Permalink to this headline">#</a></h2>
 <section id="get-spacegroup">
 <h3><code class="docutils literal notranslate"><span class="pre">get_spacegroup</span></code><a class="headerlink" href="#get-spacegroup" title="Permalink to this headline">#</a></h3>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">spacegroup</span> <span class="o">=</span> <span class="n">get_spacegroup</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">spacegroup</span> <span class="o">=</span> <span class="n">get_spacegroup</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">angle_tolerance</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">symbol_type</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>International space group short symbol and number are obtained as a
@@ -1292,7 +1324,7 @@ international symbol.</p>
 <section id="standardize-cell">
 <h3><code class="docutils literal notranslate"><span class="pre">standardize_cell</span></code><a class="headerlink" href="#standardize-cell" title="Permalink to this headline">#</a></h3>
 <p><strong>New in version 1.8.x</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">lattice</span><span class="p">,</span> <span class="n">scaled_positions</span><span class="p">,</span> <span class="n">numbers</span> <span class="o">=</span> <span class="n">standardize_cell</span><span class="p">(</span><span class="n">bulk</span><span class="p">,</span> <span class="n">to_primitive</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">no_idealize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">lattice</span><span class="p">,</span> <span class="n">scaled_positions</span><span class="p">,</span> <span class="n">numbers</span> <span class="o">=</span> <span class="n">standardize_cell</span><span class="p">(</span><span class="n">bulk</span><span class="p">,</span> <span class="n">to_primitive</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">no_idealize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">angle_tolerance</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">to_primitive=True</span></code> is used to create the standardized primitive
@@ -1308,7 +1340,7 @@ shown in the spglib (C-API) document.</p>
 <section id="find-primitive">
 <h3><code class="docutils literal notranslate"><span class="pre">find_primitive</span></code><a class="headerlink" href="#find-primitive" title="Permalink to this headline">#</a></h3>
 <p><strong>Behaviour changed in version 1.8.x</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">lattice</span><span class="p">,</span> <span class="n">scaled_positions</span><span class="p">,</span> <span class="n">numbers</span> <span class="o">=</span> <span class="n">find_primitive</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">lattice</span><span class="p">,</span> <span class="n">scaled_positions</span><span class="p">,</span> <span class="n">numbers</span> <span class="o">=</span> <span class="n">find_primitive</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">angle_tolerance</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>When a primitive cell is found, lattice parameters (a 3x3 numpy array),
@@ -1321,7 +1353,7 @@ numbers (a 1D numpy array) is returned. When the search failed,
 <section id="refine-cell">
 <h3><code class="docutils literal notranslate"><span class="pre">refine_cell</span></code><a class="headerlink" href="#refine-cell" title="Permalink to this headline">#</a></h3>
 <p><strong>Behaviour changed in version 1.8.x</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">lattice</span><span class="p">,</span> <span class="n">scaled_positions</span><span class="p">,</span> <span class="n">numbers</span> <span class="o">=</span> <span class="n">refine_cell</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">lattice</span><span class="p">,</span> <span class="n">scaled_positions</span><span class="p">,</span> <span class="n">numbers</span> <span class="o">=</span> <span class="n">refine_cell</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">angle_tolerance</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Standardized crystal structure is obtained as a tuple of lattice (a
@@ -1577,7 +1609,7 @@ the irreducible k-point indices that are obtained by</p>
                     <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>
                     <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]])</span> <span class="o">*</span> <span class="mf">5.4</span>
 <span class="n">positions</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.875</span><span class="p">,</span> <span class="mf">0.875</span><span class="p">,</span> <span class="mf">0.875</span><span class="p">],</span>
-             <span class="p">[</span><span class="mf">0.125</span><span class="p">,</span> <span class="mf">0.125</span><span class="p">,</span> <span class="mf">0.125</span><span class="p">]]</span>
+            <span class="p">[</span><span class="mf">0.125</span><span class="p">,</span> <span class="mf">0.125</span><span class="p">,</span> <span class="mf">0.125</span><span class="p">]]</span>
 <span class="n">numbers</span><span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,]</span> <span class="o">*</span> <span class="mi">2</span>
 <span class="n">cell</span> <span class="o">=</span> <span class="p">(</span><span class="n">lattice</span><span class="p">,</span> <span class="n">positions</span><span class="p">,</span> <span class="n">numbers</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">spglib</span><span class="o">.</span><span class="n">get_spacegroup</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">))</span>

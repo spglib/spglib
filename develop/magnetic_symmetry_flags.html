@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Flags to control action of magnetic symmetry operations &#8212; Spglib v.1.16.5</title>
+    <title>Flags to control action of magnetic symmetry operations &#8212; Spglib v.2.0.0</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -73,7 +73,7 @@
       
       
       
-      <h1 class="site-logo" id="site-title">Spglib v.1.16.5</h1>
+      <h1 class="site-logo" id="site-title">Spglib v.2.0.0</h1>
       
     </a>
 </div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
@@ -125,6 +125,11 @@
  <li class="toctree-l1">
   <a class="reference internal" href="references.html">
    References
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="releases.html">
+   Summary of releases
   </a>
  </li>
  <li class="toctree-l1 current active has-children">
@@ -290,55 +295,22 @@ title="Print to PDF"
    </code>
    (C API)
   </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#previous-behavior">
-     Previous behavior
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#proposed-behavior">
-     Proposed behavior
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#correspondence">
-     Correspondence
-    </a>
-   </li>
-  </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#spg-get-magnetic-dataset-c-api">
-   <code class="docutils literal notranslate">
-    <span class="pre">
-     spg_get_magnetic_dataset
-    </span>
-   </code>
-   (C API)
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#get-symmetry-python-api">
+  <a class="reference internal nav-link" href="#get-symmetry-and-get-magnetic-symmetry-python-api">
    <code class="docutils literal notranslate">
     <span class="pre">
      get_symmetry
     </span>
    </code>
+   and
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     get_magnetic_symmetry
+    </span>
+   </code>
    (Python API)
   </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#previous-behaviors">
-     Previous behaviors
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#id1">
-     Proposed behavior
-    </a>
-   </li>
-  </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#get-magnetic-symmetry-dataset-python-api">
@@ -349,18 +321,6 @@ title="Print to PDF"
    </code>
    (Python API)
   </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#id2">
-     Previous behaviors
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#id3">
-     Proposed behavior
-    </a>
-   </li>
-  </ul>
  </li>
 </ul>
 
@@ -390,55 +350,22 @@ title="Print to PDF"
    </code>
    (C API)
   </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#previous-behavior">
-     Previous behavior
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#proposed-behavior">
-     Proposed behavior
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#correspondence">
-     Correspondence
-    </a>
-   </li>
-  </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#spg-get-magnetic-dataset-c-api">
-   <code class="docutils literal notranslate">
-    <span class="pre">
-     spg_get_magnetic_dataset
-    </span>
-   </code>
-   (C API)
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#get-symmetry-python-api">
+  <a class="reference internal nav-link" href="#get-symmetry-and-get-magnetic-symmetry-python-api">
    <code class="docutils literal notranslate">
     <span class="pre">
      get_symmetry
     </span>
    </code>
+   and
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     get_magnetic_symmetry
+    </span>
+   </code>
    (Python API)
   </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#previous-behaviors">
-     Previous behaviors
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#id1">
-     Proposed behavior
-    </a>
-   </li>
-  </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#get-magnetic-symmetry-dataset-python-api">
@@ -449,18 +376,6 @@ title="Print to PDF"
    </code>
    (Python API)
   </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#id2">
-     Previous behaviors
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#id3">
-     Proposed behavior
-    </a>
-   </li>
-  </ul>
  </li>
 </ul>
 
@@ -479,28 +394,19 @@ title="Print to PDF"
 <li><p>Add <code class="docutils literal notranslate"><span class="pre">is_axial</span></code></p></li>
 <li><p>Retain <code class="docutils literal notranslate"><span class="pre">tensor_rank</span></code></p></li>
 </ul>
-<p>In this document, refer to <code class="docutils literal notranslate"><span class="pre">is_magnetic</span></code> in previous functions as <code class="docutils literal notranslate"><span class="pre">is_magnetic_old</span></code>.</p>
+<!-- In this document, refer to `is_magnetic` in previous functions as `is_magnetic_old`. -->
 <section id="spg-get-symmetry-with-site-tensors-c-api">
 <h2><code class="docutils literal notranslate"><span class="pre">spg_get_symmetry_with_site_tensors</span></code> (C API)<a class="headerlink" href="#spg-get-symmetry-with-site-tensors-c-api" title="Permalink to this headline">#</a></h2>
-<section id="previous-behavior">
-<h3>Previous behavior<a class="headerlink" href="#previous-behavior" title="Permalink to this headline">#</a></h3>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">tensor_rank=0</span></code>: <span class="math notranslate nohighlight">\((\mathbf{R}, \mathbf{v}) \circ m = m\)</span></p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">is_magnetic_old=true</span></code>: <span class="math notranslate nohighlight">\(1' \circ m = -m\)</span></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">is_magnetic_old=false</span></code>: <span class="math notranslate nohighlight">\(1' \circ m = m\)</span></p></li>
-</ul>
-</li>
-<li><p><code class="docutils literal notranslate"><span class="pre">tensor_rank=1</span></code>: <span class="math notranslate nohighlight">\((\mathbf{R}, \mathbf{v}) \circ \mathbf{m} = (\mathrm{det} \mathbf{R}) \mathbf{R} \mathbf{m}\)</span></p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">is_magnetic_old=true</span></code>: <span class="math notranslate nohighlight">\(1' \circ \mathbf{m} = -\mathbf{m}\)</span></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">is_magnetic_old=false</span></code>: <span class="math notranslate nohighlight">\(1' \circ \mathbf{m} = \mathbf{m}\)</span></p></li>
-</ul>
-</li>
-</ul>
-</section>
-<section id="proposed-behavior">
-<h3>Proposed behavior<a class="headerlink" href="#proposed-behavior" title="Permalink to this headline">#</a></h3>
+<!-- ### Previous behavior
+
+- `tensor_rank=0`: {math}`(\mathbf{R}, \mathbf{v}) \circ m = m`
+    - `is_magnetic_old=true`: {math}`1' \circ m = -m`
+    - `is_magnetic_old=false`: {math}`1' \circ m = m`
+- `tensor_rank=1`: {math}`(\mathbf{R}, \mathbf{v}) \circ \mathbf{m} = (\mathrm{det} \mathbf{R}) \mathbf{R} \mathbf{m}`
+    - `is_magnetic_old=true`: {math}`1' \circ \mathbf{m} = -\mathbf{m}`
+    - `is_magnetic_old=false`: {math}`1' \circ \mathbf{m} = \mathbf{m}`
+
+### Proposed behavior -->
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">tensor_rank=0</span></code></p>
 <ul>
@@ -535,91 +441,52 @@ title="Print to PDF"
 </ul>
 </li>
 </ul>
+<!-- ### Correspondence
+
+| `tensor_rank` | `is_magnetic_old` |   | `with_time_reversal` | `is_axial` |
+| ------------- | ----------------- | - | -------------------- | ---------- |
+| 0             | `true`            |   | `true`               | `false`    |
+| 0             | `false`           |   | `false`              | `false`    |
+| 1             | `true`            |   | `true`               | `true`     |
+| 1             | `false`           |   | `false`              | `true`     | -->
+<!-- ## `spg_get_magnetic_dataset` (C API)
+
+- Previous behavior: call `spg_get_symmetry_with_site_tensors` with `is_magnetic_old=true` -->
 </section>
-<section id="correspondence">
-<h3>Correspondence<a class="headerlink" href="#correspondence" title="Permalink to this headline">#</a></h3>
-<table class="colwidths-auto table">
-<thead>
-<tr class="row-odd"><th class="head"><p><code class="docutils literal notranslate"><span class="pre">tensor_rank</span></code></p></th>
-<th class="head"><p><code class="docutils literal notranslate"><span class="pre">is_magnetic_old</span></code></p></th>
-<th class="head"><p></p></th>
-<th class="head"><p><code class="docutils literal notranslate"><span class="pre">with_time_reversal</span></code></p></th>
-<th class="head"><p><code class="docutils literal notranslate"><span class="pre">is_axial</span></code></p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>0</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">true</span></code></p></td>
-<td><p></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">true</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">false</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p>0</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">false</span></code></p></td>
-<td><p></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">false</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">false</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p>1</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">true</span></code></p></td>
-<td><p></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">true</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">true</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p>1</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">false</span></code></p></td>
-<td><p></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">false</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">true</span></code></p></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="spg-get-magnetic-dataset-c-api">
-<h2><code class="docutils literal notranslate"><span class="pre">spg_get_magnetic_dataset</span></code> (C API)<a class="headerlink" href="#spg-get-magnetic-dataset-c-api" title="Permalink to this headline">#</a></h2>
-<ul class="simple">
-<li><p>Previous behavior: call <code class="docutils literal notranslate"><span class="pre">spg_get_symmetry_with_site_tensors</span></code> with <code class="docutils literal notranslate"><span class="pre">is_magnetic_old=true</span></code></p></li>
-</ul>
-</section>
-<section id="get-symmetry-python-api">
-<h2><code class="docutils literal notranslate"><span class="pre">get_symmetry</span></code> (Python API)<a class="headerlink" href="#get-symmetry-python-api" title="Permalink to this headline">#</a></h2>
-<section id="previous-behaviors">
-<h3>Previous behaviors<a class="headerlink" href="#previous-behaviors" title="Permalink to this headline">#</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">get_symmetry((lattice,</span> <span class="pre">positions,</span> <span class="pre">numbers,</span> <span class="pre">magmoms),</span> <span class="pre">is_magnetic_old=True)</span></code></p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">magmoms</span> <span class="pre">=</span> <span class="pre">None</span></code> or not specified: other flags have no effect</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">magmoms.shape</span> <span class="pre">=</span> <span class="pre">(num_atoms,</span> <span class="pre">)</span></code>: call C API with <code class="docutils literal notranslate"><span class="pre">tensor_rank=0</span></code> and <code class="docutils literal notranslate"><span class="pre">is_magnetic_old</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">magmoms.shape</span> <span class="pre">=</span> <span class="pre">(num_atoms,</span> <span class="pre">3)</span></code>: call C API with <code class="docutils literal notranslate"><span class="pre">tensor_rank=1</span></code> and <code class="docutils literal notranslate"><span class="pre">is_magnetic_old</span></code></p></li>
-</ul>
-</section>
-<section id="id1">
-<h3>Proposed behavior<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h3>
-<p>Deprecate <code class="docutils literal notranslate"><span class="pre">get_symmetry((lattice,</span> <span class="pre">positions,</span> <span class="pre">numbers,</span> <span class="pre">magmoms),</span> <span class="pre">is_magnetic_old=True)</span></code></p>
+<section id="get-symmetry-and-get-magnetic-symmetry-python-api">
+<h2><code class="docutils literal notranslate"><span class="pre">get_symmetry</span></code> and <code class="docutils literal notranslate"><span class="pre">get_magnetic_symmetry</span></code> (Python API)<a class="headerlink" href="#get-symmetry-and-get-magnetic-symmetry-python-api" title="Permalink to this headline">#</a></h2>
+<!-- ### Previous behaviors
+
+`get_symmetry((lattice, positions, numbers, magmoms), is_magnetic_old=True)`
+- `magmoms = None` or not specified: other flags have no effect
+- `magmoms.shape = (num_atoms, )`: call C API with `tensor_rank=0` and `is_magnetic_old`
+- `magmoms.shape = (num_atoms, 3)`: call C API with `tensor_rank=1` and `is_magnetic_old`
+
+### Proposed behavior -->
+<p>Deprecate <code class="docutils literal notranslate"><span class="pre">is_magnetic</span></code> in <code class="docutils literal notranslate"><span class="pre">get_symmetry</span></code>, and the functionality is replaced by
+<code class="docutils literal notranslate"><span class="pre">get_magnetic_symmetry</span></code>.</p>
 <p>Add new function <code class="docutils literal notranslate"><span class="pre">get_magnetic_symmetry((lattice,</span> <span class="pre">positions,</span> <span class="pre">numbers,</span> <span class="pre">magmoms),</span> <span class="pre">is_axial=None,</span> <span class="pre">with_time_reversal=True)</span></code></p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">magmoms</span> <span class="pre">=</span> <span class="pre">None</span></code> or not specified: other flags have no effect</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">magmoms.shape</span> <span class="pre">=</span> <span class="pre">(num_atoms,</span> <span class="pre">)</span></code>: call C API with <code class="docutils literal notranslate"><span class="pre">tensor_rank=0</span></code>, <code class="docutils literal notranslate"><span class="pre">is_axial</span></code> (default=false), and <code class="docutils literal notranslate"><span class="pre">with_time_reversal</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">magmoms.shape</span> <span class="pre">=</span> <span class="pre">(num_atoms,</span> <span class="pre">3)</span></code>: call C API with <code class="docutils literal notranslate"><span class="pre">tensor_rank=1</span></code>, <code class="docutils literal notranslate"><span class="pre">is_axial</span></code> (default=true), and <code class="docutils literal notranslate"><span class="pre">with_time_reversal</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">magmoms.shape</span> <span class="pre">=</span> <span class="pre">(num_atoms,</span> <span class="pre">)</span></code>: call C API with <code class="docutils literal notranslate"><span class="pre">tensor_rank=0</span></code>, <code class="docutils literal notranslate"><span class="pre">is_axial</span></code>
+(default=false), and <code class="docutils literal notranslate"><span class="pre">with_time_reversal</span></code> (collinear magnetic like)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">magmoms.shape</span> <span class="pre">=</span> <span class="pre">(num_atoms,</span> <span class="pre">3)</span></code>: call C API with <code class="docutils literal notranslate"><span class="pre">tensor_rank=1</span></code>, <code class="docutils literal notranslate"><span class="pre">is_axial</span></code>
+(default=true), and <code class="docutils literal notranslate"><span class="pre">with_time_reversal</span></code> (non-collinear magnetic like)</p></li>
 </ul>
-</section>
 </section>
 <section id="get-magnetic-symmetry-dataset-python-api">
 <h2><code class="docutils literal notranslate"><span class="pre">get_magnetic_symmetry_dataset</span></code> (Python API)<a class="headerlink" href="#get-magnetic-symmetry-dataset-python-api" title="Permalink to this headline">#</a></h2>
-<section id="id2">
-<h3>Previous behaviors<a class="headerlink" href="#id2" title="Permalink to this headline">#</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">get_magnetic_symmetry_dataset((lattice,</span> <span class="pre">positions,</span> <span class="pre">numbers,</span> <span class="pre">magmoms),</span> <span class="pre">is_magnetic_old=True)</span></code></p>
-<ul class="simple">
-<li><p>call <code class="docutils literal notranslate"><span class="pre">get_symmetry</span></code> with <code class="docutils literal notranslate"><span class="pre">is_magnetic_old</span></code></p></li>
-</ul>
-</section>
-<section id="id3">
-<h3>Proposed behavior<a class="headerlink" href="#id3" title="Permalink to this headline">#</a></h3>
+<!-- ### Previous behaviors
+
+`get_magnetic_symmetry_dataset((lattice, positions, numbers, magmoms), is_magnetic_old=True)`
+
+- call `get_symmetry` with `is_magnetic_old`
+
+### Proposed behavior  -->
 <p><code class="docutils literal notranslate"><span class="pre">get_magnetic_symmetry_dataset((lattice,</span> <span class="pre">positions,</span> <span class="pre">numbers,</span> <span class="pre">magmoms),</span> <span class="pre">is_axial=None,</span> <span class="pre">with_time_reversal=True)</span></code></p>
 <ul class="simple">
 <li><p>call <code class="docutils literal notranslate"><span class="pre">get_magnetic_symmetry</span></code> with <code class="docutils literal notranslate"><span class="pre">is_axial</span></code> and <code class="docutils literal notranslate"><span class="pre">with_time_reversal</span></code></p></li>
 </ul>
-</section>
 </section>
 </section>
 

@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Variables &#8212; Spglib v.1.16.5</title>
+    <title>Variables &#8212; Spglib v.2.0.0</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -74,7 +74,7 @@
       
       
       
-      <h1 class="site-logo" id="site-title">Spglib v.1.16.5</h1>
+      <h1 class="site-logo" id="site-title">Spglib v.2.0.0</h1>
       
     </a>
 </div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
@@ -126,6 +126,11 @@
  <li class="toctree-l1">
   <a class="reference internal" href="references.html">
    References
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="releases.html">
+   Summary of releases
   </a>
  </li>
  <li class="toctree-l1 has-children">
@@ -223,7 +228,7 @@ title="Fullscreen mode"
   <div class="menu-dropdown__content">
     <ul>
       <li>
-        <a href="_sources/variable.rst.txt"
+        <a href="_sources/variable.md.txt"
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -234,7 +239,7 @@ title="Download source file"
 <span class="headerbtn__icon-container">
   <i class="fas fa-file"></i>
   </span>
-<span class="headerbtn__text-container">.rst</span>
+<span class="headerbtn__text-container">.md</span>
 </a>
 
       </li>
@@ -345,6 +350,15 @@ title="Print to PDF"
    </code>
   </a>
  </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#mag-symprec">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     mag_symprec
+    </span>
+   </code>
+  </a>
+ </li>
 </ul>
 
     </nav>
@@ -427,6 +441,15 @@ title="Print to PDF"
    </code>
   </a>
  </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#mag-symprec">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     mag_symprec
+    </span>
+   </code>
+  </a>
+ </li>
 </ul>
 
                         </nav>
@@ -445,7 +468,7 @@ for Python interface is transposed.</p>
 <section id="lattice">
 <span id="variables-lattice"></span><h2><code class="docutils literal notranslate"><span class="pre">lattice</span></code><a class="headerlink" href="#lattice" title="Permalink to this headline">#</a></h2>
 <p><strong>Attention</strong>: In Python interface, <code class="docutils literal notranslate"><span class="pre">lattice</span></code> is transposed
-(<a class="reference internal" href="python-spglib.html#py-variables-crystal-structure"><span class="std std-ref">Crystal structure (cell)</span></a>.)</p>
+(<a class="reference internal" href="python-spglib.html#py-variables-crystal-structure"><span class="std std-ref">Crystal structure (cell)</span></a>).</p>
 <p>Basis vectors (in Cartesian)</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span> <span class="p">[</span> <span class="n">a_x</span><span class="p">,</span> <span class="n">b_x</span><span class="p">,</span> <span class="n">c_x</span> <span class="p">],</span>
   <span class="p">[</span> <span class="n">a_y</span><span class="p">,</span> <span class="n">b_y</span><span class="p">,</span> <span class="n">c_y</span> <span class="p">],</span>
@@ -454,7 +477,7 @@ for Python interface is transposed.</p>
 </div>
 <p>Cartesian position <span class="math notranslate nohighlight">\(\mathbf{x}_\mathrm{Cart}\)</span> is obtained by</p>
 <div class="math notranslate nohighlight">
-\[\mathbf{x}_\mathrm{Cart} = \mathrm{L}\cdot\mathbf{x}_\mathrm{frac}\]</div>
+\[  \mathbf{x}_\mathrm{Cart} = \mathrm{L}\cdot\mathbf{x}_\mathrm{frac}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\mathrm{L}\)</span> is the basis vectors defined above and is
 <span class="math notranslate nohighlight">\(\mathrm{L}=(\mathbf{a},\mathbf{b},\mathbf{c})\)</span>, and
 <span class="math notranslate nohighlight">\(\mathbf{x}_\mathrm{frac}\)</span> is the atomic position in fractional
@@ -500,9 +523,10 @@ coordinates.</p>
 <span id="variables-symprec"></span><h2><code class="docutils literal notranslate"><span class="pre">symprec</span></code><a class="headerlink" href="#symprec" title="Permalink to this headline">#</a></h2>
 <p>Distance tolerance in Cartesian coordinates to find crystal
 symmetry.</p>
-<p>For atomic positions, roughly speaking, two position vectors <cite>x</cite> and
-<cite>x’</cite> in Cartesian coordinates are considered to be the same if <code class="docutils literal notranslate"><span class="pre">|x'</span> <span class="pre">-</span>
-<span class="pre">x|</span> <span class="pre">&lt;</span> <span class="pre">symprec</span></code>. For more details, see the <a class="reference external" href="https://arxiv.org/abs/1808.01590">spglib paper</a>, Sec. II-A.</p>
+<p>For atomic positions, roughly speaking, two position vectors <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">x'</span></code> in
+Cartesian coordinates are considered to be the same if <code class="docutils literal notranslate"><span class="pre">|x'</span> <span class="pre">-</span> <span class="pre">x|</span> <span class="pre">&lt;</span> <span class="pre">symprec</span></code>.
+For more details, see the <a class="reference external" href="https://arxiv.org/abs/1808.01590%3E">spglib paper</a>,
+Sec. II-A.</p>
 <p>The angle distortion between basis vectors is converted to a length
 and compared with this distance tolerance. For more details, see the
 <a class="reference external" href="https://arxiv.org/abs/1808.01590">spglib paper</a>, Sec. IV-A. It is
@@ -524,12 +548,23 @@ functions are prepared for C-API as follows</p>
 <span class="n">spgat_refine_cell</span>
 </pre></div>
 </div>
-<p>These functions are called by the same way with an additional argument
-of <code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">double</span> <span class="pre">angle_tolerance</span></code> in degrees. By specifying a
-negative value, the behavior becomes the same as usual functions. The
-default value of <code class="docutils literal notranslate"><span class="pre">angle_tolerance</span></code> is a negative value. For
-python-API, the angle tolerance is given with a keyword argument of
-<cite>angle_tolerance</cite>.</p>
+</section>
+<section id="mag-symprec">
+<span id="variables-mag-symprec"></span><h2><code class="docutils literal notranslate"><span class="pre">mag_symprec</span></code><a class="headerlink" href="#mag-symprec" title="Permalink to this headline">#</a></h2>
+<p>Tolerance for magnetic symmetry search in the unit of spins or magmoms. By
+specifying a negative value, the same value as <code class="docutils literal notranslate"><span class="pre">symprec</span></code> is used to compare
+magnetic moments.</p>
+<p>The following functions are called by the same way with an additional argument
+of <code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">double</span> <span class="pre">angle_tolerance</span></code> in degrees. By specifying a negative value,
+the behavior becomes the same as usual functions (e.g.
+<code class="docutils literal notranslate"><span class="pre">spg_get_magnetic_dataset</span></code>). For python-API, the magnetic tolerance is given
+with a keyword argument of <code class="docutils literal notranslate"><span class="pre">mag_symprec</span></code>, where the default value of
+<code class="docutils literal notranslate"><span class="pre">mag_symprec</span></code> is a negative value.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">spgms_get_magnetic_dataset</span>
+<span class="n">spgms_get_symmetry_with_collinear_spin</span>
+<span class="n">spgms_get_symmetry_with_site_tensors</span>
+</pre></div>
+</div>
 </section>
 </section>
 

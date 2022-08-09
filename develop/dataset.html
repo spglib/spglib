@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Spglib dataset &#8212; Spglib v.1.16.5</title>
+    <title>Spglib dataset &#8212; Spglib v.2.0.0</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -74,7 +74,7 @@
       
       
       
-      <h1 class="site-logo" id="site-title">Spglib v.1.16.5</h1>
+      <h1 class="site-logo" id="site-title">Spglib v.2.0.0</h1>
       
     </a>
 </div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
@@ -126,6 +126,11 @@
  <li class="toctree-l1">
   <a class="reference internal" href="references.html">
    References
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="releases.html">
+   Summary of releases
   </a>
  </li>
  <li class="toctree-l1 has-children">
@@ -935,11 +940,11 @@ space-group-type matching under a set of unique axis, setting and cell
 choices. These are operated to the basis vectors and atomic point
 coordinates of the input unit cell as</p>
 <div class="math notranslate nohighlight">
-\[   ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
-   \mathbf{c}_\mathrm{s} ) = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c}
-   ) \boldsymbol{P}^{-1} \;\; \text{and} \;\; \boldsymbol{x}_\mathrm{s} =
-   \boldsymbol{P}\boldsymbol{x} + \boldsymbol{p}
-   \;\;(\mathrm{mod}\; \mathbf{1}),\]</div>
+\[( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
+\mathbf{c}_\mathrm{s} ) = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c}
+) \boldsymbol{P}^{-1} \;\; \text{and} \;\; \boldsymbol{x}_\mathrm{s} =
+\boldsymbol{P}\boldsymbol{x} + \boldsymbol{p}
+\;\;(\mathrm{mod}\; \mathbf{1}),\]</div>
 <p>by which the basis vectors are transformed to those of a
 standardized unit cell. Atomic point coordinates are shifted so that
 symmetry operations have one of possible standard origins. The
@@ -950,11 +955,11 @@ detailed definition is presented at
 <code class="docutils literal notranslate"><span class="pre">origin_shift</span></code> (<span class="math notranslate nohighlight">\(\boldsymbol{p}_\text{old}\)</span>) was differently defined from
 the current definition as follows:</p>
 <div class="math notranslate nohighlight">
-\[   ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
-   \mathbf{c}_\mathrm{s} ) = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c}
-   ) \boldsymbol{P}_\text{old} \;\; \text{and} \;\; \boldsymbol{x}_\mathrm{s} =
-   \boldsymbol{P}^{-1}_\text{old}\boldsymbol{x} - \boldsymbol{p}_\text{old}
-   \;\;(\mathrm{mod}\; \mathbf{1}).\]</div>
+\[( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
+\mathbf{c}_\mathrm{s} ) = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c}
+) \boldsymbol{P}_\text{old} \;\; \text{and} \;\; \boldsymbol{x}_\mathrm{s} =
+\boldsymbol{P}^{-1}_\text{old}\boldsymbol{x} - \boldsymbol{p}_\text{old}
+\;\;(\mathrm{mod}\; \mathbf{1}).\]</div>
 </section>
 </section>
 <section id="standardized-crystal-structure-after-idealization">
@@ -978,12 +983,17 @@ before idealization <span class="math notranslate nohighlight">\(( \mathbf{a}_\m
 idealization <span class="math notranslate nohighlight">\(( \bar{\mathbf{a}}_\mathrm{s} \; \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )\)</span> in
 Cartesian coordinates of the given input unit cell. The rotation
 matrix <span class="math notranslate nohighlight">\(\boldsymbol{R}\)</span> is defined by</p>
-<div class="math notranslate nohighlight">
-\[   ( \bar{\mathbf{a}}_\mathrm{s} \;
-   \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )
-   = ( \boldsymbol{R} \mathbf{a}_\mathrm{s} \;
-   \boldsymbol{R} \mathbf{b}_\mathrm{s} \; \boldsymbol{R}
-   \mathbf{c}_\mathrm{s} ).\]</div>
+<div class="math notranslate nohighlight" id="equation-rotation-in-standardization">
+<span class="eqno">(1)<a class="headerlink" href="#equation-rotation-in-standardization" title="Permalink to this equation">#</a></span>\[( \bar{\mathbf{a}}_\mathrm{s} \;
+\bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )
+= ( \boldsymbol{R} \mathbf{a}_\mathrm{s} \;
+\boldsymbol{R} \mathbf{b}_\mathrm{s} \; \boldsymbol{R}
+\mathbf{c}_\mathrm{s} ).\]</div>
+<p>More precisely, this rotation matrix is an orthonormal matrix. Since <span class="math notranslate nohighlight">\(( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )\)</span> can
+be distored, to make <span class="math notranslate nohighlight">\(\boldsymbol{R}\)</span> orthonormal, it is calculated as
+follows. Make cubes of <span class="math notranslate nohighlight">\(( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )\)</span> and <span class="math notranslate nohighlight">\(( \bar{\mathbf{a}}_\mathrm{s} \; \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )\)</span> by
+<span class="math notranslate nohighlight">\(\mathrm{L} = \begin{pmatrix}\frac{\mathbf{a}}{|\mathbf{a}|} &amp; \frac{\mathbf{c} \times \mathbf{a}}{|\mathbf{c} \times \mathbf{a}|} &amp; \frac{\mathbf{a} \times \mathbf{b}}{|\mathbf{a} \times \mathbf{b}|} \end{pmatrix}\)</span>. Watching <span class="math notranslate nohighlight">\(\mathrm{L}\)</span>s as <span class="math notranslate nohighlight">\(3\times 3\)</span> matrices,
+<span class="math notranslate nohighlight">\(\boldsymbol{R}\)</span> is obtained by solving <span class="math notranslate nohighlight">\(\bar{\mathrm{L}}_\mathrm{s} = \boldsymbol{R} \mathrm{L}_\mathrm{s}\)</span>.</p>
 </section>
 <section id="std-mapping-to-primitive">
 <h3><code class="docutils literal notranslate"><span class="pre">std_mapping_to_primitive</span></code><a class="headerlink" href="#std-mapping-to-primitive" title="Permalink to this headline">#</a></h3>
