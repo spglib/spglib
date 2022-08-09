@@ -139,11 +139,11 @@ choices. These are operated to the basis vectors and atomic point
 coordinates of the input unit cell as
 
 ```{math}
-   ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
-   \mathbf{c}_\mathrm{s} ) = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c}
-   ) \boldsymbol{P}^{-1} \;\; \text{and} \;\; \boldsymbol{x}_\mathrm{s} =
-   \boldsymbol{P}\boldsymbol{x} + \boldsymbol{p}
-   \;\;(\mathrm{mod}\; \mathbf{1}),
+( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
+\mathbf{c}_\mathrm{s} ) = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c}
+) \boldsymbol{P}^{-1} \;\; \text{and} \;\; \boldsymbol{x}_\mathrm{s} =
+\boldsymbol{P}\boldsymbol{x} + \boldsymbol{p}
+\;\;(\mathrm{mod}\; \mathbf{1}),
 ```
 
 by which the basis vectors are transformed to those of a
@@ -158,11 +158,11 @@ At **versions 1.7.x and 1.8 or before**, the set of
 the current definition as follows:
 
 ```{math}
-   ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
-   \mathbf{c}_\mathrm{s} ) = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c}
-   ) \boldsymbol{P}_\text{old} \;\; \text{and} \;\; \boldsymbol{x}_\mathrm{s} =
-   \boldsymbol{P}^{-1}_\text{old}\boldsymbol{x} - \boldsymbol{p}_\text{old}
-   \;\;(\mathrm{mod}\; \mathbf{1}).
+( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
+\mathbf{c}_\mathrm{s} ) = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c}
+) \boldsymbol{P}_\text{old} \;\; \text{and} \;\; \boldsymbol{x}_\mathrm{s} =
+\boldsymbol{P}^{-1}_\text{old}\boldsymbol{x} - \boldsymbol{p}_\text{old}
+\;\;(\mathrm{mod}\; \mathbf{1}).
 ```
 
 (dataset_idealized_cell)=
@@ -194,12 +194,27 @@ idealization {math}`( \bar{\mathbf{a}}_\mathrm{s} \;
 Cartesian coordinates of the given input unit cell. The rotation
 matrix {math}`\boldsymbol{R}` is defined by
 ```{math}
-   ( \bar{\mathbf{a}}_\mathrm{s} \;
-   \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )
-   = ( \boldsymbol{R} \mathbf{a}_\mathrm{s} \;
-   \boldsymbol{R} \mathbf{b}_\mathrm{s} \; \boldsymbol{R}
-   \mathbf{c}_\mathrm{s} ).
+:label: rotation-in-standardization
+
+( \bar{\mathbf{a}}_\mathrm{s} \;
+\bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )
+= ( \boldsymbol{R} \mathbf{a}_\mathrm{s} \;
+\boldsymbol{R} \mathbf{b}_\mathrm{s} \; \boldsymbol{R}
+\mathbf{c}_\mathrm{s} ).
 ```
+
+More precisely, this rotation matrix is an orthonormal matrix. Since {math}`(
+\mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )` can
+be distored, to make {math}`\boldsymbol{R}` orthonormal, it is calculated as
+follows. Make cubes of {math}`( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s}
+\; \mathbf{c}_\mathrm{s} )` and {math}`( \bar{\mathbf{a}}_\mathrm{s} \;
+\bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )` by
+{math}`\mathrm{L} = \begin{pmatrix}\frac{\mathbf{a}}{|\mathbf{a}|} &
+\frac{\mathbf{c} \times \mathbf{a}}{|\mathbf{c} \times \mathbf{a}|} &
+\frac{\mathbf{a} \times \mathbf{b}}{|\mathbf{a} \times \mathbf{b}|}
+\end{pmatrix}`. Watching {math}`\mathrm{L}`s as {math}`3\times 3` matrices,
+{math}`\boldsymbol{R}` is obtained by solving {math}`\bar{\mathrm{L}}_\mathrm{s}
+= \boldsymbol{R} \mathrm{L}_\mathrm{s}`.
 
 ### ``std_mapping_to_primitive``
 

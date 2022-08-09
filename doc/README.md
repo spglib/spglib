@@ -4,6 +4,8 @@ This directory contains python-sphinx documentation source.
 
 ## How to compile
 
+Python>=3.8 required for `importlib.metadata`.
+
 ```shell
 cd python
 pip install -e ".[doc]"

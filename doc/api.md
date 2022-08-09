@@ -378,13 +378,12 @@ SpglibSpacegroupType spg_get_spacegroup_type_from_symmetry(
 );
 ```
 
+The `SpglibSpacegroupType` structure is explained at {ref}`api_spg_spacegroup_type`.
 The parameter ``lattice`` is used as the distance measure for ``symprec``. If it
-is unknown,
+is unknown, the following may be a reasonable choice.
 ```
 lattice[3][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
 ```
-may be a good choice though ``symprec`` works under this ``lattice``.
-
 
 ## Magnetic symmetry
 

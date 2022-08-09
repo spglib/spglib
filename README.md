@@ -37,7 +37,8 @@ A simple test is executed by
 
 ## How to run test
 
-Test is provided with the python interface.
+Test is provided with the python interface. Python >= 3.7 is required for this
+test.
 
 ```bash
 % cd python
