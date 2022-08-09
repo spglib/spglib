@@ -25,5 +25,5 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/spglib_f08.mod DESTINATION ${CMAKE_INS
 configure_file(spglib_f08.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/spglib_f08.pc)
 install(
 	FILES  ${CMAKE_CURRENT_BINARY_DIR}/spglib_f08.pc
-	DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig
+	DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/pkgconfig
 	COMPONENT pkgconfig)
