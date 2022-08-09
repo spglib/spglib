@@ -13,6 +13,7 @@
    Rust, Fortran, and Ruby interfaces <interface>
    Definitions and conventions <definition>
    References <references>
+   Summary of releases <releases>
    Developer Documentation <develop>
 ```
 

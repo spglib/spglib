@@ -52,7 +52,7 @@ Conda is another choice:
 
 ### Building using setup.py
 
-To manually install python-spglib using ``setup.py``, python header
+To manually install python-spglib using `setup.py`, python header
 files (python-dev), C-compiler (e.g., gcc, clang), and numpy are
 required before the build. The installation steps are shown as
 follows:
@@ -116,7 +116,7 @@ except ImportError:
 ## Version number
 
 In version 1.8.3 or later, the version number is obtained by
-``spglib.__version__`` or {ref}`method_get_version`.
+`spglib.__version__` or {ref}`method_get_version`.
 
 ## Example
 
@@ -126,24 +126,24 @@ Examples are found in [examples](https://github.com/spglib/spglib/tree/master/py
 ## Variables
 
 (py_variables_crystal_structure)=
-### Crystal structure (``cell``)
+### Crystal structure (`cell`)
 
 A crystal structure is given by a **tuple**. This tuple format is
 supported at version 1.9.1 or later.
 
 The tuple format is shown as follows. There are three or four elements
-in the tuple: ``cell = (lattice, positions, numbers)`` or ``cell =
-(lattice, positions, numbers, magmoms)`` where ``magmoms`` represents
+in the tuple: `cell = (lattice, positions, numbers)` or `cell =
+(lattice, positions, numbers, magmoms)` where `magmoms` represents
 collinear polarizations on atoms and is optional.
 
-Lattice parameters ``lattice`` are given by a 3x3 matrix with floating
+Lattice parameters `lattice` are given by a 3x3 matrix with floating
 point values, where {math}`\mathbf{a}, \mathbf{b}, \mathbf{c}` are
 given as rows, which results in the transpose of the definition for
 C-API ({ref}`variables_lattice`). Fractional atomic positions
-``positions`` are given by a Nx3 matrix with floating point values,
+`positions` are given by a Nx3 matrix with floating point values,
 where N is the number of atoms. Numbers to distinguish atomic species
-``numbers`` are given by a list of N integers. The collinear polarizations
-``magmoms`` work with ``get_magnetic_symmetry`` and are given
+`numbers` are given by a list of N integers. The collinear polarizations
+`magmoms` work with `get_magnetic_symmetry` and are given
 as a list of N floating point values.
 
 ```python
@@ -158,7 +158,7 @@ numbers = [n_1, n_2, n_3, ...]
 magmoms = [m_1, m_2, m_3, ...]  # Works with get_magnetic_symmetry
 ```
 
-For example, the crystal structure (``cell``) of L1{math}`_{2}`-type AlNi{math}`_{3}` is:
+For example, the crystal structure (`cell`) of L1{math}`_{2}`-type AlNi{math}`_{3}` is:
 ```python
 lattice = [[1.0, 0.0, 0.0],
             [0.0, 1.0, 0.0],
@@ -172,13 +172,13 @@ numbers = [1, 2, 2, 2]        # Al, Ni, Ni, Ni
 
 
 Version 1.9.5 or later: The methods that use the crystal structure
-will return ``None`` when a crystal structure is not properly given.
+will return `None` when a crystal structure is not properly given.
 
 #### ASE Atoms-like input is deprecated.
 
 In the previous versions, ASE Atoms-like input was supported, but it
 is deprecated. It is recommended to use the above tuple-style input
-for the future support. ``DeprecationWarning`` is issued at version
+for the future support. `DeprecationWarning` is issued at version
 1.10.0 or later.
 
 The reason to make this feature deprecated is that ASE Atoms class is
@@ -191,23 +191,26 @@ from the ASE Atoms-class instance::
    numbers = cell.get_atomic_numbers()
    magmoms = None
 ```
-for which the corresponding code is written out of API and it is found
-at [here](https://github.com/spglib/spglib/blob/e0851894ccdad1abb87d519b228d056128b56806/python/spglib/spglib.py#L737-L741).
-Nevertheless the ASE Atoms-like input will be accepted for a while.  An alternative
-Atoms class ([atoms.py](https://github.com/spglib/spglib/blob/master/python/examples/atoms.py))
-that contains minimum set of methods is prepared in the [examples](https://github.com/spglib/spglib/tree/master/python/examples)
-directory. ``get_symmetry`` with collinear polarizations is not
-supported when ASE Atoms-class instance.
+for which the corresponding code is written out of API and it is found at
+[here](https://github.com/spglib/spglib/blob/e0851894ccdad1abb87d519b228d056128b56806/python/spglib/spglib.py#L737-L741).
+Nevertheless the ASE Atoms-like input will be accepted for a while.  An
+alternative Atoms class
+([atoms.py](https://github.com/spglib/spglib/blob/master/python/examples/atoms.py))
+that contains minimum set of methods is prepared in the
+[examples](https://github.com/spglib/spglib/tree/master/python/examples)
+directory. `get_symmetry` with collinear polarizations is not supported when
+ASE Atoms-class instance.
 
-### Symmetry tolerance (``symprec``)
+### Symmetry tolerance (`symprec`, `angle_tolerance`, `mag_symprec`)
 
-Distance tolerance in Cartesian coordinates to find crystal
-symmetry. For more details, see {ref}`variables_symprec`
+Distance tolerance in Cartesian coordinates to find crystal symmetry. For more
+details, see {ref}`variables_symprec`, {ref}`variables_angle_tolerance`, and
+{ref}`variables_mag_symprec`.
 
 ## Methods (version)
 
 (method_get_version)=
-### ``get_version``
+### `get_version`
 
 **New in version 1.8.3**
 
@@ -219,7 +222,7 @@ This returns version number of spglib by tuple with three numbers.
 
 ## Methods (error)
 
-### ``get_error_message``
+### `get_error_message`
 
 **New in version 1.9.5**
 
@@ -235,17 +238,17 @@ error_message = get_error_message()
 ## Method (space-group symmetry search)
 
 (py_method_get_symmetry)=
-### ``get_symmetry``
+### `get_symmetry`
 
 **`get_symmetry` with `is_magnetic=True` is deprecated at version 2.0. Use {ref}`py_get_magnetic_symmetry` for magnetic symmetry search.**
 
 ```python
-symmetry = get_symmetry(cell, symprec=1e-5)
+symmetry = get_symmetry(cell, symprec=1e-5, angle_tolerance=-1.0, mag_symprec=-1.0)
 ```
 
-Symmetry operations are obtained as a dictionary. The key ``rotation``
+Symmetry operations are obtained as a dictionary. The key `rotation`
 contains a numpy array of integer, which is "number of symmetry
-operations" x "3x3 matrices". The key ``translation`` contains a numpy
+operations" x "3x3 matrices". The key `translation` contains a numpy
 array of float, which is "number of symmetry operations" x
 "vectors". The orders of the rotation matrices and the translation
 vectors correspond with each other, e.g. , the second symmetry
@@ -264,24 +267,24 @@ new_vector[3x1] = rotation[3x3] * vector[3x1] + translation[3x1]
 ```
 
 The three values in the vector are given for the a, b, and c axes,
-respectively. The key ``equivalent_atoms`` gives a mapping table of
+respectively. The key `equivalent_atoms` gives a mapping table of
 atoms to symmetrically independent atoms. This is used to find
 symmetrically equivalent atoms. The numbers contained are the indices
 of atoms starting from 0, i.e., the first atom is numbered as 0, and
-then 1, 2, 3, ... ``np.unique(equivalent_atoms)`` gives representative
+then 1, 2, 3, ... `np.unique(equivalent_atoms)` gives representative
 symmetrically independent atoms. A list of atoms that are
 symmetrically equivalent to some independent atom (here for example 1
-is in ``equivalent_atom``) is found by
-``np.where(equivalent_atom=1)[0]``. When the search failed, ``None``
+is in `equivalent_atom`) is found by
+`np.where(equivalent_atom=1)[0]`. When the search failed, `None`
 is returned.
 
-If ``cell`` is given as a tuple and collinear polarizations are given
+If `cell` is given as a tuple and collinear polarizations are given
 as the fourth element of this tuple, symmetry operations are searched
 considering this freedom. In ASE Atoms-class object, this is not supported.
 
 
 (py_method_get_symmetry_dataset)=
-### ``get_symmetry_dataset``
+### `get_symmetry_dataset`
 
 **At version 1.9.4, the member 'choice' is added.**
 
@@ -291,156 +294,156 @@ dataset = get_symmetry_dataset(cell, symprec=1e-5, angle_tolerance=-1.0, hall_nu
 
 The arguments are:
 
-* ``cell`` and ``symprec``: See {ref}`py_variables`.
-* ``angle_tolerance``: An experimental argument that controls angle
+* `cell` and `symprec`: See {ref}`py_variables`.
+* `angle_tolerance`: An experimental argument that controls angle
   tolerance between basis vectors. Normally it is not recommended to use
   this argument. See a bit more detail at
   {ref}`variables_angle_tolerance`.
-* ``hall_number`` (see the definition of this number at
+* `hall_number` (see the definition of this number at
   {ref}`dataset_spg_get_dataset_spacegroup_type`): The argument to
   constrain the space-group-type search only for the Hall symbol
   corresponding to it. The mapping from Hall symbols to a
   space-group-type is the many-to-one mapping. Without specifying this
-  option (i.e., in the case of ``hall_number=0``), always the first one
+  option (i.e., in the case of `hall_number=0`), always the first one
   (the smallest serial number corresponding to the space-group-type in
   [list of space groups (Seto's web site)](https://yseto.net/?page_id=29>))
   among possible choices and settings is chosen as default. This
   argument is useful when the other choice (or setting) is expected to
-  be hooked. This affects to the obtained values of ``international``,
-  ``hall``, ``hall_number``, ``choice``, ``transformation_matrix``,
-  ``origin shift``, ``wyckoffs``, ``std_lattice``, ``std_positions``,
-  ``std_types`` and ``std_rotation_matrix``, but not to ``rotations``
-  and ``translations`` since the later set is defined with respect to
-  the basis vectors of user's input (the ``cell`` argument).
+  be hooked. This affects to the obtained values of `international`,
+  `hall`, `hall_number`, `choice`, `transformation_matrix`,
+  `origin shift`, `wyckoffs`, `std_lattice`, `std_positions`,
+  `std_types` and `std_rotation_matrix`, but not to `rotations`
+  and `translations` since the later set is defined with respect to
+  the basis vectors of user's input (the `cell` argument).
 
-``dataset`` is a dictionary. Short explanations of the values of the
+`dataset` is a dictionary. Short explanations of the values of the
 keys are shown below. More details are found at {ref}`spglib_dataset`.
 
-* ``number``: International space group number
-* ``international``: International short symbol
-* ``hall``: Hall symbol
-* ``hall_number``: Hall number. This number is used in
+* `number`: International space group number
+* `international`: International short symbol
+* `hall`: Hall symbol
+* `hall_number`: Hall number. This number is used in
   {ref}`py_method_get_symmetry_from_database` and
   {ref}`py_method_get_spacegroup_type`.
-* ``choice``: Centring, origin, basis vector setting
-* ``transformation_matrix``: See the detail at
+* `choice`: Centring, origin, basis vector setting
+* `transformation_matrix`: See the detail at
   {ref}`dataset_origin_shift_and_transformation`.
-* ``origin shift``: See the detail at
+* `origin shift`: See the detail at
   {ref}`dataset_origin_shift_and_transformation`.
-* ``wyckoffs``: Wyckoff letters
-* ``site_symmetry_symbols``: Site-symmetry symbols (**experimental**)
-* ``equivalent_atoms``: Mapping table to equivalent atoms
-* ``crystallographic_orbits`` : Mapping table to equivalent atoms (see
+* `wyckoffs`: Wyckoff letters
+* `site_symmetry_symbols`: Site-symmetry symbols (**experimental**)
+* `equivalent_atoms`: Mapping table to equivalent atoms
+* `crystallographic_orbits` : Mapping table to equivalent atoms (see
   {ref}`this <dataset_spg_get_dataset_site_symmetry>` for the difference
-  between ``equivalent_atoms`` and ``crystallographic_orbits``)
-* ``primitive_lattice`` : Basis vectors of a primitive cell
-* ``mapping_to_primitive``: Mapping table to atoms in the primitive cell
-* ``rotations`` and ``translations``: Rotation matrices and
+  between `equivalent_atoms` and `crystallographic_orbits`)
+* `primitive_lattice` : Basis vectors of a primitive cell
+* `mapping_to_primitive`: Mapping table to atoms in the primitive cell
+* `rotations` and `translations`: Rotation matrices and
   translation vectors. See {ref}`py_method_get_symmetry` for more
   details.
-* ``pointgroup``: Symbol of the crystallographic point group in
+* `pointgroup`: Symbol of the crystallographic point group in
   the Hermann–Mauguin notation.
-* ``std_lattice``, ``std_positions``, ``std_types``: Standardized
+* `std_lattice`, `std_positions`, `std_types`: Standardized
   crystal structure corresponding to a Hall symbol found. These are
-  equivalently given in the array formats of ``lattice``,
-  ``positions``, and ``numbers`` presented at
+  equivalently given in the array formats of `lattice`,
+  `positions`, and `numbers` presented at
   {ref}`py_variables_crystal_structure`,
   respectively.
-* ``std_rotation_matrix``: See the detail at {ref}`dataset_idealized_cell`.
-* ``std_mapping_to_primitive``: Mapping table from atoms in the
+* `std_rotation_matrix`: See the detail at {ref}`dataset_idealized_cell`.
+* `std_mapping_to_primitive`: Mapping table from atoms in the
   standardized crystal structure to the atoms in the primitive cell.
 
-%    * ``pointgrouop_number``: Serial number of the crystallographic point
+%    * `pointgrouop_number`: Serial number of the crystallographic point
 %      group, which refers list of space groups (Seto’s web site)
 
-When the search failed, ``None`` is returned.
+When the search failed, `None` is returned.
 
 ## Method (space-group type search)
 
-### ``get_spacegroup``
+### `get_spacegroup`
 
 ```python
-spacegroup = get_spacegroup(cell, symprec=1e-5)
+spacegroup = get_spacegroup(cell, symprec=1e-5, angle_tolerance=-1.0, symbol_type=0)
 ```
 
 International space group short symbol and number are obtained as a
-string. With ``symbol_type=1``, Schoenflies symbol is given instead of
+string. With `symbol_type=1`, Schoenflies symbol is given instead of
 international symbol.
 
 ## Method (standardization and finding primitive)
 
-### ``standardize_cell``
+### `standardize_cell`
 
 **New in version 1.8.x**
 
 ```python
-lattice, scaled_positions, numbers = standardize_cell(bulk, to_primitive=False, no_idealize=False, symprec=1e-5)
+lattice, scaled_positions, numbers = standardize_cell(bulk, to_primitive=False, no_idealize=False, symprec=1e-5, angle_tolerance=-1.0)
 ```
 
-``to_primitive=True`` is used to create the standardized primitive
-cell, and ``no_idealize=True`` disables to idealize lengths and angles
+`to_primitive=True` is used to create the standardized primitive
+cell, and `no_idealize=True` disables to idealize lengths and angles
 of basis vectors and positions of atoms according to crystal
-symmetry. Now ``refine_cell`` and ``find_primitive`` are shorthands of
+symmetry. Now `refine_cell` and `find_primitive` are shorthands of
 this method with combinations of these options. When the search
-failed, ``None`` is returned.  About the default choice
-of the setting, see the documentation of ``hall_number`` argument of
+failed, `None` is returned.  About the default choice
+of the setting, see the documentation of `hall_number` argument of
 {ref}`py_method_get_symmetry_dataset`.  More detailed explanation is
 shown in the spglib (C-API) document.
 
-### ``find_primitive``
+### `find_primitive`
 
 **Behaviour changed in version 1.8.x**
 
 ```python
-lattice, scaled_positions, numbers = find_primitive(cell, symprec=1e-5)
+lattice, scaled_positions, numbers = find_primitive(cell, symprec=1e-5, angle_tolerance=-1.0)
 ```
 
 When a primitive cell is found, lattice parameters (a 3x3 numpy array),
 scaled positions (a numpy array of [number_of_atoms,3]), and atomic
 numbers (a 1D numpy array) is returned. When the search failed,
-``None`` is returned.
+`None` is returned.
 
 The detailed control of standardization of unit cell can be done using
-``standardize_cell``.
+`standardize_cell`.
 
-### ``refine_cell``
+### `refine_cell`
 
 **Behaviour changed in version 1.8.x**
 
 ```python
-lattice, scaled_positions, numbers = refine_cell(cell, symprec=1e-5)
+lattice, scaled_positions, numbers = refine_cell(cell, symprec=1e-5, angle_tolerance=-1.0)
 ```
 
 Standardized crystal structure is obtained as a tuple of lattice (a
 3x3 numpy array), atomic scaled positions (a numpy array of
 [number_of_atoms,3]), and atomic numbers (a 1D numpy array) that are
 symmetrized following space group type. When the search failed,
-``None`` is returned. About the default choice of the setting, see the
-documentation of ``hall_number`` argument of
+`None` is returned. About the default choice of the setting, see the
+documentation of `hall_number` argument of
 {ref}`py_method_get_symmetry_dataset`.
 
 The detailed control of standardization of unit cell is achieved using
-``standardize_cell``.
+`standardize_cell`.
 
 ## Method (space-group dataset access)
 
 (py_method_get_symmetry_from_database)=
-### ``get_symmetry_from_database``
+### `get_symmetry_from_database`
 
 ```python
 symmetry = get_symmetry_from_database(hall_number)
 ```
 
 A set of crystallographic symmetry operations corresponding to
-``hall_number`` is returned by a dictionary where rotation parts and
-translation parts are accessed by the keys ``rotations`` and
-``translations``, respectively. The definition of ``hall_number`` is
+`hall_number` is returned by a dictionary where rotation parts and
+translation parts are accessed by the keys `rotations` and
+`translations`, respectively. The definition of `hall_number` is
 found at {ref}`dataset_spg_get_dataset_spacegroup_type`.
 
-When something wrong happened, ``None`` is returned.
+When something wrong happened, `None` is returned.
 
 (py_method_get_spacegroup_type)=
-### ``get_spacegroup_type``
+### `get_spacegroup_type`
 
 - **New at version 1.9.4**
 - **`hall_number` member is added at version 2.0.**
@@ -451,8 +454,8 @@ spacegroup_type = get_spacegroup_type(hall_number)
 
 This function allows to directly access to the space-group-type
 database in spglib (spg_database.c). A dictionary is returned. To
-specify the space group type with a specific choice, ``hall_number``
-is used. The definition of ``hall_number`` is found at
+specify the space group type with a specific choice, `hall_number`
+is used. The definition of `hall_number` is found at
 {ref}`dataset_spg_get_dataset_spacegroup_type`. The keys of the returned
 dictionary is as follows:
 
@@ -471,17 +474,17 @@ arithmetic_crystal_class_number
 arithmetic_crystal_class_symbol
 ```
 
-Here ``spacegroup_type['international_short']`` is equivalent to
-``dataset['international']`` of ``get_symmetry_dataset``,
-``spacegroup_type['hall_symbol']`` is equivalent to
-``dataset['hall']`` of ``get_symmetry_dataset``, and
-``spacegroup_type['pointgroup_international']`` is equivalent to
-``dataset['pointgroup_symbol']`` of ``get_symmetry_dataset``.
+Here `spacegroup_type['international_short']` is equivalent to
+`dataset['international']` of `get_symmetry_dataset`,
+`spacegroup_type['hall_symbol']` is equivalent to
+`dataset['hall']` of `get_symmetry_dataset`, and
+`spacegroup_type['pointgroup_international']` is equivalent to
+`dataset['pointgroup_symbol']` of `get_symmetry_dataset`.
 
-When something wrong happened, ``None`` is returned.
+When something wrong happened, `None` is returned.
 
 (py_method_get_spacegroup_type_from_symmetry)=
-### ``get_spacegroup_type_from_symmetry``
+### `get_spacegroup_type_from_symmetry`
 
 **New at version 2.0**
 
@@ -491,12 +494,12 @@ spacegroup_type = get_spacegroup_type_from_symmetry(rotations, translations, lat
 
 Return space-group type information (see {ref}`py_method_get_spacegroup_type`)
 from symmetry operations. This is the replacement of
-``get_hall_number_from_symmetry`` (deprecated at v2.0).
+`get_hall_number_from_symmetry` (deprecated at v2.0).
 
 This is expected to work well for the set of symmetry operations whose
 distortion is small. The aim of making this feature is to find space-group-type
 for the set of symmetry operations given by the other source than spglib. The
-parameter ``lattice`` is used as the distance measure for ``symprec``. If this
+parameter `lattice` is used as the distance measure for `symprec`. If this
 is not given, the cubic basis vector whose lengths are one is used.
 
 ## Methods (magnetic symmetry)
@@ -603,7 +606,7 @@ Optionally alternative settings can be specified with `hall_number`.
 
 ## Methods (lattice reduction)
 
-### ``niggli_reduce``
+### `niggli_reduce`
 
 **New at version 1.9.4**
 
@@ -613,17 +616,17 @@ niggli_lattice = niggli_reduce(lattice, eps=1e-5)
 
 Niggli reduction is achieved using this method. The algorithm detail
 is found at https://atztogo.github.io/niggli/ and the references are
-there in. Original basis vectors are stored in ``lattice`` and the
-Niggli reduced basis vectors are given in ``niggli_lattice``. The
+there in. Original basis vectors are stored in `lattice` and the
+Niggli reduced basis vectors are given in `niggli_lattice`. The
 format of basis vectors are found at
-{ref}`py_variables_crystal_structure`. ``esp`` is the tolerance
-parameter, but unlike ``symprec`` the unit is not a length. This is
+{ref}`py_variables_crystal_structure`. `esp` is the tolerance
+parameter, but unlike `symprec` the unit is not a length. This is
 used to check if difference of norms of two basis vectors is close to
 zero or not and if two basis vectors are orthogonal by the value of
 dot product being close to zero or not.  The detail is shown at
 <https://atztogo.github.io/niggli/>.
 
-When the search failed, ``None`` is returned.
+When the search failed, `None` is returned.
 
 The transformation from original basis vectors {math}`( \mathbf{a}
 \; \mathbf{b} \; \mathbf{c} )` to final basis vectors {math}`(
@@ -634,7 +637,7 @@ by {math}`\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
 ( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}` and the matrix
 elements have to be almost integers.
 
-### ``delaunay_reduce``
+### `delaunay_reduce`
 
 **New at version 1.9.4**
 
@@ -644,16 +647,16 @@ delaunay_lattice = delaunay_reduce(lattice, eps=1e-5)
 
 Delaunay reduction is achieved using this method. The algorithm is
 found in the international tables for crystallography
-volume A. Original basis vectors are stored in ``lattice`` and the
-Delaunay reduced basis vectors are given in ``delaunay_lattice``,
+volume A. Original basis vectors are stored in `lattice` and the
+Delaunay reduced basis vectors are given in `delaunay_lattice`,
 where the format of basis vectors are shown in
-{ref}`py_variables_crystal_structure`. ``esp`` is the tolerance
-parameter, but unlike ``symprec`` the unit is not a length. This is
+{ref}`py_variables_crystal_structure`. `esp` is the tolerance
+parameter, but unlike `symprec` the unit is not a length. This is
 used as the criterion if volume is close to zero or not and if two
 basis vectors are orthogonal by the value of dot product being close
 to zero or not.
 
-When the search failed, ``None`` is returned.
+When the search failed, `None` is returned.
 
 The transformation from original basis vectors {math}`( \mathbf{a}
 \; \mathbf{b} \; \mathbf{c} )` to final basis vectors {math}`(
@@ -666,85 +669,85 @@ elements have to be almost integers.
 
 ## Methods (kpoints)
 
-### ``get_ir_reciprocal_mesh``
+### `get_ir_reciprocal_mesh`
 
 ```python
 mapping, grid = get_ir_reciprocal_mesh(mesh, cell, is_shift=[0, 0, 0])
 ```
 
 Irreducible k-points are obtained from a sampling mesh of k-points.
-``mesh`` is given by three integers by array and specifies mesh
-numbers along reciprocal primitive axis. ``is_shift`` is given by the
-three integers by array. When ``is_shift`` is set for each reciprocal
+`mesh` is given by three integers by array and specifies mesh
+numbers along reciprocal primitive axis. `is_shift` is given by the
+three integers by array. When `is_shift` is set for each reciprocal
 primitive axis, the mesh is shifted along the axis in half of adjacent
 mesh points irrespective of the mesh numbers. When the value is not 0,
-``is_shift`` is set.
+`is_shift` is set.
 
-``mapping`` and ``grid`` are returned. ``grid`` gives the mesh points in
-fractional coordinates in reciprocal space. ``mapping`` gives mapping to
+`mapping` and `grid` are returned. `grid` gives the mesh points in
+fractional coordinates in reciprocal space. `mapping` gives mapping to
 the irreducible k-point indices that are obtained by
 ```python
 np.unique(mapping)
 ```
-Here ``np`` means the numpy module. The grid point is accessed by
-``grid[index]``.
+Here `np` means the numpy module. The grid point is accessed by
+`grid[index]`.
 
-When the search failed, ``None`` is returned.
+When the search failed, `None` is returned.
 
 An example is shown below:
 
-   ```python
-   import numpy as np
-   import spglib
+```python
+import numpy as np
+import spglib
 
-   lattice = np.array([[0.0, 0.5, 0.5],
-                       [0.5, 0.0, 0.5],
-                       [0.5, 0.5, 0.0]]) * 5.4
-   positions = [[0.875, 0.875, 0.875],
-                [0.125, 0.125, 0.125]]
-   numbers= [1,] * 2
-   cell = (lattice, positions, numbers)
-   print(spglib.get_spacegroup(cell, symprec=1e-5))
-   mesh = [8, 8, 8]
+lattice = np.array([[0.0, 0.5, 0.5],
+                    [0.5, 0.0, 0.5],
+                    [0.5, 0.5, 0.0]]) * 5.4
+positions = [[0.875, 0.875, 0.875],
+            [0.125, 0.125, 0.125]]
+numbers= [1,] * 2
+cell = (lattice, positions, numbers)
+print(spglib.get_spacegroup(cell, symprec=1e-5))
+mesh = [8, 8, 8]
 
-   #
-   # Gamma centre mesh
-   #
-   mapping, grid = spglib.get_ir_reciprocal_mesh(mesh, cell, is_shift=[0, 0, 0])
+#
+# Gamma centre mesh
+#
+mapping, grid = spglib.get_ir_reciprocal_mesh(mesh, cell, is_shift=[0, 0, 0])
 
-   # All k-points and mapping to ir-grid points
-   for i, (ir_gp_id, gp) in enumerate(zip(mapping, grid)):
-       print("%3d ->%3d %s" % (i, ir_gp_id, gp.astype(float) / mesh))
+# All k-points and mapping to ir-grid points
+for i, (ir_gp_id, gp) in enumerate(zip(mapping, grid)):
+    print("%3d ->%3d %s" % (i, ir_gp_id, gp.astype(float) / mesh))
 
-   # Irreducible k-points
-   print("Number of ir-kpoints: %d" % len(np.unique(mapping)))
-   print(grid[np.unique(mapping)] / np.array(mesh, dtype=float))
+# Irreducible k-points
+print("Number of ir-kpoints: %d" % len(np.unique(mapping)))
+print(grid[np.unique(mapping)] / np.array(mesh, dtype=float))
 
-   #
-   # With shift
-   #
-   mapping, grid = spglib.get_ir_reciprocal_mesh(mesh, cell, is_shift=[1, 1, 1])
+#
+# With shift
+#
+mapping, grid = spglib.get_ir_reciprocal_mesh(mesh, cell, is_shift=[1, 1, 1])
 
-   # All k-points and mapping to ir-grid points
-   for i, (ir_gp_id, gp) in enumerate(zip(mapping, grid)):
-       print("%3d ->%3d %s" % (i, ir_gp_id, (gp + [0.5, 0.5, 0.5]) / mesh))
+# All k-points and mapping to ir-grid points
+for i, (ir_gp_id, gp) in enumerate(zip(mapping, grid)):
+    print("%3d ->%3d %s" % (i, ir_gp_id, (gp + [0.5, 0.5, 0.5]) / mesh))
 
-   # Irreducible k-points
-   print("Number of ir-kpoints: %d" % len(np.unique(mapping)))
-   print((grid[np.unique(mapping)] + [0.5, 0.5, 0.5]) / mesh)
-   ```
+# Irreducible k-points
+print("Number of ir-kpoints: %d" % len(np.unique(mapping)))
+print((grid[np.unique(mapping)] + [0.5, 0.5, 0.5]) / mesh)
+```
 
 ## Method (deprecated)
-### ``get_hall_number_from_symmetry``
+### `get_hall_number_from_symmetry`
 
 **Deprecated at version 2.0. This function is replaced by
 {ref}`py_method_get_spacegroup_type_from_symmetry`.**
 
-Return one of ``hall_number`` corresponding to a space-group type of the given
-set of symmetry operations. When multiple ``hall_number`` exist for the
+Return one of `hall_number` corresponding to a space-group type of the given
+set of symmetry operations. When multiple `hall_number` exist for the
 space-group type, the smallest one (the first description of the space-group
 type in International Tables for Crystallography) is chosen. The definition of
-``hall_number`` is found at {ref}`dataset_spg_get_dataset_spacegroup_type` and
+`hall_number` is found at {ref}`dataset_spg_get_dataset_spacegroup_type` and
 the corresponding space-group-type information is obtained through
 {ref}`py_method_get_spacegroup_type`.
 
@@ -753,9 +756,9 @@ distortion is small. The aim of making this feature is to find
 space-group-type for the set of symmetry operations given by the other
 source than spglib.
 
-Note that the definition of ``symprec`` is
+Note that the definition of `symprec` is
 different from usual one, but is given in the fractional
-coordinates and so it should be small like ``1e-5``.
+coordinates and so it should be small like `1e-5`.
 
 ```python
 get_hall_number_from_symmetry(rotations, translations, symprec=1e-5)

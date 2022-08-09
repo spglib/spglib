@@ -378,13 +378,12 @@ SpglibSpacegroupType spg_get_spacegroup_type_from_symmetry(
 );
 ```
 
+The `SpglibSpacegroupType` structure is explained at {ref}`api_spg_spacegroup_type`.
 The parameter ``lattice`` is used as the distance measure for ``symprec``. If it
-is unknown,
+is unknown, the following may be a reasonable choice.
 ```
 lattice[3][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
 ```
-may be a good choice though ``symprec`` works under this ``lattice``.
-
 
 ## Magnetic symmetry
 
@@ -412,7 +411,7 @@ int spg_get_symmetry_with_collinear_spin(int rotation[][3][3],
 
 ### `spg_get_symmetry_with_site_tensors`
 
-**Changed in version 2.0: new argument `is_axial` is now required.**
+**Experimental: new at version 2.0**
 
 Returns magnetic symmetry operations represented by `rotation`, `translation`, and `spin_flips`
 from crystal structure with `lattice`, `position`, `types`, and `tensors`.
@@ -514,6 +513,8 @@ typedef struct {
 - `type` Type of MSG from 1 to 4
 
 ### `spg_get_magnetic_spacegroup_type_from_symmetry`
+
+**Experimental: new at version 2.0**
 
 Return magnetic space-group type information from magnetic symmetry operations.
 `time_reversals` takes 0 for ordinary operations and 1 for time-reversal operations.

@@ -35,8 +35,8 @@
 #ifndef __version_H__
 #define __version_H__
 
-#define SPGLIB_MAJOR_VERSION 1
-#define SPGLIB_MINOR_VERSION 16
-#define SPGLIB_MICRO_VERSION 5
+#define SPGLIB_MAJOR_VERSION 2
+#define SPGLIB_MINOR_VERSION 0
+#define SPGLIB_MICRO_VERSION 0
 
 #endif

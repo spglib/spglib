@@ -5,11 +5,11 @@
 - Add `is_axial`
 - Retain `tensor_rank`
 
-In this document, refer to `is_magnetic` in previous functions as `is_magnetic_old`.
+<!-- In this document, refer to `is_magnetic` in previous functions as `is_magnetic_old`. -->
 
 ## `spg_get_symmetry_with_site_tensors` (C API)
 
-### Previous behavior
+<!-- ### Previous behavior
 
 - `tensor_rank=0`: {math}`(\mathbf{R}, \mathbf{v}) \circ m = m`
     - `is_magnetic_old=true`: {math}`1' \circ m = -m`
@@ -18,7 +18,7 @@ In this document, refer to `is_magnetic` in previous functions as `is_magnetic_o
     - `is_magnetic_old=true`: {math}`1' \circ \mathbf{m} = -\mathbf{m}`
     - `is_magnetic_old=false`: {math}`1' \circ \mathbf{m} = \mathbf{m}`
 
-### Proposed behavior
+### Proposed behavior -->
 
 - `tensor_rank=0`
     - `with_time_reversal=true`: {math}`1' \circ m = -m`
@@ -35,46 +35,50 @@ In this document, refer to `is_magnetic` in previous functions as `is_magnetic_o
         - `is_axial=true`: {math}`(\mathbf{R}, \mathbf{v}) \circ \mathbf{m} = (\mathrm{det} \mathbf{R}) \mathbf{R} \mathbf{m}`
         - `is_axial=true`: {math}`(\mathbf{R}, \mathbf{v}) \circ \mathbf{m} = \mathbf{R} \mathbf{m}`
 
-### Correspondence
+<!-- ### Correspondence
 
 | `tensor_rank` | `is_magnetic_old` |   | `with_time_reversal` | `is_axial` |
 | ------------- | ----------------- | - | -------------------- | ---------- |
 | 0             | `true`            |   | `true`               | `false`    |
 | 0             | `false`           |   | `false`              | `false`    |
 | 1             | `true`            |   | `true`               | `true`     |
-| 1             | `false`           |   | `false`              | `true`     |
+| 1             | `false`           |   | `false`              | `true`     | -->
 
-## `spg_get_magnetic_dataset` (C API)
+<!-- ## `spg_get_magnetic_dataset` (C API)
 
-- Previous behavior: call `spg_get_symmetry_with_site_tensors` with `is_magnetic_old=true`
+- Previous behavior: call `spg_get_symmetry_with_site_tensors` with `is_magnetic_old=true` -->
 
-## `get_symmetry` (Python API)
+## `get_symmetry` and `get_magnetic_symmetry` (Python API)
 
-### Previous behaviors
+<!-- ### Previous behaviors
 
 `get_symmetry((lattice, positions, numbers, magmoms), is_magnetic_old=True)`
 - `magmoms = None` or not specified: other flags have no effect
 - `magmoms.shape = (num_atoms, )`: call C API with `tensor_rank=0` and `is_magnetic_old`
 - `magmoms.shape = (num_atoms, 3)`: call C API with `tensor_rank=1` and `is_magnetic_old`
 
-### Proposed behavior
+### Proposed behavior -->
 
-Deprecate `get_symmetry((lattice, positions, numbers, magmoms), is_magnetic_old=True)`
+Deprecate `is_magnetic` in `get_symmetry`, and the functionality is replaced by
+`get_magnetic_symmetry`.
 
-Add new function `get_magnetic_symmetry((lattice, positions, numbers, magmoms), is_axial=None, with_time_reversal=True)`
+Add new function `get_magnetic_symmetry((lattice, positions, numbers, magmoms),
+is_axial=None, with_time_reversal=True)`
 - `magmoms = None` or not specified: other flags have no effect
-- `magmoms.shape = (num_atoms, )`: call C API with `tensor_rank=0`, `is_axial` (default=false), and `with_time_reversal`
-- `magmoms.shape = (num_atoms, 3)`: call C API with `tensor_rank=1`, `is_axial` (default=true), and `with_time_reversal`
+- `magmoms.shape = (num_atoms, )`: call C API with `tensor_rank=0`, `is_axial`
+  (default=false), and `with_time_reversal` (collinear magnetic like)
+- `magmoms.shape = (num_atoms, 3)`: call C API with `tensor_rank=1`, `is_axial`
+  (default=true), and `with_time_reversal` (non-collinear magnetic like)
 
 ## `get_magnetic_symmetry_dataset` (Python API)
 
-### Previous behaviors
+<!-- ### Previous behaviors
 
 `get_magnetic_symmetry_dataset((lattice, positions, numbers, magmoms), is_magnetic_old=True)`
 
 - call `get_symmetry` with `is_magnetic_old`
 
-### Proposed behavior
+### Proposed behavior  -->
 
 `get_magnetic_symmetry_dataset((lattice, positions, numbers, magmoms), is_axial=None, with_time_reversal=True)`
 
