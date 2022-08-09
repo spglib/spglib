@@ -992,8 +992,9 @@ matrix <span class="math notranslate nohighlight">\(\boldsymbol{R}\)</span> is d
 <p>More precisely, this rotation matrix is an orthonormal matrix. Since <span class="math notranslate nohighlight">\(( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )\)</span> can
 be distored, to make <span class="math notranslate nohighlight">\(\boldsymbol{R}\)</span> orthonormal, it is calculated as
 follows. Make cubes of <span class="math notranslate nohighlight">\(( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )\)</span> and <span class="math notranslate nohighlight">\(( \bar{\mathbf{a}}_\mathrm{s} \; \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )\)</span> by
-<span class="math notranslate nohighlight">\(\mathrm{L} = \begin{pmatrix}\frac{\mathbf{a}}{|\mathbf{a}|} &amp; \frac{\mathbf{c} \times \mathbf{a}}{|\mathbf{c} \times \mathbf{a}|} &amp; \frac{\mathbf{a} \times \mathbf{b}}{|\mathbf{a} \times \mathbf{b}|} \end{pmatrix}\)</span>. Watching <span class="math notranslate nohighlight">\(\mathrm{L}\)</span>s as <span class="math notranslate nohighlight">\(3\times 3\)</span> matrices,
-<span class="math notranslate nohighlight">\(\boldsymbol{R}\)</span> is obtained by solving <span class="math notranslate nohighlight">\(\bar{\mathrm{L}}_\mathrm{s} = \boldsymbol{R} \mathrm{L}_\mathrm{s}\)</span>.</p>
+<span class="math notranslate nohighlight">\(\mathrm{L} = \begin{pmatrix}\frac{\mathbf{a}}{|\mathbf{a}|} &amp; \frac{(\mathbf{a} \times \mathbf{b}) \times \mathbf{a}}{|(\mathbf{a} \times \mathbf{b}) \times \mathbf{a}|} &amp; \frac{\mathbf{a} \times \mathbf{b}}{|\mathbf{a} \times \mathbf{b}|} \end{pmatrix}\)</span>. Watching
+<span class="math notranslate nohighlight">\(\mathrm{L}\)</span>s as <span class="math notranslate nohighlight">\(3\times 3\)</span> matrices, <span class="math notranslate nohighlight">\(\boldsymbol{R}\)</span> is
+obtained by solving <span class="math notranslate nohighlight">\(\bar{\mathrm{L}}_\mathrm{s} = \boldsymbol{R} \mathrm{L}_\mathrm{s}\)</span>.</p>
 </section>
 <section id="std-mapping-to-primitive">
 <h3><code class="docutils literal notranslate"><span class="pre">std_mapping_to_primitive</span></code><a class="headerlink" href="#std-mapping-to-primitive" title="Permalink to this headline">#</a></h3>

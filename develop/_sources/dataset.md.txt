@@ -210,11 +210,12 @@ follows. Make cubes of {math}`( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s}
 \; \mathbf{c}_\mathrm{s} )` and {math}`( \bar{\mathbf{a}}_\mathrm{s} \;
 \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )` by
 {math}`\mathrm{L} = \begin{pmatrix}\frac{\mathbf{a}}{|\mathbf{a}|} &
-\frac{\mathbf{c} \times \mathbf{a}}{|\mathbf{c} \times \mathbf{a}|} &
-\frac{\mathbf{a} \times \mathbf{b}}{|\mathbf{a} \times \mathbf{b}|}
-\end{pmatrix}`. Watching {math}`\mathrm{L}`s as {math}`3\times 3` matrices,
-{math}`\boldsymbol{R}` is obtained by solving {math}`\bar{\mathrm{L}}_\mathrm{s}
-= \boldsymbol{R} \mathrm{L}_\mathrm{s}`.
+\frac{(\mathbf{a} \times \mathbf{b}) \times \mathbf{a}}{|(\mathbf{a} \times
+\mathbf{b}) \times \mathbf{a}|} & \frac{\mathbf{a} \times
+\mathbf{b}}{|\mathbf{a} \times \mathbf{b}|} \end{pmatrix}`. Watching
+{math}`\mathrm{L}`s as {math}`3\times 3` matrices, {math}`\boldsymbol{R}` is
+obtained by solving {math}`\bar{\mathrm{L}}_\mathrm{s} = \boldsymbol{R}
+\mathrm{L}_\mathrm{s}`.
 
 ### ``std_mapping_to_primitive``
 
