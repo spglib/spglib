@@ -26,14 +26,7 @@ Or to install under the parent directory,
 % cmake --install . --prefix ..
 ```
 
-A simple test is executed by
-
-```bash
-% mkdir _build
-% cd _build
-% cmake .. -DUSE_SANITIZER="Address" -DCMAKE_BUILD_TYPE="Debug"
-% make check
-```
+See [test/README.md](test/README.md) for simple tests.
 
 ## How to run test
 

@@ -13,6 +13,7 @@ repos:
     files: |
       (?x)^(
         ^src/.+\.(c|h)|
+        ^test/.+\.(c|h)|
         ^python/_spglib.c
       )$
     exclude: src/msg_database.c  # Skip too large file to wait every time
