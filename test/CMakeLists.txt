@@ -42,17 +42,12 @@ endif()
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
-# Include src/spglib.h
-include_directories(${PROJECT_SOURCE_DIR}/../src)
-# Include test/utils.h
-include_directories(${PROJECT_SOURCE_DIR})
+# Include src/spglib.h and test/utils.h
+include_directories("${PROJECT_SOURCE_DIR}/../src" "${PROJECT_SOURCE_DIR}")
 
-# Source code
+# Static library
 file(GLOB SOURCES ${PROJECT_SOURCE_DIR}/../src/*.c)
-list(REMOVE_ITEM SOURCES ${PROJECT_SOURCE_DIR}/../src/test.c)
-
-# Shared library
-add_library(symspg SHARED ${SOURCES})
+add_library(symspg STATIC ${SOURCES})
 
 # Fetch GoogleTest
 include(FetchContent)
