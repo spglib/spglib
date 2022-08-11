@@ -60,5 +60,88 @@ TEST(<your_test_suite_name>, <test_name>) {
 }
 ```
 
+## Utility functions for preparing structures
+
+When you find a doubtful `cell` with Python API, the following python snippets will be useful to prepare a test case for Python testing and C testing.
+
+```python
+def print_python_cell(cell):
+    if len(cell) == 3:
+        lattice, positions, numbers = cell
+        magmoms = None
+    elif len(cell) == 4:
+        lattice, positions, numbers, magmoms = cell
+
+    contents = []
+
+    # lattice
+    contents.append("lattice = np.array([")
+    for i in range(3):
+        contents.append(f"    [{lattice[i][0]:.8f}, {lattice[i][1]:.8f}, {lattice[i][2]:.8f}],")
+    contents.append("])")
+
+    # positions
+    contents.append("positions = np.array([")
+    for i in range(len(positions)):
+        contents.append(
+            f"    [{positions[i][0]:.8f}, {positions[i][1]:.8f}, {positions[i][2]:.8f}],"
+        )
+    contents.append("])")
+
+    # numbers
+    contents.append("numbers = np.array([" + ", ".join(map(str, numbers)) + "])")
+
+    # magmoms
+    if magmoms:
+        contents.append("magmoms = np.array([")
+        for i in range(len(positions)):
+            contents.append(f"    [{magmoms[i][0]:.8f}, {magmoms[i][1]:.8f}, {magmoms[i][2]:.8f}],")
+        contents.append("])")
+
+    print("\n".join(contents))
+```
+
+```python
+def print_cpp_cell(cell):
+    if len(cell) == 3:
+        lattice, positions, numbers = cell
+        magmoms = None
+    elif len(cell) == 4:
+        lattice, positions, numbers, magmoms = cell
+
+    contents = []
+
+    # lattice
+    lattice_col = lattice.T
+    contents.append("double lattice[3][3] = {")
+    for i in range(3):
+        contents.append(
+            f"    {{ {lattice_col[i][0]:.8f}, {lattice_col[i][1]:.8f}, {lattice_col[i][2]:.8f} }},"
+        )
+    contents.append("};")
+
+    # positions
+    contents.append("double positions[][3] = {")
+    for i in range(len(positions)):
+        contents.append(
+            f"    {{ {positions[i][0]:.8f}, {positions[i][1]:.8f}, {positions[i][2]:.8f} }},"
+        )
+    contents.append("};")
+
+    # numbers
+    contents.append("int types[] = {" + ", ".join(map(str, numbers)) + "};")
+
+    # magmoms
+    if magmoms:
+        contents.append("double spins[] = {")
+        for i in range(len(positions)):
+            contents.append(f"    {magmoms[i][0]:.8f}, {magmoms[i][1]:.8f}, {magmoms[i][2]:.8f},")
+        contents.append("};")
+
+    contents.append(f"int num_atom = {len(positions)};")
+
+    print("\n".join(contents))
+```
+
 ## Resources
 - <https://google.github.io/googletest/>
