@@ -25,7 +25,7 @@ For older CMake<3.14
 cd test
 mkdir build && cd build
 cmake -DUSE_SANITIZER="Address" -DCMAKE_BUILD_TYPE="Debug" ..
-cmake --build build
+cmake --build .
 ctest
 ```
 
