@@ -28,8 +28,8 @@ jobs:
 
       - name: Build wheels for macOS
         if: matrix.os == 'macOS-11'
-        # env:
-        #   CIBW_ARCHS_MACOS: x86_64 arm64
+        env:
+          CIBW_ARCHS_MACOS: x86_64 arm64
         run: |
           python -m cibuildwheel --output-dir wheelhouse python
 
