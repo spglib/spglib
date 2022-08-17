@@ -68,8 +68,6 @@ static Cell *expand_positions_in_bravais(
 static Cell *get_conventional_primitive(SPGCONST Spacegroup *spacegroup,
                                         const Cell *primitive);
 static int get_number_of_pure_translation(const Symmetry *conv_sym);
-static void get_conventional_lattice(double lattice[3][3],
-                                     SPGCONST Spacegroup *spacegroup);
 static void set_tricli(double lattice[3][3], SPGCONST double metric[3][3]);
 static void set_monocli(double lattice[3][3], SPGCONST double metric[3][3],
                         const char choice[6]);
@@ -124,11 +122,6 @@ static Symmetry *get_symmetry_in_original_cell(SPGCONST int t_mat[3][3],
 static Symmetry *copy_symmetry_upon_lattice_points(const VecDBL *pure_trans,
                                                    const Symmetry *t_sym,
                                                    const int aperiodic_axis);
-static int find_similar_bravais_lattice(Spacegroup *spacegroup,
-                                        const double symprec);
-static void measure_rigid_rotation(double rotation[3][3],
-                                   SPGCONST double bravais_lattice[3][3],
-                                   SPGCONST double std_lattice[3][3]);
 static void get_orthonormal_basis(double basis[3][3],
                                   SPGCONST double lattice[3][3]);
 static SPGCONST int identity[3][3] = {
@@ -138,6 +131,8 @@ static SPGCONST int identity[3][3] = {
 };
 
 /* Return NULL if failed */
+/* spacegroup->bravais_lattice and spacegroup->origin_shift are overwritten */
+/* by refined ones. */
 ExactStructure *ref_get_exact_structure_and_symmetry(Spacegroup *spacegroup,
                                                      const Cell *primitive,
                                                      const Cell *cell,
@@ -160,9 +155,7 @@ ExactStructure *ref_get_exact_structure_and_symmetry(Spacegroup *spacegroup,
     symmetry = NULL;
     exact_structure = NULL;
 
-    /* spacegroup->bravais_lattice is overwritten. */
-    /* spacegroup->origin_shift is overwritten. */
-    if (!find_similar_bravais_lattice(spacegroup, symprec)) {
+    if (!ref_find_similar_bravais_lattice(spacegroup, symprec)) {
         goto err;
     }
 
@@ -218,8 +211,8 @@ ExactStructure *ref_get_exact_structure_and_symmetry(Spacegroup *spacegroup,
         goto err;
     }
 
-    measure_rigid_rotation(rotation, spacegroup->bravais_lattice,
-                           bravais->lattice);
+    ref_measure_rigid_rotation(rotation, spacegroup->bravais_lattice,
+                               bravais->lattice);
 
     exact_structure->bravais = bravais;
     exact_structure->symmetry = symmetry;
@@ -472,7 +465,7 @@ static Cell *get_bravais_exact_positions_and_lattice(
     num_pure_trans = get_number_of_pure_translation(conv_sym);
 
     /* Lattice vectors are set. */
-    get_conventional_lattice(conv_prim->lattice, spacegroup);
+    ref_get_conventional_lattice(conv_prim->lattice, spacegroup);
 
     /* Aperiodic axis is set. */
     conv_prim->aperiodic_axis = spacegroup->hall_number > 0 ? -1 : 2;
@@ -529,7 +522,8 @@ static Cell *expand_positions_in_bravais(
 
     bravais = NULL;
 
-    if ((bravais = cel_alloc_cell(conv_prim->size * num_pure_trans)) == NULL) {
+    if ((bravais = cel_alloc_cell(conv_prim->size * num_pure_trans,
+                                  conv_prim->tensor_rank)) == NULL) {
         return NULL;
     }
 
@@ -594,7 +588,8 @@ static Cell *get_conventional_primitive(SPGCONST Spacegroup *spacegroup,
 
     conv_prim = NULL;
 
-    if ((conv_prim = cel_alloc_cell(primitive->size)) == NULL) {
+    if ((conv_prim = cel_alloc_cell(primitive->size, primitive->tensor_rank)) ==
+        NULL) {
         return NULL;
     }
 
@@ -617,8 +612,10 @@ static Cell *get_conventional_primitive(SPGCONST Spacegroup *spacegroup,
     return conv_prim;
 }
 
-static void get_conventional_lattice(double lattice[3][3],
-                                     SPGCONST Spacegroup *spacegroup) {
+/* Return standardized transformation matrix for given space-group type and
+ * settings. */
+void ref_get_conventional_lattice(double lattice[3][3],
+                                  SPGCONST Spacegroup *spacegroup) {
     int i, j;
     double metric[3][3];
     Pointgroup pointgroup;
@@ -635,20 +632,6 @@ static void get_conventional_lattice(double lattice[3][3],
 
     debug_print("[line %d, %s]\n", __LINE__, __FILE__);
     debug_print("bravais lattice\n");
-
-    /* printf("%f %f %f\n", */
-    /*        spacegroup->bravais_lattice[0][0], */
-    /*        spacegroup->bravais_lattice[0][1], */
-    /*        spacegroup->bravais_lattice[0][2]); */
-    /* printf("%f %f %f\n", */
-    /*        spacegroup->bravais_lattice[1][0], */
-    /*        spacegroup->bravais_lattice[1][1], */
-    /*        spacegroup->bravais_lattice[1][2]); */
-    /* printf("%f %f %f\n", */
-    /*        spacegroup->bravais_lattice[2][0], */
-    /*        spacegroup->bravais_lattice[2][1], */
-    /*        spacegroup->bravais_lattice[2][2]); */
-
     debug_print_matrix_d3(spacegroup->bravais_lattice);
     debug_print("%s\n", spacegroup->choice);
 
@@ -1429,8 +1412,10 @@ static Symmetry *copy_symmetry_upon_lattice_points(const VecDBL *pure_trans,
     return symmetry;
 }
 
-static int find_similar_bravais_lattice(Spacegroup *spacegroup,
-                                        const double symprec) {
+/* spacegroup->bravais_lattice and spacegroup->origin_shift are overwritten */
+/* by refined ones. Return 0 if failed. */
+int ref_find_similar_bravais_lattice(Spacegroup *spacegroup,
+                                     const double symprec) {
     int i, j, k, rot_i, lattice_rank;
     Symmetry *conv_sym;
     double min_length2, length2, diff, min_length, length;
@@ -1445,7 +1430,7 @@ static int find_similar_bravais_lattice(Spacegroup *spacegroup,
         return 0;
     }
 
-    get_conventional_lattice(std_lattice, spacegroup);
+    ref_get_conventional_lattice(std_lattice, spacegroup);
 
     min_length2 = 0;
     for (i = 0; i < 3; i++) {
@@ -1535,9 +1520,10 @@ static int find_similar_bravais_lattice(Spacegroup *spacegroup,
     return 1;
 }
 
-static void measure_rigid_rotation(double rotation[3][3],
-                                   SPGCONST double bravais_lattice[3][3],
-                                   SPGCONST double std_lattice[3][3]) {
+/* Calculate `rotation` s.t. std_lattice = rotation @ bravais_lattice */
+void ref_measure_rigid_rotation(double rotation[3][3],
+                                SPGCONST double bravais_lattice[3][3],
+                                SPGCONST double std_lattice[3][3]) {
     /* (a_s^ideal, b_s^ideal, c_s^ideal) = R(a_s, b_s, c_s) */
     double brv_basis[3][3], std_basis[3][3], inv_brv_basis[3][3];
 

@@ -474,7 +474,7 @@ static int is_equivalent_lattice(double tmat[3][3], const int allow_flip,
                                  SPGCONST double orig_lattice[3][3],
                                  const double symprec);
 
-/* Return spacegroup.number = 0 if failed */
+/* Return NULL if failed */
 Spacegroup *spa_search_spacegroup(const Primitive *primitive,
                                   const int hall_number, const double symprec,
                                   const double angle_tolerance) {
@@ -515,10 +515,12 @@ Spacegroup *spa_search_spacegroup(const Primitive *primitive,
     return spacegroup;
 }
 
-/* Return 0 if failed */
-int spa_search_spacegroup_with_symmetry(const Symmetry *symmetry,
-                                        const double symprec) {
-    int i, hall_number;
+/* Return NULL if failed */
+/* Assume symmetry is transformed in primitive cell. */
+Spacegroup *spa_search_spacegroup_with_symmetry(const Symmetry *symmetry,
+                                                SPGCONST double prim_lat[3][3],
+                                                const double symprec) {
+    int i;
     Spacegroup *spacegroup;
     Primitive *primitive;
 
@@ -527,10 +529,10 @@ int spa_search_spacegroup_with_symmetry(const Symmetry *symmetry,
     if ((primitive = prm_alloc_primitive(1)) == NULL) {
         return 0;
     }
-    if ((primitive->cell = cel_alloc_cell(1)) == NULL) {
+    if ((primitive->cell = cel_alloc_cell(1, NOSPIN)) == NULL) {
         return 0;
     }
-    mat_copy_matrix_d3(primitive->cell->lattice, identity);
+    mat_copy_matrix_d3(primitive->cell->lattice, prim_lat);
     for (i = 0; i < 3; i++) {
         primitive->cell->position[0][i] = 0;
     }
@@ -539,14 +541,7 @@ int spa_search_spacegroup_with_symmetry(const Symmetry *symmetry,
     prm_free_primitive(primitive);
     primitive = NULL;
 
-    if (spacegroup != NULL) {
-        hall_number = spacegroup->hall_number;
-        free(spacegroup);
-        spacegroup = NULL;
-        return hall_number;
-    } else {
-        return 0;
-    }
+    return spacegroup;
 }
 
 /* Return NULL if failed */
@@ -647,7 +642,8 @@ Cell *spa_transform_from_primitive(const Cell *primitive,
         goto ret;
     }
 
-    if ((std_cell = cel_alloc_cell(primitive->size * multi)) == NULL) {
+    if ((std_cell = cel_alloc_cell(primitive->size * multi,
+                                   primitive->tensor_rank)) == NULL) {
         free(mapping_table);
         mapping_table = NULL;
         goto ret;
@@ -684,6 +680,20 @@ Cell *spa_transform_from_primitive(const Cell *primitive,
 
 ret:
     return trimmed_cell;
+}
+
+void spa_copy_spacegroup(Spacegroup *dst, SPGCONST Spacegroup *src) {
+    dst->number = src->number;
+    dst->hall_number = src->hall_number;
+    dst->pointgroup_number = src->pointgroup_number;
+    strcpy(dst->schoenflies, src->schoenflies);
+    strcpy(dst->hall_symbol, src->hall_symbol);
+    strcpy(dst->international, src->international);
+    strcpy(dst->international_long, src->international_long);
+    strcpy(dst->international_short, src->international_short);
+    strcpy(dst->choice, src->choice);
+    mat_copy_matrix_d3(dst->bravais_lattice, src->bravais_lattice);
+    mat_copy_vector_d3(dst->origin_shift, src->origin_shift);
 }
 
 /* Return NULL if failed */

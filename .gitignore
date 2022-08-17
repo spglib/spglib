@@ -24,6 +24,7 @@ lib
 include
 lib64
 
+
 # Installer logs
 pip-log.txt
 
@@ -79,6 +80,14 @@ autoscan.log
 configure.scan
 test-driver
 
+# CMake
+CMakeCache.txt
+CMakeFiles/
+CTestTestfile.cmake
+cmake_install.cmake
+null.d
+*.pc
+
 example/a.out
 example/defs_basis.mod
 example/example
@@ -91,3 +100,6 @@ findsym.log
 
 spglib_test*
 test-suite.log
+
+.vscode/
+docs_build/

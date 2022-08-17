@@ -21,6 +21,7 @@ static int sub_spg_standardize_cell(double lattice[3][3],
 static void test_spg_get_international(void);
 static void test_spg_get_schoenflies(void);
 static void test_spg_get_spacegroup_type(void);
+static void test_spg_get_magnetic_spacegroup_type(void);
 static void test_spg_get_symmetry_from_database(void);
 static void test_spg_refine_cell_BCC(void);
 static void test_spg_get_dataset(void);
@@ -59,6 +60,7 @@ int main(void)
   test_spg_get_international();
   test_spg_get_schoenflies();
   test_spg_get_spacegroup_type();
+  test_spg_get_magnetic_spacegroup_type();
   test_spg_get_symmetry_from_database();
   test_spg_refine_cell_BCC();
   test_spg_get_dataset();
@@ -410,6 +412,20 @@ static void test_spg_get_spacegroup_type(void)
   printf("International: %s\n", spgtype.international_full);
   printf("International: %s\n", spgtype.international_short);
   printf("Hall symbol:   %s\n", spgtype.hall_symbol);
+
+}
+
+static void test_spg_get_magnetic_spacegroup_type(void) {
+    SpglibMagneticSpacegroupType msgtype;
+    msgtype = spg_get_magnetic_spacegroup_type(1279);
+
+    printf("*** Example of spg_get_magnetic_spacegroup_type ***:\n");
+    printf("UNI Number:    %d\n", msgtype.uni_number);
+    printf("Litvin Number: %d\n", msgtype.litvin_number);
+    printf("BNS Number:    %s\n", msgtype.bns_number);
+    printf("OG Number:     %s\n", msgtype.og_number);
+    printf("Number:        %d\n", msgtype.number);
+    printf("Type:          %d\n", msgtype.type);
 
 }
 

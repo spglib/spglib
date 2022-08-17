@@ -48,16 +48,23 @@
 static Cell *trim_cell(int *mapping_table,
                        SPGCONST double trimmed_lattice[3][3], const Cell *cell,
                        const double symprec);
-static void set_positions(Cell *trim_cell, const VecDBL *position,
-                          const int *mapping_table, const int *overlap_table);
+static void set_positions_and_tensors(Cell *trimmed_cell,
+                                      const VecDBL *position,
+                                      const SiteTensorType tensor_rank,
+                                      const double *tensors,
+                                      const int *mapping_table,
+                                      const int *overlap_table);
 static VecDBL *translate_atoms_in_trimmed_lattice(
     const Cell *cell, SPGCONST double prim_lat[3][3]);
 static int *get_overlap_table(const VecDBL *position, const int cell_size,
                               const int *cell_types, const Cell *trimmed_cell,
                               const double symprec);
 
-/* NULL is returned if failed */
-Cell *cel_alloc_cell(const int size) {
+// @brief Allocate Cell. NULL is returned if failed
+// @param size number of atoms
+// @param tensor_rank rank of site tensors for magnetic symmetry. Set -1 if not
+// used.
+Cell *cel_alloc_cell(const int size, const SiteTensorType tensor_rank) {
     Cell *cell;
 
     cell = NULL;
@@ -67,15 +74,11 @@ Cell *cel_alloc_cell(const int size) {
     }
 
     if ((cell = (Cell *)malloc(sizeof(Cell))) == NULL) {
-        warning_print("spglib: Memory could not be allocated.");
-        return NULL;
+        goto fail;
     }
 
     if ((cell->lattice = (double(*)[3])malloc(sizeof(double[3]) * 3)) == NULL) {
-        warning_print("spglib: Memory could not be allocated.");
-        free(cell);
-        cell = NULL;
-        return NULL;
+        goto fail;
     }
 
     cell->size = size;
@@ -83,26 +86,35 @@ Cell *cel_alloc_cell(const int size) {
     cell->aperiodic_axis = -1;
 
     if ((cell->types = (int *)malloc(sizeof(int) * size)) == NULL) {
-        warning_print("spglib: Memory could not be allocated.");
-        free(cell->lattice);
-        cell->lattice = NULL;
-        free(cell);
-        cell = NULL;
-        return NULL;
+        goto fail;
     }
     if ((cell->position = (double(*)[3])malloc(sizeof(double[3]) * size)) ==
         NULL) {
-        warning_print("spglib: Memory could not be allocated.");
-        free(cell->types);
-        cell->types = NULL;
-        free(cell->lattice);
-        cell->lattice = NULL;
-        free(cell);
-        cell = NULL;
-        return NULL;
+        goto fail;
+    }
+
+    cell->tensor_rank = tensor_rank;
+    if (tensor_rank == COLLINEAR) {
+        // Collinear case
+        if ((cell->tensors = (double *)malloc(sizeof(double) * size)) == NULL) {
+            goto fail;
+        }
+    }
+    if (tensor_rank == NONCOLLINEAR) {
+        // Non-collinear case
+        if ((cell->tensors = (double *)malloc(sizeof(double) * size * 3)) ==
+            NULL) {
+            goto fail;
+        }
     }
 
     return cell;
+
+fail:
+    warning_print("spglib: Memory could not be allocated.");
+    cel_free_cell(cell);
+    cell = NULL;
+    return NULL;
 }
 
 void cel_free_cell(Cell *cell) {
@@ -118,6 +130,11 @@ void cel_free_cell(Cell *cell) {
         if (cell->types != NULL) {
             free(cell->types);
             cell->types = NULL;
+        }
+        if ((cell->tensor_rank != NOSPIN) && (cell->tensors != NULL)) {
+            // When cell->tensor_rank==NOSPIN, cell->tensors is already NULL.
+            free(cell->tensors);
+            cell->tensors = NULL;
         }
         free(cell);
     }
@@ -155,17 +172,41 @@ void cel_set_layer_cell(Cell *cell, SPGCONST double lattice[3][3],
     cell->aperiodic_axis = aperiodic_axis;
 }
 
+void cel_set_cell_with_tensors(Cell *cell, SPGCONST double lattice[3][3],
+                               SPGCONST double position[][3], const int types[],
+                               const double *tensors) {
+    int i, j;
+
+    cel_set_cell(cell, lattice, position, types);
+    for (i = 0; i < cell->size; i++) {
+        if (cell->tensor_rank == COLLINEAR) {
+            cell->tensors[i] = tensors[i];
+        } else if (cell->tensor_rank == NONCOLLINEAR) {
+            for (j = 0; j < 3; j++) {
+                cell->tensors[i * 3 + j] = tensors[i * 3 + j];
+            }
+        }
+    }
+}
+
 Cell *cel_copy_cell(const Cell *cell) {
     Cell *cell_new;
 
     cell_new = NULL;
 
-    if ((cell_new = cel_alloc_cell(cell->size)) == NULL) {
+    if ((cell_new = cel_alloc_cell(cell->size, cell->tensor_rank)) == NULL) {
         return NULL;
     }
 
-    cel_set_layer_cell(cell_new, cell->lattice, cell->position, cell->types,
-                       cell->aperiodic_axis);
+    if (cell->aperiodic_axis != -1) {
+        cel_set_layer_cell(cell_new, cell->lattice, cell->position, cell->types,
+                           cell->aperiodic_axis);
+    } else if (cell->tensor_rank == NOSPIN) {
+        cel_set_cell(cell_new, cell->lattice, cell->position, cell->types);
+    } else {
+        cel_set_cell_with_tensors(cell_new, cell->lattice, cell->position,
+                                  cell->types, cell->tensors);
+    }
 
     return cell_new;
 }
@@ -285,6 +326,12 @@ int cel_layer_any_overlap_with_same_type(const Cell *cell,
     return 0;
 }
 
+/// @param[out] mapping_table array (cell->size, ), maps atom-`i` in cell to
+/// non-overlapped atom-`mapping_table[i]`
+/// @param[in] trimmed_lattice
+/// @param[in] cell
+/// @param[in] symprec
+/// @return trimmed_cell
 Cell *cel_trim_cell(int *mapping_table, SPGCONST double trimmed_lattice[3][3],
                     const Cell *cell, const double symprec) {
     return trim_cell(mapping_table, trimmed_lattice, cell, symprec);
@@ -328,7 +375,8 @@ static Cell *trim_cell(int *mapping_table,
         goto err;
     }
 
-    if ((trimmed_cell = cel_alloc_cell(cell->size / ratio)) == NULL) {
+    if ((trimmed_cell =
+             cel_alloc_cell(cell->size / ratio, cell->tensor_rank)) == NULL) {
         goto err;
     }
 
@@ -367,7 +415,8 @@ static Cell *trim_cell(int *mapping_table,
         }
     }
 
-    set_positions(trimmed_cell, position, mapping_table, overlap_table);
+    set_positions_and_tensors(trimmed_cell, position, cell->tensor_rank,
+                              cell->tensors, mapping_table, overlap_table);
 
     mat_free_VecDBL(position);
     position = NULL;
@@ -379,13 +428,27 @@ err:
     return NULL;
 }
 
-static void set_positions(Cell *trimmed_cell, const VecDBL *position,
-                          const int *mapping_table, const int *overlap_table) {
-    int i, j, k, l, multi;
+/// @brief Set trimmed_cell->position and trimmed_cell->tensors by averaging
+/// over overlapped atoms
+static void set_positions_and_tensors(Cell *trimmed_cell,
+                                      const VecDBL *position,
+                                      const SiteTensorType tensor_rank,
+                                      const double *tensors,
+                                      const int *mapping_table,
+                                      const int *overlap_table) {
+    int i, j, k, l, multi, atom_idx;
 
     for (i = 0; i < trimmed_cell->size; i++) {
         for (j = 0; j < 3; j++) {
             trimmed_cell->position[i][j] = 0;
+        }
+
+        if (tensor_rank == COLLINEAR) {
+            trimmed_cell->tensors[i] = 0;
+        } else if (tensor_rank == NONCOLLINEAR) {
+            for (j = 0; j < 3; j++) {
+                trimmed_cell->tensors[3 * i + j] = 0;
+            }
         }
     }
 
@@ -408,6 +471,18 @@ static void set_positions(Cell *trimmed_cell, const VecDBL *position,
         }
     }
 
+    /* Site tensors of overlapped atoms are averaged. */
+    for (i = 0; i < position->size; i++) {
+        atom_idx = mapping_table[i];
+        if (tensor_rank == COLLINEAR) {
+            trimmed_cell->tensors[atom_idx] += tensors[i];
+        } else if (tensor_rank == NONCOLLINEAR) {
+            for (j = 0; j < 3; j++) {
+                trimmed_cell->tensors[3 * atom_idx + j] += tensors[3 * i + j];
+            }
+        }
+    }
+
     multi = position->size / trimmed_cell->size;
     for (i = 0; i < trimmed_cell->size; i++) {
         for (j = 0; j < 3; j++) {
@@ -415,6 +490,14 @@ static void set_positions(Cell *trimmed_cell, const VecDBL *position,
             if (j != trimmed_cell->aperiodic_axis) {
                 trimmed_cell->position[i][j] =
                     mat_Dmod1(trimmed_cell->position[i][j]);
+            }
+        }
+
+        if (tensor_rank == COLLINEAR) {
+            trimmed_cell->tensors[i] /= multi;
+        } else if (tensor_rank == NONCOLLINEAR) {
+            for (j = 0; j < 3; j++) {
+                trimmed_cell->tensors[3 * i + j] /= multi;
             }
         }
     }

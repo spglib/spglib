@@ -64,7 +64,9 @@ set(SOURCES ${PROJECT_SOURCE_DIR}/src/arithmetic.c
             ${PROJECT_SOURCE_DIR}/src/hall_symbol.c
             ${PROJECT_SOURCE_DIR}/src/kgrid.c
             ${PROJECT_SOURCE_DIR}/src/kpoint.c
+            ${PROJECT_SOURCE_DIR}/src/magnetic_spacegroup.c
             ${PROJECT_SOURCE_DIR}/src/mathfunc.c
+            ${PROJECT_SOURCE_DIR}/src/msg_database.c
             ${PROJECT_SOURCE_DIR}/src/niggli.c
             ${PROJECT_SOURCE_DIR}/src/overlap.c
             ${PROJECT_SOURCE_DIR}/src/pointgroup.c
@@ -100,28 +102,6 @@ install(FILES ${PROJECT_SOURCE_DIR}/src/spglib.h
               ${PROJECT_SOURCE_DIR}/fortran/spglib_f08.f90
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-add_executable(spglibtest EXCLUDE_FROM_ALL ${PROJECT_SOURCE_DIR}/src/test.c ${SOURCES})
-
-if(NOT MSVC)
-  target_link_libraries(spglibtest PRIVATE m)
-endif()
-
-enable_testing()
-add_test(spglibtest spglibtest)
-
-# make check
-
-# cf. https://stackoverflow.com/questions/5709914/using-cmake-how-do-i-get-verbose-output-from-ctest
-add_custom_target(check
-        ${CMAKE_COMMAND} -E echo CWD=${CMAKE_BINARY_DIR}
-        COMMAND ${CMAKE_COMMAND} -E echo CMD=${CMAKE_CTEST_COMMAND} -C $<CONFIG>
-        COMMAND ${CMAKE_COMMAND} -E echo ----------------------------------
-        COMMAND ${CMAKE_COMMAND} -E env CTEST_OUTPUT_ON_FAILURE=1
-            ${CMAKE_CTEST_COMMAND} -C $<CONFIG> --verbose
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-    DEPENDS spglibtest
-    )
-
 if (WITH_Fortran)
   enable_language(Fortran)
   add_subdirectory(fortran)
@@ -130,5 +110,5 @@ endif()
 configure_file(spglib.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/spglib.pc)
 install(
   FILES  ${CMAKE_CURRENT_BINARY_DIR}/spglib.pc
-  DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig
+  DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/pkgconfig
   COMPONENT pkgconfig)
