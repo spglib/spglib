@@ -1,6 +1,6 @@
-#include "spglib.h"
-
 #include <stdio.h>
+
+#include "spglib.h"
 
 void show_symmetry_operations(SPGCONST int (*rotations)[3][3],
                               const double (*translations)[3], const int size) {
