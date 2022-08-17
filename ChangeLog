@@ -1,3 +1,10 @@
+2022-08-09 Atsushi Togo <atz.togo@gmail.com>
+
+    * This ChangeLog is obsolete.
+
+    New releases are presented at https://spglib.github.io/spglib/releases.html.
+    Detailed changes are found in git-log.
+
 2022-05-06 Atsushi Togo <atz.togo@gmail.com>
 
     * Version 1.16.5

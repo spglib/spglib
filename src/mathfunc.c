@@ -196,6 +196,7 @@ void mat_multiply_matrix_vector_i3(int v[3], SPGCONST int a[3][3],
     for (i = 0; i < 3; i++) v[i] = c[i];
 }
 
+/* v[3] <- a[3][3] * b[3] */
 void mat_multiply_matrix_vector_d3(double v[3], SPGCONST double a[3][3],
                                    const double b[3]) {
     int i;
@@ -355,6 +356,7 @@ double mat_Dabs(const double a) {
         return a;
 }
 
+/* Round to a nearest integer */
 int mat_Nint(const double a) {
     if (a < 0.0)
         return (int)(a - 0.5);

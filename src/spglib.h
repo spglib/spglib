@@ -47,53 +47,53 @@ extern "C" {
 #include <stddef.h>
 
 /*
-  ------------------------------------------------------------------
+   ------------------------------------------------------------------
 
-  lattice: Lattice vectors (in Cartesian)
+   lattice: Lattice vectors (in Cartesian)
 
-  [ [ a_x, b_x, c_x ],
-  [ a_y, b_y, c_y ],
-  [ a_z, b_z, c_z ] ]
+   [ [ a_x, b_x, c_x ],
+   [ a_y, b_y, c_y ],
+   [ a_z, b_z, c_z ] ]
 
-  position: Atomic positions (in fractional coordinates)
+   position: Atomic positions (in fractional coordinates)
 
-  [ [ x1_a, x1_b, x1_c ],
-  [ x2_a, x2_b, x2_c ],
-  [ x3_a, x3_b, x3_c ],
-  ...                   ]
+   [ [ x1_a, x1_b, x1_c ],
+   [ x2_a, x2_b, x2_c ],
+   [ x3_a, x3_b, x3_c ],
+   ...                   ]
 
-  types: Atom types, i.e., species identified by number
+   types: Atom types, i.e., species identified by number
 
-  [ type_1, type_2, type_3, ... ]
+   [ type_1, type_2, type_3, ... ]
 
-  rotation: Rotation matrices of symmetry operations
+   rotation: Rotation matrices of symmetry operations
 
-  each rotation is:
-  [ [ r_aa, r_ab, r_ac ],
-  [ r_ba, r_bb, r_bc ],
-  [ r_ca, r_cb, r_cc ] ]
+   each rotation is:
+   [ [ r_aa, r_ab, r_ac ],
+   [ r_ba, r_bb, r_bc ],
+   [ r_ca, r_cb, r_cc ] ]
 
-  translation: Translation vectors of symmetry operations
+   translation: Translation vectors of symmetry operations
 
-  each translation is:
-  [ t_a, t_b, t_c ]
+   each translation is:
+   [ t_a, t_b, t_c ]
 
-  symprec: Distance tolerance in Cartesian coordinates to find crystal
+   symprec: Distance tolerance in Cartesian coordinates to find crystal
            symmetry.
 
-  ------------------------------------------------------------------
+   ------------------------------------------------------------------
 
-  Definition of the operation:
-  r : rotation     3x3 matrix
-  t : translation  vector
+   Definition of the operation:
+   r : rotation     3x3 matrix
+   t : translation  vector
 
-  x_new = r * x + t:
-  [ x_new_a ]   [ r_aa, r_ab, r_ac ]   [ x_a ]   [ t_a ]
-  [ x_new_b ] = [ r_ba, r_bb, r_bc ] * [ x_b ] + [ t_b ]
-  [ x_new_c ]   [ r_ca, r_cb, r_cc ]   [ x_c ]   [ t_c ]
+   x_new = r * x + t:
+   [ x_new_a ]   [ r_aa, r_ab, r_ac ]   [ x_a ]   [ t_a ]
+   [ x_new_b ] = [ r_ba, r_bb, r_bc ] * [ x_b ] + [ t_b ]
+   [ x_new_c ]   [ r_ca, r_cb, r_cc ]   [ x_c ]   [ t_c ]
 
-  ------------------------------------------------------------------
-*/
+   ------------------------------------------------------------------
+ */
 
 typedef enum {
     SPGLIB_SUCCESS = 0,
@@ -142,6 +142,7 @@ typedef struct {
     char international_full[20];
     char international[32];
     char schoenflies[7];
+    int hall_number;
     char hall_symbol[17];
     char choice[6];
     char pointgroup_international[6];
@@ -149,6 +150,44 @@ typedef struct {
     int arithmetic_crystal_class_number;
     char arithmetic_crystal_class_symbol[7];
 } SpglibSpacegroupType;
+
+typedef struct {
+    /* Magnetic space-group type */
+    int uni_number;
+    int msg_type;
+    int hall_number; /* For type-I, II, III, Hall number of FSG; for type-IV,
+                        that of XSG */
+    int tensor_rank;
+    /* Magnetic symmetry operations */
+    int n_operations;
+    int (*rotations)[3][3];
+    double (*translations)[3];
+    int *time_reversals;
+    /* Equivalent atoms */
+    int n_atoms;
+    int *equivalent_atoms;
+    /* Transformation to standardized setting */
+    double transformation_matrix[3][3];
+    double origin_shift[3];
+    /* Standardized crystal structure */
+    int n_std_atoms;
+    double std_lattice[3][3];
+    int *std_types;
+    double (*std_positions)[3];
+    double *std_tensors;
+    double std_rotation_matrix[3][3];
+    /* Intermidiate datum in symmetry search */
+    double primitive_lattice[3][3];
+} SpglibMagneticDataset;
+
+typedef struct {
+    int uni_number;
+    int litvin_number;
+    char bns_number[8];
+    char og_number[12];
+    int number;
+    int type;
+} SpglibMagneticSpacegroupType;
 
 int spg_get_major_version(void);
 int spg_get_minor_version(void);
@@ -167,6 +206,17 @@ SpglibDataset *spg_get_layer_dataset(SPGCONST double lattice[3][3],
                                      const int types[], const int num_atom,
                                      const int aperiodic_axis,
                                      const double symprec);
+
+SpglibMagneticDataset *spg_get_magnetic_dataset(
+    SPGCONST double lattice[3][3], SPGCONST double position[][3],
+    const int types[], const double *tensors, const int tensor_rank,
+    const int num_atom, const int is_axial, const double symprec);
+
+SpglibMagneticDataset *spgms_get_magnetic_dataset(
+    SPGCONST double lattice[3][3], SPGCONST double position[][3],
+    const int types[], const double *tensors, const int tensor_rank,
+    const int num_atom, const int is_axial, const double symprec,
+    const double angle_tolerance, const double mag_symprec);
 
 SpglibDataset *spgat_get_dataset(SPGCONST double lattice[3][3],
                                  SPGCONST double position[][3],
@@ -189,6 +239,7 @@ SpglibDataset *spgat_get_dataset_with_hall_number(
     const double symprec, const double angle_tolerance);
 
 void spg_free_dataset(SpglibDataset *dataset);
+void spg_free_magnetic_dataset(SpglibMagneticDataset *dataset);
 
 /* Find symmetry operations. The operations are stored in */
 /* ``rotation`` and ``translation``. The number of operations is */
@@ -220,30 +271,65 @@ int spgat_get_symmetry_with_collinear_spin(
     SPGCONST double position[][3], const int types[], const double spins[],
     const int num_atom, const double symprec, const double angle_tolerance);
 
+int spgms_get_symmetry_with_collinear_spin(
+    int rotation[][3][3], double translation[][3], int equivalent_atoms[],
+    const int max_size, SPGCONST double lattice[3][3],
+    SPGCONST double position[][3], const int types[], const double spins[],
+    const int num_atom, const double symprec, const double angle_tolerance,
+    const double mag_symprec);
+
 /* Return 0 if failed */
 /* ``rotation`` and ``translation`` are used as input and output. */
-/* ``num_operations`` is the number of the symmetry operations of */
-/* input. */
 int spg_get_symmetry_with_site_tensors(
     int rotation[][3][3], double translation[][3], int equivalent_atoms[],
-    double primitive_lattice[3][3], int *spin_flips, const int num_operations,
+    double primitive_lattice[3][3], int *spin_flips, const int max_size,
     SPGCONST double lattice[3][3], SPGCONST double position[][3],
     const int types[], const double *tensors, const int tensor_rank,
-    const int num_atom, const int is_magnetic, const double symprec);
+    const int num_atom, const int with_time_reversal, const int is_axial,
+    const double symprec);
 
 int spgat_get_symmetry_with_site_tensors(
     int rotation[][3][3], double translation[][3], int equivalent_atoms[],
-    double primitive_lattice[3][3], int *spin_flips, const int num_operations,
+    double primitive_lattice[3][3], int *spin_flips, const int max_size,
     SPGCONST double lattice[3][3], SPGCONST double position[][3],
     const int types[], const double *tensors, const int tensor_rank,
-    const int num_atom, const int is_magnetic, const double symprec,
-    const double angle_tolerance);
+    const int num_atom, const int with_time_reversal, const int is_axial,
+    const double symprec, const double angle_tolerance);
 
+int spgms_get_symmetry_with_site_tensors(
+    int rotation[][3][3], double translation[][3], int equivalent_atoms[],
+    double primitive_lattice[3][3], int *spin_flips, const int max_size,
+    SPGCONST double lattice[3][3], SPGCONST double position[][3],
+    const int types[], const double *tensors, const int tensor_rank,
+    const int num_atom, const int with_time_reversal, const int is_axial,
+    const double symprec, const double angle_tolerance,
+    const double mag_symprec);
+
+/* Deprecated at v2.0 */
 /* Space group type (hall_number) is searched from symmetry operations. */
 int spg_get_hall_number_from_symmetry(SPGCONST int rotation[][3][3],
                                       SPGCONST double translation[][3],
                                       const int num_operations,
                                       const double symprec);
+/**
+ * @brief Search space group type from symmetry operations
+ *
+ * @param rotation Matrix parts of space group operations
+ * @param translation Vector parts of space grouop operations
+ * @param num_operations Number of space group operations
+ * @param lattice Basis vectors given as column vectors
+ * @param symprec
+ * @return SpglibSpacegroupType
+ */
+SpglibSpacegroupType spg_get_spacegroup_type_from_symmetry(
+    SPGCONST int rotation[][3][3], SPGCONST double translation[][3],
+    const int num_operations, SPGCONST double lattice[3][3],
+    const double symprec);
+
+SpglibMagneticSpacegroupType spg_get_magnetic_spacegroup_type_from_symmetry(
+    SPGCONST int rotations[][3][3], SPGCONST double translations[][3],
+    SPGCONST int *time_reversals, const int num_operations,
+    SPGCONST double lattice[3][3], const double symprec);
 
 /* Return exact number of symmetry operations. This function may */
 /* be used in advance to allocate memory space for symmetry */
@@ -291,9 +377,33 @@ int spg_get_symmetry_from_database(int rotations[192][3][3],
                                    double translations[192][3],
                                    const int hall_number);
 
+/* This is unstable feature under active development! */
+/* Magnetic space-group operations in built-in database are accessed by UNI
+ */
+/* number, which is defined as number from 1 to 1651. Optionally alternative
+ */
+/* settings can be specified with hall_number. For type-I, type-II, and */
+/* type-III magnetic space groups, hall_number changes settings in family
+ * space group. */
+/* For type-IV, hall_number changes settings in maximal space group. */
+/* When hall_number = 0, the smallest hall number corresponding to
+ * uni_number is used. */
+int spg_get_magnetic_symmetry_from_database(int rotations[384][3][3],
+                                            double translations[384][3],
+                                            int time_reversals[384],
+                                            const int uni_number,
+                                            const int hall_number);
+
 /* Space-group type information is accessed by index of hall symbol. */
 /* The index is defined as number from 1 to 530. */
 SpglibSpacegroupType spg_get_spacegroup_type(const int hall_number);
+
+/* This is unstable feature under active development! */
+/* Magnetic space-group type information is accessed by index of UNI symbol.
+ */
+/* The index is defined as number from 1 to 1651. */
+SpglibMagneticSpacegroupType spg_get_magnetic_spacegroup_type(
+    const int uni_number);
 
 int spg_standardize_cell(double lattice[3][3], double position[][3],
                          int types[], const int num_atom,
@@ -307,7 +417,8 @@ int spgat_standardize_cell(double lattice[3][3], double position[][3],
 
 /* This is a wrapper of spg_standardize_cell. */
 /* A primitive cell is found from an input cell. */
-/* Be careful that ``lattice``, ``position``, and ``types`` are overwritten. */
+/* Be careful that ``lattice``, ``position``, and ``types`` are overwritten.
+ */
 /* ``num_atom`` is returned as return value. */
 /* When any primitive cell is not found, 0 is returned. */
 int spg_find_primitive(double lattice[3][3], double position[][3], int types[],
@@ -396,7 +507,8 @@ size_t spg_get_dense_stabilized_reciprocal_mesh(
     SPGCONST double qpoints[][3]);
 
 /* Rotation operations in reciprocal space ``rot_reciprocal`` are applied */
-/* to a grid address ``address_orig`` and resulting grid points are stored in */
+/* to a grid address ``address_orig`` and resulting grid points are stored
+ * in */
 /* ``rot_grid_points``. Return 0 if failed. */
 void spg_get_grid_points_by_rotations(int rot_grid_points[],
                                       const int address_orig[3],

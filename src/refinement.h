@@ -56,5 +56,12 @@ ExactStructure *ref_get_exact_structure_and_symmetry(Spacegroup *spacegroup,
                                                      const int *mapping_table,
                                                      const double symprec);
 void ref_free_exact_structure(ExactStructure *exstr);
+int ref_find_similar_bravais_lattice(Spacegroup *spacegroup,
+                                     const double symprec);
+void ref_get_conventional_lattice(double lattice[3][3],
+                                  SPGCONST Spacegroup *spacegroup);
+void ref_measure_rigid_rotation(double rotation[3][3],
+                                SPGCONST double bravais_lattice[3][3],
+                                SPGCONST double std_lattice[3][3]);
 
 #endif

@@ -4,15 +4,37 @@ This directory contains python-sphinx documentation source.
 
 ## How to compile
 
-```
+Python>=3.8 required for `importlib.metadata`.
+
+```shell
+cd python
+pip install -e ".[doc]"
+cd ../doc
 make html
+# sphinx-autobuild . _build
 ```
 
 ## Source files
 
-* `conf.py` contains the sphinx setting configuration.
-* `*.rst` are the usual sphinx documentation source and the filenames without `.rst` are the keys to link from toctree mainly in `index.rst`.
-* `*.inc` are the files included in the other `*.rst` files.
+- `conf.py` contains the sphinx setting configuration.
+- `*.rst` are the usual sphinx documentation source and the filenames without `.rst` are the keys to link from toctree mainly in `index.rst`.
+- `*.inc` are the files included in the other `*.rst` files.
+
+### How to add references
+- `references.bib` contains citation entries for [sphinxcontrib-bibtex](https://sphinxcontrib-bibtex.readthedocs.io/en/latest/index.html)
+- Each subsection in `references.md` has a bibliography as follows
+  - use `cite:empty` directive to refer to an entry in `references.bib`
+  - set `keyprefix` for each subsection and append it when refer to bibtex's entries.
+
+```
+    {cite:empty}`gen-ITA2016`
+
+    ```{bibliography}
+    :cited:
+    :keyprefix: gen-
+    ```
+```
+
 
 ## How to publish
 

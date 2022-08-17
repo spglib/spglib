@@ -1,3 +1,4 @@
+"""Python bindings for C library for finding and handling crystal."""
 # Copyright (C) 2015 Atsushi Togo
 # All rights reserved.
 #
@@ -32,25 +33,35 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from .spglib import (get_version,
-                     get_symmetry,
-                     get_symmetry_dataset,
-                     get_spacegroup,
-                     get_hall_number_from_symmetry,
-                     get_spacegroup_type,
-                     get_pointgroup,
-                     standardize_cell,
-                     refine_cell,
-                     find_primitive,
-                     delaunay_reduce,
-                     niggli_reduce,
-                     get_symmetry_from_database,
-                     get_grid_point_from_address,
-                     get_ir_reciprocal_mesh,
-                     get_grid_points_by_rotations,
-                     get_BZ_grid_points_by_rotations,
-                     relocate_BZ_grid_address,
-                     get_stabilized_reciprocal_mesh,
-                     get_error_message)
+# fmt: off
+from .spglib import (  # noqa: F401
+    delaunay_reduce,
+    find_primitive,
+    get_BZ_grid_points_by_rotations,
+    get_error_message,
+    get_grid_point_from_address,
+    get_grid_points_by_rotations,
+    get_hall_number_from_symmetry,
+    get_ir_reciprocal_mesh,
+    get_magnetic_spacegroup_type,
+    get_magnetic_symmetry,
+    get_magnetic_symmetry_dataset,
+    get_magnetic_symmetry_from_database,
+    get_pointgroup,
+    get_spacegroup,
+    get_spacegroup_type,
+    get_spacegroup_type_from_symmetry,
+    get_stabilized_reciprocal_mesh,
+    get_symmetry,
+    get_symmetry_dataset,
+    get_symmetry_from_database,
+    get_version,
+    niggli_reduce,
+    refine_cell,
+    relocate_BZ_grid_address,
+    standardize_cell,
+)
+
+# fmt: on
 
 __version__ = "%d.%d.%d" % get_version()

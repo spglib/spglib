@@ -46,6 +46,7 @@
 
 #define NUM_ATOMS_CRITERION_FOR_OPENMP 1000
 #define ANGLE_REDUCE_RATE 0.95
+#define SIN_DTHETA2_CUTOFF 1e-12
 #define NUM_ATTEMPT 100
 #define PI 3.14159265358979323846
 /* Tolerance of angle between lattice vectors in degrees */
@@ -161,6 +162,71 @@ void sym_free_symmetry(Symmetry *symmetry) {
         symmetry->rot = NULL;
         free(symmetry->trans);
         symmetry->trans = NULL;
+    }
+    free(symmetry);
+}
+
+/* Return NULL if failed */
+MagneticSymmetry *sym_alloc_magnetic_symmetry(const int size) {
+    MagneticSymmetry *symmetry;
+
+    symmetry = NULL;
+
+    if (size < 1) {
+        return NULL;
+    }
+
+    if ((symmetry = (MagneticSymmetry *)malloc(sizeof(MagneticSymmetry))) ==
+        NULL) {
+        warning_print("spglib: Memory could not be allocated ");
+        return NULL;
+    }
+
+    symmetry->size = size;
+    symmetry->rot = NULL;
+    symmetry->trans = NULL;
+    symmetry->timerev = NULL;
+
+    if ((symmetry->rot = (int(*)[3][3])malloc(sizeof(int[3][3]) * size)) ==
+        NULL) {
+        warning_print("spglib: Memory could not be allocated ");
+        warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+        free(symmetry);
+        symmetry = NULL;
+        return NULL;
+    }
+    if ((symmetry->trans = (double(*)[3])malloc(sizeof(double[3]) * size)) ==
+        NULL) {
+        warning_print("spglib: Memory could not be allocated ");
+        warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+        free(symmetry->rot);
+        symmetry->rot = NULL;
+        free(symmetry);
+        symmetry = NULL;
+        return NULL;
+    }
+    if ((symmetry->timerev = (int *)malloc(sizeof(int *) * size)) == NULL) {
+        warning_print("spglib: Memory could not be allocated ");
+        warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+        free(symmetry->rot);
+        symmetry->rot = NULL;
+        free(symmetry->trans);
+        symmetry->trans = NULL;
+        free(symmetry);
+        symmetry = NULL;
+        return NULL;
+    }
+    return symmetry;
+}
+
+void sym_free_magnetic_symmetry(MagneticSymmetry *symmetry) {
+    if (symmetry->size > 0) {
+        free(symmetry->rot);
+        symmetry->rot = NULL;
+        free(symmetry->trans);
+        symmetry->trans = NULL;
+        free(symmetry->timerev);
+        symmetry->timerev = NULL;
     }
     free(symmetry);
 }
@@ -874,14 +940,15 @@ static PointSymmetry get_lattice_symmetry(const Cell *cell,
 
     aperiodic_axis = cell->aperiodic_axis;
 
-    /* input cell of get_lattice_symmetry seems always to be primitive cell, */
-    /* then del_delaunay_reduce and transform_pointsymmetry are useless. */
-    if ((aperiodic_axis == -1 &&
-         !del_delaunay_reduce(min_lattice, cell->lattice, symprec)) ||
-        (aperiodic_axis != -1 &&
-         !del_layer_delaunay_reduce(min_lattice, cell->lattice, aperiodic_axis,
-                                    symprec))) {
-        goto err;
+    if (aperiodic_axis == -1) {
+        if (!del_delaunay_reduce(min_lattice, cell->lattice, symprec)) {
+            goto err;
+        }
+    } else {
+        if (!del_layer_delaunay_reduce(min_lattice, cell->lattice,
+                                       aperiodic_axis, symprec)) {
+            goto err;
+        }
     }
 
     mat_get_metric(metric_orig, min_lattice);
@@ -984,7 +1051,7 @@ static int is_identity_metric(SPGCONST double metric_rotated[3][3],
             length_ave2 = ((length_orig[j] + length_rot[j]) *
                            (length_orig[k] + length_rot[k])) /
                           4;
-            if (sin_dtheta2 > 1e-12) {
+            if (sin_dtheta2 > SIN_DTHETA2_CUTOFF) {
                 if (sin_dtheta2 * length_ave2 > symprec * symprec) {
                     goto fail;
                 }

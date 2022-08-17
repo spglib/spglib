@@ -135,12 +135,51 @@ Primitive *prm_get_primitive(const Cell *cell, const double symprec,
     return get_primitive(cell, symprec, angle_tolerance);
 }
 
-Symmetry *prm_get_primitive_symmetry(const Symmetry *symmetry,
+/* Return primitive cell from given pure translations. */
+/* If failed, return 0. */
+int prm_get_primitive_with_pure_trans(Primitive *primitive, const Cell *cell,
+                                      const VecDBL *pure_trans,
+                                      const double symprec,
+                                      const double angle_tolerance) {
+    int i;
+
+    if (pure_trans->size == 1) {
+        if ((primitive->cell = get_cell_with_smallest_lattice(cell, symprec)) ==
+            NULL) {
+            return 0;
+        }
+        for (i = 0; i < cell->size; i++) {
+            primitive->mapping_table[i] = i;
+        }
+    } else {
+        if ((primitive->cell =
+                 get_primitive_cell(primitive->mapping_table, cell, pure_trans,
+                                    symprec, angle_tolerance)) == NULL) {
+            return 0;
+        }
+    }
+
+    primitive->tolerance = symprec;
+    primitive->angle_tolerance = angle_tolerance;
+    if ((primitive->orig_lattice =
+             (double(*)[3])malloc(sizeof(double[3]) * 3)) == NULL) {
+        warning_print("spglib: Memory could not be allocated.");
+        return 0;
+    }
+    mat_copy_matrix_d3(primitive->orig_lattice, cell->lattice);
+
+    return 1;
+}
+
+/* t_mat transforms primitive cell to conventional: */
+/* (a_p, b_p, c_p) t_mat = (a_c, b_c, c_c) */
+Symmetry *prm_get_primitive_symmetry(double t_mat[3][3],
+                                     const Symmetry *symmetry,
                                      const double symprec) {
     int i, primsym_size;
     VecDBL *pure_trans;
     Symmetry *prim_symmetry;
-    double t_mat[3][3], t_mat_inv[3][3], tmp_mat[3][3];
+    double t_mat_inv[3][3], tmp_mat[3][3];
 
     pure_trans = NULL;
     prim_symmetry = NULL;
@@ -171,7 +210,7 @@ Symmetry *prm_get_primitive_symmetry(const Symmetry *symmetry,
         return NULL;
     }
 
-    /* Overwrite prim_symmetry by R_p = TRT^-1, t_p = T.t */
+    /* Overwrite prim_symmetry by (T, 0) (R, t) (T, 0)^-1 = (T R T^-1, T t) */
     for (i = 0; i < prim_symmetry->size; i++) {
         mat_multiply_matrix_di3(tmp_mat, t_mat, prim_symmetry->rot[i]);
         mat_multiply_matrix_d3(tmp_mat, tmp_mat, t_mat_inv);
@@ -205,10 +244,14 @@ int prm_get_primitive_lattice_vectors(double prim_lattice[3][3],
                                          symprec, angle_tolerance);
 }
 
+/*=======*/
+/* local */
+/*=======*/
+
 /* Return NULL if failed */
 static Primitive *get_primitive(const Cell *cell, const double symprec,
                                 const double angle_tolerance) {
-    int i, attempt;
+    int attempt;
     double tolerance;
     Primitive *primitive;
     VecDBL *pure_trans;
@@ -226,20 +269,9 @@ static Primitive *get_primitive(const Cell *cell, const double symprec,
     for (attempt = 0; attempt < NUM_ATTEMPT; attempt++) {
         debug_print("get_primitive (attempt = %d):\n", attempt);
         if ((pure_trans = sym_get_pure_translation(cell, tolerance)) != NULL) {
-            if (pure_trans->size == 1) {
-                if ((primitive->cell = get_cell_with_smallest_lattice(
-                         cell, tolerance)) != NULL) {
-                    for (i = 0; i < cell->size; i++) {
-                        primitive->mapping_table[i] = i;
-                    }
-                    goto found;
-                }
-            } else {
-                if ((primitive->cell = get_primitive_cell(
-                         primitive->mapping_table, cell, pure_trans, tolerance,
-                         angle_tolerance)) != NULL) {
-                    goto found;
-                }
+            if (prm_get_primitive_with_pure_trans(primitive, cell, pure_trans,
+                                                  tolerance, angle_tolerance)) {
+                goto found;
             }
         }
 
@@ -258,14 +290,6 @@ notfound:
     return NULL;
 
 found:
-    primitive->tolerance = tolerance;
-    primitive->angle_tolerance = angle_tolerance;
-    if ((primitive->orig_lattice =
-             (double(*)[3])malloc(sizeof(double[3]) * 3)) == NULL) {
-        warning_print("spglib: Memory could not be allocated.");
-        return NULL;
-    }
-    mat_copy_matrix_d3(primitive->orig_lattice, cell->lattice);
     mat_free_VecDBL(pure_trans);
     pure_trans = NULL;
     return primitive;
@@ -294,7 +318,8 @@ static Cell *get_cell_with_smallest_lattice(const Cell *cell,
     mat_inverse_matrix_d3(inv_lat, min_lat, 0);
     mat_multiply_matrix_d3(trans_mat, inv_lat, cell->lattice);
 
-    if ((smallest_cell = cel_alloc_cell(cell->size)) == NULL) {
+    if ((smallest_cell = cel_alloc_cell(cell->size, cell->tensor_rank)) ==
+        NULL) {
         return NULL;
     }
 
@@ -632,7 +657,7 @@ static int get_primitive_in_translation_space(double t_mat_inv[3][3],
     cell = NULL;
     primitive = NULL;
 
-    if ((cell = cel_alloc_cell(pure_trans->size)) == NULL) {
+    if ((cell = cel_alloc_cell(pure_trans->size, NOSPIN)) == NULL) {
         return 0;
     }
 

@@ -45,12 +45,21 @@ typedef struct {
 } Symmetry;
 
 typedef struct {
+    int size;
+    int (*rot)[3][3];
+    double (*trans)[3];
+    int *timerev;
+} MagneticSymmetry;
+
+typedef struct {
     int rot[48][3][3];
     int size;
 } PointSymmetry;
 
 Symmetry *sym_alloc_symmetry(const int size);
 void sym_free_symmetry(Symmetry *symmetry);
+MagneticSymmetry *sym_alloc_magnetic_symmetry(const int size);
+void sym_free_magnetic_symmetry(MagneticSymmetry *symmetry);
 Symmetry *sym_get_operation(const Cell *primitive, const double symprec,
                             const double angle_tolerance);
 Symmetry *sym_reduce_operation(const Cell *primitive, const Symmetry *symmetry,
