@@ -1,2 +1,5 @@
 [build-system]
 requires = ["setuptools", "wheel", "numpy"]
+
+[tool.cibuildwheel]
+skip = ["pp*", "*-win32", "*-manylinux_i686"]

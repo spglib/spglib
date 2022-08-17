@@ -1,0 +1,84 @@
+name: Spglib PyPI Wheel builds for win and mac
+
+on:
+  push:
+    branches:
+      - rc
+      - master
+
+jobs:
+  build_wheels:
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-2019, macOS-11]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      # Used to host cibuildwheel
+      - uses: actions/setup-python@v3
+
+      - name: Install cibuildwheel
+        run: python -m pip install cibuildwheel==2.9.0
+        # to supply options, put them in 'env', like:
+        # env:
+        #   CIBW_SOME_OPTION: value
+
+      - name: Build wheels for macOS
+        if: matrix.os == 'macOS-11'
+        # env:
+        #   CIBW_ARCHS_MACOS: x86_64 arm64
+        run: |
+          python -m cibuildwheel --output-dir wheelhouse python
+
+      - name: Build wheels for win
+        if: matrix.os != 'macOS-11'
+        run: |
+          python -m cibuildwheel --output-dir wheelhouse python
+
+      - uses: actions/upload-artifact@v3
+        with:
+          path: ./wheelhouse/*.whl
+
+  # build_sdist:
+  #   name: Build source distribution
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - name: Build sdist
+  #       run: |
+  #         pip install numpy
+  #         cd python
+  #         sh pre-build-script.sh
+  #         python setup.py sdist
+  #         cd ..
+  #     - uses: actions/upload-artifact@v3
+  #       with:
+  #         path: python/dist/*.tar.gz
+
+  upload_pypi:
+    # needs: [build_wheels, build_sdist]
+    needs: [build_wheels]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: artifact
+          path: dist
+
+      - name: Publish package to TestPyPI
+        if: startsWith(github.ref, 'refs/heads/rc')
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          user: __token__
+          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+          repository_url: https://test.pypi.org/legacy/
+
+      - name: Publish package to PyPI
+        if: startsWith(github.ref, 'refs/heads/master')
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_API_TOKEN }}
