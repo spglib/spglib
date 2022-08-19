@@ -7,42 +7,6 @@ Information in this page is valid for spglib 1.8.1 or later. The
 definitions of transformation matrix and origin shift were different
 in the previous versions.
 
-.. contents::
-   :depth: 2
-   :local:
-
-
-References
------------
-
-Some references about crystallographic definitions and conventions are
-shown below. Though spglib may not follow them fully, it doesn't mean
-spglib doesn't respect them, rather it is due to spglib-author's lack of
-understanding the crystallography ashamedly.
-
-* `International Tables for Crystallography <http://it.iucr.org/>`_.
-* `Bilbao Crystallographic Server <http://www.cryst.ehu.es/>`_. The
-  references of many useful papers are found at
-  http://www.cryst.ehu.es/wiki/index.php/Articles.
-* Ulrich Müller, "Symmetry Relationships between Crystal Structures"
-* E. Parthé, K. Cenzual, and R. E. Gladyshevskii, "Standardization of
-  crystal structure data as an aid to the classification of crystal
-  structure types", Journal of Alloys and Compounds, **197**, 291-301
-  (1993). [`doi2
-  <https://dx.doi.org/10.1016/0925-8388(93)90049-S>`_]
-* E. Parthé and L. M. Gelato, "The ’best’ unit cell for monoclinic
-  structures consistent with b axis unique and cell choice 1
-  of international tables for crystallography (1983)", Acta
-  Cryst. A **41**, 142-151 (1985) [`doi3
-  <https://doi.org/10.1107/S0108767385000289>`_]
-* E. Parthé and L. M. Gelato, "The standardization of inorganic
-  crystal-structure data", Acta Cryst. A
-  **40**, 169-183 (1984) [`doi4
-  <https://doi.org/10.1107/S0108767384000416>`_]
-* S. Hall, "Space-group notation with an explicit origin", Acta
-  Cryst. A **37**, 517-525 (1981) [`doi1
-  <https://doi.org/10.1107/S0567739481001228>`_]
-
 Space group operation and change of basis
 ------------------------------------------
 

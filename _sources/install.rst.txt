@@ -27,7 +27,7 @@ Build and install in ``_build`` directory by
 
 ::
 
-   % mkdir _build && _build
+   % mkdir _build && cd _build
    % cmake -DCMAKE_INSTALL_PREFIX="" ..
    % make
    % make DESTDIR=/some/where install

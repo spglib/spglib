@@ -1,213 +1,609 @@
+
 <!DOCTYPE html>
 
 <html>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Definitions and conventions &#8212; Spglig v.1.16.0</title>
+    <title>Definitions and conventions &#8212; Spglib v.2.0.0</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/bootstrap-sphinx.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=62ba249389abaaa9ffc34bf36a076bdc1d65ee18" type="text/css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=f31d14ad54b65d19161ba51d4ffff3a77ae00456"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Magnetic Space group (MSG)" href="magnetic_spacegroup.html" />
+    <link rel="next" title="References" href="references.html" />
     <link rel="prev" title="Rust, Fortran, and Ruby interfaces" href="interface.html" />
-<meta charset='utf-8'>
-<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
-<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
-<meta name="apple-mobile-web-app-capable" content="yes">
-<script type="text/javascript" src="_static/js/jquery-1.12.4.min.js"></script>
-<script type="text/javascript" src="_static/js/jquery-fix.js"></script>
-<script type="text/javascript" src="_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
 
-  </head><body>
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
 
-  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
-    <div class="container">
-      <div class="navbar-header">
-        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="index.html">
-          spglib</a>
-        <span class="navbar-text navbar-version pull-left"><b>1.16</b></span>
-      </div>
+    
+    <div class="container-fluid" id="banner"></div>
 
-        <div class="collapse navbar-collapse nav-collapse">
-          <ul class="nav navbar-nav">
-            
-            
-              <li class="dropdown globaltoc-container">
-  <a role="button"
-     id="dLabelGlobalToc"
-     data-toggle="dropdown"
-     data-target="#"
-     href="index.html">Site <b class="caret"></b></a>
-  <ul class="dropdown-menu globaltoc"
-      role="menu"
-      aria-labelledby="dLabelGlobalToc"><ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="install.html">How to install spglib C-API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api.html">C-APIs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dataset.html">Spglib dataset</a></li>
-<li class="toctree-l1"><a class="reference internal" href="variable.html">Variables</a></li>
-<li class="toctree-l1"><a class="reference internal" href="python-spglib.html">Python interface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="interface.html">Rust, Fortran, and Ruby interfaces</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Definitions and conventions</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="magnetic_spacegroup.html">Magnetic space group</a></li>
-</ul>
-</ul>
-</li>
-              
-                <li class="dropdown">
-  <a role="button"
-     id="dLabelLocalToc"
-     data-toggle="dropdown"
-     data-target="#"
-     href="#">Page <b class="caret"></b></a>
-  <ul class="dropdown-menu localtoc"
-      role="menu"
-      aria-labelledby="dLabelLocalToc"><ul>
-<li><a class="reference internal" href="#">Definitions and conventions</a><ul>
-<li><a class="reference internal" href="#references">References</a></li>
-<li><a class="reference internal" href="#space-group-operation-and-change-of-basis">Space group operation and change of basis</a><ul>
-<li><a class="reference internal" href="#basis-vectors-mathbf-a-mathbf-b-mathbf-c-or-mathbf-a-1-mathbf-a-2-mathbf-a-3">Basis vectors <span class="math notranslate nohighlight">\((\mathbf{a}, \mathbf{b}, \mathbf{c})\)</span> or <span class="math notranslate nohighlight">\((\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)\)</span></a></li>
-<li><a class="reference internal" href="#atomic-point-coordinates-boldsymbol-x">Atomic point coordinates <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span></a></li>
-<li><a class="reference internal" href="#symmetry-operation-boldsymbol-w-boldsymbol-w">Symmetry operation <span class="math notranslate nohighlight">\((\boldsymbol{W}, \boldsymbol{w})\)</span></a></li>
-<li><a class="reference internal" href="#transformation-matrix-boldsymbol-p-and-origin-shift-boldsymbol-p">Transformation matrix <span class="math notranslate nohighlight">\(\boldsymbol{P}\)</span> and origin shift <span class="math notranslate nohighlight">\(\boldsymbol{p}\)</span></a></li>
-<li><a class="reference internal" href="#difference-between-rotation-and-transformation-matrices">Difference between rotation and transformation matrices</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#spglib-conventions-of-standardized-unit-cell">Spglib conventions of standardized unit cell</a><ul>
-<li><a class="reference internal" href="#choice-of-basis-vectors">Choice of basis vectors</a></li>
-<li><a class="reference internal" href="#transformation-to-the-primitive-cell">Transformation to the primitive cell</a></li>
-<li><a class="reference internal" href="#def-idealize-cell">Idealization of unit cell structure</a><ul>
-<li><a class="reference internal" href="#triclinic-lattice">Triclinic lattice</a></li>
-<li><a class="reference internal" href="#monoclinic-lattice">Monoclinic lattice</a></li>
-<li><a class="reference internal" href="#orthorhombic-lattice">Orthorhombic lattice</a></li>
-<li><a class="reference internal" href="#tetragonal-lattice">Tetragonal lattice</a></li>
-<li><a class="reference internal" href="#rhombohedral-lattice">Rhombohedral lattice</a></li>
-<li><a class="reference internal" href="#hexagonal-lattice">Hexagonal lattice</a></li>
-<li><a class="reference internal" href="#cubic-lattice">Cubic lattice</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#rotation-introduced-by-idealization">Rotation introduced by idealization</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#examples">Examples</a><ul>
-<li><a class="reference internal" href="#crystallographic-choice-and-rigid-rotation">Crystallographic choice and rigid rotation</a></li>
-<li><a class="reference internal" href="#transformation-to-a-primitive-cell">Transformation to a primitive cell</a></li>
-<li><a class="reference internal" href="#computing-rigid-rotation-introduced-by-idealization">Computing rigid rotation introduced by idealization</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</ul>
-</li>
-              
-            
-            
-            
-            
-            
-          </ul>
+    
 
+    <div class="container-xl">
+      <div class="row">
           
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="index.html">
+      
+      
+      
+      <h1 class="site-logo" id="site-title">Spglib v.2.0.0</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="install.html">
+   How to install spglib C-API
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="api.html">
+   C-APIs
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="dataset.html">
+   Spglib dataset
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="magnetic_dataset.html">
+   Magnetic spglib dataset (Experimental)
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="variable.html">
+   Variables
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="python-spglib.html">
+   Spglib for Python
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="interface.html">
+   Rust, Fortran, and Ruby interfaces
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Definitions and conventions
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="references.html">
+   References
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="releases.html">
+   Summary of releases
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="develop.html">
+   Developer Documentation
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="magnetic_spacegroup.html">
+     Magnetic space group
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="magnetic_symmetry_flags.html">
+     Flags to control action of magnetic symmetry operations
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
             
-<form class="navbar-form navbar-right" action="search.html" method="get">
- <div class="form-group">
-  <input type="text" name="q" class="form-control" placeholder="Search" />
- </div>
-  <input type="hidden" name="check_keywords" value="yes" />
-  <input type="hidden" name="area" value="default" />
-</form>
-          
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
         </div>
     </div>
-  </div>
+    <div id="rtd-footer-container"></div>
+</div>
 
-<div class="container">
-  <div class="row">
-    <div class="body col-md-12 content" role="main">
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="_sources/definition.md.txt"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.md</span>
+</a>
+
+      </li>
       
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#space-group-operation-and-change-of-basis">
+   Space group operation and change of basis
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#basis-vectors-mathbf-a-mathbf-b-mathbf-c-or-mathbf-a-1-mathbf-a-2-mathbf-a-3">
+     Basis vectors
+     <span class="math notranslate nohighlight">
+      \((\mathbf{a}, \mathbf{b}, \mathbf{c})\)
+     </span>
+     or
+     <span class="math notranslate nohighlight">
+      \((\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)\)
+     </span>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#atomic-point-coordinates-boldsymbol-x">
+     Atomic point coordinates
+     <span class="math notranslate nohighlight">
+      \(\boldsymbol{x}\)
+     </span>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#symmetry-operation-boldsymbol-w-boldsymbol-w">
+     Symmetry operation
+     <span class="math notranslate nohighlight">
+      \((\boldsymbol{W}, \boldsymbol{w})\)
+     </span>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#transformation-matrix-boldsymbol-p-and-origin-shift-boldsymbol-p">
+     Transformation matrix
+     <span class="math notranslate nohighlight">
+      \(\boldsymbol{P}\)
+     </span>
+     and origin shift
+     <span class="math notranslate nohighlight">
+      \(\boldsymbol{p}\)
+     </span>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#difference-between-rotation-and-transformation-matrices">
+     Difference between rotation and transformation matrices
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#spglib-conventions-of-standardized-unit-cell">
+   Spglib conventions of standardized unit cell
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#choice-of-basis-vectors">
+     Choice of basis vectors
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#transformation-to-the-primitive-cell">
+     Transformation to the primitive cell
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#def-idealize-cell">
+     Idealization of unit cell structure
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#triclinic-lattice">
+       Triclinic lattice
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#monoclinic-lattice">
+       Monoclinic lattice
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#orthorhombic-lattice">
+       Orthorhombic lattice
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#tetragonal-lattice">
+       Tetragonal lattice
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#rhombohedral-lattice">
+       Rhombohedral lattice
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#hexagonal-lattice">
+       Hexagonal lattice
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#cubic-lattice">
+       Cubic lattice
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#rotation-introduced-by-idealization">
+     Rotation introduced by idealization
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#examples">
+   Examples
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#crystallographic-choice-and-rigid-rotation">
+     Crystallographic choice and rigid rotation
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#transformation-to-a-primitive-cell">
+     Transformation to a primitive cell
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#computing-rigid-rotation-introduced-by-idealization">
+     Computing rigid rotation introduced by idealization
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Definitions and conventions</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#space-group-operation-and-change-of-basis">
+   Space group operation and change of basis
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#basis-vectors-mathbf-a-mathbf-b-mathbf-c-or-mathbf-a-1-mathbf-a-2-mathbf-a-3">
+     Basis vectors
+     <span class="math notranslate nohighlight">
+      \((\mathbf{a}, \mathbf{b}, \mathbf{c})\)
+     </span>
+     or
+     <span class="math notranslate nohighlight">
+      \((\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)\)
+     </span>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#atomic-point-coordinates-boldsymbol-x">
+     Atomic point coordinates
+     <span class="math notranslate nohighlight">
+      \(\boldsymbol{x}\)
+     </span>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#symmetry-operation-boldsymbol-w-boldsymbol-w">
+     Symmetry operation
+     <span class="math notranslate nohighlight">
+      \((\boldsymbol{W}, \boldsymbol{w})\)
+     </span>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#transformation-matrix-boldsymbol-p-and-origin-shift-boldsymbol-p">
+     Transformation matrix
+     <span class="math notranslate nohighlight">
+      \(\boldsymbol{P}\)
+     </span>
+     and origin shift
+     <span class="math notranslate nohighlight">
+      \(\boldsymbol{p}\)
+     </span>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#difference-between-rotation-and-transformation-matrices">
+     Difference between rotation and transformation matrices
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#spglib-conventions-of-standardized-unit-cell">
+   Spglib conventions of standardized unit cell
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#choice-of-basis-vectors">
+     Choice of basis vectors
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#transformation-to-the-primitive-cell">
+     Transformation to the primitive cell
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#def-idealize-cell">
+     Idealization of unit cell structure
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#triclinic-lattice">
+       Triclinic lattice
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#monoclinic-lattice">
+       Monoclinic lattice
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#orthorhombic-lattice">
+       Orthorhombic lattice
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#tetragonal-lattice">
+       Tetragonal lattice
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#rhombohedral-lattice">
+       Rhombohedral lattice
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#hexagonal-lattice">
+       Hexagonal lattice
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#cubic-lattice">
+       Cubic lattice
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#rotation-introduced-by-idealization">
+     Rotation introduced by idealization
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#examples">
+   Examples
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#crystallographic-choice-and-rigid-rotation">
+     Crystallographic choice and rigid rotation
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#transformation-to-a-primitive-cell">
+     Transformation to a primitive cell
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#computing-rigid-rotation-introduced-by-idealization">
+     Computing rigid rotation introduced by idealization
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
   <div class="section" id="definitions-and-conventions">
-<span id="id1"></span><h1>Definitions and conventions<a class="headerlink" href="#definitions-and-conventions" title="Permalink to this headline">¶</a></h1>
+<span id="id1"></span><h1>Definitions and conventions<a class="headerlink" href="#definitions-and-conventions" title="Permalink to this headline">#</a></h1>
 <p>Information in this page is valid for spglib 1.8.1 or later. The
 definitions of transformation matrix and origin shift were different
 in the previous versions.</p>
-<div class="contents local topic" id="contents">
-<ul class="simple">
-<li><p><a class="reference internal" href="#references" id="id2">References</a></p></li>
-<li><p><a class="reference internal" href="#space-group-operation-and-change-of-basis" id="id3">Space group operation and change of basis</a></p>
-<ul>
-<li><p><a class="reference internal" href="#basis-vectors-mathbf-a-mathbf-b-mathbf-c-or-mathbf-a-1-mathbf-a-2-mathbf-a-3" id="id4">Basis vectors <span class="math notranslate nohighlight">\((\mathbf{a}, \mathbf{b}, \mathbf{c})\)</span> or <span class="math notranslate nohighlight">\((\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)\)</span></a></p></li>
-<li><p><a class="reference internal" href="#atomic-point-coordinates-boldsymbol-x" id="id5">Atomic point coordinates <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span></a></p></li>
-<li><p><a class="reference internal" href="#symmetry-operation-boldsymbol-w-boldsymbol-w" id="id6">Symmetry operation <span class="math notranslate nohighlight">\((\boldsymbol{W}, \boldsymbol{w})\)</span></a></p></li>
-<li><p><a class="reference internal" href="#transformation-matrix-boldsymbol-p-and-origin-shift-boldsymbol-p" id="id7">Transformation matrix <span class="math notranslate nohighlight">\(\boldsymbol{P}\)</span> and origin shift <span class="math notranslate nohighlight">\(\boldsymbol{p}\)</span></a></p></li>
-<li><p><a class="reference internal" href="#difference-between-rotation-and-transformation-matrices" id="id8">Difference between rotation and transformation matrices</a></p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#spglib-conventions-of-standardized-unit-cell" id="id9">Spglib conventions of standardized unit cell</a></p>
-<ul>
-<li><p><a class="reference internal" href="#choice-of-basis-vectors" id="id10">Choice of basis vectors</a></p></li>
-<li><p><a class="reference internal" href="#transformation-to-the-primitive-cell" id="id11">Transformation to the primitive cell</a></p></li>
-<li><p><a class="reference internal" href="#def-idealize-cell" id="id12">Idealization of unit cell structure</a></p></li>
-<li><p><a class="reference internal" href="#rotation-introduced-by-idealization" id="id13">Rotation introduced by idealization</a></p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#examples" id="id14">Examples</a></p>
-<ul>
-<li><p><a class="reference internal" href="#crystallographic-choice-and-rigid-rotation" id="id15">Crystallographic choice and rigid rotation</a></p></li>
-<li><p><a class="reference internal" href="#transformation-to-a-primitive-cell" id="id16">Transformation to a primitive cell</a></p></li>
-<li><p><a class="reference internal" href="#computing-rigid-rotation-introduced-by-idealization" id="id17">Computing rigid rotation introduced by idealization</a></p></li>
-</ul>
-</li>
-</ul>
-</div>
-<div class="section" id="references">
-<h2><a class="toc-backref" href="#id2">References</a><a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
-<p>Some references about crystallographic definitions and conventions are
-shown below. Though spglib may not follow them fully, it doesn’t mean
-spglib doesn’t respect them, rather it is due to spglib-author’s lack of
-understanding the crystallography ashamedly.</p>
-<ul class="simple">
-<li><p><a class="reference external" href="http://it.iucr.org/">International Tables for Crystallography</a>.</p></li>
-<li><p><a class="reference external" href="http://www.cryst.ehu.es/">Bilbao Crystallographic Server</a>. The
-references of many useful papers are found at
-<a class="reference external" href="http://www.cryst.ehu.es/wiki/index.php/Articles">http://www.cryst.ehu.es/wiki/index.php/Articles</a>.</p></li>
-<li><p>Ulrich Müller, “Symmetry Relationships between Crystal Structures”</p></li>
-<li><p>E. Parthé, K. Cenzual, and R. E. Gladyshevskii, “Standardization of
-crystal structure data as an aid to the classification of crystal
-structure types”, Journal of Alloys and Compounds, <strong>197</strong>, 291-301
-(1993). [<a class="reference external" href="https://dx.doi.org/10.1016/0925-8388(93)90049-S">doi2</a>]</p></li>
-<li><p>E. Parthé and L. M. Gelato, “The ’best’ unit cell for monoclinic
-structures consistent with b axis unique and cell choice 1
-of international tables for crystallography (1983)”, Acta
-Cryst. A <strong>41</strong>, 142-151 (1985) [<a class="reference external" href="https://doi.org/10.1107/S0108767385000289">doi3</a>]</p></li>
-<li><p>E. Parthé and L. M. Gelato, “The standardization of inorganic
-crystal-structure data”, Acta Cryst. A
-<strong>40</strong>, 169-183 (1984) [<a class="reference external" href="https://doi.org/10.1107/S0108767384000416">doi4</a>]</p></li>
-<li><p>S. Hall, “Space-group notation with an explicit origin”, Acta
-Cryst. A <strong>37</strong>, 517-525 (1981) [<a class="reference external" href="https://doi.org/10.1107/S0567739481001228">doi1</a>]</p></li>
-</ul>
-</div>
 <div class="section" id="space-group-operation-and-change-of-basis">
-<h2><a class="toc-backref" href="#id3">Space group operation and change of basis</a><a class="headerlink" href="#space-group-operation-and-change-of-basis" title="Permalink to this headline">¶</a></h2>
+<h2>Space group operation and change of basis<a class="headerlink" href="#space-group-operation-and-change-of-basis" title="Permalink to this headline">#</a></h2>
+<p>`</p>
 <div class="section" id="basis-vectors-mathbf-a-mathbf-b-mathbf-c-or-mathbf-a-1-mathbf-a-2-mathbf-a-3">
-<h3><a class="toc-backref" href="#id4">Basis vectors <span class="math notranslate nohighlight">\((\mathbf{a}, \mathbf{b}, \mathbf{c})\)</span> or <span class="math notranslate nohighlight">\((\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)\)</span></a><a class="headerlink" href="#basis-vectors-mathbf-a-mathbf-b-mathbf-c-or-mathbf-a-1-mathbf-a-2-mathbf-a-3" title="Permalink to this headline">¶</a></h3>
+<h3>Basis vectors <span class="math notranslate nohighlight">\((\mathbf{a}, \mathbf{b}, \mathbf{c})\)</span> or <span class="math notranslate nohighlight">\((\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)\)</span><a class="headerlink" href="#basis-vectors-mathbf-a-mathbf-b-mathbf-c-or-mathbf-a-1-mathbf-a-2-mathbf-a-3" title="Permalink to this headline">#</a></h3>
 <p>In spglib, basis vectors are represented by three column vectors:</p>
 <div class="math notranslate nohighlight" id="equation-basis-vectors">
-<span class="eqno">(1)<a class="headerlink" href="#equation-basis-vectors" title="Permalink to this equation">¶</a></span>\[\begin{split}\mathbf{a}= \begin{pmatrix}
+<span class="eqno">(1)<a class="headerlink" href="#equation-basis-vectors" title="Permalink to this equation">#</a></span>\[\begin{split}\mathbf{a}= \begin{pmatrix}
 a_x \\
 a_y \\
 a_z \\
@@ -227,11 +623,11 @@ c_z \\
 <span class="math notranslate nohighlight">\((\mathbf{a}, \mathbf{b}, \mathbf{c})\)</span>.</p>
 </div>
 <div class="section" id="atomic-point-coordinates-boldsymbol-x">
-<h3><a class="toc-backref" href="#id5">Atomic point coordinates <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span></a><a class="headerlink" href="#atomic-point-coordinates-boldsymbol-x" title="Permalink to this headline">¶</a></h3>
+<h3>Atomic point coordinates <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span><a class="headerlink" href="#atomic-point-coordinates-boldsymbol-x" title="Permalink to this headline">#</a></h3>
 <p>Coordinates of an atomic point <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span> are represented
 as three fractional values relative to basis vectors as follows,</p>
 <div class="math notranslate nohighlight" id="equation-coordinate-triplet">
-<span class="eqno">(2)<a class="headerlink" href="#equation-coordinate-triplet" title="Permalink to this equation">¶</a></span>\[\begin{split}\boldsymbol{x}= \begin{pmatrix}
+<span class="eqno">(2)<a class="headerlink" href="#equation-coordinate-triplet" title="Permalink to this equation">#</a></span>\[\begin{split}\boldsymbol{x}= \begin{pmatrix}
 x_1 \\
 x_2 \\
 x_3 \\
@@ -239,32 +635,30 @@ x_3 \\
 <p>where <span class="math notranslate nohighlight">\(0 \le x_i &lt; 1\)</span>. A position vector <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> in
 Cartesian coordinates is obtained by</p>
 <div class="math notranslate nohighlight" id="equation-position-vector-1">
-<span class="eqno">(3)<a class="headerlink" href="#equation-position-vector-1" title="Permalink to this equation">¶</a></span>\[\mathbf{x} = (\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{x}.\]</div>
+<span class="eqno">(3)<a class="headerlink" href="#equation-position-vector-1" title="Permalink to this equation">#</a></span>\[\mathbf{x} = (\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{x}.\]</div>
 <p>or</p>
 <div class="math notranslate nohighlight" id="equation-position-vector-2">
-<span class="eqno">(4)<a class="headerlink" href="#equation-position-vector-2" title="Permalink to this equation">¶</a></span>\[\mathbf{x} = \sum_i x_i \mathbf{a}_i.\]</div>
+<span class="eqno">(4)<a class="headerlink" href="#equation-position-vector-2" title="Permalink to this equation">#</a></span>\[\mathbf{x} = \sum_i x_i \mathbf{a}_i.\]</div>
 </div>
 <div class="section" id="symmetry-operation-boldsymbol-w-boldsymbol-w">
-<h3><a class="toc-backref" href="#id6">Symmetry operation <span class="math notranslate nohighlight">\((\boldsymbol{W}, \boldsymbol{w})\)</span></a><a class="headerlink" href="#symmetry-operation-boldsymbol-w-boldsymbol-w" title="Permalink to this headline">¶</a></h3>
+<h3>Symmetry operation <span class="math notranslate nohighlight">\((\boldsymbol{W}, \boldsymbol{w})\)</span><a class="headerlink" href="#symmetry-operation-boldsymbol-w-boldsymbol-w" title="Permalink to this headline">#</a></h3>
 <p>A symmetry operation consists of a pair of the rotation part
 <span class="math notranslate nohighlight">\(\boldsymbol{W}\)</span> and translation part <span class="math notranslate nohighlight">\(\boldsymbol{w}\)</span>,
 and is represented as <span class="math notranslate nohighlight">\((\boldsymbol{W}, \boldsymbol{w})\)</span> in the
 spglib document. The symmetry operation transfers <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span> to
 <span class="math notranslate nohighlight">\(\tilde{\boldsymbol{x}}\)</span> as follows:</p>
 <div class="math notranslate nohighlight" id="equation-space-group-operation">
-<span class="eqno">(5)<a class="headerlink" href="#equation-space-group-operation" title="Permalink to this equation">¶</a></span>\[\tilde{\boldsymbol{x}} = \boldsymbol{W}\boldsymbol{x} + \boldsymbol{w}.\]</div>
+<span class="eqno">(5)<a class="headerlink" href="#equation-space-group-operation" title="Permalink to this equation">#</a></span>\[\tilde{\boldsymbol{x}} = \boldsymbol{W}\boldsymbol{x} + \boldsymbol{w}.\]</div>
 </div>
 <div class="section" id="transformation-matrix-boldsymbol-p-and-origin-shift-boldsymbol-p">
-<span id="def-transformation-and-origin-shift"></span><h3><a class="toc-backref" href="#id7">Transformation matrix <span class="math notranslate nohighlight">\(\boldsymbol{P}\)</span> and origin shift <span class="math notranslate nohighlight">\(\boldsymbol{p}\)</span></a><a class="headerlink" href="#transformation-matrix-boldsymbol-p-and-origin-shift-boldsymbol-p" title="Permalink to this headline">¶</a></h3>
+<span id="def-transformation-and-origin-shift"></span><h3>Transformation matrix <span class="math notranslate nohighlight">\(\boldsymbol{P}\)</span> and origin shift <span class="math notranslate nohighlight">\(\boldsymbol{p}\)</span><a class="headerlink" href="#transformation-matrix-boldsymbol-p-and-origin-shift-boldsymbol-p" title="Permalink to this headline">#</a></h3>
 <p>The transformation matrix <span class="math notranslate nohighlight">\(\boldsymbol{P}\)</span> changes choice of
 basis vectors as follows</p>
 <div class="math notranslate nohighlight" id="equation-transformation-matrix">
-<span class="eqno">(6)<a class="headerlink" href="#equation-transformation-matrix" title="Permalink to this equation">¶</a></span>\[( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
+<span class="eqno">(6)<a class="headerlink" href="#equation-transformation-matrix" title="Permalink to this equation">#</a></span>\[( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
 = ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
 \mathbf{c}_\mathrm{s} )  \boldsymbol{P},\]</div>
-<p>where <span class="math notranslate nohighlight">\(( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )\)</span> and <span class="math notranslate nohighlight">\((
-\mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
-\mathbf{c}_\mathrm{s} )\)</span> are the basis vectors of an arbitrary system
+<p>where <span class="math notranslate nohighlight">\(( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )\)</span> and <span class="math notranslate nohighlight">\(( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )\)</span> are the basis vectors of an arbitrary system
 and of a standardized system, respectively. In general, the
 transformation matrix is not limited for the transformation from the
 standardized system, but can be used in between any systems possibly
@@ -275,7 +669,7 @@ changes the choices of basis vectors.</p>
 origin of the standardized system <span class="math notranslate nohighlight">\(\boldsymbol{O}_\mathrm{s}\)</span> to
 the origin of the arbitrary system <span class="math notranslate nohighlight">\(\boldsymbol{O}\)</span>,</p>
 <div class="math notranslate nohighlight" id="equation-origin-shift">
-<span class="eqno">(7)<a class="headerlink" href="#equation-origin-shift" title="Permalink to this equation">¶</a></span>\[\boldsymbol{p} = \boldsymbol{O} - \boldsymbol{O}_\mathrm{s}.\]</div>
+<span class="eqno">(7)<a class="headerlink" href="#equation-origin-shift" title="Permalink to this equation">#</a></span>\[\boldsymbol{p} = \boldsymbol{O} - \boldsymbol{O}_\mathrm{s}.\]</div>
 <p>Origin shift <strong>doesn’t</strong> move a crystal in Cartesian coordinates, but
 just changes the origin to measure the coordinates of atomic points.</p>
 <p>A change of basis is described by the combination of the
@@ -285,15 +679,14 @@ transformation matrix is applied and then origin shift. The points in
 the standardized system <span class="math notranslate nohighlight">\(\boldsymbol{x}_\mathrm{s}\)</span> and
 arbitrary system <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span> are related by</p>
 <div class="math notranslate nohighlight" id="equation-change-of-basis-1">
-<span class="eqno">(8)<a class="headerlink" href="#equation-change-of-basis-1" title="Permalink to this equation">¶</a></span>\[\boldsymbol{x}_\mathrm{s} = \boldsymbol{P}\boldsymbol{x} +
+<span class="eqno">(8)<a class="headerlink" href="#equation-change-of-basis-1" title="Permalink to this equation">#</a></span>\[\boldsymbol{x}_\mathrm{s} = \boldsymbol{P}\boldsymbol{x} +
 \boldsymbol{p},\]</div>
 <p>or equivalently,</p>
 <div class="math notranslate nohighlight" id="equation-change-of-basis-2">
-<span class="eqno">(9)<a class="headerlink" href="#equation-change-of-basis-2" title="Permalink to this equation">¶</a></span>\[\boldsymbol{x} = \boldsymbol{P}^{-1}\boldsymbol{x}_\mathrm{s} -
+<span class="eqno">(9)<a class="headerlink" href="#equation-change-of-basis-2" title="Permalink to this equation">#</a></span>\[\boldsymbol{x} = \boldsymbol{P}^{-1}\boldsymbol{x}_\mathrm{s} -
 \boldsymbol{P}^{-1}\boldsymbol{p}.\]</div>
 <p>A graphical example is shown below.</p>
-<p><a class="reference internal" href="_images/change-of-basis.png"><img alt="cob" src="_images/change-of-basis.png" style="width: 20%;" /></a></p>
-<p>(click the figure to enlarge)</p>
+<a class="reference internal image-reference" href="_images/change-of-basis.png"><img alt="_images/change-of-basis.png" class="align-center" src="_images/change-of-basis.png" style="width: 50%;" /></a>
 <p>In this example,</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\boldsymbol{P} = \begin{pmatrix}
@@ -303,7 +696,7 @@ arbitrary system <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</
 \end{pmatrix}.\end{split}\]</div>
 </div>
 <div class="section" id="difference-between-rotation-and-transformation-matrices">
-<h3><a class="toc-backref" href="#id8">Difference between rotation and transformation matrices</a><a class="headerlink" href="#difference-between-rotation-and-transformation-matrices" title="Permalink to this headline">¶</a></h3>
+<h3>Difference between rotation and transformation matrices<a class="headerlink" href="#difference-between-rotation-and-transformation-matrices" title="Permalink to this headline">#</a></h3>
 <p>A rotation matrix rotates (or mirrors, inverts) the crystal body with
 respect to origin. A transformation matrix changes the choice of the
 basis vectors, but does not rotate the crystal body.</p>
@@ -312,11 +705,10 @@ another point by</p>
 <div class="math notranslate nohighlight">
 \[\tilde{\boldsymbol{x}} = \boldsymbol{W}\boldsymbol{x},\]</div>
 <p>where <span class="math notranslate nohighlight">\(\tilde{\boldsymbol{x}}\)</span> and <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span> are
-represented with respect to the same basis vectors <span class="math notranslate nohighlight">\((\mathbf{a},
-\mathbf{b}, \mathbf{c})\)</span>. Equivalently the rotation is achieved by
+represented with respect to the same basis vectors <span class="math notranslate nohighlight">\((\mathbf{a}, \mathbf{b}, \mathbf{c})\)</span>. Equivalently the rotation is achieved by
 rotating the basis vectors:</p>
 <div class="math notranslate nohighlight" id="equation-rotation-matrix">
-<span class="eqno">(10)<a class="headerlink" href="#equation-rotation-matrix" title="Permalink to this equation">¶</a></span>\[(\tilde{\mathbf{a}}, \tilde{\mathbf{b}}, \tilde{\mathbf{c}}) =
+<span class="eqno">(10)<a class="headerlink" href="#equation-rotation-matrix" title="Permalink to this equation">#</a></span>\[(\tilde{\mathbf{a}}, \tilde{\mathbf{b}}, \tilde{\mathbf{c}}) =
 (\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{W}\]</div>
 <p>with keeping the representation of the atomic point coordinates
 <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span> because</p>
@@ -345,14 +737,13 @@ rotating the basis vectors:</p>
 </div>
 </div>
 <div class="section" id="spglib-conventions-of-standardized-unit-cell">
-<span id="def-standardized-unit-cell"></span><h2><a class="toc-backref" href="#id9">Spglib conventions of standardized unit cell</a><a class="headerlink" href="#spglib-conventions-of-standardized-unit-cell" title="Permalink to this headline">¶</a></h2>
-<p>The standardization in spglib is achieved by <a class="reference internal" href="#def-transformation-and-origin-shift"><span class="std std-ref">a change of basis
-transformation</span></a>. If
+<span id="def-standardized-unit-cell"></span><h2>Spglib conventions of standardized unit cell<a class="headerlink" href="#spglib-conventions-of-standardized-unit-cell" title="Permalink to this headline">#</a></h2>
+<p>The standardization in spglib is achieved by <a class="reference internal" href="#def-transformation-and-origin-shift"><span class="std std-ref">a change of basis transformation</span></a>. If
 <a class="reference internal" href="#def-idealize-cell"><span class="std std-ref">idealization</span></a> as shown below is further
 applied, the crystal can be rigidly rotated in Cartesian
 coordinates.</p>
 <div class="section" id="choice-of-basis-vectors">
-<h3><a class="toc-backref" href="#id10">Choice of basis vectors</a><a class="headerlink" href="#choice-of-basis-vectors" title="Permalink to this headline">¶</a></h3>
+<h3>Choice of basis vectors<a class="headerlink" href="#choice-of-basis-vectors" title="Permalink to this headline">#</a></h3>
 <p>Using the APIs <code class="docutils literal notranslate"><span class="pre">spg_get_dataset</span></code>,
 <code class="docutils literal notranslate"><span class="pre">spg_get_dataset_with_hall_number</span></code>, or <code class="docutils literal notranslate"><span class="pre">spg_standardize_cell</span></code>, the
 standardized unit cell is obtained. The “standardized unit cell” in
@@ -367,13 +758,13 @@ in spglib, lengths of basis vectors are used to choose the order of
 determined only by the symmetrical conventions.</p>
 </div>
 <div class="section" id="transformation-to-the-primitive-cell">
-<span id="def-standardized-primitive-cell"></span><h3><a class="toc-backref" href="#id11">Transformation to the primitive cell</a><a class="headerlink" href="#transformation-to-the-primitive-cell" title="Permalink to this headline">¶</a></h3>
+<span id="def-standardized-primitive-cell"></span><h3>Transformation to the primitive cell<a class="headerlink" href="#transformation-to-the-primitive-cell" title="Permalink to this headline">#</a></h3>
 <p>In the standardized unit cells, there are five different centring
 types available, base centrings of A and C, rhombohedral (R), body centred
 (I), and face centred (F). The transformation is applied to the
 standardized unit cell by</p>
 <div class="math notranslate nohighlight" id="equation-transformation-to-primitive">
-<span class="eqno">(11)<a class="headerlink" href="#equation-transformation-to-primitive" title="Permalink to this equation">¶</a></span>\[( \mathbf{a}_\mathrm{p} \; \mathbf{b}_\mathrm{p} \; \mathbf{c}_\mathrm{p} )
+<span class="eqno">(11)<a class="headerlink" href="#equation-transformation-to-primitive" title="Permalink to this equation">#</a></span>\[( \mathbf{a}_\mathrm{p} \; \mathbf{b}_\mathrm{p} \; \mathbf{c}_\mathrm{p} )
 = ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
 \mathbf{c}_\mathrm{s} )  \boldsymbol{P}_\mathrm{c},\]</div>
 <p>where <span class="math notranslate nohighlight">\(\mathbf{a}_\mathrm{p}\)</span>, <span class="math notranslate nohighlight">\(\mathbf{b}_\mathrm{p}\)</span>,
@@ -423,7 +814,7 @@ lattice), no transformation matrix is applied because it is already
 the primitive cell.</p>
 </div>
 <div class="section" id="def-idealize-cell">
-<span id="idealization-of-unit-cell-structure"></span><h3><a class="toc-backref" href="#id12">Idealization of unit cell structure</a><a class="headerlink" href="#def-idealize-cell" title="Permalink to this headline">¶</a></h3>
+<span id="idealization-of-unit-cell-structure"></span><h3>Idealization of unit cell structure<a class="headerlink" href="#def-idealize-cell" title="Permalink to this headline">#</a></h3>
 <p>Spglib allows tolerance parameters to match a slightly distorted unit
 cell structure to a space group type with some higher symmetry. Using
 obtained symmetry operations, the distortion is removed to idealize
@@ -435,7 +826,7 @@ triclinic crystals, crystals can be rotated in Cartesian coordinates,
 which is the different type of transformation from that of the
 change-of-basis transformation explained above.</p>
 <div class="section" id="triclinic-lattice">
-<h4>Triclinic lattice<a class="headerlink" href="#triclinic-lattice" title="Permalink to this headline">¶</a></h4>
+<h4>Triclinic lattice<a class="headerlink" href="#triclinic-lattice" title="Permalink to this headline">#</a></h4>
 <ul class="simple">
 <li><p>Niggli reduced cell is used for choosing <span class="math notranslate nohighlight">\(\mathbf{a}, \mathbf{b}, \mathbf{c}\)</span>.</p></li>
 <li><p><span class="math notranslate nohighlight">\(\mathbf{a}\)</span> is set along <span class="math notranslate nohighlight">\(+x\)</span> direction of Cartesian coordinates.</p></li>
@@ -445,7 +836,7 @@ coordinates so that <span class="math notranslate nohighlight">\(\mathbf{a}\time
 </ul>
 </div>
 <div class="section" id="monoclinic-lattice">
-<h4>Monoclinic lattice<a class="headerlink" href="#monoclinic-lattice" title="Permalink to this headline">¶</a></h4>
+<h4>Monoclinic lattice<a class="headerlink" href="#monoclinic-lattice" title="Permalink to this headline">#</a></h4>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(b\)</span> axis is taken as the unique axis.</p></li>
 <li><p><span class="math notranslate nohighlight">\(\alpha = 90^\circ\)</span> and <span class="math notranslate nohighlight">\(\gamma = 90^\circ\)</span></p></li>
@@ -456,7 +847,7 @@ coordinates so that <span class="math notranslate nohighlight">\(\mathbf{a}\time
 </ul>
 </div>
 <div class="section" id="orthorhombic-lattice">
-<h4>Orthorhombic lattice<a class="headerlink" href="#orthorhombic-lattice" title="Permalink to this headline">¶</a></h4>
+<h4>Orthorhombic lattice<a class="headerlink" href="#orthorhombic-lattice" title="Permalink to this headline">#</a></h4>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(\alpha = \beta = \gamma = 90^\circ\)</span>.</p></li>
 <li><p><span class="math notranslate nohighlight">\(\mathbf{a}\)</span> is set along <span class="math notranslate nohighlight">\(+x\)</span> direction of Cartesian coordinates.</p></li>
@@ -465,7 +856,7 @@ coordinates so that <span class="math notranslate nohighlight">\(\mathbf{a}\time
 </ul>
 </div>
 <div class="section" id="tetragonal-lattice">
-<h4>Tetragonal lattice<a class="headerlink" href="#tetragonal-lattice" title="Permalink to this headline">¶</a></h4>
+<h4>Tetragonal lattice<a class="headerlink" href="#tetragonal-lattice" title="Permalink to this headline">#</a></h4>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(\alpha = \beta = \gamma = 90^\circ\)</span>.</p></li>
 <li><p><span class="math notranslate nohighlight">\(a=b\)</span>.</p></li>
@@ -475,7 +866,7 @@ coordinates so that <span class="math notranslate nohighlight">\(\mathbf{a}\time
 </ul>
 </div>
 <div class="section" id="rhombohedral-lattice">
-<h4>Rhombohedral lattice<a class="headerlink" href="#rhombohedral-lattice" title="Permalink to this headline">¶</a></h4>
+<h4>Rhombohedral lattice<a class="headerlink" href="#rhombohedral-lattice" title="Permalink to this headline">#</a></h4>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(\alpha = \beta = \gamma\)</span>.</p></li>
 <li><p><span class="math notranslate nohighlight">\(a=b=c\)</span>.</p></li>
@@ -501,7 +892,7 @@ respectively.</p></li>
 </ul>
 </div>
 <div class="section" id="hexagonal-lattice">
-<h4>Hexagonal lattice<a class="headerlink" href="#hexagonal-lattice" title="Permalink to this headline">¶</a></h4>
+<h4>Hexagonal lattice<a class="headerlink" href="#hexagonal-lattice" title="Permalink to this headline">#</a></h4>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(\alpha = \beta = 90^\circ\)</span>.</p></li>
 <li><p><span class="math notranslate nohighlight">\(\gamma = 120^\circ\)</span>.</p></li>
@@ -512,7 +903,7 @@ respectively.</p></li>
 </ul>
 </div>
 <div class="section" id="cubic-lattice">
-<h4>Cubic lattice<a class="headerlink" href="#cubic-lattice" title="Permalink to this headline">¶</a></h4>
+<h4>Cubic lattice<a class="headerlink" href="#cubic-lattice" title="Permalink to this headline">#</a></h4>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(\alpha = \beta = \gamma = 90^\circ\)</span>.</p></li>
 <li><p><span class="math notranslate nohighlight">\(a=b=c\)</span>.</p></li>
@@ -523,28 +914,26 @@ respectively.</p></li>
 </div>
 </div>
 <div class="section" id="rotation-introduced-by-idealization">
-<h3><a class="toc-backref" href="#id13">Rotation introduced by idealization</a><a class="headerlink" href="#rotation-introduced-by-idealization" title="Permalink to this headline">¶</a></h3>
+<h3>Rotation introduced by idealization<a class="headerlink" href="#rotation-introduced-by-idealization" title="Permalink to this headline">#</a></h3>
 <p>In the idealization step presented above, the input unit cell crystal
 structure can be rotated in the Cartesian coordinates.  The rotation
 matrix <span class="math notranslate nohighlight">\(\boldsymbol{R}\)</span> of this rotation is defined by</p>
 <div class="math notranslate nohighlight" id="equation-rigid-rotation-matrix">
-<span class="eqno">(12)<a class="headerlink" href="#equation-rigid-rotation-matrix" title="Permalink to this equation">¶</a></span>\[( \bar{\mathbf{a}}_\mathrm{s} \;
+<span class="eqno">(12)<a class="headerlink" href="#equation-rigid-rotation-matrix" title="Permalink to this equation">#</a></span>\[( \bar{\mathbf{a}}_\mathrm{s} \;
 \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )
 = ( \boldsymbol{R} \mathbf{a}_\mathrm{s} \;
 \boldsymbol{R} \mathbf{b}_\mathrm{s} \; \boldsymbol{R}
 \mathbf{c}_\mathrm{s} ).\]</div>
 <p>This rotation matrix rotates the standardized
-crystal structure before idealization <span class="math notranslate nohighlight">\(( \mathbf{a}_\mathrm{s}
-\; \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )\)</span> to that after
-idealization <span class="math notranslate nohighlight">\(( \bar{\mathbf{a}}_\mathrm{s} \;
-\bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )\)</span> in
+crystal structure before idealization <span class="math notranslate nohighlight">\(( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )\)</span> to that after
+idealization <span class="math notranslate nohighlight">\(( \bar{\mathbf{a}}_\mathrm{s} \; \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )\)</span> in
 Cartesian coordinates of the given input unit cell.</p>
 </div>
 </div>
 <div class="section" id="examples">
-<h2><a class="toc-backref" href="#id14">Examples</a><a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">#</a></h2>
 <div class="section" id="crystallographic-choice-and-rigid-rotation">
-<h3><a class="toc-backref" href="#id15">Crystallographic choice and rigid rotation</a><a class="headerlink" href="#crystallographic-choice-and-rigid-rotation" title="Permalink to this headline">¶</a></h3>
+<h3>Crystallographic choice and rigid rotation<a class="headerlink" href="#crystallographic-choice-and-rigid-rotation" title="Permalink to this headline">#</a></h3>
 <p>The following example of a python script gives a crystal structure of
 Br whose space group type is <em>Cmce</em>. The basis vectors
 <span class="math notranslate nohighlight">\((\mathbf{a}, \mathbf{b}, \mathbf{c})\)</span> are fixed by the symmetry
@@ -553,26 +942,26 @@ and <em>m</em> and <em>c</em> operations in <em>Cmce</em> fix which directions a
 b-axes should be with respect to each other axis. This is the first
 one choice appearing in the list of Hall symbols among 6 different
 choices for this space group type.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">spglib</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">spglib</span>
 
 <span class="c1"># Mind that the a, b, c axes are given in row vectors here,</span>
 <span class="c1"># but the formulation above is given for the column vectors.</span>
 <span class="n">lattice</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">7.17851431</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>  <span class="c1"># a</span>
-           <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">3.99943947</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>  <span class="c1"># b</span>
-           <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">8.57154746</span><span class="p">]]</span>  <span class="c1"># c</span>
+            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">3.99943947</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>  <span class="c1"># b</span>
+            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">8.57154746</span><span class="p">]]</span>  <span class="c1"># c</span>
 <span class="n">points</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.84688439</span><span class="p">,</span> <span class="mf">0.1203133</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.65311561</span><span class="p">,</span> <span class="mf">0.6203133</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.34688439</span><span class="p">,</span> <span class="mf">0.3796867</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.15311561</span><span class="p">,</span> <span class="mf">0.8796867</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.34688439</span><span class="p">,</span> <span class="mf">0.1203133</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.15311561</span><span class="p">,</span> <span class="mf">0.6203133</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.84688439</span><span class="p">,</span> <span class="mf">0.3796867</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.65311561</span><span class="p">,</span> <span class="mf">0.8796867</span><span class="p">]]</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.65311561</span><span class="p">,</span> <span class="mf">0.6203133</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.34688439</span><span class="p">,</span> <span class="mf">0.3796867</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.15311561</span><span class="p">,</span> <span class="mf">0.8796867</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.34688439</span><span class="p">,</span> <span class="mf">0.1203133</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.15311561</span><span class="p">,</span> <span class="mf">0.6203133</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.84688439</span><span class="p">,</span> <span class="mf">0.3796867</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.65311561</span><span class="p">,</span> <span class="mf">0.8796867</span><span class="p">]]</span>
 <span class="n">numbers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">35</span><span class="p">,]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
 <span class="n">cell</span> <span class="o">=</span> <span class="p">(</span><span class="n">lattice</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">numbers</span><span class="p">)</span>
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">spglib</span><span class="o">.</span><span class="n">get_symmetry_dataset</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Space group type: </span><span class="si">%s</span><span class="s2"> (</span><span class="si">%d</span><span class="s2">)&quot;</span>
-      <span class="o">%</span> <span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;international&#39;</span><span class="p">],</span> <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;number&#39;</span><span class="p">]))</span>
+        <span class="o">%</span> <span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;international&#39;</span><span class="p">],</span> <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;number&#39;</span><span class="p">]))</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Transformation matrix:&quot;</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;transformation_matrix&#39;</span><span class="p">]:</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  </span><span class="si">%2d</span><span class="s2"> </span><span class="si">%2d</span><span class="s2"> </span><span class="si">%2d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
@@ -583,33 +972,33 @@ choices for this space group type.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">python</span> <span class="n">example</span><span class="o">.</span><span class="n">py</span>
 <span class="n">Space</span> <span class="n">group</span> <span class="nb">type</span><span class="p">:</span> <span class="n">Cmce</span> <span class="p">(</span><span class="mi">64</span><span class="p">)</span>
 <span class="n">Transformation</span> <span class="n">matrix</span><span class="p">:</span>
-   <span class="mi">1</span>  <span class="mi">0</span>  <span class="mi">0</span>
-   <span class="mi">0</span>  <span class="mi">1</span>  <span class="mi">0</span>
-   <span class="mi">0</span>  <span class="mi">0</span>  <span class="mi">1</span>
+    <span class="mi">1</span>  <span class="mi">0</span>  <span class="mi">0</span>
+    <span class="mi">0</span>  <span class="mi">1</span>  <span class="mi">0</span>
+    <span class="mi">0</span>  <span class="mi">0</span>  <span class="mi">1</span>
 <span class="n">Origin</span> <span class="n">shift</span><span class="p">:</span> <span class="mf">0.000000</span> <span class="mf">0.500000</span> <span class="mf">0.500000</span>
 </pre></div>
 </div>
 <p>No rotation was introduced in the idealization. Next, we swap a- and c-axes.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">spglib</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">spglib</span>
 
 <span class="c1"># Mind that the a, b, c axes are given in row vectors here,</span>
 <span class="c1"># but the formulation above is given for the column vectors.</span>
 <span class="n">lattice</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">8.57154746</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>  <span class="c1"># a</span>
-           <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">3.99943947</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>  <span class="c1"># b</span>
-           <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">7.17851431</span><span class="p">]]</span>  <span class="c1"># c</span>
+            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">3.99943947</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>  <span class="c1"># b</span>
+            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">7.17851431</span><span class="p">]]</span>  <span class="c1"># c</span>
 <span class="n">points</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1203133</span><span class="p">,</span> <span class="mf">0.84688439</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.6203133</span><span class="p">,</span> <span class="mf">0.65311561</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.3796867</span><span class="p">,</span> <span class="mf">0.34688439</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.8796867</span><span class="p">,</span> <span class="mf">0.15311561</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.1203133</span><span class="p">,</span> <span class="mf">0.34688439</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.6203133</span><span class="p">,</span> <span class="mf">0.15311561</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.3796867</span><span class="p">,</span> <span class="mf">0.84688439</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.8796867</span><span class="p">,</span> <span class="mf">0.65311561</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]]</span>
+            <span class="p">[</span><span class="mf">0.6203133</span><span class="p">,</span> <span class="mf">0.65311561</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.3796867</span><span class="p">,</span> <span class="mf">0.34688439</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.8796867</span><span class="p">,</span> <span class="mf">0.15311561</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.1203133</span><span class="p">,</span> <span class="mf">0.34688439</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.6203133</span><span class="p">,</span> <span class="mf">0.15311561</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.3796867</span><span class="p">,</span> <span class="mf">0.84688439</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.8796867</span><span class="p">,</span> <span class="mf">0.65311561</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]]</span>
 <span class="n">numbers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">35</span><span class="p">,]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
 <span class="n">cell</span> <span class="o">=</span> <span class="p">(</span><span class="n">lattice</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">numbers</span><span class="p">)</span>
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">spglib</span><span class="o">.</span><span class="n">get_symmetry_dataset</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Space group type: </span><span class="si">%s</span><span class="s2"> (</span><span class="si">%d</span><span class="s2">)&quot;</span>
-      <span class="o">%</span> <span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;international&#39;</span><span class="p">],</span> <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;number&#39;</span><span class="p">]))</span>
+        <span class="o">%</span> <span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;international&#39;</span><span class="p">],</span> <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;number&#39;</span><span class="p">]))</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Transformation matrix:&quot;</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;transformation_matrix&#39;</span><span class="p">]:</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  </span><span class="si">%2d</span><span class="s2"> </span><span class="si">%2d</span><span class="s2"> </span><span class="si">%2d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
@@ -620,9 +1009,9 @@ choices for this space group type.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">python</span> <span class="n">spglib</span><span class="o">-</span><span class="n">example2</span><span class="o">.</span><span class="n">py</span>
 <span class="n">Space</span> <span class="n">group</span> <span class="nb">type</span><span class="p">:</span> <span class="n">Cmce</span> <span class="p">(</span><span class="mi">64</span><span class="p">)</span>
 <span class="n">Transformation</span> <span class="n">matrix</span><span class="p">:</span>
-   <span class="mi">0</span>  <span class="mi">0</span>  <span class="mi">1</span>
-   <span class="mi">0</span>  <span class="mi">1</span>  <span class="mi">0</span>
-  <span class="o">-</span><span class="mi">1</span>  <span class="mi">0</span>  <span class="mi">0</span>
+    <span class="mi">0</span>  <span class="mi">0</span>  <span class="mi">1</span>
+    <span class="mi">0</span>  <span class="mi">1</span>  <span class="mi">0</span>
+   <span class="o">-</span><span class="mi">1</span>  <span class="mi">0</span>  <span class="mi">0</span>
 <span class="n">Origin</span> <span class="n">shift</span><span class="p">:</span> <span class="mf">0.000000</span> <span class="mf">0.000000</span> <span class="mf">0.000000</span>
 </pre></div>
 </div>
@@ -632,26 +1021,26 @@ c-axes. The transformation back of the basis vectors is achieved by
 Eq. <a class="reference internal" href="#equation-transformation-matrix">(6)</a>. Next, we try to rotate rigidly the
 crystal structure by <span class="math notranslate nohighlight">\(45^\circ\)</span> around c-axis in Cartesian
 coordinates from the first one:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">spglib</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">spglib</span>
 
 <span class="c1"># Mind that the a, b, c axes are given in row vectors here,</span>
 <span class="c1"># but the formulation above is given for the column vectors.</span>
 <span class="n">lattice</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">5.0759761474456697</span><span class="p">,</span> <span class="mf">5.0759761474456697</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>  <span class="c1"># a</span>
-           <span class="p">[</span><span class="o">-</span><span class="mf">2.8280307701821314</span><span class="p">,</span> <span class="mf">2.8280307701821314</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>  <span class="c1"># b</span>
-           <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">8.57154746</span><span class="p">]]</span>  <span class="c1"># c</span>
+            <span class="p">[</span><span class="o">-</span><span class="mf">2.8280307701821314</span><span class="p">,</span> <span class="mf">2.8280307701821314</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>  <span class="c1"># b</span>
+            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">8.57154746</span><span class="p">]]</span>  <span class="c1"># c</span>
 <span class="n">points</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.84688439</span><span class="p">,</span> <span class="mf">0.1203133</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.65311561</span><span class="p">,</span> <span class="mf">0.6203133</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.34688439</span><span class="p">,</span> <span class="mf">0.3796867</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.15311561</span><span class="p">,</span> <span class="mf">0.8796867</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.34688439</span><span class="p">,</span> <span class="mf">0.1203133</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.15311561</span><span class="p">,</span> <span class="mf">0.6203133</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.84688439</span><span class="p">,</span> <span class="mf">0.3796867</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.65311561</span><span class="p">,</span> <span class="mf">0.8796867</span><span class="p">]]</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.65311561</span><span class="p">,</span> <span class="mf">0.6203133</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.34688439</span><span class="p">,</span> <span class="mf">0.3796867</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.15311561</span><span class="p">,</span> <span class="mf">0.8796867</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.34688439</span><span class="p">,</span> <span class="mf">0.1203133</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.15311561</span><span class="p">,</span> <span class="mf">0.6203133</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.84688439</span><span class="p">,</span> <span class="mf">0.3796867</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.65311561</span><span class="p">,</span> <span class="mf">0.8796867</span><span class="p">]]</span>
 <span class="n">numbers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">35</span><span class="p">,]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
 <span class="n">cell</span> <span class="o">=</span> <span class="p">(</span><span class="n">lattice</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">numbers</span><span class="p">)</span>
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">spglib</span><span class="o">.</span><span class="n">get_symmetry_dataset</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Space group type: </span><span class="si">%s</span><span class="s2"> (</span><span class="si">%d</span><span class="s2">)&quot;</span>
-      <span class="o">%</span> <span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;international&#39;</span><span class="p">],</span> <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;number&#39;</span><span class="p">]))</span>
+        <span class="o">%</span> <span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;international&#39;</span><span class="p">],</span> <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;number&#39;</span><span class="p">]))</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Transformation matrix:&quot;</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;transformation_matrix&#39;</span><span class="p">]:</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  </span><span class="si">%2d</span><span class="s2"> </span><span class="si">%2d</span><span class="s2"> </span><span class="si">%2d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
@@ -662,9 +1051,9 @@ coordinates from the first one:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">python</span> <span class="n">spglib</span><span class="o">-</span><span class="n">example3</span><span class="o">.</span><span class="n">py</span>
 <span class="n">Space</span> <span class="n">group</span> <span class="nb">type</span><span class="p">:</span> <span class="n">Cmce</span> <span class="p">(</span><span class="mi">64</span><span class="p">)</span>
 <span class="n">Transformation</span> <span class="n">matrix</span><span class="p">:</span>
-   <span class="mi">1</span>  <span class="mi">0</span>  <span class="mi">0</span>
-   <span class="mi">0</span>  <span class="mi">1</span>  <span class="mi">0</span>
-   <span class="mi">0</span>  <span class="mi">0</span>  <span class="mi">1</span>
+    <span class="mi">1</span>  <span class="mi">0</span>  <span class="mi">0</span>
+    <span class="mi">0</span>  <span class="mi">1</span>  <span class="mi">0</span>
+    <span class="mi">0</span>  <span class="mi">0</span>  <span class="mi">1</span>
 <span class="n">Origin</span> <span class="n">shift</span><span class="p">:</span> <span class="mf">0.000000</span> <span class="mf">0.000000</span> <span class="mf">0.500000</span>
 </pre></div>
 </div>
@@ -674,7 +1063,7 @@ different but it changes only the order of atoms, so effectively it
 does nothing.</p>
 </div>
 <div class="section" id="transformation-to-a-primitive-cell">
-<h3><a class="toc-backref" href="#id16">Transformation to a primitive cell</a><a class="headerlink" href="#transformation-to-a-primitive-cell" title="Permalink to this headline">¶</a></h3>
+<h3>Transformation to a primitive cell<a class="headerlink" href="#transformation-to-a-primitive-cell" title="Permalink to this headline">#</a></h3>
 <p>There are infinite number of choices of primitive cell. The
 transformation from a primitive cell basis vectors to the other
 primitive cell basis vectors is always done by an integer matrix
@@ -691,7 +1080,7 @@ example:</p>
 cell. A possible transformation is shown at
 <a class="reference internal" href="#def-standardized-primitive-cell"><span class="std std-ref">Transformation to the primitive cell</span></a>, which is
 <span class="math notranslate nohighlight">\(\boldsymbol{P}_\mathrm{C}\)</span>. With the following script:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="n">lattice</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">7.17851431</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>  <span class="c1"># a</span>
            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">3.99943947</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>  <span class="c1"># b</span>
            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">8.57154746</span><span class="p">]]</span>  <span class="c1"># c</span>
@@ -711,19 +1100,19 @@ cell. A possible transformation is shown at
 transforming standardized and idealized crystal structure to the
 primitive cell using the transformation matrix. Therefore by this
 script:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">spglib</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">spglib</span>
 
 <span class="n">lattice</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">7.17851431</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-           <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">3.99943947</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-           <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">8.57154746</span><span class="p">]]</span>
+            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">3.99943947</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">8.57154746</span><span class="p">]]</span>
 <span class="n">points</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.84688439</span><span class="p">,</span> <span class="mf">0.1203133</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.65311561</span><span class="p">,</span> <span class="mf">0.6203133</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.34688439</span><span class="p">,</span> <span class="mf">0.3796867</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.15311561</span><span class="p">,</span> <span class="mf">0.8796867</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.34688439</span><span class="p">,</span> <span class="mf">0.1203133</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.15311561</span><span class="p">,</span> <span class="mf">0.6203133</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.84688439</span><span class="p">,</span> <span class="mf">0.3796867</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.65311561</span><span class="p">,</span> <span class="mf">0.8796867</span><span class="p">]]</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.65311561</span><span class="p">,</span> <span class="mf">0.6203133</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.34688439</span><span class="p">,</span> <span class="mf">0.3796867</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.15311561</span><span class="p">,</span> <span class="mf">0.8796867</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.34688439</span><span class="p">,</span> <span class="mf">0.1203133</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.15311561</span><span class="p">,</span> <span class="mf">0.6203133</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.84688439</span><span class="p">,</span> <span class="mf">0.3796867</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.65311561</span><span class="p">,</span> <span class="mf">0.8796867</span><span class="p">]]</span>
 <span class="n">numbers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">8</span><span class="p">,]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
 <span class="n">cell</span> <span class="o">=</span> <span class="p">(</span><span class="n">lattice</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">numbers</span><span class="p">)</span>
 
@@ -746,26 +1135,26 @@ Even when the basis vectors are rigidly rotated as:</p>
 </div>
 <p>the relationship of a, b, c axes is unchanged. Therefore the same
 transformation matrix to the primitive cell can be used. Then we get:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[[</span><span class="mf">3.95200346</span> <span class="mf">1.12397269</span> <span class="mf">0.</span>        <span class="p">]</span>
- <span class="p">[</span><span class="mf">1.12397269</span> <span class="mf">3.95200346</span> <span class="mf">0.</span>        <span class="p">]</span>
- <span class="p">[</span><span class="mf">0.</span>         <span class="mf">0.</span>         <span class="mf">8.57154746</span><span class="p">]]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>   <span class="p">[[</span><span class="mf">3.95200346</span> <span class="mf">1.12397269</span> <span class="mf">0.</span>        <span class="p">]</span>
+    <span class="p">[</span><span class="mf">1.12397269</span> <span class="mf">3.95200346</span> <span class="mf">0.</span>        <span class="p">]</span>
+    <span class="p">[</span><span class="mf">0.</span>         <span class="mf">0.</span>         <span class="mf">8.57154746</span><span class="p">]]</span>
 </pre></div>
 </div>
 <p>However applying <code class="docutils literal notranslate"><span class="pre">find_primitive</span></code> rigidly rotates automatically and
 so the following script doesn’t give this basis vectors:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">spglib</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">spglib</span>
 
 <span class="n">lattice</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">5.0759761474456697</span><span class="p">,</span> <span class="mf">5.0759761474456697</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-           <span class="p">[</span><span class="o">-</span><span class="mf">2.8280307701821314</span><span class="p">,</span> <span class="mf">2.8280307701821314</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-           <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">8.57154746</span><span class="p">]]</span>
+            <span class="p">[</span><span class="o">-</span><span class="mf">2.8280307701821314</span><span class="p">,</span> <span class="mf">2.8280307701821314</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">8.57154746</span><span class="p">]]</span>
 <span class="n">points</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.84688439</span><span class="p">,</span> <span class="mf">0.1203133</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.65311561</span><span class="p">,</span> <span class="mf">0.6203133</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.34688439</span><span class="p">,</span> <span class="mf">0.3796867</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.15311561</span><span class="p">,</span> <span class="mf">0.8796867</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.34688439</span><span class="p">,</span> <span class="mf">0.1203133</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.15311561</span><span class="p">,</span> <span class="mf">0.6203133</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.84688439</span><span class="p">,</span> <span class="mf">0.3796867</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.65311561</span><span class="p">,</span> <span class="mf">0.8796867</span><span class="p">]]</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.65311561</span><span class="p">,</span> <span class="mf">0.6203133</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.34688439</span><span class="p">,</span> <span class="mf">0.3796867</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.15311561</span><span class="p">,</span> <span class="mf">0.8796867</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.34688439</span><span class="p">,</span> <span class="mf">0.1203133</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.15311561</span><span class="p">,</span> <span class="mf">0.6203133</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.84688439</span><span class="p">,</span> <span class="mf">0.3796867</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.65311561</span><span class="p">,</span> <span class="mf">0.8796867</span><span class="p">]]</span>
 <span class="n">numbers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">8</span><span class="p">,]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
 <span class="n">cell</span> <span class="o">=</span> <span class="p">(</span><span class="n">lattice</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">numbers</span><span class="p">)</span>
 
@@ -780,8 +1169,8 @@ so the following script doesn’t give this basis vectors:</p>
 </pre></div>
 </div>
 <p>To obtain the rotated primitive cell basis vectors, we can use
-<code class="docutils literal notranslate"><span class="pre">standardize_cell</span></code> as shown below:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">spglib</span>
+<code class="docutils literal notranslate"><span class="pre">standardize_cell</span></code> as shown below::</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">spglib</span>
 
 <span class="n">lattice</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">5.0759761474456697</span><span class="p">,</span> <span class="mf">5.0759761474456697</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
            <span class="p">[</span><span class="o">-</span><span class="mf">2.8280307701821314</span><span class="p">,</span> <span class="mf">2.8280307701821314</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
@@ -811,31 +1200,31 @@ so the following script doesn’t give this basis vectors:</p>
 crystal structure.</p>
 </div>
 <div class="section" id="computing-rigid-rotation-introduced-by-idealization">
-<h3><a class="toc-backref" href="#id17">Computing rigid rotation introduced by idealization</a><a class="headerlink" href="#computing-rigid-rotation-introduced-by-idealization" title="Permalink to this headline">¶</a></h3>
+<h3>Computing rigid rotation introduced by idealization<a class="headerlink" href="#computing-rigid-rotation-introduced-by-idealization" title="Permalink to this headline">#</a></h3>
 <p>In spglib, rigid rotation is purposely introduced in the idealization
 step though this is unlikely as a crystallographic operation.</p>
 <p>The crystal structure in the following script is the same as shown
 above, which is the one <span class="math notranslate nohighlight">\(45^\circ\)</span> rotated around c-axis:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">spglib</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">spglib</span>
 
 <span class="c1"># Mind that the a, b, c axes are given in row vectors here,</span>
 <span class="c1"># but the formulation above is given for the column vectors.</span>
 <span class="n">lattice</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">5.0759761474456697</span><span class="p">,</span> <span class="mf">5.0759761474456697</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>  <span class="c1"># a</span>
-           <span class="p">[</span><span class="o">-</span><span class="mf">2.8280307701821314</span><span class="p">,</span> <span class="mf">2.8280307701821314</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>  <span class="c1"># b</span>
-           <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">8.57154746</span><span class="p">]]</span>  <span class="c1"># c</span>
+            <span class="p">[</span><span class="o">-</span><span class="mf">2.8280307701821314</span><span class="p">,</span> <span class="mf">2.8280307701821314</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>  <span class="c1"># b</span>
+            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">8.57154746</span><span class="p">]]</span>  <span class="c1"># c</span>
 <span class="n">points</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.84688439</span><span class="p">,</span> <span class="mf">0.1203133</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.65311561</span><span class="p">,</span> <span class="mf">0.6203133</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.34688439</span><span class="p">,</span> <span class="mf">0.3796867</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.15311561</span><span class="p">,</span> <span class="mf">0.8796867</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.34688439</span><span class="p">,</span> <span class="mf">0.1203133</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.15311561</span><span class="p">,</span> <span class="mf">0.6203133</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.84688439</span><span class="p">,</span> <span class="mf">0.3796867</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.65311561</span><span class="p">,</span> <span class="mf">0.8796867</span><span class="p">]]</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.65311561</span><span class="p">,</span> <span class="mf">0.6203133</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.34688439</span><span class="p">,</span> <span class="mf">0.3796867</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.15311561</span><span class="p">,</span> <span class="mf">0.8796867</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.34688439</span><span class="p">,</span> <span class="mf">0.1203133</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.15311561</span><span class="p">,</span> <span class="mf">0.6203133</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.84688439</span><span class="p">,</span> <span class="mf">0.3796867</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.65311561</span><span class="p">,</span> <span class="mf">0.8796867</span><span class="p">]]</span>
 <span class="n">numbers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">35</span><span class="p">,]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
 <span class="n">cell</span> <span class="o">=</span> <span class="p">(</span><span class="n">lattice</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">numbers</span><span class="p">)</span>
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">spglib</span><span class="o">.</span><span class="n">get_symmetry_dataset</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Space group type: </span><span class="si">%s</span><span class="s2"> (</span><span class="si">%d</span><span class="s2">)&quot;</span>
-      <span class="o">%</span> <span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;international&#39;</span><span class="p">],</span> <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;number&#39;</span><span class="p">]))</span>
+        <span class="o">%</span> <span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;international&#39;</span><span class="p">],</span> <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;number&#39;</span><span class="p">]))</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Transformation matrix:&quot;</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;transformation_matrix&#39;</span><span class="p">]:</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  </span><span class="si">%2d</span><span class="s2"> </span><span class="si">%2d</span><span class="s2"> </span><span class="si">%2d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
@@ -856,9 +1245,8 @@ above, which is the one <span class="math notranslate nohighlight">\(45^\circ\)<
 </pre></div>
 </div>
 <p>From Eq. <a class="reference internal" href="#equation-transformation-matrix">(6)</a>, the standardized basis vectors
-<strong>before</strong> idealization <span class="math notranslate nohighlight">\(( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s}
-\; \mathbf{c}_\mathrm{s} )\)</span> is obtained by (after <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">numpy</span> <span class="pre">as</span> <span class="pre">np</span></code>)</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">std_lattice_before_idealization</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span>
+<strong>before</strong> idealization <span class="math notranslate nohighlight">\(( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )\)</span> is obtained by (after <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">numpy</span> <span class="pre">as</span> <span class="pre">np</span></code>)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">std_lattice_before_idealization</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span>
     <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">lattice</span><span class="p">),</span>
     <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;transformation_matrix&#39;</span><span class="p">]))</span><span class="o">.</span><span class="n">T</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">std_lattice_before_idealization</span><span class="p">)</span>
@@ -871,8 +1259,7 @@ above, which is the one <span class="math notranslate nohighlight">\(45^\circ\)<
 </pre></div>
 </div>
 <p>This is different from the standardized basis vectors <strong>after</strong>
-idealization <span class="math notranslate nohighlight">\(( \bar{\mathbf{a}}_\mathrm{s} \;
-\bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )\)</span>.  Unless
+idealization <span class="math notranslate nohighlight">\(( \bar{\mathbf{a}}_\mathrm{s} \; \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )\)</span>.  Unless
 this crystal structure is distorted from the crystal structure that
 has the ideal symmetry, this means that the crystal was rotated
 rigidly in the idealization step by</p>
@@ -884,8 +1271,8 @@ rigidly in the idealization step by</p>
 \mathbf{c}_\mathrm{s} ).\]</div>
 <p>where <span class="math notranslate nohighlight">\(\boldsymbol{R}\)</span> is the rotation
 matrix. This is computed by</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;std_lattice&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
-           <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">std_lattice_before_idealization</span><span class="o">.</span><span class="n">T</span><span class="p">))</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;std_lattice&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">std_lattice_before_idealization</span><span class="o">.</span><span class="n">T</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">R</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -903,7 +1290,7 @@ matrix. This is computed by</p>
 0 &amp; 0 &amp; 1
 \end{pmatrix},\end{split}\]</div>
 <p>with <span class="math notranslate nohighlight">\(\theta = -\pi/4\)</span> and <span class="math notranslate nohighlight">\(\det(\boldsymbol{R})=1\)</span> when
-no distortion. <code class="docutils literal notranslate"><span class="pre">dataset['std_rotation_matrix'])</span></code> gives
+no distortion. <code class="docutils literal notranslate"><span class="pre">dataset['std_rotation_matrix']</span></code> gives
 approximately the same result:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[[</span> <span class="mf">0.70710678</span>  <span class="mf">0.70710678</span>  <span class="mf">0.</span>        <span class="p">]</span>
  <span class="p">[</span><span class="o">-</span><span class="mf">0.70710678</span>  <span class="mf">0.70710678</span>  <span class="mf">0.</span>        <span class="p">]</span>
@@ -916,8 +1303,7 @@ approximately the same result:</p>
 \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )  \boldsymbol{P}
 = ( \boldsymbol{R} \mathbf{a} \; \boldsymbol{R} \mathbf{b} \;
 \boldsymbol{R} \mathbf{c} ).\]</div>
-<p>The atomic point coordinates in <span class="math notranslate nohighlight">\(( \bar{\mathbf{a}}_\mathrm{s}
-\; \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )\)</span>
+<p>The atomic point coordinates in <span class="math notranslate nohighlight">\(( \bar{\mathbf{a}}_\mathrm{s} \; \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )\)</span>
 are simply obtained by Eq. <a class="reference internal" href="#equation-change-of-basis-1">(8)</a> since the
 rotation doesn’t affect them.</p>
 </div>
@@ -925,28 +1311,48 @@ rotation doesn’t affect them.</p>
 </div>
 
 
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="interface.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Rust, Fortran, and Ruby interfaces</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="references.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">References</p>
     </div>
-      
-  </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
 </div>
-<footer class="footer">
-  <div class="container">
-    <p class="pull-right">
-      <a href="#">Back to top</a>
-      
-        <br/>
-        
-<div id="sourcelink">
-  <a href="_sources/definition.rst.txt"
-     rel="nofollow">Source</a>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+      &copy; Copyright 2009, Atsushi Togo.<br/>
+</p>
+        </footer>
+    </div>
+    
 </div>
-      
-    </p>
-    <p>
-        &copy; Copyright 2009, Atsushi Togo.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br/>
-    </p>
-  </div>
-</footer>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
   </body>
 </html>

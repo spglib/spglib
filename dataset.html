@@ -1,268 +1,879 @@
+
 <!DOCTYPE html>
 
 <html>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Spglib dataset &#8212; Spglig v.1.16.0</title>
+    <title>Spglib dataset &#8212; Spglib v.2.0.0</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/bootstrap-sphinx.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=62ba249389abaaa9ffc34bf36a076bdc1d65ee18" type="text/css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=f31d14ad54b65d19161ba51d4ffff3a77ae00456"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Variables" href="variable.html" />
+    <link rel="next" title="Magnetic Spglib dataset (Experimental)" href="magnetic_dataset.html" />
     <link rel="prev" title="C-APIs" href="api.html" />
-<meta charset='utf-8'>
-<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
-<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
-<meta name="apple-mobile-web-app-capable" content="yes">
-<script type="text/javascript" src="_static/js/jquery-1.12.4.min.js"></script>
-<script type="text/javascript" src="_static/js/jquery-fix.js"></script>
-<script type="text/javascript" src="_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
 
-  </head><body>
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
 
-  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
-    <div class="container">
-      <div class="navbar-header">
-        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="index.html">
-          spglib</a>
-        <span class="navbar-text navbar-version pull-left"><b>1.16</b></span>
-      </div>
+    
+    <div class="container-fluid" id="banner"></div>
 
-        <div class="collapse navbar-collapse nav-collapse">
-          <ul class="nav navbar-nav">
-            
-            
-              <li class="dropdown globaltoc-container">
-  <a role="button"
-     id="dLabelGlobalToc"
-     data-toggle="dropdown"
-     data-target="#"
-     href="index.html">Site <b class="caret"></b></a>
-  <ul class="dropdown-menu globaltoc"
-      role="menu"
-      aria-labelledby="dLabelGlobalToc"><ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="install.html">How to install spglib C-API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api.html">C-APIs</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Spglib dataset</a></li>
-<li class="toctree-l1"><a class="reference internal" href="variable.html">Variables</a></li>
-<li class="toctree-l1"><a class="reference internal" href="python-spglib.html">Python interface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="interface.html">Rust, Fortran, and Ruby interfaces</a></li>
-<li class="toctree-l1"><a class="reference internal" href="definition.html">Definitions and conventions</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="magnetic_spacegroup.html">Magnetic space group</a></li>
-</ul>
-</ul>
-</li>
-              
-                <li class="dropdown">
-  <a role="button"
-     id="dLabelLocalToc"
-     data-toggle="dropdown"
-     data-target="#"
-     href="#">Page <b class="caret"></b></a>
-  <ul class="dropdown-menu localtoc"
-      role="menu"
-      aria-labelledby="dLabelLocalToc"><ul>
-<li><a class="reference internal" href="#">Spglib dataset</a><ul>
-<li><a class="reference internal" href="#space-group-type">Space group type</a><ul>
-<li><a class="reference internal" href="#spacegroup-number"><code class="docutils literal notranslate"><span class="pre">spacegroup_number</span></code></a></li>
-<li><a class="reference internal" href="#hall-number"><code class="docutils literal notranslate"><span class="pre">hall_number</span></code></a></li>
-<li><a class="reference internal" href="#international-symbol"><code class="docutils literal notranslate"><span class="pre">international_symbol</span></code></a></li>
-<li><a class="reference internal" href="#hall-symbol"><code class="docutils literal notranslate"><span class="pre">hall_symbol</span></code></a></li>
-<li><a class="reference internal" href="#choice"><code class="docutils literal notranslate"><span class="pre">choice</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#symmetry-operations">Symmetry operations</a><ul>
-<li><a class="reference internal" href="#rotations-translations-and-n-operations"><code class="docutils literal notranslate"><span class="pre">rotations</span></code>, <code class="docutils literal notranslate"><span class="pre">translations</span></code>, and <code class="docutils literal notranslate"><span class="pre">n_operations</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#wyckoff-positions-and-symmetrically-equivalent-atoms">Wyckoff positions and symmetrically equivalent atoms</a><ul>
-<li><a class="reference internal" href="#n-atoms"><code class="docutils literal notranslate"><span class="pre">n_atoms</span></code></a></li>
-<li><a class="reference internal" href="#wyckoffs"><code class="docutils literal notranslate"><span class="pre">wyckoffs</span></code></a></li>
-<li><a class="reference internal" href="#site-symmetry-symbols"><code class="docutils literal notranslate"><span class="pre">site_symmetry_symbols</span></code></a></li>
-<li><a class="reference internal" href="#equivalent-atoms"><code class="docutils literal notranslate"><span class="pre">equivalent_atoms</span></code></a></li>
-<li><a class="reference internal" href="#crystallographic-orbits"><code class="docutils literal notranslate"><span class="pre">crystallographic_orbits</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#transformation-matrix-and-origin-shift">Transformation matrix and origin shift</a><ul>
-<li><a class="reference internal" href="#id2"><code class="docutils literal notranslate"><span class="pre">transformation_matrix</span></code> and <code class="docutils literal notranslate"><span class="pre">origin_shift</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#standardized-crystal-structure-after-idealization">Standardized crystal structure after idealization</a><ul>
-<li><a class="reference internal" href="#n-std-atoms-std-lattice-std-types-and-std-positions"><code class="docutils literal notranslate"><span class="pre">n_std_atoms</span></code>, <code class="docutils literal notranslate"><span class="pre">std_lattice</span></code>, <code class="docutils literal notranslate"><span class="pre">std_types</span></code>, and <code class="docutils literal notranslate"><span class="pre">std_positions</span></code></a></li>
-<li><a class="reference internal" href="#std-rotation-matrix"><code class="docutils literal notranslate"><span class="pre">std_rotation_matrix</span></code></a></li>
-<li><a class="reference internal" href="#std-mapping-to-primitive"><code class="docutils literal notranslate"><span class="pre">std_mapping_to_primitive</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#crystallographic-point-group">Crystallographic point group</a><ul>
-<li><a class="reference internal" href="#pointgroup-symbol"><code class="docutils literal notranslate"><span class="pre">pointgroup_symbol</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#intermediate-data-in-symmetry-search">Intermediate data in symmetry search</a><ul>
-<li><a class="reference internal" href="#primitive-lattice"><code class="docutils literal notranslate"><span class="pre">primitive_lattice</span></code></a></li>
-<li><a class="reference internal" href="#mapping-to-primitive"><code class="docutils literal notranslate"><span class="pre">mapping_to_primitive</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</ul>
-</li>
-              
-            
-            
-            
-            
-            
-          </ul>
+    
 
+    <div class="container-xl">
+      <div class="row">
           
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="index.html">
+      
+      
+      
+      <h1 class="site-logo" id="site-title">Spglib v.2.0.0</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="install.html">
+   How to install spglib C-API
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="api.html">
+   C-APIs
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Spglib dataset
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="magnetic_dataset.html">
+   Magnetic spglib dataset (Experimental)
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="variable.html">
+   Variables
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="python-spglib.html">
+   Spglib for Python
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="interface.html">
+   Rust, Fortran, and Ruby interfaces
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="definition.html">
+   Definitions and conventions
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="references.html">
+   References
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="releases.html">
+   Summary of releases
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="develop.html">
+   Developer Documentation
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="magnetic_spacegroup.html">
+     Magnetic space group
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="magnetic_symmetry_flags.html">
+     Flags to control action of magnetic symmetry operations
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
             
-<form class="navbar-form navbar-right" action="search.html" method="get">
- <div class="form-group">
-  <input type="text" name="q" class="form-control" placeholder="Search" />
- </div>
-  <input type="hidden" name="check_keywords" value="yes" />
-  <input type="hidden" name="area" value="default" />
-</form>
-          
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
         </div>
     </div>
-  </div>
-
-<div class="container">
-  <div class="row">
-    <div class="body col-md-12 content" role="main">
-      
-  <div class="section" id="spglib-dataset">
-<span id="id1"></span><h1>Spglib dataset<a class="headerlink" href="#spglib-dataset" title="Permalink to this headline">¶</a></h1>
-<div class="contents local topic" id="contents">
-<ul class="simple">
-<li><p><a class="reference internal" href="#space-group-type" id="id3">Space group type</a></p>
-<ul>
-<li><p><a class="reference internal" href="#spacegroup-number" id="id4"><code class="docutils literal notranslate"><span class="pre">spacegroup_number</span></code></a></p></li>
-<li><p><a class="reference internal" href="#hall-number" id="id5"><code class="docutils literal notranslate"><span class="pre">hall_number</span></code></a></p></li>
-<li><p><a class="reference internal" href="#international-symbol" id="id6"><code class="docutils literal notranslate"><span class="pre">international_symbol</span></code></a></p></li>
-<li><p><a class="reference internal" href="#hall-symbol" id="id7"><code class="docutils literal notranslate"><span class="pre">hall_symbol</span></code></a></p></li>
-<li><p><a class="reference internal" href="#choice" id="id8"><code class="docutils literal notranslate"><span class="pre">choice</span></code></a></p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#symmetry-operations" id="id9">Symmetry operations</a></p>
-<ul>
-<li><p><a class="reference internal" href="#rotations-translations-and-n-operations" id="id10"><code class="docutils literal notranslate"><span class="pre">rotations</span></code>, <code class="docutils literal notranslate"><span class="pre">translations</span></code>, and <code class="docutils literal notranslate"><span class="pre">n_operations</span></code></a></p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#wyckoff-positions-and-symmetrically-equivalent-atoms" id="id11">Wyckoff positions and symmetrically equivalent atoms</a></p>
-<ul>
-<li><p><a class="reference internal" href="#n-atoms" id="id12"><code class="docutils literal notranslate"><span class="pre">n_atoms</span></code></a></p></li>
-<li><p><a class="reference internal" href="#wyckoffs" id="id13"><code class="docutils literal notranslate"><span class="pre">wyckoffs</span></code></a></p></li>
-<li><p><a class="reference internal" href="#site-symmetry-symbols" id="id14"><code class="docutils literal notranslate"><span class="pre">site_symmetry_symbols</span></code></a></p></li>
-<li><p><a class="reference internal" href="#equivalent-atoms" id="id15"><code class="docutils literal notranslate"><span class="pre">equivalent_atoms</span></code></a></p></li>
-<li><p><a class="reference internal" href="#crystallographic-orbits" id="id16"><code class="docutils literal notranslate"><span class="pre">crystallographic_orbits</span></code></a></p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#transformation-matrix-and-origin-shift" id="id17">Transformation matrix and origin shift</a></p>
-<ul>
-<li><p><a class="reference internal" href="#id2" id="id18"><code class="docutils literal notranslate"><span class="pre">transformation_matrix</span></code> and <code class="docutils literal notranslate"><span class="pre">origin_shift</span></code></a></p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#standardized-crystal-structure-after-idealization" id="id19">Standardized crystal structure after idealization</a></p>
-<ul>
-<li><p><a class="reference internal" href="#n-std-atoms-std-lattice-std-types-and-std-positions" id="id20"><code class="docutils literal notranslate"><span class="pre">n_std_atoms</span></code>, <code class="docutils literal notranslate"><span class="pre">std_lattice</span></code>, <code class="docutils literal notranslate"><span class="pre">std_types</span></code>, and <code class="docutils literal notranslate"><span class="pre">std_positions</span></code></a></p></li>
-<li><p><a class="reference internal" href="#std-rotation-matrix" id="id21"><code class="docutils literal notranslate"><span class="pre">std_rotation_matrix</span></code></a></p></li>
-<li><p><a class="reference internal" href="#std-mapping-to-primitive" id="id22"><code class="docutils literal notranslate"><span class="pre">std_mapping_to_primitive</span></code></a></p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#crystallographic-point-group" id="id23">Crystallographic point group</a></p>
-<ul>
-<li><p><a class="reference internal" href="#pointgroup-symbol" id="id24"><code class="docutils literal notranslate"><span class="pre">pointgroup_symbol</span></code></a></p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#intermediate-data-in-symmetry-search" id="id25">Intermediate data in symmetry search</a></p>
-<ul>
-<li><p><a class="reference internal" href="#primitive-lattice" id="id26"><code class="docutils literal notranslate"><span class="pre">primitive_lattice</span></code></a></p></li>
-<li><p><a class="reference internal" href="#mapping-to-primitive" id="id27"><code class="docutils literal notranslate"><span class="pre">mapping_to_primitive</span></code></a></p></li>
-</ul>
-</li>
-</ul>
+    <div id="rtd-footer-container"></div>
 </div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="_sources/dataset.md.txt"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.md</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#space-group-type">
+   Space group type
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#spacegroup-number">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       spacegroup_number
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#hall-number">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       hall_number
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#international-symbol">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       international_symbol
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#hall-symbol">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       hall_symbol
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#choice">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       choice
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#symmetry-operations">
+   Symmetry operations
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#rotations-translations-and-n-operations">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       rotations
+      </span>
+     </code>
+     ,
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       translations
+      </span>
+     </code>
+     , and
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       n_operations
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#wyckoff-positions-and-symmetrically-equivalent-atoms">
+   Wyckoff positions and symmetrically equivalent atoms
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#n-atoms">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       n_atoms
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#wyckoffs">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       wyckoffs
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#site-symmetry-symbols">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       site_symmetry_symbols
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#equivalent-atoms">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       equivalent_atoms
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#crystallographic-orbits">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       crystallographic_orbits
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#transformation-matrix-and-origin-shift">
+   Transformation matrix and origin shift
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id2">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       transformation_matrix
+      </span>
+     </code>
+     and
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       origin_shift
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#standardized-crystal-structure-after-idealization">
+   Standardized crystal structure after idealization
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#n-std-atoms-std-lattice-std-types-and-std-positions">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       n_std_atoms
+      </span>
+     </code>
+     ,
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       std_lattice
+      </span>
+     </code>
+     ,
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       std_types
+      </span>
+     </code>
+     , and
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       std_positions
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#std-rotation-matrix">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       std_rotation_matrix
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#std-mapping-to-primitive">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       std_mapping_to_primitive
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#crystallographic-point-group">
+   Crystallographic point group
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#pointgroup-symbol">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       pointgroup_symbol
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#intermediate-data-in-symmetry-search">
+   Intermediate data in symmetry search
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#primitive-lattice">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       primitive_lattice
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#mapping-to-primitive">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       mapping_to_primitive
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Spglib dataset</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#space-group-type">
+   Space group type
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#spacegroup-number">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       spacegroup_number
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#hall-number">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       hall_number
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#international-symbol">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       international_symbol
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#hall-symbol">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       hall_symbol
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#choice">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       choice
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#symmetry-operations">
+   Symmetry operations
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#rotations-translations-and-n-operations">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       rotations
+      </span>
+     </code>
+     ,
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       translations
+      </span>
+     </code>
+     , and
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       n_operations
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#wyckoff-positions-and-symmetrically-equivalent-atoms">
+   Wyckoff positions and symmetrically equivalent atoms
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#n-atoms">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       n_atoms
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#wyckoffs">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       wyckoffs
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#site-symmetry-symbols">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       site_symmetry_symbols
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#equivalent-atoms">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       equivalent_atoms
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#crystallographic-orbits">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       crystallographic_orbits
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#transformation-matrix-and-origin-shift">
+   Transformation matrix and origin shift
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id2">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       transformation_matrix
+      </span>
+     </code>
+     and
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       origin_shift
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#standardized-crystal-structure-after-idealization">
+   Standardized crystal structure after idealization
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#n-std-atoms-std-lattice-std-types-and-std-positions">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       n_std_atoms
+      </span>
+     </code>
+     ,
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       std_lattice
+      </span>
+     </code>
+     ,
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       std_types
+      </span>
+     </code>
+     , and
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       std_positions
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#std-rotation-matrix">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       std_rotation_matrix
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#std-mapping-to-primitive">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       std_mapping_to_primitive
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#crystallographic-point-group">
+   Crystallographic point group
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#pointgroup-symbol">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       pointgroup_symbol
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#intermediate-data-in-symmetry-search">
+   Intermediate data in symmetry search
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#primitive-lattice">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       primitive_lattice
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#mapping-to-primitive">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       mapping_to_primitive
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <div class="section" id="spglib-dataset">
+<span id="id1"></span><h1>Spglib dataset<a class="headerlink" href="#spglib-dataset" title="Permalink to this headline">#</a></h1>
 <p><strong>At version 1.9.4, SpglibDataset was modified.</strong> The member
 name <code class="docutils literal notranslate"><span class="pre">setting</span></code> is changed to <code class="docutils literal notranslate"><span class="pre">choice</span></code> and <code class="docutils literal notranslate"><span class="pre">pointgroup_number</span></code> is
 removed.</p>
 <p>The dataset is accessible through the C-structure given by</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">typedef</span> <span class="n">struct</span> <span class="p">{</span>
-  <span class="nb">int</span> <span class="n">spacegroup_number</span><span class="p">;</span>
-  <span class="nb">int</span> <span class="n">hall_number</span><span class="p">;</span>
-  <span class="n">char</span> <span class="n">international_symbol</span><span class="p">[</span><span class="mi">11</span><span class="p">];</span>
-  <span class="n">char</span> <span class="n">hall_symbol</span><span class="p">[</span><span class="mi">17</span><span class="p">];</span>
-  <span class="n">char</span> <span class="n">choice</span><span class="p">[</span><span class="mi">6</span><span class="p">];</span>
-  <span class="n">double</span> <span class="n">transformation_matrix</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">];</span>
-  <span class="n">double</span> <span class="n">origin_shift</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
-  <span class="nb">int</span> <span class="n">n_operations</span><span class="p">;</span>
-  <span class="nb">int</span> <span class="p">(</span><span class="o">*</span><span class="n">rotations</span><span class="p">)[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">];</span>
-  <span class="n">double</span> <span class="p">(</span><span class="o">*</span><span class="n">translations</span><span class="p">)[</span><span class="mi">3</span><span class="p">];</span>
-  <span class="nb">int</span> <span class="n">n_atoms</span><span class="p">;</span>
-  <span class="nb">int</span> <span class="o">*</span><span class="n">wyckoffs</span><span class="p">;</span>
-  <span class="n">char</span> <span class="p">(</span><span class="o">*</span><span class="n">site_symmetry_symbols</span><span class="p">)[</span><span class="mi">7</span><span class="p">];</span>
-  <span class="nb">int</span> <span class="o">*</span><span class="n">equivalent_atoms</span><span class="p">;</span>
-  <span class="nb">int</span> <span class="o">*</span><span class="n">crystallographic_orbits</span><span class="p">;</span>
-  <span class="n">double</span> <span class="n">primitive_lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">];</span>
-  <span class="nb">int</span> <span class="o">*</span><span class="n">mapping_to_primitive</span><span class="p">;</span>
-  <span class="nb">int</span> <span class="n">n_std_atoms</span><span class="p">;</span>
-  <span class="n">double</span> <span class="n">std_lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">];</span>
-  <span class="nb">int</span> <span class="o">*</span><span class="n">std_types</span><span class="p">;</span>
-  <span class="n">double</span> <span class="p">(</span><span class="o">*</span><span class="n">std_positions</span><span class="p">)[</span><span class="mi">3</span><span class="p">];</span>
-  <span class="n">double</span> <span class="n">std_rotation_matrix</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">];</span>
-  <span class="nb">int</span> <span class="o">*</span><span class="n">std_mapping_to_primitive</span><span class="p">;</span>
-  <span class="n">char</span> <span class="n">pointgroup_symbol</span><span class="p">[</span><span class="mi">6</span><span class="p">];</span>
-<span class="p">}</span> <span class="n">SpglibDataset</span><span class="p">;</span>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">spacegroup_number</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">hall_number</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">international_symbol</span><span class="p">[</span><span class="mi">11</span><span class="p">];</span><span class="w"></span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">hall_symbol</span><span class="p">[</span><span class="mi">17</span><span class="p">];</span><span class="w"></span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">choice</span><span class="p">[</span><span class="mi">6</span><span class="p">];</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">transformation_matrix</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">];</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">origin_shift</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n_operations</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">rotations</span><span class="p">)[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">];</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">translations</span><span class="p">)[</span><span class="mi">3</span><span class="p">];</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n_atoms</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">wyckoffs</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">site_symmetry_symbols</span><span class="p">)[</span><span class="mi">7</span><span class="p">];</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">equivalent_atoms</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">crystallographic_orbits</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">primitive_lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">];</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">mapping_to_primitive</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n_std_atoms</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">std_lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">];</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">std_types</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">std_positions</span><span class="p">)[</span><span class="mi">3</span><span class="p">];</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">std_rotation_matrix</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">];</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">std_mapping_to_primitive</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">pointgroup_symbol</span><span class="p">[</span><span class="mi">6</span><span class="p">];</span><span class="w"></span>
+<span class="p">}</span><span class="w"> </span><span class="n">SpglibDataset</span><span class="p">;</span><span class="w"></span>
 </pre></div>
 </div>
 <div class="section" id="space-group-type">
-<span id="dataset-spg-get-dataset-spacegroup-type"></span><h2><a class="toc-backref" href="#id3">Space group type</a><a class="headerlink" href="#space-group-type" title="Permalink to this headline">¶</a></h2>
+<span id="dataset-spg-get-dataset-spacegroup-type"></span><h2>Space group type<a class="headerlink" href="#space-group-type" title="Permalink to this headline">#</a></h2>
 <div class="section" id="spacegroup-number">
-<h3><a class="toc-backref" href="#id4"><code class="docutils literal notranslate"><span class="pre">spacegroup_number</span></code></a><a class="headerlink" href="#spacegroup-number" title="Permalink to this headline">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">spacegroup_number</span></code><a class="headerlink" href="#spacegroup-number" title="Permalink to this headline">#</a></h3>
 <p>The space group type number defined in International Tables for
 Crystallography (ITA).</p>
 </div>
 <div class="section" id="hall-number">
-<h3><a class="toc-backref" href="#id5"><code class="docutils literal notranslate"><span class="pre">hall_number</span></code></a><a class="headerlink" href="#hall-number" title="Permalink to this headline">¶</a></h3>
-<p>The serial number from 1 to 530 which are found at <a class="reference external" href="https://yseto.net/?page_id=29">list of space
+<span id="spglib-dataset-hall-number"></span><h3><code class="docutils literal notranslate"><span class="pre">hall_number</span></code><a class="headerlink" href="#hall-number" title="Permalink to this headline">#</a></h3>
+<p>The serial number from 1 to 530 which are found at <a class="reference external" href="https://yseto.net/?page_id=29%3E">list of space
 groups (Seto’s web site)</a>. Be
 sure that this is not a standard crystallographic definition as far as
 the author of spglib knows.</p>
 </div>
 <div class="section" id="international-symbol">
-<h3><a class="toc-backref" href="#id6"><code class="docutils literal notranslate"><span class="pre">international_symbol</span></code></a><a class="headerlink" href="#international-symbol" title="Permalink to this headline">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">international_symbol</span></code><a class="headerlink" href="#international-symbol" title="Permalink to this headline">#</a></h3>
 <p>The (full) Hermann–Mauguin notation of space group type is given by .</p>
 </div>
 <div class="section" id="hall-symbol">
-<h3><a class="toc-backref" href="#id7"><code class="docutils literal notranslate"><span class="pre">hall_symbol</span></code></a><a class="headerlink" href="#hall-symbol" title="Permalink to this headline">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">hall_symbol</span></code><a class="headerlink" href="#hall-symbol" title="Permalink to this headline">#</a></h3>
 <p>The Hall symbol is stored here.</p>
 </div>
 <div class="section" id="choice">
-<h3><a class="toc-backref" href="#id8"><code class="docutils literal notranslate"><span class="pre">choice</span></code></a><a class="headerlink" href="#choice" title="Permalink to this headline">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">choice</span></code><a class="headerlink" href="#choice" title="Permalink to this headline">#</a></h3>
 <p>The information on unique axis, setting or cell choices.</p>
 </div>
 </div>
 <div class="section" id="symmetry-operations">
-<h2><a class="toc-backref" href="#id9">Symmetry operations</a><a class="headerlink" href="#symmetry-operations" title="Permalink to this headline">¶</a></h2>
+<h2>Symmetry operations<a class="headerlink" href="#symmetry-operations" title="Permalink to this headline">#</a></h2>
 <div class="section" id="rotations-translations-and-n-operations">
-<h3><a class="toc-backref" href="#id10"><code class="docutils literal notranslate"><span class="pre">rotations</span></code>, <code class="docutils literal notranslate"><span class="pre">translations</span></code>, and <code class="docutils literal notranslate"><span class="pre">n_operations</span></code></a><a class="headerlink" href="#rotations-translations-and-n-operations" title="Permalink to this headline">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">rotations</span></code>, <code class="docutils literal notranslate"><span class="pre">translations</span></code>, and <code class="docutils literal notranslate"><span class="pre">n_operations</span></code><a class="headerlink" href="#rotations-translations-and-n-operations" title="Permalink to this headline">#</a></h3>
 <p>The symmetry operations of the input unit cell are stored in
 <code class="docutils literal notranslate"><span class="pre">rotations</span></code> and <code class="docutils literal notranslate"><span class="pre">translations</span></code>. A crystallographic symmetry
 operation <span class="math notranslate nohighlight">\((\boldsymbol{W}, \boldsymbol{w})\)</span> is made from a pair
@@ -273,14 +884,14 @@ the values is found at <a class="reference internal" href="api.html#api-spg-get-
 </div>
 </div>
 <div class="section" id="wyckoff-positions-and-symmetrically-equivalent-atoms">
-<span id="dataset-spg-get-dataset-site-symmetry"></span><h2><a class="toc-backref" href="#id11">Wyckoff positions and symmetrically equivalent atoms</a><a class="headerlink" href="#wyckoff-positions-and-symmetrically-equivalent-atoms" title="Permalink to this headline">¶</a></h2>
+<span id="dataset-spg-get-dataset-site-symmetry"></span><h2>Wyckoff positions and symmetrically equivalent atoms<a class="headerlink" href="#wyckoff-positions-and-symmetrically-equivalent-atoms" title="Permalink to this headline">#</a></h2>
 <div class="section" id="n-atoms">
-<h3><a class="toc-backref" href="#id12"><code class="docutils literal notranslate"><span class="pre">n_atoms</span></code></a><a class="headerlink" href="#n-atoms" title="Permalink to this headline">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">n_atoms</span></code><a class="headerlink" href="#n-atoms" title="Permalink to this headline">#</a></h3>
 <p>Number of atoms in the input unit cell. This gives the numbers of
 elements in <code class="docutils literal notranslate"><span class="pre">wyckoffs</span></code> and <code class="docutils literal notranslate"><span class="pre">equivalent_atoms</span></code>.</p>
 </div>
 <div class="section" id="wyckoffs">
-<h3><a class="toc-backref" href="#id13"><code class="docutils literal notranslate"><span class="pre">wyckoffs</span></code></a><a class="headerlink" href="#wyckoffs" title="Permalink to this headline">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">wyckoffs</span></code><a class="headerlink" href="#wyckoffs" title="Permalink to this headline">#</a></h3>
 <p>This gives the information of Wyckoff letters by integer
 numbers, where 0, 1, 2, <span class="math notranslate nohighlight">\(\ldots\)</span>, represent the Wyckoff letters
 of a, b, c, <span class="math notranslate nohighlight">\(\ldots\)</span>. These are assigned to all atomic positions
@@ -290,14 +901,14 @@ which is given by <code class="docutils literal notranslate"><span class="pre">n
 <p>This is determined from the symmetry of the primitive cell.</p>
 </div>
 <div class="section" id="site-symmetry-symbols">
-<h3><a class="toc-backref" href="#id14"><code class="docutils literal notranslate"><span class="pre">site_symmetry_symbols</span></code></a><a class="headerlink" href="#site-symmetry-symbols" title="Permalink to this headline">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">site_symmetry_symbols</span></code><a class="headerlink" href="#site-symmetry-symbols" title="Permalink to this headline">#</a></h3>
 <p>This gives site-symmetry symbols. These are valid for the standard
 settings. For different settings and choices belonging to the same
 space group type, the same set of the symbols is returned.</p>
 <p>This is determined from the symmetry of the primitive cell.</p>
 </div>
 <div class="section" id="equivalent-atoms">
-<h3><a class="toc-backref" href="#id15"><code class="docutils literal notranslate"><span class="pre">equivalent_atoms</span></code></a><a class="headerlink" href="#equivalent-atoms" title="Permalink to this headline">¶</a></h3>
+<span id="spglib-dataset-equivalent-atoms"></span><h3><code class="docutils literal notranslate"><span class="pre">equivalent_atoms</span></code><a class="headerlink" href="#equivalent-atoms" title="Permalink to this headline">#</a></h3>
 <p>This gives the mapping table from the atomic indices of the input unit
 cell to the atomic indices of symmetrically independent atom, such as
 <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">4,</span> <span class="pre">4,</span> <span class="pre">4,</span> <span class="pre">4]</span></code>, where the symmetrically independent
@@ -312,16 +923,16 @@ are almost equivalent, but they can be different in a special
 case as written in <a class="reference internal" href="api.html#api-spg-get-symmetry"><span class="std std-ref">spg_get_symmetry</span></a>.</p>
 </div>
 <div class="section" id="crystallographic-orbits">
-<h3><a class="toc-backref" href="#id16"><code class="docutils literal notranslate"><span class="pre">crystallographic_orbits</span></code></a><a class="headerlink" href="#crystallographic-orbits" title="Permalink to this headline">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">crystallographic_orbits</span></code><a class="headerlink" href="#crystallographic-orbits" title="Permalink to this headline">#</a></h3>
 <p><strong>New at version 1.15</strong></p>
 <p>This is almost equivalent to <code class="docutils literal notranslate"><span class="pre">equivalent_atoms</span></code>. But symmetry of the
 primitive cell is used to determine the symmetrically equivalent atoms.</p>
 </div>
 </div>
 <div class="section" id="transformation-matrix-and-origin-shift">
-<span id="dataset-origin-shift-and-transformation"></span><h2><a class="toc-backref" href="#id17">Transformation matrix and origin shift</a><a class="headerlink" href="#transformation-matrix-and-origin-shift" title="Permalink to this headline">¶</a></h2>
+<span id="dataset-origin-shift-and-transformation"></span><h2>Transformation matrix and origin shift<a class="headerlink" href="#transformation-matrix-and-origin-shift" title="Permalink to this headline">#</a></h2>
 <div class="section" id="id2">
-<h3><a class="toc-backref" href="#id18"><code class="docutils literal notranslate"><span class="pre">transformation_matrix</span></code> and <code class="docutils literal notranslate"><span class="pre">origin_shift</span></code></a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">transformation_matrix</span></code> and <code class="docutils literal notranslate"><span class="pre">origin_shift</span></code><a class="headerlink" href="#id2" title="Permalink to this headline">#</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">transformation_matrix</span></code> (<span class="math notranslate nohighlight">\(\boldsymbol{P}\)</span>) and
 <code class="docutils literal notranslate"><span class="pre">origin_shift</span></code> (<span class="math notranslate nohighlight">\(\boldsymbol{p}\)</span>) are obtained as a result of
 space-group-type matching under a set of unique axis, setting and cell
@@ -351,9 +962,9 @@ the current definition as follows:</p>
 </div>
 </div>
 <div class="section" id="standardized-crystal-structure-after-idealization">
-<span id="dataset-idealized-cell"></span><h2><a class="toc-backref" href="#id19">Standardized crystal structure after idealization</a><a class="headerlink" href="#standardized-crystal-structure-after-idealization" title="Permalink to this headline">¶</a></h2>
+<span id="dataset-idealized-cell"></span><h2>Standardized crystal structure after idealization<a class="headerlink" href="#standardized-crystal-structure-after-idealization" title="Permalink to this headline">#</a></h2>
 <div class="section" id="n-std-atoms-std-lattice-std-types-and-std-positions">
-<h3><a class="toc-backref" href="#id20"><code class="docutils literal notranslate"><span class="pre">n_std_atoms</span></code>, <code class="docutils literal notranslate"><span class="pre">std_lattice</span></code>, <code class="docutils literal notranslate"><span class="pre">std_types</span></code>, and <code class="docutils literal notranslate"><span class="pre">std_positions</span></code></a><a class="headerlink" href="#n-std-atoms-std-lattice-std-types-and-std-positions" title="Permalink to this headline">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">n_std_atoms</span></code>, <code class="docutils literal notranslate"><span class="pre">std_lattice</span></code>, <code class="docutils literal notranslate"><span class="pre">std_types</span></code>, and <code class="docutils literal notranslate"><span class="pre">std_positions</span></code><a class="headerlink" href="#n-std-atoms-std-lattice-std-types-and-std-positions" title="Permalink to this headline">#</a></h3>
 <p>The standardized crystal structure after <a class="reference internal" href="definition.html#def-idealize-cell"><span class="std std-ref">idealization</span></a> corresponding to a Hall symbol is stored in
 <code class="docutils literal notranslate"><span class="pre">n_std_atoms</span></code>, <code class="docutils literal notranslate"><span class="pre">std_lattice</span></code>, <code class="docutils literal notranslate"><span class="pre">std_types</span></code>, and
 <code class="docutils literal notranslate"><span class="pre">std_positions</span></code>. These output usually contains the rotation in Cartesian
@@ -364,24 +975,28 @@ members corresponding to those above are <code class="docutils literal notransla
 <code class="docutils literal notranslate"><span class="pre">brv_lattice</span></code>, <code class="docutils literal notranslate"><span class="pre">brv_types</span></code>, and <code class="docutils literal notranslate"><span class="pre">brv_positions</span></code>, respectively.</p>
 </div>
 <div class="section" id="std-rotation-matrix">
-<span id="dataset-std-rotation-matrix"></span><h3><a class="toc-backref" href="#id21"><code class="docutils literal notranslate"><span class="pre">std_rotation_matrix</span></code></a><a class="headerlink" href="#std-rotation-matrix" title="Permalink to this headline">¶</a></h3>
+<span id="dataset-std-rotation-matrix"></span><h3><code class="docutils literal notranslate"><span class="pre">std_rotation_matrix</span></code><a class="headerlink" href="#std-rotation-matrix" title="Permalink to this headline">#</a></h3>
 <p><strong>New in version 1.11</strong></p>
 <p>Rotation matrix that rotates the standardized crystal structure
-before idealization <span class="math notranslate nohighlight">\(( \mathbf{a}_\mathrm{s} \;
-\mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )\)</span> to that after
-idealization <span class="math notranslate nohighlight">\(( \bar{\mathbf{a}}_\mathrm{s} \;
-\bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )\)</span> in
+before idealization <span class="math notranslate nohighlight">\(( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )\)</span> to that after
+idealization <span class="math notranslate nohighlight">\(( \bar{\mathbf{a}}_\mathrm{s} \; \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )\)</span> in
 Cartesian coordinates of the given input unit cell. The rotation
 matrix <span class="math notranslate nohighlight">\(\boldsymbol{R}\)</span> is defined by</p>
-<div class="math notranslate nohighlight">
-\[( \bar{\mathbf{a}}_\mathrm{s} \;
+<div class="math notranslate nohighlight" id="equation-rotation-in-standardization">
+<span class="eqno">(1)<a class="headerlink" href="#equation-rotation-in-standardization" title="Permalink to this equation">#</a></span>\[( \bar{\mathbf{a}}_\mathrm{s} \;
 \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )
 = ( \boldsymbol{R} \mathbf{a}_\mathrm{s} \;
 \boldsymbol{R} \mathbf{b}_\mathrm{s} \; \boldsymbol{R}
 \mathbf{c}_\mathrm{s} ).\]</div>
+<p>More precisely, this rotation matrix is an orthonormal matrix. Since <span class="math notranslate nohighlight">\(( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )\)</span> can
+be distored, to make <span class="math notranslate nohighlight">\(\boldsymbol{R}\)</span> orthonormal, it is calculated as
+follows. Make cubes of <span class="math notranslate nohighlight">\(( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )\)</span> and <span class="math notranslate nohighlight">\(( \bar{\mathbf{a}}_\mathrm{s} \; \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )\)</span> by
+<span class="math notranslate nohighlight">\(\mathrm{L} = \begin{pmatrix}\frac{\mathbf{a}}{|\mathbf{a}|} &amp; \frac{(\mathbf{a} \times \mathbf{b}) \times \mathbf{a}}{|(\mathbf{a} \times \mathbf{b}) \times \mathbf{a}|} &amp; \frac{\mathbf{a} \times \mathbf{b}}{|\mathbf{a} \times \mathbf{b}|} \end{pmatrix}\)</span>. Watching
+<span class="math notranslate nohighlight">\(\mathrm{L}\)</span>s as <span class="math notranslate nohighlight">\(3\times 3\)</span> matrices, <span class="math notranslate nohighlight">\(\boldsymbol{R}\)</span> is
+obtained by solving <span class="math notranslate nohighlight">\(\bar{\mathrm{L}}_\mathrm{s} = \boldsymbol{R} \mathrm{L}_\mathrm{s}\)</span>.</p>
 </div>
 <div class="section" id="std-mapping-to-primitive">
-<h3><a class="toc-backref" href="#id22"><code class="docutils literal notranslate"><span class="pre">std_mapping_to_primitive</span></code></a><a class="headerlink" href="#std-mapping-to-primitive" title="Permalink to this headline">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">std_mapping_to_primitive</span></code><a class="headerlink" href="#std-mapping-to-primitive" title="Permalink to this headline">#</a></h3>
 <p>This is available <strong>at versions 1.10 or later</strong>. This gives a list of
 atomic indices in the primitive cell of the standardized crystal
 structure, where the same number presents the same atom in the
@@ -391,33 +1006,33 @@ is obtained.</p>
 </div>
 </div>
 <div class="section" id="crystallographic-point-group">
-<h2><a class="toc-backref" href="#id23">Crystallographic point group</a><a class="headerlink" href="#crystallographic-point-group" title="Permalink to this headline">¶</a></h2>
+<h2>Crystallographic point group<a class="headerlink" href="#crystallographic-point-group" title="Permalink to this headline">#</a></h2>
 <div class="section" id="pointgroup-symbol">
-<h3><a class="toc-backref" href="#id24"><code class="docutils literal notranslate"><span class="pre">pointgroup_symbol</span></code></a><a class="headerlink" href="#pointgroup-symbol" title="Permalink to this headline">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">pointgroup_symbol</span></code><a class="headerlink" href="#pointgroup-symbol" title="Permalink to this headline">#</a></h3>
 <p><strong>New in version 1.8.1</strong></p>
 <p><code class="docutils literal notranslate"><span class="pre">pointgroup_symbol</span></code> is the symbol of the crystallographic point
 group in the Hermann–Mauguin notation. There are 32 crystallographic
-point groups:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="mi">2</span><span class="o">/</span><span class="n">m</span><span class="p">,</span> <span class="mi">222</span><span class="p">,</span> <span class="n">mm2</span><span class="p">,</span> <span class="n">mmm</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="o">/</span><span class="n">m</span><span class="p">,</span> <span class="mi">422</span><span class="p">,</span> <span class="mi">4</span><span class="n">mm</span><span class="p">,</span> <span class="o">-</span><span class="mi">42</span><span class="n">m</span><span class="p">,</span> <span class="mi">4</span><span class="o">/</span><span class="n">mmm</span><span class="p">,</span>
-<span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">3</span><span class="n">m</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="n">m</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="o">-</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="o">/</span><span class="n">m</span><span class="p">,</span> <span class="mi">622</span><span class="p">,</span> <span class="mi">6</span><span class="n">mm</span><span class="p">,</span> <span class="o">-</span><span class="mi">6</span><span class="n">m2</span><span class="p">,</span> <span class="mi">6</span><span class="o">/</span><span class="n">mmm</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="n">m</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span>
-<span class="mi">432</span><span class="p">,</span> <span class="o">-</span><span class="mi">43</span><span class="n">m</span><span class="p">,</span> <span class="n">m</span><span class="o">-</span><span class="mi">3</span><span class="n">m</span>
+point groups</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>   <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="mi">2</span><span class="o">/</span><span class="n">m</span><span class="p">,</span> <span class="mi">222</span><span class="p">,</span> <span class="n">mm2</span><span class="p">,</span> <span class="n">mmm</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="o">/</span><span class="n">m</span><span class="p">,</span> <span class="mi">422</span><span class="p">,</span> <span class="mi">4</span><span class="n">mm</span><span class="p">,</span> <span class="o">-</span><span class="mi">42</span><span class="n">m</span><span class="p">,</span> <span class="mi">4</span><span class="o">/</span><span class="n">mmm</span><span class="p">,</span>
+   <span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">3</span><span class="n">m</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="n">m</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="o">-</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="o">/</span><span class="n">m</span><span class="p">,</span> <span class="mi">622</span><span class="p">,</span> <span class="mi">6</span><span class="n">mm</span><span class="p">,</span> <span class="o">-</span><span class="mi">6</span><span class="n">m2</span><span class="p">,</span> <span class="mi">6</span><span class="o">/</span><span class="n">mmm</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="n">m</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span>
+   <span class="mi">432</span><span class="p">,</span> <span class="o">-</span><span class="mi">43</span><span class="n">m</span><span class="p">,</span> <span class="n">m</span><span class="o">-</span><span class="mi">3</span><span class="n">m</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="section" id="intermediate-data-in-symmetry-search">
-<h2><a class="toc-backref" href="#id25">Intermediate data in symmetry search</a><a class="headerlink" href="#intermediate-data-in-symmetry-search" title="Permalink to this headline">¶</a></h2>
+<h2>Intermediate data in symmetry search<a class="headerlink" href="#intermediate-data-in-symmetry-search" title="Permalink to this headline">#</a></h2>
 <p>A primitive cell is searched from the translational symmetry. This
 primitive cell is given by <code class="docutils literal notranslate"><span class="pre">primitive_lattice</span></code> and
 <code class="docutils literal notranslate"><span class="pre">mapping_to_primitive</span></code> below.</p>
 <div class="section" id="primitive-lattice">
-<h3><a class="toc-backref" href="#id26"><code class="docutils literal notranslate"><span class="pre">primitive_lattice</span></code></a><a class="headerlink" href="#primitive-lattice" title="Permalink to this headline">¶</a></h3>
+<span id="spglib-dataset-primitive-lattice"></span><h3><code class="docutils literal notranslate"><span class="pre">primitive_lattice</span></code><a class="headerlink" href="#primitive-lattice" title="Permalink to this headline">#</a></h3>
 <p><strong>New at version 1.15</strong></p>
 <p>Non-standardized basis vectors of a primitive cell in the input
 cell.</p>
 </div>
 <div class="section" id="mapping-to-primitive">
-<h3><a class="toc-backref" href="#id27"><code class="docutils literal notranslate"><span class="pre">mapping_to_primitive</span></code></a><a class="headerlink" href="#mapping-to-primitive" title="Permalink to this headline">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">mapping_to_primitive</span></code><a class="headerlink" href="#mapping-to-primitive" title="Permalink to this headline">#</a></h3>
 <p>In version 1.10 or later, <code class="docutils literal notranslate"><span class="pre">mapping_to_primitive</span></code> is available. This
 gives a list of atomic indices in the primitive cell of the input
 crystal structure, where the same number presents the same atom in the
@@ -428,28 +1043,48 @@ of relative lattice points in the input crystal structure is obtained.</p>
 </div>
 
 
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="api.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">C-APIs</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="magnetic_dataset.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Magnetic Spglib dataset (Experimental)</p>
     </div>
-      
-  </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
 </div>
-<footer class="footer">
-  <div class="container">
-    <p class="pull-right">
-      <a href="#">Back to top</a>
-      
-        <br/>
-        
-<div id="sourcelink">
-  <a href="_sources/dataset.rst.txt"
-     rel="nofollow">Source</a>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+      &copy; Copyright 2009, Atsushi Togo.<br/>
+</p>
+        </footer>
+    </div>
+    
 </div>
-      
-    </p>
-    <p>
-        &copy; Copyright 2009, Atsushi Togo.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br/>
-    </p>
-  </div>
-</footer>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
   </body>
 </html>
