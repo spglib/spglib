@@ -1,0 +1,895 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Summary of changes at release v2.0 and future plan &#8212; Spglib v.1.16.5</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=62ba249389abaaa9ffc34bf36a076bdc1d65ee18" type="text/css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=f31d14ad54b65d19161ba51d4ffff3a77ae00456"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Developer document" href="develop.html" />
+    <link rel="prev" title="References" href="references.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="index.html">
+      
+      
+      
+      <h1 class="site-logo" id="site-title">Spglib v.1.16.5</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="install.html">
+   How to install spglib C-API
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="api.html">
+   C-APIs
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="dataset.html">
+   Spglib dataset
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="magnetic_dataset.html">
+   Magnetic spglib dataset (Experimental)
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="variable.html">
+   Variables
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="python-spglib.html">
+   Spglib for Python
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="interface.html">
+   Rust, Fortran, and Ruby interfaces
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="definition.html">
+   Definitions and conventions
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="references.html">
+   References
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Summary of changes at release v2.0
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="develop.html">
+   Developer Documentation
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="magnetic_spacegroup.html">
+     Magnetic space group
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="magnetic_symmetry_flags.html">
+     Flags to control action of magnetic symmetry operations
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="_sources/changes_at_v2.md.txt"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.md</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#c-functions-and-structures">
+   C functions and structures
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#spg-get-spacegroup-type">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       spg_get_spacegroup_type
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#spg-get-spacegroup-type-from-symmetry">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       spg_get_spacegroup_type_from_symmetry
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#spg-get-symmetry-with-site-tensors">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       spg_get_symmetry_with_site_tensors
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#spg-get-magnetic-dataset">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       spg_get_magnetic_dataset
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#spg-get-magnetic-symmetry-from-database">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       spg_get_magnetic_symmetry_from_database
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#spg-free-magnetic-dataset">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       spg_free_magnetic_dataset
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#spg-get-magnetic-spacegroup-type-from-symmetry">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       spg_get_magnetic_spacegroup_type_from_symmetry
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#spg-get-hall-number-from-symmetry">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       spg_get_hall_number_from_symmetry
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#spgat-get-symmetry-with-collinear-spin">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       spgat_get_symmetry_with_collinear_spin
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#spg-get-ir-reciprocal-mesh">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       spg_get_ir_reciprocal_mesh
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#spg-get-stabilized-reciprocal-mesh">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       spg_get_stabilized_reciprocal_mesh
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#python-interface">
+   Python interface
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#get-symmetry">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       get_symmetry
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#get-spacegroup-type">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       get_spacegroup_type
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#get-spacegroup-type-from-symmetry">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       get_spacegroup_type_from_symmetry
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#get-magnetic-symmetry">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       get_magnetic_symmetry
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#get-magnetic-symmetry-dataset">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       get_magnetic_symmetry_dataset
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#get-magnetic-spacegroup-type">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       get_magnetic_spacegroup_type
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#get-magnetic-symmetry-from-database">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       get_magnetic_symmetry_from_database
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#get-hall-number-from-symmetry">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       get_hall_number_from_symmetry
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#get-ir-reciprocal-mesh">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       get_ir_reciprocal_mesh
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Summary of changes at release v2.0 and future plan</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#c-functions-and-structures">
+   C functions and structures
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#spg-get-spacegroup-type">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       spg_get_spacegroup_type
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#spg-get-spacegroup-type-from-symmetry">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       spg_get_spacegroup_type_from_symmetry
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#spg-get-symmetry-with-site-tensors">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       spg_get_symmetry_with_site_tensors
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#spg-get-magnetic-dataset">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       spg_get_magnetic_dataset
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#spg-get-magnetic-symmetry-from-database">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       spg_get_magnetic_symmetry_from_database
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#spg-free-magnetic-dataset">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       spg_free_magnetic_dataset
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#spg-get-magnetic-spacegroup-type-from-symmetry">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       spg_get_magnetic_spacegroup_type_from_symmetry
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#spg-get-hall-number-from-symmetry">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       spg_get_hall_number_from_symmetry
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#spgat-get-symmetry-with-collinear-spin">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       spgat_get_symmetry_with_collinear_spin
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#spg-get-ir-reciprocal-mesh">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       spg_get_ir_reciprocal_mesh
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#spg-get-stabilized-reciprocal-mesh">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       spg_get_stabilized_reciprocal_mesh
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#python-interface">
+   Python interface
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#get-symmetry">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       get_symmetry
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#get-spacegroup-type">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       get_spacegroup_type
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#get-spacegroup-type-from-symmetry">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       get_spacegroup_type_from_symmetry
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#get-magnetic-symmetry">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       get_magnetic_symmetry
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#get-magnetic-symmetry-dataset">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       get_magnetic_symmetry_dataset
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#get-magnetic-spacegroup-type">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       get_magnetic_spacegroup_type
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#get-magnetic-symmetry-from-database">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       get_magnetic_symmetry_from_database
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#get-hall-number-from-symmetry">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       get_hall_number_from_symmetry
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#get-ir-reciprocal-mesh">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       get_ir_reciprocal_mesh
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <div class="section" id="summary-of-changes-at-release-v2-0-and-future-plan">
+<h1>Summary of changes at release v2.0 and future plan<a class="headerlink" href="#summary-of-changes-at-release-v2-0-and-future-plan" title="Permalink to this headline">#</a></h1>
+<p>This release contains functions to search magnetic space group types which are
+provided as experimental features. The behaviours of these magnetic related
+functions (<code class="docutils literal notranslate"><span class="pre">*_magnetic_*</span></code>) with respect to the tolerance parameter (<code class="docutils literal notranslate"><span class="pre">symprec</span></code> or
+<a class="reference internal" href="variable.html#variables-mag-symprec"><span class="std std-ref">mag_symprec</span></a>) may be changed in the future.</p>
+<p>We are planning to separate irreducible k-points search from spglib. At spglib
+version 4.0, those functions will be removed if we succeed to provide an
+alternative package (hopefully with better functionalities) until then.</p>
+<div class="section" id="c-functions-and-structures">
+<h2>C functions and structures<a class="headerlink" href="#c-functions-and-structures" title="Permalink to this headline">#</a></h2>
+<div class="section" id="spg-get-spacegroup-type">
+<h3><code class="docutils literal notranslate"><span class="pre">spg_get_spacegroup_type</span></code><a class="headerlink" href="#spg-get-spacegroup-type" title="Permalink to this headline">#</a></h3>
+<ul class="simple">
+<li><p>Add <code class="docutils literal notranslate"><span class="pre">hall_number</span></code> member at version 2.0</p></li>
+</ul>
+</div>
+<div class="section" id="spg-get-spacegroup-type-from-symmetry">
+<h3><code class="docutils literal notranslate"><span class="pre">spg_get_spacegroup_type_from_symmetry</span></code><a class="headerlink" href="#spg-get-spacegroup-type-from-symmetry" title="Permalink to this headline">#</a></h3>
+<ul class="simple">
+<li><p>New at version 2.0</p></li>
+<li><p>Replacement of <code class="docutils literal notranslate"><span class="pre">spg_get_hall_number_from_symmetry</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="spg-get-symmetry-with-site-tensors">
+<h3><code class="docutils literal notranslate"><span class="pre">spg_get_symmetry_with_site_tensors</span></code><a class="headerlink" href="#spg-get-symmetry-with-site-tensors" title="Permalink to this headline">#</a></h3>
+<ul class="simple">
+<li><p>Experimental: new at version 2.0</p></li>
+</ul>
+</div>
+<div class="section" id="spg-get-magnetic-dataset">
+<h3><code class="docutils literal notranslate"><span class="pre">spg_get_magnetic_dataset</span></code><a class="headerlink" href="#spg-get-magnetic-dataset" title="Permalink to this headline">#</a></h3>
+<ul class="simple">
+<li><p>Experimental: new at version 2.0</p></li>
+</ul>
+</div>
+<div class="section" id="spg-get-magnetic-symmetry-from-database">
+<h3><code class="docutils literal notranslate"><span class="pre">spg_get_magnetic_symmetry_from_database</span></code><a class="headerlink" href="#spg-get-magnetic-symmetry-from-database" title="Permalink to this headline">#</a></h3>
+<ul class="simple">
+<li><p>Experimental: new at version 2.0</p></li>
+</ul>
+</div>
+<div class="section" id="spg-free-magnetic-dataset">
+<h3><code class="docutils literal notranslate"><span class="pre">spg_free_magnetic_dataset</span></code><a class="headerlink" href="#spg-free-magnetic-dataset" title="Permalink to this headline">#</a></h3>
+<ul class="simple">
+<li><p>Experimental: new at version 2.0</p></li>
+</ul>
+</div>
+<div class="section" id="spg-get-magnetic-spacegroup-type-from-symmetry">
+<h3><code class="docutils literal notranslate"><span class="pre">spg_get_magnetic_spacegroup_type_from_symmetry</span></code><a class="headerlink" href="#spg-get-magnetic-spacegroup-type-from-symmetry" title="Permalink to this headline">#</a></h3>
+<ul class="simple">
+<li><p>Experimental: new at version 2.0</p></li>
+</ul>
+</div>
+<div class="section" id="spg-get-hall-number-from-symmetry">
+<h3><code class="docutils literal notranslate"><span class="pre">spg_get_hall_number_from_symmetry</span></code><a class="headerlink" href="#spg-get-hall-number-from-symmetry" title="Permalink to this headline">#</a></h3>
+<ul class="simple">
+<li><p>Deprecated at version 2.0</p></li>
+<li><p>Will be removed at version 3.0</p></li>
+</ul>
+</div>
+<div class="section" id="spgat-get-symmetry-with-collinear-spin">
+<h3><code class="docutils literal notranslate"><span class="pre">spgat_get_symmetry_with_collinear_spin</span></code><a class="headerlink" href="#spgat-get-symmetry-with-collinear-spin" title="Permalink to this headline">#</a></h3>
+<ul class="simple">
+<li><p>Deprecated at version 2.0</p></li>
+<li><p>Will be removed at version 3.0</p></li>
+<li><p>Will be replaced by <code class="docutils literal notranslate"><span class="pre">spgms_get_symmetry_with_collinear_spin</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="spg-get-ir-reciprocal-mesh">
+<h3><code class="docutils literal notranslate"><span class="pre">spg_get_ir_reciprocal_mesh</span></code><a class="headerlink" href="#spg-get-ir-reciprocal-mesh" title="Permalink to this headline">#</a></h3>
+<ul class="simple">
+<li><p>Plan to make it deprecated at version 3.0</p></li>
+</ul>
+</div>
+<div class="section" id="spg-get-stabilized-reciprocal-mesh">
+<h3><code class="docutils literal notranslate"><span class="pre">spg_get_stabilized_reciprocal_mesh</span></code><a class="headerlink" href="#spg-get-stabilized-reciprocal-mesh" title="Permalink to this headline">#</a></h3>
+<ul class="simple">
+<li><p>Plan to make it deprecated at version 3.0</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="python-interface">
+<h2>Python interface<a class="headerlink" href="#python-interface" title="Permalink to this headline">#</a></h2>
+<div class="section" id="get-symmetry">
+<h3><code class="docutils literal notranslate"><span class="pre">get_symmetry</span></code><a class="headerlink" href="#get-symmetry" title="Permalink to this headline">#</a></h3>
+<ul class="simple">
+<li><p>get_symmetry with <code class="docutils literal notranslate"><span class="pre">is_magnetic=True</span></code> is deprecated at version 2.0. Use
+<code class="docutils literal notranslate"><span class="pre">get_magnetic_symmetry</span></code> for magnetic symmetry search.</p></li>
+</ul>
+</div>
+<div class="section" id="get-spacegroup-type">
+<h3><code class="docutils literal notranslate"><span class="pre">get_spacegroup_type</span></code><a class="headerlink" href="#get-spacegroup-type" title="Permalink to this headline">#</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">hall_number</span></code> member is added at version 2.0.</p></li>
+</ul>
+</div>
+<div class="section" id="get-spacegroup-type-from-symmetry">
+<h3><code class="docutils literal notranslate"><span class="pre">get_spacegroup_type_from_symmetry</span></code><a class="headerlink" href="#get-spacegroup-type-from-symmetry" title="Permalink to this headline">#</a></h3>
+<ul class="simple">
+<li><p>New at version 2.0</p></li>
+<li><p>Replacement of get_hall_number_from_symmetry</p></li>
+</ul>
+</div>
+<div class="section" id="get-magnetic-symmetry">
+<h3><code class="docutils literal notranslate"><span class="pre">get_magnetic_symmetry</span></code><a class="headerlink" href="#get-magnetic-symmetry" title="Permalink to this headline">#</a></h3>
+<ul class="simple">
+<li><p>Experimental: new at version 2.0</p></li>
+</ul>
+</div>
+<div class="section" id="get-magnetic-symmetry-dataset">
+<h3><code class="docutils literal notranslate"><span class="pre">get_magnetic_symmetry_dataset</span></code><a class="headerlink" href="#get-magnetic-symmetry-dataset" title="Permalink to this headline">#</a></h3>
+<ul class="simple">
+<li><p>Experimental: new at version 2.0</p></li>
+</ul>
+</div>
+<div class="section" id="get-magnetic-spacegroup-type">
+<h3><code class="docutils literal notranslate"><span class="pre">get_magnetic_spacegroup_type</span></code><a class="headerlink" href="#get-magnetic-spacegroup-type" title="Permalink to this headline">#</a></h3>
+<ul class="simple">
+<li><p>Experimental: new at version 2.0</p></li>
+</ul>
+</div>
+<div class="section" id="get-magnetic-symmetry-from-database">
+<h3><code class="docutils literal notranslate"><span class="pre">get_magnetic_symmetry_from_database</span></code><a class="headerlink" href="#get-magnetic-symmetry-from-database" title="Permalink to this headline">#</a></h3>
+<ul class="simple">
+<li><p>Experimental: new at version 2.0</p></li>
+</ul>
+</div>
+<div class="section" id="get-hall-number-from-symmetry">
+<h3><code class="docutils literal notranslate"><span class="pre">get_hall_number_from_symmetry</span></code><a class="headerlink" href="#get-hall-number-from-symmetry" title="Permalink to this headline">#</a></h3>
+<ul class="simple">
+<li><p>Deprecated at version 2.0</p></li>
+<li><p>Will be removed at version 3.0</p></li>
+<li><p>Will be replaced by <code class="docutils literal notranslate"><span class="pre">get_spacegroup_type_from_symmetry</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="get-ir-reciprocal-mesh">
+<h3><code class="docutils literal notranslate"><span class="pre">get_ir_reciprocal_mesh</span></code><a class="headerlink" href="#get-ir-reciprocal-mesh" title="Permalink to this headline">#</a></h3>
+<ul class="simple">
+<li><p>Plan to make it deprecated at version 3.0</p></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="references.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">References</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="develop.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Developer document</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+      &copy; Copyright 2009, Atsushi Togo.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>
