@@ -1,8 +1,6 @@
 spglib
 ======
 
-|Version Badge| |Downloads Badge| |PyPi downloads| |Build Status|
-
 Python bindings for C library for finding and handling crystal
 symmetries
 
@@ -28,29 +26,6 @@ Conda is another choice:
 
 ::
 
-    conda install -c atztogo spglib
+    conda install -c conda-forge spglib
 
-These packages are made by Paweł T. Jochym.
-
-Building using setup.py
-~~~~~~~~~~~~~~~~~~~~~~~
-
-To manually install python-spglib using ``setup.py``, python header
-files (python-dev), C-compiler (e.g., gcc, clang), and numpy are
-required before the build. The installation steps are shown as follows:
-
-1. Go to the python directory
-2. Type the command:
-
-   ::
-
-       python setup.py install --user
-
-.. |Version Badge| image:: https://anaconda.org/atztogo/spglib/badges/version.svg
-   :target: https://anaconda.org/atztogo/spglib
-.. |Downloads Badge| image:: https://anaconda.org/atztogo/spglib/badges/downloads.svg
-   :target: https://anaconda.org/atztogo/spglib
-.. |PyPi downloads| image:: https://img.shields.io/pypi/dm/spglib.svg?maxAge=2592000
-   :target: https://pypi.python.org/pypi/spglib
-.. |Build Status| image:: https://travis-ci.org/atztogo/spglib.svg?branch=master
-   :target: https://travis-ci.org/atztogo/spglib
+These packages are made by Pawel T. Jochym.
