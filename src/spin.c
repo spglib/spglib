@@ -616,7 +616,8 @@ static int *get_symmetry_permutations(const MagneticSymmetry *magnetic_symmetry,
                         cell->lattice, symprec)) {
                     continue;
                 }
-                debug_print("Try to overlap site-%d (%f) with site-%d (%f)\n", i, scalar, j, cell->tensors[j]);
+                debug_print("Try to overlap site-%d (%f) with site-%d (%f)\n",
+                            i, scalar, j, cell->tensors[j]);
                 if (cell->tensor_rank == COLLINEAR &&
                     !is_zero(cell->tensors[j] - scalar, mag_symprec)) {
                     continue;
