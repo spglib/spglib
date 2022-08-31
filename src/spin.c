@@ -412,21 +412,24 @@ static MagneticSymmetry *get_operations(
                 return NULL;
             }
 
-            /* Skip if relevant tensors are zeros because they have nothing to
-             * do with magnetic symmetry search! */
+            // Skip if relevant tensors are zeros because they have nothing to
+            // do with magnetic symmetry search!
+            // If spins `m` and `-m` are equal up to `mag_symprec`,
+            // m - (-m) = 2m < mag_symprec
+            // Thus, we need to check `m` and 0 up to `0.5 * mag_symprec`!
             if (cell->tensor_rank == COLLINEAR) {
-                if (is_zero(cell->tensors[j], mag_symprec) &&
-                    is_zero(cell->tensors[k], mag_symprec)) {
+                if (is_zero(cell->tensors[j], 0.5 * mag_symprec) &&
+                    is_zero(cell->tensors[k], 0.5 * mag_symprec)) {
                     continue;
                 }
             }
             if (cell->tensor_rank == NONCOLLINEAR) {
-                if (is_zero(cell->tensors[j * 3], mag_symprec) &&
-                    is_zero(cell->tensors[j * 3 + 1], mag_symprec) &&
-                    is_zero(cell->tensors[j * 3 + 2], mag_symprec) &&
-                    is_zero(cell->tensors[k * 3], mag_symprec) &&
-                    is_zero(cell->tensors[k * 3 + 1], mag_symprec) &&
-                    is_zero(cell->tensors[k * 3 + 2], mag_symprec)) {
+                if (is_zero(cell->tensors[j * 3], 0.5 * mag_symprec) &&
+                    is_zero(cell->tensors[j * 3 + 1], 0.5 * mag_symprec) &&
+                    is_zero(cell->tensors[j * 3 + 2], 0.5 * mag_symprec) &&
+                    is_zero(cell->tensors[k * 3], 0.5 * mag_symprec) &&
+                    is_zero(cell->tensors[k * 3 + 1], 0.5 * mag_symprec) &&
+                    is_zero(cell->tensors[k * 3 + 2], 0.5 * mag_symprec)) {
                     continue;
                 }
             }
@@ -613,6 +616,7 @@ static int *get_symmetry_permutations(const MagneticSymmetry *magnetic_symmetry,
                         cell->lattice, symprec)) {
                     continue;
                 }
+                debug_print("Try to overlap site-%d (%f) with site-%d (%f)\n", i, scalar, j, cell->tensors[j]);
                 if (cell->tensor_rank == COLLINEAR &&
                     !is_zero(cell->tensors[j] - scalar, mag_symprec)) {
                     continue;
