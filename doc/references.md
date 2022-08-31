@@ -60,7 +60,7 @@ understanding the crystallography ashamedly.
 {cite:empty}`math-Souvignier08`
 {cite:empty}`math-Opgenorth:js0065`
 {cite:empty}`math-Eick2005`
-{cite:empty}`Eick:js0047`
+{cite:empty}`math-Eick:js0047`
 {cite:empty}`math-10.2307/2322930`
 
 ```{bibliography}

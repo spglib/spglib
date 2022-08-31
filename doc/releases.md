@@ -1,5 +1,10 @@
 
 # Summary of releases
+
+## V2.0.1 (31 Aug. 2022)
+
+- Fix magnetic tolerance for judging type-II MSG (#187)
+
 ## Release v2.0 and future plan
 
 This release contains functions to search magnetic space group types which are
