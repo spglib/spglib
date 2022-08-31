@@ -496,10 +496,6 @@ err:
         representatives = NULL;
     }
 
-    if (ref_sg != NULL) {
-        free(ref_sg);
-        ref_sg = NULL;
-    }
     return 0;
 }
 /* Get family space group (FSG) and return its order. */
