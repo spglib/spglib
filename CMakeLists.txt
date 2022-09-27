@@ -80,6 +80,11 @@ set(SOURCES ${PROJECT_SOURCE_DIR}/src/arithmetic.c
             ${PROJECT_SOURCE_DIR}/src/spin.c
             ${PROJECT_SOURCE_DIR}/src/symmetry.c)
 
+# avoid One Definition Rule problems
+set_source_files_properties(
+    ${SOURCES} PROPERTIES SKIP_UNITY_BUILD_INCLUSION ON
+)
+
 # Shared library
 add_library(symspg SHARED ${SOURCES})
 
