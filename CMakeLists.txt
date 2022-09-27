@@ -81,9 +81,15 @@ set(SOURCES ${PROJECT_SOURCE_DIR}/src/arithmetic.c
             ${PROJECT_SOURCE_DIR}/src/symmetry.c)
 
 # avoid One Definition Rule problems
-set_source_files_properties(
-    ${SOURCES} PROPERTIES SKIP_UNITY_BUILD_INCLUSION ON
-)
+# only available since 3.16.0
+# VERSION_GREATER_EQUAL only available since 3.7.0, so let's do it manually
+if (NOT CMAKE_MAJOR_VERSION LESS "3")
+  if (CMAKE_MAJOR_VERSION GREATER "3" OR NOT CMAKE_MINOR_VERSION LESS "16")
+    set_source_files_properties(
+        ${SOURCES} PROPERTIES SKIP_UNITY_BUILD_INCLUSION ON
+    )
+  endif()
+endif()
 
 # Shared library
 add_library(symspg SHARED ${SOURCES})
