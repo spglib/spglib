@@ -408,8 +408,12 @@ static MagneticSymmetry *get_operations(
                 }
             }
             if (k == cell->size) {
-                /* Unreachable here! */
-                return NULL;
+                // Unreachable here in theory, but we rarely fail to overlap
+                // atoms possibly due to too high symprec. In that case, skip
+                // the symmetry operation.
+                debug_print("Failed to overlap atom-%d by operation-%d\n", j, i);
+                found = 0;
+                break;
             }
 
             // Skip if relevant tensors are zeros because they have nothing to
