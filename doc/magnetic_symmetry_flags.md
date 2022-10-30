@@ -30,10 +30,10 @@
 - `tensor_rank=1`
     - `with_time_reversal=true`: {math}`1' \circ \mathbf{m} = -\mathbf{m}`
         - `is_axial=true`: {math}`(\mathbf{R}, \mathbf{v}) \circ \mathbf{m} = (\mathrm{det} \mathbf{R}) \mathbf{R} \mathbf{m}`
-        - `is_axial=true`: {math}`(\mathbf{R}, \mathbf{v}) \circ \mathbf{m} = \mathbf{R} \mathbf{m}`
+        - `is_axial=false`: {math}`(\mathbf{R}, \mathbf{v}) \circ \mathbf{m} = \mathbf{R} \mathbf{m}`
     - `with_time_reversal=false`: {math}`1' \circ \mathbf{m} = \mathbf{m}`
         - `is_axial=true`: {math}`(\mathbf{R}, \mathbf{v}) \circ \mathbf{m} = (\mathrm{det} \mathbf{R}) \mathbf{R} \mathbf{m}`
-        - `is_axial=true`: {math}`(\mathbf{R}, \mathbf{v}) \circ \mathbf{m} = \mathbf{R} \mathbf{m}`
+        - `is_axial=false`: {math}`(\mathbf{R}, \mathbf{v}) \circ \mathbf{m} = \mathbf{R} \mathbf{m}`
 
 <!-- ### Correspondence
 

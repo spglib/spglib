@@ -24,9 +24,9 @@ If spglib returns different results by changing `symprec`, `angle_tolerance`, or
 <!-- A clear and concise description of what you expected to happen. -->
 
 ## Environment
- 
-- Python version: 
-- Spglib's version: 
+
+- Python version:
+- Spglib's version:
 
 ## Additional context
 
