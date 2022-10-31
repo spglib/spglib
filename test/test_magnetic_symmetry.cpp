@@ -362,8 +362,7 @@ TEST(
 
 TEST(
     test_magnetic_symmetry,
-    test_spg_get_symmetry_with_tensors_rough_mag_symprec) {
-
+    test_with_broken_symmetry) {
     // https://github.com/spglib/spglib/issues/194
     // Part of "mp-806965" in the Materials Project database
     double lattice[][3] = {  // column-wise!
@@ -398,9 +397,11 @@ TEST(
     spin_flips = (int *)malloc(sizeof(int *) * max_size);
     time_reversals = (int *)malloc(sizeof(int *) * max_size);
 
-    size = spg_get_symmetry(rotations, translations, max_size, lattice, positions, types, num_atoms, symprec);
-    show_symmetry_operations(rotations, translations, size);
-
+    // Check magnetic symmetry search
+    // spg_get_symmetry returns four operations, but spgms_get_symmetry_with_site_tensors
+    // only returns three of them. This is due to too high symprec: detected operations
+    // in `sym_get_operation` follow `symprec`, but refined operations in
+    // `ref_get_exact_structure_and_symmetry` does not.
     size = spgms_get_symmetry_with_site_tensors(
         rotations, translations, equivalent_atoms, primitive_lattice, spin_flips,
         max_size, lattice, positions, types, tensors,
@@ -413,11 +414,23 @@ TEST(
         time_reversals[i] = (1 - spin_flips[i]) / 2;
     }
     show_magnetic_symmetry_operations(rotations, translations, time_reversals, size);
+    ASSERT_TRUE(size >= 1);
+
+    // Check magnetic dataset construction
+    // Since detected magnetic symmetry operations do not form a group due to high symprec,
+    // we fail to get magnetic dataset for now.
+    SpglibMagneticDataset *dataset;
+    dataset = spg_get_magnetic_dataset(lattice, positions, types, tensors,
+                                        0 /* tensor_rank */, num_atoms,
+                                        0 /* is_axial */, symprec);
+    ASSERT_TRUE(dataset == NULL);
 
     free(rotations);
     free(translations);
     free(spin_flips);
     free(time_reversals);
+    if (dataset != NULL) spg_free_magnetic_dataset(dataset);
+    free(dataset);
 }
 
 // TODO: test get_magnetic_dataset with distorted positions

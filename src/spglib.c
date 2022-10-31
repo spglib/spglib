@@ -1316,6 +1316,7 @@ finalize:
     if (spglib_error_code == SPGLIB_SUCCESS) {
         return dataset;
     } else {
+        spg_free_magnetic_dataset(dataset);
         return NULL;
     }
 }
@@ -1779,9 +1780,15 @@ static MagneticSymmetry *get_symmetry_with_site_tensors(
     spg_free_dataset(dataset);
     dataset = NULL;
 
-    magnetic_symmetry = spn_get_operations_with_site_tensors(
-        &equiv_atoms, permutations, primitive_lattice, sym_nonspin, cell,
-        with_time_reversal, is_axial, symprec, angle_tolerance, mag_symprec);
+    if ((magnetic_symmetry = spn_get_operations_with_site_tensors(
+             &equiv_atoms, permutations, primitive_lattice, sym_nonspin, cell,
+             with_time_reversal, is_axial, symprec, angle_tolerance,
+             mag_symprec)) == NULL) {
+        sym_free_symmetry(sym_nonspin);
+        sym_nonspin = NULL;
+        goto err;
+    }
+
     /* Set equivalent_atoms */
     for (i = 0; i < cell->size; i++) {
         equivalent_atoms[i] = equiv_atoms[i];
