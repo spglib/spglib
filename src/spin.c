@@ -411,7 +411,8 @@ static MagneticSymmetry *get_operations(
                 // Unreachable here in theory, but we rarely fail to overlap
                 // atoms possibly due to too high symprec. In that case, skip
                 // the symmetry operation.
-                debug_print("Failed to overlap atom-%d by operation-%d\n", j, i);
+                debug_print("Failed to overlap atom-%d by operation-%d\n", j,
+                            i);
                 found = 0;
                 break;
             }
@@ -562,9 +563,9 @@ err:
     return NULL;
 }
 
-/* Return permutation tables `permutations` such that the p-th operation */
-/* in `magnetic_symmetry` maps site-`i` to site-`permutations[p * cell->size +
- * i]`. */
+// Return permutation tables `permutations` such that the p-th operation
+// in `magnetic_symmetry` maps site-`i` to site-`permutations[p * cell->size +
+// * i]`. If failed, return NULL.
 static int *get_symmetry_permutations(const MagneticSymmetry *magnetic_symmetry,
                                       const Cell *cell,
                                       const int with_time_reversal,
@@ -659,7 +660,7 @@ static int *get_symmetry_permutations(const MagneticSymmetry *magnetic_symmetry,
     return permutations;
 }
 
-/* Return equivalent_atoms */
+// Return equivalent_atoms. If failed, return NULL.
 static int *get_orbits(const int *permutations, const int num_sym,
                        const int num_atoms) {
     int s, i;
