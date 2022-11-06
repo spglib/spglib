@@ -641,7 +641,7 @@ static int check_total_overlap_for_sorted(
     search_start = 0;
     for (i_orig = 0; i_orig < num_pos; i_orig++) {
         /* Permanently skip positions filled near the beginning. */
-        while (found[search_start]) {
+        while ((search_start < num_pos) && found[search_start]) {
             search_start++;
         }
 
