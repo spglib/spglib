@@ -360,6 +360,79 @@ TEST(
     free(time_reversals);
 }
 
+TEST(
+    test_magnetic_symmetry,
+    test_with_broken_symmetry) {
+    // https://github.com/spglib/spglib/issues/194
+    // Part of "mp-806965" in the Materials Project database
+    double lattice[][3] = {  // column-wise!
+        {5.24191, -0.003459, -2.618402},
+        {0, 5.600534, -1.87898},
+        {0, 0, 11.148141},
+    };
+    double positions[][3] = {
+        {0.829407, 0.834674, 0.662821},
+        {0.665078, 0.665214, 0.316142},
+        {0.001174, 0.996383, 0.002809},
+        {0.181127, 0.169218, 0.349259},
+    };
+    int types[] = {0, 0, 0, 0};
+    double tensors[] = {1.927, 1.947, 1.928, 1.949};
+    int num_atoms = 4;
+    int max_size = num_atoms * 96;
+
+    double symprec = 0.1;  // with very high symprec
+    double mag_symprec = symprec;
+
+    int i, size;
+    int equivalent_atoms[4];
+    double primitive_lattice[3][3];
+    int(*rotations)[3][3];
+    double(*translations)[3];
+    int *spin_flips;
+    int *time_reversals;
+
+    rotations = (int(*)[3][3])malloc(sizeof(int[3][3]) * max_size);
+    translations = (double(*)[3])malloc(sizeof(double[3]) * max_size);
+    spin_flips = (int *)malloc(sizeof(int *) * max_size);
+    time_reversals = (int *)malloc(sizeof(int *) * max_size);
+
+    // Check magnetic symmetry search
+    // spg_get_symmetry returns four operations, but spgms_get_symmetry_with_site_tensors
+    // only returns three of them. This is due to too high symprec: detected operations
+    // in `sym_get_operation` follow `symprec`, but refined operations in
+    // `ref_get_exact_structure_and_symmetry` does not.
+    size = spgms_get_symmetry_with_site_tensors(
+        rotations, translations, equivalent_atoms, primitive_lattice, spin_flips,
+        max_size, lattice, positions, types, tensors,
+        0 /* tensor_rank */ , num_atoms,
+        1 /* with_time_reversal */,
+        0 /* is_axial */,
+        symprec, -1 /* angle_tolerance */, mag_symprec);
+
+    for (i = 0; i < size; i++) {
+        time_reversals[i] = (1 - spin_flips[i]) / 2;
+    }
+    show_magnetic_symmetry_operations(rotations, translations, time_reversals, size);
+    ASSERT_TRUE(size >= 1);
+
+    // Check magnetic dataset construction
+    // Since detected magnetic symmetry operations do not form a group due to high symprec,
+    // we fail to get magnetic dataset for now.
+    SpglibMagneticDataset *dataset;
+    dataset = spg_get_magnetic_dataset(lattice, positions, types, tensors,
+                                        0 /* tensor_rank */, num_atoms,
+                                        0 /* is_axial */, symprec);
+    ASSERT_TRUE(dataset == NULL);
+
+    free(rotations);
+    free(translations);
+    free(spin_flips);
+    free(time_reversals);
+    if (dataset != NULL) spg_free_magnetic_dataset(dataset);
+    free(dataset);
+}
+
 // TODO: test get_magnetic_dataset with distorted positions
 
 // ****************************************************************************

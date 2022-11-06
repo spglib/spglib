@@ -1,6 +1,11 @@
 
 # Summary of releases
 
+## V2.0.2 (6 Nov. 2022)
+
+- Fix segmentation fault in `spgms_get_symmetry_with_site_tensors` with high symprec [[#195]](https://github.com/spglib/spglib/pull/195)
+- Fix possible segmentation fault in `get_magnetic_dataset` with high symprec [[#196]](https://github.com/spglib/spglib/pull/196)
+
 ## V2.0.1 (31 Aug. 2022)
 
 - Fix magnetic tolerance for judging type-II MSG (#187)
