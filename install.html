@@ -4,8 +4,9 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>How to install spglib C-API &#8212; Spglib v.2.0.1</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>How to install spglib C-API &#8212; Spglib v.2.0.2</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -20,7 +21,7 @@
     href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=62ba249389abaaa9ffc34bf36a076bdc1d65ee18" type="text/css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
     
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
@@ -29,7 +30,7 @@
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/scripts/sphinx-book-theme.js?digest=f31d14ad54b65d19161ba51d4ffff3a77ae00456"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="C-APIs" href="api.html" />
@@ -72,7 +73,7 @@
       
       
       
-      <h1 class="site-logo" id="site-title">Spglib v.2.0.1</h1>
+      <h1 class="site-logo" id="site-title">Spglib v.2.0.2</h1>
       
     </a>
 </div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
@@ -378,19 +379,19 @@ title="Print to PDF"
                 
               <div>
                 
-  <div class="section" id="how-to-install-spglib-c-api">
+  <section id="how-to-install-spglib-c-api">
 <h1>How to install spglib C-API<a class="headerlink" href="#how-to-install-spglib-c-api" title="Permalink to this headline">#</a></h1>
-<div class="section" id="download">
+<section id="download">
 <h2>Download<a class="headerlink" href="#download" title="Permalink to this headline">#</a></h2>
 <p>The source code is downloaded at <a class="reference external" href="https://github.com/spglib/spglib/archive/master.zip">https://github.com/spglib/spglib/archive/master.zip</a> or you can
 git-clone the spglib repository by</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">spglib</span><span class="o">/</span><span class="n">spglib</span><span class="o">.</span><span class="n">git</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="install">
+</section>
+<section id="install">
 <h2>Install<a class="headerlink" href="#install" title="Permalink to this headline">#</a></h2>
-<div class="section" id="unix-like">
+<section id="unix-like">
 <h3>Unix-like<a class="headerlink" href="#unix-like" title="Permalink to this headline">#</a></h3>
 <p>After expanding source code, go into the source code directory:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">tar</span> <span class="n">xvfz</span> <span class="n">spglib</span><span class="o">-</span><span class="mf">2.0.0</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
@@ -413,8 +414,8 @@ git-clone the spglib repository by</p>
 % cmake --install . --prefix ..
 </pre></div>
 </div>
-</div>
-<div class="section" id="windows-cygwin">
+</section>
+<section id="windows-cygwin">
 <h3>Windows &amp; Cygwin<a class="headerlink" href="#windows-cygwin" title="Permalink to this headline">#</a></h3>
 <p>For windows, cmake behaves slightly differently and the following
 way is recommended</p>
@@ -425,9 +426,9 @@ way is recommended</p>
 </div>
 <p>The detail of the windows installation process is discussed at
 https://github.com/spglib/spglib/issues/118.</p>
-</div>
-</div>
-<div class="section" id="usage">
+</section>
+</section>
+<section id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">#</a></h2>
 <ol class="arabic simple">
 <li><p>Include <code class="docutils literal notranslate"><span class="pre">spglib.h</span></code></p></li>
@@ -435,12 +436,12 @@ https://github.com/spglib/spglib/issues/118.</p>
 <li><p>A compilation example is shown in
 <a class="reference external" href="https://github.com/spglib/spglib/tree/master/example/README.md">example/README.md</a>.</p></li>
 </ol>
-</div>
-<div class="section" id="example">
+</section>
+<section id="example">
 <h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">#</a></h2>
 <p>A few examples are found in <a class="reference external" href="https://github.com/spglib/spglib/tree/master/example">example</a> directory.</p>
-</div>
-</div>
+</section>
+</section>
 
 
               </div>

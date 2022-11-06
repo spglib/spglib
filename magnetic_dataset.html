@@ -4,8 +4,9 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Magnetic Spglib dataset (Experimental) &#8212; Spglib v.2.0.1</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Magnetic Spglib dataset (Experimental) &#8212; Spglib v.2.0.2</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -20,7 +21,7 @@
     href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=62ba249389abaaa9ffc34bf36a076bdc1d65ee18" type="text/css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
     
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
@@ -29,7 +30,7 @@
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/scripts/sphinx-book-theme.js?digest=f31d14ad54b65d19161ba51d4ffff3a77ae00456"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Variables" href="variable.html" />
@@ -72,7 +73,7 @@
       
       
       
-      <h1 class="site-logo" id="site-title">Spglib v.2.0.1</h1>
+      <h1 class="site-logo" id="site-title">Spglib v.2.0.2</h1>
       
     </a>
 </div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
@@ -704,7 +705,7 @@ title="Print to PDF"
                 
               <div>
                 
-  <div class="section" id="magnetic-spglib-dataset-experimental">
+  <section id="magnetic-spglib-dataset-experimental">
 <span id="magnetic-spglib-dataset"></span><h1>Magnetic Spglib dataset (Experimental)<a class="headerlink" href="#magnetic-spglib-dataset-experimental" title="Permalink to this headline">#</a></h1>
 <p><strong>New at version 2.0</strong></p>
 <p>The dataset is accessible through the C-structure given by</p>
@@ -737,13 +738,13 @@ title="Print to PDF"
 <span class="p">}</span><span class="w"> </span><span class="n">SpglibMagneticDataset</span><span class="p">;</span><span class="w"></span>
 </pre></div>
 </div>
-<div class="section" id="magnetic-space-group-type">
+<section id="magnetic-space-group-type">
 <h2>Magnetic space-group type<a class="headerlink" href="#magnetic-space-group-type" title="Permalink to this headline">#</a></h2>
-<div class="section" id="uni-number">
+<section id="uni-number">
 <h3><code class="docutils literal notranslate"><span class="pre">uni_number</span></code><a class="headerlink" href="#uni-number" title="Permalink to this headline">#</a></h3>
 <p>The serial number from 1 to 1651 of UNI or BNS symbols.</p>
-</div>
-<div class="section" id="msg-type">
+</section>
+<section id="msg-type">
 <h3><code class="docutils literal notranslate"><span class="pre">msg_type</span></code><a class="headerlink" href="#msg-type" title="Permalink to this headline">#</a></h3>
 <p>Magnetic space groups (MSG) is classified by its family space group (FSG)
 and maximal space subgroup (XSG).
@@ -758,69 +759,69 @@ translational subgroups.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">msg_type==4</span></code> (type-IV): XSG is a proper subgroup of MSG with isomorphic
 point group.</p></li>
 </ul>
-</div>
-<div class="section" id="hall-number">
+</section>
+<section id="hall-number">
 <h3><code class="docutils literal notranslate"><span class="pre">hall_number</span></code><a class="headerlink" href="#hall-number" title="Permalink to this headline">#</a></h3>
 <p>For type-I, II, III, <a class="reference internal" href="dataset.html#spglib-dataset-hall-number"><span class="std std-ref">hall number</span></a> of FSG; for type-IV, that of XSG</p>
-</div>
-<div class="section" id="tensor-rank">
+</section>
+<section id="tensor-rank">
 <h3><code class="docutils literal notranslate"><span class="pre">tensor_rank</span></code><a class="headerlink" href="#tensor-rank" title="Permalink to this headline">#</a></h3>
 <p>0 for collinear spins, 1 for non-collinear spins</p>
-</div>
-</div>
-<div class="section" id="magnetic-symmetry-operations">
+</section>
+</section>
+<section id="magnetic-symmetry-operations">
 <h2>Magnetic symmetry operations<a class="headerlink" href="#magnetic-symmetry-operations" title="Permalink to this headline">#</a></h2>
-<div class="section" id="n-operations">
+<section id="n-operations">
 <h3><code class="docutils literal notranslate"><span class="pre">n_operations</span></code><a class="headerlink" href="#n-operations" title="Permalink to this headline">#</a></h3>
 <p>Number of magnetic symmetry operations.</p>
-</div>
-<div class="section" id="rotations">
+</section>
+<section id="rotations">
 <h3><code class="docutils literal notranslate"><span class="pre">rotations</span></code><a class="headerlink" href="#rotations" title="Permalink to this headline">#</a></h3>
 <p>Rotation (matrix) parts of symmetry operations</p>
-</div>
-<div class="section" id="translations">
+</section>
+<section id="translations">
 <h3><code class="docutils literal notranslate"><span class="pre">translations</span></code><a class="headerlink" href="#translations" title="Permalink to this headline">#</a></h3>
 <p>Translation (vector) parts of symmetry operations</p>
-</div>
-<div class="section" id="time-reversals">
+</section>
+<section id="time-reversals">
 <h3><code class="docutils literal notranslate"><span class="pre">time_reversals</span></code><a class="headerlink" href="#time-reversals" title="Permalink to this headline">#</a></h3>
 <p>Time reversal part of magnetic symmetry operations.
 1 indicates time reversal operation, and 0 indicates an ordinary operation.</p>
-</div>
-</div>
-<div class="section" id="symmetrically-equivalent-atoms">
+</section>
+</section>
+<section id="symmetrically-equivalent-atoms">
 <h2>Symmetrically equivalent atoms<a class="headerlink" href="#symmetrically-equivalent-atoms" title="Permalink to this headline">#</a></h2>
-<div class="section" id="n-atoms-and-equivalent-atoms">
+<section id="n-atoms-and-equivalent-atoms">
 <h3><code class="docutils literal notranslate"><span class="pre">n_atoms</span></code> and <code class="docutils literal notranslate"><span class="pre">equivalent_atoms</span></code><a class="headerlink" href="#n-atoms-and-equivalent-atoms" title="Permalink to this headline">#</a></h3>
 <p>See <a class="reference internal" href="dataset.html#spglib-dataset-equivalent-atoms"><span class="std std-ref">equivalent_atoms</span></a>.</p>
-</div>
-</div>
-<div class="section" id="transformation-to-standardized-setting">
+</section>
+</section>
+<section id="transformation-to-standardized-setting">
 <h2>Transformation to standardized setting<a class="headerlink" href="#transformation-to-standardized-setting" title="Permalink to this headline">#</a></h2>
-<div class="section" id="transformation-matrix-and-origin-shift">
+<section id="transformation-matrix-and-origin-shift">
 <h3><code class="docutils literal notranslate"><span class="pre">transformation_matrix</span></code> and <code class="docutils literal notranslate"><span class="pre">origin_shift</span></code><a class="headerlink" href="#transformation-matrix-and-origin-shift" title="Permalink to this headline">#</a></h3>
 <p>See <a class="reference internal" href="dataset.html#dataset-origin-shift-and-transformation"><span class="std std-ref">Transformation matrix and origin shift</span></a>.</p>
-</div>
-</div>
-<div class="section" id="standardized-crystal-structure-after-idealization">
+</section>
+</section>
+<section id="standardized-crystal-structure-after-idealization">
 <h2>Standardized crystal structure after idealization<a class="headerlink" href="#standardized-crystal-structure-after-idealization" title="Permalink to this headline">#</a></h2>
-<div class="section" id="n-std-atoms-std-lattice-std-types-std-positions-and-std-rotation-matrix">
+<section id="n-std-atoms-std-lattice-std-types-std-positions-and-std-rotation-matrix">
 <h3><code class="docutils literal notranslate"><span class="pre">n_std_atoms</span></code>, <code class="docutils literal notranslate"><span class="pre">std_lattice</span></code>, <code class="docutils literal notranslate"><span class="pre">std_types</span></code>, <code class="docutils literal notranslate"><span class="pre">std_positions</span></code>, and <code class="docutils literal notranslate"><span class="pre">std_rotation_matrix</span></code><a class="headerlink" href="#n-std-atoms-std-lattice-std-types-std-positions-and-std-rotation-matrix" title="Permalink to this headline">#</a></h3>
 <p>See <a class="reference internal" href="dataset.html#dataset-idealized-cell"><span class="std std-ref">Standardized crystal structure after idealization</span></a>.</p>
-</div>
-<div class="section" id="std-tensors">
+</section>
+<section id="std-tensors">
 <h3><code class="docutils literal notranslate"><span class="pre">std_tensors</span></code><a class="headerlink" href="#std-tensors" title="Permalink to this headline">#</a></h3>
 <p>Site tensors of the standardized crystal structure <a class="reference internal" href="definition.html#def-idealize-cell"><span class="std std-ref">idealization</span></a>.</p>
-</div>
-</div>
-<div class="section" id="intermediate-data-in-symmetry-search">
+</section>
+</section>
+<section id="intermediate-data-in-symmetry-search">
 <h2>Intermediate data in symmetry search<a class="headerlink" href="#intermediate-data-in-symmetry-search" title="Permalink to this headline">#</a></h2>
-<div class="section" id="primitive-lattice">
+<section id="primitive-lattice">
 <h3><code class="docutils literal notranslate"><span class="pre">primitive_lattice</span></code><a class="headerlink" href="#primitive-lattice" title="Permalink to this headline">#</a></h3>
 <p>See <a class="reference internal" href="dataset.html#spglib-dataset-primitive-lattice"><span class="std std-ref">primitive_lattice</span></a>.</p>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
               </div>

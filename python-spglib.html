@@ -4,8 +4,9 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Spglib for Python &#8212; Spglib v.2.0.1</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Spglib for Python &#8212; Spglib v.2.0.2</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -20,7 +21,7 @@
     href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=62ba249389abaaa9ffc34bf36a076bdc1d65ee18" type="text/css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
     
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
@@ -29,7 +30,7 @@
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/scripts/sphinx-book-theme.js?digest=f31d14ad54b65d19161ba51d4ffff3a77ae00456"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -73,7 +74,7 @@
       
       
       
-      <h1 class="site-logo" id="site-title">Spglib v.2.0.1</h1>
+      <h1 class="site-logo" id="site-title">Spglib v.2.0.2</h1>
       
     </a>
 </div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
@@ -977,9 +978,9 @@ title="Print to PDF"
                 
               <div>
                 
-  <div class="section" id="spglib-for-python">
+  <section id="spglib-for-python">
 <span id="python-spglib"></span><h1>Spglib for Python<a class="headerlink" href="#spglib-for-python" title="Permalink to this headline">#</a></h1>
-<div class="section" id="installation">
+<section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">#</a></h2>
 <p>The source code is downloaded at
 <a class="reference external" href="https://github.com/spglib/spglib/tags">https://github.com/spglib/spglib/tags</a>.
@@ -993,7 +994,7 @@ package distribution services or from building using setup.py.</p>
 <p>The following pip and conda packages are made and maintained by
 <a class="reference external" href="https://github.com/jochym">Paweł T. Jochym</a>, which is of great help
 to keeping spglib handy and useful.</p>
-<div class="section" id="using-pip">
+<section id="using-pip">
 <h3>Using pip<a class="headerlink" href="#using-pip" title="Permalink to this headline">#</a></h3>
 <p>Numpy is required before the python-spglib installation. The command to
 install spglib is</p>
@@ -1015,15 +1016,15 @@ upgrade setuptools, e.g., by</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>% pip install --upgrade --user setuptools
 </pre></div>
 </div>
-</div>
-<div class="section" id="using-conda">
+</section>
+<section id="using-conda">
 <h3>Using conda<a class="headerlink" href="#using-conda" title="Permalink to this headline">#</a></h3>
 <p>Conda is another choice:</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>% conda install -c conda-forge spglib
 </pre></div>
 </div>
-</div>
-<div class="section" id="building-using-setup-py">
+</section>
+<section id="building-using-setup-py">
 <h3>Building using setup.py<a class="headerlink" href="#building-using-setup-py" title="Permalink to this headline">#</a></h3>
 <p>To manually install python-spglib using <code class="docutils literal notranslate"><span class="pre">setup.py</span></code>, python header
 files (python-dev), C-compiler (e.g., gcc, clang), and numpy are
@@ -1048,9 +1049,9 @@ setuptools, e.g., by</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>% pip install --upgrade --user setuptools
 </pre></div>
 </div>
-</div>
-</div>
-<div class="section" id="test">
+</section>
+</section>
+<section id="test">
 <h2>Test<a class="headerlink" href="#test" title="Permalink to this headline">#</a></h2>
 <p>The test script <code class="docutils literal notranslate"><span class="pre">test_spglib.py</span></code> is found in <code class="docutils literal notranslate"><span class="pre">python/test</span></code>
 directory. Got to this directory and run this script. It will be like below::</p>
@@ -1066,8 +1067,8 @@ directory. Got to this directory and run this script. It will be like below::</p
 <span class="n">OK</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="how-to-import-spglib-module">
+</section>
+<section id="how-to-import-spglib-module">
 <h2>How to import spglib module<a class="headerlink" href="#how-to-import-spglib-module" title="Permalink to this headline">#</a></h2>
 <p><strong>Change in version 1.9.0!</strong></p>
 <p>For versions 1.9.x or later:</p>
@@ -1085,19 +1086,19 @@ directory. Got to this directory and run this script. It will be like below::</p
     <span class="kn">from</span> <span class="nn">pyspglib</span> <span class="kn">import</span> <span class="n">spglib</span> <span class="k">as</span> <span class="n">spg</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="version-number">
+</section>
+<section id="version-number">
 <h2>Version number<a class="headerlink" href="#version-number" title="Permalink to this headline">#</a></h2>
 <p>In version 1.8.3 or later, the version number is obtained by
 <code class="docutils literal notranslate"><span class="pre">spglib.__version__</span></code> or <a class="reference internal" href="#method-get-version"><span class="std std-ref">get_version</span></a>.</p>
-</div>
-<div class="section" id="example">
+</section>
+<section id="example">
 <h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">#</a></h2>
 <p>Examples are found in <a class="reference external" href="https://github.com/spglib/spglib/tree/master/python/examples">examples</a> directory.</p>
-</div>
-<div class="section" id="variables">
+</section>
+<section id="variables">
 <span id="py-variables"></span><h2>Variables<a class="headerlink" href="#variables" title="Permalink to this headline">#</a></h2>
-<div class="section" id="crystal-structure-cell">
+<section id="crystal-structure-cell">
 <span id="py-variables-crystal-structure"></span><h3>Crystal structure (<code class="docutils literal notranslate"><span class="pre">cell</span></code>)<a class="headerlink" href="#crystal-structure-cell" title="Permalink to this headline">#</a></h3>
 <p>A crystal structure is given by a <strong>tuple</strong>. This tuple format is
 supported at version 1.9.1 or later.</p>
@@ -1137,7 +1138,7 @@ as a list of N floating point values.</p>
 </div>
 <p>Version 1.9.5 or later: The methods that use the crystal structure
 will return <code class="docutils literal notranslate"><span class="pre">None</span></code> when a crystal structure is not properly given.</p>
-<div class="section" id="ase-atoms-like-input-is-deprecated">
+<section id="ase-atoms-like-input-is-deprecated">
 <h4>ASE Atoms-like input is deprecated.<a class="headerlink" href="#ase-atoms-like-input-is-deprecated" title="Permalink to this headline">#</a></h4>
 <p>In the previous versions, ASE Atoms-like input was supported, but it
 is deprecated. It is recommended to use the above tuple-style input
@@ -1162,29 +1163,29 @@ that contains minimum set of methods is prepared in the
 <a class="reference external" href="https://github.com/spglib/spglib/tree/master/python/examples">examples</a>
 directory. <code class="docutils literal notranslate"><span class="pre">get_symmetry</span></code> with collinear polarizations is not supported when
 ASE Atoms-class instance.</p>
-</div>
-</div>
-<div class="section" id="symmetry-tolerance-symprec-angle-tolerance-mag-symprec">
+</section>
+</section>
+<section id="symmetry-tolerance-symprec-angle-tolerance-mag-symprec">
 <h3>Symmetry tolerance (<code class="docutils literal notranslate"><span class="pre">symprec</span></code>, <code class="docutils literal notranslate"><span class="pre">angle_tolerance</span></code>, <code class="docutils literal notranslate"><span class="pre">mag_symprec</span></code>)<a class="headerlink" href="#symmetry-tolerance-symprec-angle-tolerance-mag-symprec" title="Permalink to this headline">#</a></h3>
 <p>Distance tolerance in Cartesian coordinates to find crystal symmetry. For more
 details, see <a class="reference internal" href="variable.html#variables-symprec"><span class="std std-ref">symprec</span></a>, <a class="reference internal" href="variable.html#variables-angle-tolerance"><span class="std std-ref">angle_tolerance</span></a>, and
 <a class="reference internal" href="variable.html#variables-mag-symprec"><span class="std std-ref">mag_symprec</span></a>.</p>
-</div>
-</div>
-<div class="section" id="methods-version">
+</section>
+</section>
+<section id="methods-version">
 <h2>Methods (version)<a class="headerlink" href="#methods-version" title="Permalink to this headline">#</a></h2>
-<div class="section" id="get-version">
+<section id="get-version">
 <span id="method-get-version"></span><h3><code class="docutils literal notranslate"><span class="pre">get_version</span></code><a class="headerlink" href="#get-version" title="Permalink to this headline">#</a></h3>
 <p><strong>New in version 1.8.3</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">version</span> <span class="o">=</span> <span class="n">get_version</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>This returns version number of spglib by tuple with three numbers.</p>
-</div>
-</div>
-<div class="section" id="methods-error">
+</section>
+</section>
+<section id="methods-error">
 <h2>Methods (error)<a class="headerlink" href="#methods-error" title="Permalink to this headline">#</a></h2>
-<div class="section" id="get-error-message">
+<section id="get-error-message">
 <h3><code class="docutils literal notranslate"><span class="pre">get_error_message</span></code><a class="headerlink" href="#get-error-message" title="Permalink to this headline">#</a></h3>
 <p><strong>New in version 1.9.5</strong></p>
 <p><strong>Be careful. This method is not thread safe, i.e., only safely usable
@@ -1193,11 +1194,11 @@ when calling one spglib method per process.</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">error_message</span> <span class="o">=</span> <span class="n">get_error_message</span><span class="p">()</span>
 </pre></div>
 </div>
-</div>
-</div>
-<div class="section" id="method-space-group-symmetry-search">
+</section>
+</section>
+<section id="method-space-group-symmetry-search">
 <h2>Method (space-group symmetry search)<a class="headerlink" href="#method-space-group-symmetry-search" title="Permalink to this headline">#</a></h2>
-<div class="section" id="get-symmetry">
+<section id="get-symmetry">
 <span id="py-method-get-symmetry"></span><h3><code class="docutils literal notranslate"><span class="pre">get_symmetry</span></code><a class="headerlink" href="#get-symmetry" title="Permalink to this headline">#</a></h3>
 <p><strong><code class="docutils literal notranslate"><span class="pre">get_symmetry</span></code> with <code class="docutils literal notranslate"><span class="pre">is_magnetic=True</span></code> is deprecated at version 2.0. Use <a class="reference internal" href="#py-get-magnetic-symmetry"><span class="std std-ref">get_magnetic_symmetry</span></a> for magnetic symmetry search.</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">symmetry</span> <span class="o">=</span> <span class="n">get_symmetry</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">angle_tolerance</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">mag_symprec</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">)</span>
@@ -1235,8 +1236,8 @@ is returned.</p>
 <p>If <code class="docutils literal notranslate"><span class="pre">cell</span></code> is given as a tuple and collinear polarizations are given
 as the fourth element of this tuple, symmetry operations are searched
 considering this freedom. In ASE Atoms-class object, this is not supported.</p>
-</div>
-<div class="section" id="get-symmetry-dataset">
+</section>
+<section id="get-symmetry-dataset">
 <span id="py-method-get-symmetry-dataset"></span><h3><code class="docutils literal notranslate"><span class="pre">get_symmetry_dataset</span></code><a class="headerlink" href="#get-symmetry-dataset" title="Permalink to this headline">#</a></h3>
 <p><strong>At version 1.9.4, the member ‘choice’ is added.</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span> <span class="o">=</span> <span class="n">get_symmetry_dataset</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">angle_tolerance</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">hall_number</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -1304,11 +1305,11 @@ respectively.</p></li>
 standardized crystal structure to the atoms in the primitive cell.</p></li>
 </ul>
 <p>When the search failed, <code class="docutils literal notranslate"><span class="pre">None</span></code> is returned.</p>
-</div>
-</div>
-<div class="section" id="method-space-group-type-search">
+</section>
+</section>
+<section id="method-space-group-type-search">
 <h2>Method (space-group type search)<a class="headerlink" href="#method-space-group-type-search" title="Permalink to this headline">#</a></h2>
-<div class="section" id="get-spacegroup">
+<section id="get-spacegroup">
 <h3><code class="docutils literal notranslate"><span class="pre">get_spacegroup</span></code><a class="headerlink" href="#get-spacegroup" title="Permalink to this headline">#</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">spacegroup</span> <span class="o">=</span> <span class="n">get_spacegroup</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">angle_tolerance</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">symbol_type</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 </pre></div>
@@ -1316,11 +1317,11 @@ standardized crystal structure to the atoms in the primitive cell.</p></li>
 <p>International space group short symbol and number are obtained as a
 string. With <code class="docutils literal notranslate"><span class="pre">symbol_type=1</span></code>, Schoenflies symbol is given instead of
 international symbol.</p>
-</div>
-</div>
-<div class="section" id="method-standardization-and-finding-primitive">
+</section>
+</section>
+<section id="method-standardization-and-finding-primitive">
 <h2>Method (standardization and finding primitive)<a class="headerlink" href="#method-standardization-and-finding-primitive" title="Permalink to this headline">#</a></h2>
-<div class="section" id="standardize-cell">
+<section id="standardize-cell">
 <h3><code class="docutils literal notranslate"><span class="pre">standardize_cell</span></code><a class="headerlink" href="#standardize-cell" title="Permalink to this headline">#</a></h3>
 <p><strong>New in version 1.8.x</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">lattice</span><span class="p">,</span> <span class="n">scaled_positions</span><span class="p">,</span> <span class="n">numbers</span> <span class="o">=</span> <span class="n">standardize_cell</span><span class="p">(</span><span class="n">bulk</span><span class="p">,</span> <span class="n">to_primitive</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">no_idealize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">angle_tolerance</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">)</span>
@@ -1335,8 +1336,8 @@ failed, <code class="docutils literal notranslate"><span class="pre">None</span>
 of the setting, see the documentation of <code class="docutils literal notranslate"><span class="pre">hall_number</span></code> argument of
 <a class="reference internal" href="#py-method-get-symmetry-dataset"><span class="std std-ref">get_symmetry_dataset</span></a>.  More detailed explanation is
 shown in the spglib (C-API) document.</p>
-</div>
-<div class="section" id="find-primitive">
+</section>
+<section id="find-primitive">
 <h3><code class="docutils literal notranslate"><span class="pre">find_primitive</span></code><a class="headerlink" href="#find-primitive" title="Permalink to this headline">#</a></h3>
 <p><strong>Behaviour changed in version 1.8.x</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">lattice</span><span class="p">,</span> <span class="n">scaled_positions</span><span class="p">,</span> <span class="n">numbers</span> <span class="o">=</span> <span class="n">find_primitive</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">angle_tolerance</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">)</span>
@@ -1348,8 +1349,8 @@ numbers (a 1D numpy array) is returned. When the search failed,
 <code class="docutils literal notranslate"><span class="pre">None</span></code> is returned.</p>
 <p>The detailed control of standardization of unit cell can be done using
 <code class="docutils literal notranslate"><span class="pre">standardize_cell</span></code>.</p>
-</div>
-<div class="section" id="refine-cell">
+</section>
+<section id="refine-cell">
 <h3><code class="docutils literal notranslate"><span class="pre">refine_cell</span></code><a class="headerlink" href="#refine-cell" title="Permalink to this headline">#</a></h3>
 <p><strong>Behaviour changed in version 1.8.x</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">lattice</span><span class="p">,</span> <span class="n">scaled_positions</span><span class="p">,</span> <span class="n">numbers</span> <span class="o">=</span> <span class="n">refine_cell</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">angle_tolerance</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">)</span>
@@ -1364,11 +1365,11 @@ documentation of <code class="docutils literal notranslate"><span class="pre">ha
 <a class="reference internal" href="#py-method-get-symmetry-dataset"><span class="std std-ref">get_symmetry_dataset</span></a>.</p>
 <p>The detailed control of standardization of unit cell is achieved using
 <code class="docutils literal notranslate"><span class="pre">standardize_cell</span></code>.</p>
-</div>
-</div>
-<div class="section" id="method-space-group-dataset-access">
+</section>
+</section>
+<section id="method-space-group-dataset-access">
 <h2>Method (space-group dataset access)<a class="headerlink" href="#method-space-group-dataset-access" title="Permalink to this headline">#</a></h2>
-<div class="section" id="get-symmetry-from-database">
+<section id="get-symmetry-from-database">
 <span id="py-method-get-symmetry-from-database"></span><h3><code class="docutils literal notranslate"><span class="pre">get_symmetry_from_database</span></code><a class="headerlink" href="#get-symmetry-from-database" title="Permalink to this headline">#</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">symmetry</span> <span class="o">=</span> <span class="n">get_symmetry_from_database</span><span class="p">(</span><span class="n">hall_number</span><span class="p">)</span>
 </pre></div>
@@ -1379,8 +1380,8 @@ translation parts are accessed by the keys <code class="docutils literal notrans
 <code class="docutils literal notranslate"><span class="pre">translations</span></code>, respectively. The definition of <code class="docutils literal notranslate"><span class="pre">hall_number</span></code> is
 found at <a class="reference internal" href="dataset.html#dataset-spg-get-dataset-spacegroup-type"><span class="std std-ref">Space group type</span></a>.</p>
 <p>When something wrong happened, <code class="docutils literal notranslate"><span class="pre">None</span></code> is returned.</p>
-</div>
-<div class="section" id="get-spacegroup-type">
+</section>
+<section id="get-spacegroup-type">
 <span id="py-method-get-spacegroup-type"></span><h3><code class="docutils literal notranslate"><span class="pre">get_spacegroup_type</span></code><a class="headerlink" href="#get-spacegroup-type" title="Permalink to this headline">#</a></h3>
 <ul class="simple">
 <li><p><strong>New at version 1.9.4</strong></p></li>
@@ -1416,8 +1417,8 @@ dictionary is as follows:</p>
 <code class="docutils literal notranslate"><span class="pre">spacegroup_type['pointgroup_international']</span></code> is equivalent to
 <code class="docutils literal notranslate"><span class="pre">dataset['pointgroup_symbol']</span></code> of <code class="docutils literal notranslate"><span class="pre">get_symmetry_dataset</span></code>.</p>
 <p>When something wrong happened, <code class="docutils literal notranslate"><span class="pre">None</span></code> is returned.</p>
-</div>
-<div class="section" id="get-spacegroup-type-from-symmetry">
+</section>
+<section id="get-spacegroup-type-from-symmetry">
 <span id="py-method-get-spacegroup-type-from-symmetry"></span><h3><code class="docutils literal notranslate"><span class="pre">get_spacegroup_type_from_symmetry</span></code><a class="headerlink" href="#get-spacegroup-type-from-symmetry" title="Permalink to this headline">#</a></h3>
 <p><strong>New at version 2.0</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">spacegroup_type</span> <span class="o">=</span> <span class="n">get_spacegroup_type_from_symmetry</span><span class="p">(</span><span class="n">rotations</span><span class="p">,</span> <span class="n">translations</span><span class="p">,</span> <span class="n">lattice</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
@@ -1431,11 +1432,11 @@ distortion is small. The aim of making this feature is to find space-group-type
 for the set of symmetry operations given by the other source than spglib. The
 parameter <code class="docutils literal notranslate"><span class="pre">lattice</span></code> is used as the distance measure for <code class="docutils literal notranslate"><span class="pre">symprec</span></code>. If this
 is not given, the cubic basis vector whose lengths are one is used.</p>
-</div>
-</div>
-<div class="section" id="methods-magnetic-symmetry">
+</section>
+</section>
+<section id="methods-magnetic-symmetry">
 <h2>Methods (magnetic symmetry)<a class="headerlink" href="#methods-magnetic-symmetry" title="Permalink to this headline">#</a></h2>
-<div class="section" id="get-magnetic-symmetry">
+<section id="get-magnetic-symmetry">
 <span id="py-get-magnetic-symmetry"></span><h3><code class="docutils literal notranslate"><span class="pre">get_magnetic_symmetry</span></code><a class="headerlink" href="#get-magnetic-symmetry" title="Permalink to this headline">#</a></h3>
 <p><strong>Experimental: new at version 2.0</strong></p>
 <p>Find magnetic symmetry operations from a crystal structure and site tensors</p>
@@ -1475,8 +1476,8 @@ Time reversal part of magnetic symmetry operations.
 an ordinary operation.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">equivalent_atoms</span></code></p></li>
 </ul>
-</div>
-<div class="section" id="get-magnetic-symmetry-dataset">
+</section>
+<section id="get-magnetic-symmetry-dataset">
 <h3><code class="docutils literal notranslate"><span class="pre">get_magnetic_symmetry_dataset</span></code><a class="headerlink" href="#get-magnetic-symmetry-dataset" title="Permalink to this headline">#</a></h3>
 <p><strong>Experimental: new at version 2.0</strong></p>
 <p>Search magnetic symmetry dataset from an input cell.</p>
@@ -1498,8 +1499,8 @@ an ordinary operation.</p></li>
 </ul>
 <p>Returned <code class="docutils literal notranslate"><span class="pre">dataset</span></code> is a dictionary.
 The description of its keys is given at <a class="reference internal" href="magnetic_dataset.html#magnetic-spglib-dataset"><span class="std std-ref">Magnetic Spglib dataset (Experimental)</span></a>.</p>
-</div>
-<div class="section" id="get-magnetic-spacegroup-type">
+</section>
+<section id="get-magnetic-spacegroup-type">
 <h3><code class="docutils literal notranslate"><span class="pre">get_magnetic_spacegroup_type</span></code><a class="headerlink" href="#get-magnetic-spacegroup-type" title="Permalink to this headline">#</a></h3>
 <p><strong>Experimental: new at version 2.0</strong></p>
 <p>Translate UNI number to magnetic space group type information.</p>
@@ -1516,8 +1517,8 @@ The description of its keys is given at <a class="reference internal" href="magn
 </pre></div>
 </div>
 <p>See <a class="reference internal" href="api.html#api-get-magnetic-spacegroup-type"><span class="std std-ref">spg_get_magnetic_spacegroup_type</span></a> for these descriptions.</p>
-</div>
-<div class="section" id="get-magnetic-symmetry-from-database">
+</section>
+<section id="get-magnetic-symmetry-from-database">
 <h3><code class="docutils literal notranslate"><span class="pre">get_magnetic_symmetry_from_database</span></code><a class="headerlink" href="#get-magnetic-symmetry-from-database" title="Permalink to this headline">#</a></h3>
 <p><strong>Experimental: new at version 2.0</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">symmetry</span> <span class="o">=</span> <span class="n">get_magnetic_symmetry_from_database</span><span class="p">(</span><span class="n">uni_number</span><span class="p">,</span> <span class="n">hall_number</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -1525,11 +1526,11 @@ The description of its keys is given at <a class="reference internal" href="magn
 </div>
 <p>Return magnetic symmetry operations corresponding to <code class="docutils literal notranslate"><span class="pre">uni_number</span></code> between 1 and 1651.
 Optionally alternative settings can be specified with <code class="docutils literal notranslate"><span class="pre">hall_number</span></code>.</p>
-</div>
-</div>
-<div class="section" id="methods-lattice-reduction">
+</section>
+</section>
+<section id="methods-lattice-reduction">
 <h2>Methods (lattice reduction)<a class="headerlink" href="#methods-lattice-reduction" title="Permalink to this headline">#</a></h2>
-<div class="section" id="niggli-reduce">
+<section id="niggli-reduce">
 <h3><code class="docutils literal notranslate"><span class="pre">niggli_reduce</span></code><a class="headerlink" href="#niggli-reduce" title="Permalink to this headline">#</a></h3>
 <p><strong>New at version 1.9.4</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">niggli_lattice</span> <span class="o">=</span> <span class="n">niggli_reduce</span><span class="p">(</span><span class="n">lattice</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
@@ -1552,8 +1553,8 @@ combination of basis vectors with integer coefficients without
 rotating coordinates. Therefore the transformation matrix is obtained
 by <span class="math notranslate nohighlight">\(\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} ) ( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}\)</span> and the matrix
 elements have to be almost integers.</p>
-</div>
-<div class="section" id="delaunay-reduce">
+</section>
+<section id="delaunay-reduce">
 <h3><code class="docutils literal notranslate"><span class="pre">delaunay_reduce</span></code><a class="headerlink" href="#delaunay-reduce" title="Permalink to this headline">#</a></h3>
 <p><strong>New at version 1.9.4</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">delaunay_lattice</span> <span class="o">=</span> <span class="n">delaunay_reduce</span><span class="p">(</span><span class="n">lattice</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
@@ -1575,11 +1576,11 @@ combination of basis vectors with integer coefficients without
 rotating coordinates. Therefore the transformation matrix is obtained
 by <span class="math notranslate nohighlight">\(\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} ) ( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}\)</span> and the matrix
 elements have to be almost integers.</p>
-</div>
-</div>
-<div class="section" id="methods-kpoints">
+</section>
+</section>
+<section id="methods-kpoints">
 <h2>Methods (kpoints)<a class="headerlink" href="#methods-kpoints" title="Permalink to this headline">#</a></h2>
-<div class="section" id="get-ir-reciprocal-mesh">
+<section id="get-ir-reciprocal-mesh">
 <h3><code class="docutils literal notranslate"><span class="pre">get_ir_reciprocal_mesh</span></code><a class="headerlink" href="#get-ir-reciprocal-mesh" title="Permalink to this headline">#</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mapping</span><span class="p">,</span> <span class="n">grid</span> <span class="o">=</span> <span class="n">get_ir_reciprocal_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">cell</span><span class="p">,</span> <span class="n">is_shift</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
 </pre></div>
@@ -1641,11 +1642,11 @@ the irreducible k-point indices that are obtained by</p>
 <span class="nb">print</span><span class="p">((</span><span class="n">grid</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">mapping</span><span class="p">)]</span> <span class="o">+</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span> <span class="o">/</span> <span class="n">mesh</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-</div>
-<div class="section" id="method-deprecated">
+</section>
+</section>
+<section id="method-deprecated">
 <h2>Method (deprecated)<a class="headerlink" href="#method-deprecated" title="Permalink to this headline">#</a></h2>
-<div class="section" id="get-hall-number-from-symmetry">
+<section id="get-hall-number-from-symmetry">
 <h3><code class="docutils literal notranslate"><span class="pre">get_hall_number_from_symmetry</span></code><a class="headerlink" href="#get-hall-number-from-symmetry" title="Permalink to this headline">#</a></h3>
 <p><strong>Deprecated at version 2.0. This function is replaced by
 <a class="reference internal" href="#py-method-get-spacegroup-type-from-symmetry"><span class="std std-ref">get_spacegroup_type_from_symmetry</span></a>.</strong></p>
@@ -1666,9 +1667,9 @@ coordinates and so it should be small like <code class="docutils literal notrans
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">get_hall_number_from_symmetry</span><span class="p">(</span><span class="n">rotations</span><span class="p">,</span> <span class="n">translations</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
               </div>

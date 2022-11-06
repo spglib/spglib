@@ -4,8 +4,9 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Spglib dataset &#8212; Spglib v.2.0.1</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Spglib dataset &#8212; Spglib v.2.0.2</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -20,7 +21,7 @@
     href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=62ba249389abaaa9ffc34bf36a076bdc1d65ee18" type="text/css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
     
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
@@ -29,7 +30,7 @@
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/scripts/sphinx-book-theme.js?digest=f31d14ad54b65d19161ba51d4ffff3a77ae00456"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -73,7 +74,7 @@
       
       
       
-      <h1 class="site-logo" id="site-title">Spglib v.2.0.1</h1>
+      <h1 class="site-logo" id="site-title">Spglib v.2.0.2</h1>
       
     </a>
 </div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
@@ -809,7 +810,7 @@ title="Print to PDF"
                 
               <div>
                 
-  <div class="section" id="spglib-dataset">
+  <section id="spglib-dataset">
 <span id="id1"></span><h1>Spglib dataset<a class="headerlink" href="#spglib-dataset" title="Permalink to this headline">#</a></h1>
 <p><strong>At version 1.9.4, SpglibDataset was modified.</strong> The member
 name <code class="docutils literal notranslate"><span class="pre">setting</span></code> is changed to <code class="docutils literal notranslate"><span class="pre">choice</span></code> and <code class="docutils literal notranslate"><span class="pre">pointgroup_number</span></code> is
@@ -843,36 +844,36 @@ removed.</p>
 <span class="p">}</span><span class="w"> </span><span class="n">SpglibDataset</span><span class="p">;</span><span class="w"></span>
 </pre></div>
 </div>
-<div class="section" id="space-group-type">
+<section id="space-group-type">
 <span id="dataset-spg-get-dataset-spacegroup-type"></span><h2>Space group type<a class="headerlink" href="#space-group-type" title="Permalink to this headline">#</a></h2>
-<div class="section" id="spacegroup-number">
+<section id="spacegroup-number">
 <h3><code class="docutils literal notranslate"><span class="pre">spacegroup_number</span></code><a class="headerlink" href="#spacegroup-number" title="Permalink to this headline">#</a></h3>
 <p>The space group type number defined in International Tables for
 Crystallography (ITA).</p>
-</div>
-<div class="section" id="hall-number">
+</section>
+<section id="hall-number">
 <span id="spglib-dataset-hall-number"></span><h3><code class="docutils literal notranslate"><span class="pre">hall_number</span></code><a class="headerlink" href="#hall-number" title="Permalink to this headline">#</a></h3>
 <p>The serial number from 1 to 530 which are found at <a class="reference external" href="https://yseto.net/?page_id=29%3E">list of space
 groups (Seto’s web site)</a>. Be
 sure that this is not a standard crystallographic definition as far as
 the author of spglib knows.</p>
-</div>
-<div class="section" id="international-symbol">
+</section>
+<section id="international-symbol">
 <h3><code class="docutils literal notranslate"><span class="pre">international_symbol</span></code><a class="headerlink" href="#international-symbol" title="Permalink to this headline">#</a></h3>
 <p>The (full) Hermann–Mauguin notation of space group type is given by .</p>
-</div>
-<div class="section" id="hall-symbol">
+</section>
+<section id="hall-symbol">
 <h3><code class="docutils literal notranslate"><span class="pre">hall_symbol</span></code><a class="headerlink" href="#hall-symbol" title="Permalink to this headline">#</a></h3>
 <p>The Hall symbol is stored here.</p>
-</div>
-<div class="section" id="choice">
+</section>
+<section id="choice">
 <h3><code class="docutils literal notranslate"><span class="pre">choice</span></code><a class="headerlink" href="#choice" title="Permalink to this headline">#</a></h3>
 <p>The information on unique axis, setting or cell choices.</p>
-</div>
-</div>
-<div class="section" id="symmetry-operations">
+</section>
+</section>
+<section id="symmetry-operations">
 <h2>Symmetry operations<a class="headerlink" href="#symmetry-operations" title="Permalink to this headline">#</a></h2>
-<div class="section" id="rotations-translations-and-n-operations">
+<section id="rotations-translations-and-n-operations">
 <h3><code class="docutils literal notranslate"><span class="pre">rotations</span></code>, <code class="docutils literal notranslate"><span class="pre">translations</span></code>, and <code class="docutils literal notranslate"><span class="pre">n_operations</span></code><a class="headerlink" href="#rotations-translations-and-n-operations" title="Permalink to this headline">#</a></h3>
 <p>The symmetry operations of the input unit cell are stored in
 <code class="docutils literal notranslate"><span class="pre">rotations</span></code> and <code class="docutils literal notranslate"><span class="pre">translations</span></code>. A crystallographic symmetry
@@ -881,16 +882,16 @@ of rotation <span class="math notranslate nohighlight">\(\boldsymbol{W}\)</span>
 <span class="math notranslate nohighlight">\(\boldsymbol{w}\)</span> parts with the same index. Number of symmetry
 operations is given as <code class="docutils literal notranslate"><span class="pre">n_operations</span></code>. The detailed explanation of
 the values is found at <a class="reference internal" href="api.html#api-spg-get-symmetry"><span class="std std-ref">spg_get_symmetry</span></a>.</p>
-</div>
-</div>
-<div class="section" id="wyckoff-positions-and-symmetrically-equivalent-atoms">
+</section>
+</section>
+<section id="wyckoff-positions-and-symmetrically-equivalent-atoms">
 <span id="dataset-spg-get-dataset-site-symmetry"></span><h2>Wyckoff positions and symmetrically equivalent atoms<a class="headerlink" href="#wyckoff-positions-and-symmetrically-equivalent-atoms" title="Permalink to this headline">#</a></h2>
-<div class="section" id="n-atoms">
+<section id="n-atoms">
 <h3><code class="docutils literal notranslate"><span class="pre">n_atoms</span></code><a class="headerlink" href="#n-atoms" title="Permalink to this headline">#</a></h3>
 <p>Number of atoms in the input unit cell. This gives the numbers of
 elements in <code class="docutils literal notranslate"><span class="pre">wyckoffs</span></code> and <code class="docutils literal notranslate"><span class="pre">equivalent_atoms</span></code>.</p>
-</div>
-<div class="section" id="wyckoffs">
+</section>
+<section id="wyckoffs">
 <h3><code class="docutils literal notranslate"><span class="pre">wyckoffs</span></code><a class="headerlink" href="#wyckoffs" title="Permalink to this headline">#</a></h3>
 <p>This gives the information of Wyckoff letters by integer
 numbers, where 0, 1, 2, <span class="math notranslate nohighlight">\(\ldots\)</span>, represent the Wyckoff letters
@@ -899,15 +900,15 @@ of the input unit cell in this order. Therefore the number of elements in
 <code class="docutils literal notranslate"><span class="pre">wyckoffs</span></code> is same as the number of atoms in the input unit cell,
 which is given by <code class="docutils literal notranslate"><span class="pre">n_atoms</span></code>.</p>
 <p>This is determined from the symmetry of the primitive cell.</p>
-</div>
-<div class="section" id="site-symmetry-symbols">
+</section>
+<section id="site-symmetry-symbols">
 <h3><code class="docutils literal notranslate"><span class="pre">site_symmetry_symbols</span></code><a class="headerlink" href="#site-symmetry-symbols" title="Permalink to this headline">#</a></h3>
 <p>This gives site-symmetry symbols. These are valid for the standard
 settings. For different settings and choices belonging to the same
 space group type, the same set of the symbols is returned.</p>
 <p>This is determined from the symmetry of the primitive cell.</p>
-</div>
-<div class="section" id="equivalent-atoms">
+</section>
+<section id="equivalent-atoms">
 <span id="spglib-dataset-equivalent-atoms"></span><h3><code class="docutils literal notranslate"><span class="pre">equivalent_atoms</span></code><a class="headerlink" href="#equivalent-atoms" title="Permalink to this headline">#</a></h3>
 <p>This gives the mapping table from the atomic indices of the input unit
 cell to the atomic indices of symmetrically independent atom, such as
@@ -921,17 +922,17 @@ cell, which is given by <code class="docutils literal notranslate"><span class="
 equivalent atoms. <code class="docutils literal notranslate"><span class="pre">equivalent_atoms</span></code> and <code class="docutils literal notranslate"><span class="pre">crystallographic_orbits</span></code>
 are almost equivalent, but they can be different in a special
 case as written in <a class="reference internal" href="api.html#api-spg-get-symmetry"><span class="std std-ref">spg_get_symmetry</span></a>.</p>
-</div>
-<div class="section" id="crystallographic-orbits">
+</section>
+<section id="crystallographic-orbits">
 <h3><code class="docutils literal notranslate"><span class="pre">crystallographic_orbits</span></code><a class="headerlink" href="#crystallographic-orbits" title="Permalink to this headline">#</a></h3>
 <p><strong>New at version 1.15</strong></p>
 <p>This is almost equivalent to <code class="docutils literal notranslate"><span class="pre">equivalent_atoms</span></code>. But symmetry of the
 primitive cell is used to determine the symmetrically equivalent atoms.</p>
-</div>
-</div>
-<div class="section" id="transformation-matrix-and-origin-shift">
+</section>
+</section>
+<section id="transformation-matrix-and-origin-shift">
 <span id="dataset-origin-shift-and-transformation"></span><h2>Transformation matrix and origin shift<a class="headerlink" href="#transformation-matrix-and-origin-shift" title="Permalink to this headline">#</a></h2>
-<div class="section" id="id2">
+<section id="id2">
 <h3><code class="docutils literal notranslate"><span class="pre">transformation_matrix</span></code> and <code class="docutils literal notranslate"><span class="pre">origin_shift</span></code><a class="headerlink" href="#id2" title="Permalink to this headline">#</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">transformation_matrix</span></code> (<span class="math notranslate nohighlight">\(\boldsymbol{P}\)</span>) and
 <code class="docutils literal notranslate"><span class="pre">origin_shift</span></code> (<span class="math notranslate nohighlight">\(\boldsymbol{p}\)</span>) are obtained as a result of
@@ -959,11 +960,11 @@ the current definition as follows:</p>
 ) \boldsymbol{P}_\text{old} \;\; \text{and} \;\; \boldsymbol{x}_\mathrm{s} =
 \boldsymbol{P}^{-1}_\text{old}\boldsymbol{x} - \boldsymbol{p}_\text{old}
 \;\;(\mathrm{mod}\; \mathbf{1}).\]</div>
-</div>
-</div>
-<div class="section" id="standardized-crystal-structure-after-idealization">
+</section>
+</section>
+<section id="standardized-crystal-structure-after-idealization">
 <span id="dataset-idealized-cell"></span><h2>Standardized crystal structure after idealization<a class="headerlink" href="#standardized-crystal-structure-after-idealization" title="Permalink to this headline">#</a></h2>
-<div class="section" id="n-std-atoms-std-lattice-std-types-and-std-positions">
+<section id="n-std-atoms-std-lattice-std-types-and-std-positions">
 <h3><code class="docutils literal notranslate"><span class="pre">n_std_atoms</span></code>, <code class="docutils literal notranslate"><span class="pre">std_lattice</span></code>, <code class="docutils literal notranslate"><span class="pre">std_types</span></code>, and <code class="docutils literal notranslate"><span class="pre">std_positions</span></code><a class="headerlink" href="#n-std-atoms-std-lattice-std-types-and-std-positions" title="Permalink to this headline">#</a></h3>
 <p>The standardized crystal structure after <a class="reference internal" href="definition.html#def-idealize-cell"><span class="std std-ref">idealization</span></a> corresponding to a Hall symbol is stored in
 <code class="docutils literal notranslate"><span class="pre">n_std_atoms</span></code>, <code class="docutils literal notranslate"><span class="pre">std_lattice</span></code>, <code class="docutils literal notranslate"><span class="pre">std_types</span></code>, and
@@ -973,8 +974,8 @@ input unit cell.</p>
 <p><strong>At versions 1.7.x and 1.8 or before</strong>, the variable names of the
 members corresponding to those above are <code class="docutils literal notranslate"><span class="pre">n_brv_atoms</span></code>,
 <code class="docutils literal notranslate"><span class="pre">brv_lattice</span></code>, <code class="docutils literal notranslate"><span class="pre">brv_types</span></code>, and <code class="docutils literal notranslate"><span class="pre">brv_positions</span></code>, respectively.</p>
-</div>
-<div class="section" id="std-rotation-matrix">
+</section>
+<section id="std-rotation-matrix">
 <span id="dataset-std-rotation-matrix"></span><h3><code class="docutils literal notranslate"><span class="pre">std_rotation_matrix</span></code><a class="headerlink" href="#std-rotation-matrix" title="Permalink to this headline">#</a></h3>
 <p><strong>New in version 1.11</strong></p>
 <p>Rotation matrix that rotates the standardized crystal structure
@@ -994,8 +995,8 @@ follows. Make cubes of <span class="math notranslate nohighlight">\(( \mathbf{a}
 <span class="math notranslate nohighlight">\(\mathrm{L} = \begin{pmatrix}\frac{\mathbf{a}}{|\mathbf{a}|} &amp; \frac{(\mathbf{a} \times \mathbf{b}) \times \mathbf{a}}{|(\mathbf{a} \times \mathbf{b}) \times \mathbf{a}|} &amp; \frac{\mathbf{a} \times \mathbf{b}}{|\mathbf{a} \times \mathbf{b}|} \end{pmatrix}\)</span>. Watching
 <span class="math notranslate nohighlight">\(\mathrm{L}\)</span>s as <span class="math notranslate nohighlight">\(3\times 3\)</span> matrices, <span class="math notranslate nohighlight">\(\boldsymbol{R}\)</span> is
 obtained by solving <span class="math notranslate nohighlight">\(\bar{\mathrm{L}}_\mathrm{s} = \boldsymbol{R} \mathrm{L}_\mathrm{s}\)</span>.</p>
-</div>
-<div class="section" id="std-mapping-to-primitive">
+</section>
+<section id="std-mapping-to-primitive">
 <h3><code class="docutils literal notranslate"><span class="pre">std_mapping_to_primitive</span></code><a class="headerlink" href="#std-mapping-to-primitive" title="Permalink to this headline">#</a></h3>
 <p>This is available <strong>at versions 1.10 or later</strong>. This gives a list of
 atomic indices in the primitive cell of the standardized crystal
@@ -1003,11 +1004,11 @@ structure, where the same number presents the same atom in the
 primitive cell. By collective the atoms having the same number, a set
 of relative lattice points in the standardized crystal structure
 is obtained.</p>
-</div>
-</div>
-<div class="section" id="crystallographic-point-group">
+</section>
+</section>
+<section id="crystallographic-point-group">
 <h2>Crystallographic point group<a class="headerlink" href="#crystallographic-point-group" title="Permalink to this headline">#</a></h2>
-<div class="section" id="pointgroup-symbol">
+<section id="pointgroup-symbol">
 <h3><code class="docutils literal notranslate"><span class="pre">pointgroup_symbol</span></code><a class="headerlink" href="#pointgroup-symbol" title="Permalink to this headline">#</a></h3>
 <p><strong>New in version 1.8.1</strong></p>
 <p><code class="docutils literal notranslate"><span class="pre">pointgroup_symbol</span></code> is the symbol of the crystallographic point
@@ -1018,29 +1019,29 @@ point groups</p>
    <span class="mi">432</span><span class="p">,</span> <span class="o">-</span><span class="mi">43</span><span class="n">m</span><span class="p">,</span> <span class="n">m</span><span class="o">-</span><span class="mi">3</span><span class="n">m</span>
 </pre></div>
 </div>
-</div>
-</div>
-<div class="section" id="intermediate-data-in-symmetry-search">
+</section>
+</section>
+<section id="intermediate-data-in-symmetry-search">
 <h2>Intermediate data in symmetry search<a class="headerlink" href="#intermediate-data-in-symmetry-search" title="Permalink to this headline">#</a></h2>
 <p>A primitive cell is searched from the translational symmetry. This
 primitive cell is given by <code class="docutils literal notranslate"><span class="pre">primitive_lattice</span></code> and
 <code class="docutils literal notranslate"><span class="pre">mapping_to_primitive</span></code> below.</p>
-<div class="section" id="primitive-lattice">
+<section id="primitive-lattice">
 <span id="spglib-dataset-primitive-lattice"></span><h3><code class="docutils literal notranslate"><span class="pre">primitive_lattice</span></code><a class="headerlink" href="#primitive-lattice" title="Permalink to this headline">#</a></h3>
 <p><strong>New at version 1.15</strong></p>
 <p>Non-standardized basis vectors of a primitive cell in the input
 cell.</p>
-</div>
-<div class="section" id="mapping-to-primitive">
+</section>
+<section id="mapping-to-primitive">
 <h3><code class="docutils literal notranslate"><span class="pre">mapping_to_primitive</span></code><a class="headerlink" href="#mapping-to-primitive" title="Permalink to this headline">#</a></h3>
 <p>In version 1.10 or later, <code class="docutils literal notranslate"><span class="pre">mapping_to_primitive</span></code> is available. This
 gives a list of atomic indices in the primitive cell of the input
 crystal structure, where the same number presents the same atom in the
 primitive cell. By collective the atoms having the same number, a set
 of relative lattice points in the input crystal structure is obtained.</p>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
               </div>

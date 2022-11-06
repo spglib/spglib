@@ -4,8 +4,9 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Flags to control action of magnetic symmetry operations &#8212; Spglib v.2.0.1</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Flags to control action of magnetic symmetry operations &#8212; Spglib v.2.0.2</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -20,7 +21,7 @@
     href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=62ba249389abaaa9ffc34bf36a076bdc1d65ee18" type="text/css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
     
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
@@ -29,7 +30,7 @@
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/scripts/sphinx-book-theme.js?digest=f31d14ad54b65d19161ba51d4ffff3a77ae00456"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -72,7 +73,7 @@
       
       
       
-      <h1 class="site-logo" id="site-title">Spglib v.2.0.1</h1>
+      <h1 class="site-logo" id="site-title">Spglib v.2.0.2</h1>
       
     </a>
 </div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
@@ -386,7 +387,7 @@ title="Print to PDF"
                 
               <div>
                 
-  <div class="section" id="flags-to-control-action-of-magnetic-symmetry-operations">
+  <section id="flags-to-control-action-of-magnetic-symmetry-operations">
 <span id="magnetic-action-flags"></span><h1>Flags to control action of magnetic symmetry operations<a class="headerlink" href="#flags-to-control-action-of-magnetic-symmetry-operations" title="Permalink to this headline">#</a></h1>
 <ul class="simple">
 <li><p>Narrow functionality of <code class="docutils literal notranslate"><span class="pre">is_magnetic</span></code> and rename to <code class="docutils literal notranslate"><span class="pre">with_time_reversal</span></code></p></li>
@@ -394,7 +395,7 @@ title="Print to PDF"
 <li><p>Retain <code class="docutils literal notranslate"><span class="pre">tensor_rank</span></code></p></li>
 </ul>
 <!-- In this document, refer to `is_magnetic` in previous functions as `is_magnetic_old`. -->
-<div class="section" id="spg-get-symmetry-with-site-tensors-c-api">
+<section id="spg-get-symmetry-with-site-tensors-c-api">
 <h2><code class="docutils literal notranslate"><span class="pre">spg_get_symmetry_with_site_tensors</span></code> (C API)<a class="headerlink" href="#spg-get-symmetry-with-site-tensors-c-api" title="Permalink to this headline">#</a></h2>
 <!-- ### Previous behavior
 
@@ -428,13 +429,13 @@ title="Print to PDF"
 <li><p><code class="docutils literal notranslate"><span class="pre">with_time_reversal=true</span></code>: <span class="math notranslate nohighlight">\(1' \circ \mathbf{m} = -\mathbf{m}\)</span></p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">is_axial=true</span></code>: <span class="math notranslate nohighlight">\((\mathbf{R}, \mathbf{v}) \circ \mathbf{m} = (\mathrm{det} \mathbf{R}) \mathbf{R} \mathbf{m}\)</span></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">is_axial=true</span></code>: <span class="math notranslate nohighlight">\((\mathbf{R}, \mathbf{v}) \circ \mathbf{m} = \mathbf{R} \mathbf{m}\)</span></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">is_axial=false</span></code>: <span class="math notranslate nohighlight">\((\mathbf{R}, \mathbf{v}) \circ \mathbf{m} = \mathbf{R} \mathbf{m}\)</span></p></li>
 </ul>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">with_time_reversal=false</span></code>: <span class="math notranslate nohighlight">\(1' \circ \mathbf{m} = \mathbf{m}\)</span></p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">is_axial=true</span></code>: <span class="math notranslate nohighlight">\((\mathbf{R}, \mathbf{v}) \circ \mathbf{m} = (\mathrm{det} \mathbf{R}) \mathbf{R} \mathbf{m}\)</span></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">is_axial=true</span></code>: <span class="math notranslate nohighlight">\((\mathbf{R}, \mathbf{v}) \circ \mathbf{m} = \mathbf{R} \mathbf{m}\)</span></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">is_axial=false</span></code>: <span class="math notranslate nohighlight">\((\mathbf{R}, \mathbf{v}) \circ \mathbf{m} = \mathbf{R} \mathbf{m}\)</span></p></li>
 </ul>
 </li>
 </ul>
@@ -451,8 +452,8 @@ title="Print to PDF"
 <!-- ## `spg_get_magnetic_dataset` (C API)
 
 - Previous behavior: call `spg_get_symmetry_with_site_tensors` with `is_magnetic_old=true` -->
-</div>
-<div class="section" id="get-symmetry-and-get-magnetic-symmetry-python-api">
+</section>
+<section id="get-symmetry-and-get-magnetic-symmetry-python-api">
 <h2><code class="docutils literal notranslate"><span class="pre">get_symmetry</span></code> and <code class="docutils literal notranslate"><span class="pre">get_magnetic_symmetry</span></code> (Python API)<a class="headerlink" href="#get-symmetry-and-get-magnetic-symmetry-python-api" title="Permalink to this headline">#</a></h2>
 <!-- ### Previous behaviors
 
@@ -472,8 +473,8 @@ title="Print to PDF"
 <li><p><code class="docutils literal notranslate"><span class="pre">magmoms.shape</span> <span class="pre">=</span> <span class="pre">(num_atoms,</span> <span class="pre">3)</span></code>: call C API with <code class="docutils literal notranslate"><span class="pre">tensor_rank=1</span></code>, <code class="docutils literal notranslate"><span class="pre">is_axial</span></code>
 (default=true), and <code class="docutils literal notranslate"><span class="pre">with_time_reversal</span></code> (non-collinear magnetic like)</p></li>
 </ul>
-</div>
-<div class="section" id="get-magnetic-symmetry-dataset-python-api">
+</section>
+<section id="get-magnetic-symmetry-dataset-python-api">
 <h2><code class="docutils literal notranslate"><span class="pre">get_magnetic_symmetry_dataset</span></code> (Python API)<a class="headerlink" href="#get-magnetic-symmetry-dataset-python-api" title="Permalink to this headline">#</a></h2>
 <!-- ### Previous behaviors
 
@@ -486,8 +487,8 @@ title="Print to PDF"
 <ul class="simple">
 <li><p>call <code class="docutils literal notranslate"><span class="pre">get_magnetic_symmetry</span></code> with <code class="docutils literal notranslate"><span class="pre">is_axial</span></code> and <code class="docutils literal notranslate"><span class="pre">with_time_reversal</span></code></p></li>
 </ul>
-</div>
-</div>
+</section>
+</section>
 
 
               </div>

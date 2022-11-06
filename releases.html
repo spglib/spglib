@@ -4,8 +4,9 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Summary of releases &#8212; Spglib v.2.0.1</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Summary of releases &#8212; Spglib v.2.0.2</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -20,7 +21,7 @@
     href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=62ba249389abaaa9ffc34bf36a076bdc1d65ee18" type="text/css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
     
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
@@ -29,7 +30,7 @@
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/scripts/sphinx-book-theme.js?digest=f31d14ad54b65d19161ba51d4ffff3a77ae00456"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Developer document" href="develop.html" />
@@ -72,7 +73,7 @@
       
       
       
-      <h1 class="site-logo" id="site-title">Spglib v.2.0.1</h1>
+      <h1 class="site-logo" id="site-title">Spglib v.2.0.2</h1>
       
     </a>
 </div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
@@ -285,6 +286,11 @@ title="Print to PDF"
     </div>
     <nav id="bd-toc-nav" aria-label="Page">
         <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#v2-0-2-6-nov-2022">
+   V2.0.2 (6 Nov. 2022)
+  </a>
+ </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#v2-0-1-31-aug-2022">
    V2.0.1 (31 Aug. 2022)
@@ -512,6 +518,11 @@ title="Print to PDF"
                         <nav aria-label="Page">
                             <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#v2-0-2-6-nov-2022">
+   V2.0.2 (6 Nov. 2022)
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#v2-0-1-31-aug-2022">
    V2.0.1 (31 Aug. 2022)
   </a>
@@ -728,15 +739,22 @@ title="Print to PDF"
                 
               <div>
                 
-  <div class="section" id="summary-of-releases">
+  <section id="summary-of-releases">
 <h1>Summary of releases<a class="headerlink" href="#summary-of-releases" title="Permalink to this headline">#</a></h1>
-<div class="section" id="v2-0-1-31-aug-2022">
+<section id="v2-0-2-6-nov-2022">
+<h2>V2.0.2 (6 Nov. 2022)<a class="headerlink" href="#v2-0-2-6-nov-2022" title="Permalink to this headline">#</a></h2>
+<ul class="simple">
+<li><p>Fix segmentation fault in <code class="docutils literal notranslate"><span class="pre">spgms_get_symmetry_with_site_tensors</span></code> with high symprec <a class="reference external" href="https://github.com/spglib/spglib/pull/195">[#195]</a></p></li>
+<li><p>Fix possible segmentation fault in <code class="docutils literal notranslate"><span class="pre">get_magnetic_dataset</span></code> with high symprec <a class="reference external" href="https://github.com/spglib/spglib/pull/196">[#196]</a></p></li>
+</ul>
+</section>
+<section id="v2-0-1-31-aug-2022">
 <h2>V2.0.1 (31 Aug. 2022)<a class="headerlink" href="#v2-0-1-31-aug-2022" title="Permalink to this headline">#</a></h2>
 <ul class="simple">
 <li><p>Fix magnetic tolerance for judging type-II MSG (#187)</p></li>
 </ul>
-</div>
-<div class="section" id="release-v2-0-and-future-plan">
+</section>
+<section id="release-v2-0-and-future-plan">
 <h2>Release v2.0 and future plan<a class="headerlink" href="#release-v2-0-and-future-plan" title="Permalink to this headline">#</a></h2>
 <p>This release contains functions to search magnetic space group types which are
 provided as experimental features. The behaviours of these magnetic related
@@ -745,143 +763,143 @@ functions (<code class="docutils literal notranslate"><span class="pre">*_magnet
 <p>We are planning to separate irreducible k-points search from spglib. At spglib
 version 4.0, those functions will be removed if we succeed to provide an
 alternative package (hopefully with better functionalities) until then.</p>
-<div class="section" id="c-functions-and-structures">
+<section id="c-functions-and-structures">
 <h3>C functions and structures<a class="headerlink" href="#c-functions-and-structures" title="Permalink to this headline">#</a></h3>
-<div class="section" id="spglibspacegrouptype-structure">
+<section id="spglibspacegrouptype-structure">
 <h4><code class="docutils literal notranslate"><span class="pre">SpglibSpacegroupType</span></code> structure<a class="headerlink" href="#spglibspacegrouptype-structure" title="Permalink to this headline">#</a></h4>
 <ul class="simple">
 <li><p>Add <code class="docutils literal notranslate"><span class="pre">hall_number</span></code> member at version 2.0</p></li>
 <li><p>Used as return value of <code class="docutils literal notranslate"><span class="pre">spg_get_spacegroup_type</span></code> and <code class="docutils literal notranslate"><span class="pre">spg_get_spacegroup_type_from_symmetry</span></code></p></li>
 </ul>
-</div>
-<div class="section" id="spg-get-spacegroup-type-from-symmetry">
+</section>
+<section id="spg-get-spacegroup-type-from-symmetry">
 <h4><code class="docutils literal notranslate"><span class="pre">spg_get_spacegroup_type_from_symmetry</span></code><a class="headerlink" href="#spg-get-spacegroup-type-from-symmetry" title="Permalink to this headline">#</a></h4>
 <ul class="simple">
 <li><p>New at version 2.0</p></li>
 <li><p>Replacement of <code class="docutils literal notranslate"><span class="pre">spg_get_hall_number_from_symmetry</span></code></p></li>
 </ul>
-</div>
-<div class="section" id="spg-get-symmetry-with-site-tensors">
+</section>
+<section id="spg-get-symmetry-with-site-tensors">
 <h4><code class="docutils literal notranslate"><span class="pre">spg_get_symmetry_with_site_tensors</span></code><a class="headerlink" href="#spg-get-symmetry-with-site-tensors" title="Permalink to this headline">#</a></h4>
 <ul class="simple">
 <li><p>Experimental: new at version 2.0</p></li>
 </ul>
-</div>
-<div class="section" id="spg-get-magnetic-dataset">
+</section>
+<section id="spg-get-magnetic-dataset">
 <h4><code class="docutils literal notranslate"><span class="pre">spg_get_magnetic_dataset</span></code><a class="headerlink" href="#spg-get-magnetic-dataset" title="Permalink to this headline">#</a></h4>
 <ul class="simple">
 <li><p>Experimental: new at version 2.0</p></li>
 </ul>
-</div>
-<div class="section" id="spg-get-magnetic-symmetry-from-database">
+</section>
+<section id="spg-get-magnetic-symmetry-from-database">
 <h4><code class="docutils literal notranslate"><span class="pre">spg_get_magnetic_symmetry_from_database</span></code><a class="headerlink" href="#spg-get-magnetic-symmetry-from-database" title="Permalink to this headline">#</a></h4>
 <ul class="simple">
 <li><p>Experimental: new at version 2.0</p></li>
 </ul>
-</div>
-<div class="section" id="spg-free-magnetic-dataset">
+</section>
+<section id="spg-free-magnetic-dataset">
 <h4><code class="docutils literal notranslate"><span class="pre">spg_free_magnetic_dataset</span></code><a class="headerlink" href="#spg-free-magnetic-dataset" title="Permalink to this headline">#</a></h4>
 <ul class="simple">
 <li><p>Experimental: new at version 2.0</p></li>
 </ul>
-</div>
-<div class="section" id="spg-get-magnetic-spacegroup-type-from-symmetry">
+</section>
+<section id="spg-get-magnetic-spacegroup-type-from-symmetry">
 <h4><code class="docutils literal notranslate"><span class="pre">spg_get_magnetic_spacegroup_type_from_symmetry</span></code><a class="headerlink" href="#spg-get-magnetic-spacegroup-type-from-symmetry" title="Permalink to this headline">#</a></h4>
 <ul class="simple">
 <li><p>Experimental: new at version 2.0</p></li>
 </ul>
-</div>
-<div class="section" id="spg-get-hall-number-from-symmetry">
+</section>
+<section id="spg-get-hall-number-from-symmetry">
 <h4><code class="docutils literal notranslate"><span class="pre">spg_get_hall_number_from_symmetry</span></code><a class="headerlink" href="#spg-get-hall-number-from-symmetry" title="Permalink to this headline">#</a></h4>
 <ul class="simple">
 <li><p>Deprecated at version 2.0</p></li>
 <li><p>Will be removed at version 3.0</p></li>
 </ul>
-</div>
-<div class="section" id="spgat-get-symmetry-with-collinear-spin">
+</section>
+<section id="spgat-get-symmetry-with-collinear-spin">
 <h4><code class="docutils literal notranslate"><span class="pre">spgat_get_symmetry_with_collinear_spin</span></code><a class="headerlink" href="#spgat-get-symmetry-with-collinear-spin" title="Permalink to this headline">#</a></h4>
 <ul class="simple">
 <li><p>Deprecated at version 2.0</p></li>
 <li><p>Will be removed at version 3.0</p></li>
 <li><p>Will be replaced by <code class="docutils literal notranslate"><span class="pre">spgms_get_symmetry_with_collinear_spin</span></code></p></li>
 </ul>
-</div>
-<div class="section" id="spg-get-ir-reciprocal-mesh">
+</section>
+<section id="spg-get-ir-reciprocal-mesh">
 <h4><code class="docutils literal notranslate"><span class="pre">spg_get_ir_reciprocal_mesh</span></code><a class="headerlink" href="#spg-get-ir-reciprocal-mesh" title="Permalink to this headline">#</a></h4>
 <ul class="simple">
 <li><p>Plan to make it deprecated at version 3.0</p></li>
 </ul>
-</div>
-<div class="section" id="spg-get-stabilized-reciprocal-mesh">
+</section>
+<section id="spg-get-stabilized-reciprocal-mesh">
 <h4><code class="docutils literal notranslate"><span class="pre">spg_get_stabilized_reciprocal_mesh</span></code><a class="headerlink" href="#spg-get-stabilized-reciprocal-mesh" title="Permalink to this headline">#</a></h4>
 <ul class="simple">
 <li><p>Plan to make it deprecated at version 3.0</p></li>
 </ul>
-</div>
-</div>
-<div class="section" id="python-interface">
+</section>
+</section>
+<section id="python-interface">
 <h3>Python interface<a class="headerlink" href="#python-interface" title="Permalink to this headline">#</a></h3>
-<div class="section" id="get-symmetry">
+<section id="get-symmetry">
 <h4><code class="docutils literal notranslate"><span class="pre">get_symmetry</span></code><a class="headerlink" href="#get-symmetry" title="Permalink to this headline">#</a></h4>
 <ul class="simple">
 <li><p>get_symmetry with <code class="docutils literal notranslate"><span class="pre">is_magnetic=True</span></code> is deprecated at version 2.0. Use
 <code class="docutils literal notranslate"><span class="pre">get_magnetic_symmetry</span></code> for magnetic symmetry search.</p></li>
 </ul>
-</div>
-<div class="section" id="get-spacegroup-type">
+</section>
+<section id="get-spacegroup-type">
 <h4><code class="docutils literal notranslate"><span class="pre">get_spacegroup_type</span></code><a class="headerlink" href="#get-spacegroup-type" title="Permalink to this headline">#</a></h4>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">hall_number</span></code> member is added at version 2.0.</p></li>
 </ul>
-</div>
-<div class="section" id="get-spacegroup-type-from-symmetry">
+</section>
+<section id="get-spacegroup-type-from-symmetry">
 <h4><code class="docutils literal notranslate"><span class="pre">get_spacegroup_type_from_symmetry</span></code><a class="headerlink" href="#get-spacegroup-type-from-symmetry" title="Permalink to this headline">#</a></h4>
 <ul class="simple">
 <li><p>New at version 2.0</p></li>
 <li><p>Replacement of get_hall_number_from_symmetry</p></li>
 </ul>
-</div>
-<div class="section" id="get-magnetic-symmetry">
+</section>
+<section id="get-magnetic-symmetry">
 <h4><code class="docutils literal notranslate"><span class="pre">get_magnetic_symmetry</span></code><a class="headerlink" href="#get-magnetic-symmetry" title="Permalink to this headline">#</a></h4>
 <ul class="simple">
 <li><p>Experimental: new at version 2.0</p></li>
 </ul>
-</div>
-<div class="section" id="get-magnetic-symmetry-dataset">
+</section>
+<section id="get-magnetic-symmetry-dataset">
 <h4><code class="docutils literal notranslate"><span class="pre">get_magnetic_symmetry_dataset</span></code><a class="headerlink" href="#get-magnetic-symmetry-dataset" title="Permalink to this headline">#</a></h4>
 <ul class="simple">
 <li><p>Experimental: new at version 2.0</p></li>
 </ul>
-</div>
-<div class="section" id="get-magnetic-spacegroup-type">
+</section>
+<section id="get-magnetic-spacegroup-type">
 <h4><code class="docutils literal notranslate"><span class="pre">get_magnetic_spacegroup_type</span></code><a class="headerlink" href="#get-magnetic-spacegroup-type" title="Permalink to this headline">#</a></h4>
 <ul class="simple">
 <li><p>Experimental: new at version 2.0</p></li>
 </ul>
-</div>
-<div class="section" id="get-magnetic-symmetry-from-database">
+</section>
+<section id="get-magnetic-symmetry-from-database">
 <h4><code class="docutils literal notranslate"><span class="pre">get_magnetic_symmetry_from_database</span></code><a class="headerlink" href="#get-magnetic-symmetry-from-database" title="Permalink to this headline">#</a></h4>
 <ul class="simple">
 <li><p>Experimental: new at version 2.0</p></li>
 </ul>
-</div>
-<div class="section" id="get-hall-number-from-symmetry">
+</section>
+<section id="get-hall-number-from-symmetry">
 <h4><code class="docutils literal notranslate"><span class="pre">get_hall_number_from_symmetry</span></code><a class="headerlink" href="#get-hall-number-from-symmetry" title="Permalink to this headline">#</a></h4>
 <ul class="simple">
 <li><p>Deprecated at version 2.0</p></li>
 <li><p>Will be removed at version 3.0</p></li>
 <li><p>Will be replaced by <code class="docutils literal notranslate"><span class="pre">get_spacegroup_type_from_symmetry</span></code></p></li>
 </ul>
-</div>
-<div class="section" id="get-ir-reciprocal-mesh">
+</section>
+<section id="get-ir-reciprocal-mesh">
 <h4><code class="docutils literal notranslate"><span class="pre">get_ir_reciprocal_mesh</span></code><a class="headerlink" href="#get-ir-reciprocal-mesh" title="Permalink to this headline">#</a></h4>
 <ul class="simple">
 <li><p>Plan to make it deprecated at version 3.0</p></li>
 </ul>
-</div>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
+</section>
 
 
               </div>

@@ -4,8 +4,9 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Definitions and conventions &#8212; Spglib v.2.0.1</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Definitions and conventions &#8212; Spglib v.2.0.2</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -20,7 +21,7 @@
     href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=62ba249389abaaa9ffc34bf36a076bdc1d65ee18" type="text/css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
     
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
@@ -29,7 +30,7 @@
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/scripts/sphinx-book-theme.js?digest=f31d14ad54b65d19161ba51d4ffff3a77ae00456"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -73,7 +74,7 @@
       
       
       
-      <h1 class="site-logo" id="site-title">Spglib v.2.0.1</h1>
+      <h1 class="site-logo" id="site-title">Spglib v.2.0.2</h1>
       
     </a>
 </div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
@@ -591,15 +592,15 @@ title="Print to PDF"
                 
               <div>
                 
-  <div class="section" id="definitions-and-conventions">
+  <section id="definitions-and-conventions">
 <span id="id1"></span><h1>Definitions and conventions<a class="headerlink" href="#definitions-and-conventions" title="Permalink to this headline">#</a></h1>
 <p>Information in this page is valid for spglib 1.8.1 or later. The
 definitions of transformation matrix and origin shift were different
 in the previous versions.</p>
-<div class="section" id="space-group-operation-and-change-of-basis">
+<section id="space-group-operation-and-change-of-basis">
 <h2>Space group operation and change of basis<a class="headerlink" href="#space-group-operation-and-change-of-basis" title="Permalink to this headline">#</a></h2>
 <p>`</p>
-<div class="section" id="basis-vectors-mathbf-a-mathbf-b-mathbf-c-or-mathbf-a-1-mathbf-a-2-mathbf-a-3">
+<section id="basis-vectors-mathbf-a-mathbf-b-mathbf-c-or-mathbf-a-1-mathbf-a-2-mathbf-a-3">
 <h3>Basis vectors <span class="math notranslate nohighlight">\((\mathbf{a}, \mathbf{b}, \mathbf{c})\)</span> or <span class="math notranslate nohighlight">\((\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)\)</span><a class="headerlink" href="#basis-vectors-mathbf-a-mathbf-b-mathbf-c-or-mathbf-a-1-mathbf-a-2-mathbf-a-3" title="Permalink to this headline">#</a></h3>
 <p>In spglib, basis vectors are represented by three column vectors:</p>
 <div class="math notranslate nohighlight" id="equation-basis-vectors">
@@ -621,8 +622,8 @@ c_z \\
 <p>in Cartesian coordinates. Depending on the situation,
 <span class="math notranslate nohighlight">\((\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)\)</span> is used instead of
 <span class="math notranslate nohighlight">\((\mathbf{a}, \mathbf{b}, \mathbf{c})\)</span>.</p>
-</div>
-<div class="section" id="atomic-point-coordinates-boldsymbol-x">
+</section>
+<section id="atomic-point-coordinates-boldsymbol-x">
 <h3>Atomic point coordinates <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span><a class="headerlink" href="#atomic-point-coordinates-boldsymbol-x" title="Permalink to this headline">#</a></h3>
 <p>Coordinates of an atomic point <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span> are represented
 as three fractional values relative to basis vectors as follows,</p>
@@ -639,8 +640,8 @@ Cartesian coordinates is obtained by</p>
 <p>or</p>
 <div class="math notranslate nohighlight" id="equation-position-vector-2">
 <span class="eqno">(4)<a class="headerlink" href="#equation-position-vector-2" title="Permalink to this equation">#</a></span>\[\mathbf{x} = \sum_i x_i \mathbf{a}_i.\]</div>
-</div>
-<div class="section" id="symmetry-operation-boldsymbol-w-boldsymbol-w">
+</section>
+<section id="symmetry-operation-boldsymbol-w-boldsymbol-w">
 <h3>Symmetry operation <span class="math notranslate nohighlight">\((\boldsymbol{W}, \boldsymbol{w})\)</span><a class="headerlink" href="#symmetry-operation-boldsymbol-w-boldsymbol-w" title="Permalink to this headline">#</a></h3>
 <p>A symmetry operation consists of a pair of the rotation part
 <span class="math notranslate nohighlight">\(\boldsymbol{W}\)</span> and translation part <span class="math notranslate nohighlight">\(\boldsymbol{w}\)</span>,
@@ -649,8 +650,8 @@ spglib document. The symmetry operation transfers <span class="math notranslate 
 <span class="math notranslate nohighlight">\(\tilde{\boldsymbol{x}}\)</span> as follows:</p>
 <div class="math notranslate nohighlight" id="equation-space-group-operation">
 <span class="eqno">(5)<a class="headerlink" href="#equation-space-group-operation" title="Permalink to this equation">#</a></span>\[\tilde{\boldsymbol{x}} = \boldsymbol{W}\boldsymbol{x} + \boldsymbol{w}.\]</div>
-</div>
-<div class="section" id="transformation-matrix-boldsymbol-p-and-origin-shift-boldsymbol-p">
+</section>
+<section id="transformation-matrix-boldsymbol-p-and-origin-shift-boldsymbol-p">
 <span id="def-transformation-and-origin-shift"></span><h3>Transformation matrix <span class="math notranslate nohighlight">\(\boldsymbol{P}\)</span> and origin shift <span class="math notranslate nohighlight">\(\boldsymbol{p}\)</span><a class="headerlink" href="#transformation-matrix-boldsymbol-p-and-origin-shift-boldsymbol-p" title="Permalink to this headline">#</a></h3>
 <p>The transformation matrix <span class="math notranslate nohighlight">\(\boldsymbol{P}\)</span> changes choice of
 basis vectors as follows</p>
@@ -694,8 +695,8 @@ arbitrary system <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</
 \frac{\bar{1}}{2} &amp; \frac{1}{2} &amp; 0 \\
 0 &amp; 0 &amp; 1
 \end{pmatrix}.\end{split}\]</div>
-</div>
-<div class="section" id="difference-between-rotation-and-transformation-matrices">
+</section>
+<section id="difference-between-rotation-and-transformation-matrices">
 <h3>Difference between rotation and transformation matrices<a class="headerlink" href="#difference-between-rotation-and-transformation-matrices" title="Permalink to this headline">#</a></h3>
 <p>A rotation matrix rotates (or mirrors, inverts) the crystal body with
 respect to origin. A transformation matrix changes the choice of the
@@ -734,15 +735,15 @@ rotating the basis vectors:</p>
 \[(\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{P} \boldsymbol{x}'
 = (\mathbf{a}', \mathbf{b}', \mathbf{c}') \boldsymbol{x}' =
 (\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{x}.\]</div>
-</div>
-</div>
-<div class="section" id="spglib-conventions-of-standardized-unit-cell">
+</section>
+</section>
+<section id="spglib-conventions-of-standardized-unit-cell">
 <span id="def-standardized-unit-cell"></span><h2>Spglib conventions of standardized unit cell<a class="headerlink" href="#spglib-conventions-of-standardized-unit-cell" title="Permalink to this headline">#</a></h2>
 <p>The standardization in spglib is achieved by <a class="reference internal" href="#def-transformation-and-origin-shift"><span class="std std-ref">a change of basis transformation</span></a>. If
 <a class="reference internal" href="#def-idealize-cell"><span class="std std-ref">idealization</span></a> as shown below is further
 applied, the crystal can be rigidly rotated in Cartesian
 coordinates.</p>
-<div class="section" id="choice-of-basis-vectors">
+<section id="choice-of-basis-vectors">
 <h3>Choice of basis vectors<a class="headerlink" href="#choice-of-basis-vectors" title="Permalink to this headline">#</a></h3>
 <p>Using the APIs <code class="docutils literal notranslate"><span class="pre">spg_get_dataset</span></code>,
 <code class="docutils literal notranslate"><span class="pre">spg_get_dataset_with_hall_number</span></code>, or <code class="docutils literal notranslate"><span class="pre">spg_standardize_cell</span></code>, the
@@ -756,8 +757,8 @@ space group types, unique axes, settings, and cell choices. Moreover
 in spglib, lengths of basis vectors are used to choose the order of
 <span class="math notranslate nohighlight">\((\mathbf{a}, \mathbf{b}, \mathbf{c})\)</span> if the order can not be
 determined only by the symmetrical conventions.</p>
-</div>
-<div class="section" id="transformation-to-the-primitive-cell">
+</section>
+<section id="transformation-to-the-primitive-cell">
 <span id="def-standardized-primitive-cell"></span><h3>Transformation to the primitive cell<a class="headerlink" href="#transformation-to-the-primitive-cell" title="Permalink to this headline">#</a></h3>
 <p>In the standardized unit cells, there are five different centring
 types available, base centrings of A and C, rhombohedral (R), body centred
@@ -812,8 +813,8 @@ lattice), <span class="math notranslate nohighlight">\(\boldsymbol{P}_\mathrm{R}
 primitive basis vectors, but for that with the R setting (rhombohedral
 lattice), no transformation matrix is applied because it is already
 the primitive cell.</p>
-</div>
-<div class="section" id="def-idealize-cell">
+</section>
+<section id="def-idealize-cell">
 <span id="idealization-of-unit-cell-structure"></span><h3>Idealization of unit cell structure<a class="headerlink" href="#def-idealize-cell" title="Permalink to this headline">#</a></h3>
 <p>Spglib allows tolerance parameters to match a slightly distorted unit
 cell structure to a space group type with some higher symmetry. Using
@@ -825,7 +826,7 @@ respective lattice shapes as follows. In this treatment, except for
 triclinic crystals, crystals can be rotated in Cartesian coordinates,
 which is the different type of transformation from that of the
 change-of-basis transformation explained above.</p>
-<div class="section" id="triclinic-lattice">
+<section id="triclinic-lattice">
 <h4>Triclinic lattice<a class="headerlink" href="#triclinic-lattice" title="Permalink to this headline">#</a></h4>
 <ul class="simple">
 <li><p>Niggli reduced cell is used for choosing <span class="math notranslate nohighlight">\(\mathbf{a}, \mathbf{b}, \mathbf{c}\)</span>.</p></li>
@@ -834,8 +835,8 @@ change-of-basis transformation explained above.</p>
 coordinates so that <span class="math notranslate nohighlight">\(\mathbf{a}\times\mathbf{b}\)</span> is along
 <span class="math notranslate nohighlight">\(+z\)</span> direction of Cartesian coordinates.</p></li>
 </ul>
-</div>
-<div class="section" id="monoclinic-lattice">
+</section>
+<section id="monoclinic-lattice">
 <h4>Monoclinic lattice<a class="headerlink" href="#monoclinic-lattice" title="Permalink to this headline">#</a></h4>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(b\)</span> axis is taken as the unique axis.</p></li>
@@ -845,8 +846,8 @@ coordinates so that <span class="math notranslate nohighlight">\(\mathbf{a}\time
 <li><p><span class="math notranslate nohighlight">\(\mathbf{b}\)</span> is set along <span class="math notranslate nohighlight">\(+y\)</span> direction of Cartesian coordinates.</p></li>
 <li><p><span class="math notranslate nohighlight">\(\mathbf{c}\)</span> is set in <span class="math notranslate nohighlight">\(x\text{-}z\)</span> plane of Cartesian coordinates.</p></li>
 </ul>
-</div>
-<div class="section" id="orthorhombic-lattice">
+</section>
+<section id="orthorhombic-lattice">
 <h4>Orthorhombic lattice<a class="headerlink" href="#orthorhombic-lattice" title="Permalink to this headline">#</a></h4>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(\alpha = \beta = \gamma = 90^\circ\)</span>.</p></li>
@@ -854,8 +855,8 @@ coordinates so that <span class="math notranslate nohighlight">\(\mathbf{a}\time
 <li><p><span class="math notranslate nohighlight">\(\mathbf{b}\)</span> is set along <span class="math notranslate nohighlight">\(+y\)</span> direction of Cartesian coordinates.</p></li>
 <li><p><span class="math notranslate nohighlight">\(\mathbf{c}\)</span> is set along <span class="math notranslate nohighlight">\(+z\)</span> direction of Cartesian coordinates.</p></li>
 </ul>
-</div>
-<div class="section" id="tetragonal-lattice">
+</section>
+<section id="tetragonal-lattice">
 <h4>Tetragonal lattice<a class="headerlink" href="#tetragonal-lattice" title="Permalink to this headline">#</a></h4>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(\alpha = \beta = \gamma = 90^\circ\)</span>.</p></li>
@@ -864,8 +865,8 @@ coordinates so that <span class="math notranslate nohighlight">\(\mathbf{a}\time
 <li><p><span class="math notranslate nohighlight">\(\mathbf{b}\)</span> is set along <span class="math notranslate nohighlight">\(+y\)</span> direction of Cartesian coordinates.</p></li>
 <li><p><span class="math notranslate nohighlight">\(\mathbf{c}\)</span> is set along <span class="math notranslate nohighlight">\(+z\)</span> direction of Cartesian coordinates.</p></li>
 </ul>
-</div>
-<div class="section" id="rhombohedral-lattice">
+</section>
+<section id="rhombohedral-lattice">
 <h4>Rhombohedral lattice<a class="headerlink" href="#rhombohedral-lattice" title="Permalink to this headline">#</a></h4>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(\alpha = \beta = \gamma\)</span>.</p></li>
@@ -890,8 +891,8 @@ respectively.</p></li>
 <li><p><span class="math notranslate nohighlight">\(a_{xy} = b_{xy} = c_{xy}\)</span>.</p></li>
 <li><p><span class="math notranslate nohighlight">\(a_{z} = b_{z} = c_{z}\)</span>.</p></li>
 </ul>
-</div>
-<div class="section" id="hexagonal-lattice">
+</section>
+<section id="hexagonal-lattice">
 <h4>Hexagonal lattice<a class="headerlink" href="#hexagonal-lattice" title="Permalink to this headline">#</a></h4>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(\alpha = \beta = 90^\circ\)</span>.</p></li>
@@ -901,8 +902,8 @@ respectively.</p></li>
 <li><p><span class="math notranslate nohighlight">\(\mathbf{b}\)</span> is set in <span class="math notranslate nohighlight">\(x\text{-}y\)</span> plane of Cartesian coordinates.</p></li>
 <li><p><span class="math notranslate nohighlight">\(\mathbf{c}\)</span> is set along <span class="math notranslate nohighlight">\(+z\)</span> direction of Cartesian coordinates.</p></li>
 </ul>
-</div>
-<div class="section" id="cubic-lattice">
+</section>
+<section id="cubic-lattice">
 <h4>Cubic lattice<a class="headerlink" href="#cubic-lattice" title="Permalink to this headline">#</a></h4>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(\alpha = \beta = \gamma = 90^\circ\)</span>.</p></li>
@@ -911,9 +912,9 @@ respectively.</p></li>
 <li><p><span class="math notranslate nohighlight">\(\mathbf{b}\)</span> is set along <span class="math notranslate nohighlight">\(+y\)</span> direction of Cartesian coordinates.</p></li>
 <li><p><span class="math notranslate nohighlight">\(\mathbf{c}\)</span> is set along <span class="math notranslate nohighlight">\(+z\)</span> direction of Cartesian coordinates.</p></li>
 </ul>
-</div>
-</div>
-<div class="section" id="rotation-introduced-by-idealization">
+</section>
+</section>
+<section id="rotation-introduced-by-idealization">
 <h3>Rotation introduced by idealization<a class="headerlink" href="#rotation-introduced-by-idealization" title="Permalink to this headline">#</a></h3>
 <p>In the idealization step presented above, the input unit cell crystal
 structure can be rotated in the Cartesian coordinates.  The rotation
@@ -928,11 +929,11 @@ matrix <span class="math notranslate nohighlight">\(\boldsymbol{R}\)</span> of t
 crystal structure before idealization <span class="math notranslate nohighlight">\(( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )\)</span> to that after
 idealization <span class="math notranslate nohighlight">\(( \bar{\mathbf{a}}_\mathrm{s} \; \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )\)</span> in
 Cartesian coordinates of the given input unit cell.</p>
-</div>
-</div>
-<div class="section" id="examples">
+</section>
+</section>
+<section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">#</a></h2>
-<div class="section" id="crystallographic-choice-and-rigid-rotation">
+<section id="crystallographic-choice-and-rigid-rotation">
 <h3>Crystallographic choice and rigid rotation<a class="headerlink" href="#crystallographic-choice-and-rigid-rotation" title="Permalink to this headline">#</a></h3>
 <p>The following example of a python script gives a crystal structure of
 Br whose space group type is <em>Cmce</em>. The basis vectors
@@ -1061,8 +1062,8 @@ coordinates from the first one:</p>
 structure is rotated in Cartesian coordinates. The origin shift is
 different but it changes only the order of atoms, so effectively it
 does nothing.</p>
-</div>
-<div class="section" id="transformation-to-a-primitive-cell">
+</section>
+<section id="transformation-to-a-primitive-cell">
 <h3>Transformation to a primitive cell<a class="headerlink" href="#transformation-to-a-primitive-cell" title="Permalink to this headline">#</a></h3>
 <p>There are infinite number of choices of primitive cell. The
 transformation from a primitive cell basis vectors to the other
@@ -1198,8 +1199,8 @@ so the following script doesn’t give this basis vectors:</p>
 <p>which is equivalent to that we get manually. However using
 <code class="docutils literal notranslate"><span class="pre">standardize_cell</span></code>, distortion is not removed for the distorted
 crystal structure.</p>
-</div>
-<div class="section" id="computing-rigid-rotation-introduced-by-idealization">
+</section>
+<section id="computing-rigid-rotation-introduced-by-idealization">
 <h3>Computing rigid rotation introduced by idealization<a class="headerlink" href="#computing-rigid-rotation-introduced-by-idealization" title="Permalink to this headline">#</a></h3>
 <p>In spglib, rigid rotation is purposely introduced in the idealization
 step though this is unlikely as a crystallographic operation.</p>
@@ -1306,9 +1307,9 @@ approximately the same result:</p>
 <p>The atomic point coordinates in <span class="math notranslate nohighlight">\(( \bar{\mathbf{a}}_\mathrm{s} \; \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )\)</span>
 are simply obtained by Eq. <a class="reference internal" href="#equation-change-of-basis-1">(8)</a> since the
 rotation doesn’t affect them.</p>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
               </div>
