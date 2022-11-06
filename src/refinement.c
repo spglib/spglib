@@ -970,7 +970,7 @@ static void set_equivalent_atoms_broken_symmetry(int *equiv_atoms_cell,
     } else {
         j = 0;
         for (i = 0; i < 3; i++) {
-            if (i == cell->aperiodic_axis) {
+            if (i != cell->aperiodic_axis) {
                 periodic_axes[j] = i;
                 j++;
             }
