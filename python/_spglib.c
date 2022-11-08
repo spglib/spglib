@@ -219,13 +219,9 @@ static PyObject *py_get_version(PyObject *self, PyObject *args) {
     return array;
 }
 
-static PyObject *py_get_dataset(PyObject *self, PyObject *args) {
-    int hall_number;
-    double symprec, angle_tolerance;
-    PyArrayObject *py_lattice;
-    PyArrayObject *py_positions;
-    PyArrayObject *py_atom_types;
-
+PyObject* build_python_list_from_dataset(SpglibDataset* dataset)
+{
+    int len_list = 21;
     PyObject *array, *vec, *mat, *rot, *trans, *wyckoffs, *equiv_atoms;
     PyObject *crystallographic_orbits;
     PyObject *site_symmetry_symbols, *primitive_lattice, *mapping_to_primitive;
@@ -235,30 +231,6 @@ static PyObject *py_get_dataset(PyObject *self, PyObject *args) {
     PyObject *std_rotation;
 
     int i, j, k, n;
-    double(*lat)[3];
-    double(*pos)[3];
-    int num_atom, len_list;
-    int *typat;
-    SpglibDataset *dataset;
-
-    if (!PyArg_ParseTuple(args, "OOOidd", &py_lattice, &py_positions,
-                          &py_atom_types, &hall_number, &symprec,
-                          &angle_tolerance)) {
-        return NULL;
-    }
-
-    lat = (double(*)[3])PyArray_DATA(py_lattice);
-    pos = (double(*)[3])PyArray_DATA(py_positions);
-    num_atom = PyArray_DIMS(py_positions)[0];
-    typat = (int *)PyArray_DATA(py_atom_types);
-
-    if ((dataset = spgat_get_dataset_with_hall_number(
-             lat, pos, typat, num_atom, hall_number, symprec,
-             angle_tolerance)) == NULL) {
-        Py_RETURN_NONE;
-    }
-
-    len_list = 21;
     array = PyList_New(len_list);
     n = 0;
 
@@ -427,7 +399,40 @@ static PyObject *py_get_dataset(PyObject *self, PyObject *args) {
     n++;
 
     assert(n == len_list);
+    return array;
+}
 
+static PyObject *py_get_dataset(PyObject *self, PyObject *args) {
+    int hall_number;
+    double symprec, angle_tolerance;
+    PyArrayObject *py_lattice;
+    PyArrayObject *py_positions;
+    PyArrayObject *py_atom_types;
+    PyObject *array;
+    double(*lat)[3];
+    double(*pos)[3];
+    int num_atom;
+    int *typat;
+    SpglibDataset *dataset;
+
+    if (!PyArg_ParseTuple(args, "OOOidd", &py_lattice, &py_positions,
+                          &py_atom_types, &hall_number, &symprec,
+                          &angle_tolerance)) {
+        return NULL;
+    }
+
+    lat = (double(*)[3])PyArray_DATA(py_lattice);
+    pos = (double(*)[3])PyArray_DATA(py_positions);
+    num_atom = PyArray_DIMS(py_positions)[0];
+    typat = (int *)PyArray_DATA(py_atom_types);
+
+    if ((dataset = spgat_get_dataset_with_hall_number(
+             lat, pos, typat, num_atom, hall_number, symprec,
+             angle_tolerance)) == NULL) {
+        Py_RETURN_NONE;
+    }
+
+    array = build_python_list_from_dataset(dataset);
     spg_free_dataset(dataset);
 
     return array;
@@ -440,15 +445,8 @@ static PyObject *py_get_layerdataset(PyObject *self, PyObject *args) {
     PyArrayObject *py_positions;
     PyArrayObject *py_atom_types;
 
-    PyObject *array, *vec, *mat, *rot, *trans, *wyckoffs, *equiv_atoms;
-    PyObject *crystallographic_orbits;
-    PyObject *site_symmetry_symbols, *primitive_lattice, *mapping_to_primitive;
-    PyObject *std_lattice, *std_types, *std_positions,
-        *std_mapping_to_primitive;
+    PyObject *array;
 
-    PyObject *std_rotation;
-
-    int i, j, k, n;
     double(*lat)[3];
     double(*pos)[3];
     int num_atom, len_list;
@@ -488,181 +486,11 @@ static PyObject *py_get_layerdataset(PyObject *self, PyObject *args) {
     {
         Py_RETURN_NONE;
     }
-
+    
     // NOTE: This code is still experimental. It parses the information
     // from layer dataset exactly as it would from normal dataset.
     // It should be checked that all of this information makes sense.
-
-    len_list = 21;
-    array = PyList_New(len_list);
-    n = 0;
-
-    /* Space group number, international symbol, hall symbol */
-    PyList_SetItem(array, n, PyLong_FromLong((long)dataset->spacegroup_number));
-    n++;
-    PyList_SetItem(array, n, PyLong_FromLong((long)dataset->hall_number));
-    n++;
-    PyList_SetItem(array, n,
-                   PYUNICODE_FROMSTRING(dataset->international_symbol));
-    n++;
-    PyList_SetItem(array, n, PYUNICODE_FROMSTRING(dataset->hall_symbol));
-    n++;
-    PyList_SetItem(array, n, PYUNICODE_FROMSTRING(dataset->choice));
-    n++;
-
-    /* Transformation matrix */
-    mat = PyList_New(3);
-    for (i = 0; i < 3; i++) {
-        vec = PyList_New(3);
-        for (j = 0; j < 3; j++) {
-            PyList_SetItem(
-                vec, j,
-                PyFloat_FromDouble(dataset->transformation_matrix[i][j]));
-        }
-        PyList_SetItem(mat, i, vec);
-    }
-    PyList_SetItem(array, n, mat);
-    n++;
-
-    /* Origin shift */
-    vec = PyList_New(3);
-    for (i = 0; i < 3; i++) {
-        PyList_SetItem(vec, i, PyFloat_FromDouble(dataset->origin_shift[i]));
-    }
-    PyList_SetItem(array, n, vec);
-    n++;
-
-    /* Rotation matrices */
-    rot = PyList_New(dataset->n_operations);
-    for (i = 0; i < dataset->n_operations; i++) {
-        mat = PyList_New(3);
-        for (j = 0; j < 3; j++) {
-            vec = PyList_New(3);
-            for (k = 0; k < 3; k++) {
-                PyList_SetItem(
-                    vec, k, PyLong_FromLong((long)dataset->rotations[i][j][k]));
-            }
-            PyList_SetItem(mat, j, vec);
-        }
-        PyList_SetItem(rot, i, mat);
-    }
-    PyList_SetItem(array, n, rot);
-    n++;
-
-    /* Translation vectors */
-    trans = PyList_New(dataset->n_operations);
-    for (i = 0; i < dataset->n_operations; i++) {
-        vec = PyList_New(3);
-        for (j = 0; j < 3; j++) {
-            PyList_SetItem(vec, j,
-                           PyFloat_FromDouble(dataset->translations[i][j]));
-        }
-        PyList_SetItem(trans, i, vec);
-    }
-    PyList_SetItem(array, n, trans);
-    n++;
-
-    /* Wyckoff letters, Equivalent atoms */
-    wyckoffs = PyList_New(dataset->n_atoms);
-    site_symmetry_symbols = PyList_New(dataset->n_atoms);
-    crystallographic_orbits = PyList_New(dataset->n_atoms);
-    equiv_atoms = PyList_New(dataset->n_atoms);
-    mapping_to_primitive = PyList_New(dataset->n_atoms);
-    for (i = 0; i < dataset->n_atoms; i++) {
-        PyList_SetItem(wyckoffs, i,
-                       PyLong_FromLong((long)dataset->wyckoffs[i]));
-        PyList_SetItem(site_symmetry_symbols, i,
-                       PYUNICODE_FROMSTRING(dataset->site_symmetry_symbols[i]));
-        PyList_SetItem(equiv_atoms, i,
-                       PyLong_FromLong((long)dataset->equivalent_atoms[i]));
-        PyList_SetItem(
-            crystallographic_orbits, i,
-            PyLong_FromLong((long)dataset->crystallographic_orbits[i]));
-        PyList_SetItem(mapping_to_primitive, i,
-                       PyLong_FromLong((long)dataset->mapping_to_primitive[i]));
-    }
-    PyList_SetItem(array, n, wyckoffs);
-    n++;
-    PyList_SetItem(array, n, site_symmetry_symbols);
-    n++;
-    PyList_SetItem(array, n, crystallographic_orbits);
-    n++;
-    PyList_SetItem(array, n, equiv_atoms);
-    n++;
-
-    primitive_lattice = PyList_New(3);
-    for (i = 0; i < 3; i++) {
-        vec = PyList_New(3);
-        for (j = 0; j < 3; j++) {
-            PyList_SetItem(
-                vec, j, PyFloat_FromDouble(dataset->primitive_lattice[i][j]));
-        }
-        PyList_SetItem(primitive_lattice, i, vec);
-    }
-    PyList_SetItem(array, n, primitive_lattice);
-    n++;
-
-    PyList_SetItem(array, n, mapping_to_primitive);
-    n++;
-
-    std_lattice = PyList_New(3);
-    for (i = 0; i < 3; i++) {
-        vec = PyList_New(3);
-        for (j = 0; j < 3; j++) {
-            PyList_SetItem(vec, j,
-                           PyFloat_FromDouble(dataset->std_lattice[i][j]));
-        }
-        PyList_SetItem(std_lattice, i, vec);
-    }
-    PyList_SetItem(array, n, std_lattice);
-    n++;
-
-    /* Standardized unit cell */
-    std_types = PyList_New(dataset->n_std_atoms);
-    std_positions = PyList_New(dataset->n_std_atoms);
-    std_mapping_to_primitive = PyList_New(dataset->n_std_atoms);
-    for (i = 0; i < dataset->n_std_atoms; i++) {
-        vec = PyList_New(3);
-        for (j = 0; j < 3; j++) {
-            PyList_SetItem(vec, j,
-                           PyFloat_FromDouble(dataset->std_positions[i][j]));
-        }
-        PyList_SetItem(std_types, i,
-                       PyLong_FromLong((long)dataset->std_types[i]));
-        PyList_SetItem(std_positions, i, vec);
-        PyList_SetItem(
-            std_mapping_to_primitive, i,
-            PyLong_FromLong((long)dataset->std_mapping_to_primitive[i]));
-    }
-    PyList_SetItem(array, n, std_types);
-    n++;
-    PyList_SetItem(array, n, std_positions);
-    n++;
-
-    std_rotation = PyList_New(3);
-    for (i = 0; i < 3; i++) {
-        vec = PyList_New(3);
-        for (j = 0; j < 3; j++) {
-            PyList_SetItem(
-                vec, j, PyFloat_FromDouble(dataset->std_rotation_matrix[i][j]));
-        }
-        PyList_SetItem(std_rotation, i, vec);
-    }
-    PyList_SetItem(array, n, std_rotation);
-    n++;
-
-    PyList_SetItem(array, n, std_mapping_to_primitive);
-    n++;
-
-    /* Point group */
-    /* PyList_SetItem(array, n, PyLong_FromLong((long)
-     * dataset->pointgroup_number)); */
-    /* n++; */
-    PyList_SetItem(array, n, PYUNICODE_FROMSTRING(dataset->pointgroup_symbol));
-    n++;
-
-    assert(n == len_list);
-
+    array = build_python_list_from_dataset(dataset);
     spg_free_dataset(dataset);
 
     return array;
