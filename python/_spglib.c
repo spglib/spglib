@@ -46,6 +46,7 @@
 
 static PyObject *py_get_version(PyObject *self, PyObject *args);
 static PyObject *py_get_dataset(PyObject *self, PyObject *args);
+static PyObject *py_get_layerdataset(PyObject *self, PyObject *args);
 static PyObject *py_get_magnetic_dataset(PyObject *self, PyObject *args);
 static PyObject *py_get_spacegroup_type(PyObject *self, PyObject *args);
 static PyObject *py_get_spacegroup_type_from_symmetry(PyObject *self,
@@ -100,6 +101,7 @@ static PyMethodDef _spglib_methods[] = {
     {"error_out", (PyCFunction)error_out, METH_NOARGS, NULL},
     {"version", py_get_version, METH_VARARGS, "Spglib version"},
     {"dataset", py_get_dataset, METH_VARARGS, "Dataset for crystal symmetry"},
+    {"layerdataset", py_get_layerdataset, METH_VARARGS, "Dataset for layer symmetry"},
     {"magnetic_dataset", py_get_magnetic_dataset, METH_VARARGS,
      "Magnetic dataset for crystal symmetry"},
     {"spacegroup_type", py_get_spacegroup_type, METH_VARARGS,
@@ -217,13 +219,9 @@ static PyObject *py_get_version(PyObject *self, PyObject *args) {
     return array;
 }
 
-static PyObject *py_get_dataset(PyObject *self, PyObject *args) {
-    int hall_number;
-    double symprec, angle_tolerance;
-    PyArrayObject *py_lattice;
-    PyArrayObject *py_positions;
-    PyArrayObject *py_atom_types;
-
+PyObject* build_python_list_from_dataset(SpglibDataset* dataset)
+{
+    int len_list = 21;
     PyObject *array, *vec, *mat, *rot, *trans, *wyckoffs, *equiv_atoms;
     PyObject *crystallographic_orbits;
     PyObject *site_symmetry_symbols, *primitive_lattice, *mapping_to_primitive;
@@ -233,30 +231,6 @@ static PyObject *py_get_dataset(PyObject *self, PyObject *args) {
     PyObject *std_rotation;
 
     int i, j, k, n;
-    double(*lat)[3];
-    double(*pos)[3];
-    int num_atom, len_list;
-    int *typat;
-    SpglibDataset *dataset;
-
-    if (!PyArg_ParseTuple(args, "OOOidd", &py_lattice, &py_positions,
-                          &py_atom_types, &hall_number, &symprec,
-                          &angle_tolerance)) {
-        return NULL;
-    }
-
-    lat = (double(*)[3])PyArray_DATA(py_lattice);
-    pos = (double(*)[3])PyArray_DATA(py_positions);
-    num_atom = PyArray_DIMS(py_positions)[0];
-    typat = (int *)PyArray_DATA(py_atom_types);
-
-    if ((dataset = spgat_get_dataset_with_hall_number(
-             lat, pos, typat, num_atom, hall_number, symprec,
-             angle_tolerance)) == NULL) {
-        Py_RETURN_NONE;
-    }
-
-    len_list = 21;
     array = PyList_New(len_list);
     n = 0;
 
@@ -425,7 +399,98 @@ static PyObject *py_get_dataset(PyObject *self, PyObject *args) {
     n++;
 
     assert(n == len_list);
+    return array;
+}
 
+static PyObject *py_get_dataset(PyObject *self, PyObject *args) {
+    int hall_number;
+    double symprec, angle_tolerance;
+    PyArrayObject *py_lattice;
+    PyArrayObject *py_positions;
+    PyArrayObject *py_atom_types;
+    PyObject *array;
+    double(*lat)[3];
+    double(*pos)[3];
+    int num_atom;
+    int *typat;
+    SpglibDataset *dataset;
+
+    if (!PyArg_ParseTuple(args, "OOOidd", &py_lattice, &py_positions,
+                          &py_atom_types, &hall_number, &symprec,
+                          &angle_tolerance)) {
+        return NULL;
+    }
+
+    lat = (double(*)[3])PyArray_DATA(py_lattice);
+    pos = (double(*)[3])PyArray_DATA(py_positions);
+    num_atom = PyArray_DIMS(py_positions)[0];
+    typat = (int *)PyArray_DATA(py_atom_types);
+
+    if ((dataset = spgat_get_dataset_with_hall_number(
+             lat, pos, typat, num_atom, hall_number, symprec,
+             angle_tolerance)) == NULL) {
+        Py_RETURN_NONE;
+    }
+
+    array = build_python_list_from_dataset(dataset);
+    spg_free_dataset(dataset);
+
+    return array;
+}
+
+static PyObject *py_get_layerdataset(PyObject *self, PyObject *args) {
+    int aperiodic_dir;
+    double symprec;
+    PyArrayObject *py_lattice;
+    PyArrayObject *py_positions;
+    PyArrayObject *py_atom_types;
+
+    PyObject *array;
+
+    double(*lat)[3];
+    double(*pos)[3];
+    int num_atom, len_list;
+    int *typat;
+    SpglibDataset *dataset;
+
+    if (!PyArg_ParseTuple(args, "OOOid", &py_lattice, &py_positions,
+                          &py_atom_types, &aperiodic_dir, &symprec)) {
+        return NULL;
+    }
+
+    if (!PyArray_IS_C_CONTIGUOUS(py_lattice))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Lattice vector not C_CONTIGUOUS");
+        return NULL;
+    }
+    if (!PyArray_IS_C_CONTIGUOUS(py_positions))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Positions vector not C_CONTIGUOUS");
+        return NULL;
+    }
+    if (!PyArray_IS_C_CONTIGUOUS(py_atom_types))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Atom types vector not C_CONTIGUOUS");
+        return NULL;
+    }
+
+    lat = (double(*)[3])PyArray_DATA(py_lattice);
+    pos = (double(*)[3])PyArray_DATA(py_positions);
+    num_atom = PyArray_DIMS(py_positions)[0];
+    typat = (int *)PyArray_DATA(py_atom_types);
+    
+    dataset = spg_get_layer_dataset(lat, pos, typat, num_atom,
+                                    aperiodic_dir, symprec);
+    
+    if (!dataset)
+    {
+        Py_RETURN_NONE;
+    }
+    
+    // NOTE: This code is still experimental. It parses the information
+    // from layer dataset exactly as it would from normal dataset.
+    // It should be checked that all of this information makes sense.
+    array = build_python_list_from_dataset(dataset);
     spg_free_dataset(dataset);
 
     return array;

@@ -48,6 +48,7 @@ from .spglib import (  # noqa: F401
     get_magnetic_symmetry_dataset,
     get_magnetic_symmetry_from_database,
     get_pointgroup,
+    get_layergroup,
     get_spacegroup,
     get_spacegroup_type,
     get_spacegroup_type_from_symmetry,
