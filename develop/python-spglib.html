@@ -31,7 +31,8 @@
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Rust, Fortran, and Ruby interfaces" href="interface.html" />
@@ -134,7 +135,7 @@
   </a>
  </li>
  <li class="toctree-l1 has-children">
-  <a class="reference internal" href="develop.html">
+  <a class="reference internal" href="development/develop.html">
    Developer Documentation
   </a>
   <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
@@ -144,12 +145,17 @@
   </label>
   <ul>
    <li class="toctree-l2">
-    <a class="reference internal" href="magnetic_spacegroup.html">
+    <a class="reference internal" href="development/performance.html">
+     Performance
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="development/magnetic_spacegroup.html">
      Magnetic space group
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="magnetic_symmetry_flags.html">
+    <a class="reference internal" href="development/magnetic_symmetry_flags.html">
      Flags to control action of magnetic symmetry operations
     </a>
    </li>
@@ -978,7 +984,7 @@ title="Print to PDF"
                 
               <div>
                 
-  <section id="spglib-for-python">
+  <section class="tex2jax_ignore mathjax_ignore" id="spglib-for-python">
 <span id="python-spglib"></span><h1>Spglib for Python<a class="headerlink" href="#spglib-for-python" title="Permalink to this headline">#</a></h1>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">#</a></h2>
@@ -990,7 +996,7 @@ latest version, you can git-clone the spglib repository</p>
 </pre></div>
 </div>
 <p>It is also possible to install spglib for python via the following
-package distribution services or from building using setup.py.</p>
+package distribution services or from building using <a class="reference external" href="http://setup.py">setup.py</a>.</p>
 <p>The following pip and conda packages are made and maintained by
 <a class="reference external" href="https://github.com/jochym">Paweł T. Jochym</a>, which is of great help
 to keeping spglib handy and useful.</p>
@@ -1025,7 +1031,7 @@ upgrade setuptools, e.g., by</p>
 </div>
 </section>
 <section id="building-using-setup-py">
-<h3>Building using setup.py<a class="headerlink" href="#building-using-setup-py" title="Permalink to this headline">#</a></h3>
+<h3>Building using <a class="reference external" href="http://setup.py">setup.py</a><a class="headerlink" href="#building-using-setup-py" title="Permalink to this headline">#</a></h3>
 <p>To manually install python-spglib using <code class="docutils literal notranslate"><span class="pre">setup.py</span></code>, python header
 files (python-dev), C-compiler (e.g., gcc, clang), and numpy are
 required before the build. The installation steps are shown as
@@ -1044,7 +1050,7 @@ links below:</p>
 </ul>
 </li>
 </ol>
-<p>If your installation by setup.py failed, you may need to upgrade
+<p>If your installation by <a class="reference external" href="http://setup.py">setup.py</a> failed, you may need to upgrade
 setuptools, e.g., by</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>% pip install --upgrade --user setuptools
 </pre></div>
@@ -1537,7 +1543,7 @@ Optionally alternative settings can be specified with <code class="docutils lite
 </pre></div>
 </div>
 <p>Niggli reduction is achieved using this method. The algorithm detail
-is found at https://atztogo.github.io/niggli/ and the references are
+is found at <a class="reference external" href="https://atztogo.github.io/niggli/">https://atztogo.github.io/niggli/</a> and the references are
 there in. Original basis vectors are stored in <code class="docutils literal notranslate"><span class="pre">lattice</span></code> and the
 Niggli reduced basis vectors are given in <code class="docutils literal notranslate"><span class="pre">niggli_lattice</span></code>. The
 format of basis vectors are found at

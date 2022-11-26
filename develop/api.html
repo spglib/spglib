@@ -31,7 +31,8 @@
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Spglib dataset" href="dataset.html" />
@@ -134,7 +135,7 @@
   </a>
  </li>
  <li class="toctree-l1 has-children">
-  <a class="reference internal" href="develop.html">
+  <a class="reference internal" href="development/develop.html">
    Developer Documentation
   </a>
   <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
@@ -144,12 +145,17 @@
   </label>
   <ul>
    <li class="toctree-l2">
-    <a class="reference internal" href="magnetic_spacegroup.html">
+    <a class="reference internal" href="development/performance.html">
+     Performance
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="development/magnetic_spacegroup.html">
      Magnetic space group
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="magnetic_symmetry_flags.html">
+    <a class="reference internal" href="development/magnetic_symmetry_flags.html">
      Flags to control action of magnetic symmetry operations
     </a>
    </li>
@@ -972,7 +978,7 @@ title="Print to PDF"
                 
               <div>
                 
-  <section id="c-apis">
+  <section class="tex2jax_ignore mathjax_ignore" id="c-apis">
 <h1>C-APIs<a class="headerlink" href="#c-apis" title="Permalink to this headline">#</a></h1>
 <section id="version">
 <h2>Version<a class="headerlink" href="#version" title="Permalink to this headline">#</a></h2>
@@ -1343,7 +1349,7 @@ from crystal structure with <code class="docutils literal notranslate"><span cla
 When you need magnetic symmetry operations of non-collinear spins, set <code class="docutils literal notranslate"><span class="pre">tensor_rank=1</span></code>, <code class="docutils literal notranslate"><span class="pre">is_axial=1</span></code>,
 and <code class="docutils literal notranslate"><span class="pre">tensors</span></code> with length <code class="docutils literal notranslate"><span class="pre">num_atom</span> <span class="pre">*</span> <span class="pre">3</span></code> (ordered by <span class="math notranslate nohighlight">\([ m_{1x}, m_{1y}, m_{1z}, \dots ]\)</span>)
 in cartesian coordinates.
-For other combinations of <code class="docutils literal notranslate"><span class="pre">tensor_rank</span></code> and <code class="docutils literal notranslate"><span class="pre">is_axial</span></code>, see <a class="reference internal" href="magnetic_symmetry_flags.html#magnetic-action-flags"><span class="std std-ref">Flags to control action of magnetic symmetry operations</span></a>.
+For other combinations of <code class="docutils literal notranslate"><span class="pre">tensor_rank</span></code> and <code class="docutils literal notranslate"><span class="pre">is_axial</span></code>, see <a class="reference internal" href="development/magnetic_symmetry_flags.html#magnetic-action-flags"><span class="std std-ref">Flags to control action of magnetic symmetry operations</span></a>.
 Returned <code class="docutils literal notranslate"><span class="pre">spin_flips</span></code> represents sign of site tensors after applying time-reversal operations:
 1 for non time reversal, and -1 for time reversal.</p>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="nf">spg_get_symmetry_with_site_tensors</span><span class="p">(</span><span class="w"></span>

@@ -31,7 +31,8 @@
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="References" href="references.html" />
@@ -134,7 +135,7 @@
   </a>
  </li>
  <li class="toctree-l1 has-children">
-  <a class="reference internal" href="develop.html">
+  <a class="reference internal" href="development/develop.html">
    Developer Documentation
   </a>
   <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
@@ -144,12 +145,17 @@
   </label>
   <ul>
    <li class="toctree-l2">
-    <a class="reference internal" href="magnetic_spacegroup.html">
+    <a class="reference internal" href="development/performance.html">
+     Performance
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="development/magnetic_spacegroup.html">
      Magnetic space group
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="magnetic_symmetry_flags.html">
+    <a class="reference internal" href="development/magnetic_symmetry_flags.html">
      Flags to control action of magnetic symmetry operations
     </a>
    </li>
@@ -592,7 +598,7 @@ title="Print to PDF"
                 
               <div>
                 
-  <section id="definitions-and-conventions">
+  <section class="tex2jax_ignore mathjax_ignore" id="definitions-and-conventions">
 <span id="id1"></span><h1>Definitions and conventions<a class="headerlink" href="#definitions-and-conventions" title="Permalink to this headline">#</a></h1>
 <p>Information in this page is valid for spglib 1.8.1 or later. The
 definitions of transformation matrix and origin shift were different
@@ -761,7 +767,7 @@ determined only by the symmetrical conventions.</p>
 <section id="transformation-to-the-primitive-cell">
 <span id="def-standardized-primitive-cell"></span><h3>Transformation to the primitive cell<a class="headerlink" href="#transformation-to-the-primitive-cell" title="Permalink to this headline">#</a></h3>
 <p>In the standardized unit cells, there are five different centring
-types available, base centrings of A and C, rhombohedral (R), body centred
+types available, base centrings of A and C, rhombohedral ®, body centred
 (I), and face centred (F). The transformation is applied to the
 standardized unit cell by</p>
 <div class="math notranslate nohighlight" id="equation-transformation-to-primitive">

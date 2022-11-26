@@ -31,7 +31,8 @@
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="How to install spglib C-API" href="install.html" />
@@ -133,7 +134,7 @@
   </a>
  </li>
  <li class="toctree-l1 has-children">
-  <a class="reference internal" href="develop.html">
+  <a class="reference internal" href="development/develop.html">
    Developer Documentation
   </a>
   <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
@@ -143,12 +144,17 @@
   </label>
   <ul>
    <li class="toctree-l2">
-    <a class="reference internal" href="magnetic_spacegroup.html">
+    <a class="reference internal" href="development/performance.html">
+     Performance
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="development/magnetic_spacegroup.html">
      Magnetic space group
     </a>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="magnetic_symmetry_flags.html">
+    <a class="reference internal" href="development/magnetic_symmetry_flags.html">
      Flags to control action of magnetic symmetry operations
     </a>
    </li>
@@ -365,7 +371,7 @@ title="Print to PDF"
                 
               <div>
                 
-  <section id="spglib">
+  <section class="tex2jax_ignore mathjax_ignore" id="spglib">
 <h1>Spglib<a class="headerlink" href="#spglib" title="Permalink to this headline">#</a></h1>
 <div class="toctree-wrapper compound">
 </div>
@@ -399,9 +405,9 @@ mailing list:</p>
 <section id="for-more-information">
 <h2>For more information<a class="headerlink" href="#for-more-information" title="Permalink to this headline">#</a></h2>
 <ul class="simple">
-<li><p>Repository: https://github.com/spglib/spglib</p></li>
+<li><p>Repository: <a class="reference external" href="https://github.com/spglib/spglib">https://github.com/spglib/spglib</a></p></li>
 <li><p>License: New BSD after version 1.0.beta-1</p></li>
-<li><p>Contact: atz.togo&#64;gmail.com</p></li>
+<li><p>Contact: <a class="reference external" href="mailto:atz&#46;togo&#37;&#52;&#48;gmail&#46;com">atz<span>&#46;</span>togo<span>&#64;</span>gmail<span>&#46;</span>com</a></p></li>
 <li><p>Author: Atsushi Togo</p></li>
 </ul>
 </section>
