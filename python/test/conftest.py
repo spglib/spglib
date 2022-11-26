@@ -29,7 +29,7 @@ def dirnames() -> list[Path]:
 
 
 @pytest.fixture(scope="session")
-def all_filenames() -> list:
+def all_filenames() -> list[Path]:
     """Return all filenames in test directories."""
     all_filenames = []
     for d in (_data_dir / _d for _d in _dirnames):
