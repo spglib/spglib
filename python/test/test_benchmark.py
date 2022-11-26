@@ -12,7 +12,7 @@ from spglib import get_symmetry_dataset
 def test_get_symmetry_dataset(
     benchmark, all_filenames: list[Path], read_vasp: Callable
 ):
-    """Benchmark performance of spglib.get_symmetry_dataset on all structures under test/data."""
+    """Benchmarking get_symmetry_dataset on all structures under test/data."""
     # Load all cells beforehands
     cells = [read_vasp(fname) for fname in all_filenames]
     print(f"Benchmark get_symmetry_dataset on {len(cells)} structures")
