@@ -486,9 +486,7 @@ def get_symmetry_dataset(cell, symprec=1e-5, angle_tolerance=-1.0, hall_number=0
 
 
 def get_symmetry_layerdataset(cell, aperiodic_dir=2, symprec=1e-5):
-    """ TODO: Add comments
-
-    """
+    """TODO: Add comments."""
     _set_no_error()
 
     lattice, positions, numbers, _ = _expand_cell(cell)
@@ -496,7 +494,11 @@ def get_symmetry_layerdataset(cell, aperiodic_dir=2, symprec=1e-5):
         return None
 
     spg_ds = spg.layerdataset(
-        lattice, positions, numbers, aperiodic_dir, symprec,
+        lattice,
+        positions,
+        numbers,
+        aperiodic_dir,
+        symprec,
     )
     if spg_ds is None:
         _set_error_message()
@@ -678,6 +680,7 @@ def get_magnetic_symmetry_dataset(
     _set_error_message()
     return dataset
 
+
 def get_layergroup(cell, aperiodic_dir=2, symprec=1e-5):
     """Return layer group in ....
 
@@ -685,8 +688,10 @@ def get_layergroup(cell, aperiodic_dir=2, symprec=1e-5):
 
     """
     _set_no_error()
-    
-    dataset = get_symmetry_layerdataset(cell, aperiodic_dir=aperiodic_dir, symprec=symprec)
+
+    dataset = get_symmetry_layerdataset(
+        cell, aperiodic_dir=aperiodic_dir, symprec=symprec
+    )
     return dataset
 
 
@@ -701,7 +706,7 @@ def get_spacegroup(cell, symprec=1e-5, angle_tolerance=-1.0, symbol_type=0):
     dataset = get_symmetry_dataset(
         cell, symprec=symprec, angle_tolerance=angle_tolerance
     )
-    
+
     if dataset is None:
         return None
 

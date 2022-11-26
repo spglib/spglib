@@ -19,20 +19,24 @@ _dirnames = (
     "virtual_structure",
 )
 
-_data_dir = Path(__file__).parent.absolute() / "data"
+
+@pytest.fixture(scope="session")
+def root_data_dir() -> Path:
+    _data_dir = Path(__file__).parent.absolute() / "data"
+    return _data_dir
 
 
 @pytest.fixture(scope="session")
-def dirnames() -> list[Path]:
+def dirnames(root_data_dir) -> list[Path]:
     """Return test directory names."""
-    return [_data_dir / d for d in _dirnames]
+    return [root_data_dir / d for d in _dirnames]
 
 
 @pytest.fixture(scope="session")
-def all_filenames() -> list:
+def all_filenames(root_data_dir) -> list[Path]:
     """Return all filenames in test directories."""
     all_filenames = []
-    for d in (_data_dir / _d for _d in _dirnames):
+    for d in (root_data_dir / _d for _d in _dirnames):
         all_filenames += [d / fname for fname in d.iterdir()]
     return all_filenames
 

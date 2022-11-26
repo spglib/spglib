@@ -5,3 +5,7 @@ requires = ["setuptools", "wheel", "numpy"]
 skip = ["pp*", "*-win32", "*-manylinux_i686", "*-musllinux*"]
 manylinux-x86_64-image = "manylinux2014"
 manylinux-aarch64-image = "manylinux2014"
+
+[tool.pytest.ini_options]
+addopts = "--benchmark-skip"
+testpaths = ["test"]

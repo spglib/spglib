@@ -132,12 +132,19 @@ if len(version_nums) > 3:
     version += "-%d" % version_nums[3]
 
 extras_require = {
+    "testing": [
+        "codecov",
+        "pytest",
+        "pytest-cov",
+        "pytest-benchmark",
+    ],
     "doc": [
         "Sphinx==4.5.0",
         "sphinx-autobuild==2021.3.14",
         "sphinxcontrib-bibtex==2.4.2",
         "sphinx-book-theme==0.3.3",
         "myst-parser==0.18.0",
+        "linkify-it-py==2.0.0",
     ],
 }
 
