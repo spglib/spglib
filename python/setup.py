@@ -138,6 +138,7 @@ extras_require = {
         "sphinxcontrib-bibtex==2.4.2",
         "sphinx-book-theme==0.3.3",
         "myst-parser==0.18.0",
+        "linkify-it-py==2.0.0",
     ],
 }
 

@@ -100,7 +100,7 @@ pygments_style = 'sphinx'
 #modindex_common_prefix = []
 
 # MyST
-myst_enalbe_extensions = [
+myst_enable_extensions = [
     "amsmath",
     "dollarmath",
     "html_admonition",
