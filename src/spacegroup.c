@@ -966,19 +966,24 @@ static int change_basis_monocli(int tmat_int[3][3],
                                 const double symprec,
                                 const int aperiodic_axis_prim) {
     double smallest_lattice[3][3], inv_lattice[3][3], tmat[3][3];
-    int i, aperiodic_axis_conv;
+    int i, aperiodic_axis_conv, unique_axis;
 
-    aperiodic_axis_conv = -1;
-    if (aperiodic_axis_prim != -1) {
+    /* Unique axis of 3D monoclinic crystal system is b */
+    /* For layer with 2D op/oc lattice, unique axis is a */
+    if (aperiodic_axis_prim == -1) {
+        aperiodic_axis_conv = -1;
+        unique_axis = 1;
+    } else {
         for (i = 0; i < 3; i++) {
             if (tmat_int[aperiodic_axis_prim][i] != 0) {
                 aperiodic_axis_conv = i;
             }
         }
+        unique_axis = 0;
     }
 
     if (!del_layer_delaunay_reduce_2D(smallest_lattice, conv_lattice,
-                                      1, /* unique axis of b */
+                                      unique_axis,
                                       aperiodic_axis_conv, symprec)) {
         return 0;
     }
