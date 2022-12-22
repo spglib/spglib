@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 import sysconfig
 
@@ -103,12 +104,14 @@ extension = Extension(
     define_macros=define_macros,
 )
 
-version_nums = [None, None, None]
-with open(os.path.join(source_dir, "version.h")) as w:
-    for line in w:
-        for i, chars in enumerate(("MAJOR", "MINOR", "MICRO")):
-            if chars in line:
-                version_nums[i] = int(line.split()[2])
+with open(os.path.join('..', 'CMakeLists.txt')) as fl:
+    # regex blackmagic: try out at regex101.com
+    # Search for first "project(spglib VERSION ...)"
+    # including whitespace, newlines, reordering and case-insensitive
+    match = re.search('(?i)\s*project\s*\(\s*spglib[\s\S]*?VERSION ([0-9.]*)[\s\S]*?\)', fl.read())
+    if not match:
+        raise RuntimeError("Failed to find spglib version from cmake file")
+    version = match.group(1)
 
 # To deploy to pypi by travis-CI
 nanoversion = 0
@@ -121,15 +124,7 @@ if os.path.isfile("__nanoversion__.txt"):
         except ValueError:
             nanoversion = 0
 if nanoversion != 0:
-    version_nums.append(nanoversion)
-
-if None in version_nums:
-    print("Failed to get version number in setup.py.")
-    raise
-
-version = ".".join(["%d" % n for n in version_nums[:3]])
-if len(version_nums) > 3:
-    version += "-%d" % version_nums[3]
+    version += f"-{nanoversion}"
 
 extras_require = {
     "testing": [

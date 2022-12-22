@@ -1,7 +1,9 @@
 
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.0)
 
-project(spglib C)
+project(spglib
+        VERSION 2.0.2
+        LANGUAGES C)
 
 option(WITH_Fortran "enable f08 interface" OFF)
 
@@ -44,18 +46,13 @@ if (USE_OMP)
 endif()
 
 # Version numbers
-file(READ ${PROJECT_SOURCE_DIR}/src/version.h version_file)
-string(REGEX MATCH "SPGLIB_MAJOR_VERSION ([0-9]+)" spglib_major_version ${version_file})
-set(spglib_major_version ${CMAKE_MATCH_1})
-string(REGEX MATCH "SPGLIB_MINOR_VERSION ([0-9]+)" spglib_minor_version ${version_file})
-set(spglib_minor_version ${CMAKE_MATCH_1})
-string(REGEX MATCH "SPGLIB_MICRO_VERSION ([0-9]+)" spglib_micro_version ${version_file})
-set(spglib_micro_version ${CMAKE_MATCH_1})
-set(serial "${spglib_major_version}.${spglib_minor_version}.${spglib_micro_version}")
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/version.h.in
+        ${CMAKE_CURRENT_BINARY_DIR}/src/version.h)
 set(soserial "1")
 
 # Source code
-include_directories("${PROJECT_SOURCE_DIR}/src")
+include_directories(${PROJECT_SOURCE_DIR}/src
+        ${CMAKE_CURRENT_BINARY_DIR}/src)
 set(SOURCES ${PROJECT_SOURCE_DIR}/src/arithmetic.c
             ${PROJECT_SOURCE_DIR}/src/cell.c
             ${PROJECT_SOURCE_DIR}/src/debug.c
@@ -97,13 +94,13 @@ add_library(symspg SHARED ${SOURCES})
 if(NOT MSVC)
   target_link_libraries(symspg PUBLIC m)
 endif()
-set_property(TARGET symspg PROPERTY VERSION ${serial})
+set_property(TARGET symspg PROPERTY VERSION ${PROJECT_VERSION})
 set_property(TARGET symspg PROPERTY SOVERSION ${soserial})
 install(TARGETS symspg LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 # Static link library
 add_library(symspg_static STATIC ${SOURCES})
-set_property(TARGET symspg_static PROPERTY VERSION ${serial})
+set_property(TARGET symspg_static PROPERTY VERSION ${PROJECT_VERSION})
 set_property(TARGET symspg_static PROPERTY SOVERSION ${soserial})
 set_property(TARGET symspg_static PROPERTY OUTPUT_NAME symspg)
 install(TARGETS symspg_static ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})

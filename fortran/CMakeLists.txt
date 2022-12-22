@@ -4,12 +4,12 @@ if (USE_OMP)
 endif()
 
 add_library(spglib_f08_static STATIC ${PROJECT_SOURCE_DIR}/fortran/spglib_f08.f90)
-set_property(TARGET spglib_f08_static PROPERTY VERSION ${serial})
+set_property(TARGET spglib_f08_static PROPERTY VERSION ${PROJECT_VERSION})
 set_property(TARGET spglib_f08_static PROPERTY SOVERSION ${soserial})
 set_property(TARGET spglib_f08_static PROPERTY OUTPUT_NAME spglib_f08)
 
 add_library(spglib_f08 SHARED ${PROJECT_SOURCE_DIR}/fortran/spglib_f08.f90)
-set_property(TARGET spglib_f08 PROPERTY VERSION ${serial})
+set_property(TARGET spglib_f08 PROPERTY VERSION ${PROJECT_VERSION})
 set_property(TARGET spglib_f08 PROPERTY SOVERSION ${soserial})
 add_dependencies(spglib_f08 spglib_f08_static)
 
