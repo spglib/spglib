@@ -5,13 +5,21 @@ a linear tetrahedron method example. `tetrahedron_method.c`and
 `tetrahedron_method.h` are those distributed under kspclib
 (https://github.com/atztogo/kspclib).
 
+## Examples of using spglib in a cmake project
+
+Here we provide a cmake example for both C and fortran projects linking
+with both native cmake and pkg-config.
+
 ## Examples of spglib functions in C
 
-To compile `example.c`:
+To manually compile `example.c`:
 
 ```
 % gcc example.c -I[include directory] -L[library directory] -lsymspg -lm
 ```
+
+where the `[include directory]` and `[library directory]` can be obtained
+via `pkg-config --cflags --libs spglib`.
 
 ## Linear tetrahedron method
 
