@@ -1,11 +1,12 @@
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.14)
 
 project(spglib
         VERSION 2.0.2
         LANGUAGES C)
 
 option(WITH_Fortran "enable f08 interface" OFF)
+option(WITH_PYTHON "build python buindings" ON)
 
 set(CMAKE_MACOSX_RPATH 1)
 if(NOT CMAKE_BUILD_TYPE)
@@ -113,6 +114,9 @@ install(FILES ${PROJECT_SOURCE_DIR}/src/spglib.h
 if (WITH_Fortran)
   enable_language(Fortran)
   add_subdirectory(fortran)
+endif()
+if (WITH_PYTHON)
+  add_subdirectory(python)
 endif()
 
 configure_file(spglib.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/spglib.pc)

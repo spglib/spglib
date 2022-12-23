@@ -1,9 +1,19 @@
 import os
 import re
+import subprocess
 import sys
 import sysconfig
 
 setup_type = sys.argv[1]
+
+# Command line flags forwarded to CMake (for debug purpose)
+cmake_cmd_args = []
+for f in sys.argv:
+    if f.startswith('-D'):
+        cmake_cmd_args.append(f)
+
+for f in cmake_cmd_args:
+    sys.argv.remove(f)
 
 try:
     from setuptools import Extension, setup
@@ -36,36 +46,52 @@ except ImportError:
         )
         sys.exit(1)
 
+
+# Use the cmake build
+# https://martinopilia.com/posts/2018/09/15/building-python-extension.html
+# https://stackoverflow.com/questions/42585210/extending-setuptools-extension-to-use-cmake-in-setup-py
+class CMakeExtension(Extension):
+    def __init__(self, name, cmake_lists_dir='..', **kwa):
+        Extension.__init__(self, name, sources=[], **kwa)
+        self.cmake_lists_dir = os.path.abspath(cmake_lists_dir)
+
+
+class CMakeBuildExt(build_ext):
+    def build_extensions(self) -> None:
+        # Ensure that CMake is present and working
+        try:
+            out = subprocess.check_output(['cmake', '--version'])
+        except OSError:
+            raise RuntimeError('Cannot find CMake executable')
+        for ext in self.extensions:
+            extdir = os.path.abspath(os.path.dirname(self.get_ext_fullpath(ext.name)))
+            # cfg = 'Debug' if options['--debug'] == 'ON' else 'Release'
+            cfg = 'Release'
+            cmake_args = [
+                f"-DCMAKE_BUILD_TYPE={cfg}",
+                f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_{cfg.upper()}={extdir}",
+                f"-DCMAKE_ARCHIVE_OUTPUT_DIRECTORY_{cfg.upper()}={self.build_temp}",
+                f"-DPython_ROOT_DIR={sys.prefix}",
+                '-DWITH_Python=ON'
+            ]
+
+            cmake_args += cmake_cmd_args
+
+            if not os.path.exists(self.build_temp):
+                os.makedirs(self.build_temp)
+
+            # Config
+            subprocess.check_call(['cmake', ext.cmake_lists_dir] + cmake_args,
+                                  cwd=self.build_temp)
+
+            # Build
+            subprocess.check_call(['cmake', '--build', '.', '--config', cfg],
+                                  cwd=self.build_temp)
+
 # Workaround Python issue 21121
 config_var = sysconfig.get_config_var("CFLAGS")
 if config_var is not None and "-Werror=declaration-after-statement" in config_var:
     os.environ["CFLAGS"] = config_var.replace("-Werror=declaration-after-statement", "")
-
-sources = [
-    "arithmetic.c",
-    "cell.c",
-    "delaunay.c",
-    "debug.c",
-    "determination.c",
-    "hall_symbol.c",
-    "kgrid.c",
-    "kpoint.c",
-    "magnetic_spacegroup.c",
-    "mathfunc.c",
-    "msg_database.c",
-    "niggli.c",
-    "overlap.c",
-    "pointgroup.c",
-    "primitive.c",
-    "refinement.c",
-    "sitesym_database.c",
-    "site_symmetry.c",
-    "spacegroup.c",
-    "spin.c",
-    "spg_database.c",
-    "spglib.c",
-    "symmetry.c",
-]
 
 if os.path.exists("src"):
     source_dir = "src"
@@ -78,8 +104,6 @@ include_dirs = [
 if not use_setuptools:
     include_dirs += get_numpy_include_dirs()
 
-for i, s in enumerate(sources):
-    sources[i] = os.path.join(source_dir, s)
 
 extra_compile_args = []
 if setup_type == "test":
@@ -95,14 +119,7 @@ define_macros = []
 # define_macros = [('SPGWARNING', None),
 #                  ('SPGDEBUG', None)]
 
-extension = Extension(
-    "spglib._spglib",
-    include_dirs=include_dirs,
-    sources=["_spglib.c"] + sources,
-    extra_compile_args=extra_compile_args,
-    extra_link_args=extra_link_args,
-    define_macros=define_macros,
-)
+extension = CMakeExtension("spglib._spglib")
 
 with open(os.path.join('..', 'CMakeLists.txt')) as fl:
     # regex blackmagic: try out at regex101.com
@@ -147,7 +164,7 @@ if use_setuptools:
     setup(
         name="spglib",
         version=version,
-        cmdclass={"build_ext": CustomBuildExtCommand},
+        cmdclass={"build_ext": CMakeBuildExt},
         setup_requires=["numpy", "setuptools>=18.0"],
         license="BSD-3-Clause",
         description="This is the spglib module.",
@@ -184,6 +201,7 @@ else:
         provides=["spglib"],
         platforms=["all"],
         ext_modules=[extension],
+        cmdclass={"build_ext": CMakeBuildExt},
         tests_require=[
             "pyyaml",
         ],
