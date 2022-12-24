@@ -4,7 +4,7 @@ project(spglib
         LANGUAGES C)
 
 option(WITH_Fortran "enable f08 interface" OFF)
-option(WITH_PYTHON "build python buindings" OFF)
+option(WITH_Python "build python buindings" OFF)
 option(USE_OMP "Build with OpenMP support" ON)
 # Sanity check if project is imported
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
@@ -125,7 +125,7 @@ if (WITH_Fortran)
   enable_language(Fortran)
   add_subdirectory(fortran)
 endif()
-if (WITH_PYTHON)
+if (WITH_Python)
     add_subdirectory(python)
 endif()
 if (WITH_TESTS)
