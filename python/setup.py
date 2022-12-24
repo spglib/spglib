@@ -72,7 +72,8 @@ class CMakeBuildExt(build_ext):
                 f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_{cfg.upper()}={extdir}",
                 f"-DCMAKE_ARCHIVE_OUTPUT_DIRECTORY_{cfg.upper()}={self.build_temp}",
                 f"-DPython_ROOT_DIR={sys.prefix}",
-                '-DWITH_Python=ON'
+                '-DWITH_Python=ON',
+                '-DWITH_TESTS=OFF'
             ]
 
             cmake_args += cmake_cmd_args

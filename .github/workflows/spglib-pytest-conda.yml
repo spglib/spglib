@@ -67,11 +67,10 @@ jobs:
         conda install --yes -c conda-forge gcc_linux-64 make cmake
     # Require CMake>=3.14 for the following build procedure
     - name: Test
-      working-directory: ./test
       run: |
-        cmake -S . -B build -DUSE_SANITIZER="Address"
+        cmake -S . -B build -DUSE_SANITIZER="Address" -DWITH_TESTS=ON
         cmake --build build
-        cd build
+        cd build/test
         ctest
 
   docs:

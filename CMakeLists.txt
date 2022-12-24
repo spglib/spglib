@@ -1,12 +1,16 @@
-
 cmake_minimum_required(VERSION 3.14)
-
 project(spglib
         VERSION 2.0.2
         LANGUAGES C)
 
 option(WITH_Fortran "enable f08 interface" OFF)
-option(WITH_PYTHON "build python buindings" ON)
+option(WITH_PYTHON "build python buindings" OFF)
+# Sanity check if project is imported
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+    option(WITH_TESTS "build unit tests" ON)
+else()
+    option(WITH_TESTS "build unit tests" OFF)
+endif()
 
 set(CMAKE_MACOSX_RPATH 1)
 if(NOT CMAKE_BUILD_TYPE)
@@ -117,6 +121,9 @@ if (WITH_Fortran)
 endif()
 if (WITH_PYTHON)
   add_subdirectory(python)
+endif()
+if (WITH_TESTS)
+    add_subdirectory(test)
 endif()
 
 configure_file(spglib.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/spglib.pc)
