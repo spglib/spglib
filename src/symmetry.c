@@ -976,8 +976,8 @@ static PointSymmetry get_lattice_symmetry(const Cell *cell,
 
                     if (is_identity_metric(metric, metric_orig, symprec,
                                            angle_tol)) {
-                        if ((aperiodic_axis == -1 && num_sym > 47) ||
-                            (aperiodic_axis != -1 && num_sym > 23)) {
+                        if ((aperiodic_axis == -1 && num_sym >= 48) ||
+                            (aperiodic_axis != -1 && num_sym >= 24)) {
                             warning_print(
                                 "spglib: Too many lattice symmetries was "
                                 "found.\n");
@@ -999,8 +999,8 @@ static PointSymmetry get_lattice_symmetry(const Cell *cell,
             }
         }
 
-        if ((aperiodic_axis == -1 && num_sym < 49) ||
-            (aperiodic_axis != -1 && num_sym < 25) || angle_tol < 0) {
+        if ((aperiodic_axis == -1 && num_sym <= 48) ||
+            (aperiodic_axis != -1 && num_sym <= 24) || angle_tol < 0) {
             lattice_sym.size = num_sym;
             return transform_pointsymmetry(&lattice_sym, cell->lattice,
                                            min_lattice);
@@ -1121,6 +1121,8 @@ err:
     return lat_sym_new;
 }
 
+// @brief Set an integer matrix to `axes`. Three integer vectors are specified
+//        by indices of array `symmetry.c:relative_axes`.
 static void set_axes(int axes[3][3], const int a1, const int a2, const int a3) {
     int i;
     for (i = 0; i < 3; i++) {

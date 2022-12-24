@@ -40,6 +40,28 @@ TEST(<your_test_suite_name>, <test_name>) {
 }
 ```
 
+## VSCode setting
+
+Although Googletest is automatically prepared, you may need to install it locally to highlight structs and functions.
+
+The below is an example of `c_cpp_properties.json` for Mac (assume Googletest is installed by brew).
+```json
+{
+    "configurations": [
+        {
+            ...
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/src",
+                "${workspaceFolder}/test",
+                "/opt/homebrew/include/"
+            ],
+            ...
+        }
+    ]
+}
+```
+
 ## Utility functions for preparing structures
 
 When you find a doubtful `cell` with Python API, the following python snippets will be useful to prepare a test case for Python testing and C testing.
