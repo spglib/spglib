@@ -74,11 +74,8 @@ typedef struct {
 
 Pointgroup ptg_get_transformation_matrix(int transform_mat[3][3],
                                          const int rotations[][3][3],
-                                         const int num_rotations);
-Pointgroup ptg_get_layer_transformation_matrix(int transform_mat[3][3],
-                                               const int rotations[][3][3],
-                                               const int num_rotations,
-                                               const int aperiodic_axis);
+                                         const int num_rotations,
+                                         const int aperiodic_axis);
 Pointgroup ptg_get_pointgroup(const int pointgroup_number);
 PointSymmetry ptg_get_pointsymmetry(const int rotations[][3][3],
                                     const int num_rotations);

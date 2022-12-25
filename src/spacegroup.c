@@ -838,8 +838,8 @@ static int search_hall_number(double origin_shift[3], double conv_lattice[3][3],
     /* For rhombohedral system, basis vectors for hP */
     /* (hexagonal lattice basis) are provided by tmat_int, */
     /* but may be either obverse or reverse setting. */
-    pointgroup = ptg_get_layer_transformation_matrix(
-        tmat_int, symmetry->rot, symmetry->size, aperiodic_axis);
+    pointgroup = ptg_get_transformation_matrix(tmat_int, symmetry->rot,
+                                               symmetry->size, aperiodic_axis);
 
     debug_print("[line %d, %s]\n", __LINE__, __FILE__);
     debug_print("initial transformation matrix\n");

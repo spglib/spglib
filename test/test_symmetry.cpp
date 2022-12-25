@@ -33,4 +33,9 @@ TEST(test_symmetry, test_get_lattice_symmetry_layer) {
     // Bravais group of the two-dimensional lattice is 4/mmm
     symmetry = sym_get_operation(cell, symprec, angle_tolerance);
     ASSERT_EQ(symmetry->size, 16);
+
+    sym_free_symmetry(symmetry);
+    cel_free_cell(cell);
+    symmetry = NULL;
+    cell = NULL;
 }
