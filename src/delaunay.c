@@ -52,9 +52,6 @@ static void get_delaunay_shortest_vectors(double basis[4][3],
                                           const double symprec);
 static int get_extended_basis(double basis[4][3], const double lattice[3][3],
                               const int aperiodic_axis);
-static int delaunay_reduce_2D(double red_lattice[3][3],
-                              const double lattice[3][3], const int unique_axis,
-                              const int aperiodic_axis, const double symprec);
 static int delaunay_reduce_basis_2D(double basis[3][3], const int lattice_rank,
                                     const double symprec);
 static void get_delaunay_shortest_vectors_2D(double basis[3][3],
@@ -70,16 +67,6 @@ int del_delaunay_reduce(double min_lattice[3][3], const double lattice[3][3],
     debug_print("del_delaunay_reduce (tolerance = %f):\n", symprec);
 
     return delaunay_reduce(min_lattice, lattice, -1, symprec);
-}
-
-int del_layer_delaunay_reduce_2D(double min_lattice[3][3],
-                                 const double lattice[3][3],
-                                 const int unique_axis,
-                                 const int aperiodic_axis,
-                                 const double symprec) {
-    debug_print("del_layer_delaunay_reduce_2D:\n");
-    return delaunay_reduce_2D(min_lattice, lattice, unique_axis, aperiodic_axis,
-                              symprec);
 }
 
 /* Return 0 if failed */
@@ -351,20 +338,31 @@ static int get_extended_basis(double basis[4][3], const double lattice[3][3],
     return lattice_rank;
 }
 
-/* For Monoclinic/Oblique, unique axis is aperiodic axis, j and k are periodic
- */
-/* For Monoclinic/Rectangular, k is aperiodic axis, unique axis and j are
- * periodic */
-/* j and k are delaunay reduced, which can be incomplete for
- * Monoclinic/Rectangular */
-static int delaunay_reduce_2D(double red_lattice[3][3],
-                              const double lattice[3][3], const int unique_axis,
-                              const int aperiodic_axis, const double symprec) {
+// @brief Delaunay reduction for monoclinic/oblique or monoclinic/rectangular
+// @param[out] red_lattice
+// @param[in] lattice
+// @param[in] unique_axis
+//            Two-fold axis or mirror-plane-perpendicular axis
+// @param[in] aperiodic_axis
+// @param[in] symprec
+// @note For Monoclinic/oblique, the unique axis is also the aperiodic axis.
+//       Axes are {j, k, unique_axis(=aperiodic_axis)}.
+//       For Monoclinic/rectangular, axes are {unique_axis, j,
+//       k(=aperiodic_axis)}. j and k are delaunay reduced, which can be
+//       incomplete for Monoclinic/Rectangular
+int del_layer_delaunay_reduce_2D(double red_lattice[3][3],
+                                 const double lattice[3][3],
+                                 const int unique_axis,
+                                 const int aperiodic_axis,
+                                 const double symprec) {
     int i, j, k, attempt, succeeded, lattice_rank;
     double volume;
     double basis[3][3], lattice_2D[3][2], unique_vec[3];
 
+    debug_print("del_layer_delaunay_reduce_2D:\n");
+
     if (aperiodic_axis == -1 || unique_axis == aperiodic_axis) {
+        // bulk or Monoclinic/oblique
         j = -1;
         k = -1;
         for (i = 0; i < 3; i++) {
@@ -378,6 +376,7 @@ static int delaunay_reduce_2D(double red_lattice[3][3],
         }
         lattice_rank = 2;
     } else {
+        // Monoclinic/rectangular
         for (i = 0; i < 3; i++) {
             if (i != unique_axis && i != aperiodic_axis) {
                 j = i;
@@ -410,7 +409,6 @@ static int delaunay_reduce_2D(double red_lattice[3][3],
 
     for (i = 0; i < 3; i++) {
         red_lattice[i][unique_axis] = lattice[i][unique_axis];
-        ;
         red_lattice[i][j] = basis[0][i];
         red_lattice[i][k] = basis[1][i];
     }

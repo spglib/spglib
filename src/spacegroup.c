@@ -918,8 +918,7 @@ err:
     return 0;
 }
 
-/* Triclinic: Niggli cell reduction */
-/* Return 0 if failed */
+// Perform Niggli cell reduction for Triclinic. Return 0 if failed.
 static int change_basis_tricli(int tmat_int[3][3],
                                const double conv_lattice[3][3],
                                const double primitive_lattice[3][3],
@@ -934,8 +933,7 @@ static int change_basis_tricli(int tmat_int[3][3],
         }
     }
 
-    if (!niggli_reduce_periodic(niggli_cell, symprec * symprec,
-                                aperiodic_axis)) {
+    if (!niggli_reduce(niggli_cell, symprec * symprec, aperiodic_axis)) {
         return 0;
     }
 
