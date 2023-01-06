@@ -1,23 +1,10 @@
 find_package(Python REQUIRED COMPONENTS Interpreter Development NumPy)
-add_library(python_api SHARED _spglib.c)
-set(lib_name "_spglib")
-if (CPython_Suffix)
-	set(lib_name "${lib_name}.${CPython_Suffix}")
+find_package(PythonExtensions REQUIRED)
+include(UsePythonExtensions)
+add_python_extension(_spglib
+		SOURCES _spglib.c
+		LINK_LIBRARIES symspg)
+if (BUNDLE_Python_SharedLib)
+	install(TARGETS symspg LIBRARY DESTINATION spglib)
 endif ()
-set_target_properties(
-		python_api
-		PROPERTIES
-		PREFIX ""
-		OUTPUT_NAME ${lib_name}
-		LINKER_LANGUAGE C
-)
-
-if (WIN32)
-	set_target_properties(
-			python_api
-			PROPERTIES
-			SUFFIX ".pyd"
-	)
-endif ()
-
-target_link_libraries(python_api PUBLIC symspg Python::Python Python::NumPy)
+install(TARGETS _spglib LIBRARY DESTINATION spglib)

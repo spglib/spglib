@@ -34,7 +34,7 @@ jobs:
         ./get_nanoversion.sh
         cat __nanoversion__.txt
         python setup.py build
-        pip install -e .[testing]
+        pip install .[testing]
     - name: Test with pytest
       working-directory: ./python
       run: |
@@ -100,7 +100,7 @@ jobs:
     - name: Setup spglib with doc's dependencies
       working-directory: ./python
       run: |
-        python -m pip install -e .[doc]
+        pip install .[doc]
 
     - name: Build
       run: |
