@@ -58,6 +58,7 @@ class CMakeExtension(Extension):
 
 class CMakeBuildExt(build_ext):
     def build_extensions(self) -> None:
+        target = 'python_api'
         # Ensure that CMake is present and working
         try:
             out = subprocess.check_output(['cmake', '--version'])
@@ -75,6 +76,9 @@ class CMakeBuildExt(build_ext):
                 '-DWITH_Python=ON',
                 '-DWITH_TESTS=OFF'
             ]
+            lib_suffix = sysconfig.get_config_var('SOABI')
+            if lib_suffix:
+                cmake_args.append(f"-DCPython_Suffix={lib_suffix}")
 
             cmake_args += cmake_cmd_args
 
@@ -86,7 +90,8 @@ class CMakeBuildExt(build_ext):
                                   cwd=self.build_temp)
 
             # Build
-            subprocess.check_call(['cmake', '--build', '.', '--config', cfg],
+            subprocess.check_call(['cmake', '--build', '.', '--config', cfg,
+                                   '--target', target],
                                   cwd=self.build_temp)
 
 # Workaround Python issue 21121

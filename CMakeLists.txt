@@ -6,6 +6,8 @@ project(spglib
 option(WITH_Fortran "enable f08 interface" OFF)
 option(WITH_Python "build python buindings" OFF)
 option(USE_OMP "Build with OpenMP support" ON)
+set(CPython_Suffix "" CACHE STRING "Library suffix according to PEP 3149")
+
 # Sanity check if project is imported
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     option(WITH_TESTS "build unit tests" ON)
