@@ -61,7 +61,7 @@ setup(
     tests_require=[
         "pyyaml",
     ],
-    cmake_args=["-DWITH_Python=ON", "-DWITH_TESTS=OFF", '-DBUNDLE_Python_SharedLib=ON'],
+    cmake_args=['-DWITH_Python=ON', '-DWITH_TESTS=OFF', '-DUSE_OMP=OFF', '-DBUNDLE_Python_SharedLib=ON'],
     cmake_source_dir="..",
     extras_require=extras_require,
 )

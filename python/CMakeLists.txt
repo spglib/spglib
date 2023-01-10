@@ -3,7 +3,7 @@ find_package(PythonExtensions REQUIRED)
 include(UsePythonExtensions)
 add_python_extension(_spglib
 		SOURCES _spglib.c
-		LINK_LIBRARIES symspg)
+		LINK_LIBRARIES symspg Python::NumPy)
 if (BUNDLE_Python_SharedLib)
 	install(TARGETS symspg LIBRARY DESTINATION spglib)
 endif ()
