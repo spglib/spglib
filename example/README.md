@@ -10,12 +10,12 @@ a linear tetrahedron method example. `tetrahedron_method.c`and
 Here we provide a cmake example for both C and fortran projects linking
 with both native cmake and pkg-config.
 
-## Examples of spglib functions in C
+## Examples of linking to spglib manually
 
 To manually compile `example.c`:
 
-```
-% gcc example.c -I[include directory] -L[library directory] -lsymspg -lm
+```console
+$ gcc example.c -I[include directory] -L[library directory] -lsymspg -lm
 ```
 
 where the `[include directory]` and `[library directory]` can be obtained
@@ -29,8 +29,8 @@ in the example in `tetrahedron.c`, although
 this is not essential for running tetrahedron method packed with the
 spglib distribution. To compile `tetrahedron.c`:
 
-```
-% gcc tetrahedron.c [source directory]/tetrahedron_method.c -I[include directory] -L[library directory] -lsymspg
+```console
+$ gcc tetrahedron.c [source directory]/tetrahedron_method.c -I[include directory] -L[library directory] -lsymspg
 ```
 
 `tetrahedron.c` is written to work with OpenMP. To compile with

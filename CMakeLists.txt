@@ -5,8 +5,7 @@ project(spglib
 
 option(WITH_Fortran "enable f08 interface" OFF)
 option(WITH_Python "build python buindings" OFF)
-option(USE_OMP "Build with OpenMP support" ON)
-option(BUNDLE_Python_SharedLib "Bundle the spglib library with the python api" ON)
+option(USE_OMP "Build with OpenMP support" OFF)
 set(USE_SANITIZER "" CACHE STRING "Sanitizer used in compilation")
 
 # Sanity check if project is imported

@@ -16,16 +16,21 @@ endif()
 
 add_executable(example_c example.c)
 add_executable(example_f example_f08.f90)
+add_executable(tetrahedron tetrahedron.c)
 if(spglib_FOUND)
 	# Linking using native cmake
 	target_link_libraries(example_c PUBLIC
 			spglib::symspg)
 	target_link_libraries(example_f PUBLIC
 			spglib::spglib_f08)
+	target_link_libraries(tetrahedron PUBLIC
+			spglib::symspg)
 else()
 	# Linking using pkg-config
 	target_link_libraries(example_c PUBLIC
 			PkgConfig::symspg)
 	target_link_libraries(example_f PUBLIC
 			PkgConfig::spglib_f08)
+	target_link_libraries(tetrahedron PUBLIC
+			PkgConfig::symspg)
 endif()
