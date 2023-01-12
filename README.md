@@ -83,11 +83,7 @@ See the [README](python/README.rst) in the python folder for more details
 
 ## Development
 
-The development of spglib is managed on the `develop` branch of github spglib
-repository.
-
-- Github issues is the place to discuss about spglib issues.
-- Github pull request is the place to request merging source code.
+See [Contribution.md](Contribution.md).
 
 ## Documentation
 
