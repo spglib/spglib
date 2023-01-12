@@ -37,7 +37,17 @@ import warnings
 
 import numpy as np
 
-from . import _spglib as spg
+try:
+    from . import _spglib as spg
+except:
+    import os.path
+    import re
+    from ctypes import cdll
+    bundled_lib = next(filter(lambda fl: re.match('.*symspg\\..*', fl), sorted(os.listdir(os.path.dirname(__file__)))), None)
+    if not bundled_lib:
+        raise FileNotFoundError("Spglib C++ library is not installed and no bundled version was detected")
+    cdll.LoadLibrary(os.path.join(os.path.dirname(__file__), bundled_lib))
+    from . import _spglib as spg
 
 
 class SpglibError(object):
