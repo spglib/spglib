@@ -219,13 +219,16 @@ static int change_of_unique_axis_monocli[48] = {
     1, 1, 0, 2, 2, 0, 1, 1, 0, 2, 2, 0, 1, 1, 0, 2, 2, 0, 1, 1, 0, 2, 2, 0,
     1, 1, 0, 2, 2, 0, 1, 1, 0, 2, 2, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2};
 
+// Transformations to {abc, bca, cab, ba-c, a-cb, -cba}
 static double change_of_basis_ortho[6][3][3] = {
     {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}},  {{0, 0, 1}, {1, 0, 0}, {0, 1, 0}},
     {{0, 1, 0}, {0, 0, 1}, {1, 0, 0}},  {{0, 1, 0}, {1, 0, 0}, {0, 0, -1}},
     {{1, 0, 0}, {0, 0, 1}, {0, -1, 0}}, {{0, 0, 1}, {0, 1, 0}, {-1, 0, 0}}};
 
+// Changed centerings of C-centering of abc to {abc, bca, cab, ba-c, a-cb, -cba}
 static Centering change_of_centering_ortho[6] = {C_FACE, B_FACE, A_FACE,
                                                  C_FACE, B_FACE, A_FACE};
+// Index of c axis in the changed coordinates system.
 static int change_of_unique_axis_ortho[6] = {2, 1, 0, 2, 1, 0};
 
 /* n_l : the index of L(g) in N_\epsilon(g) of SPG No.16-74 */
@@ -416,12 +419,12 @@ static int match_hall_symbol_db(
 static int match_hall_symbol_db_monocli(
     double origin_shift[3], double conv_lattice[3][3],
     const double (*orig_lattice)[3], const int hall_number,
-    const int space_group_number, const Centering centering,
+    const int group_number, const Centering centering,
     const Symmetry *conv_symmetry, const double symprec);
 static int match_hall_symbol_db_monocli_in_loop(
     double origin_shift[3], double conv_lattice[3][3], double norms_squared[2],
-    const int i, const double (*orig_lattice)[3], const int check_norms,
-    const int hall_number, const Centering centering,
+    const int change_of_basis_index, const double (*orig_lattice)[3],
+    const int check_norms, const int hall_number, const Centering centering,
     const Symmetry *conv_symmetry, const double symprec);
 static int match_hall_symbol_db_ortho(
     double origin_shift[3], double conv_lattice[3][3],
@@ -430,8 +433,8 @@ static int match_hall_symbol_db_ortho(
     const int num_free_axes, const double symprec);
 static int match_hall_symbol_db_ortho_in_loop(
     double origin_shift[3], double lattice[3][3],
-    const double (*orig_lattice)[3], const int i, const int hall_number,
-    const Centering centering, const Symmetry *symmetry,
+    const double (*orig_lattice)[3], const int axis_choice_index,
+    const int hall_number, const Centering centering, const Symmetry *symmetry,
     const int num_free_axes, const double symprec);
 static int match_hall_symbol_db_cubic(double origin_shift[3],
                                       double conv_lattice[3][3],
@@ -1024,7 +1027,7 @@ static int match_hall_symbol_db(
     const double (*orig_lattice)[3], const int hall_number,
     const int pointgroup_number, const Holohedry holohedry,
     const Centering centering, const Symmetry *symmetry, const double symprec) {
-    int is_found;
+    int is_found, num_free_axes;
     SpacegroupType spacegroup_type;
     Symmetry *changed_symmetry;
     double changed_lattice[3][3], inv_lattice[3][3], tmat[3][3];
@@ -1047,23 +1050,14 @@ static int match_hall_symbol_db(
             break;
 
         case ORTHO:
-            if (num_axis_choices_ortho[spacegroup_type.number - 16] == 6) {
-                if (match_hall_symbol_db_ortho(
-                        origin_shift, conv_lattice, orig_lattice, hall_number,
-                        centering, symmetry, 6, symprec)) {
-                    return 1;
-                }
-                break;
+            if (hall_number > 0) {
+                num_free_axes =
+                    num_axis_choices_ortho[spacegroup_type.number - 16];
+            } else if (hall_number < 0) {
+                num_free_axes =
+                    layer_num_axis_choices_ortho[spacegroup_type.number - 19];
             }
-
-            if (num_axis_choices_ortho[spacegroup_type.number - 16] == 3) {
-                if (match_hall_symbol_db_ortho(
-                        origin_shift, conv_lattice, orig_lattice, hall_number,
-                        centering, symmetry, 3, symprec)) {
-                    return 1;
-                }
-                break;
-            }
+            assert(num_free_axes > 0);
 
             /* Switching two axes */
             /* Two steps: */
@@ -1073,8 +1067,7 @@ static int match_hall_symbol_db(
             /*      lengths preference. */
             /*   2. Finding transformation matrix and origin shift for the */
             /*      specified hall symbol. */
-            if (hall_number > 0 &&
-                num_axis_choices_ortho[spacegroup_type.number - 16] == 2) {
+            if (hall_number > 0 && num_free_axes == 2) {
                 mat_copy_matrix_d3(changed_lattice, conv_lattice);
                 if (!match_hall_symbol_db_ortho(
                         origin_shift, changed_lattice, orig_lattice,
@@ -1102,29 +1095,11 @@ static int match_hall_symbol_db(
                 break;
             }
 
-            /* c is the principal axis, axes switch is not required. */
-            if (hall_number < 0 &&
-                layer_num_axis_choices_ortho[spacegroup_type.number - 19] ==
-                    2) {
-                if (match_hall_symbol_db_ortho(
-                        origin_shift, conv_lattice, orig_lattice, hall_number,
-                        centering, symmetry, 2, symprec)) {
-                    return 1;
-                }
-                break;
+            if (match_hall_symbol_db_ortho(origin_shift, conv_lattice,
+                                           orig_lattice, hall_number, centering,
+                                           symmetry, num_free_axes, symprec)) {
+                return 1;
             }
-
-            if (num_axis_choices_ortho[spacegroup_type.number - 16] == 1 ||
-                layer_num_axis_choices_ortho[spacegroup_type.number - 19] ==
-                    1) {
-                if (match_hall_symbol_db_ortho(
-                        origin_shift, conv_lattice, orig_lattice, hall_number,
-                        centering, symmetry, 1, symprec)) {
-                    return 1;
-                }
-                break;
-            }
-
             break;
 
         case CUBIC:
@@ -1170,7 +1145,7 @@ err:
 static int match_hall_symbol_db_monocli(
     double origin_shift[3], double conv_lattice[3][3],
     const double (*orig_lattice)[3], const int hall_number,
-    const int space_group_number, const Centering centering,
+    const int group_number, const Centering centering,
     const Symmetry *conv_symmetry, const double symprec) {
     int i, check_norms, i_shortest, is_found_any, j, num_change_of_basis;
     int is_found[36];
@@ -1180,11 +1155,13 @@ static int match_hall_symbol_db_monocli(
 
     /* E. Parthe and L. M. Gelato */
     /* "The best unit cell for monoclinic structure..." (1983) */
-    /* 3: P2, p112. 4: P2_1, p11m. 6: Pm, p112/m. 10: P2/m. 11: P2_1/m */
-    if (space_group_number == 3 || space_group_number == 4 ||
-        space_group_number == 6 ||
-        (hall_number > 0 &&
-         (space_group_number == 10 || space_group_number == 11))) {
+    // Space group: 3: P2, 4: P2_1, 6: Pm, 10: P2/m, 11: P2_1/m
+    // Layer group: 3: p112, 4: p11m, 6: p112/m
+    if ((hall_number > 0 &&
+         (group_number == 3 || group_number == 4 || group_number == 6 ||
+          group_number == 10 || group_number == 11)) ||
+        (hall_number < 0 &&
+         (group_number == 3 || group_number == 4 || group_number == 6))) {
         /* |a| < |c| for unique axis b. (This is as written in the paper 1983.)
          */
         /* |a| < |b| for unique axis c. (This is spgilb definition.) */
@@ -1212,8 +1189,11 @@ static int match_hall_symbol_db_monocli(
         if (hall_number > 0) {
             j = i;
         } else if (-11 <= hall_number && hall_number <= -3) {
+            // Monoclinic/oblique
+            // Try change_of_basis_monocli[36:48]
             j = i + 36;
         } else if (-33 <= hall_number && hall_number <= -12) {
+            // Monoclinic/rectangular
             j = index_monocli_rectang[i];
         }
 
@@ -1280,8 +1260,8 @@ err:
 
 static int match_hall_symbol_db_monocli_in_loop(
     double origin_shift[3], double conv_lattice[3][3], double norms_squared[2],
-    const int i, const double (*orig_lattice)[3], const int check_norms,
-    const int hall_number, const Centering centering,
+    const int change_of_basis_index, const double (*orig_lattice)[3],
+    const int check_norms, const int hall_number, const Centering centering,
     const Symmetry *conv_symmetry, const double symprec) {
     int j, k, l, is_found, retval, unique_axis;
     double vec[2][3];
@@ -1291,14 +1271,15 @@ static int match_hall_symbol_db_monocli_in_loop(
 
     /* centring type should be P or C */
     if (centering == C_FACE) {
-        changed_centering = change_of_centering_monocli[i];
+        changed_centering = change_of_centering_monocli[change_of_basis_index];
     } else { /* suppose PRIMITIVE */
         changed_centering = centering;
     }
 
-    mat_copy_matrix_d3(change_of_basis, change_of_basis_monocli[i]);
+    mat_copy_matrix_d3(change_of_basis,
+                       change_of_basis_monocli[change_of_basis_index]);
     mat_multiply_matrix_d3(conv_lattice, conv_lattice, change_of_basis);
-    unique_axis = change_of_unique_axis_monocli[i];
+    unique_axis = change_of_unique_axis_monocli[change_of_basis_index];
 
     /* Make non-acute and length preference */
     /* norms_squared[0] and norms_squared[1] are the norms of the two */
@@ -1380,6 +1361,8 @@ static int match_hall_symbol_db_ortho(
     const int num_free_axes, const double symprec) {
     int i, j;
 
+    // For layer, try axis choices abc and ba-c, which preserve the aperiodic
+    // axis.
     j = hall_number > 0 ? 1 : 3;
 
     /* Try to find the best (a, b, c) by flipping axes. */
@@ -1408,10 +1391,20 @@ static int match_hall_symbol_db_ortho(
     return 0;
 }
 
+// @param[out] origin_shift
+// @param[out] conv_lattice
+// @param[in] orig_lattice
+// @param[in] axis_choice_index Index of axis choices, {abc, bca, cab, ba-c,
+// a-cb, -cba}
+// @param[in] hall_number
+// @param[in] centering
+// @param[in] symmetry
+// @param[in] num_free_axes
+// @param[in] symprec
 static int match_hall_symbol_db_ortho_in_loop(
     double origin_shift[3], double conv_lattice[3][3],
-    const double (*orig_lattice)[3], const int i, const int hall_number,
-    const Centering centering, const Symmetry *symmetry,
+    const double (*orig_lattice)[3], const int axis_choice_index,
+    const int hall_number, const Centering centering, const Symmetry *symmetry,
     const int num_free_axes, const double symprec) {
     int j, k, l, is_found;
     double vec[3], norms[3];
@@ -1422,19 +1415,19 @@ static int match_hall_symbol_db_ortho_in_loop(
     changed_symmetry = NULL;
 
     if (centering == C_FACE) {
-        changed_centering = change_of_centering_ortho[i];
+        changed_centering = change_of_centering_ortho[axis_choice_index];
     } else {
         changed_centering = centering;
     }
 
-    mat_multiply_matrix_d3(changed_lattice, conv_lattice,
-                           change_of_basis_ortho[i]);
+    mat_copy_matrix_d3(change_of_basis,
+                       change_of_basis_ortho[axis_choice_index]);
+    mat_multiply_matrix_d3(changed_lattice, conv_lattice, change_of_basis);
 
     /* When orig_lattice is given not NULL, try to find similar (a, b, c) */
     /* choices to the input (a, b, c) by flipping a, b, c axes. */
     /* Here flipping means a -> -a, and so on. */
-    /* Note that flipping of axes doesn't change centring. */
-    mat_copy_matrix_d3(change_of_basis, change_of_basis_ortho[i]);
+    /* Note that flipping of axes doesn't change centering. */
     if (orig_lattice != NULL) {
         if (is_equivalent_lattice(tmat, 1, changed_lattice, orig_lattice,
                                   symprec)) {
@@ -1446,10 +1439,12 @@ static int match_hall_symbol_db_ortho_in_loop(
         }
     }
 
+    // When num_free_axes=2, axis choices {abc, ba-c}, {cab, -cba}, and {bca,
+    // a-cb} give the identical space groups, respectively.
     if (num_free_axes == 2) {
         l = 0;
         for (j = 0; j < 3; j++) {
-            if (j == change_of_unique_axis_ortho[i]) {
+            if (j == change_of_unique_axis_ortho[axis_choice_index]) {
                 continue;
             }
             for (k = 0; k < 3; k++) {
@@ -1463,6 +1458,8 @@ static int match_hall_symbol_db_ortho_in_loop(
         }
     }
 
+    // When num_free_axes=3, axis choices {abc, bca, cab} and {ba-c, a-cb, -cba}
+    // give the identical space groups, respectively.
     if (num_free_axes == 3) {
         for (j = 0; j < 3; j++) {
             for (k = 0; k < 3; k++) {
@@ -1476,6 +1473,7 @@ static int match_hall_symbol_db_ortho_in_loop(
         }
     }
 
+    // When num_free_axes=6, each axis choice gives a different space group.
     if (num_free_axes == 6) {
         for (j = 0; j < 3; j++) {
             for (k = 0; k < 3; k++) {
@@ -1967,8 +1965,17 @@ static int get_centering_shifts(double shift[3][3], const Centering centering) {
     return multi;
 }
 
-/* allow_flip: Flip axes when abs(P)=I but P!=I. */
-/* lattice is overwritten. */
+// @brief Return 1 if `lattice` and `orig_lattice` is equivalent.
+//        The equivalence is defined though `mode`.
+// @param[out] tmat Isometric transformation s.t. orig_lattice = lattice * tmat
+// if exists
+// @param[in] mode
+//            mode=0: Equivalent if `lattice` and `orig_lattice` are identical
+//            as matrices. mode=1: Allow to flip axes when abs(P)=I but P!=I.
+//            mode=2: Check equivalence from their metric tensors.
+// @param[in] lattice
+// @param[in] orig_lattice
+// @param[in] symprec
 static int is_equivalent_lattice(double tmat[3][3], const int mode,
                                  const double lattice[3][3],
                                  const double orig_lattice[3][3],
@@ -1986,6 +1993,7 @@ static int is_equivalent_lattice(double tmat[3][3], const int mode,
         goto fail;
     }
 
+    // orig_lattice == lattice @ tmat
     mat_multiply_matrix_d3(tmat, inv_lat, orig_lattice);
 
     switch (mode) {
