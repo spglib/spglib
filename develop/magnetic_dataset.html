@@ -714,33 +714,33 @@ title="Print to PDF"
 <span id="magnetic-spglib-dataset"></span><h1>Magnetic Spglib dataset (Experimental)<a class="headerlink" href="#magnetic-spglib-dataset-experimental" title="Permalink to this headline">#</a></h1>
 <p><strong>New at version 2.0</strong></p>
 <p>The dataset is accessible through the C-structure given by</p>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="cm">/* Magnetic space-group type */</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">uni_number</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">msg_type</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">hall_number</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">tensor_rank</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="cm">/* Magnetic symmetry operations */</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n_operations</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">rotations</span><span class="p">)[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">];</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">translations</span><span class="p">)[</span><span class="mi">3</span><span class="p">];</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">time_reversals</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="cm">/* Equivalent atoms */</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n_atoms</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">equivalent_atoms</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="cm">/* Transformation to standardized setting */</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">transformation_matrix</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">];</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">origin_shift</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span><span class="w"></span>
-<span class="w">    </span><span class="cm">/* Standardized crystal structure */</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n_std_atoms</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">std_lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">];</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">std_types</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">std_positions</span><span class="p">)[</span><span class="mi">3</span><span class="p">];</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">std_tensors</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">std_rotation_matrix</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">];</span><span class="w"></span>
-<span class="w">    </span><span class="cm">/* Intermidiate datum in symmetry search */</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">primitive_lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">];</span><span class="w"></span>
-<span class="p">}</span><span class="w"> </span><span class="n">SpglibMagneticDataset</span><span class="p">;</span><span class="w"></span>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="cm">/* Magnetic space-group type */</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">uni_number</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">msg_type</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">hall_number</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">tensor_rank</span><span class="p">;</span>
+<span class="w">    </span><span class="cm">/* Magnetic symmetry operations */</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n_operations</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">rotations</span><span class="p">)[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">];</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">translations</span><span class="p">)[</span><span class="mi">3</span><span class="p">];</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">time_reversals</span><span class="p">;</span>
+<span class="w">    </span><span class="cm">/* Equivalent atoms */</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n_atoms</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">equivalent_atoms</span><span class="p">;</span>
+<span class="w">    </span><span class="cm">/* Transformation to standardized setting */</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">transformation_matrix</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">];</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">origin_shift</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
+<span class="w">    </span><span class="cm">/* Standardized crystal structure */</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n_std_atoms</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">std_lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">];</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">std_types</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">std_positions</span><span class="p">)[</span><span class="mi">3</span><span class="p">];</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">std_tensors</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">std_rotation_matrix</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">];</span>
+<span class="w">    </span><span class="cm">/* Intermidiate datum in symmetry search */</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">primitive_lattice</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">3</span><span class="p">];</span>
+<span class="p">}</span><span class="w"> </span><span class="n">SpglibMagneticDataset</span><span class="p">;</span>
 </pre></div>
 </div>
 <section id="magnetic-space-group-type">

@@ -404,19 +404,19 @@ git-clone the spglib repository by</p>
 </pre></div>
 </div>
 <p>Build and install in <code class="docutils literal notranslate"><span class="pre">_build</span></code> directory by</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>% mkdir _build
-% <span class="nb">cd</span> _build
-% cmake ..
-% cmake --build .
-% cmake --install <span class="o">(</span>probably installed under /usr/local<span class="o">)</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>%<span class="w"> </span>mkdir<span class="w"> </span>_build
+%<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>_build
+%<span class="w"> </span>cmake<span class="w"> </span>..
+%<span class="w"> </span>cmake<span class="w"> </span>--build<span class="w"> </span>.
+%<span class="w"> </span>cmake<span class="w"> </span>--install<span class="w"> </span><span class="o">(</span>probably<span class="w"> </span>installed<span class="w"> </span>under<span class="w"> </span>/usr/local<span class="o">)</span>
 </pre></div>
 </div>
 <p>Or to install under the parent directory,</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>% mkdir _build
-% <span class="nb">cd</span> _build
-% cmake -DCMAKE_INSTALL_PREFIX<span class="o">=</span>.. ..
-% cmake --build .
-% cmake --install . --prefix ..
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>%<span class="w"> </span>mkdir<span class="w"> </span>_build
+%<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>_build
+%<span class="w"> </span>cmake<span class="w"> </span>-DCMAKE_INSTALL_PREFIX<span class="o">=</span>..<span class="w"> </span>..
+%<span class="w"> </span>cmake<span class="w"> </span>--build<span class="w"> </span>.
+%<span class="w"> </span>cmake<span class="w"> </span>--install<span class="w"> </span>.<span class="w"> </span>--prefix<span class="w"> </span>..
 </pre></div>
 </div>
 </section>
@@ -424,9 +424,9 @@ git-clone the spglib repository by</p>
 <h3>Windows &amp; Cygwin<a class="headerlink" href="#windows-cygwin" title="Permalink to this headline">#</a></h3>
 <p>For windows, cmake behaves slightly differently and the following
 way is recommended</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>% cmake -DCMAKE_INSTALL_PREFIX<span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span>shell cygpath -w <span class="s2">&quot;</span><span class="si">${</span><span class="nv">BUILD_DIR</span><span class="si">}</span><span class="s2">&quot;</span><span class="k">)</span><span class="s2">&quot;</span> ..
-% cmake --build . --config Release
-% cmake --install . --config Release
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>%<span class="w"> </span>cmake<span class="w"> </span>-DCMAKE_INSTALL_PREFIX<span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span>shell<span class="w"> </span>cygpath<span class="w"> </span>-w<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">BUILD_DIR</span><span class="si">}</span><span class="s2">&quot;</span><span class="k">)</span><span class="s2">&quot;</span><span class="w"> </span>..
+%<span class="w"> </span>cmake<span class="w"> </span>--build<span class="w"> </span>.<span class="w"> </span>--config<span class="w"> </span>Release
+%<span class="w"> </span>cmake<span class="w"> </span>--install<span class="w"> </span>.<span class="w"> </span>--config<span class="w"> </span>Release
 </pre></div>
 </div>
 <p>The detail of the windows installation process is discussed at
