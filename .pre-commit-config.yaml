@@ -5,31 +5,19 @@ default_language_version:
 
 fail_fast: false
 repos:
-- repo: https://github.com/pocc/pre-commit-hooks
-  rev: v1.3.5
+- repo: https://github.com/Takishima/cmake-pre-commit-hooks
+  rev: v1.5.3
   hooks:
-  - id: clang-format
-    args: ["-i", "--style=file"]  # Use style set in .clang-format
-    files: |
-      (?x)^(
-        ^src/.+\.(c|h)|
-        ^test/.+\.(c|h)|
-        ^python/_spglib.c
-      )$
-    exclude: src/msg_database.c  # Skip too large file to wait every time
-  - id: clang-tidy
-    files: ^src/
-  # - id: oclint
-  #   files: ^src/
-  # - id: uncrustify
-  #   files: ^src/
-  #   args: ["--replace"]
-  # - id: cppcheck
-  #   files: ^src/
-  # - id: cpplint
-  #   files: ^src/
-  # - id: include-what-you-use
-  #   files: ^src/
+    - id: clang-format
+      args:
+        - '-B_build-pre-commit'
+        - '-DWITH_Fortran=ON'
+        - '-i'
+      exclude: src/msg_database.c
+    - id: clang-tidy
+      args:
+        - '-B_build-pre-commit'
+        - '-DWITH_Fortran=ON'
 
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v4.3.0

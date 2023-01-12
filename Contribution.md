@@ -20,6 +20,11 @@ Alternatively, you can manually run it for debug purposes:
 $ pre-commit run --all-files
 ```
 
+Make sure you have necessary tools installed (`clang-format`,`clang-tidy`), e.g.
+```console
+# dnf install clang-tools-extra
+```
+
 Consult [`.pre-commit-config.yaml`](.pre-commit-config.yaml) for advanced
 standard changes.
 

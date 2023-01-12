@@ -56,6 +56,10 @@ CTestTestfile.cmake
 cmake_install.cmake
 null.d
 *.pc
+cmake-build-*
+
+# Custom pre-commit
+_build-pre-commit
 
 example/a.out
 example/defs_basis.mod
