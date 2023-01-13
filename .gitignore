@@ -60,6 +60,7 @@ cmake-build-*
 
 # Custom pre-commit
 _build-pre-commit
+compile_commands.json
 
 example/a.out
 example/defs_basis.mod
