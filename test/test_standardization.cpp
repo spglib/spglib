@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
 extern "C" {
-  #include "spglib.h"
+#include "spglib.h"
 }
 
 static int sub_spg_standardize_cell(double lattice[3][3], double position[][3],
@@ -23,10 +23,9 @@ TEST(test_standardization, test_spg_standardize_cell_BCC) {
     printf("------------------------------------------------------\n");
     for (j = 0; j < 2; j++) {
         for (k = 0; k < 2; k++) {
-            ASSERT_EQ(
-                sub_spg_standardize_cell(lattice, position, types, num_atom,
-                                         symprec, j, k),
-                0);
+            ASSERT_EQ(sub_spg_standardize_cell(lattice, position, types,
+                                               num_atom, symprec, j, k),
+                      0);
             printf("------------------------------------------------------\n");
         }
     }
@@ -85,15 +84,13 @@ TEST(test_standardization, test_spg_standardize_cell_corundum) {
     printf("------------------------------------------------------\n");
     for (j = 0; j < 2; j++) {
         for (k = 0; k < 2; k++) {
-            ASSERT_EQ(
-                sub_spg_standardize_cell(lattice, position, types, num_atom,
-                                         symprec, j, k),
-                0);
+            ASSERT_EQ(sub_spg_standardize_cell(lattice, position, types,
+                                               num_atom, symprec, j, k),
+                      0);
             printf("------------------------------------------------------\n");
         }
     }
 }
-
 
 // ****************************************************************************
 // Local functions

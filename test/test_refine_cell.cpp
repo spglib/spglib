@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 
 extern "C" {
-  #include "spglib.h"
-  #include "utils.h"
+#include "spglib.h"
+#include "utils.h"
 }
 
 TEST(test_refine_cell, test_spg_refine_cell_BCC) {

@@ -1,12 +1,16 @@
 #include <gtest/gtest.h>
 
 extern "C" {
-  #include "spglib.h"
-  #include "utils.h"
+#include "spglib.h"
+#include "utils.h"
 }
 
-static void show_magnetic_symmetry_operations(SPGCONST int (*rotations)[3][3], const double (*translations)[3], const int *time_reversals, const int size);
-static void show_magnetic_spacegroup_type(const SpglibMagneticSpacegroupType msgtype);
+static void show_magnetic_symmetry_operations(SPGCONST int (*rotations)[3][3],
+                                              const double (*translations)[3],
+                                              const int *time_reversals,
+                                              const int size);
+static void show_magnetic_spacegroup_type(
+    const SpglibMagneticSpacegroupType msgtype);
 static void show_spg_magnetic_dataset(const SpglibMagneticDataset *dataset);
 
 TEST(test_magnetic_symmetry, test_spg_get_magnetic_symmetry_from_database) {
@@ -22,7 +26,8 @@ TEST(test_magnetic_symmetry, test_spg_get_magnetic_symmetry_from_database) {
                                                    time_reversals, 1242, 434);
     ASSERT_TRUE(size > 0);
 
-    show_magnetic_symmetry_operations(rotations, translations, time_reversals, size);
+    show_magnetic_symmetry_operations(rotations, translations, time_reversals,
+                                      size);
 }
 
 TEST(test_magnetic_symmetry, test_spg_get_symmetry_with_collinear_spin) {
@@ -46,8 +51,8 @@ TEST(test_magnetic_symmetry, test_spg_get_symmetry_with_collinear_spin) {
         spins[0] = 0.6;
         spins[1] = 0.6;
         size = spg_get_symmetry_with_collinear_spin(
-            rotation, translation, equivalent_atoms, max_size, lattice, position,
-            types, spins, num_atom, 1e-5);
+            rotation, translation, equivalent_atoms, max_size, lattice,
+            position, types, spins, num_atom, 1e-5);
         ASSERT_TRUE(size > 0);
 
         show_symmetry_operations(rotation, translation, size);
@@ -58,8 +63,8 @@ TEST(test_magnetic_symmetry, test_spg_get_symmetry_with_collinear_spin) {
         spins[0] = 0.6;
         spins[1] = -0.6;
         size = spg_get_symmetry_with_collinear_spin(
-            rotation, translation, equivalent_atoms, max_size, lattice, position,
-            types, spins, num_atom, 1e-5);
+            rotation, translation, equivalent_atoms, max_size, lattice,
+            position, types, spins, num_atom, 1e-5);
         ASSERT_TRUE(size > 0);
 
         show_symmetry_operations(rotation, translation, size);
@@ -70,8 +75,8 @@ TEST(test_magnetic_symmetry, test_spg_get_symmetry_with_collinear_spin) {
         spins[0] = 0.6;
         spins[1] = 1.2;
         size = spg_get_symmetry_with_collinear_spin(
-            rotation, translation, equivalent_atoms, max_size, lattice, position,
-            types, spins, num_atom, 1e-5);
+            rotation, translation, equivalent_atoms, max_size, lattice,
+            position, types, spins, num_atom, 1e-5);
         ASSERT_TRUE(size > 0);
 
         show_symmetry_operations(rotation, translation, size);
@@ -167,7 +172,8 @@ TEST(test_magnetic_symmetry, test_spg_get_symmetry_with_site_tensors) {
     ASSERT_EQ(msgtype.uni_number, 546);
 
     printf("*** spg_get_symmetry_with_site_tensors (type-III) ***:\n");
-    show_magnetic_symmetry_operations(rotation, translation, time_reversals, size);
+    show_magnetic_symmetry_operations(rotation, translation, time_reversals,
+                                      size);
 
     free(rotation);
     rotation = NULL;
@@ -300,15 +306,13 @@ TEST(test_magnetic_symmetry, test_spg_get_magnetic_dataset_type4) {
     spg_free_magnetic_dataset(dataset);
 }
 
-TEST(
-    test_magnetic_symmetry,
-    test_spg_get_symmetry_with_tensors_rough_symprec) {
-
+TEST(test_magnetic_symmetry, test_spg_get_symmetry_with_tensors_rough_symprec) {
     // https://github.com/spglib/spglib/issues/186
-    double lattice[][3] = {  // column-wise!
+    double lattice[][3] = {
+        // column-wise!
         {3.36017962, 1.70747655, -0.0117898},
-        {0.        , 3.84457132, -0.29501452},
-        {0.95244787, 0.37960516,  6.4450749},
+        {0., 3.84457132, -0.29501452},
+        {0.95244787, 0.37960516, 6.4450749},
     };
     double positions[][3] = {
         {0.0, 0.0, 0.0},
@@ -320,7 +324,7 @@ TEST(
     int num_atoms = 3;
     int max_size = num_atoms * 96;
 
-    double symprec = 1e-2;  // with high symprec
+    double symprec = 1e-2;         // with high symprec
     double mag_symprec = symprec;  // with high mag_symprec
 
     int i, size;
@@ -336,23 +340,23 @@ TEST(
     spin_flips = (int *)malloc(sizeof(int *) * max_size);
     time_reversals = (int *)malloc(sizeof(int *) * max_size);
 
-    size = spg_get_symmetry(rotations, translations, max_size, lattice, positions, types, num_atoms, symprec);
+    size = spg_get_symmetry(rotations, translations, max_size, lattice,
+                            positions, types, num_atoms, symprec);
     ASSERT_EQ(size, 4);
     show_symmetry_operations(rotations, translations, size);
 
     size = spgms_get_symmetry_with_site_tensors(
-        rotations, translations, equivalent_atoms, primitive_lattice, spin_flips,
-        max_size, lattice, positions, types, tensors,
-        0 /* tensor_rank */ , num_atoms,
-        1 /* with_time_reversal */,
-        0 /* is_axial */,
-        symprec, -1 /* angle_tolerance */, mag_symprec);
+        rotations, translations, equivalent_atoms, primitive_lattice,
+        spin_flips, max_size, lattice, positions, types, tensors,
+        0 /* tensor_rank */, num_atoms, 1 /* with_time_reversal */,
+        0 /* is_axial */, symprec, -1 /* angle_tolerance */, mag_symprec);
     ASSERT_EQ(size, 4);
 
     for (i = 0; i < size; i++) {
         time_reversals[i] = (1 - spin_flips[i]) / 2;
     }
-    show_magnetic_symmetry_operations(rotations, translations, time_reversals, size);
+    show_magnetic_symmetry_operations(rotations, translations, time_reversals,
+                                      size);
 
     free(rotations);
     free(translations);
@@ -360,12 +364,11 @@ TEST(
     free(time_reversals);
 }
 
-TEST(
-    test_magnetic_symmetry,
-    test_with_broken_symmetry) {
+TEST(test_magnetic_symmetry, test_with_broken_symmetry) {
     // https://github.com/spglib/spglib/issues/194
     // Part of "mp-806965" in the Materials Project database
-    double lattice[][3] = {  // column-wise!
+    double lattice[][3] = {
+        // column-wise!
         {5.24191, -0.003459, -2.618402},
         {0, 5.600534, -1.87898},
         {0, 0, 11.148141},
@@ -398,31 +401,31 @@ TEST(
     time_reversals = (int *)malloc(sizeof(int *) * max_size);
 
     // Check magnetic symmetry search
-    // spg_get_symmetry returns four operations, but spgms_get_symmetry_with_site_tensors
-    // only returns three of them. This is due to too high symprec: detected operations
-    // in `sym_get_operation` follow `symprec`, but refined operations in
+    // spg_get_symmetry returns four operations, but
+    // spgms_get_symmetry_with_site_tensors only returns three of them. This is
+    // due to too high symprec: detected operations in `sym_get_operation`
+    // follow `symprec`, but refined operations in
     // `ref_get_exact_structure_and_symmetry` does not.
     size = spgms_get_symmetry_with_site_tensors(
-        rotations, translations, equivalent_atoms, primitive_lattice, spin_flips,
-        max_size, lattice, positions, types, tensors,
-        0 /* tensor_rank */ , num_atoms,
-        1 /* with_time_reversal */,
-        0 /* is_axial */,
-        symprec, -1 /* angle_tolerance */, mag_symprec);
+        rotations, translations, equivalent_atoms, primitive_lattice,
+        spin_flips, max_size, lattice, positions, types, tensors,
+        0 /* tensor_rank */, num_atoms, 1 /* with_time_reversal */,
+        0 /* is_axial */, symprec, -1 /* angle_tolerance */, mag_symprec);
 
     for (i = 0; i < size; i++) {
         time_reversals[i] = (1 - spin_flips[i]) / 2;
     }
-    show_magnetic_symmetry_operations(rotations, translations, time_reversals, size);
+    show_magnetic_symmetry_operations(rotations, translations, time_reversals,
+                                      size);
     ASSERT_TRUE(size >= 1);
 
     // Check magnetic dataset construction
-    // Since detected magnetic symmetry operations do not form a group due to high symprec,
-    // we fail to get magnetic dataset for now.
+    // Since detected magnetic symmetry operations do not form a group due to
+    // high symprec, we fail to get magnetic dataset for now.
     SpglibMagneticDataset *dataset;
     dataset = spg_get_magnetic_dataset(lattice, positions, types, tensors,
-                                        0 /* tensor_rank */, num_atoms,
-                                        0 /* is_axial */, symprec);
+                                       0 /* tensor_rank */, num_atoms,
+                                       0 /* is_axial */, symprec);
     ASSERT_TRUE(dataset == NULL);
 
     free(rotations);
@@ -439,16 +442,19 @@ TEST(
 // Local functions
 // ****************************************************************************
 
-static void show_magnetic_symmetry_operations(SPGCONST int (*rotations)[3][3], const double (*translations)[3], const int *time_reversals, const int size) {
+static void show_magnetic_symmetry_operations(SPGCONST int (*rotations)[3][3],
+                                              const double (*translations)[3],
+                                              const int *time_reversals,
+                                              const int size) {
     int i, j;
     for (i = 0; i < size; i++) {
         printf("--- %d ---\n", i + 1);
         for (j = 0; j < 3; j++) {
             printf("%2d %2d %2d\n", rotations[i][j][0], rotations[i][j][1],
-                    rotations[i][j][2]);
+                   rotations[i][j][2]);
         }
         printf("%f %f %f\n", translations[i][0], translations[i][1],
-                translations[i][2]);
+               translations[i][2]);
         printf("%2d\n", time_reversals[i]);
     }
 }

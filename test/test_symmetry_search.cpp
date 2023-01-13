@@ -1,13 +1,13 @@
 #include <gtest/gtest.h>
 
 extern "C" {
-  #include "spglib.h"
-  #include "utils.h"
+#include "spglib.h"
+#include "utils.h"
 }
 
 int show_spg_dataset(double lattice[3][3], const double origin_shift[3],
-                            double position[][3], const int num_atom,
-                            const int types[]);
+                     double position[][3], const int num_atom,
+                     const int types[]);
 
 TEST(test_symmetry_search, test_spg_get_symmetry) {
     double lattice[3][3] = {{4, 0, 0}, {0, 4, 0}, {0, 0, 3}};
@@ -69,13 +69,10 @@ TEST(test_symmetry_search, test_spg_get_dataset) {
     int num_atom_2 = 4;
 
     ASSERT_EQ(
-        show_spg_dataset(lattice, origin_shift, position, num_atom, types),
-        0
-    );
-    ASSERT_EQ(
-        show_spg_dataset(lattice_2, origin_shift_2, position_2, num_atom_2, types_2),
-        0
-    );
+        show_spg_dataset(lattice, origin_shift, position, num_atom, types), 0);
+    ASSERT_EQ(show_spg_dataset(lattice_2, origin_shift_2, position_2,
+                               num_atom_2, types_2),
+              0);
 }
 
 TEST(test_symmetry_search, test_spg_get_multiplicity) {
@@ -89,14 +86,13 @@ TEST(test_symmetry_search, test_spg_get_multiplicity) {
     ASSERT_EQ(size, 48);
 }
 
-
 // ****************************************************************************
 // Local functions
 // ****************************************************************************
 
 int show_spg_dataset(double lattice[3][3], const double origin_shift[3],
-                            double position[][3], const int num_atom,
-                            const int types[]) {
+                     double position[][3], const int num_atom,
+                     const int types[]) {
     SpglibDataset *dataset;
     char ptsymbol[6];
     int pt_trans_mat[3][3];

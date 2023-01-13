@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
 extern "C" {
-  #include "spglib.h"
+#include "spglib.h"
 }
 
 TEST(test_spacegroup_type_search, test_spg_get_international) {
@@ -34,7 +34,8 @@ TEST(test_spacegroup_type_search, test_spg_get_schoenflies) {
     char symbol[7];
     char symbol_expect[] = "D4h^14";
 
-    num_spg = spg_get_schoenflies(symbol, lattice, position, types, num_atom, 1e-5);
+    num_spg =
+        spg_get_schoenflies(symbol, lattice, position, types, num_atom, 1e-5);
     ASSERT_EQ(num_spg, 136);
     ASSERT_STREQ(symbol, symbol_expect);
 }

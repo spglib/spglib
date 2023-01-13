@@ -64,4 +64,3 @@ to test the python bindings
 .. code-block:: console
 
     $ pytest
-
