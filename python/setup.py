@@ -2,6 +2,14 @@ import os
 import re
 from skbuild import setup
 
+# TODO: Temporary fix for #212
+#  Remove and update dependency when scikit-build/scikit-build#717 is resolved
+import platform
+if platform.system() == "Darwin":
+    mac_version, _, mac_arch = platform.mac_ver()
+else:
+    mac_version = None
+
 with open(os.path.join('..', 'CMakeLists.txt')) as fl:
     # regex blackmagic: try out at regex101.com
     # Search for first "project(spglib VERSION ...)"
@@ -41,6 +49,11 @@ extras_require = {
     ],
 }
 
+cmake_args = ['-DWITH_Python=ON', '-DWITH_TESTS=OFF', '-DUSE_OMP=OFF', '-DBUNDLE_Python_SharedLib=ON']
+# TODO: Temporary fix for #212
+if mac_version:
+    cmake_args.append(f"-DCMAKE_OSX_DEPLOYMENT_TARGET={mac_version}")
+
 setup(
     name="spglib",
     version=version,
@@ -61,7 +74,7 @@ setup(
     tests_require=[
         "pyyaml",
     ],
-    cmake_args=['-DWITH_Python=ON', '-DWITH_TESTS=OFF', '-DUSE_OMP=OFF', '-DBUNDLE_Python_SharedLib=ON'],
+    cmake_args=cmake_args,
     cmake_source_dir="..",
     extras_require=extras_require,
 )
