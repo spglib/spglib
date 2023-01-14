@@ -39,6 +39,23 @@
 #include "mathfunc.h"
 #include "symmetry.h"
 
+/**
+ * @brief
+ *
+ * @param[out] equivalent_atoms
+ * @param[out] permutations such that the p-th operation in `magnetic_symmetry`
+ * maps site-`i` to site-`permutations[p * cell->size + i]`.
+ * @param[out] prim_lattice
+ * @param[in] sym_nonspin Symmetry operations with ignoring spin
+ * @param[in] cell
+ * @param[in] with_time_reversal true if consider time reversal operation
+ * @param[in] is_axial true if site tensors are axial w.r.t. time-reversal
+ * operations
+ * @param[in] symprec
+ * @param[in] angle_tolerance
+ * @param[in] mag_symprec if mag_sympprec < 0, use symprec instead
+ * @return Return NULL if failed.
+ */
 MagneticSymmetry *spn_get_operations_with_site_tensors(
     int **equivalent_atoms, int **permutations, double prim_lattice[3][3],
     const Symmetry *sym_nonspin, const Cell *cell, const int with_time_reversal,
