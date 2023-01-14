@@ -80,8 +80,8 @@ module spglib_f08
      function spgat_get_symmetry( rotation, translation, max_size, lattice, &
           & position, types, num_atom, symprec, angle_tolerance) bind(c)
        import c_int, c_double
-       integer(c_int), intent(out) :: rotation(3,3,*)
-       real(c_double), intent(out) :: translation(3,*)
+       integer(c_int), intent(inout) :: rotation(3,3,*)
+       real(c_double), intent(inout) :: translation(3,*)
        integer(c_int), intent(in), value :: max_size
        real(c_double), intent(in) :: lattice(3,3), position(3,*)
        integer(c_int), intent(in) :: types(*)
@@ -95,9 +95,9 @@ module spglib_f08
           & equivalent_atoms, max_size, lattice, position, types, spins, &
           & num_atom, symprec) bind(c)
        import c_int, c_double
-       integer(c_int), intent(out) :: rotation(3,3,*)
-       real(c_double), intent(out) :: translation(3,*)
-       integer(c_int), intent(out) :: equivalent_atoms(*)
+       integer(c_int), intent(inout) :: rotation(3,3,*)
+       real(c_double), intent(inout) :: translation(3,*)
+       integer(c_int), intent(inout) :: equivalent_atoms(*)
        integer(c_int), intent(in), value :: max_size
        real(c_double), intent(in) :: lattice(3,3), position(3,*)
        integer(c_int), intent(in) :: types(*)
@@ -112,9 +112,9 @@ module spglib_f08
           & equivalent_atoms, max_size, lattice, position, types, spins, &
           & num_atom, symprec, angle_tolerance) bind(c)
        import c_int, c_double
-       integer(c_int), intent(out) :: rotation(3,3,*)
-       real(c_double), intent(out) :: translation(3,*)
-       integer(c_int), intent(out) :: equivalent_atoms(*)
+       integer(c_int), intent(inout) :: rotation(3,3,*)
+       real(c_double), intent(inout) :: translation(3,*)
+       integer(c_int), intent(inout) :: equivalent_atoms(*)
        integer(c_int), intent(in), value :: max_size
        real(c_double), intent(in) :: lattice(3,3), position(3,*)
        integer(c_int), intent(in) :: types(*)
@@ -127,21 +127,22 @@ module spglib_f08
 
      function spg_get_symmetry_with_site_tensors( rotation, translation, &
           & equivalent_atoms, primitive_lattice, spin_flips, max_size, lattice, &
-          & position, types, tensors, tensor_rank, num_atom, is_magnetic, &
-          & symprec) bind(c)
+          & position, types, tensors, tensor_rank, num_atom, with_time_reversal, &
+          & is_axial, symprec) bind(c)
        import c_int, c_double
        integer(c_int), intent(inout) :: rotation(3,3,*)
        real(c_double), intent(inout) :: translation(3,*)
-       integer(c_int), intent(out) :: equivalent_atoms(*)
-       real(c_double), intent(out) :: primitive_lattice(3,3)
-       integer(c_int), intent(out) :: spin_flips(*)
+       integer(c_int), intent(inout) :: equivalent_atoms(*)
+       real(c_double), intent(inout) :: primitive_lattice(3,3)
+       integer(c_int), intent(inout) :: spin_flips(*)
        integer(c_int), intent(in), value :: max_size
        real(c_double), intent(in) :: lattice(3,3), position(3,*)
        integer(c_int), intent(in) :: types(*)
        real(c_double), intent(in) :: tensors(*)
        integer(c_int), intent(in), value :: tensor_rank
        integer(c_int), intent(in), value :: num_atom
-       integer(c_int), intent(in), value :: is_magnetic
+       integer(c_int), intent(in), value :: with_time_reversal
+       integer(c_int), intent(in), value :: is_axial
        real(c_double), intent(in), value :: symprec
        integer(c_int) :: spg_get_symmetry_with_site_tensors
      end function spg_get_symmetry_with_site_tensors
@@ -149,21 +150,22 @@ module spglib_f08
 
      function spgat_get_symmetry_with_site_tensors( rotation, translation, &
           & equivalent_atoms, primitive_lattice, spin_flips, max_size, lattice, &
-          & position, types, tensors, tensor_rank, num_atom, is_magnetic, &
-          & symprec, angle_tolerance) bind(c)
+          & position, types, tensors, tensor_rank, num_atom, with_time_reversal, &
+          & is_axial, symprec, angle_tolerance) bind(c)
        import c_int, c_double
        integer(c_int), intent(inout) :: rotation(3,3,*)
        real(c_double), intent(inout) :: translation(3,*)
-       integer(c_int), intent(out) :: equivalent_atoms(*)
-       real(c_double), intent(out) :: primitive_lattice(3,3)
-       integer(c_int), intent(out) :: spin_flips(*)
+       integer(c_int), intent(inout) :: equivalent_atoms(*)
+       real(c_double), intent(inout) :: primitive_lattice(3,3)
+       integer(c_int), intent(inout) :: spin_flips(*)
        integer(c_int), intent(in), value :: max_size
        real(c_double), intent(in) :: lattice(3,3), position(3,*)
        integer(c_int), intent(in) :: types(*)
        real(c_double), intent(in) :: tensors(*)
        integer(c_int), intent(in), value :: tensor_rank
        integer(c_int), intent(in), value :: num_atom
-       integer(c_int), intent(in), value :: is_magnetic
+       integer(c_int), intent(in), value :: with_time_reversal
+       integer(c_int), intent(in), value :: is_axial
        real(c_double), intent(in), value :: symprec, angle_tolerance
        integer(c_int) :: spgat_get_symmetry_with_site_tensors
      end function spgat_get_symmetry_with_site_tensors
@@ -439,6 +441,7 @@ contains
        character(kind=c_char) :: international_full(20)
        character(kind=c_char) :: international(32)
        character(kind=c_char) :: schoenflies(7)
+       integer(c_int) :: hall_number
        character(kind=c_char) :: hall_symbol(17)
        character(kind=c_char) :: choice(6)
        character(kind=c_char) :: pointgroup_international(6)
