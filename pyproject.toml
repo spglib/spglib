@@ -53,16 +53,13 @@ cmake.args = [
     "-DUSE_OMP=OFF",
 ]
 
-
-#[tool.scikit-build.dynamic]
-
-
 [tool.cibuildwheel]
 skip = ["pp*", "*-win32", "*-manylinux_i686", "*-musllinux*", "cp36-*"]
 manylinux-x86_64-image = "manylinux2014"
 manylinux-aarch64-image = "manylinux2014"
-#test-requires = ["pytest"]
+test-extras = "testing"
+test-command = "pytest"
 
 [tool.pytest.ini_options]
 addopts = "--benchmark-skip"
-testpaths = ["test"]
+testpaths = ["python/test"]
