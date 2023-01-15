@@ -5,6 +5,8 @@ on:
     branches:
       - rc
       - master
+  pull_request:
+    branches: [rc]
 
 jobs:
   build_wheels:
