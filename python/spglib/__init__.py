@@ -43,6 +43,7 @@ from .spglib import (  # noqa: F401
     get_grid_points_by_rotations,
     get_hall_number_from_symmetry,
     get_ir_reciprocal_mesh,
+    get_layergroup,
     get_magnetic_spacegroup_type,
     get_magnetic_symmetry,
     get_magnetic_symmetry_dataset,

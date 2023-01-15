@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 
 extern "C" {
-  #include "spglib.h"
-  #include "utils.h"
+#include "spglib.h"
+#include "utils.h"
 }
 
 TEST(test_find_primitive_cell, test_spg_find_primitive_BCC) {

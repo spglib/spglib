@@ -37,7 +37,26 @@ import warnings
 
 import numpy as np
 
-from . import _spglib as spg
+try:
+    from . import _spglib as spg
+except ImportError:
+    import os.path
+    import re
+    from ctypes import cdll
+
+    bundled_lib = next(
+        filter(
+            lambda fl: re.match(".*symspg\\..*", fl),
+            sorted(os.listdir(os.path.dirname(__file__))),
+        ),
+        None,
+    )
+    if not bundled_lib:
+        raise FileNotFoundError(
+            "Spglib C++ library is not installed and no bundled version was detected"
+        )
+    cdll.LoadLibrary(os.path.join(os.path.dirname(__file__), bundled_lib))
+    from . import _spglib as spg
 
 
 class SpglibError(object):
@@ -300,6 +319,78 @@ def get_magnetic_symmetry(
         }
 
 
+def _build_dataset_dict(spg_ds):
+    keys = (
+        "number",
+        "hall_number",
+        "international",
+        "hall",
+        "choice",
+        "transformation_matrix",
+        "origin_shift",
+        "rotations",
+        "translations",
+        "wyckoffs",
+        "site_symmetry_symbols",
+        "crystallographic_orbits",
+        "equivalent_atoms",
+        "primitive_lattice",
+        "mapping_to_primitive",
+        "std_lattice",
+        "std_types",
+        "std_positions",
+        "std_rotation_matrix",
+        "std_mapping_to_primitive",
+        # 'pointgroup_number',
+        "pointgroup",
+    )
+    dataset = {}
+    for key, data in zip(keys, spg_ds):
+        dataset[key] = data
+
+    dataset["international"] = dataset["international"].strip()
+    dataset["hall"] = dataset["hall"].strip()
+    dataset["choice"] = dataset["choice"].strip()
+    dataset["transformation_matrix"] = np.array(
+        dataset["transformation_matrix"], dtype="double", order="C"
+    )
+    dataset["origin_shift"] = np.array(dataset["origin_shift"], dtype="double")
+    dataset["rotations"] = np.array(dataset["rotations"], dtype="intc", order="C")
+    dataset["translations"] = np.array(
+        dataset["translations"], dtype="double", order="C"
+    )
+    letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    dataset["wyckoffs"] = [letters[x] for x in dataset["wyckoffs"]]
+    dataset["site_symmetry_symbols"] = [
+        s.strip() for s in dataset["site_symmetry_symbols"]
+    ]
+    dataset["crystallographic_orbits"] = np.array(
+        dataset["crystallographic_orbits"], dtype="intc"
+    )
+    dataset["equivalent_atoms"] = np.array(dataset["equivalent_atoms"], dtype="intc")
+    dataset["primitive_lattice"] = np.array(
+        np.transpose(dataset["primitive_lattice"]), dtype="double", order="C"
+    )
+    dataset["mapping_to_primitive"] = np.array(
+        dataset["mapping_to_primitive"], dtype="intc"
+    )
+    dataset["std_lattice"] = np.array(
+        np.transpose(dataset["std_lattice"]), dtype="double", order="C"
+    )
+    dataset["std_types"] = np.array(dataset["std_types"], dtype="intc")
+    dataset["std_positions"] = np.array(
+        dataset["std_positions"], dtype="double", order="C"
+    )
+    dataset["std_rotation_matrix"] = np.array(
+        dataset["std_rotation_matrix"], dtype="double", order="C"
+    )
+    dataset["std_mapping_to_primitive"] = np.array(
+        dataset["std_mapping_to_primitive"], dtype="intc"
+    )
+    dataset["pointgroup"] = dataset["pointgroup"].strip()
+    return dataset
+
+
 def get_symmetry_dataset(cell, symprec=1e-5, angle_tolerance=-1.0, hall_number=0):
     """Search symmetry dataset from an input cell.
 
@@ -408,74 +499,31 @@ def get_symmetry_dataset(cell, symprec=1e-5, angle_tolerance=-1.0, hall_number=0
         _set_error_message()
         return None
 
-    keys = (
-        "number",
-        "hall_number",
-        "international",
-        "hall",
-        "choice",
-        "transformation_matrix",
-        "origin_shift",
-        "rotations",
-        "translations",
-        "wyckoffs",
-        "site_symmetry_symbols",
-        "crystallographic_orbits",
-        "equivalent_atoms",
-        "primitive_lattice",
-        "mapping_to_primitive",
-        "std_lattice",
-        "std_types",
-        "std_positions",
-        "std_rotation_matrix",
-        "std_mapping_to_primitive",
-        # 'pointgroup_number',
-        "pointgroup",
-    )
-    dataset = {}
-    for key, data in zip(keys, spg_ds):
-        dataset[key] = data
+    dataset = _build_dataset_dict(spg_ds)
+    _set_error_message()
+    return dataset
 
-    dataset["international"] = dataset["international"].strip()
-    dataset["hall"] = dataset["hall"].strip()
-    dataset["choice"] = dataset["choice"].strip()
-    dataset["transformation_matrix"] = np.array(
-        dataset["transformation_matrix"], dtype="double", order="C"
+
+def get_symmetry_layerdataset(cell, aperiodic_dir=2, symprec=1e-5):
+    """TODO: Add comments."""
+    _set_no_error()
+
+    lattice, positions, numbers, _ = _expand_cell(cell)
+    if lattice is None:
+        return None
+
+    spg_ds = spg.layerdataset(
+        lattice,
+        positions,
+        numbers,
+        aperiodic_dir,
+        symprec,
     )
-    dataset["origin_shift"] = np.array(dataset["origin_shift"], dtype="double")
-    dataset["rotations"] = np.array(dataset["rotations"], dtype="intc", order="C")
-    dataset["translations"] = np.array(
-        dataset["translations"], dtype="double", order="C"
-    )
-    letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    dataset["wyckoffs"] = [letters[x] for x in dataset["wyckoffs"]]
-    dataset["site_symmetry_symbols"] = [
-        s.strip() for s in dataset["site_symmetry_symbols"]
-    ]
-    dataset["crystallographic_orbits"] = np.array(
-        dataset["crystallographic_orbits"], dtype="intc"
-    )
-    dataset["equivalent_atoms"] = np.array(dataset["equivalent_atoms"], dtype="intc")
-    dataset["primitive_lattice"] = np.array(
-        np.transpose(dataset["primitive_lattice"]), dtype="double", order="C"
-    )
-    dataset["mapping_to_primitive"] = np.array(
-        dataset["mapping_to_primitive"], dtype="intc"
-    )
-    dataset["std_lattice"] = np.array(
-        np.transpose(dataset["std_lattice"]), dtype="double", order="C"
-    )
-    dataset["std_types"] = np.array(dataset["std_types"], dtype="intc")
-    dataset["std_positions"] = np.array(
-        dataset["std_positions"], dtype="double", order="C"
-    )
-    dataset["std_rotation_matrix"] = np.array(
-        dataset["std_rotation_matrix"], dtype="double", order="C"
-    )
-    dataset["std_mapping_to_primitive"] = np.array(
-        dataset["std_mapping_to_primitive"], dtype="intc"
-    )
-    dataset["pointgroup"] = dataset["pointgroup"].strip()
+    if spg_ds is None:
+        _set_error_message()
+        return None
+
+    dataset = _build_dataset_dict(spg_ds)
 
     _set_error_message()
     return dataset
@@ -652,6 +700,20 @@ def get_magnetic_symmetry_dataset(
     return dataset
 
 
+def get_layergroup(cell, aperiodic_dir=2, symprec=1e-5):
+    """Return layer group in ....
+
+    If it fails, None is returned.
+
+    """
+    _set_no_error()
+
+    dataset = get_symmetry_layerdataset(
+        cell, aperiodic_dir=aperiodic_dir, symprec=symprec
+    )
+    return dataset
+
+
 def get_spacegroup(cell, symprec=1e-5, angle_tolerance=-1.0, symbol_type=0):
     """Return space group in international table symbol and number as a string.
 
@@ -663,6 +725,7 @@ def get_spacegroup(cell, symprec=1e-5, angle_tolerance=-1.0, symbol_type=0):
     dataset = get_symmetry_dataset(
         cell, symprec=symprec, angle_tolerance=angle_tolerance
     )
+
     if dataset is None:
         return None
 

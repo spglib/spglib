@@ -5,42 +5,19 @@
 - CMake >= 3.11
 - (Googletest is automatically prepared with [FetchContent](https://cmake.org/cmake/help/latest/module/FetchContent.html))
 
-## How to run tests
-
-For CMake>=3.14
-```shell
-cd test
-cmake -S . -B build -DUSE_SANITIZER="Address" -DCMAKE_BUILD_TYPE="Debug"
-cmake --build build
-# With multi cores
-# cmake --build build -j 32
-
-cd build
-ctest
-# ctest -V
-```
-
-For older CMake<3.14
-```shell
-cd test
-mkdir build && cd build
-cmake -DUSE_SANITIZER="Address" -DCMAKE_BUILD_TYPE="Debug" ..
-cmake --build .
-ctest
-```
-
 ## How to run single test
 
-Example to run `test_symmetry_search.test_spg_get_symmetry`
+In the `test` folder of the build directory (e.g. `build/test`), run the specific test executable.
+For example, to run `test_symmetry_search.test_spg_get_symmetry`
 ```shell
-# at test/build
+# at build/test
 ./test_symmetry_search --gtest_filter=test_spg_get_symmetry
 ```
 
-## How to add new test file
+## How to add a new test file
 
-1. Create `test/<your_test_suite_name>.cpp`
-2. Append `<your_test_suite_name>` at the bottom loops in [test/CMakeLists.txt](test/CMakeLists.txt)
+1. Create `<your_test_suite_name>.cpp`
+2. Append `<your_test_suite_name>` at the bottom loops in [the current CMakeLists.txt](CMakeLists.txt)
 
 ## How to add test
 

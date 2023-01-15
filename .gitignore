@@ -6,7 +6,10 @@ MANIFEST
 *.so
 *.lo
 *.o
+
+# Python wrapper
 python/src
+python/_skbuild
 
 # Packages
 *.egg
@@ -46,40 +49,6 @@ nosetests.xml
 .doctrees
 _build
 
-# autotools
-AUTHORS
-INSTALL
-NEWS
-README
-aclocal.m4
-autom4te.cache/
-compile
-config.guess
-config.h.in
-config.sub
-install-sh
-missing
-Makefile.in
-config.log
-config.status
-configure
-depcomp
-ltmain.sh
-m4/
-src/Makefile.in
-Makefile
-!doc/Makefile
-config.h
-libtool
-src/.deps/
-src/.libs/
-src/Makefile
-src/libsymspg.la
-stamp-h1
-autoscan.log
-configure.scan
-test-driver
-
 # CMake
 CMakeCache.txt
 CMakeFiles/
@@ -87,6 +56,11 @@ CTestTestfile.cmake
 cmake_install.cmake
 null.d
 *.pc
+cmake-build-*
+
+# Custom pre-commit
+_build-pre-commit
+compile_commands.json
 
 example/a.out
 example/defs_basis.mod

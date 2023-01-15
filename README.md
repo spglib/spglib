@@ -6,46 +6,84 @@
 
 C library for finding and handling crystal symmetries
 
-## How to compile with cmake
+## How to link spglib C library to your project
 
-```bash
-% mkdir _build
-% cd _build
-% cmake ..
-% cmake --build .
-% cmake --install (probably installed under /usr/local)
+We currently support two ways of linking this project: using native `cmake` or via `pkg-config`.
+The native cmake package and namespace are `spglib`. The cmake targets and pkg-config files
+exported are:
+
+|     CMake target     | pkg-config file | Description     |
+|:--------------------:|:---------------:|:----------------|
+|   `spglib::symspg`   |    `spglib`     | Main C library  |
+| `spglib::spglib_f08` |  `spglib_f08`   | Fortran wrapper |
+
+An example `CMakeLists.txt` to link via native `cmake`:
+```cmake
+project(foo)
+
+find_package(spglib REQUIRED)
+
+add_library(foo_library)
+target_link_libraries(foo_library PRIVATE spglib::symspg)
 ```
 
-Or to install under the parent directory,
+See [example/CMakeLists.txt](example/CMakeLists.txt) for a more complete example.
 
-```bash
-% mkdir _build
-% cd _build
-% cmake -DCMAKE_INSTALL_PREFIX=.. ..
-% cmake --build .
-% cmake --install . --prefix ..
+For other wrappers see the corresponding readme in the respective directories.
+
+## How to compile main C library
+
+```console
+$ mkdir build
+$ cd build
+$ cmake ..
+$ cmake --build ${CMAKE_OPTIONS} .
+$ cmake --install .
 ```
+Replace the variable `CMAKE_OPTIONS` with appropriate options. For a list of Spglib
+specific (marked as **bold**) and other useful native cmake options, see
+[CMake Options](#cmake-options).
 
-See [test/README.md](test/README.md) for simple tests.
+### CMake Options
+
+Keep in mind that in order to pass cmake options they have to be prefixed with `-D`,
+e.g. `-DWITH_Fortran=ON`.
+
+| Option               |               Default               | Description                                                                        |
+|:---------------------|:-----------------------------------:|:-----------------------------------------------------------------------------------|
+| **WITH_Fortran**     |                 OFF                 | Build Fortran API                                                                  |
+| **WITH_Python**      |                 OFF                 | Build Python API                                                                   |
+| **WITH_TESTS**       |                 ON                  | Include basic tests                                                                |
+| **USE_OMP**          |                 OFF                 | Use OpenMPI                                                                        |
+| **USE_SANITIZER**    |                 ""                  | Specify a sanitizer to compile with<br/> See `CMakeLists.txt` for supported values |
+| CMAKE_INSTALL_PREFIX | OS specific<br/>(e.g. `/usr/local`) | Location where to install built project                                            |
+| BUILD_SHARED_LIBS    |                 ON                  | Whether to build shared or statically linked libraries<br/>(Currently unsupported) |
+
+
+## How to compile python API
+
+See [python documentation](python/README.rst) for compilation instructions.
+
+Note that the python library uses the system default Spglib library (controllable
+by `LD_LIBRARY_PATH` on Linux or `DYLD_LIBRARY_PATH` on MacOS). If it is not found,
+it will default to a bundled version compiled with minimum options.
 
 ## How to run test
 
-Test is provided with the python interface. Python >= 3.7 is required for this
-test.
-
-```bash
-% cd python
-% pip install -e .
-% pytest
+The C library tests are incorporated in the CMake projects and enabled with the
+option `WITH_TESTS`. To execute these tests, runt the following command in the
+build directory
+```console
+$ cd test
+$ ctest
 ```
+
+Additionally, there are python tests that cover more use-cases.
+See the [README](python/README.rst) in the python folder for more details
 
 ## Development
 
-The development of spglib is managed on the `develop` branch of github spglib
-repository.
-
-- Github issues is the place to discuss about spglib issues.
-- Github pull request is the place to request merging source code.
+See [Contribution.md](Contribution.md).
 
 ## Documentation
 

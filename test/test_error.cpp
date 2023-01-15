@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
 extern "C" {
-  #include "spglib.h"
+#include "spglib.h"
 }
 
 TEST(test_error, test_spg_get_error_message) {

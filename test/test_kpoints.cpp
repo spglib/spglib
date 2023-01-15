@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
 extern "C" {
-  #include "spglib.h"
+#include "spglib.h"
 }
 
 TEST(test_kpoints, test_spg_get_ir_reciprocal_mesh) {
@@ -117,8 +117,8 @@ TEST(test_kpoints, test_spg_relocate_BZ_grid_address) {
 
     printf("*** spg_relocate_BZ_grid_address of NaCl structure ***:\n");
 
-    num_q = spg_relocate_BZ_grid_address(
-        bz_grid_address, bz_map, grid_address, mesh, rec_lattice, is_shift);
+    num_q = spg_relocate_BZ_grid_address(bz_grid_address, bz_map, grid_address,
+                                         mesh, rec_lattice, is_shift);
     // printf("Number of k-points of NaCl Brillouin zone\n");
     // printf("with Gamma-centered 40x40x40 Monkhorst-Pack mesh is 65861.\n");
     ASSERT_EQ(num_q, 65861);
@@ -166,8 +166,7 @@ TEST(test_kpoints, test_spg_relocate_dense_BZ_grid_address) {
         (double(*)[3])q);
     ASSERT_TRUE(num_ir > 0);
 
-    printf(
-        "*** spg_relocate_dense_BZ_grid_address of NaCl structure ***:\n");
+    printf("*** spg_relocate_dense_BZ_grid_address of NaCl structure ***:\n");
 
     num_q = spg_relocate_dense_BZ_grid_address(
         bz_grid_address, bz_map, grid_address, mesh, rec_lattice, is_shift);

@@ -14,7 +14,7 @@
    Definitions and conventions <definition>
    References <references>
    Summary of releases <releases>
-   Developer Documentation <develop>
+   Developer Documentation <development/develop>
 ```
 
 Spglib is a library for finding and handling crystal symmetries

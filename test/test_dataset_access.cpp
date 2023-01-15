@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 
 extern "C" {
-  #include "spglib.h"
-  #include "utils.h"
+#include "spglib.h"
+#include "utils.h"
 }
 
 static void show_spacegroup_type(const SpglibSpacegroupType spgtype);
@@ -93,10 +93,7 @@ TEST(test_dataset_access, test_spg_get_spacegroup_type_from_symmetry) {
     if (dataset) {
         spg_free_dataset(dataset);
     }
-
 }
-
-
 
 // ****************************************************************************
 // Local functions

@@ -1,9 +1,22 @@
-
-cmake_minimum_required(VERSION 2.8.12)
-
-project(spglib C)
+cmake_minimum_required(VERSION 3.14)
+project(spglib
+        VERSION 2.0.2
+        LANGUAGES C)
 
 option(WITH_Fortran "enable f08 interface" OFF)
+option(WITH_Python "build python buindings" OFF)
+option(USE_OMP "Build with OpenMP support" OFF)
+set(USE_SANITIZER "" CACHE STRING "Sanitizer used in compilation")
+
+# Sanity check if project is imported
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+    option(WITH_TESTS "build unit tests" ON)
+else()
+    option(WITH_TESTS "build unit tests" OFF)
+endif()
+
+include(CMakePackageConfigHelpers)
+include(GNUInstallDirs)
 
 set(CMAKE_MACOSX_RPATH 1)
 if(NOT CMAKE_BUILD_TYPE)
@@ -32,11 +45,7 @@ elseif (USE_SANITIZER STREQUAL "Memory")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=memory")
 endif()
 
-include(GNUInstallDirs)
-
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-
-option(USE_OMP "Build with OpenMP support" ON)
 
 if (USE_OMP)
   find_package(OpenMP REQUIRED)
@@ -44,18 +53,13 @@ if (USE_OMP)
 endif()
 
 # Version numbers
-file(READ ${PROJECT_SOURCE_DIR}/src/version.h version_file)
-string(REGEX MATCH "SPGLIB_MAJOR_VERSION ([0-9]+)" spglib_major_version ${version_file})
-set(spglib_major_version ${CMAKE_MATCH_1})
-string(REGEX MATCH "SPGLIB_MINOR_VERSION ([0-9]+)" spglib_minor_version ${version_file})
-set(spglib_minor_version ${CMAKE_MATCH_1})
-string(REGEX MATCH "SPGLIB_MICRO_VERSION ([0-9]+)" spglib_micro_version ${version_file})
-set(spglib_micro_version ${CMAKE_MATCH_1})
-set(serial "${spglib_major_version}.${spglib_minor_version}.${spglib_micro_version}")
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/version.h.in
+        ${CMAKE_CURRENT_BINARY_DIR}/src/version.h)
 set(soserial "1")
 
 # Source code
-include_directories("${PROJECT_SOURCE_DIR}/src")
+include_directories(${PROJECT_SOURCE_DIR}/src
+        ${CMAKE_CURRENT_BINARY_DIR}/src)
 set(SOURCES ${PROJECT_SOURCE_DIR}/src/arithmetic.c
             ${PROJECT_SOURCE_DIR}/src/cell.c
             ${PROJECT_SOURCE_DIR}/src/debug.c
@@ -93,20 +97,26 @@ endif()
 
 # Shared library
 add_library(symspg SHARED ${SOURCES})
+target_include_directories(symspg PUBLIC
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
+        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
 
 if(NOT MSVC)
   target_link_libraries(symspg PUBLIC m)
 endif()
-set_property(TARGET symspg PROPERTY VERSION ${serial})
+set_property(TARGET symspg PROPERTY VERSION ${PROJECT_VERSION})
 set_property(TARGET symspg PROPERTY SOVERSION ${soserial})
-install(TARGETS symspg LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(TARGETS symspg
+        EXPORT spglibTargets
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 # Static link library
 add_library(symspg_static STATIC ${SOURCES})
-set_property(TARGET symspg_static PROPERTY VERSION ${serial})
-set_property(TARGET symspg_static PROPERTY SOVERSION ${soserial})
+set_property(TARGET symspg_static PROPERTY VERSION ${PROJECT_VERSION})
 set_property(TARGET symspg_static PROPERTY OUTPUT_NAME symspg)
-install(TARGETS symspg_static ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(TARGETS symspg_static
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 # Header file
 install(FILES ${PROJECT_SOURCE_DIR}/src/spglib.h
@@ -117,9 +127,39 @@ if (WITH_Fortran)
   enable_language(Fortran)
   add_subdirectory(fortran)
 endif()
+if (WITH_Python)
+    add_subdirectory(python)
+endif()
+if (WITH_TESTS)
+    add_subdirectory(test)
+endif()
 
-configure_file(spglib.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/spglib.pc)
+configure_file(spglib.pc.in ${CMAKE_CURRENT_BINARY_DIR}/spglib.pc @ONLY)
 install(
   FILES  ${CMAKE_CURRENT_BINARY_DIR}/spglib.pc
-  DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/pkgconfig
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
   COMPONENT pkgconfig)
+
+# Generate the cmake export files
+write_basic_package_version_file(
+  ${CMAKE_CURRENT_BINARY_DIR}/spglibConfigVersion.cmake
+  VERSION ${PROJECT_VERSION}
+  COMPATIBILITY SameMajorVersion)
+configure_package_config_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/cmake/spglibConfig.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/spglibConfig.cmake
+  INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/spglib
+)
+install(
+  FILES ${CMAKE_CURRENT_BINARY_DIR}/spglibConfigVersion.cmake
+        ${CMAKE_CURRENT_BINARY_DIR}/spglibConfig.cmake
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/spglib
+)
+install(EXPORT spglibTargets
+        FILE spglibTargets.cmake
+        NAMESPACE spglib::
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/spglib
+)
+export(EXPORT spglibTargets
+  FILE ${CMAKE_CURRENT_BINARY_DIR}/cmake/spglibTargets.cmake
+  NAMESPACE spglib::)

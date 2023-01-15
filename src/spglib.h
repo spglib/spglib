@@ -278,8 +278,27 @@ int spgms_get_symmetry_with_collinear_spin(
     const int num_atom, const double symprec, const double angle_tolerance,
     const double mag_symprec);
 
-/* Return 0 if failed */
-/* ``rotation`` and ``translation`` are used as input and output. */
+/**
+ * @brief
+ *
+ * @param rotation Rotation parts of symmetry operations as return values.
+ * @param translation Translation parts of symmetry operations as return value.
+ * @param equivalent_atoms Symmetrically equivalent atoms as return value.
+ * @param primitive_lattice Primitive basis vectors as return value.
+ * @param spin_flips 1 for non time reversal and -1 for time reversal for each
+ * symmetry operation.
+ * @param max_size
+ * @param lattice
+ * @param position
+ * @param types
+ * @param tensors
+ * @param tensor_rank
+ * @param num_atom
+ * @param with_time_reversal
+ * @param is_axial
+ * @param symprec
+ * @return int Number of symmetry operations. Return 0 if failed.
+ */
 int spg_get_symmetry_with_site_tensors(
     int rotation[][3][3], double translation[][3], int equivalent_atoms[],
     double primitive_lattice[3][3], int *spin_flips, const int max_size,
