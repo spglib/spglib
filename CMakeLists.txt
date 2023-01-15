@@ -107,21 +107,11 @@ if(NOT MSVC)
 endif()
 set_property(TARGET symspg PROPERTY VERSION ${PROJECT_VERSION})
 set_property(TARGET symspg PROPERTY SOVERSION ${soserial})
-install(TARGETS symspg
-        EXPORT spglibTargets
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 # Static link library
 add_library(symspg_static STATIC ${SOURCES})
 set_property(TARGET symspg_static PROPERTY VERSION ${PROJECT_VERSION})
 set_property(TARGET symspg_static PROPERTY OUTPUT_NAME symspg)
-install(TARGETS symspg_static
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
-
-# Header file
-install(FILES ${PROJECT_SOURCE_DIR}/src/spglib.h
-              ${PROJECT_SOURCE_DIR}/fortran/spglib_f08.f90
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 if (WITH_Fortran)
   enable_language(Fortran)
@@ -134,32 +124,46 @@ if (WITH_TESTS)
     add_subdirectory(test)
 endif()
 
-configure_file(spglib.pc.in ${CMAKE_CURRENT_BINARY_DIR}/spglib.pc @ONLY)
-install(
-  FILES  ${CMAKE_CURRENT_BINARY_DIR}/spglib.pc
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
-  COMPONENT pkgconfig)
+# Installation
+# TODO: Temporarily disable normal cmake install targets when using scikit-build-core
+#  Check how bundled cmake searches CMAKE_MODULE_DIR and add accordingly
+#  (use SKBUILD_PLATLIB_DIR for install root)
+if (NOT SKBUILD)
+    # Main target
+    install(TARGETS symspg
+            EXPORT spglibTargets
+            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    install(TARGETS symspg_static
+            ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    install(FILES ${PROJECT_SOURCE_DIR}/src/spglib.h
+            ${PROJECT_SOURCE_DIR}/fortran/spglib_f08.f90
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-# Generate the cmake export files
-write_basic_package_version_file(
-  ${CMAKE_CURRENT_BINARY_DIR}/spglibConfigVersion.cmake
-  VERSION ${PROJECT_VERSION}
-  COMPATIBILITY SameMajorVersion)
-configure_package_config_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/cmake/spglibConfig.cmake.in
-  ${CMAKE_CURRENT_BINARY_DIR}/spglibConfig.cmake
-  INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/spglib
-)
-install(
-  FILES ${CMAKE_CURRENT_BINARY_DIR}/spglibConfigVersion.cmake
-        ${CMAKE_CURRENT_BINARY_DIR}/spglibConfig.cmake
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/spglib
-)
-install(EXPORT spglibTargets
-        FILE spglibTargets.cmake
-        NAMESPACE spglib::
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/spglib
-)
-export(EXPORT spglibTargets
-  FILE ${CMAKE_CURRENT_BINARY_DIR}/cmake/spglibTargets.cmake
-  NAMESPACE spglib::)
+
+    # pkg-config files
+    configure_file(spglib.pc.in ${CMAKE_CURRENT_BINARY_DIR}/spglib.pc @ONLY)
+    install(FILES  ${CMAKE_CURRENT_BINARY_DIR}/spglib.pc
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
+            COMPONENT pkgconfig)
+
+    # cmake export files
+    write_basic_package_version_file(
+            ${CMAKE_CURRENT_BINARY_DIR}/spglibConfigVersion.cmake
+            VERSION ${PROJECT_VERSION}
+            COMPATIBILITY SameMajorVersion)
+    configure_package_config_file(
+            ${CMAKE_CURRENT_SOURCE_DIR}/cmake/spglibConfig.cmake.in
+            ${CMAKE_CURRENT_BINARY_DIR}/spglibConfig.cmake
+            INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/spglib)
+    install(
+            FILES ${CMAKE_CURRENT_BINARY_DIR}/spglibConfigVersion.cmake
+            ${CMAKE_CURRENT_BINARY_DIR}/spglibConfig.cmake
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/spglib)
+    install(EXPORT spglibTargets
+            FILE spglibTargets.cmake
+            NAMESPACE spglib::
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/spglib)
+    export(EXPORT spglibTargets
+            FILE ${CMAKE_CURRENT_BINARY_DIR}/cmake/spglibTargets.cmake
+            NAMESPACE spglib::)
+endif ()

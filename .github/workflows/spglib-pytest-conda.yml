@@ -27,13 +27,12 @@ jobs:
     - name: Install dependencies
       run: |
         conda install --yes -c conda-forge python=3.9
-        conda install --yes -c conda-forge numpy gcc_linux-64 pip pyyaml make cmake scikit-build
+        conda install --yes -c conda-forge numpy gcc_linux-64 pip pyyaml make cmake scikit-build-core build
     - name: Setup spglib
-      working-directory: ./python
       run: |
-        ./get_nanoversion.sh
+        ./python/get_nanoversion.sh
         cat __nanoversion__.txt
-        python setup.py build
+        python -m build
         pip install .[testing]
     - name: Test with pytest
       working-directory: ./python
@@ -86,10 +85,9 @@ jobs:
     - name: Install dependencies
       run: |
         conda install --yes -c conda-forge python=3.9
-        conda install --yes -c conda-forge numpy gcc_linux-64 pip pyyaml make cmake scikit-build
+        conda install --yes -c conda-forge numpy gcc_linux-64 pip pyyaml make cmake scikit-build-core
 
     - name: Setup spglib with doc's dependencies
-      working-directory: ./python
       run: |
         pip install .[doc]
 

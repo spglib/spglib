@@ -1,0 +1,68 @@
+[build-system]
+requires = ["scikit-build-core", "numpy"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "spglib"
+version = "2.0.2"
+description = "This is the spglib module."
+license = { text = "BSD-3-Clause" }
+readme = "python/README.rst"
+# TODO: Switch to dynamic variables scikit-build/scikit-build-core#172
+#dynamic = ["version", "name", "description"]
+dependencies = [
+    "numpy"
+]
+authors = [
+    {name="Atsushi Togo", email="atz.togo@gmail.com"},
+]
+maintainers = [
+    {name="Atsushi Togo", email="atz.togo@gmail.com"},
+    {name="Cristian Le", email="git@lecris.dev"},
+]
+
+[project.urls]
+homepage = "https://spglib.github.io/spglib/"
+documentation = "https://spglib.github.io/spglib/"
+repository = "https://github.com/spglib/spglib"
+changelog = "https://spglib.github.io/spglib/releases.html"
+
+[project.optional-dependencies]
+testing = [
+    "codecov",
+    "pytest",
+    "pytest-cov",
+    "pytest-benchmark",
+    "pyyaml",
+]
+doc = [
+    "Sphinx==4.5.0",
+    "sphinx-autobuild==2021.3.14",
+    "sphinxcontrib-bibtex==2.4.2",
+    "sphinx-book-theme==0.3.3",
+    "myst-parser==0.18.0",
+    "linkify-it-py==2.0.0"
+]
+
+[tool.scikit-build]
+#wheel.packages = "python/spglib"
+wheel.install-dir = "spglib"
+cmake.args = [
+    "-DWITH_Python=ON",
+    "-DWITH_TESTS=OFF",
+    "-DUSE_OMP=OFF",
+]
+
+
+#[tool.scikit-build.dynamic]
+
+
+[tool.cibuildwheel]
+skip = ["pp*", "*-win32", "*-manylinux_i686", "*-musllinux*", "cp36-*"]
+manylinux-x86_64-image = "manylinux2014"
+manylinux-aarch64-image = "manylinux2014"
+#test-requires = ["pytest"]
+
+[tool.pytest.ini_options]
+addopts = "--benchmark-skip"
+testpaths = ["test"]
