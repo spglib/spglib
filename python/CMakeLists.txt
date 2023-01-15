@@ -1,4 +1,6 @@
-find_package(Python REQUIRED COMPONENTS Interpreter Development NumPy)
+# TODO: Make package REQUIRED when a different solution is found to
+# https://github.com/pypa/cibuildwheel/issues/639#issuecomment-818020937
+find_package(Python COMPONENTS Interpreter Development NumPy)
 Python_add_library(python_api MODULE WITH_SOABI _spglib.c)
 set_target_properties(python_api PROPERTIES
 		OUTPUT_NAME _spglib)
