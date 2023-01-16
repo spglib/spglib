@@ -171,8 +171,12 @@ static struct PyModuleDef moduledef = {PyModuleDef_HEAD_INIT,
                                        NULL};
 
 #define INITERROR return NULL
-
-PyObject *PyInit__spglib(void)
+#if defined(_MSC_VER)
+#define DLL_PUBLIC __declspec(dllexport) // Note: actually gcc seems to also supports this syntax.
+#elif defined(__GNUC__)
+#define DLL_PUBLIC __attribute__ ((dllexport))
+#endif
+DLL_PUBLIC PyObject* PyInit__spglib(void)
 #else
 #define INITERROR return
 

@@ -15,6 +15,13 @@ if (NOT Python_INSTALL_DIR)
 		set(Python_INSTALL_DIR ${Python_SITEARCH}/spglib)
 	endif()
 endif ()
-install(TARGETS symspg LIBRARY DESTINATION ${Python_INSTALL_DIR})
+if (WIN32)
+	# Windows needs RUNTIME as well to install the .dll file to
+	install(TARGETS symspg
+			LIBRARY DESTINATION ${Python_INSTALL_DIR}
+			RUNTIME DESTINATION ${Python_INSTALL_DIR})
+else()
+	install(TARGETS symspg LIBRARY DESTINATION ${Python_INSTALL_DIR})
+endif()
 install(TARGETS python_api LIBRARY DESTINATION ${Python_INSTALL_DIR})
 install(DIRECTORY spglib/ DESTINATION ${Python_INSTALL_DIR})

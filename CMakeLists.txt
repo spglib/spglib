@@ -26,6 +26,11 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
   add_definitions(-DSPGDEBUG -DSPGWARNING)
 endif()
 
+# Windows setup, make sure there is a .lib file to link to
+if (SKBUILD AND WIN32)
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+endif()
+
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 
 if (USE_SANITIZER STREQUAL "Address")
