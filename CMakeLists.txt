@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.14)
 project(spglib
-        VERSION 2.0.2
+        VERSION 2.1.0
         LANGUAGES C)
 
 option(WITH_Fortran "enable f08 interface" OFF)
