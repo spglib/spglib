@@ -1,31 +1,27 @@
-if (USE_OMP)
-	find_package(OpenMP COMPONENTS Fortran REQUIRED)
-	set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${OpenMP_Fortran_FLAGS}")
-endif()
+# Main fortran wrapper
+add_library(spglib_f08 spglib_f08.f90)
 
-add_library(spglib_f08_static STATIC ${PROJECT_SOURCE_DIR}/fortran/spglib_f08.f90)
-set_property(TARGET spglib_f08_static PROPERTY VERSION ${PROJECT_VERSION})
-set_property(TARGET spglib_f08_static PROPERTY OUTPUT_NAME spglib_f08)
-target_link_libraries(spglib_f08_static PRIVATE symspg_static)
-
-add_library(spglib_f08 SHARED ${PROJECT_SOURCE_DIR}/fortran/spglib_f08.f90)
-set_property(TARGET spglib_f08 PROPERTY VERSION ${PROJECT_VERSION})
-set_property(TARGET spglib_f08 PROPERTY SOVERSION ${soserial})
-target_link_libraries(spglib_f08 PUBLIC symspg)
+# Configure Fortran wrapper
+set_target_properties(spglib_f08 PROPERTIES
+		VERSION ${PROJECT_VERSION}
+		PUBLIC_HEADER spglib_f08.f90)
 target_include_directories(spglib_f08 PUBLIC
 		"$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
 		"$<INSTALL_INTERFACE:${CMAKE_INSTALL_LIBDIR}>")
+target_link_libraries(spglib_f08 PRIVATE symspg)
+# Note: Fortran wrapper is not linked to OpenMP library because it should not be defining any such setup
 
+# Install
 install(TARGETS spglib_f08
 		EXPORT spglibTargets
-		LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-install(TARGETS spglib_f08_static
-		ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+		LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+		ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+		PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/spglib_f08.mod DESTINATION ${CMAKE_INSTALL_LIBDIR})
+# Maybe it is handled automatically
+#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/spglib_f08.mod DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
-configure_file(spglib_f08.pc.in ${CMAKE_CURRENT_BINARY_DIR}/spglib_f08.pc @ONLY)
-install(
-	FILES  ${CMAKE_CURRENT_BINARY_DIR}/spglib_f08.pc
+configure_file(spglib_f08.pc.in spglib_f08.pc @ONLY)
+install(FILES  ${CMAKE_CURRENT_BINARY_DIR}/spglib_f08.pc
 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
 	COMPONENT pkgconfig)

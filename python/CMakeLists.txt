@@ -17,9 +17,14 @@ if (WIN32)
 	# Windows needs RUNTIME as well to install the .dll file to
 	install(TARGETS symspg
 			LIBRARY DESTINATION ${Python_INSTALL_DIR}
+			PUBLIC_HEADER DESTINATION ${Python_INSTALL_DIR}
 			RUNTIME DESTINATION ${Python_INSTALL_DIR})
 else()
-	install(TARGETS symspg LIBRARY DESTINATION ${Python_INSTALL_DIR})
+	# TODO: Cmake forces to install PUBLIC_HEADER when defined
+	# https://gitlab.kitware.com/cmake/cmake/-/issues/24326
+	install(TARGETS symspg
+			LIBRARY DESTINATION ${Python_INSTALL_DIR}
+			PUBLIC_HEADER DESTINATION ${Python_INSTALL_DIR})
 endif()
 install(TARGETS python_api LIBRARY DESTINATION ${Python_INSTALL_DIR})
 install(DIRECTORY spglib/ DESTINATION ${Python_INSTALL_DIR})

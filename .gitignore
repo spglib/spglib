@@ -62,6 +62,9 @@ cmake-build-*
 _build-pre-commit
 compile_commands.json
 
+# cibuildwheel
+wheelhouse/
+
 example/a.out
 example/defs_basis.mod
 example/example
