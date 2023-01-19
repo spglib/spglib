@@ -170,18 +170,20 @@ static struct PyModuleDef moduledef = {PyModuleDef_HEAD_INIT,
                                        _spglib_clear,
                                        NULL};
 
-#define INITERROR return NULL
-#if defined(_MSC_VER)
-#define DLL_PUBLIC __declspec(dllexport) // Note: actually gcc seems to also supports this syntax.
-#elif defined(__GNUC__)
-#define DLL_PUBLIC __attribute__ ((dllexport))
-#endif
-DLL_PUBLIC PyObject* PyInit__spglib(void)
+// Define macro to make sure symbol is exported
+// TODO: Switch to C23 native
+#if defined(_WIN32) || defined(WIN32)
+    // Note: actually gcc and intel seem to also supports this syntax.
+    #ifdef _MSC_VER
+        #define EXPORT __declspec(dllexport)
+    #else
+        #define EXPORT __attribute__ ((dllexport))
+    #endif
 #else
-#define INITERROR return
-
-void init_spglib(void)
+    #define EXPORT __attribute__ ((visibility("default")))
 #endif
+
+EXPORT PyObject* PyInit__spglib(void)
 {
     struct module_state *st;
 #if PY_MAJOR_VERSION >= 3
