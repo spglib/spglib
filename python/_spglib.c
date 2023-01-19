@@ -40,12 +40,6 @@
 #include <spglib.h>
 #include <stdio.h>
 
-#if (PY_MAJOR_VERSION < 3) && (PY_MINOR_VERSION < 6)
-#define PYUNICODE_FROMSTRING PyString_FromString
-#else
-#define PYUNICODE_FROMSTRING PyUnicode_FromString
-#endif
-
 static PyObject *py_get_version(PyObject *self, PyObject *args);
 static PyObject *py_get_dataset(PyObject *self, PyObject *args);
 static PyObject *py_get_layerdataset(PyObject *self, PyObject *args);
@@ -86,15 +80,8 @@ struct module_state {
     PyObject *error;
 };
 
-#if PY_MAJOR_VERSION >= 3
-#define GETSTATE(m) ((struct module_state *)PyModule_GetState(m))
-#else
-#define GETSTATE(m) (&_state)
-static struct module_state _state;
-#endif
-
 static PyObject *error_out(PyObject *m) {
-    struct module_state *st = GETSTATE(m);
+    struct module_state *st = (struct module_state *)PyModule_GetState(m);
     PyErr_SetString(st->error, "something bad happened");
     return NULL;
 }
@@ -148,15 +135,13 @@ static PyMethodDef _spglib_methods[] = {
 
     {NULL, NULL, 0, NULL}};
 
-#if PY_MAJOR_VERSION >= 3
-
 static int _spglib_traverse(PyObject *m, visitproc visit, void *arg) {
-    Py_VISIT(GETSTATE(m)->error);
+    Py_VISIT(((struct module_state *)PyModule_GetState(m))->error);
     return 0;
 }
 
 static int _spglib_clear(PyObject *m) {
-    Py_CLEAR(GETSTATE(m)->error);
+    Py_CLEAR(((struct module_state *)PyModule_GetState(m))->error);
     return 0;
 }
 
@@ -186,25 +171,19 @@ static struct PyModuleDef moduledef = {PyModuleDef_HEAD_INIT,
 EXPORT PyObject* PyInit__spglib(void)
 {
     struct module_state *st;
-#if PY_MAJOR_VERSION >= 3
     PyObject *module = PyModule_Create(&moduledef);
-#else
-    PyObject *module = Py_InitModule("_spglib", _spglib_methods);
-#endif
 
-    if (module == NULL) INITERROR;
+    if (module == NULL)
+        return NULL;
 
-    st = GETSTATE(module);
+    st = (struct module_state *)PyModule_GetState(module);
 
     st->error = PyErr_NewException("_spglib.Error", NULL, NULL);
     if (st->error == NULL) {
         Py_DECREF(module);
-        INITERROR;
+        return NULL;
     }
-
-#if PY_MAJOR_VERSION >= 3
     return module;
-#endif
 }
 
 static PyObject *py_get_version(PyObject *self, PyObject *args) {
@@ -248,11 +227,11 @@ PyObject *build_python_list_from_dataset(SpglibDataset *dataset) {
     PyList_SetItem(array, n, PyLong_FromLong((long)dataset->hall_number));
     n++;
     PyList_SetItem(array, n,
-                   PYUNICODE_FROMSTRING(dataset->international_symbol));
+                   PyUnicode_FromString(dataset->international_symbol));
     n++;
-    PyList_SetItem(array, n, PYUNICODE_FROMSTRING(dataset->hall_symbol));
+    PyList_SetItem(array, n, PyUnicode_FromString(dataset->hall_symbol));
     n++;
-    PyList_SetItem(array, n, PYUNICODE_FROMSTRING(dataset->choice));
+    PyList_SetItem(array, n, PyUnicode_FromString(dataset->choice));
     n++;
 
     /* Transformation matrix */
@@ -317,7 +296,7 @@ PyObject *build_python_list_from_dataset(SpglibDataset *dataset) {
         PyList_SetItem(wyckoffs, i,
                        PyLong_FromLong((long)dataset->wyckoffs[i]));
         PyList_SetItem(site_symmetry_symbols, i,
-                       PYUNICODE_FROMSTRING(dataset->site_symmetry_symbols[i]));
+                       PyUnicode_FromString(dataset->site_symmetry_symbols[i]));
         PyList_SetItem(equiv_atoms, i,
                        PyLong_FromLong((long)dataset->equivalent_atoms[i]));
         PyList_SetItem(
@@ -403,7 +382,7 @@ PyObject *build_python_list_from_dataset(SpglibDataset *dataset) {
     /* PyList_SetItem(array, n, PyLong_FromLong((long)
      * dataset->pointgroup_number)); */
     /* n++; */
-    PyList_SetItem(array, n, PYUNICODE_FROMSTRING(dataset->pointgroup_symbol));
+    PyList_SetItem(array, n, PyUnicode_FromString(dataset->pointgroup_symbol));
     n++;
 
     assert(n == len_list);
@@ -763,25 +742,25 @@ static PyObject *py_get_spacegroup_type(PyObject *self, PyObject *args) {
     PyList_SetItem(array, n, PyLong_FromLong((long)spg_type.number));
     n++;
     PyList_SetItem(array, n,
-                   PYUNICODE_FROMSTRING(spg_type.international_short));
+                   PyUnicode_FromString(spg_type.international_short));
     n++;
-    PyList_SetItem(array, n, PYUNICODE_FROMSTRING(spg_type.international_full));
+    PyList_SetItem(array, n, PyUnicode_FromString(spg_type.international_full));
     n++;
-    PyList_SetItem(array, n, PYUNICODE_FROMSTRING(spg_type.international));
+    PyList_SetItem(array, n, PyUnicode_FromString(spg_type.international));
     n++;
-    PyList_SetItem(array, n, PYUNICODE_FROMSTRING(spg_type.schoenflies));
+    PyList_SetItem(array, n, PyUnicode_FromString(spg_type.schoenflies));
     n++;
     PyList_SetItem(array, n, PyLong_FromLong((long)spg_type.hall_number));
     n++;
-    PyList_SetItem(array, n, PYUNICODE_FROMSTRING(spg_type.hall_symbol));
+    PyList_SetItem(array, n, PyUnicode_FromString(spg_type.hall_symbol));
     n++;
-    PyList_SetItem(array, n, PYUNICODE_FROMSTRING(spg_type.choice));
-    n++;
-    PyList_SetItem(array, n,
-                   PYUNICODE_FROMSTRING(spg_type.pointgroup_international));
+    PyList_SetItem(array, n, PyUnicode_FromString(spg_type.choice));
     n++;
     PyList_SetItem(array, n,
-                   PYUNICODE_FROMSTRING(spg_type.pointgroup_schoenflies));
+                   PyUnicode_FromString(spg_type.pointgroup_international));
+    n++;
+    PyList_SetItem(array, n,
+                   PyUnicode_FromString(spg_type.pointgroup_schoenflies));
     n++;
     PyList_SetItem(
         array, n,
@@ -789,7 +768,7 @@ static PyObject *py_get_spacegroup_type(PyObject *self, PyObject *args) {
     n++;
     PyList_SetItem(
         array, n,
-        PYUNICODE_FROMSTRING(spg_type.arithmetic_crystal_class_symbol));
+        PyUnicode_FromString(spg_type.arithmetic_crystal_class_symbol));
     n++;
 
     return array;
@@ -830,25 +809,25 @@ static PyObject *py_get_spacegroup_type_from_symmetry(PyObject *self,
     PyList_SetItem(array, n, PyLong_FromLong((long)spg_type.number));
     n++;
     PyList_SetItem(array, n,
-                   PYUNICODE_FROMSTRING(spg_type.international_short));
+                   PyUnicode_FromString(spg_type.international_short));
     n++;
-    PyList_SetItem(array, n, PYUNICODE_FROMSTRING(spg_type.international_full));
+    PyList_SetItem(array, n, PyUnicode_FromString(spg_type.international_full));
     n++;
-    PyList_SetItem(array, n, PYUNICODE_FROMSTRING(spg_type.international));
+    PyList_SetItem(array, n, PyUnicode_FromString(spg_type.international));
     n++;
-    PyList_SetItem(array, n, PYUNICODE_FROMSTRING(spg_type.schoenflies));
+    PyList_SetItem(array, n, PyUnicode_FromString(spg_type.schoenflies));
     n++;
     PyList_SetItem(array, n, PyLong_FromLong((long)spg_type.hall_number));
     n++;
-    PyList_SetItem(array, n, PYUNICODE_FROMSTRING(spg_type.hall_symbol));
+    PyList_SetItem(array, n, PyUnicode_FromString(spg_type.hall_symbol));
     n++;
-    PyList_SetItem(array, n, PYUNICODE_FROMSTRING(spg_type.choice));
-    n++;
-    PyList_SetItem(array, n,
-                   PYUNICODE_FROMSTRING(spg_type.pointgroup_international));
+    PyList_SetItem(array, n, PyUnicode_FromString(spg_type.choice));
     n++;
     PyList_SetItem(array, n,
-                   PYUNICODE_FROMSTRING(spg_type.pointgroup_schoenflies));
+                   PyUnicode_FromString(spg_type.pointgroup_international));
+    n++;
+    PyList_SetItem(array, n,
+                   PyUnicode_FromString(spg_type.pointgroup_schoenflies));
     n++;
     PyList_SetItem(
         array, n,
@@ -856,7 +835,7 @@ static PyObject *py_get_spacegroup_type_from_symmetry(PyObject *self,
     n++;
     PyList_SetItem(
         array, n,
-        PYUNICODE_FROMSTRING(spg_type.arithmetic_crystal_class_symbol));
+        PyUnicode_FromString(spg_type.arithmetic_crystal_class_symbol));
     n++;
 
     return array;
@@ -881,8 +860,8 @@ static PyObject *py_get_magnetic_spacegroup_type(PyObject *self,
     n = 0;
     PyList_SetItem(array, n++, PyLong_FromLong((long)msg_type.uni_number));
     PyList_SetItem(array, n++, PyLong_FromLong((long)msg_type.litvin_number));
-    PyList_SetItem(array, n++, PYUNICODE_FROMSTRING(msg_type.bns_number));
-    PyList_SetItem(array, n++, PYUNICODE_FROMSTRING(msg_type.og_number));
+    PyList_SetItem(array, n++, PyUnicode_FromString(msg_type.bns_number));
+    PyList_SetItem(array, n++, PyUnicode_FromString(msg_type.og_number));
     PyList_SetItem(array, n++, PyLong_FromLong((long)msg_type.number));
     PyList_SetItem(array, n++, PyLong_FromLong((long)msg_type.type));
 
@@ -919,7 +898,7 @@ static PyObject *py_get_pointgroup(PyObject *self, PyObject *args) {
     }
 
     array = PyList_New(3);
-    PyList_SetItem(array, 0, PYUNICODE_FROMSTRING(symbol));
+    PyList_SetItem(array, 0, PyUnicode_FromString(symbol));
     PyList_SetItem(array, 1, PyLong_FromLong((long)ptg_num));
     PyList_SetItem(array, 2, mat);
 
@@ -1468,5 +1447,5 @@ static PyObject *py_get_error_message(PyObject *self, PyObject *args) {
 
     error = spg_get_error_code();
 
-    return PYUNICODE_FROMSTRING(spg_get_error_message(error));
+    return PyUnicode_FromString(spg_get_error_message(error));
 }
