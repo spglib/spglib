@@ -1,0 +1,76 @@
+[build-system]
+requires = ["scikit-build-core", "numpy"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "spglib"
+version = "2.1.0-rc1"
+requires-python = ">=3.7"
+description = "This is the spglib module."
+license = { text = "BSD-3-Clause" }
+readme = "python/README.rst"
+# TODO: Switch to dynamic variables scikit-build/scikit-build-core#172
+#dynamic = ["version", "name", "description"]
+dependencies = [
+    "numpy"
+]
+authors = [
+    {name="Atsushi Togo", email="atz.togo@gmail.com"},
+]
+maintainers = [
+    {name="Atsushi Togo", email="atz.togo@gmail.com"},
+    {name="Cristian Le", email="git@lecris.dev"},
+]
+
+[project.urls]
+homepage = "https://spglib.github.io/spglib/"
+documentation = "https://spglib.github.io/spglib/"
+repository = "https://github.com/spglib/spglib"
+changelog = "https://spglib.github.io/spglib/releases.html"
+
+[project.optional-dependencies]
+testing = [
+    "codecov",
+    "pytest",
+    "pytest-cov",
+    "pytest-benchmark",
+    "pyyaml",
+]
+doc = [
+    "Sphinx==4.5.0",
+    "sphinx-autobuild==2021.3.14",
+    "sphinxcontrib-bibtex==2.4.2",
+    "sphinx-book-theme==0.3.3",
+    "myst-parser==0.18.0",
+    "linkify-it-py==2.0.0"
+]
+
+[tool.scikit-build]
+#wheel.packages = "python/spglib"
+wheel.install-dir = "spglib"
+cmake.args = [
+    "-DWITH_Python=ON",
+    "-DWITH_TESTS=OFF",
+    "-DUSE_OMP=OFF",
+]
+
+[tool.cibuildwheel]
+skip = ["pp*", "*-win32", "*-manylinux_i686", "*-musllinux*"]
+test-extras = "testing"
+test-command = "pytest {package}/python/test --benchmark-skip"
+# Do not run test on emulated environments
+test-skip = "*-*linux_{aarch64,ppc64le,s390x} *-macosx_arm64 *-macosx_universal2:arm64"
+
+[tool.cibuildwheel.linux]
+# TODO: auditwheel fails if LD_LIBRARY_PATH is not set correctly. Not sure about apprropriate value to set to
+#repair-wheel-command = "LD_LIBRARY_PATH=. auditwheel repair --lib-sdir . -w {dest_dir} {wheel}"
+repair-wheel-command = ""
+
+[tool.cibuildwheel.macos]
+# TODO: similar to above
+#repair-wheel-command = "DYLD_LIBRARY_PATH=. delocate-wheel --require-archs {delocate_archs} -w {dest_dir} -v {wheel}"
+repair-wheel-command = ""
+
+[tool.pytest.ini_options]
+addopts = "--benchmark-skip"
+testpaths = ["python/test"]

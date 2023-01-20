@@ -9,42 +9,7 @@ on:
     branches: [develop]
 
 jobs:
-  build-linux:
-    runs-on: ubuntu-latest
-    strategy:
-      max-parallel: 5
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python 3.9
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.9
-    - name: Add conda to system path
-      run: |
-        # $CONDA is an environment variable pointing to the root of the miniconda directory
-        echo $CONDA/bin >> $GITHUB_PATH
-    - name: Install dependencies
-      run: |
-        conda install --yes -c conda-forge python=3.9
-        conda install --yes -c conda-forge numpy gcc_linux-64 pip pyyaml make cmake scikit-build
-    - name: Setup spglib
-      working-directory: ./python
-      run: |
-        ./get_nanoversion.sh
-        cat __nanoversion__.txt
-        python setup.py build
-        pip install .[testing]
-    - name: Test with pytest
-      working-directory: ./python
-      run: |
-        pytest --cov=./ --cov-report=xml
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v1
-      with:
-        verbose: true
-
-  c-test-linux:
+  pytest-linux:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -52,9 +17,9 @@ jobs:
       fail-fast: true
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
     - name: Add conda to system path
@@ -63,14 +28,36 @@ jobs:
         echo $CONDA/bin >> $GITHUB_PATH
     - name: Install dependencies
       run: |
-        conda install --yes -c conda-forge python=${{ matrix.python-version }}
-        conda install --yes -c conda-forge gcc_linux-64 make cmake
-    # Require CMake>=3.14 for the following build procedure
-    - name: Test
+        conda install --yes -c conda-forge python=3.9
+        conda install --yes -c conda-forge numpy gcc_linux-64 pip pyyaml make cmake scikit-build-core build
+    - name: Setup spglib
       run: |
-        cmake -S . -B build -DUSE_SANITIZER="Address" -DWITH_TESTS=ON
+        ./python/get_nanoversion.sh
+        cat __nanoversion__.txt
+        python -m build
+        pip install .[testing]
+    - name: Test with pytest
+      run: |
+        pytest --cov=./ --cov-report=xml
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        verbose: true
+
+  ctest-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: lukka/get-cmake@latest
+      # TODO: switch to cmake preset file
+    - name: Build
+      run: |
+        cmake -S . -B build -DUSE_SANITIZER="Address" -DWITH_TESTS=ON -DWITH_Fortran=ON
         cmake --build build
-        cd build/test
+    - name: Test
+      working-directory: build/test
+      run: |
         ctest
 
   docs:
@@ -95,10 +82,9 @@ jobs:
     - name: Install dependencies
       run: |
         conda install --yes -c conda-forge python=3.9
-        conda install --yes -c conda-forge numpy gcc_linux-64 pip pyyaml make cmake scikit-build
+        conda install --yes -c conda-forge numpy gcc_linux-64 pip pyyaml make cmake scikit-build-core
 
     - name: Setup spglib with doc's dependencies
-      working-directory: ./python
       run: |
         pip install .[doc]
 
