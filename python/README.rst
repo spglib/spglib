@@ -45,7 +45,7 @@ in :code:`pyproject.toml`. Then simply run the following in the current director
 
 .. code-block:: console
 
-    $ python setup.py build
+    $ python -m build
     $ pip install .
 
 To include testing or documentation environments, simply include the relevant extras

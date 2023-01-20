@@ -5,6 +5,8 @@ on:
     branches:
       - rc
       - master
+  pull_request:
+    branches: [rc]
 
 jobs:
   build_wheels:
@@ -28,10 +30,6 @@ jobs:
         env:
           CIBW_ARCHS_LINUX: auto aarch64
           CIBW_ARCHS_MACOS: x86_64 arm64
-        with:
-          package-dir: python
-          output-dir: wheelhouse
-          config-file: "{package}/pyproject.toml"
 
       - uses: actions/upload-artifact@v3
         with:
@@ -44,14 +42,13 @@ jobs:
       - uses: actions/checkout@v3
       - name: Build sdist
         run: |
-          pip install numpy make cmake scikit-build
-          cd python
-          sh pre-build-script.sh
-          python setup.py sdist
-          cd ..
+          pip install numpy make cmake scikit-build-core build
+          ./python/get_nanoversion.sh
+          cat __nanoversion__.txt
+          python -m build
       - uses: actions/upload-artifact@v3
         with:
-          path: python/dist/*.tar.gz
+          path: dist/*.tar.gz
 
   upload_pypi:
     needs: [build_wheels, build_sdist]

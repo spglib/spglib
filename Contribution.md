@@ -34,3 +34,11 @@ standard changes.
 2. Increment version at <CMakeLists.txt>
 3. Push the commit to `rc` branch (Github actions publishes the package to TestPyPI automatically)
 4. Push the commit to `master` branch (Github actions publishes the package to PyPI automatically)
+
+Note that scikit-build-core does not yet support dynamic variables for the
+updating `pyproject.toml` (follow progress at the upstream issues
+[#172](https://github.com/scikit-build/scikit-build-core/issues/172) and
+[#116](https://github.com/scikit-build/scikit-build-core/issues/116)).
+Currently, the Pypi release versions and releases candidates have to be
+manually updated in the version field of the [`pyproject.toml`](pyproject.toml)
+file.
