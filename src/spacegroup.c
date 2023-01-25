@@ -934,7 +934,7 @@ static int change_basis_tricli(int tmat_int[3][3],
         }
     }
 
-    if (!periodic_niggli_reduce(niggli_cell, symprec * symprec,
+    if (!niggli_reduce_periodic(niggli_cell, symprec * symprec,
                                 aperiodic_axis)) {
         return 0;
     }
@@ -983,8 +983,8 @@ static int change_basis_monocli(int tmat_int[3][3],
     }
 
     if (!del_layer_delaunay_reduce_2D(smallest_lattice, conv_lattice,
-                                      unique_axis,
-                                      aperiodic_axis_conv, symprec)) {
+                                      unique_axis, aperiodic_axis_conv,
+                                      symprec)) {
         return 0;
     }
 

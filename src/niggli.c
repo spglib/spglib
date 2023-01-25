@@ -118,10 +118,10 @@ int niggli_get_micro_version(void) { return NIGGLI_MICRO_VERSION; }
 
 /* return 0 if failed */
 int niggli_reduce(double *lattice_, const double eps_) {
-    return periodic_niggli_reduce(lattice_, eps_, -1);
+    return niggli_reduce_periodic(lattice_, eps_, -1);
 }
 
-int periodic_niggli_reduce(double *lattice_, const double eps_,
+int niggli_reduce_periodic(double *lattice_, const double eps_,
                            const int aperiodic_axis) {
     int i, j, succeeded;
     NiggliParams *p;
