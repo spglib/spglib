@@ -22,7 +22,7 @@ install(TARGETS spglib_f08
 install(TARGETS spglib_f08_static
 		ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/spglib_f08.mod DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/spglib_f08.mod DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 configure_file(spglib_f08.pc.in ${CMAKE_CURRENT_BINARY_DIR}/spglib_f08.pc @ONLY)
 install(
