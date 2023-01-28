@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 project(spglib
-        VERSION 2.1.0
-        LANGUAGES C)
+		VERSION 2.1.0
+		LANGUAGES C)
 
 option(spglib_WITH_Fortran "enable f08 interface" OFF)
 option(spglib_WITH_Python "build python buindings" OFF)
@@ -11,20 +11,27 @@ set(spglib_USE_SANITIZER "" CACHE STRING "Sanitizer used in compilation")
 # Sanity check if project is imported
 if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 	option(spglib_WITH_TESTS "build unit tests" ON)
+	option(spglib_SHARED_LIBS "Build spglib as a shared library" ON)
 else ()
 	option(spglib_WITH_TESTS "build unit tests" OFF)
+	option(spglib_SHARED_LIBS "Build spglib as a shared library" OFF)
 endif ()
 
 # Include basic tools
 include(CMakePackageConfigHelpers)
 if (UNIX)
 	include(GNUInstallDirs)
-endif()
+endif ()
 
 # Define basic parameters
 if (NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE Release)
-endif (NOT CMAKE_BUILD_TYPE)
+endif ()
+if (spglib_SHARED_LIBS)
+	set(BUILD_SHARED_LIBS ON)
+else()
+	set(BUILD_SHARED_LIBS OFF)
+endif()
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 
 set(CMAKE_MACOSX_RPATH 1)
@@ -32,10 +39,10 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 # Windows setup, make sure there is a .lib file to link to
 if (SKBUILD AND WIN32)
 	set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-endif()
+endif ()
 if (spglib_WITH_Fortran)
 	enable_language(Fortran)
-endif()
+endif ()
 
 # Include third-party libraries
 if (USE_OMP)

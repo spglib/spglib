@@ -28,6 +28,9 @@ target_link_libraries(foo_library PRIVATE spglib::symspg)
 ```
 
 See [example/CMakeLists.txt](example/CMakeLists.txt) for a more complete example.
+Note that this library is built as a shared library, unless it is imported via
+`FetchContent` or equivalent approaches. This can be controlled via
+`spglib_SHARED_LIBS`.
 
 For other wrappers see the corresponding readme in the respective directories.
 
@@ -51,15 +54,16 @@ and allow the project to be included via `FetchContent`.
 Keep in mind that in order to pass cmake options they have to be prefixed with `-D`,
 e.g. `-Dspglib_WITH_Fortran=ON`.
 
-| Option                   |               Default               | Description                                                                        |
-|:-------------------------|:-----------------------------------:|:-----------------------------------------------------------------------------------|
-| **spglib_WITH_Fortran**  |                 OFF                 | Build Fortran API                                                                  |
-| **spglib_WITH_Python**   |                 OFF                 | Build Python API                                                                   |
-| **spglib_WITH_TESTS**    |                 ON                  | Include basic tests                                                                |
-| **spglib_USE_OMP**       |                 OFF                 | Use OpenMPI                                                                        |
-| **spglib_USE_SANITIZER** |                 ""                  | Specify a sanitizer to compile with<br/> See `CMakeLists.txt` for supported values |
-| CMAKE_INSTALL_PREFIX     | OS specific<br/>(e.g. `/usr/local`) | Location where to install built project                                            |
-| BUILD_SHARED_LIBS        |                 ON                  | Whether to build shared or statically linked libraries<br/>(Currently unsupported) |
+| Option                              |               Default               | Description                                                                        |
+|:------------------------------------|:-----------------------------------:|:-----------------------------------------------------------------------------------|
+| **spglib_SHARED_LIBS**              |                 ON                  | Build spglib as a shared library. Turn off to build static.                        |
+| **spglib_WITH_Fortran**             |                 OFF                 | Build Fortran API                                                                  |
+| **spglib_WITH_Python**              |                 OFF                 | Build Python API                                                                   |
+| **spglib_WITH_TESTS**               |                 ON                  | Include basic tests                                                                |
+| **spglib_USE_OMP**                  |                 OFF                 | Use OpenMPI                                                                        |
+| **spglib_USE_SANITIZER**            |                 ""                  | Specify a sanitizer to compile with<br/> e.g. `address`                            |
+| CMAKE_INSTALL_PREFIX                | OS specific<br/>(e.g. `/usr/local`) | Location where to install built project                                            |
+| BUILD_SHARED_LIBS                   |                 ON                  | Whether to build shared or statically linked libraries<br/>(Currently unsupported) |
 
 
 ## How to compile python API
