@@ -1,5 +1,6 @@
 # Main fortran wrapper
 add_library(spglib_f08 spglib_f08.f90)
+add_library(spglib::spglib_f08 ALIAS spglib_f08)
 
 # Configure Fortran wrapper
 set_target_properties(spglib_f08 PROPERTIES

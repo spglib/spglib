@@ -3,16 +3,16 @@ project(spglib
         VERSION 2.1.0
         LANGUAGES C)
 
-option(WITH_Fortran "enable f08 interface" OFF)
-option(WITH_Python "build python buindings" OFF)
-option(USE_OMP "Build with OpenMP support" OFF)
-set(USE_SANITIZER "" CACHE STRING "Sanitizer used in compilation")
+option(spglib_WITH_Fortran "enable f08 interface" OFF)
+option(spglib_WITH_Python "build python buindings" OFF)
+option(spglib_USE_OMP "Build with OpenMP support" OFF)
+set(spglib_USE_SANITIZER "" CACHE STRING "Sanitizer used in compilation")
 
 # Sanity check if project is imported
 if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
-	option(WITH_TESTS "build unit tests" ON)
+	option(spglib_WITH_TESTS "build unit tests" ON)
 else ()
-	option(WITH_TESTS "build unit tests" OFF)
+	option(spglib_WITH_TESTS "build unit tests" OFF)
 endif ()
 
 # Include basic tools
@@ -33,7 +33,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 if (SKBUILD AND WIN32)
 	set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 endif()
-if (WITH_Fortran)
+if (spglib_WITH_Fortran)
 	enable_language(Fortran)
 endif()
 
@@ -44,15 +44,16 @@ endif ()
 
 # Main project
 add_library(symspg)
+add_library(spglib::symspg ALIAS symspg)
 add_subdirectory(src)
 
-if (WITH_Fortran)
+if (spglib_WITH_Fortran)
 	add_subdirectory(fortran)
 endif ()
-if (WITH_Python)
+if (spglib_WITH_Python)
 	add_subdirectory(python)
 endif ()
-if (WITH_TESTS)
+if (spglib_WITH_TESTS)
 	add_subdirectory(test)
 endif ()
 
