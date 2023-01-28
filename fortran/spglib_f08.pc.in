@@ -5,4 +5,4 @@ Description: The spglib f08 library
 depends: spglib
 Version: @PROJECT_VERSION@
 Libs: -L${prefix}/@CMAKE_INSTALL_LIBDIR@ -lspglib_f08 -lsymspg
-Cflags: -I${prefix}/include -I${prefix}/@CMAKE_INSTALL_LIBDIR@
+Cflags: -I${prefix}/include -I${prefix}/@CMAKE_INSTALL_INCLUDEDIR@

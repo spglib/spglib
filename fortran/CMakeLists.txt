@@ -14,7 +14,7 @@ set_property(TARGET spglib_f08 PROPERTY SOVERSION ${soserial})
 target_link_libraries(spglib_f08 PUBLIC symspg)
 target_include_directories(spglib_f08 PUBLIC
 		"$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
-		"$<INSTALL_INTERFACE:${CMAKE_INSTALL_LIBDIR}>")
+		"$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
 
 install(TARGETS spglib_f08
 		EXPORT spglibTargets
