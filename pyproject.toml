@@ -49,13 +49,13 @@ doc = [
 #wheel.packages = "python/spglib"
 wheel.install-dir = "spglib"
 cmake.args = [
-    "-DWITH_Python=ON",
-    "-DWITH_TESTS=OFF",
-    "-DUSE_OMP=OFF",
+    "-Dspglib_WITH_Python=ON",
+    "-Dspglib_WITH_TESTS=OFF",
+    "-Dspglbi_USE_OMP=OFF",
 ]
 
 [tool.cibuildwheel]
-skip = ["pp*", "*-win32", "*-manylinux_i686", "*-musllinux*"]
+skip = ["pp*", "*-win32", "*-manylinux_i686", "*-musllinux*", "*-macosx_arm64"]
 test-extras = "testing"
 test-command = "pytest {package}/python/test --benchmark-skip"
 # Do not run test on emulated environments

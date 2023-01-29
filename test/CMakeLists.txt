@@ -38,3 +38,7 @@ foreach(TESTCASE IN ITEMS
 		  PRIVATE GTest::gtest GTest::gtest_main)
   gtest_discover_tests(${TESTCASE})
 endforeach()
+
+if(spglib_WITH_Fortran)
+	add_subdirectory(fortran)
+endif()

@@ -28,6 +28,9 @@ target_link_libraries(foo_library PRIVATE spglib::symspg)
 ```
 
 See [example/CMakeLists.txt](example/CMakeLists.txt) for a more complete example.
+Note that this library is built as a shared library, unless it is imported via
+`FetchContent` or equivalent approaches. This can be controlled via
+`spglib_SHARED_LIBS`.
 
 For other wrappers see the corresponding readme in the respective directories.
 
@@ -46,18 +49,21 @@ specific (marked as **bold**) and other useful native cmake options, see
 
 ### CMake Options
 
+All spglib specific options are prefixed with `spglib_` in order to avoid clashes
+and allow the project to be included via `FetchContent`.
 Keep in mind that in order to pass cmake options they have to be prefixed with `-D`,
-e.g. `-DWITH_Fortran=ON`.
+e.g. `-Dspglib_WITH_Fortran=ON`.
 
-| Option               |               Default               | Description                                                                        |
-|:---------------------|:-----------------------------------:|:-----------------------------------------------------------------------------------|
-| **WITH_Fortran**     |                 OFF                 | Build Fortran API                                                                  |
-| **WITH_Python**      |                 OFF                 | Build Python API                                                                   |
-| **WITH_TESTS**       |                 ON                  | Include basic tests                                                                |
-| **USE_OMP**          |                 OFF                 | Use OpenMPI                                                                        |
-| **USE_SANITIZER**    |                 ""                  | Specify a sanitizer to compile with<br/> See `CMakeLists.txt` for supported values |
-| CMAKE_INSTALL_PREFIX | OS specific<br/>(e.g. `/usr/local`) | Location where to install built project                                            |
-| BUILD_SHARED_LIBS    |                 ON                  | Whether to build shared or statically linked libraries<br/>(Currently unsupported) |
+| Option                              |               Default               | Description                                                                        |
+|:------------------------------------|:-----------------------------------:|:-----------------------------------------------------------------------------------|
+| **spglib_SHARED_LIBS**              |                 ON                  | Build spglib as a shared library. Turn off to build static.                        |
+| **spglib_WITH_Fortran**             |                 OFF                 | Build Fortran API                                                                  |
+| **spglib_WITH_Python**              |                 OFF                 | Build Python API                                                                   |
+| **spglib_WITH_TESTS**               |                 ON                  | Include basic tests                                                                |
+| **spglib_USE_OMP**                  |                 OFF                 | Use OpenMPI                                                                        |
+| **spglib_USE_SANITIZER**            |                 ""                  | Specify a sanitizer to compile with<br/> e.g. `address`                            |
+| CMAKE_INSTALL_PREFIX                | OS specific<br/>(e.g. `/usr/local`) | Location where to install built project                                            |
+| BUILD_SHARED_LIBS                   |                 ON                  | Whether to build shared or statically linked libraries<br/>(Currently unsupported) |
 
 
 ## How to compile python API
@@ -71,7 +77,7 @@ it will default to a bundled version compiled with minimum options.
 ## How to run test
 
 The C library tests are incorporated in the CMake projects and enabled with the
-option `WITH_TESTS`. To execute these tests, runt the following command in the
+option `spglib_WITH_TESTS`. To execute these tests, runt the following command in the
 build directory
 ```console
 $ cd test
