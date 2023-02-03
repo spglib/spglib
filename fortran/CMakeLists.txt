@@ -9,7 +9,7 @@ set_target_properties(spglib_f08 PROPERTIES
 target_include_directories(spglib_f08 PUBLIC
 		"$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
 		"$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
-target_link_libraries(spglib_f08 PRIVATE symspg)
+target_link_libraries(spglib_f08 PUBLIC symspg)
 # Note: Fortran wrapper is not linked to OpenMP library because it should not be defining any such setup
 
 # Install
