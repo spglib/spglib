@@ -7,7 +7,7 @@ set(TestsDriver fortran_test.c)
 # Add fortran tests here
 create_test_sourcelist(FortranTests_Files
 		${TestsDriver}
-		test_spg_get_symmetry.f90)
+		test_fortran_spg_get_symmetry.f90)
 
 add_executable(FortranTests ${FortranTests_Files})
 target_link_libraries(FortranTests PRIVATE test_utils spglib_f08)

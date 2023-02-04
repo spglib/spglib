@@ -1,4 +1,4 @@
-function test_spg_get_symmetry() bind(C) result(ret)
+function test_fortran_spg_get_symmetry() bind(C) result(ret)
     use, intrinsic :: iso_c_binding
     use spglib_f08, only: spg_get_symmetry
     use test_utils
@@ -46,4 +46,4 @@ function test_spg_get_symmetry() bind(C) result(ret)
 
     ret = 0
 
-end function test_spg_get_symmetry
+end function test_fortran_spg_get_symmetry
