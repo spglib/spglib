@@ -51,7 +51,7 @@ wheel.install-dir = "spglib"
 cmake.args = [
     "-Dspglib_WITH_Python=ON",
     "-Dspglib_WITH_TESTS=OFF",
-    "-Dspglbi_USE_OMP=OFF",
+    "-Dspglib_USE_OMP=OFF",
 ]
 
 [tool.cibuildwheel]
