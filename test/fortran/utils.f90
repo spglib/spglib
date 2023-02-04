@@ -13,9 +13,9 @@ subroutine assert_int(val, ref_val)
     end if
 end subroutine assert_int
 
-subroutine assert_1D_array_c_long(vals, ref_vals, size_of_array)
-    integer(c_long), intent(in) :: vals(:)
-    integer(c_long), intent(in) :: ref_vals(:)
+subroutine assert_1D_array_c_int(vals, ref_vals, size_of_array)
+    integer(c_int), intent(in) :: vals(:)
+    integer(c_int), intent(in) :: ref_vals(:)
     integer, intent(in) :: size_of_array
     integer :: i
 
@@ -26,11 +26,11 @@ subroutine assert_1D_array_c_long(vals, ref_vals, size_of_array)
             error stop
         end if
     end do
-end subroutine assert_1D_array_c_long
+end subroutine assert_1D_array_c_int
 
-subroutine assert_2D_array_c_long(vals, ref_vals, shape_of_array)
-    integer(c_long), intent(in) :: vals(:, :)
-    integer(c_long), intent(in) :: ref_vals(:, :)
+subroutine assert_2D_array_c_int(vals, ref_vals, shape_of_array)
+    integer(c_int), intent(in) :: vals(:, :)
+    integer(c_int), intent(in) :: ref_vals(:, :)
     integer, intent(in) :: shape_of_array(:)
     integer :: i, j
 
@@ -43,5 +43,5 @@ subroutine assert_2D_array_c_long(vals, ref_vals, shape_of_array)
             end if
         end do
     end do
-end subroutine assert_2D_array_c_long
+end subroutine assert_2D_array_c_int
 end module test_utils
