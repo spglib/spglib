@@ -2,6 +2,7 @@ module test_spg_refine_cell
     use spglib_f08, only : spg_refine_cell
     use test_utils
     use C_interface_module
+    use, intrinsic :: iso_fortran_env
     implicit none
 contains
     function test_fortran_spg_refine_cell(argc, argv) bind(C) result(ret)
@@ -10,8 +11,10 @@ contains
         type(c_ptr), intent(in) :: argv(argc)
         integer(c_int) :: ret
 
-        write (*, '("test_FCC")')
+        write (output_unit, *) "test_FCC"
         call test_FCC()
+
+        ret = 0
     end function
 
     !> @brief Find standardaized cell of FCC from its primitive cell

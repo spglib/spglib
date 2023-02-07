@@ -2,6 +2,7 @@ module test_spg_get_symmetry
     use spglib_f08, only : spg_get_symmetry
     use test_utils
     use C_interface_module
+    use, intrinsic :: iso_fortran_env
     implicit none
 contains
     function test_fortran_spg_get_symmetry(argc, argv) bind(C) result(ret)
@@ -10,10 +11,30 @@ contains
         type(c_ptr), intent(in) :: argv(argc)
         integer(c_int) :: ret
 
-        write (*, '("test_rutile112")')
-        call test_rutile112()
-        write (*, '("test_zincblende")')
-        call test_zincblende()
+        integer :: len
+        character(len = :), allocatable :: str
+
+        if (argc < 2) then
+            write (output_unit, *) "test_rutile112"
+            call test_rutile112()
+            write (output_unit, *) "test_zincblende"
+            call test_zincblende()
+        else
+            len = c_strlen(argv(2))
+            allocate(character(len = len) :: str)
+            call C_F_string(argv(2), str)
+            select case (str)
+            case ("test_rutile112")
+                call test_rutile112()
+            case ("test_zincblende")
+                call test_zincblende()
+            case default
+                write (error_unit, *) "No known sub-test passed"
+            end select
+            deallocate(str)
+        end if
+
+        ret = 0
     end function test_fortran_spg_get_symmetry
 
     subroutine test_rutile112() bind(C)

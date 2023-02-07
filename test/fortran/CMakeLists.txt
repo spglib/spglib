@@ -3,6 +3,7 @@ add_library(test_utils STATIC utils.f90 c_interface_module.F90)
 # Generated ctest file that switches and displays tests
 # Note must be plain C because generated CPP file does not include extern "C"
 set(TestsDriver fortran_test.c)
+set(SubTests_test_fortran_spg_get_symmetry "test_rutile112;test_zincblende")
 
 # Add fortran tests here
 create_test_sourcelist(FortranTests_Files
