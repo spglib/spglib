@@ -76,7 +76,7 @@ contains
         deallocate (translation)
         deallocate (rotation)
 
-        call assert_int(n_sym, 32)
+        call assert(n_sym, 32)
     end subroutine test_rutile112
 
     subroutine test_zincblende() bind(C)
@@ -120,6 +120,6 @@ contains
         deallocate (translation)
         deallocate (rotation)
 
-        call assert_int(n_sym, 12)
+        call assert(n_sym, 12)
     end subroutine test_zincblende
 end module test_spg_get_symmetry

@@ -38,6 +38,6 @@ contains
 
         num_atom_bravais = spg_refine_cell(lattice, position, types, num_atom, symprec)
 
-        call assert_int(num_atom_bravais, 4)
+        call assert(num_atom_bravais, 4)
     end subroutine test_FCC
 end module test_spg_refine_cell

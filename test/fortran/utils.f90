@@ -2,6 +2,10 @@ module test_utils
     use, intrinsic :: iso_c_binding
     implicit none
 
+
+    interface assert
+        module procedure assert_int, assert_1D_array_c_int, assert_2D_array_c_int
+    end interface
 contains
 
 subroutine assert_int(val, ref_val)
