@@ -1,12 +1,19 @@
-program test_fortran_spg_refine_cell
-    use, intrinsic :: iso_c_binding
-    use spglib_f08, only: spg_refine_cell
+module test_spg_refine_cell
+    use spglib_f08, only : spg_refine_cell
     use test_utils
+    use C_interface_module
     implicit none
-
-    write (*, '("test_FCC")')
-    call test_FCC()
 contains
+    function test_fortran_spg_refine_cell(argc, argv) bind(C) result(ret)
+        use, intrinsic :: iso_c_binding
+        integer(c_int), value, intent(in) :: argc
+        type(c_ptr), intent(in) :: argv(argc)
+        integer(c_int) :: ret
+
+        write (*, '("test_FCC")')
+        call test_FCC()
+    end function
+
     !> @brief Find standardaized cell of FCC from its primitive cell
     !> The output structure of spg_refine_cell may contain more number of atoms.
     !> Therefore, larger space than that required for input structure has to
@@ -30,4 +37,4 @@ contains
 
         call assert_int(num_atom_bravais, 4)
     end subroutine test_FCC
-end program test_fortran_spg_refine_cell
+end module test_spg_refine_cell
