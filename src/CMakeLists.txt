@@ -47,10 +47,10 @@ endif()
 
 
 # Additional settings
-if (spglib_USE_SANITIZER)
-	string(TOLOWER ${spglib_USE_SANITIZER} spglib_USE_SANITIZER)
-	target_compile_options(symspg PUBLIC -fsanitize=${spglib_USE_SANITIZER})
-	target_link_options(symspg PUBLIC -fsanitize=${spglib_USE_SANITIZER})
+if (SPGLIB_USE_SANITIZER)
+	string(TOLOWER ${SPGLIB_USE_SANITIZER} SPGLIB_USE_SANITIZER)
+	target_compile_options(symspg PUBLIC -fsanitize=${SPGLIB_USE_SANITIZER})
+	target_link_options(symspg PUBLIC -fsanitize=${SPGLIB_USE_SANITIZER})
 endif()
 if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 	target_compile_definitions(symspg

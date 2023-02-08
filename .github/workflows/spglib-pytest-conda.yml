@@ -53,7 +53,7 @@ jobs:
       # TODO: switch to cmake preset file
     - name: Build
       run: |
-        cmake -S . -B build -Dspglib_USE_SANITIZER="Address" -Dspglib_WITH_TESTS=ON -Dspglib_WITH_Fortran=ON
+        cmake -S . -B build -DSPGLIB_USE_SANITIZER="Address" -DSPGLIB_WITH_TESTS=ON -DSPGLIB_WITH_Fortran=ON
         cmake --build build
     - name: Test
       working-directory: build/test

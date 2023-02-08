@@ -39,6 +39,6 @@ foreach(TESTCASE IN ITEMS
   gtest_discover_tests(${TESTCASE})
 endforeach()
 
-if(spglib_WITH_Fortran)
+if(SPGLIB_WITH_Fortran)
 	add_subdirectory(fortran)
 endif()
