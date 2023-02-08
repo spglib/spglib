@@ -81,7 +81,7 @@ if (NOT SKBUILD)
 	configure_file(cmake/spglib.pc.in spglib.pc @ONLY)
 	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/spglib.pc
 			DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
-			COMPONENT pkgconfig)
+			COMPONENT Spglib_Development)
 
 	# cmake export files
 	write_basic_package_version_file(
@@ -92,14 +92,15 @@ if (NOT SKBUILD)
 			cmake/SpglibConfig.cmake.in
 			${CMAKE_CURRENT_BINARY_DIR}/SpglibConfig.cmake
 			INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Spglib)
-	install(
-			FILES ${CMAKE_CURRENT_BINARY_DIR}/SpglibConfigVersion.cmake
+	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/SpglibConfigVersion.cmake
 			${CMAKE_CURRENT_BINARY_DIR}/SpglibConfig.cmake
-			DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Spglib)
+			DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Spglib
+			COMPONENT Spglib_Development)
 	install(EXPORT SpglibTargets
 			FILE SpglibTargets.cmake
 			NAMESPACE Spglib::
-			DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Spglib)
+			DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Spglib
+			COMPONENT Spglib_Development)
 	export(EXPORT SpglibTargets
 			FILE ${CMAKE_CURRENT_BINARY_DIR}/cmake/SpglibTargets.cmake
 			NAMESPACE Spglib::)
