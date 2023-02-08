@@ -1,7 +1,7 @@
 configure_file(version.h.in version.h)
 
 # Configure main target
-target_sources(symspg PRIVATE
+target_sources(Spglib_symspg PRIVATE
 		arithmetic.c
 		cell.c
 		debug.c
@@ -26,18 +26,16 @@ target_sources(symspg PRIVATE
 		spin.c
 		symmetry.c
 		)
-set_target_properties(symspg PROPERTIES
-		VERSION ${PROJECT_VERSION}
-		SOVERSION ${PROJECT_VERSION_MAJOR}
+set_target_properties(Spglib_symspg PROPERTIES
 		PUBLIC_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/spglib.h)
-target_include_directories(symspg PUBLIC
+target_include_directories(Spglib_symspg PUBLIC
 		"$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
 		"$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
 		"$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
 
 # Link to third-party libraries
 if (OpenMP_FOUND)
-	target_link_libraries(symspg PRIVATE OpenMP::OpenMP_C)
+	target_link_libraries(Spglib_symspg PRIVATE OpenMP::OpenMP_C)
 endif()
 # Should not be needed anymore
 #if(NOT MSVC)
@@ -49,11 +47,11 @@ endif()
 # Additional settings
 if (SPGLIB_USE_SANITIZER)
 	string(TOLOWER ${SPGLIB_USE_SANITIZER} SPGLIB_USE_SANITIZER)
-	target_compile_options(symspg PUBLIC -fsanitize=${SPGLIB_USE_SANITIZER})
-	target_link_options(symspg PUBLIC -fsanitize=${SPGLIB_USE_SANITIZER})
+	target_compile_options(Spglib_symspg PUBLIC -fsanitize=${SPGLIB_USE_SANITIZER})
+	target_link_options(Spglib_symspg PUBLIC -fsanitize=${SPGLIB_USE_SANITIZER})
 endif()
 if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-	target_compile_definitions(symspg
+	target_compile_definitions(Spglib_symspg
 			PUBLIC SPGDEBUG SPGWARNING)
 endif ()
 
@@ -75,14 +73,14 @@ if (NOT SKBUILD)
 	# Normal installation target to system. When using scikit-build check python subdirectory
 	if (WIN32)
 		# TODO: Probably wrong, please fix
-		install(TARGETS symspg
+		install(TARGETS Spglib_symspg
 				EXPORT SpglibTargets
 				LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
 				ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
 				PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 				RUNTIME DESTINATION ${CMAKE_INSTALL_RUNTIMEDIR})
 	else()
-		install(TARGETS symspg
+		install(TARGETS Spglib_symspg
 				EXPORT SpglibTargets
 				LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
 				ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}

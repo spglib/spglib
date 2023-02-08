@@ -1,19 +1,24 @@
 # Main fortran wrapper
-add_library(spglib_f08 spglib_f08.f90)
-add_library(Spglib::spglib_f08 ALIAS spglib_f08)
+add_library(Spglib_fortran spglib_f08.f90)
+add_library(Spglib::fortran ALIAS Spglib_fortran)
 
 # Configure Fortran wrapper
-set_target_properties(spglib_f08 PROPERTIES
+set_target_properties(Spglib_fortran PROPERTIES
 		VERSION ${PROJECT_VERSION}
+		SOVERSION ${PROJECT_VERSION_MAJOR}
+		EXPORT_NAME fortran
+		OUTPUT_NAME spglib_f08
 		PUBLIC_HEADER spglib_f08.f90)
-target_include_directories(spglib_f08 PUBLIC
+set_target_properties(Spglib_fortran PROPERTIES
+		PUBLIC_HEADER spglib_f08.f90)
+target_include_directories(Spglib_fortran PUBLIC
 		"$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
-target_link_libraries(spglib_f08 PUBLIC symspg)
+target_link_libraries(Spglib_fortran PUBLIC Spglib_symspg)
 # Note: Fortran wrapper is not linked to OpenMP library because it should not be defining any such setup
 
 # Install
-install(TARGETS spglib_f08
-		EXPORT spglibTargets
+install(TARGETS Spglib_fortran
+		EXPORT SpglibTargets
 		LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
 		ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
 		PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})

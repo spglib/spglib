@@ -53,8 +53,13 @@ if (SPGLIB_USE_OMP)
 endif ()
 
 # Main project
-add_library(symspg)
-add_library(Spglib::symspg ALIAS symspg)
+add_library(Spglib_symspg)
+set_target_properties(Spglib_symspg PROPERTIES
+		VERSION ${PROJECT_VERSION}
+		SOVERSION ${PROJECT_VERSION_MAJOR}
+		EXPORT_NAME symspg
+		OUTPUT_NAME symspg)
+add_library(Spglib::symspg ALIAS Spglib_symspg)
 add_subdirectory(src)
 
 if (SPGLIB_WITH_Fortran)

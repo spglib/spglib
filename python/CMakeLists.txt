@@ -1,9 +1,9 @@
 find_package(Python3 COMPONENTS REQUIRED Interpreter Development.Module NumPy)
-Python3_add_library(python_api MODULE WITH_SOABI _spglib.c)
-set_target_properties(python_api PROPERTIES
+Python3_add_library(Spglib_python MODULE WITH_SOABI _spglib.c)
+set_target_properties(Spglib_python PROPERTIES
 		OUTPUT_NAME _spglib)
-target_link_libraries(python_api PRIVATE
-		symspg Python3::NumPy)
+target_link_libraries(Spglib_python PRIVATE
+		Spglib_symspg Python3::NumPy)
 if (NOT Python_INSTALL_DIR)
 	if (SKBUILD)
 		# If built with scikit-build-core, let it handle the installation
@@ -15,16 +15,16 @@ if (NOT Python_INSTALL_DIR)
 endif ()
 if (WIN32)
 	# Windows needs RUNTIME as well to install the .dll file to
-	install(TARGETS symspg
+	install(TARGETS Spglib_symspg
 			LIBRARY DESTINATION ${Python_INSTALL_DIR}
 			PUBLIC_HEADER DESTINATION ${Python_INSTALL_DIR}
 			RUNTIME DESTINATION ${Python_INSTALL_DIR})
 else()
 	# TODO: Cmake forces to install PUBLIC_HEADER when defined
 	# https://gitlab.kitware.com/cmake/cmake/-/issues/24326
-	install(TARGETS symspg
+	install(TARGETS Spglib_symspg
 			LIBRARY DESTINATION ${Python_INSTALL_DIR}
 			PUBLIC_HEADER DESTINATION ${Python_INSTALL_DIR})
 endif()
-install(TARGETS python_api LIBRARY DESTINATION ${Python_INSTALL_DIR})
+install(TARGETS Spglib_python LIBRARY DESTINATION ${Python_INSTALL_DIR})
 install(DIRECTORY spglib/ DESTINATION ${Python_INSTALL_DIR})

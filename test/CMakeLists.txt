@@ -34,7 +34,7 @@ foreach(TESTCASE IN ITEMS
         )
   add_executable(${TESTCASE} ${TESTCASE}.cpp utils.c)
   target_link_libraries(${TESTCASE}
-		  PUBLIC symspg
+		  PUBLIC Spglib_symspg
 		  PRIVATE GTest::gtest GTest::gtest_main)
   gtest_discover_tests(${TESTCASE})
 endforeach()
