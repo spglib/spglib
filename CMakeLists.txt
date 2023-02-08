@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(spglib
+project(Spglib
 		VERSION 2.1.0
 		LANGUAGES C)
 
@@ -11,10 +11,10 @@ set(SPGLIB_USE_SANITIZER "" CACHE STRING "Sanitizer used in compilation")
 # Sanity check if project is imported
 if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 	option(SPGLIB_WITH_TESTS "build unit tests" ON)
-	option(SPGLIB_SHARED_LIBS "Build spglib as a shared library" ON)
+	option(SPGLIB_SHARED_LIBS "Build Spglib as a shared library" ON)
 else ()
 	option(SPGLIB_WITH_TESTS "build unit tests" OFF)
-	option(SPGLIB_SHARED_LIBS "Build spglib as a shared library" OFF)
+	option(SPGLIB_SHARED_LIBS "Build Spglib as a shared library" OFF)
 endif ()
 
 # Include basic tools
@@ -54,7 +54,7 @@ endif ()
 
 # Main project
 add_library(symspg)
-add_library(spglib::symspg ALIAS symspg)
+add_library(Spglib::symspg ALIAS symspg)
 add_subdirectory(src)
 
 if (SPGLIB_WITH_Fortran)
@@ -80,22 +80,22 @@ if (NOT SKBUILD)
 
 	# cmake export files
 	write_basic_package_version_file(
-			${CMAKE_CURRENT_BINARY_DIR}/spglibConfigVersion.cmake
+			${CMAKE_CURRENT_BINARY_DIR}/SpglibConfigVersion.cmake
 			VERSION ${PROJECT_VERSION}
 			COMPATIBILITY SameMajorVersion)
 	configure_package_config_file(
-			cmake/spglibConfig.cmake.in
-			${CMAKE_CURRENT_BINARY_DIR}/spglibConfig.cmake
-			INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/spglib)
+			cmake/SpglibConfig.cmake.in
+			${CMAKE_CURRENT_BINARY_DIR}/SpglibConfig.cmake
+			INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Spglib)
 	install(
-			FILES ${CMAKE_CURRENT_BINARY_DIR}/spglibConfigVersion.cmake
-			${CMAKE_CURRENT_BINARY_DIR}/spglibConfig.cmake
-			DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/spglib)
-	install(EXPORT spglibTargets
-			FILE spglibTargets.cmake
-			NAMESPACE spglib::
-			DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/spglib)
-	export(EXPORT spglibTargets
-			FILE ${CMAKE_CURRENT_BINARY_DIR}/cmake/spglibTargets.cmake
-			NAMESPACE spglib::)
+			FILES ${CMAKE_CURRENT_BINARY_DIR}/SpglibConfigVersion.cmake
+			${CMAKE_CURRENT_BINARY_DIR}/SpglibConfig.cmake
+			DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Spglib)
+	install(EXPORT SpglibTargets
+			FILE SpglibTargets.cmake
+			NAMESPACE Spglib::
+			DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Spglib)
+	export(EXPORT SpglibTargets
+			FILE ${CMAKE_CURRENT_BINARY_DIR}/cmake/SpglibTargets.cmake
+			NAMESPACE Spglib::)
 endif ()
