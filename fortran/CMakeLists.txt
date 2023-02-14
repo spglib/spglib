@@ -18,10 +18,11 @@ target_link_libraries(Spglib_fortran PUBLIC Spglib_symspg)
 
 # Install
 install(TARGETS Spglib_fortran
-		EXPORT SpglibTargets
+		EXPORT SpglibTargets-fortran
 		LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Spglib_Runtime NAMELINK_COMPONENT Spglib_Development
 		ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Spglib_Development
 		PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT Spglib_Development)
+export_components(COMPONENT fortran LIB_TYPE ${lib_type})
 
 # Maybe it is handled automatically
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/spglib_f08.mod

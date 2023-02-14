@@ -22,12 +22,18 @@ include(CMakePackageConfigHelpers)
 if (UNIX)
 	include(GNUInstallDirs)
 endif ()
+include(cmake/PackageCompsHelper.cmake)
 
 # Define basic parameters
 if (NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE Release)
 endif ()
 set(BUILD_SHARED_LIBS ${SPGLIB_SHARED_LIBS})
+if (BUILD_SHARED_LIBS)
+	set(lib_type "shared")
+else ()
+	set(lib_type "static")
+endif ()
 if (NOT CMAKE_Fortran_MODULE_DIRECTORY)
 	set(CMAKE_Fortran_MODULE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/fortran_mods)
 endif ()
@@ -90,14 +96,12 @@ if (NOT SKBUILD)
 			INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Spglib)
 	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/SpglibConfigVersion.cmake
 			${CMAKE_CURRENT_BINARY_DIR}/SpglibConfig.cmake
+			cmake/PackageCompsHelper.cmake
 			DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Spglib
 			COMPONENT Spglib_Development)
-	install(EXPORT SpglibTargets
-			FILE SpglibTargets.cmake
-			NAMESPACE Spglib::
-			DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Spglib
-			COMPONENT Spglib_Development)
-	export(EXPORT SpglibTargets
-			FILE ${CMAKE_CURRENT_BINARY_DIR}/cmake/SpglibTargets.cmake
-			NAMESPACE Spglib::)
+	export_components(LIB_TYPE ${lib_type})
+	if (SPGLIB_USE_OMP)
+		# This is an empty target file
+		export_components(COMPONENT omp LIB_TYPE ${lib_type})
+	endif ()
 endif ()
