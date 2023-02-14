@@ -1,7 +1,7 @@
 configure_file(version.h.in version.h)
 
 # Configure main target
-target_sources(Spglib_symspg PRIVATE
+add_library(Spglib_src_obj OBJECT
 		arithmetic.c
 		cell.c
 		debug.c
@@ -28,15 +28,39 @@ target_sources(Spglib_symspg PRIVATE
 		)
 set_target_properties(Spglib_symspg PROPERTIES
 		PUBLIC_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/spglib.h)
-target_include_directories(Spglib_symspg PUBLIC
+# TODO: Should move spglib.h to a separate folder so other headers are not included in ExternalProject setups
+target_include_directories(Spglib_symspg INTERFACE
 		"$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
-		"$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
 		"$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
+target_sources(Spglib_symspg PRIVATE $<TARGET_OBJECTS:Spglib_src_obj>)
+# Note: Not using the following to avoid exporting Spglib_src_obj
+#target_link_libraries(Spglib_symspg PRIVATE Spglib_src_obj)
+target_include_directories(Spglib_src_obj PRIVATE
+		"$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
+		"$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>")
 
 # Link to third-party libraries
 if (OpenMP_FOUND)
-	target_link_libraries(Spglib_symspg PRIVATE OpenMP::OpenMP_C)
-endif()
+	target_link_libraries(Spglib_symspg INTERFACE OpenMP::OpenMP_C)
+	target_link_libraries(Spglib_src_obj PUBLIC OpenMP::OpenMP_C)
+endif ()
+if (SPGLIB_USE_OMP)
+	# Add additional library that is guaranteed to have omp
+	# TODO: might be better to keep them separate them, but how do we link to either version on fortran/python?
+	add_library(Spglib_omp)
+	target_sources(Spglib_omp PRIVATE $<TARGET_OBJECTS:Spglib_src_obj>)
+	add_library(Spglib::omp ALIAS Spglib_omp)
+	set_target_properties(Spglib_omp PROPERTIES
+			VERSION ${PROJECT_VERSION}
+			SOVERSION ${PROJECT_VERSION_MAJOR}
+			EXPORT_NAME omp
+			OUTPUT_NAME symspg-omp
+			PUBLIC_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/spglib.h)
+	target_include_directories(Spglib_omp INTERFACE
+			"$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
+			"$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
+	target_link_libraries(Spglib_omp INTERFACE OpenMP::OpenMP_C)
+endif ()
 # Should not be needed anymore
 #if(NOT MSVC)
 #	# Link to mathlibrary
@@ -49,7 +73,7 @@ if (SPGLIB_USE_SANITIZER)
 	string(TOLOWER ${SPGLIB_USE_SANITIZER} SPGLIB_USE_SANITIZER)
 	target_compile_options(Spglib_symspg PUBLIC -fsanitize=${SPGLIB_USE_SANITIZER})
 	target_link_options(Spglib_symspg PUBLIC -fsanitize=${SPGLIB_USE_SANITIZER})
-endif()
+endif ()
 if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 	target_compile_definitions(Spglib_symspg
 			PUBLIC SPGDEBUG SPGWARNING)
