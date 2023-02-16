@@ -3,18 +3,18 @@ project(Spglib
 		VERSION 2.1.0
 		LANGUAGES C)
 
-option(SPGLIB_WITH_Fortran "enable f08 interface" OFF)
-option(SPGLIB_WITH_Python "build python buindings" OFF)
-option(SPGLIB_USE_OMP "Build with OpenMP support" OFF)
-set(SPGLIB_USE_SANITIZER "" CACHE STRING "Sanitizer used in compilation")
+option(SPGLIB_WITH_Fortran "Spglib: Build Fortran interface" OFF)
+option(SPGLIB_WITH_Python "Spglib: Build Python interface" OFF)
+option(SPGLIB_USE_OMP "Spglib: Build with OpenMP support" OFF)
+set(SPGLIB_USE_SANITIZER "" CACHE STRING "Spglib: Sanitizer used in compilation")
 
 # Sanity check if project is imported
 if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
-	option(SPGLIB_WITH_TESTS "build unit tests" ON)
-	option(SPGLIB_SHARED_LIBS "Build Spglib as a shared library" ON)
+	option(SPGLIB_WITH_TESTS "Spglib: Build unit tests" ON)
+	option(SPGLIB_SHARED_LIBS "Spglib: Build as a shared library" ON)
 else ()
-	option(SPGLIB_WITH_TESTS "build unit tests" OFF)
-	option(SPGLIB_SHARED_LIBS "Build Spglib as a shared library" OFF)
+	option(SPGLIB_WITH_TESTS "Spglib: Build unit tests" OFF)
+	option(SPGLIB_SHARED_LIBS "Spglib: Build as a shared library" OFF)
 endif ()
 
 # Include basic tools
