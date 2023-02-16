@@ -93,7 +93,7 @@ endif ()
 
 
 # Install
-if (NOT SKBUILD)
+if (NOT SKBUILD AND CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 	# Normal installation target to system. When using scikit-build check python subdirectory
 	if (WIN32)
 		# TODO: Probably wrong, please fix

@@ -17,19 +17,21 @@ target_link_libraries(Spglib_fortran PUBLIC Spglib_symspg)
 # Note: Fortran wrapper is not linked to OpenMP library because it should not be defining any such setup
 
 # Install
-install(TARGETS Spglib_fortran
-		EXPORT SpglibTargets-fortran
-		LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Spglib_Runtime NAMELINK_COMPONENT Spglib_Development
-		ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Spglib_Development
-		PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT Spglib_Development)
-export_components(COMPONENT fortran LIB_TYPE ${lib_type})
+if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+	install(TARGETS Spglib_fortran
+			EXPORT SpglibTargets-fortran
+			LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Spglib_Runtime NAMELINK_COMPONENT Spglib_Development
+			ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Spglib_Development
+			PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT Spglib_Development)
+	export_components(COMPONENT fortran LIB_TYPE ${SPGLIB_LIB_TYPE})
 
-# Maybe it is handled automatically
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/spglib_f08.mod
-		DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-		COMPONENT Spglib_Development)
+	# Maybe it is handled automatically
+	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/spglib_f08.mod
+			DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+			COMPONENT Spglib_Development)
 
-configure_file(spglib_f08.pc.in spglib_f08.pc @ONLY)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/spglib_f08.pc
-		DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
-		COMPONENT Spglib_Development)
+	configure_file(spglib_f08.pc.in spglib_f08.pc @ONLY)
+	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/spglib_f08.pc
+			DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
+			COMPONENT Spglib_Development)
+endif ()

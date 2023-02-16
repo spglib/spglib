@@ -30,17 +30,20 @@ if (NOT CMAKE_BUILD_TYPE)
 endif ()
 set(BUILD_SHARED_LIBS ${SPGLIB_SHARED_LIBS})
 if (BUILD_SHARED_LIBS)
-	set(lib_type "shared")
+	set(SPGLIB_LIB_TYPE "shared")
 else ()
-	set(lib_type "static")
+	set(SPGLIB_LIB_TYPE "static")
 endif ()
 if (NOT CMAKE_Fortran_MODULE_DIRECTORY)
 	set(CMAKE_Fortran_MODULE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/fortran_mods)
 endif ()
-message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+message(STATUS "Spglib:: Build type: ${CMAKE_BUILD_TYPE}")
 
 set(CMAKE_MACOSX_RPATH 1)
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+# TODO: This should be satisfied automatically but for some reason it isn't
+# https://cmake.org/cmake/help/v3.26/command/add_library.html#normal-libraries
+# https://gitlab.kitware.com/cmake/cmake/-/issues/22626
+set(CMAKE_POSITION_INDEPENDENT_CODE ${SPGLIB_SHARED_LIBS})
 # Windows setup, make sure there is a .lib file to link to
 if (SKBUILD AND WIN32)
 	set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
@@ -78,7 +81,10 @@ endif ()
 # TODO: Temporarily disable normal cmake install targets when using scikit-build-core
 #  Check how bundled cmake searches CMAKE_MODULE_DIR and add accordingly
 #  (use SKBUILD_PLATLIB_DIR for install root)
-if (NOT SKBUILD)
+# Note: Completely disabling install when project is included as an ExternalProject
+#       Currently unclear how to expose it and protect it from overwriting other installations
+#       Please contact if such functionality is needed
+if (NOT SKBUILD AND CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 	# pkg-config files
 	configure_file(cmake/spglib.pc.in spglib.pc @ONLY)
 	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/spglib.pc
@@ -99,9 +105,9 @@ if (NOT SKBUILD)
 			cmake/PackageCompsHelper.cmake
 			DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Spglib
 			COMPONENT Spglib_Development)
-	export_components(LIB_TYPE ${lib_type})
+	export_components(LIB_TYPE ${SPGLIB_LIB_TYPE})
 	if (SPGLIB_USE_OMP)
 		# This is an empty target file
-		export_components(COMPONENT omp LIB_TYPE ${lib_type})
+		export_components(COMPONENT omp LIB_TYPE ${SPGLIB_LIB_TYPE})
 	endif ()
 endif ()
