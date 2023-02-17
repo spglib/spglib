@@ -9,28 +9,39 @@ C library for finding and handling crystal symmetries
 ## How to link spglib C library to your project
 
 We currently support two ways of linking this project: using native `cmake` or via `pkg-config`.
-The native cmake package and namespace are `spglib`. The cmake targets and pkg-config files
+The native cmake package and namespace are `Spglib`. The cmake targets and pkg-config files
 exported are:
 
-|     CMake target     | pkg-config file | Description     |
-|:--------------------:|:---------------:|:----------------|
-|   `spglib::symspg`   |    `spglib`     | Main C library  |
-| `spglib::spglib_f08` |  `spglib_f08`   | Fortran wrapper |
+|   CMake target    | pkg-config file | Description                                                      |
+|:-----------------:|:---------------:|:-----------------------------------------------------------------|
+| `Spglib::symspg`  |    `spglib`     | Main C library                                                   |
+|   `Spglib::omp`   |       ---       | Equivalent to `Spglib::symspg` <br/> Guaranteed `OpenMP` support |
+| `Spglib::fortran` |  `spglib_f08`   | Fortran wrapper                                                  |
 
 An example `CMakeLists.txt` to link via native `cmake`:
+
 ```cmake
 project(foo)
 
-find_package(spglib REQUIRED)
+find_package(Spglib REQUIRED)
 
 add_library(foo_library)
-target_link_libraries(foo_library PRIVATE spglib::symspg)
+target_link_libraries(foo_library PRIVATE Spglib::symspg)
 ```
+
+Additionally, we provide convenient components and variables to control and check the
+spglib library:
+
+| Component |  Imported target  | CMake variable    | Description                             |
+|:---------:|:-----------------:|-------------------|-----------------------------------------|
+| `static`  |        ---        | `Spglib_LIB_TYPE` | Link against statically built libraries |
+| `shared`  |        ---        | `Spglib_LIB_TYPE` | Link against shared libraries           |
+| `fortran` | `Spglib::fortran` | `Spglib_Fortran`  | Check and include Fortran target        |
+|   `omp`   |   `Spglib::omp`   | `Spglib_OMP`      | Check and include OpenMP target         |
 
 See [example/CMakeLists.txt](example/CMakeLists.txt) for a more complete example.
 Note that this library is built as a shared library, unless it is imported via
-`FetchContent` or equivalent approaches. This can be controlled via
-`SPGLIB_SHARED_LIBS`.
+`FetchContent` or equivalent approaches. This can be controlled via `SPGLIB_SHARED_LIBS`.
 
 For other wrappers see the corresponding readme in the respective directories.
 
@@ -43,6 +54,7 @@ $ cmake ..
 $ cmake --build ${CMAKE_OPTIONS} .
 $ cmake --install .
 ```
+
 Replace the variable `CMAKE_OPTIONS` with appropriate options. For a list of Spglib
 specific (marked as **bold**) and other useful native cmake options, see
 [CMake Options](#cmake-options).
@@ -54,17 +66,16 @@ and allow the project to be included via `FetchContent`.
 Keep in mind that in order to pass cmake options they have to be prefixed with `-D`,
 e.g. `-DSPGLIB_WITH_Fortran=ON`.
 
-| Option                              |               Default               | Description                                                                        |
-|:------------------------------------|:-----------------------------------:|:-----------------------------------------------------------------------------------|
-| **SPGLIB_SHARED_LIBS**              |                 ON                  | Build spglib as a shared library. Turn off to build static.                        |
-| **SPGLIB_WITH_Fortran**             |                 OFF                 | Build Fortran API                                                                  |
-| **SPGLIB_WITH_Python**              |                 OFF                 | Build Python API                                                                   |
-| **SPGLIB_WITH_TESTS**               |                 ON                  | Include basic tests                                                                |
-| **SPGLIB_USE_OMP**                  |                 OFF                 | Use OpenMPI                                                                        |
-| **SPGLIB_USE_SANITIZER**            |                 ""                  | Specify a sanitizer to compile with<br/> e.g. `address`                            |
-| CMAKE_INSTALL_PREFIX                | OS specific<br/>(e.g. `/usr/local`) | Location where to install built project                                            |
-| BUILD_SHARED_LIBS                   |                 ON                  | Whether to build shared or statically linked libraries<br/>(Currently unsupported) |
-
+| Option                   |               Default               | Description                                                                        |
+|:-------------------------|:-----------------------------------:|:-----------------------------------------------------------------------------------|
+| **SPGLIB_SHARED_LIBS**   |                 ON                  | Build spglib as a shared library. Turn off to build static.                        |
+| **SPGLIB_WITH_Fortran**  |                 OFF                 | Build Fortran API                                                                  |
+| **SPGLIB_WITH_Python**   |                 OFF                 | Build Python API                                                                   |
+| **SPGLIB_WITH_TESTS**    |                 ON                  | Include basic tests                                                                |
+| **SPGLIB_USE_OMP**       |                 OFF                 | Use OpenMPI                                                                        |
+| **SPGLIB_USE_SANITIZER** |                 ""                  | Specify a sanitizer to compile with<br/> e.g. `address`                            |
+| CMAKE_INSTALL_PREFIX     | OS specific<br/>(e.g. `/usr/local`) | Location where to install built project                                            |
+| BUILD_SHARED_LIBS        |                 ON                  | Whether to build shared or statically linked libraries<br/>(Currently unsupported) |
 
 ## How to compile python API
 
@@ -79,6 +90,7 @@ it will default to a bundled version compiled with minimum options.
 The C library tests are incorporated in the CMake projects and enabled with the
 option `SPGLIB_WITH_TESTS`. To execute these tests, runt the following command in the
 build directory
+
 ```console
 $ cd test
 $ ctest

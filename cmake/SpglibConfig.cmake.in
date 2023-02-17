@@ -9,6 +9,7 @@ set(Spglib_Deprecated_Comps "")
 set(Spglib_Fortran @SPGLIB_WITH_Fortran@)
 set(Spglib_Python @SPGLIB_WITH_Python@)
 set(Spglib_OMP @SPGLIB_USE_OMP@)
+set(Spglib_LIB_TYPE @SPGLIB_LIB_TYPE@)
 
 ## Parse find_package request
 
