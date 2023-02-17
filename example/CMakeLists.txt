@@ -3,9 +3,9 @@ project(example_spglib
 		LANGUAGES C Fortran)
 
 # Import spglib using native cmake
-find_package(spglib)
+find_package(Spglib COMPONENTS fortran)
 # Alternatively use pkg-config
-if(NOT spglib_FOUND)
+if(NOT Spglib_FOUND)
 	find_package(PkgConfig)
 	pkg_check_modules(symspg REQUIRED IMPORTED_TARGET
 			spglib)
@@ -16,21 +16,16 @@ endif()
 
 add_executable(example_c example.c)
 add_executable(example_f example_f08.f90)
-add_executable(tetrahedron tetrahedron.c)
-if(spglib_FOUND)
+if(Spglib_FOUND)
 	# Linking using native cmake
 	target_link_libraries(example_c PUBLIC
-			spglib::symspg)
+			Spglib::symspg)
 	target_link_libraries(example_f PUBLIC
-			spglib::spglib_f08)
-	target_link_libraries(tetrahedron PUBLIC
-			spglib::symspg)
+			Spglib::fortran)
 else()
 	# Linking using pkg-config
 	target_link_libraries(example_c PUBLIC
 			PkgConfig::symspg)
 	target_link_libraries(example_f PUBLIC
 			PkgConfig::spglib_f08)
-	target_link_libraries(tetrahedron PUBLIC
-			PkgConfig::symspg)
 endif()

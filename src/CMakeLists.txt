@@ -62,10 +62,13 @@ if (SPGLIB_USE_OMP)
 	target_link_libraries(Spglib_omp INTERFACE OpenMP::OpenMP_C)
 endif ()
 # Should not be needed anymore
-#if(NOT MSVC)
-#	# Link to mathlibrary
-#	target_link_libraries(symspg PRIVATE m)
-#endif()
+if (NOT MSVC)
+	# Link to mathlibrary
+	target_link_libraries(Spglib_symspg PUBLIC m)
+	if (SPGLIB_USE_OMP)
+		target_link_libraries(Spglib_omp PUBLIC m)
+	endif ()
+endif ()
 
 
 # Additional settings
