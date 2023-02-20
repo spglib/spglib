@@ -40,10 +40,6 @@ endif ()
 message(STATUS "Spglib:: Build type: ${CMAKE_BUILD_TYPE}")
 
 set(CMAKE_MACOSX_RPATH 1)
-# TODO: This should be satisfied automatically but for some reason it isn't
-# https://cmake.org/cmake/help/v3.26/command/add_library.html#normal-libraries
-# https://gitlab.kitware.com/cmake/cmake/-/issues/22626
-set(CMAKE_POSITION_INDEPENDENT_CODE ${SPGLIB_SHARED_LIBS})
 # Windows setup, make sure there is a .lib file to link to
 if (SKBUILD AND WIN32)
 	set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)

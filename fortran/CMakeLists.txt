@@ -26,7 +26,7 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 	export_components(COMPONENT fortran LIB_TYPE ${SPGLIB_LIB_TYPE})
 
 	# Maybe it is handled automatically
-	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/spglib_f08.mod
+	install(FILES ${CMAKE_Fortran_MODULE_DIRECTORY}/spglib_f08.mod
 			DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 			COMPONENT Spglib_Development)
 

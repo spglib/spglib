@@ -38,6 +38,9 @@ target_sources(Spglib_symspg PRIVATE $<TARGET_OBJECTS:Spglib_src_obj>)
 target_include_directories(Spglib_src_obj PRIVATE
 		"$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
 		"$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>")
+# The object is basically a library, it should have similar properties set
+set_target_properties(Spglib_src_obj PROPERTIES
+		POSITION_INDEPENDENT_CODE ${SPGLIB_SHARED_LIBS})
 
 # Link to third-party libraries
 if (OpenMP_FOUND)
