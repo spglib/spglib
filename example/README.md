@@ -5,7 +5,7 @@ This is the README file for spglib examples for C and Fortran.
 ## Examples of using spglib in a cmake project
 
 See the local [`CMakeLists.txt`](CMakeLists.txt) file for how to use
-spglib in a cmake project, using either native cmake options or pkg-config. 
+spglib in a cmake project, using either native cmake options or pkg-config.
 
 ## Examples of linking to spglib manually
 
