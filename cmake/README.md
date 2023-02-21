@@ -15,9 +15,7 @@ The configuration is done by passing cmake options and environment variables at 
 configuration stage, i.e.:
 
 ```console
-$ mkdir build
-$ cd build
-$ cmake .. ${CMAKE_OPTIONS}
+$ cmake . -B build  ${CMAKE_OPTIONS}
 ```
 
 Replace the variable `CMAKE_OPTIONS` with appropriate built-in CMake options, e.g.

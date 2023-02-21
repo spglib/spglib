@@ -11,9 +11,8 @@ C library for finding and handling crystal symmetries
   * [How to compile the main C library](#how-to-compile-the-main-c-library)
   * [How install the python library](#how-install-the-python-library)
   * [How to run test](#how-to-run-test)
-  * [Development](#development)
+  * [Contributing](#contributing)
   * [Documentation](#documentation)
-  * [Mailing list for questions](#mailing-list-for-questions)
 <!-- TOC -->
 
 ## How to compile the main C library
@@ -21,11 +20,9 @@ C library for finding and handling crystal symmetries
 The minimum configuration, build and install instructions are as follows:
 
 ```console
-$ mkdir build
-$ cd build
-$ cmake ..
-$ cmake --build .
-$ cmake --install .
+$ cmake . -B ./build
+$ cmake --build ./build
+$ cmake --install ./build
 ```
 
 For more details on configuration options and how to link your project check
@@ -50,27 +47,23 @@ For more details and how to build the python project from source, see the
 ## How to run test
 
 The C library tests are incorporated in the CMake projects and enabled by default.
-To execute these tests, run the following command in the build directory
+To execute these tests, run the following command with the appropriate path to the
+build directory
 
 ```console
-$ cd test
-$ ctest
+$ ctest --test-dir ./build/test
 ```
 
 Additionally, there are python tests that cover more use-cases.
 See the [README](python/README.rst) in the python folder for more details
 
-## Development
+## Contributing
 
-See [Contribution.md](Contribution.md).
+We welcome any contribution from the core development of the library to documentation
+improvements. See [Contributing.md](Contributing.md) for more details.
 
 ## Documentation
 
-Spglib user documetation is written using python sphinx. The source files are
-stored in `doc` directory. Please see how to write the documentation at
-`doc/README.md`.
-
-## Mailing list for questions
-
-Usual spglib questions should be sent to spglib mailing list
-(https://sourceforge.net/p/spglib/mailman/).
+See [spglib.github.io/spglib/](https://spglib.github.io/spglib/) for further
+documentation. See the [doc documentation](doc/README.md) for more information on
+how to contribute to the documentation.
