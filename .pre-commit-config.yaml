@@ -11,15 +11,15 @@ repos:
     - id: clang-format
       args:
         - '-B_build-pre-commit'
-        - '-Dspglib_WITH_Fortran=ON'
-        - '-Dspglib_WITH_TESTS=ON'
+        - '-DSPGLIB_WITH_Fortran=ON'
+        - '-DSPGLIB_WITH_TESTS=ON'
         - '-i'
       exclude: src/msg_database.c
     - id: clang-tidy
       args:
         - '-B_build-pre-commit'
-        - '-Dspglib_WITH_Fortran=ON'
-        - '-Dspglib_WITH_TESTS=ON'
+        - '-DSPGLIB_WITH_Fortran=ON'
+        - '-DSPGLIB_WITH_TESTS=ON'
       exclude: src/msg_database.c
 
 - repo: https://github.com/pre-commit/pre-commit-hooks

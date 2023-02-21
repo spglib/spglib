@@ -14,7 +14,7 @@ create_test_sourcelist(FortranTests_Files
 
 
 add_executable(FortranTests ${FortranTests_Files})
-target_link_libraries(FortranTests PRIVATE test_utils spglib_f08)
+target_link_libraries(FortranTests PRIVATE test_utils Spglib_fortran)
 if (CMAKE_Fortran_COMPILER_ID MATCHES "Intel.*")
 	target_link_options(FortranTests PRIVATE
 			"$<$<COMPILE_LANGUAGE:Fortran>:-nofor-main>")

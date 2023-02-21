@@ -6,98 +6,64 @@
 
 C library for finding and handling crystal symmetries
 
-## How to link spglib C library to your project
+<!-- TOC -->
+* [Spglib](#spglib)
+  * [How to compile the main C library](#how-to-compile-the-main-c-library)
+  * [How install the python library](#how-install-the-python-library)
+  * [How to run test](#how-to-run-test)
+  * [Contributing](#contributing)
+  * [Documentation](#documentation)
+<!-- TOC -->
 
-We currently support two ways of linking this project: using native `cmake` or via `pkg-config`.
-The native cmake package and namespace are `spglib`. The cmake targets and pkg-config files
-exported are:
+## How to compile the main C library
 
-|     CMake target     | pkg-config file | Description     |
-|:--------------------:|:---------------:|:----------------|
-|   `spglib::symspg`   |    `spglib`     | Main C library  |
-| `spglib::spglib_f08` |  `spglib_f08`   | Fortran wrapper |
-
-An example `CMakeLists.txt` to link via native `cmake`:
-```cmake
-project(foo)
-
-find_package(spglib REQUIRED)
-
-add_library(foo_library)
-target_link_libraries(foo_library PRIVATE spglib::symspg)
-```
-
-See [example/CMakeLists.txt](example/CMakeLists.txt) for a more complete example.
-Note that this library is built as a shared library, unless it is imported via
-`FetchContent` or equivalent approaches. This can be controlled via
-`spglib_SHARED_LIBS`.
-
-For other wrappers see the corresponding readme in the respective directories.
-
-## How to compile main C library
+The minimum configuration, build and install instructions are as follows:
 
 ```console
-$ mkdir build
-$ cd build
-$ cmake ..
-$ cmake --build ${CMAKE_OPTIONS} .
-$ cmake --install .
+$ cmake . -B ./build
+$ cmake --build ./build
+$ cmake --install ./build
 ```
-Replace the variable `CMAKE_OPTIONS` with appropriate options. For a list of Spglib
-specific (marked as **bold**) and other useful native cmake options, see
-[CMake Options](#cmake-options).
 
-### CMake Options
+For more details on configuration options and how to link your project check
+the [cmake documentation](cmake/README.md). A minimal example project using
+spglib is available at [example](example/README.md).
 
-All spglib specific options are prefixed with `spglib_` in order to avoid clashes
-and allow the project to be included via `FetchContent`.
-Keep in mind that in order to pass cmake options they have to be prefixed with `-D`,
-e.g. `-Dspglib_WITH_Fortran=ON`.
+## How install the python library
 
-| Option                              |               Default               | Description                                                                        |
-|:------------------------------------|:-----------------------------------:|:-----------------------------------------------------------------------------------|
-| **spglib_SHARED_LIBS**              |                 ON                  | Build spglib as a shared library. Turn off to build static.                        |
-| **spglib_WITH_Fortran**             |                 OFF                 | Build Fortran API                                                                  |
-| **spglib_WITH_Python**              |                 OFF                 | Build Python API                                                                   |
-| **spglib_WITH_TESTS**               |                 ON                  | Include basic tests                                                                |
-| **spglib_USE_OMP**                  |                 OFF                 | Use OpenMPI                                                                        |
-| **spglib_USE_SANITIZER**            |                 ""                  | Specify a sanitizer to compile with<br/> e.g. `address`                            |
-| CMAKE_INSTALL_PREFIX                | OS specific<br/>(e.g. `/usr/local`) | Location where to install built project                                            |
-| BUILD_SHARED_LIBS                   |                 ON                  | Whether to build shared or statically linked libraries<br/>(Currently unsupported) |
+Spglib is available on PyPi, so it can be installed as:
 
+```console
+$ pip install spglib
+```
 
-## How to compile python API
+This python library will default to the system installed Spglib library detected,
+specified via `LD_LIBRARY_PATH` on Linux or `DYLD_LIBRARY_PATH` on MacOS, otherwise
+defaulting to a bundled version.
 
-See [python documentation](python/README.rst) for compilation instructions.
-
-Note that the python library uses the system default Spglib library (controllable
-by `LD_LIBRARY_PATH` on Linux or `DYLD_LIBRARY_PATH` on MacOS). If it is not found,
-it will default to a bundled version compiled with minimum options.
+For more details and how to build the python project from source, see the
+[python documentation](python/README.rst).
 
 ## How to run test
 
-The C library tests are incorporated in the CMake projects and enabled with the
-option `spglib_WITH_TESTS`. To execute these tests, runt the following command in the
+The C library tests are incorporated in the CMake projects and enabled by default.
+To execute these tests, run the following command with the appropriate path to the
 build directory
+
 ```console
-$ cd test
-$ ctest
+$ ctest --test-dir ./build/test
 ```
 
 Additionally, there are python tests that cover more use-cases.
 See the [README](python/README.rst) in the python folder for more details
 
-## Development
+## Contributing
 
-See [Contribution.md](Contribution.md).
+We welcome any contribution from the core development of the library to documentation
+improvements. See [Contributing.md](Contributing.md) for more details.
 
 ## Documentation
 
-Spglib user documetation is written using python sphinx. The source files are
-stored in `doc` directory. Please see how to write the documentation at
-`doc/README.md`.
-
-## Mailing list for questions
-
-Usual spglib questions should be sent to spglib mailing list
-(https://sourceforge.net/p/spglib/mailman/).
+See [spglib.github.io/spglib/](https://spglib.github.io/spglib/) for further
+documentation. See the [doc documentation](doc/README.md) for more information on
+how to contribute to the documentation.

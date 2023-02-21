@@ -7,11 +7,10 @@ This directory contains python-sphinx documentation source.
 Python>=3.8 required for `importlib.metadata`.
 
 ```shell
-cd python
-pip install -e ".[doc]"
-cd ../doc
-make html
-# sphinx-autobuild . _build
+$ pip install -e ".[doc]"
+$ cd doc
+$ make html
+$ sphinx-autobuild . _build
 ```
 
 ## Source files

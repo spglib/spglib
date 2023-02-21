@@ -1,0 +1,25 @@
+@PACKAGE_INIT@
+
+
+## Define basic variables
+# Defined components in the project
+set(Spglib_Supported_Comps static shared omp fortran)
+# Define deprecated components. For each deprecated component define ${comp}_Replacement
+set(Spglib_Deprecated_Comps "")
+set(Spglib_Fortran @SPGLIB_WITH_Fortran@)
+set(Spglib_Python @SPGLIB_WITH_Python@)
+set(Spglib_OMP @SPGLIB_USE_OMP@)
+set(Spglib_LIB_TYPE @SPGLIB_LIB_TYPE@)
+
+## Parse find_package request
+
+if (NOT EXISTS ${CMAKE_CURRENT_LIST_DIR}/PackageCompsHelper.cmake)
+	message(WARNING "Missing helper file PackageCompsHelper.cmake")
+	set(Spglib_FOUND FALSE)
+	return()
+endif()
+
+include(${CMAKE_CURRENT_LIST_DIR}/PackageCompsHelper.cmake)
+find_package_with_comps(PACKAGE Spglib PRINT LOAD_ALL_DEFAULT HAVE_GLOBAL_SHARED_STATIC)
+
+check_required_components(Spglib)

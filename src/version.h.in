@@ -35,8 +35,8 @@
 #ifndef __version_H__
 #define __version_H__
 
-#define SPGLIB_MAJOR_VERSION @spglib_VERSION_MAJOR@
-#define SPGLIB_MINOR_VERSION @spglib_VERSION_MINOR@
-#define SPGLIB_MICRO_VERSION @spglib_VERSION_PATCH@
+#define SPGLIB_MAJOR_VERSION @Spglib_VERSION_MAJOR@
+#define SPGLIB_MINOR_VERSION @Spglib_VERSION_MINOR@
+#define SPGLIB_MICRO_VERSION @Spglib_VERSION_PATCH@
 
 #endif
