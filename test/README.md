@@ -9,6 +9,7 @@
 
 In the `test` folder of the build directory (e.g. `build/test`), run the specific test executable.
 For example, to run `test_symmetry_search.test_spg_get_symmetry`
+
 ```shell
 # at build/test
 ./test_symmetry_search --gtest_filter=test_spg_get_symmetry
@@ -121,4 +122,5 @@ def print_cpp_cell(cell):
 ```
 
 ## Resources
+
 - <https://google.github.io/googletest/>

@@ -1,8 +1,11 @@
 (magnetic_spglib_dataset)=
+
 # Magnetic Spglib dataset (Experimental)
+
 **New at version 2.0**
 
 The dataset is accessible through the C-structure given by
+
 ```c
 typedef struct {
     /* Magnetic space-group type */
@@ -48,13 +51,14 @@ XSG is a space group obtained by picking out non time-reversal operations in MSG
 
 - `msg_type==1` (type-I): MSG, XSG, FSG are all isomorphic.
 - `msg_type==2` (type-II): XSG and FSG are isomorphic, and MSG is generated
-                        from XSG and pure time reversal operations
+  from XSG and pure time reversal operations
 - `msg_type==3` (type-III): XSG is a proper subgroup of MSG with isomorphic
-                        translational subgroups.
+  translational subgroups.
 - `msg_type==4` (type-IV): XSG is a proper subgroup of MSG with isomorphic
-                        point group.
+  point group.
 
 ### `hall_number`
+
 For type-I, II, III, {ref}`hall number <spglib_dataset_hall_number>` of FSG; for type-IV, that of XSG
 
 ### `tensor_rank`
@@ -64,19 +68,21 @@ For type-I, II, III, {ref}`hall number <spglib_dataset_hall_number>` of FSG; for
 ## Magnetic symmetry operations
 
 ### `n_operations`
+
 Number of magnetic symmetry operations.
 
 ### `rotations`
+
 Rotation (matrix) parts of symmetry operations
 
 ### `translations`
+
 Translation (vector) parts of symmetry operations
 
 ### `time_reversals`
 
 Time reversal part of magnetic symmetry operations.
 1 indicates time reversal operation, and 0 indicates an ordinary operation.
-
 
 ## Symmetrically equivalent atoms
 

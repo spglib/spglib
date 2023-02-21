@@ -24,7 +24,7 @@ Version history is found at [ChangeLog](https://github.com/spglib/spglib/blob/ma
 
 The detailed algorithm of spglib is described the following text:
 
-* "{math}`\texttt{Spglib}`: a software library for crystal symmetry search",
+- "{math}`\texttt{Spglib}`: a software library for crystal symmetry search",
   Atsushi Togo and Isao Tanaka,
   <https://arxiv.org/abs/1808.01590> (written at version 1.10.4)
 

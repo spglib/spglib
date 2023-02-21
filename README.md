@@ -7,12 +7,14 @@
 C library for finding and handling crystal symmetries
 
 <!-- TOC -->
-* [Spglib](#spglib)
-  * [How to compile the main C library](#how-to-compile-the-main-c-library)
-  * [How install the python library](#how-install-the-python-library)
-  * [How to run test](#how-to-run-test)
-  * [Contributing](#contributing)
-  * [Documentation](#documentation)
+
+- [Spglib](#spglib)
+  - [How to compile the main C library](#how-to-compile-the-main-c-library)
+  - [How install the python library](#how-install-the-python-library)
+  - [How to run test](#how-to-run-test)
+  - [Contributing](#contributing)
+  - [Documentation](#documentation)
+
 <!-- TOC -->
 
 ## How to compile the main C library

@@ -1,12 +1,14 @@
 # CMake Integration
 
 <!-- TOC -->
-* [CMake Integration](#cmake-integration)
-  * [How to configure the spglib library](#how-to-configure-the-spglib-library)
-  * [CMake Options](#cmake-options)
-  * [How to link spglib C library to your project](#how-to-link-spglib-c-library-to-your-project)
-    * [Linking against locally installed spglib](#linking-against-locally-installed-spglib)
-    * [Downloading and using specific versions](#downloading-and-using-specific-versions)
+
+- [CMake Integration](#cmake-integration)
+  - [How to configure the spglib library](#how-to-configure-the-spglib-library)
+  - [CMake Options](#cmake-options)
+  - [How to link spglib C library to your project](#how-to-link-spglib-c-library-to-your-project)
+    - [Linking against locally installed spglib](#linking-against-locally-installed-spglib)
+    - [Downloading and using specific versions](#downloading-and-using-specific-versions)
+
 <!-- TOC -->
 
 ## How to configure the spglib library
@@ -30,7 +32,7 @@ Keep in mind that in order to pass cmake options they have to be prefixed with `
 e.g. `-DSPGLIB_WITH_Fortran=ON`.
 
 | Option                   |               Default               | Description                                                                        |
-|:-------------------------|:-----------------------------------:|:-----------------------------------------------------------------------------------|
+| :----------------------- | :---------------------------------: | :--------------------------------------------------------------------------------- |
 | **SPGLIB_SHARED_LIBS**   |                 ON                  | Build spglib as a shared library. Turn off to build static.                        |
 | **SPGLIB_WITH_Fortran**  |                 OFF                 | Build Fortran API                                                                  |
 | **SPGLIB_WITH_Python**   |                 OFF                 | Build Python API                                                                   |
@@ -39,7 +41,6 @@ e.g. `-DSPGLIB_WITH_Fortran=ON`.
 | **SPGLIB_USE_SANITIZER** |                 ""                  | Specify a sanitizer to compile with<br/> e.g. `address`                            |
 | CMAKE_INSTALL_PREFIX     | OS specific<br/>(e.g. `/usr/local`) | Location where to install built project                                            |
 | BUILD_SHARED_LIBS        |                 ON                  | Whether to build shared or statically linked libraries<br/>(Currently unsupported) |
-
 
 ## How to link spglib C library to your project
 
@@ -50,7 +51,7 @@ The native cmake package and namespace are `Spglib`. The cmake targets and pkg-c
 exported are:
 
 |   CMake target    | pkg-config file | Description                                                      |
-|:-----------------:|:---------------:|:-----------------------------------------------------------------|
+| :---------------: | :-------------: | :--------------------------------------------------------------- |
 | `Spglib::symspg`  |    `spglib`     | Main C library                                                   |
 |   `Spglib::omp`   |       ---       | Equivalent to `Spglib::symspg` <br/> Guaranteed `OpenMP` support |
 | `Spglib::fortran` |  `spglib_f08`   | Fortran wrapper                                                  |
@@ -70,7 +71,7 @@ Additionally, we provide convenient components and variables to control and chec
 spglib library:
 
 | Component |  Imported target  | CMake variable    | Description                             |
-|:---------:|:-----------------:|-------------------|-----------------------------------------|
+| :-------: | :---------------: | ----------------- | --------------------------------------- |
 | `static`  |        ---        | `Spglib_LIB_TYPE` | Link against statically built libraries |
 | `shared`  |        ---        | `Spglib_LIB_TYPE` | Link against shared libraries           |
 | `fortran` | `Spglib::fortran` | `Spglib_Fortran`  | Check and include Fortran target        |
@@ -81,6 +82,7 @@ Note that this library is built as a shared library, unless it is imported via
 `FetchContent` or equivalent approaches. This can be controlled via `SPGLIB_SHARED_LIBS`.
 
 ### Downloading and using specific versions
+
 Alternatively, you can download spglib automatically using
 [`FetchContent`](https://cmake.org/cmake/help/latest/module/FetchContent.html),
 and compile it with specific options in [CMake Options](#cmake-options), e.g.:
