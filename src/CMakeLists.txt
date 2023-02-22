@@ -76,9 +76,14 @@ endif ()
 
 # Additional settings
 if (SPGLIB_USE_SANITIZER)
-	string(TOLOWER ${SPGLIB_USE_SANITIZER} SPGLIB_USE_SANITIZER)
-	target_compile_options(Spglib_symspg PUBLIC -fsanitize=${SPGLIB_USE_SANITIZER})
-	target_link_options(Spglib_symspg PUBLIC -fsanitize=${SPGLIB_USE_SANITIZER})
+	if (CMAKE_Fortran_COMPILER_ID MATCHES "Intel.*")
+		# TODO: Address sanitizer cannot run on intel
+		message(WARNING "Sanitizer are not bundled well with intel compiler")
+	else ()
+		string(TOLOWER ${SPGLIB_USE_SANITIZER} SPGLIB_USE_SANITIZER)
+		target_compile_options(Spglib_symspg PUBLIC -fsanitize=${SPGLIB_USE_SANITIZER})
+		target_link_options(Spglib_symspg PUBLIC -fsanitize=${SPGLIB_USE_SANITIZER})
+	endif ()
 endif ()
 if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 	target_compile_definitions(Spglib_symspg
