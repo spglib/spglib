@@ -19,14 +19,42 @@
         "SPGLIB_WITH_TESTS": {
           "type": "BOOL",
           "value": true
-        },
-        "SPGLIB_USE_SANITIZER": {
-          "type": "STRING",
-          "value": "address"
         }
       },
       "errors": {
         "deprecated": true
+      }
+    },
+    {
+      "name": "ci-coverage",
+      "displayName": "Configure preset for test coverage",
+      "inherits": [
+        "ci-base"
+      ],
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": {
+          "type": "FILEPATH",
+          "value": "gcc"
+        },
+        "CMAKE_CXX_COMPILER": {
+          "type": "FILEPATH",
+          "value": "g++"
+        },
+        "CMAKE_Fortran_COMPILER": {
+          "type": "FILEPATH",
+          "value": "gfortran"
+        },
+        "CMAKE_LINKER": {
+          "type": "FILEPATH",
+          "value": "ld"
+        },
+        "SPGLIB_TEST_COVERAGE": {
+          "type": "BOOL",
+          "value": true
+        }
+      },
+      "errors": {
+        "deprecated": false
       }
     },
     {
@@ -52,6 +80,10 @@
         "CMAKE_LINKER": {
           "type": "FILEPATH",
           "value": "ld"
+        },
+        "SPGLIB_USE_SANITIZER": {
+          "type": "STRING",
+          "value": "address"
         }
       }
     },
@@ -74,6 +106,10 @@
         "CMAKE_Fortran_COMPILER": {
           "type": "FILEPATH",
           "value": "ifx"
+        },
+        "SPGLIB_USE_SANITIZER": {
+          "type": "STRING",
+          "value": "address"
         }
       }
     },
@@ -100,6 +136,10 @@
         "CMAKE_LINKER": {
           "type": "FILEPATH",
           "value": "lld"
+        },
+        "SPGLIB_USE_SANITIZER": {
+          "type": "STRING",
+          "value": "address"
         }
       }
     }
@@ -112,6 +152,14 @@
         "default"
       ],
       "cleanFirst": true
+    },
+    {
+      "name": "ci-coverage",
+      "displayName": "Build preset for test coverage",
+      "inherits": [
+        "ci-base"
+      ],
+      "configurePreset": "ci-coverage"
     },
     {
       "name": "gcc-ci",
@@ -150,6 +198,14 @@
       }
     },
     {
+      "name": "ci-coverage",
+      "hidden": true,
+      "inherits": [
+        "default"
+      ],
+      "configurePreset": "ci-coverage"
+    },
+    {
       "name": "gcc-ci",
       "displayName": "Test preset for GCC toolchain",
       "inherits": [
@@ -172,6 +228,30 @@
         "ci-base"
       ],
       "configurePreset": "llvm-ci"
+    },
+    {
+      "name": "ci-coverage-c",
+      "displayName": "Test preset for test coverage of C api",
+      "inherits": [
+        "ci-coverage"
+      ],
+      "filter": {
+        "include": {
+          "label": "c_api"
+        }
+      }
+    },
+    {
+      "name": "ci-coverage-fortran",
+      "displayName": "Test preset for test coverage of Fortran api",
+      "inherits": [
+        "ci-coverage"
+      ],
+      "filter": {
+        "include": {
+          "label": "fortran_api"
+        }
+      }
     }
   ],
   "workflowPresets": [
@@ -226,6 +306,42 @@
         {
           "type": "test",
           "name": "llvm-ci"
+        }
+      ]
+    },
+    {
+      "name": "ci-coverage-c",
+      "displayName": "Coverage tests for C api",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "ci-coverage"
+        },
+        {
+          "type": "build",
+          "name": "ci-coverage"
+        },
+        {
+          "type": "test",
+          "name": "ci-coverage-c"
+        }
+      ]
+    },
+    {
+      "name": "ci-coverage-fortran",
+      "displayName": "Coverage tests for Fortran api",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "ci-coverage"
+        },
+        {
+          "type": "build",
+          "name": "ci-coverage"
+        },
+        {
+          "type": "test",
+          "name": "ci-coverage-fortran"
         }
       ]
     }

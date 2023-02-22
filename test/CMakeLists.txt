@@ -1,3 +1,4 @@
+include(CTest)
 enable_language(CXX)
 
 set(CMAKE_CXX_STANDARD 11)
