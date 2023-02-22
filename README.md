@@ -53,7 +53,7 @@ To execute these tests, run the following command with the appropriate path to t
 build directory
 
 ```console
-$ ctest --test-dir ./build/test
+$ ctest --test-dir ./build
 ```
 
 Additionally, there are python tests that cover more use-cases.

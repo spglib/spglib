@@ -70,6 +70,7 @@ if (SPGLIB_WITH_Python)
 	add_subdirectory(python)
 endif ()
 if (SPGLIB_WITH_TESTS)
+	enable_testing()
 	add_subdirectory(test)
 endif ()
 
