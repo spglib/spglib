@@ -1,6 +1,6 @@
 # C example
 
-This is the README file for spglib examples for C.
+This is an example of how to use Spglib through the C api
 
 ## Examples of using spglib in a cmake project
 
