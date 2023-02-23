@@ -34,6 +34,7 @@ pages show the details.
 - [Spglib dataset](https://spglib.github.io/spglib/dataset.html)
 
 ```C
+#include <assert.h>
 #include "spglib.h"
 
 int main(void) {
@@ -55,7 +56,7 @@ int main(void) {
     dataset = spg_get_dataset(lattice, position, types, num_atom, symprec);
 
     // Obtain data in SpglibDataset.
-    dataset->spacegroup_number;
+    assert(dataset->spacegroup_number == 186);
 
     // Deallocate SpglibDataset, otherwise induce memory leak.
     spg_free_dataset(dataset);
