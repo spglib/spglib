@@ -1,6 +1,6 @@
-# How to use spglib example files
+# How to use spglib example file in Fortran
 
-This is the README file for spglib examples for C and Fortran.
+This is the README file for spglib examples for Fortran.
 
 ## Examples of using spglib in a cmake project
 
