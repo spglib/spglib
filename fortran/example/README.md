@@ -1,6 +1,6 @@
-# How to use spglib example file in Fortran
+# Fortran example
 
-This is the README file for spglib examples for Fortran.
+This is an example of how to use Spglib through the Fortran api
 
 ## Examples of using spglib in a cmake project
 
@@ -16,6 +16,7 @@ gfortran example.f90 ../../lib/libspglib_f08.a ../../lib/libsymspg.a -I../../inc
 ```
 
 Here it is assumed that spglib library was built by
+
 ```console
 cmake -B build -DCMAKE_INSTALL_PREFIX=. -DSPGLIB_WITH_Fortran=on -DSPGLIB_SHARED_LIBS=off -DSPGLIB_WITH_TESTS=off .
 cmake --build build
