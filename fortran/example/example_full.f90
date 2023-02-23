@@ -15,9 +15,9 @@ contains
         print '("")'
         print '("FCC:")'
         call example_spg_get_dataset_FCC()
-        print '("D0_{24}:")'
         print '("")'
-        call example_spg_get_dataset_D0_24()
+        print '("Wurtzite:")'
+        call example_spg_get_dataset_wurtzite()
     end subroutine run_examples
 
     subroutine example_spg_get_dataset_rutile()
@@ -27,10 +27,10 @@ contains
         real(c_double) :: positions(3, 6)
         integer(c_int) :: atom_types(6)
 
-        integer(c_int) :: mesh(3) = [20, 20, 20]
+        integer(c_int) :: mesh(3) = [4, 4, 6]
         integer(c_int) :: shifted(3)
-        integer(c_int) :: grid_point(3, 8000)
-        integer(c_int) :: map(8000)
+        integer(c_int) :: grid_point(3, 96)
+        integer(c_int) :: map(96)
         integer(c_int) :: is_time_reversal = 1
 
         real :: a
@@ -46,7 +46,7 @@ contains
         positions(:, 5) = [0.2, 0.8, 0.5]
         positions(:, 6) = [0.8, 0.2, 0.5]
         atom_types(:) = [1, 1, 2, 2, 2, 2]
-        shifted(:) = [0, 0, 0]
+        shifted(:) = [1, 1, 1]
 
         call show_syminfo(num_atom, lattice, symprec, atom_types, positions)
         call show_grid_info(num_atom, lattice, symprec, atom_types, positions, &
@@ -61,10 +61,10 @@ contains
         real(c_double) :: positions(3, 1)
         integer(c_int) :: atom_types(1)
 
-        integer(c_int) :: mesh(3) = [20, 20, 20]
+        integer(c_int) :: mesh(3) = [4, 4, 4]
         integer(c_int) :: shifted(3)
-        integer(c_int) :: grid_point(3, 8000)
-        integer(c_int) :: map(8000)
+        integer(c_int) :: grid_point(3, 64)
+        integer(c_int) :: map(64)
         integer(c_int) :: is_time_reversal = 1
 
         num_atom = 1
@@ -81,57 +81,35 @@ contains
 
     end subroutine example_spg_get_dataset_FCC
 
-    subroutine example_spg_get_dataset_D0_24
+    subroutine example_spg_get_dataset_wurtzite
         integer(c_int) :: num_atom
         real(c_double) :: symprec = 1e-6
         real(c_double) :: lattice(3, 3)
-        real(c_double) :: positions(3, 16)
-        integer(c_int) :: atom_types(16)
+        real(c_double) :: positions(3, 4)
+        integer(c_int) :: atom_types(4)
 
-        integer(c_int) :: mesh(3) = [20, 20, 20]
+        integer(c_int) :: mesh(3) = [6, 6, 4]
         integer(c_int) :: shifted(3)
-        integer(c_int) :: grid_point(3, 8000)
-        integer(c_int) :: map(8000)
+        integer(c_int) :: grid_point(3, 144)
+        integer(c_int) :: map(144)
         integer(c_int) :: is_time_reversal = 1
 
-        real :: a
-
-        a = 2.89
-
-        lattice(1, :) = [sqrt(3.0), -1.0, 0.0]
-        lattice(2, :) = [sqrt(3.0), 1.0, 0.0]
-        lattice(3, :) = [0.0, 0.0, sqrt(32/3.0)]
-
-        num_atom = 16
-        positions(:, 1) = [0.0, 0.0, 0.0]
-        positions(:, 2) = [3.0, 0.0, 0.0]
-        positions(:, 3) = [0.0, 3.0, 0.0]
-        positions(:, 4) = [3.0, 3.0, 0.0]
-        positions(:, 5) = [2.0, 2.0, 1.0]
-        positions(:, 6) = [5.0, 2.0, 1.0]
-        positions(:, 7) = [2.0, 5.0, 1.0]
-        positions(:, 8) = [5.0, 5.0, 1.0]
-        positions(:, 9) = [0.0, 0.0, 2.0]
-        positions(:, 10) = [3.0, 0.0, 2.0]
-        positions(:, 11) = [0.0, 3.0, 2.0]
-        positions(:, 12) = [3.0, 3.0, 2.0]
-        positions(:, 13) = [1.0, 1.0, 3.0]
-        positions(:, 14) = [4.0, 1.0, 3.0]
-        positions(:, 15) = [1.0, 4.0, 3.0]
-        positions(:, 16) = [4.0, 4.0, 3.0]
-
-        positions(1:2, :) = positions(1:2, :)/6
-        positions(3, :) = positions(3, :)/4
-
-        atom_types(:) = [1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1]
-        mesh = [12, 12, 6]
-        shifted = [1, 1, 1]
+        num_atom = 4
+        lattice(:, 1) = [3.111, -1.5555, 0.0]
+        lattice(:, 2) = [0.0, 2.6942050311733885, 0.0]
+        lattice(:, 3) = [0.0, 0.0, 4.988]
+        positions(:, 1) = [1.0/3, 2.0/3, 0.0]
+        positions(:, 2) = [2.0/3, 1.0/3, 0.5]
+        positions(:, 3) = [1.0/3, 2.0/3, 0.6181]
+        positions(:, 4) = [2.0/3, 1.0/3, 0.1181]
+        atom_types(:) = [1, 1, 2, 2]
+        shifted(:) = [0, 0, 1]
 
         call show_syminfo(num_atom, lattice, symprec, atom_types, positions)
         call show_grid_info(num_atom, lattice, symprec, atom_types, positions, &
                             mesh, shifted, is_time_reversal)
 
-    end subroutine example_spg_get_dataset_D0_24
+    end subroutine example_spg_get_dataset_wurtzite
 
     subroutine show_syminfo(num_atom, lattice, symprec, atom_types, positions)
         use spglib_f08, only: &
@@ -155,20 +133,20 @@ contains
         character(len=21) :: international
         character(len=7) :: schoenflies
         character(len=30) :: space
-        character(len=128) :: fmt
+        character(len=27) :: wyckoffs
 
         type(SpglibDataset) :: dset
         type(SpglibSpacegroupType) :: spgtype
 
         !**************************************************************************
 
-        space = "                              "
-
         !   The allocatable components of dset get deallocated on scope exit
         dset = spg_get_dataset(lattice, positions, atom_types, num_atom, symprec)
 
         num_sym = dset%n_operations
 
+        wyckoffs = "abcdefghijklmnopqrstuvwxyz"
+        space = "                              "
         indent = 1
         if (dset%spacegroup_number /= 0) then
             spgtype = spg_get_spacegroup_type(dset%hall_number)
@@ -200,15 +178,19 @@ contains
             end do
             print('(a, "  translation: [ ", f10.7,", ", f10.7,", ", f10.7,"]")'), space(1:indent*2), dset%translations(:, i)
         end do
-
-        write (fmt, '(i0,a)') num_atom, "(x,i0,':',i0))"
-        print "(a,'wyckoffs:         ', "//fmt, space(1:indent*2), (i, dset%wyckoffs(i), i=1, dset%n_atoms)
-        print "(a,'equivalent_atoms: ', "//fmt, space(1:indent*2), (i, dset%equivalent_atoms(i) + 1, i=1, dset%n_atoms)
+        print "(a,'wyckoffs:')", space(1:indent*2)
+        do i = 1, dset%n_atoms
+            print('(a, "- ", i0, ": ", a)'), space(1:indent*2), i, wyckoffs(dset%wyckoffs(i) + 1:dset%wyckoffs(i) + 1)
+        end do
+        print "(a,'equivalent_atoms:')", space(1:indent*2)
+        do i = 1, dset%n_atoms
+            print('(a, "- ", i0, ": ", i0)'), space(1:indent*2), i, dset%equivalent_atoms(i) + 1
+        end do
     end subroutine show_syminfo
 
     subroutine show_grid_info(num_atom, lattice, symprec, atom_types, positions, &
                               mesh, shifted, is_time_reversal)
-        use spglib_f08, only: spg_get_spacegroup_type,  spg_get_ir_reciprocal_mesh
+        use spglib_f08, only: spg_get_spacegroup_type, spg_get_ir_reciprocal_mesh
 
         ! Arguments ------------------------------------
         ! scalars
@@ -234,6 +216,7 @@ contains
             & mesh, shifted, is_time_reversal, lattice, positions, &
             & atom_types, num_atom, symprec)
 
+        space = "                              "
         indent = 1
 
         print('(a, "reciprocal-mesh: [", i3, ", ", i3, ", ", i3, "]")'), space(1:indent*2), mesh(:)
