@@ -1,0 +1,92 @@
+name: test
+run-name: Run tests
+
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
+
+jobs:
+  pre-commit:
+    name: Check pre-commit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+      - uses: pre-commit/action@v3.0.0
+  pytest-linux:
+    runs-on: ubuntu-latest
+    needs: [ ctest-linux ]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+      - name: Add conda to system path
+        run: |
+          # $CONDA is an environment variable pointing to the root of the miniconda directory
+          echo $CONDA/bin >> $GITHUB_PATH
+      - name: Install dependencies
+        run: |
+          conda install --yes -c conda-forge python=3.9
+          conda install --yes -c conda-forge numpy gcc_linux-64 pip pyyaml make cmake scikit-build-core build
+      - name: Setup spglib
+        run: |
+          ./python/get_nanoversion.sh
+          cat __nanoversion__.txt
+          python -m build
+          pip install .[testing]
+      - name: Test with pytest
+        run: |
+          pytest --cov=./ --cov-report=xml
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          verbose: true
+
+  ctest-linux:
+    runs-on: ubuntu-latest
+    needs: [ pre-commit ]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: lukka/get-cmake@latest
+        # TODO: switch to cmake preset file
+      - name: Build
+        run: |
+          cmake -S . -B build -DSPGLIB_USE_SANITIZER="Address" -DSPGLIB_WITH_TESTS=ON -DSPGLIB_WITH_Fortran=ON
+          cmake --build build
+      - name: Test
+        working-directory: build/test
+        run: |
+          ctest
+
+  docs:
+    runs-on: ubuntu-latest
+    needs: [ ctest-linux, pytest-linux ]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+      - name: Install dependencies
+        run: |
+          sudo apt-get install -y pandoc
+      - name: Add conda to system path
+        run: |
+          # $CONDA is an environment variable pointing to the root of the miniconda directory
+          echo $CONDA/bin >> $GITHUB_PATH
+      - name: Install dependencies
+        run: |
+          conda install --yes -c conda-forge python=3.9
+          conda install --yes -c conda-forge numpy gcc_linux-64 pip pyyaml make cmake scikit-build-core
+      - name: Setup spglib with doc's dependencies
+        run: |
+          pip install .[doc]
+      - name: Build
+        run: |
+          sphinx-build doc docs_build
+      - name: Deploy docs at develop branch
+        if: ${{ github.ref == 'refs/heads/develop' }}
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+          publish_dir: ./docs_build
+          destination_dir: develop
