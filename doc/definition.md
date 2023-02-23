@@ -13,7 +13,6 @@ in the previous versions.
 In spglib, basis vectors are represented by three column vectors:
 
 $$
-:label: basis_vectors
 
 \mathbf{a}= \begin{pmatrix}
 a_x \\
@@ -30,7 +29,7 @@ c_x \\
 c_y \\
 c_z \\
 \end{pmatrix},
-$$
+$$ (basis_vectors)
 
 in Cartesian coordinates. Depending on the situation,
 $(\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)$ is used instead of
@@ -42,31 +41,28 @@ Coordinates of an atomic point $\boldsymbol{x}$ are represented
 as three fractional values relative to basis vectors as follows,
 
 $$
-:label: coordinate_triplet
 
 \boldsymbol{x}= \begin{pmatrix}
 x_1 \\
 x_2 \\
 x_3 \\
 \end{pmatrix},
-$$
+$$ (coordinate_triplet)
 
 where $0 \le x_i < 1$. A position vector $\mathbf{x}$ in
 Cartesian coordinates is obtained by
 
 $$
-:label: position_vector_1
 
 \mathbf{x} = (\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{x}.
-$$
+$$ (position_vector_1)
 
 or
 
 $$
-:label: position_vector_2
 
 \mathbf{x} = \sum_i x_i \mathbf{a}_i.
-$$
+$$ (position_vector_2)
 
 ### Symmetry operation $(\boldsymbol{W}, \boldsymbol{w})$
 
@@ -77,10 +73,9 @@ spglib document. The symmetry operation transfers $\boldsymbol{x}$ to
 $\tilde{\boldsymbol{x}}$ as follows:
 
 $$
-:label: space_group_operation
 
 \tilde{\boldsymbol{x}} = \boldsymbol{W}\boldsymbol{x} + \boldsymbol{w}.
-$$
+$$ (space_group_operation)
 
 (def_transformation_and_origin_shift)=
 
@@ -90,12 +85,11 @@ The transformation matrix $\boldsymbol{P}$ changes choice of
 basis vectors as follows
 
 $$
-:label: transformation_matrix
 
 ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
 = ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
 \mathbf{c}_\mathrm{s} )  \boldsymbol{P},
-$$
+$$ (transformation_matrix)
 
 where $( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )$ and $(
 \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
@@ -112,10 +106,9 @@ origin of the standardized system $\boldsymbol{O}_\mathrm{s}$ to
 the origin of the arbitrary system $\boldsymbol{O}$,
 
 $$
-:label: origin_shift
 
 \boldsymbol{p} = \boldsymbol{O} - \boldsymbol{O}_\mathrm{s}.
-$$
+$$ (origin_shift)
 
 Origin shift **doesn't** move a crystal in Cartesian coordinates, but
 just changes the origin to measure the coordinates of atomic points.
@@ -128,20 +121,18 @@ the standardized system $\boldsymbol{x}_\mathrm{s}$ and
 arbitrary system $\boldsymbol{x}$ are related by
 
 $$
-:label: change_of_basis_1
 
 \boldsymbol{x}_\mathrm{s} = \boldsymbol{P}\boldsymbol{x} +
 \boldsymbol{p},
-$$
+$$ (change_of_basis_1)
 
 or equivalently,
 
 $$
-:label: change_of_basis_2
 
 \boldsymbol{x} = \boldsymbol{P}^{-1}\boldsymbol{x}_\mathrm{s} -
 \boldsymbol{P}^{-1}\boldsymbol{p}.
-$$
+$$ (change_of_basis_2)
 
 A graphical example is shown below.
 
@@ -179,11 +170,10 @@ represented with respect to the same basis vectors $(\mathbf{a},
 rotating the basis vectors:
 
 $$
-:label: rotation_matrix
 
 (\tilde{\mathbf{a}}, \tilde{\mathbf{b}}, \tilde{\mathbf{c}}) =
 (\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{W}
-$$
+$$ (rotation_matrix)
 
 with keeping the representation of the atomic point coordinates
 $\boldsymbol{x}$ because
@@ -258,12 +248,11 @@ types available, base centrings of A and C, rhombohedral (R), body centred
 standardized unit cell by
 
 $$
-:label: transformation_to_primitive
 
 ( \mathbf{a}_\mathrm{p} \; \mathbf{b}_\mathrm{p} \; \mathbf{c}_\mathrm{p} )
 = ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
 \mathbf{c}_\mathrm{s} )  \boldsymbol{P}_\mathrm{c},
-$$
+$$ (transformation_to_primitive)
 
 where $\mathbf{a}_\mathrm{p}$, $\mathbf{b}_\mathrm{p}$,
 and $\mathbf{c}_\mathrm{p}$ are the basis vectors of the
@@ -418,14 +407,13 @@ structure can be rotated in the Cartesian coordinates.  The rotation
 matrix $\boldsymbol{R}$ of this rotation is defined by
 
 $$
-:label: rigid_rotation_matrix
 
 ( \bar{\mathbf{a}}_\mathrm{s} \;
 \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )
 = ( \boldsymbol{R} \mathbf{a}_\mathrm{s} \;
 \boldsymbol{R} \mathbf{b}_\mathrm{s} \; \boldsymbol{R}
 \mathbf{c}_\mathrm{s} ).
-$$
+$$ (rigid_rotation_matrix)
 
 This rotation matrix rotates the standardized
 crystal structure before idealization $( \mathbf{a}_\mathrm{s}
