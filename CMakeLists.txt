@@ -22,6 +22,7 @@ include(CMakePackageConfigHelpers)
 if (UNIX)
 	include(GNUInstallDirs)
 endif ()
+include(FetchContent)
 include(cmake/PackageCompsHelper.cmake)
 
 # Define basic parameters
@@ -51,6 +52,12 @@ endif ()
 # Include third-party libraries
 if (SPGLIB_USE_OMP)
 	find_package(OpenMP REQUIRED COMPONENTS C)
+endif ()
+if (SPGLIB_TEST_COVERAGE)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage")
+	set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} --coverage -ftest-forall-temp")
+#	set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} --coverage")
 endif ()
 
 # Main project

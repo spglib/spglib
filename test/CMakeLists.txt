@@ -3,41 +3,37 @@ enable_language(CXX)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-find_package(GTest)
-if(NOT GTest_FOUND)
-	# pthread (required for GoogleTest)
-	# https://stackoverflow.com/questions/1620918/cmake-and-libpthread
-	set(THREADS_PREFER_PTHREAD_FLAG ON)
-	find_package(Threads REQUIRED)
+set(gtest_disable_pthreads ON)
+FetchContent_Declare(
+		GTest
+		GIT_REPOSITORY https://github.com/google/googletest
+		GIT_TAG v1.13.0
+		FIND_PACKAGE_ARGS
+)
+FetchContent_MakeAvailable(GTest)
 
-	# Fetch GoogleTest
-	include(FetchContent)
-	FetchContent_Declare(
-			googletest
-			URL https://github.com/google/googletest/archive/refs/tags/release-1.12.1.tar.gz
-			URL_HASH MD5=e82199374acdfda3f425331028eb4e2a
-	)
-	FetchContent_MakeAvailable(googletest)
-endif()
+add_executable(CTests
+		test_error.cpp
+		test_symmetry_search.cpp
+		test_spacegroup_type_search.cpp
+		test_find_primitive_cell.cpp
+		test_refine_cell.cpp
+		test_standardization.cpp
+		test_dataset_access.cpp
+		test_magnetic_symmetry.cpp
+		test_kpoints.cpp
+		utils.c
+		)
+gtest_add_tests(TARGET CTests
+		TEST_LIST google_tests)
+target_link_libraries(CTests
+		PRIVATE GTest::gtest GTest::gtest_main Spglib_symspg)
 
-foreach(TESTCASE IN ITEMS
-        test_error
-        test_symmetry_search
-        test_spacegroup_type_search
-        test_find_primitive_cell
-        test_refine_cell
-        test_standardization
-        test_dataset_access
-        test_magnetic_symmetry
-        test_kpoints
-        )
-  add_executable(${TESTCASE} ${TESTCASE}.cpp utils.c)
-  target_link_libraries(${TESTCASE}
-		  PUBLIC Spglib_symspg
-		  PRIVATE GTest::gtest GTest::gtest_main)
-  gtest_discover_tests(${TESTCASE})
-endforeach()
+foreach (g_test IN LISTS google_tests)
+	set_tests_properties(${g_test} PROPERTIES
+			LABELS "c_api;${g_test}")
+endforeach ()
 
-if(SPGLIB_WITH_Fortran)
+if (SPGLIB_WITH_Fortran)
 	add_subdirectory(fortran)
-endif()
+endif ()
