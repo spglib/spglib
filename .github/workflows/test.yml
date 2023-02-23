@@ -26,7 +26,7 @@ jobs:
     steps:
       - name: Install common packages
         run: |
-          sudo dnf -y install git libasan
+          sudo dnf -y install git libasan gtest-devel
       - name: Install GCC packages
         run: |
           sudo dnf -y install gcc g++ gcc-fortran
@@ -94,6 +94,32 @@ jobs:
           sudo rm -rf /opt/intel/oneapi/compiler/"$LATEST_VERSION"/linux/lib/oclfpga
         if: matrix.toolchain == 'intel' && steps.cache-install.outputs.cache-hit != 'true'
 
+  coverage:
+    runs-on: ubuntu-latest
+    needs: [ ctest-linux ]
+    strategy:
+      matrix:
+        coverage_api: [ c, fortran ]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: lukka/get-cmake@latest
+      - name: Get test coverage for ${{ matrix.coverage_api }} api
+        uses: lukka/run-cmake@v10.3
+        with:
+          workflowPreset: "ci-coverage-${{ matrix.coverage_api }}"
+      - name: Get lcov data
+        uses: danielealbano/lcov-action@v3
+        with:
+          # Note lcov-action prepends and appends wild-cards *. Account for those
+          # https://github.com/danielealbano/lcov-action/issues/11
+          remove_patterns: /test/,/cmake-build*/
+      - name: Get code coverage data
+        uses: codecov/codecov-action@v3
+        with:
+          name: ${{ matrix.coverage_api }} api coverage
+          files: coverage.info
+          verbose: true
+
   pytest-linux:
     runs-on: ubuntu-latest
     needs: [ ctest-linux ]
@@ -126,7 +152,7 @@ jobs:
 
   docs:
     runs-on: ubuntu-latest
-    needs: [ ctest-linux, pytest-linux ]
+    needs: [ ctest-linux ]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
