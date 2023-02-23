@@ -31,6 +31,7 @@
       "inherits": [
         "ci-base"
       ],
+      "binaryDir": "cmake-build-coverage",
       "cacheVariables": {
         "CMAKE_C_COMPILER": {
           "type": "FILEPATH",

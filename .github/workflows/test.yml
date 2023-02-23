@@ -113,11 +113,12 @@ jobs:
           # Note lcov-action prepends and appends wild-cards *. Account for those
           # https://github.com/danielealbano/lcov-action/issues/11
           remove_patterns: /test/,/cmake-build*/
-      - name: Get code coverage data
+      - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
           name: ${{ matrix.coverage_api }} api coverage
           files: coverage.info
+          flags: ${{ matrix.coverage_api }}_api
           verbose: true
 
   pytest-linux:
@@ -138,16 +139,27 @@ jobs:
       - name: Setup spglib
         # TODO: switch to editable installs
         run: |
-          pip install .[testing]
+          pip install .[testing] \
+            --config-settings=cmake.define.SPGLIB_TEST_COVERAGE=ON \
+            --config-settings=build-dir=build
       - name: Test with pytest and code coverage
         # TODO: switch to `coverage run`
         # Cannot use coverage run without editable installs (probably)
         run: |
           # coverage run
           pytest --cov=spglib
+      - name: Get lcov data
+        uses: danielealbano/lcov-action@v3
+        with:
+          # Note lcov-action prepends and appends wild-cards *. Account for those
+          # https://github.com/danielealbano/lcov-action/issues/11
+          remove_patterns: /test/,/cmake-build*/,/tmp/
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
+          name: python api coverage
+          files: coverage.info,.coverage
+          flags: python_api
           verbose: true
 
   docs:
