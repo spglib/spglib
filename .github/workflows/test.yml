@@ -110,14 +110,15 @@ jobs:
           conda install --yes -c conda-forge python=3.9
           conda install --yes -c conda-forge numpy gcc_linux-64 pip pyyaml make cmake scikit-build-core build
       - name: Setup spglib
+        # TODO: switch to editable installs
         run: |
-          ./python/get_nanoversion.sh
-          cat __nanoversion__.txt
-          python -m build
           pip install .[testing]
-      - name: Test with pytest
+      - name: Test with pytest and code coverage
+        # TODO: switch to `coverage run`
+        # Cannot use coverage run without editable installs (probably)
         run: |
-          pytest --cov=./ --cov-report=xml
+          # coverage run
+          pytest --cov=spglib
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
