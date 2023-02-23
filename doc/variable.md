@@ -5,7 +5,6 @@ other languages, the definition may be different, e.g., `lattice`
 for Python interface is transposed.
 
 (variables_lattice)=
-
 ## `lattice`
 
 **Attention**: In Python interface, `lattice` is transposed
@@ -19,16 +18,16 @@ Basis vectors (in Cartesian)
   [ a_z, b_z, c_z ] ]
 ```
 
-Cartesian position {math}`\mathbf{x}_\mathrm{Cart}` is obtained by
+Cartesian position $\mathbf{x}_\mathrm{Cart}$ is obtained by
 
-```{math}
+$$
   \mathbf{x}_\mathrm{Cart} = \mathrm{L}\cdot\mathbf{x}_\mathrm{frac}
-```
-
-where {math}`\mathrm{L}` is the basis vectors defined above and is
-{math}`\mathrm{L}=(\mathbf{a},\mathbf{b},\mathbf{c})`, and
-{math}`\mathbf{x}_\mathrm{frac}` is the atomic position in fractional
+$$
+where $\mathrm{L}$ is the basis vectors defined above and is
+$\mathrm{L}=(\mathbf{a},\mathbf{b},\mathbf{c})$, and
+$\mathbf{x}_\mathrm{frac}$ is the atomic position in fractional
 coordinates given below.
+
 
 ## `position`
 
@@ -49,7 +48,6 @@ used to distinguishes atoms, and is not related to atomic numbers.
 ```
 [ type_1, type_2, type_3, ... ]
 ```
-
 The number of elements is same as the number of atoms.
 
 ## `rotation`
@@ -61,7 +59,6 @@ Rotation matrices (integer) of symmetry operations.
   [ r_ba, r_bb, r_bc ],
   [ r_ca, r_cb, r_cc ] ]
 ```
-
 ## `translation`
 
 Translation vectors corresponding to symmetry operations in fractional
@@ -72,15 +69,15 @@ coordinates.
 ```
 
 (variables_symprec)=
-
 ## `symprec`
+
 
 Distance tolerance in Cartesian coordinates to find crystal
 symmetry.
 
 For atomic positions, roughly speaking, two position vectors `x` and `x'` in
 Cartesian coordinates are considered to be the same if `|x' - x| < symprec`.
-For more details, see the [spglib paper](https://arxiv.org/abs/1808.01590%3E),
+For more details, see the [spglib paper](https://arxiv.org/abs/1808.01590>),
 Sec. II-A.
 
 The angle distortion between basis vectors is converted to a length
@@ -90,7 +87,6 @@ possible to specify angle tolerance explicitly, see
 {ref}`variables_angle_tolerance`.
 
 (variables_angle_tolerance)=
-
 ## `angle_tolerance`
 
 Tolerance of angle between basis vectors in degrees to be tolerated
@@ -109,7 +105,6 @@ spgat_refine_cell
 ```
 
 (variables_mag_symprec)=
-
 ## `mag_symprec`
 
 Tolerance for magnetic symmetry search in the unit of spins or magmoms. By

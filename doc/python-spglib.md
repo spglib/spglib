@@ -153,7 +153,7 @@ in the tuple: `cell = (lattice, positions, numbers)` or `cell = (lattice, positi
 magnetic moments on atoms and is optional.
 
 Lattice parameters `lattice` are given by a 3x3 matrix with floating
-point values, where {math}`\mathbf{a}, \mathbf{b}, \mathbf{c}` are
+point values, where $\mathbf{a}, \mathbf{b}, \mathbf{c}$ are
 given as rows, which results in the transpose of the definition for
 C-API ({ref}`variables_lattice`). Fractional atomic positions
 `positions` are given by a Nx3 matrix with floating point values,
@@ -175,8 +175,7 @@ magmoms = [m_1, m_2, m_3, ...]  # Works with get_magnetic_symmetry for a colline
 # magmoms = [[m_1x, m_1y, m_1z], ...]  # For a non-collinear case
 ```
 
-For example, the crystal structure (`cell`) of L1{math}`_{2}`-type AlNi{math}`_{3}` is:
-
+For example, the crystal structure (`cell`) of L1$_{2}$-type AlNi$_{3}$ is:
 ```python
 lattice = [[1.0, 0.0, 0.0],
             [0.0, 1.0, 0.0],
@@ -660,10 +659,10 @@ dot product being close to zero or not.  The detail is shown at
 
 When the search failed, `None` is returned.
 
-The transformation from original basis vectors {math}`( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )` to final basis vectors {math}`( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )` is achieved by linear
+The transformation from original basis vectors $( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )$ to final basis vectors $( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )$ is achieved by linear
 combination of basis vectors with integer coefficients without
 rotating coordinates. Therefore the transformation matrix is obtained
-by {math}`\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} ) ( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}` and the matrix
+by $\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} ) ( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}$ and the matrix
 elements have to be almost integers.
 
 ### `delaunay_reduce`
@@ -687,10 +686,10 @@ to zero or not.
 
 When the search failed, `None` is returned.
 
-The transformation from original basis vectors {math}`( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )` to final basis vectors {math}`( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )` is achieved by linear
+The transformation from original basis vectors $( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )$ to final basis vectors $( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )$ is achieved by linear
 combination of basis vectors with integer coefficients without
 rotating coordinates. Therefore the transformation matrix is obtained
-by {math}`\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} ) ( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}` and the matrix
+by $\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} ) ( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}$ and the matrix
 elements have to be almost integers.
 
 ## Methods (kpoints)
