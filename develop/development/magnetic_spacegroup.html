@@ -524,7 +524,7 @@ title="Print to PDF"
 <h1>Magnetic space group (MSG)<a class="headerlink" href="#magnetic-space-group-msg" title="Permalink to this headline">#</a></h1>
 <section id="definition">
 <h2>Definition<a class="headerlink" href="#definition" title="Permalink to this headline">#</a></h2>
-<p>For more details, we refer to Refs. <span id="id1">[<a class="reference internal" href="#id19" title="Daniel B Litvin. Magnetic group tables. IUCr, 2014. URL: https://www.iucr.org/publ/978-0-9553602-2-0.">1</a>, <a class="reference internal" href="#id18" title="Branton J. Campbell, Harold T. Stokes, J. Manuel Perez-Mato, and Juan Rodríguez-Carvajal. Introducing a unified magnetic space-group symbol. Acta Crystallographica Section A, 78(2):99–106, Mar 2022. URL: https://doi.org/10.1107/S2053273321012912, doi:10.1107/S2053273321012912.">2</a>]</span>.</p>
+<p>For more details, we refer to Refs. <span id="id1">[<a class="reference internal" href="#id16" title="Daniel B Litvin. Magnetic group tables. IUCr, 2014. URL: https://www.iucr.org/publ/978-0-9553602-2-0.">1</a>, <a class="reference internal" href="#id15" title="Branton J. Campbell, Harold T. Stokes, J. Manuel Perez-Mato, and Juan Rodríguez-Carvajal. Introducing a unified magnetic space-group symbol. Acta Crystallographica Section A, 78(2):99–106, Mar 2022. URL: https://doi.org/10.1107/S2053273321012912, doi:10.1107/S2053273321012912.">2</a>]</span>.</p>
 <p>A <strong>magnetic space group</strong> <span class="math notranslate nohighlight">\(\mathcal{M}\)</span> is a subgroup of direct product of space group <span class="math notranslate nohighlight">\(\mathcal{G}\)</span> and <span class="math notranslate nohighlight">\(\mathbb{Z}_{2} \simeq \{1, 1' \}\)</span>.</p>
 <p>A <strong>family space group</strong> (FSG) <span class="math notranslate nohighlight">\(\mathcal{F}(\mathcal{M})\)</span> is a non-magnetic space group obtained by ignoring primes in operations,</p>
 <div class="math notranslate nohighlight">
@@ -532,7 +532,7 @@ title="Print to PDF"
 <p>A <strong>maximal space subgroup</strong> (XSG) <span class="math notranslate nohighlight">\(\mathcal{D}(\mathcal{M})\)</span> is a space group obtained by removing primed operations,</p>
 <div class="math notranslate nohighlight">
 \[    \mathcal{D}(\mathcal{M}) = \left\{ (\mathbf{R}, \mathbf{v}) \mid (\mathbf{R}, \mathbf{v}) \in \mathcal{M} \right\}.\]</div>
-<p>Magnetic space groups are classified to the following four types <a class="footnote-reference brackets" href="#notation" id="id2">1</a>:</p>
+<p>Magnetic space groups are classified to the following four types [^notation]:</p>
 <ul>
 <li><p>(type-I) <span class="math notranslate nohighlight">\(\mathcal{M} \simeq \mathcal{F}(\mathcal{M}) \simeq \mathcal{D}(\mathcal{M})\)</span>.</p></li>
 <li><p>(type-II) <span class="math notranslate nohighlight">\(\mathcal{M} \simeq \mathcal{F}(\mathcal{M}) \times \{1, 1'\}, \mathcal{F}(\mathcal{M}) \simeq \mathcal{D}(\mathcal{M})\)</span>.</p></li>
@@ -547,8 +547,10 @@ title="Print to PDF"
 \[  \mathcal{M} \simeq \mathcal{D}(\mathcal{M}) \sqcup (\mathcal{F}(\mathcal{M}) \backslash \mathcal{D}(\mathcal{M})) 1'\]</div>
 </li>
 </ul>
-<table class="table" id="id25">
-<caption><span class="caption-text">Number of (3-dimensional) magnetic space groups</span><a class="headerlink" href="#id25" title="Permalink to this table">#</a></caption>
+<p>[^notation]: <span class="math notranslate nohighlight">\(A \backslash B\)</span> represents the set difference, which is a set of elements in <span class="math notranslate nohighlight">\(A\)</span> which are not element of <span class="math notranslate nohighlight">\(B\)</span>.
+<span class="math notranslate nohighlight">\(A \sqcup B\)</span> represents union of disjoint sets <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(B\)</span>.</p>
+<table class="table" id="id22">
+<caption><span class="caption-text">Number of (3-dimensional) magnetic space groups</span><a class="headerlink" href="#id22" title="Permalink to this table">#</a></caption>
 <colgroup>
 <col style="width: 20%" />
 <col style="width: 20%" />
@@ -579,7 +581,7 @@ For type-IV MSG, OG symbols use a setting of <span class="math notranslate nohig
 <section id="action-of-msg-operations">
 <h2>Action of MSG operations<a class="headerlink" href="#action-of-msg-operations" title="Permalink to this headline">#</a></h2>
 <p>In general, we can arbitrarily choose how MSG operation acts on objects as long as it satisfies the definition of left actions.
-Here are the examples of objects and actions on them <a class="footnote-reference brackets" href="#notation2" id="id3">2</a>:</p>
+Here are the examples of objects and actions on them [^notation2]:</p>
 <ul>
 <li><p>Collinear magnetic moment <span class="math notranslate nohighlight">\(m_{z}\)</span> without spin-orbit coupling</p>
 <div class="math notranslate nohighlight">
@@ -599,6 +601,7 @@ Here are the examples of objects and actions on them <a class="footnote-referenc
 1' \circ (\mathbf{r}, \mathrm{white}) &amp;= (\mathbf{r}, \mathrm{black}) \\\end{split}\]</div>
 </li>
 </ul>
+<p>[^notation2]: We write action of group element <span class="math notranslate nohighlight">\(g\)</span> on object <span class="math notranslate nohighlight">\(x\)</span> as <span class="math notranslate nohighlight">\(g \circ x\)</span>.</p>
 </section>
 <section id="msg-detection-for-crystal-structure">
 <h2>MSG detection for crystal structure<a class="headerlink" href="#msg-detection-for-crystal-structure" title="Permalink to this headline">#</a></h2>
@@ -609,11 +612,13 @@ Here are the examples of objects and actions on them <a class="footnote-referenc
 <li><p>atomic types <span class="math notranslate nohighlight">\(\mathbf{T}\)</span></p></li>
 <li><p>magmoms <span class="math notranslate nohighlight">\(\mathbf{M}\)</span></p></li>
 </ul>
-<p>SG corresponds to the following equivalence relation (equivalent to <code class="docutils literal notranslate"><span class="pre">cel_is_overlap_with_same_type</span></code>) as <span class="math notranslate nohighlight">\(\mathcal{S} := \mathrm{Stab}_{\mathrm{E}(3)} \, (\mathbf{X}, \mathbf{T}) / \sim_{\mathcal{S}}\)</span> <a class="footnote-reference brackets" href="#notation3" id="id4">3</a>,</p>
+<p>SG corresponds to the following equivalence relation (equivalent to <code class="docutils literal notranslate"><span class="pre">cel_is_overlap_with_same_type</span></code>) as <span class="math notranslate nohighlight">\(\mathcal{S} := \mathrm{Stab}_{\mathrm{E}(3)} \, (\mathbf{X}, \mathbf{T}) / \sim_{\mathcal{S}}\)</span> [^notation3],</p>
 <div class="math notranslate nohighlight">
 \[    (X_{i}, T_{i}) \sim_{\mathcal{S}} (X_{j}, T_{j})
     \overset{\mathrm{def}}{\iff}
     \exists g \in \mathrm{E}(3) \, s.t. \,  g \circ X_{i} = X_{j} \,\mathrm{and}\,  T_{i} = T_{j}.\]</div>
+<p>[^notation3]: <span class="math notranslate nohighlight">\(\mathrm{E}(3)\)</span> is three dimensional Euclidean group.
+When group <span class="math notranslate nohighlight">\(G\)</span> acts on elements in <span class="math notranslate nohighlight">\(X\)</span>, we write the stabilizer as <span class="math notranslate nohighlight">\(\mathrm{Stab}_{G} X\)</span>.</p>
 <p>XSG corresponds to the following equivalence relation as <span class="math notranslate nohighlight">\(\mathcal{D} := \mathrm{Stab}_{ \mathcal{S} } \, (\mathbf{X}, \mathbf{T}, \mathbf{M}) / \sim_{\mathcal{D}}\)</span>,</p>
 <div class="math notranslate nohighlight">
 \[    (X_{i}, T_{i}, M_{i}) \sim_{\mathcal{D}} (X_{j}, T_{j}, M_{j})
@@ -752,7 +757,7 @@ The action of <span class="math notranslate nohighlight">\(\overline{\mathcal{M}
     \right)_{i=1, \dots, n}.\]</div>
 <p>Although we can obtain the invariant subspace by computing kernel of the above operator, we merely apply it on given positions since the positions are assumed to be close to an idealized ones.
 An idealization of site tensors can be performed as well.</p>
-<p>Note that this idealization is extension of special position operators presented in Ref. <span id="id5">[<a class="reference internal" href="#id8" title="R. W. Grosse-Kunstleve and P. D. Adams. Algorithms for deriving crystallographic space-group information. II. Treatment of special positions. Acta Cryst. A, 58(1):60–65, Jan 2002. URL: https://doi.org/10.1107/S0108767301016658, doi:10.1107/S0108767301016658.">3</a>]</span>, which considers only site-symmetry group of each site.</p>
+<p>Note that this idealization is extension of special position operators presented in Ref. <span id="id2">[<a class="reference internal" href="#id5" title="R. W. Grosse-Kunstleve and P. D. Adams. Algorithms for deriving crystallographic space-group information. II. Treatment of special positions. Acta Cryst. A, 58(1):60–65, Jan 2002. URL: https://doi.org/10.1107/S0108767301016658, doi:10.1107/S0108767301016658.">3</a>]</span>, which considers only site-symmetry group of each site.</p>
 </section>
 <section id="transformation-of-space-group-mathcal-g">
 <h3>Transformation of space group <span class="math notranslate nohighlight">\(\mathcal{G}\)</span><a class="headerlink" href="#transformation-of-space-group-mathcal-g" title="Permalink to this headline">#</a></h3>
@@ -833,33 +838,19 @@ x_{p} &amp;= (P^{-1}, p)^{-1} x_{\mathrm{std}}</p>
 </section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Permalink to this headline">#</a></h2>
-<div class="docutils container" id="id6">
+<div class="docutils container" id="id3">
 <dl class="citation">
-<dt class="label" id="id19"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dt class="label" id="id16"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
 <dd><p>Daniel B Litvin. <em>Magnetic group tables</em>. IUCr, 2014. URL: <a class="reference external" href="https://www.iucr.org/publ/978-0-9553602-2-0">https://www.iucr.org/publ/978-0-9553602-2-0</a>.</p>
 </dd>
-<dt class="label" id="id18"><span class="brackets"><a class="fn-backref" href="#id1">2</a></span></dt>
+<dt class="label" id="id15"><span class="brackets"><a class="fn-backref" href="#id1">2</a></span></dt>
 <dd><p>Branton J. Campbell, Harold T. Stokes, J. Manuel Perez-Mato, and Juan Rodríguez-Carvajal. Introducing a unified magnetic space-group symbol. <em>Acta Crystallographica Section A</em>, 78(2):99–106, Mar 2022. URL: <a class="reference external" href="https://doi.org/10.1107/S2053273321012912">https://doi.org/10.1107/S2053273321012912</a>, <a class="reference external" href="https://doi.org/10.1107/S2053273321012912">doi:10.1107/S2053273321012912</a>.</p>
 </dd>
-<dt class="label" id="id8"><span class="brackets"><a class="fn-backref" href="#id5">3</a></span></dt>
+<dt class="label" id="id5"><span class="brackets"><a class="fn-backref" href="#id2">3</a></span></dt>
 <dd><p>R. W. Grosse-Kunstleve and P. D. Adams. Algorithms for deriving crystallographic space-group information. II. Treatment of special positions. <em>Acta Cryst. A</em>, 58(1):60–65, Jan 2002. URL: <a class="reference external" href="https://doi.org/10.1107/S0108767301016658">https://doi.org/10.1107/S0108767301016658</a>, <a class="reference external" href="https://doi.org/10.1107/S0108767301016658">doi:10.1107/S0108767301016658</a>.</p>
 </dd>
 </dl>
 </div>
-<hr class="footnotes docutils" />
-<dl class="footnote brackets">
-<dt class="label" id="notation"><span class="brackets"><a class="fn-backref" href="#id2">1</a></span></dt>
-<dd><p><span class="math notranslate nohighlight">\(A \backslash B\)</span> represents the set difference, which is a set of elements in <span class="math notranslate nohighlight">\(A\)</span> which are not element of <span class="math notranslate nohighlight">\(B\)</span>.
-<span class="math notranslate nohighlight">\(A \sqcup B\)</span> represents union of disjoint sets <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(B\)</span>.</p>
-</dd>
-<dt class="label" id="notation2"><span class="brackets"><a class="fn-backref" href="#id3">2</a></span></dt>
-<dd><p>We write action of group element <span class="math notranslate nohighlight">\(g\)</span> on object <span class="math notranslate nohighlight">\(x\)</span> as <span class="math notranslate nohighlight">\(g \circ x\)</span>.</p>
-</dd>
-<dt class="label" id="notation3"><span class="brackets"><a class="fn-backref" href="#id4">3</a></span></dt>
-<dd><p><span class="math notranslate nohighlight">\(\mathrm{E}(3)\)</span> is three dimensional Euclidean group.
-When group <span class="math notranslate nohighlight">\(G\)</span> acts on elements in <span class="math notranslate nohighlight">\(X\)</span>, we write the stabilizer as <span class="math notranslate nohighlight">\(\mathrm{Stab}_{G} X\)</span>.</p>
-</dd>
-</dl>
 </section>
 </section>
 
