@@ -2,10 +2,10 @@
 
 #include "spglib.h"
 
-int main(void) {
-    SpglibDataset *dataset;
-    int i, j, size;
-    const char *wl = "abcdefghijklmnopqrstuvwxyz";
+int main(int argc, char* argv[]) {
+    SpglibDataset* dataset;
+    int i, j;
+    const char wl[26] = "abcdefghijklmnopqrstuvwxyz";
 
     // Wurtzite structure (P6_3mc)
     double lattice[3][3] = {
@@ -18,11 +18,12 @@ int main(void) {
     };
     int types[4] = {1, 1, 2, 2};
     int num_atom = 4;
+    double symprec = 1e-5;
 
-    // SplibDataset has to be freed after use.
-    dataset = spg_get_dataset(lattice, position, types, num_atom, 1e-5);
+    // SpglibDataset has to be freed after use.
+    dataset = spg_get_dataset(lattice, position, types, num_atom, symprec);
 
-    printf("International: %s (%d)\n", dataset->international_symbol,
+    printf("International symbol: %s (%d)\n", dataset->international_symbol,
            dataset->spacegroup_number);
     printf("Hall symbol:   %s\n", dataset->hall_symbol);
     printf("Wyckoff letters:\n");
