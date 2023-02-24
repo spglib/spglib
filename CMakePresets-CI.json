@@ -1,0 +1,350 @@
+{
+  "version": 6,
+  "include": [
+    "CMakePresets-defaults.json"
+  ],
+  "configurePresets": [
+    {
+      "name": "ci-base",
+      "hidden": true,
+      "generator": "Ninja",
+      "inherits": [
+        "default"
+      ],
+      "cacheVariables": {
+        "SPGLIB_WITH_Fortran": {
+          "type": "BOOL",
+          "value": true
+        },
+        "SPGLIB_WITH_TESTS": {
+          "type": "BOOL",
+          "value": true
+        }
+      },
+      "errors": {
+        "deprecated": true
+      }
+    },
+    {
+      "name": "ci-coverage",
+      "displayName": "Configure preset for test coverage",
+      "inherits": [
+        "ci-base"
+      ],
+      "binaryDir": "cmake-build-coverage",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": {
+          "type": "FILEPATH",
+          "value": "gcc"
+        },
+        "CMAKE_CXX_COMPILER": {
+          "type": "FILEPATH",
+          "value": "g++"
+        },
+        "CMAKE_Fortran_COMPILER": {
+          "type": "FILEPATH",
+          "value": "gfortran"
+        },
+        "CMAKE_LINKER": {
+          "type": "FILEPATH",
+          "value": "ld"
+        },
+        "SPGLIB_TEST_COVERAGE": {
+          "type": "BOOL",
+          "value": true
+        }
+      },
+      "errors": {
+        "deprecated": false
+      }
+    },
+    {
+      "name": "gcc-ci",
+      "displayName": "Configure preset for GCC toolchain",
+      "inherits": [
+        "ci-base"
+      ],
+      "binaryDir": "cmake-build-release-gcc",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": {
+          "type": "FILEPATH",
+          "value": "gcc"
+        },
+        "CMAKE_CXX_COMPILER": {
+          "type": "FILEPATH",
+          "value": "g++"
+        },
+        "CMAKE_Fortran_COMPILER": {
+          "type": "FILEPATH",
+          "value": "gfortran"
+        },
+        "CMAKE_LINKER": {
+          "type": "FILEPATH",
+          "value": "ld"
+        },
+        "SPGLIB_USE_SANITIZER": {
+          "type": "STRING",
+          "value": "address"
+        }
+      }
+    },
+    {
+      "name": "intel-ci",
+      "displayName": "Configure preset for Intel toolchain",
+      "inherits": [
+        "ci-base"
+      ],
+      "binaryDir": "cmake-build-release-intel",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": {
+          "type": "FILEPATH",
+          "value": "icx"
+        },
+        "CMAKE_CXX_COMPILER": {
+          "type": "FILEPATH",
+          "value": "icpx"
+        },
+        "CMAKE_Fortran_COMPILER": {
+          "type": "FILEPATH",
+          "value": "ifx"
+        },
+        "SPGLIB_USE_SANITIZER": {
+          "type": "STRING",
+          "value": "address"
+        }
+      }
+    },
+    {
+      "name": "llvm-ci",
+      "displayName": "Configure preset for LLVM (Clang, Flang) toolchain",
+      "inherits": [
+        "ci-base"
+      ],
+      "binaryDir": "cmake-build-release-llvm",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": {
+          "type": "FILEPATH",
+          "value": "clang"
+        },
+        "CMAKE_CXX_COMPILER": {
+          "type": "FILEPATH",
+          "value": "clang++"
+        },
+        "CMAKE_Fortran_COMPILER": {
+          "type": "FILEPATH",
+          "value": "gfortran"
+        },
+        "CMAKE_LINKER": {
+          "type": "FILEPATH",
+          "value": "lld"
+        },
+        "SPGLIB_USE_SANITIZER": {
+          "type": "STRING",
+          "value": "address"
+        }
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "ci-base",
+      "hidden": true,
+      "inherits": [
+        "default"
+      ],
+      "cleanFirst": true
+    },
+    {
+      "name": "ci-coverage",
+      "displayName": "Build preset for test coverage",
+      "inherits": [
+        "ci-base"
+      ],
+      "configurePreset": "ci-coverage"
+    },
+    {
+      "name": "gcc-ci",
+      "displayName": "Build preset for GCC toolchain",
+      "inherits": [
+        "ci-base"
+      ],
+      "configurePreset": "gcc-ci"
+    },
+    {
+      "name": "intel-ci",
+      "displayName": "Build preset for Intel toolchain",
+      "inherits": [
+        "ci-base"
+      ],
+      "configurePreset": "intel-ci"
+    },
+    {
+      "name": "llvm-ci",
+      "displayName": "Build preset for LLVM (Clang, Flang) toolchain",
+      "inherits": [
+        "ci-base"
+      ],
+      "configurePreset": "llvm-ci"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "ci-base",
+      "hidden": true,
+      "inherits": [
+        "default"
+      ],
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "ci-coverage",
+      "hidden": true,
+      "inherits": [
+        "default"
+      ],
+      "configurePreset": "ci-coverage"
+    },
+    {
+      "name": "gcc-ci",
+      "displayName": "Test preset for GCC toolchain",
+      "inherits": [
+        "ci-base"
+      ],
+      "configurePreset": "gcc-ci"
+    },
+    {
+      "name": "intel-ci",
+      "displayName": "Test preset for Intel toolchain",
+      "inherits": [
+        "ci-base"
+      ],
+      "configurePreset": "intel-ci"
+    },
+    {
+      "name": "llvm-ci",
+      "displayName": "Test preset for LLVM (Clang, Flang) toolchain",
+      "inherits": [
+        "ci-base"
+      ],
+      "configurePreset": "llvm-ci"
+    },
+    {
+      "name": "ci-coverage-c",
+      "displayName": "Test preset for test coverage of C api",
+      "inherits": [
+        "ci-coverage"
+      ],
+      "filter": {
+        "include": {
+          "label": "c_api"
+        }
+      }
+    },
+    {
+      "name": "ci-coverage-fortran",
+      "displayName": "Test preset for test coverage of Fortran api",
+      "inherits": [
+        "ci-coverage"
+      ],
+      "filter": {
+        "include": {
+          "label": "fortran_api"
+        }
+      }
+    }
+  ],
+  "workflowPresets": [
+    {
+      "name": "gcc-ci",
+      "displayName": "CI test for GCC toolchain",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "gcc-ci"
+        },
+        {
+          "type": "build",
+          "name": "gcc-ci"
+        },
+        {
+          "type": "test",
+          "name": "gcc-ci"
+        }
+      ]
+    },
+    {
+      "name": "intel-ci",
+      "displayName": "CI test for Intel toolchain",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "intel-ci"
+        },
+        {
+          "type": "build",
+          "name": "intel-ci"
+        },
+        {
+          "type": "test",
+          "name": "intel-ci"
+        }
+      ]
+    },
+    {
+      "name": "llvm-ci",
+      "displayName": "CI test for LLVM (Clang, Flang) toolchain",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "llvm-ci"
+        },
+        {
+          "type": "build",
+          "name": "llvm-ci"
+        },
+        {
+          "type": "test",
+          "name": "llvm-ci"
+        }
+      ]
+    },
+    {
+      "name": "ci-coverage-c",
+      "displayName": "Coverage tests for C api",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "ci-coverage"
+        },
+        {
+          "type": "build",
+          "name": "ci-coverage"
+        },
+        {
+          "type": "test",
+          "name": "ci-coverage-c"
+        }
+      ]
+    },
+    {
+      "name": "ci-coverage-fortran",
+      "displayName": "Coverage tests for Fortran api",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "ci-coverage"
+        },
+        {
+          "type": "build",
+          "name": "ci-coverage"
+        },
+        {
+          "type": "test",
+          "name": "ci-coverage-fortran"
+        }
+      ]
+    }
+  ]
+}

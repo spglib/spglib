@@ -7,7 +7,9 @@ definitions of transformation matrix and origin shift were different
 in the previous versions.
 
 ## Space group operation and change of basis
-`
+
+\`
+
 ### Basis vectors {math}`(\mathbf{a}, \mathbf{b}, \mathbf{c})` or {math}`(\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)`
 
 In spglib, basis vectors are represented by three column vectors:
@@ -97,9 +99,7 @@ basis vectors as follows
 \mathbf{c}_\mathrm{s} )  \boldsymbol{P},
 ```
 
-where {math}`( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )` and {math}`(
-\mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
-\mathbf{c}_\mathrm{s} )` are the basis vectors of an arbitrary system
+where {math}`( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )` and {math}`( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )` are the basis vectors of an arbitrary system
 and of a standardized system, respectively. In general, the
 transformation matrix is not limited for the transformation from the
 standardized system, but can be used in between any systems possibly
@@ -174,8 +174,7 @@ another point by
 ```
 
 where {math}`\tilde{\boldsymbol{x}}` and {math}`\boldsymbol{x}` are
-represented with respect to the same basis vectors {math}`(\mathbf{a},
-\mathbf{b}, \mathbf{c})`. Equivalently the rotation is achieved by
+represented with respect to the same basis vectors {math}`(\mathbf{a}, \mathbf{b}, \mathbf{c})`. Equivalently the rotation is achieved by
 rotating the basis vectors:
 
 ```{math}
@@ -225,10 +224,10 @@ because
 ```
 
 (def_standardized_unit_cell)=
+
 ## Spglib conventions of standardized unit cell
 
-The standardization in spglib is achieved by {ref}`a change of basis
-transformation <def_transformation_and_origin_shift>`. If
+The standardization in spglib is achieved by {ref}`a change of basis transformation <def_transformation_and_origin_shift>`. If
 {ref}`idealization <def_idealize_cell>` as shown below is further
 applied, the crystal can be rigidly rotated in Cartesian
 coordinates.
@@ -341,11 +340,15 @@ change-of-basis transformation explained above.
 #### Monoclinic lattice
 
 - {math}`b` axis is taken as the unique axis.
+
 - {math}`\alpha = 90^\circ` and {math}`\gamma = 90^\circ`
+
 - {math}`90^\circ < \beta < 120^\circ`.
 
 - {math}`\mathbf{a}` is set along {math}`+x` direction of Cartesian coordinates.
+
 - {math}`\mathbf{b}` is set along {math}`+y` direction of Cartesian coordinates.
+
 - {math}`\mathbf{c}` is set in {math}`x\text{-}z` plane of Cartesian coordinates.
 
 #### Orthorhombic lattice
@@ -353,21 +356,27 @@ change-of-basis transformation explained above.
 - {math}`\alpha = \beta = \gamma = 90^\circ`.
 
 - {math}`\mathbf{a}` is set along {math}`+x` direction of Cartesian coordinates.
+
 - {math}`\mathbf{b}` is set along {math}`+y` direction of Cartesian coordinates.
+
 - {math}`\mathbf{c}` is set along {math}`+z` direction of Cartesian coordinates.
 
 #### Tetragonal lattice
 
 - {math}`\alpha = \beta = \gamma = 90^\circ`.
+
 - {math}`a=b`.
 
 - {math}`\mathbf{a}` is set along {math}`+x` direction of Cartesian coordinates.
+
 - {math}`\mathbf{b}` is set along {math}`+y` direction of Cartesian coordinates.
+
 - {math}`\mathbf{c}` is set along {math}`+z` direction of Cartesian coordinates.
 
 #### Rhombohedral lattice
 
 - {math}`\alpha = \beta = \gamma`.
+
 - {math}`a=b=c`.
 
 - Let {math}`\mathbf{a}`, {math}`\mathbf{b}`, and {math}`\mathbf{c}`
@@ -376,6 +385,7 @@ change-of-basis transformation explained above.
   {math}`\mathbf{c}_{xy}`, respectively, and their angles be
   {math}`\alpha_{xy}`, {math}`\beta_{xy}`,
   {math}`\gamma_{xy}`, respectively.
+
 - Let {math}`\mathbf{a}`, {math}`\mathbf{b}`, and {math}`\mathbf{c}`
   projected along {math}`z`-axis in Cartesian coordinates be
   {math}`\mathbf{a}_{z}`, {math}`\mathbf{b}_{z}`, and
@@ -387,28 +397,37 @@ change-of-basis transformation explained above.
   {math}`\mathbf{c}_{xy}` are placed by angles {math}`120^\circ` and
   {math}`240^\circ` from {math}`\mathbf{a}_{xy}` counter-clockwise,
   respectively.
-- {math}`\alpha_{xy} = \beta_{xy} = \gamma_{xy} = 120^\circ`.
-- {math}`a_{xy} = b_{xy} = c_{xy}`.
-- {math}`a_{z} = b_{z} = c_{z}`.
 
+- {math}`\alpha_{xy} = \beta_{xy} = \gamma_{xy} = 120^\circ`.
+
+- {math}`a_{xy} = b_{xy} = c_{xy}`.
+
+- {math}`a_{z} = b_{z} = c_{z}`.
 
 #### Hexagonal lattice
 
 - {math}`\alpha = \beta = 90^\circ`.
+
 - {math}`\gamma = 120^\circ`.
+
 - {math}`a=b`.
 
 - {math}`\mathbf{a}` is set along {math}`+x` direction of Cartesian coordinates.
+
 - {math}`\mathbf{b}` is set in {math}`x\text{-}y` plane of Cartesian coordinates.
+
 - {math}`\mathbf{c}` is set along {math}`+z` direction of Cartesian coordinates.
 
 #### Cubic lattice
 
 - {math}`\alpha = \beta = \gamma = 90^\circ`.
+
 - {math}`a=b=c`.
 
 - {math}`\mathbf{a}` is set along {math}`+x` direction of Cartesian coordinates.
+
 - {math}`\mathbf{b}` is set along {math}`+y` direction of Cartesian coordinates.
+
 - {math}`\mathbf{c}` is set along {math}`+z` direction of Cartesian coordinates.
 
 ### Rotation introduced by idealization
@@ -428,10 +447,8 @@ matrix {math}`\boldsymbol{R}` of this rotation is defined by
 ```
 
 This rotation matrix rotates the standardized
-crystal structure before idealization {math}`( \mathbf{a}_\mathrm{s}
-\; \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )` to that after
-idealization {math}`( \bar{\mathbf{a}}_\mathrm{s} \;
-\bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )` in
+crystal structure before idealization {math}`( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )` to that after
+idealization {math}`( \bar{\mathbf{a}}_\mathrm{s} \; \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )` in
 Cartesian coordinates of the given input unit cell.
 
 ## Examples
@@ -617,7 +634,7 @@ we get the primitive cell basis vectors (shown in row vectors):
 [[ 3.58925715 -1.99971973  0.        ]
  [ 3.58925715  1.99971973  0.        ]
  [ 0.          0.          8.57154746]]
- ```
+```
 
 `find_primitive` gives a primitive cell that is obtained by
 transforming standardized and idealized crystal structure to the
@@ -732,7 +749,7 @@ then we get:
 [[3.95200346 1.12397269 0.        ]
  [1.12397269 3.95200346 0.        ]
  [0.         0.         8.57154746]]
- ```
+```
 
 which is equivalent to that we get manually. However using
 `standardize_cell`, distortion is not removed for the distorted
@@ -789,8 +806,7 @@ std_lattice_after_idealization:
 ```
 
 From Eq. {eq}`transformation_matrix`, the standardized basis vectors
-**before** idealization {math}`( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s}
-\; \mathbf{c}_\mathrm{s} )` is obtained by (after `import numpy as np`)
+**before** idealization {math}`( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )` is obtained by (after `import numpy as np`)
 
 ```python
 std_lattice_before_idealization = np.dot(
@@ -808,8 +824,7 @@ which is (in row vectors)
 ```
 
 This is different from the standardized basis vectors **after**
-idealization {math}`( \bar{\mathbf{a}}_\mathrm{s} \;
-\bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )`.  Unless
+idealization {math}`( \bar{\mathbf{a}}_\mathrm{s} \; \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )`.  Unless
 this crystal structure is distorted from the crystal structure that
 has the ideal symmetry, this means that the crystal was rotated
 rigidly in the idealization step by
@@ -857,7 +872,7 @@ approximately the same result:
 [[ 0.70710678  0.70710678  0.        ]
  [-0.70710678  0.70710678  0.        ]
  [ 0.          0.          1.        ]]
- ```
+```
 
 In summary,
 
@@ -868,7 +883,6 @@ In summary,
 \boldsymbol{R} \mathbf{c} ).
 ```
 
-The atomic point coordinates in {math}`( \bar{\mathbf{a}}_\mathrm{s}
-\; \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )`
+The atomic point coordinates in {math}`( \bar{\mathbf{a}}_\mathrm{s} \; \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )`
 are simply obtained by Eq. {eq}`change_of_basis_1` since the
 rotation doesn't affect them.

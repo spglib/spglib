@@ -3,21 +3,22 @@
 ## Requirements
 
 - CMake >= 3.11
-- (Googletest is automatically prepared with [FetchContent](https://cmake.org/cmake/help/latest/module/FetchContent.html))
+- (Googletest is automatically prepared with [FetchContent](https://cmake.org/cmake/help/latest/module/FetchContent.html) if not available)
 
 ## How to run single test
 
 In the `test` folder of the build directory (e.g. `build/test`), run the specific test executable.
 For example, to run `test_symmetry_search.test_spg_get_symmetry`
+
 ```shell
 # at build/test
-./test_symmetry_search --gtest_filter=test_spg_get_symmetry
+./CTests --gtest_filter=test_spg_get_symmetry
 ```
 
 ## How to add a new test file
 
 1. Create `<your_test_suite_name>.cpp`
-2. Append `<your_test_suite_name>` at the bottom loops in [the current CMakeLists.txt](CMakeLists.txt)
+2. Append `<your_test_suite_name>.cpp` to the `CTests` executable sources in the [current CMakeLists.txt](CMakeLists.txt)
 
 ## How to add test
 
@@ -121,4 +122,5 @@ def print_cpp_cell(cell):
 ```
 
 ## Resources
+
 - <https://google.github.io/googletest/>

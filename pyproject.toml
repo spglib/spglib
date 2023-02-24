@@ -74,3 +74,9 @@ repair-wheel-command = ""
 [tool.pytest.ini_options]
 addopts = "--benchmark-skip"
 testpaths = ["python/test"]
+
+[tool.coverage.run]
+command_line = '-m pytest --cov'
+# TODO: Cannot report relative to project path because we cannot do editable installs yet
+#source = ['python/spglib']
+source = ['spglib']

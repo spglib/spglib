@@ -158,23 +158,21 @@ static struct PyModuleDef moduledef = {PyModuleDef_HEAD_INIT,
 // Define macro to make sure symbol is exported
 // TODO: Switch to C23 native
 #if defined(_WIN32) || defined(WIN32)
-    // Note: actually gcc and intel seem to also supports this syntax.
-    #ifdef _MSC_VER
-        #define EXPORT __declspec(dllexport)
-    #else
-        #define EXPORT __attribute__ ((dllexport))
-    #endif
+// Note: actually gcc and intel seem to also supports this syntax.
+#ifdef _MSC_VER
+#define EXPORT __declspec(dllexport)
 #else
-    #define EXPORT __attribute__ ((visibility("default")))
+#define EXPORT __attribute__((dllexport))
+#endif
+#else
+#define EXPORT __attribute__((visibility("default")))
 #endif
 
-EXPORT PyObject* PyInit__spglib(void)
-{
+EXPORT PyObject *PyInit__spglib(void) {
     struct module_state *st;
     PyObject *module = PyModule_Create(&moduledef);
 
-    if (module == NULL)
-        return NULL;
+    if (module == NULL) return NULL;
 
     st = (struct module_state *)PyModule_GetState(module);
 

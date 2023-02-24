@@ -7,12 +7,14 @@
 C library for finding and handling crystal symmetries
 
 <!-- TOC -->
-* [Spglib](#spglib)
-  * [How to compile the main C library](#how-to-compile-the-main-c-library)
-  * [How install the python library](#how-install-the-python-library)
-  * [How to run test](#how-to-run-test)
-  * [Contributing](#contributing)
-  * [Documentation](#documentation)
+
+- [Spglib](#spglib)
+  - [How to compile the main C library](#how-to-compile-the-main-c-library)
+  - [How install the python library](#how-install-the-python-library)
+  - [How to run test](#how-to-run-test)
+  - [Contributing](#contributing)
+  - [Documentation](#documentation)
+
 <!-- TOC -->
 
 ## How to compile the main C library
@@ -51,7 +53,7 @@ To execute these tests, run the following command with the appropriate path to t
 build directory
 
 ```console
-$ ctest --test-dir ./build/test
+$ ctest --test-dir ./build
 ```
 
 Additionally, there are python tests that cover more use-cases.

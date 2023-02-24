@@ -1,0 +1,194 @@
+name: test
+run-name: Run tests
+
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
+
+jobs:
+  pre-commit:
+    name: Check pre-commit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+      - uses: pre-commit/action@v3.0.0
+
+  ctest-linux:
+    runs-on: ubuntu-latest
+    container: fedora
+    needs: [ pre-commit ]
+    strategy:
+      matrix:
+        toolchain: [ gcc, intel, llvm ]
+    steps:
+      - name: Install common packages
+        run: |
+          sudo dnf -y install git libasan gtest-devel
+      - name: Install GCC packages
+        run: |
+          sudo dnf -y install gcc g++ gcc-fortran
+        if: matrix.toolchain == 'gcc'
+      - name: Install Intel compiler pre-requisites
+        # findutils and procps are needed by intel compiler to run setvars.sh
+        # Intel does not have a ld program, so we need them from binutils, but binutils does not work without gcc
+        run: |
+          sudo dnf -y install findutils procps binutils gcc g++
+        if: matrix.toolchain == 'intel'
+      # Instructions for linux CI are adapted from upstream: https://github.com/oneapi-src/oneapi-ci (build_linux_dnf_cpp)
+      - name: Add Intel compiler repository and get versioned dependencies of dnf packages
+        run: |
+          tee > /tmp/oneAPI.repo << EOF
+          [oneAPI]
+          name=Intel(R) oneAPI repository
+          baseurl=https://yum.repos.intel.com/oneapi
+          enabled=1
+          gpgcheck=1
+          repo_gpgcheck=1
+          gpgkey=https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
+          EOF
+          sudo mv /tmp/oneAPI.repo /etc/yum.repos.d/
+          dnf -y repoquery --deplist intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic intel-oneapi-compiler-fortran | tee depends.txt
+        if: matrix.toolchain == 'intel'
+      - name: Cache Intel compiler
+        id: cache-install
+        uses: actions/cache@v3
+        with:
+          path: |
+            /opt/intel/oneapi
+          key: Intel-Compiler-${{ hashFiles('**/depends.txt') }}
+        if: matrix.toolchain == 'intel'
+      - name: Install Intel compiler
+        run: |
+          sudo dnf install -y intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic intel-oneapi-compiler-fortran
+        if: matrix.toolchain == 'intel' && steps.cache-install.outputs.cache-hit != 'true'
+      - name: Activate Intel compilers
+        # Not elegant, it will propagate all environment variable.
+        # Intel does not provide a way to output the environment variables to a file
+        # Note: PATH needs to be exported to GITHUB_PATH otherwise it can be overwritten
+        run: |
+          source /opt/intel/oneapi/setvars.sh
+          printenv >> $GITHUB_ENV
+          echo $PATH >> $GITHUB_PATH
+        if: matrix.toolchain == 'intel'
+      - name: Install LLVM compilers
+        # TODO: Currently using gfortran because flang tests fail. See #241 for more details
+        run: |
+          sudo dnf install -y clang gcc-gfortran lld
+        if: matrix.toolchain == 'llvm'
+      - uses: actions/checkout@v3
+      - uses: lukka/get-cmake@latest
+      - name: Run CMake configuration for ${{ matrix.toolchain }} toolchain
+        uses: lukka/run-cmake@v10.3
+        with:
+          workflowPreset: "${{ matrix.toolchain }}-ci"
+      # Not sure about this step
+      - name: Remove unused files from Intel cache
+        run: |
+          LATEST_VERSION=$(ls -1 /opt/intel/oneapi/compiler/ | grep -v latest | sort | tail -1)
+          sudo rm -rf /opt/intel/oneapi/compiler/"$LATEST_VERSION"/linux/compiler/lib/ia32_lin
+          sudo rm -rf /opt/intel/oneapi/compiler/"$LATEST_VERSION"/linux/bin/ia32
+          sudo rm -rf /opt/intel/oneapi/compiler/"$LATEST_VERSION"/linux/lib/emu
+          sudo rm -rf /opt/intel/oneapi/compiler/"$LATEST_VERSION"/linux/lib/oclfpga
+        if: matrix.toolchain == 'intel' && steps.cache-install.outputs.cache-hit != 'true'
+
+  coverage:
+    runs-on: ubuntu-latest
+    needs: [ ctest-linux ]
+    strategy:
+      matrix:
+        coverage_api: [ c, fortran ]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: lukka/get-cmake@latest
+      - name: Get test coverage for ${{ matrix.coverage_api }} api
+        uses: lukka/run-cmake@v10.3
+        with:
+          workflowPreset: "ci-coverage-${{ matrix.coverage_api }}"
+      - name: Get lcov data
+        uses: danielealbano/lcov-action@v3
+        with:
+          # Note lcov-action prepends and appends wild-cards *. Account for those
+          # https://github.com/danielealbano/lcov-action/issues/11
+          remove_patterns: /test/,/cmake-build*/
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          name: ${{ matrix.coverage_api }} api coverage
+          files: coverage.info
+          flags: ${{ matrix.coverage_api }}_api
+          verbose: true
+
+  pytest-linux:
+    runs-on: ubuntu-latest
+    needs: [ ctest-linux ]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+      - name: Add conda to system path
+        run: |
+          # $CONDA is an environment variable pointing to the root of the miniconda directory
+          echo $CONDA/bin >> $GITHUB_PATH
+      - name: Install dependencies
+        run: |
+          conda install --yes -c conda-forge python=3.9
+          conda install --yes -c conda-forge numpy gcc_linux-64 pip pyyaml make cmake scikit-build-core build
+      - name: Setup spglib
+        # TODO: switch to editable installs
+        run: |
+          pip install .[testing] \
+            --config-settings=cmake.define.SPGLIB_TEST_COVERAGE=ON \
+            --config-settings=build-dir=build
+      - name: Test with pytest and code coverage
+        # TODO: switch to `coverage run`
+        # Cannot use coverage run without editable installs (probably)
+        run: |
+          # coverage run
+          pytest --cov=spglib
+      - name: Get lcov data
+        uses: danielealbano/lcov-action@v3
+        with:
+          # Note lcov-action prepends and appends wild-cards *. Account for those
+          # https://github.com/danielealbano/lcov-action/issues/11
+          remove_patterns: /test/,/cmake-build*/,/tmp/
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          name: python api coverage
+          files: coverage.info,.coverage
+          flags: python_api
+          verbose: true
+
+  docs:
+    runs-on: ubuntu-latest
+    needs: [ ctest-linux ]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+      - name: Install dependencies
+        run: |
+          sudo apt-get install -y pandoc
+      - name: Add conda to system path
+        run: |
+          # $CONDA is an environment variable pointing to the root of the miniconda directory
+          echo $CONDA/bin >> $GITHUB_PATH
+      - name: Install dependencies
+        run: |
+          conda install --yes -c conda-forge python=3.9
+          conda install --yes -c conda-forge numpy gcc_linux-64 pip pyyaml make cmake scikit-build-core
+      - name: Setup spglib with doc's dependencies
+        run: |
+          pip install .[doc]
+      - name: Build
+        run: |
+          sphinx-build doc docs_build
+      - name: Deploy docs at develop branch
+        if: ${{ github.ref == 'refs/heads/develop' }}
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+          publish_dir: ./docs_build
+          destination_dir: develop

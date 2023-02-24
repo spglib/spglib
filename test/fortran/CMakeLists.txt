@@ -36,13 +36,13 @@ foreach (test ${TestsToRun})
 			add_test(NAME "${test_name}/${subtest}"
 					COMMAND $<TARGET_FILE:FortranTests> ${test_name} ${subtest})
 			set_tests_properties("${test_name}/${subtest}" PROPERTIES
-					LABELS "fortran;${test_name}")
+					LABELS "fortran_api;${test_name};${test_name}.${subtest}")
 		endforeach ()
 	else ()
 		# Only run the main test without arguments. Maybe can pass other variable data though :-?
 		add_test(NAME ${test_name}
 				COMMAND $<TARGET_FILE:FortranTests> ${test_name})
 		set_tests_properties(${test_name} PROPERTIES
-				LABELS "fortran")
+				LABELS "fortran_api;${test_name}")
 	endif ()
 endforeach ()

@@ -1,6 +1,5 @@
 # How to install spglib C-API
 
-
 ## Download
 
 The source code is downloaded at <https://github.com/spglib/spglib/archive/master.zip> or you can
@@ -54,7 +53,6 @@ way is recommended
 
 The detail of the windows installation process is discussed at
 https://github.com/spglib/spglib/issues/118.
-
 
 ## Usage
 

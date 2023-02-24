@@ -1,4 +1,5 @@
 (python_spglib)=
+
 # Spglib for Python
 
 ## Installation
@@ -7,6 +8,7 @@ The source code is downloaded at
 <https://github.com/spglib/spglib/tags>.
 But minor updates are not included in this package. If you want the
 latest version, you can git-clone the spglib repository
+
 ```shell
 % git clone https://github.com/spglib/spglib.git
 ```
@@ -22,23 +24,28 @@ to keeping spglib handy and useful.
 
 Numpy is required before the python-spglib installation. The command to
 install spglib is
+
 ```shell
 % pip install --user spglib
 ```
 
 If you see the error message like below in the installation process
+
 ```shell
 _spglib.c:35:20: fatal error: Python.h: No such file or directory
 ```
+
 development tools for building python module are additionally
 necessary and are installed using OS's package management system,
 e.g.,:
+
 ```shell
 % sudo apt-get install python-dev
 ```
 
 If your installation by pip failed, you may need to
 upgrade setuptools, e.g., by
+
 ```shell
 % pip install --upgrade --user setuptools
 ```
@@ -46,6 +53,7 @@ upgrade setuptools, e.g., by
 ### Using conda
 
 Conda is another choice:
+
 ```shell
 % conda install -c conda-forge spglib
 ```
@@ -69,6 +77,7 @@ follows:
 
 If your installation by setup.py failed, you may need to upgrade
 setuptools, e.g., by
+
 ```shell
 % pip install --upgrade --user setuptools
 ```
@@ -96,16 +105,19 @@ OK
 **Change in version 1.9.0!**
 
 For versions 1.9.x or later:
+
 ```python
 import spglib
 ```
 
 For versions 1.8.x or before:
+
 ```python
 from pyspglib import spglib
 ```
 
 If the version is not sure:
+
 ```python
 try:
     import spglib as spg
@@ -123,17 +135,18 @@ In version 1.8.3 or later, the version number is obtained by
 Examples are found in [examples](https://github.com/spglib/spglib/tree/master/python/examples) directory.
 
 (py_variables)=
+
 ## Variables
 
 (py_variables_crystal_structure)=
+
 ### Crystal structure (`cell`)
 
 A crystal structure is given by a **tuple**. This tuple format is
 supported at version 1.9.1 or later.
 
 The tuple format is shown as follows. There are three or four elements
-in the tuple: `cell = (lattice, positions, numbers)` or `cell =
-(lattice, positions, numbers, magmoms)` where `magmoms` represents
+in the tuple: `cell = (lattice, positions, numbers)` or `cell = (lattice, positions, numbers, magmoms)` where `magmoms` represents
 collinear polarizations on atoms and is optional.
 
 Lattice parameters `lattice` are given by a 3x3 matrix with floating
@@ -159,6 +172,7 @@ magmoms = [m_1, m_2, m_3, ...]  # Works with get_magnetic_symmetry
 ```
 
 For example, the crystal structure (`cell`) of L1{math}`_{2}`-type AlNi{math}`_{3}` is:
+
 ```python
 lattice = [[1.0, 0.0, 0.0],
             [0.0, 1.0, 0.0],
@@ -169,7 +183,6 @@ positions = [[0.0, 0.0, 0.0], # Al
             [0.5, 0.0, 0.5]] # Ni
 numbers = [1, 2, 2, 2]        # Al, Ni, Ni, Ni
 ```
-
 
 Version 1.9.5 or later: The methods that use the crystal structure
 will return `None` when a crystal structure is not properly given.
@@ -185,12 +198,14 @@ The reason to make this feature deprecated is that ASE Atoms class is
 too huge and users may expect spglib can understand its full
 feature. However spglib actually collects only the following values
 from the ASE Atoms-class instance::
+
 ```python
    lattice = cell.get_cell()
    positions = cell.get_scaled_positions()
    numbers = cell.get_atomic_numbers()
    magmoms = None
 ```
+
 for which the corresponding code is written out of API and it is found at
 [here](https://github.com/spglib/spglib/blob/e0851894ccdad1abb87d519b228d056128b56806/python/spglib/spglib.py#L737-L741).
 Nevertheless the ASE Atoms-like input will be accepted for a while.  An
@@ -210,6 +225,7 @@ details, see {ref}`variables_symprec`, {ref}`variables_angle_tolerance`, and
 ## Methods (version)
 
 (method_get_version)=
+
 ### `get_version`
 
 **New in version 1.8.3**
@@ -238,6 +254,7 @@ error_message = get_error_message()
 ## Method (space-group symmetry search)
 
 (py_method_get_symmetry)=
+
 ### `get_symmetry`
 
 **`get_symmetry` with `is_magnetic=True` is deprecated at version 2.0. Use {ref}`py_get_magnetic_symmetry` for magnetic symmetry search.**
@@ -255,6 +272,7 @@ vectors correspond with each other, e.g. , the second symmetry
 operation is organized by the set of the second rotation matrix and second
 translation vector in the respective arrays. Therefore a set of
 symmetry operations may obtained by
+
 ```python
 [(r, t) for r, t in zip(dataset['rotations'], dataset['translations'])]
 ```
@@ -262,6 +280,7 @@ symmetry operations may obtained by
 The operations are given with respect to the fractional coordinates
 (not for Cartesian coordinates). The rotation matrix and translation
 vector are used as follows:
+
 ```
 new_vector[3x1] = rotation[3x3] * vector[3x1] + translation[3x1]
 ```
@@ -282,8 +301,8 @@ If `cell` is given as a tuple and collinear polarizations are given
 as the fourth element of this tuple, symmetry operations are searched
 considering this freedom. In ASE Atoms-class object, this is not supported.
 
-
 (py_method_get_symmetry_dataset)=
+
 ### `get_symmetry_dataset`
 
 **At version 1.9.4, the member 'choice' is added.**
@@ -294,19 +313,19 @@ dataset = get_symmetry_dataset(cell, symprec=1e-5, angle_tolerance=-1.0, hall_nu
 
 The arguments are:
 
-* `cell` and `symprec`: See {ref}`py_variables`.
-* `angle_tolerance`: An experimental argument that controls angle
+- `cell` and `symprec`: See {ref}`py_variables`.
+- `angle_tolerance`: An experimental argument that controls angle
   tolerance between basis vectors. Normally it is not recommended to use
   this argument. See a bit more detail at
   {ref}`variables_angle_tolerance`.
-* `hall_number` (see the definition of this number at
+- `hall_number` (see the definition of this number at
   {ref}`dataset_spg_get_dataset_spacegroup_type`): The argument to
   constrain the space-group-type search only for the Hall symbol
   corresponding to it. The mapping from Hall symbols to a
   space-group-type is the many-to-one mapping. Without specifying this
   option (i.e., in the case of `hall_number=0`), always the first one
   (the smallest serial number corresponding to the space-group-type in
-  [list of space groups (Seto's web site)](https://yseto.net/?page_id=29>))
+  [list of space groups (Seto's web site)](https://yseto.net/?page_id=29%3E))
   among possible choices and settings is chosen as default. This
   argument is useful when the other choice (or setting) is expected to
   be hooked. This affects to the obtained values of `international`,
@@ -319,38 +338,38 @@ The arguments are:
 `dataset` is a dictionary. Short explanations of the values of the
 keys are shown below. More details are found at {ref}`spglib_dataset`.
 
-* `number`: International space group number
-* `international`: International short symbol
-* `hall`: Hall symbol
-* `hall_number`: Hall number. This number is used in
+- `number`: International space group number
+- `international`: International short symbol
+- `hall`: Hall symbol
+- `hall_number`: Hall number. This number is used in
   {ref}`py_method_get_symmetry_from_database` and
   {ref}`py_method_get_spacegroup_type`.
-* `choice`: Centring, origin, basis vector setting
-* `transformation_matrix`: See the detail at
+- `choice`: Centring, origin, basis vector setting
+- `transformation_matrix`: See the detail at
   {ref}`dataset_origin_shift_and_transformation`.
-* `origin shift`: See the detail at
+- `origin shift`: See the detail at
   {ref}`dataset_origin_shift_and_transformation`.
-* `wyckoffs`: Wyckoff letters
-* `site_symmetry_symbols`: Site-symmetry symbols (**experimental**)
-* `equivalent_atoms`: Mapping table to equivalent atoms
-* `crystallographic_orbits` : Mapping table to equivalent atoms (see
+- `wyckoffs`: Wyckoff letters
+- `site_symmetry_symbols`: Site-symmetry symbols (**experimental**)
+- `equivalent_atoms`: Mapping table to equivalent atoms
+- `crystallographic_orbits` : Mapping table to equivalent atoms (see
   {ref}`this <dataset_spg_get_dataset_site_symmetry>` for the difference
   between `equivalent_atoms` and `crystallographic_orbits`)
-* `primitive_lattice` : Basis vectors of a primitive cell
-* `mapping_to_primitive`: Mapping table to atoms in the primitive cell
-* `rotations` and `translations`: Rotation matrices and
+- `primitive_lattice` : Basis vectors of a primitive cell
+- `mapping_to_primitive`: Mapping table to atoms in the primitive cell
+- `rotations` and `translations`: Rotation matrices and
   translation vectors. See {ref}`py_method_get_symmetry` for more
   details.
-* `pointgroup`: Symbol of the crystallographic point group in
+- `pointgroup`: Symbol of the crystallographic point group in
   the Hermann–Mauguin notation.
-* `std_lattice`, `std_positions`, `std_types`: Standardized
+- `std_lattice`, `std_positions`, `std_types`: Standardized
   crystal structure corresponding to a Hall symbol found. These are
   equivalently given in the array formats of `lattice`,
   `positions`, and `numbers` presented at
   {ref}`py_variables_crystal_structure`,
   respectively.
-* `std_rotation_matrix`: See the detail at {ref}`dataset_idealized_cell`.
-* `std_mapping_to_primitive`: Mapping table from atoms in the
+- `std_rotation_matrix`: See the detail at {ref}`dataset_idealized_cell`.
+- `std_mapping_to_primitive`: Mapping table from atoms in the
   standardized crystal structure to the atoms in the primitive cell.
 
 %    * `pointgrouop_number`: Serial number of the crystallographic point
@@ -399,7 +418,7 @@ lattice, scaled_positions, numbers = find_primitive(cell, symprec=1e-5, angle_to
 ```
 
 When a primitive cell is found, lattice parameters (a 3x3 numpy array),
-scaled positions (a numpy array of [number_of_atoms,3]), and atomic
+scaled positions (a numpy array of \[number_of_atoms,3\]), and atomic
 numbers (a 1D numpy array) is returned. When the search failed,
 `None` is returned.
 
@@ -416,7 +435,7 @@ lattice, scaled_positions, numbers = refine_cell(cell, symprec=1e-5, angle_toler
 
 Standardized crystal structure is obtained as a tuple of lattice (a
 3x3 numpy array), atomic scaled positions (a numpy array of
-[number_of_atoms,3]), and atomic numbers (a 1D numpy array) that are
+\[number_of_atoms,3\]), and atomic numbers (a 1D numpy array) that are
 symmetrized following space group type. When the search failed,
 `None` is returned. About the default choice of the setting, see the
 documentation of `hall_number` argument of
@@ -428,6 +447,7 @@ The detailed control of standardization of unit cell is achieved using
 ## Method (space-group dataset access)
 
 (py_method_get_symmetry_from_database)=
+
 ### `get_symmetry_from_database`
 
 ```python
@@ -443,6 +463,7 @@ found at {ref}`dataset_spg_get_dataset_spacegroup_type`.
 When something wrong happened, `None` is returned.
 
 (py_method_get_spacegroup_type)=
+
 ### `get_spacegroup_type`
 
 - **New at version 1.9.4**
@@ -484,6 +505,7 @@ Here `spacegroup_type['international_short']` is equivalent to
 When something wrong happened, `None` is returned.
 
 (py_method_get_spacegroup_type_from_symmetry)=
+
 ### `get_spacegroup_type_from_symmetry`
 
 **New at version 2.0**
@@ -505,6 +527,7 @@ is not given, the cubic basis vector whose lengths are one is used.
 ## Methods (magnetic symmetry)
 
 (py_get_magnetic_symmetry)=
+
 ### `get_magnetic_symmetry`
 
 **Experimental: new at version 2.0**
@@ -523,27 +546,29 @@ symmetry = get_magnetic_symmetry(
 ```
 
 Arguments
+
 - `cell`: See {ref}`py_variables_crystal_structure`
 - `symprec`, `angle_tolerance`: See {ref}`py_method_get_symmetry`
 - `mag_symprec`:
   Tolerance for magnetic symmetry search in the unit of `magmoms`.
   If not specified, use the same value as `symprec`.
 - `is_axial`
-   Set `is_axial=True` if `magmoms` does not change their sign by improper rotations.
-   If not specified, set `is_axial=False` when `magmoms.shape==(num_atoms, )`, and
-   set `is_axial=True` when `magmoms.shape==(num_atoms, 3)`. These default settings
-   correspond to collinear and non-collinear spins.
+  Set `is_axial=True` if `magmoms` does not change their sign by improper rotations.
+  If not specified, set `is_axial=False` when `magmoms.shape==(num_atoms, )`, and
+  set `is_axial=True` when `magmoms.shape==(num_atoms, 3)`. These default settings
+  correspond to collinear and non-collinear spins.
 - `with_time_reversal`
   Set `with_time_reversal=True` if `magmoms` change their sign by time-reversal
   operations.
 
 Returned `symmetry` is a dictionary with the following keys:
+
 - `rotations` : Rotation (matrix) parts of symmetry operations
 - `translations`: Translation (vector) parts of symmetry operations
 - `time_reversals`:
-   Time reversal part of magnetic symmetry operations.
-   `True` indicates time reversal operation, and `False` indicates
-   an ordinary operation.
+  Time reversal part of magnetic symmetry operations.
+  `True` indicates time reversal operation, and `False` indicates
+  an ordinary operation.
 - `equivalent_atoms`
 
 ### `get_magnetic_symmetry_dataset`
@@ -563,6 +588,7 @@ dataset = get_magnetic_symmetry_dataset(
 ```
 
 Arguments
+
 - `cell`: See {ref}`py_variables_crystal_structure`
 - `symprec`, `angle_tolerance`: See {ref}`py_method_get_symmetry`
 - `mag_symprec`: See {ref}`py_get_magnetic_symmetry`
@@ -582,6 +608,7 @@ magnetic_spacegroup_type = get_magnetic_spacegroup_type(uni_number):
 ```
 
 The returned `magnetic_spacegroup_type` is a dictionary with
+
 ```
 uni_number
 litvin_number
@@ -628,13 +655,10 @@ dot product being close to zero or not.  The detail is shown at
 
 When the search failed, `None` is returned.
 
-The transformation from original basis vectors {math}`( \mathbf{a}
-\; \mathbf{b} \; \mathbf{c} )` to final basis vectors {math}`(
-\mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )` is achieved by linear
+The transformation from original basis vectors {math}`( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )` to final basis vectors {math}`( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )` is achieved by linear
 combination of basis vectors with integer coefficients without
 rotating coordinates. Therefore the transformation matrix is obtained
-by {math}`\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
-( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}` and the matrix
+by {math}`\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} ) ( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}` and the matrix
 elements have to be almost integers.
 
 ### `delaunay_reduce`
@@ -658,13 +682,10 @@ to zero or not.
 
 When the search failed, `None` is returned.
 
-The transformation from original basis vectors {math}`( \mathbf{a}
-\; \mathbf{b} \; \mathbf{c} )` to final basis vectors {math}`(
-\mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )` is achieved by linear
+The transformation from original basis vectors {math}`( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )` to final basis vectors {math}`( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )` is achieved by linear
 combination of basis vectors with integer coefficients without
 rotating coordinates. Therefore the transformation matrix is obtained
-by {math}`\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
-( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}` and the matrix
+by {math}`\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} ) ( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}` and the matrix
 elements have to be almost integers.
 
 ## Methods (kpoints)
@@ -686,9 +707,11 @@ mesh points irrespective of the mesh numbers. When the value is not 0,
 `mapping` and `grid` are returned. `grid` gives the mesh points in
 fractional coordinates in reciprocal space. `mapping` gives mapping to
 the irreducible k-point indices that are obtained by
+
 ```python
 np.unique(mapping)
 ```
+
 Here `np` means the numpy module. The grid point is accessed by
 `grid[index]`.
 
@@ -738,6 +761,7 @@ print((grid[np.unique(mapping)] + [0.5, 0.5, 0.5]) / mesh)
 ```
 
 ## Method (deprecated)
+
 ### `get_hall_number_from_symmetry`
 
 **Deprecated at version 2.0. This function is replaced by
