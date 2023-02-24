@@ -12,7 +12,7 @@ spglib in a cmake project, using either native cmake options or pkg-config.
 To manually compile `example.f90`:
 
 ```console
-gfortran example.f90 ../../lib/libspglib_f08.a ../../lib/libsymspg.a -I../../include
+gfortran example.f90 -I[include directory] -L[library directory] -lsymspg
 ```
 
 Here it is assumed that spglib library was built by
