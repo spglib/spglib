@@ -56,6 +56,8 @@ int main(void) {
     dataset = spg_get_dataset(lattice, position, types, num_atom, symprec);
 
     // Obtain data in SpglibDataset.
+    // The space group number 186 corresponds to the wurtzite-type (P6_3mc).
+    // See https://www.cryst.ehu.es/cgi-bin/cryst/programs/nph-table
     assert(dataset->spacegroup_number == 186);
 
     // Deallocate SpglibDataset, otherwise induce memory leak.
