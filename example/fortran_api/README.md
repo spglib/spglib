@@ -14,7 +14,4 @@ To manually compile `example.f90`:
 ```console
 gfortran example.f90 -I[include directory] -L[library directory] -lsymspg
 ```
-where the `[include directory]` and `[library directory]` can be obtained by
-```
-PKG_CONFIG_PATH=/path/to/spglib_f08.pc pkg-config --cflags --libs spglib_f08
-```
+where `[include directory]` and `[library directory]` are taken from `pkg-config --cflags --libs spglib_f08`.
