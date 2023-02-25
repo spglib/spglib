@@ -1,6 +1,3 @@
-! How to make
-! % gfortran example_f08.f90 ../lib/libspglib_f08.a ../lib/libsymspg.a -I../include
-
 program spglib_example
     use, intrinsic :: iso_c_binding
     implicit none

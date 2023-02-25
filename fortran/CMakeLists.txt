@@ -1,5 +1,5 @@
 # Main fortran wrapper
-add_library(Spglib_fortran spglib_f08.f90)
+add_library(Spglib_fortran spglib_f08.F90)
 add_library(Spglib::fortran ALIAS Spglib_fortran)
 
 # Configure Fortran wrapper
@@ -8,9 +8,9 @@ set_target_properties(Spglib_fortran PROPERTIES
 		SOVERSION ${PROJECT_VERSION_MAJOR}
 		EXPORT_NAME fortran
 		OUTPUT_NAME spglib_f08
-		PUBLIC_HEADER spglib_f08.f90)
+		PUBLIC_HEADER spglib_f08.F90)
 set_target_properties(Spglib_fortran PROPERTIES
-		PUBLIC_HEADER spglib_f08.f90)
+		PUBLIC_HEADER spglib_f08.F90)
 target_include_directories(Spglib_fortran PUBLIC
 		"$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
 target_link_libraries(Spglib_fortran PUBLIC Spglib_symspg)

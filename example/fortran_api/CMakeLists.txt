@@ -13,7 +13,7 @@ if(NOT Spglib_FOUND)
 endif()
 
 
-add_executable(example_f example_f08.f90)
+add_executable(example_f example_f08.F90)
 if(Spglib_FOUND)
 	# Linking using native cmake
 	target_link_libraries(example_c PUBLIC
