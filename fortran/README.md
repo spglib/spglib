@@ -1,19 +1,31 @@
 # How to use Fortran interface
 
+## Design of Fortran interface
+
+Most of the functions are simply thin interfaces to corresponding C functions
+using the feature of iso_c_binding added at Fortran 2003. Therefore the memory
+order arrays are kept between Fortran and C. This means we have to be careful
+that the array dimensions are inverted in use.
+
+In C, since we don't know the length of symmetry operations to be returned, and
+the memory spaces are allocated dynamically, we have to free them explicitly by
+`spg_free_dataset`. However, when using the Fortran interface, it is unnecessary
+to deallocate `SpglibDataset` because it is properly treated inside the Fortran
+interface, i.e., data obtained through dynamically allocated arrays by C
+`malloc` are copied to Fortran `allocatable` arrays and the C arrays are freed
+inside the Fortran interface. Thus, the Fortran allocatable arrays are
+automatically deallocated when exiting the scope.
+
 ## Conceptual example
 
 A crystal structure is given to a spglib function or subroutine to obtain
 symmetry information. `spg_get_dataset` is the function that returns most
-fruitful space group information. This returns the result in the fortran-type of
-`SpglibDataset`. We don't know the length of symmetry operations to be returned,
-the memory spaces are allocated dynamically, which means we have to free them.
-by `spg_free_dataset`. To tolerate tiny distortion of crystal structure,
+fruitful space group information. This returns the result in the Fortran-type of
+`SpglibDataset`. To tolerate tiny distortion of crystal structure,
 it has to be specified when calling symmetry search function.
 No detailed documentation about crystal structure format and APIs for Fortran.
-Please refer documentation for C. The notable difference between
-those in C and Fortran are twofold: Dimensions of arrays are inverted to
-keep data order in memory unchanged, and it is unnecessary to deallocate
-`SpglibDataset`. The following pages show the details for C.
+Please read the section above about the design of the Fortran interface, and
+then refer documentation for C. The following pages show the details for C.
 
 - [Crystal structure format](https://spglib.github.io/spglib/variable.html)
 - [Functions](https://spglib.github.io/spglib/api.html)
