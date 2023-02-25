@@ -31,7 +31,6 @@ For more details on configuration options and how to link your project check
 the [cmake documentation](cmake/README.md). A minimal example project using
 spglib is available at [example](example/README.md).
 
-
 ## Conceptual example of the main C library
 
 A crystal structure is given to a spglib function to obtain symmetry
