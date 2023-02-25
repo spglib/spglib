@@ -14,11 +14,7 @@ To manually compile `example.f90`:
 ```console
 gfortran example.f90 -I[include directory] -L[library directory] -lsymspg
 ```
-
-Here it is assumed that spglib library was built by
-
-```console
-cmake -B build -DCMAKE_INSTALL_PREFIX=. -DSPGLIB_WITH_Fortran=on -DSPGLIB_SHARED_LIBS=off -DSPGLIB_WITH_TESTS=off .
-cmake --build build
-cmake --install build
+where the `[include directory]` and `[library directory]` can be obtained by
+```
+PKG_CONFIG_PATH=/path/to/spglib_f08.pc pkg-config --cflags --libs spglib_f08
 ```
