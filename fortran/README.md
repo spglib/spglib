@@ -1,4 +1,4 @@
-# How to use Fortran interface
+# Fortran interface
 
 ## Design of Fortran interface
 
