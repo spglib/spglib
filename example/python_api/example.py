@@ -1,22 +1,11 @@
 #!/usr/bin/env python
+"""Examples of python APIs."""
 
 import numpy as np
-
-#######################################################################
-# Using the local Atoms-like class (BSD license) where a small set of #
-# ASE Atoms features is compatible but enough for this example.       #
-#######################################################################
-from atoms import Atoms
-
 import spglib
 
-#######################################
-# Uncomment to use Atoms class in ASE #
-#######################################
-# from ase import Atoms
 
-
-def show_symmetry(symmetry):
+def _show_symmetry(symmetry):
     for i in range(symmetry["rotations"].shape[0]):
         print("  --------------- %4d ---------------" % (i + 1))
         rot = symmetry["rotations"][i]
@@ -28,7 +17,7 @@ def show_symmetry(symmetry):
         print("     (%8.5f %8.5f %8.5f)" % (trans[0], trans[1], trans[2]))
 
 
-def show_lattice(lattice):
+def _show_lattice(lattice):
     print("Basis vectors:")
     for vec, axis in zip(lattice, ("a", "b", "c")):
         print(
@@ -42,28 +31,12 @@ def show_lattice(lattice):
         )
 
 
-def show_cell(lattice, positions, numbers):
-    show_lattice(lattice)
+def _show_cell(lattice, positions, numbers):
+    _show_lattice(lattice)
     print("Atomic points:")
     for p, s in zip(positions, numbers):
         print("%2d %10.5f %10.5f %10.5f" % ((s,) + tuple(p)))
 
-
-silicon_ase = Atoms(
-    symbols=["Si"] * 8,
-    cell=[(4, 0, 0), (0, 4, 0), (0, 0, 4)],
-    scaled_positions=[
-        (0, 0, 0),
-        (0, 0.5, 0.5),
-        (0.5, 0, 0.5),
-        (0.5, 0.5, 0),
-        (0.25, 0.25, 0.25),
-        (0.25, 0.75, 0.75),
-        (0.75, 0.25, 0.75),
-        (0.75, 0.75, 0.25),
-    ],
-    pbc=True,
-)
 
 silicon = (
     [(4, 0, 0), (0, 4, 0), (0, 0, 4)],
@@ -146,18 +119,12 @@ b = [-3.66666667, 3.68178701, 0.0]
 c = [-0.66666667, -1.3429469, 1.32364995]
 niggli_lattice = np.array([a, b, c])
 
-# For VASP case
-# import vasp
-# bulk = vasp.read_vasp(sys.argv[1])
 
 print("[get_spacegroup]")
 print("  Spacegroup of Silicon is %s." % spglib.get_spacegroup(silicon))
 print("")
 print("[get_spacegroup]")
-print(
-    "  Spacegroup of Silicon (ASE Atoms-like format) is %s."
-    % spglib.get_spacegroup(silicon_ase)
-)
+print("  Spacegroup of Silicon is %s." % spglib.get_spacegroup(silicon))
 print("")
 print("[get_spacegroup]")
 print("  Spacegroup of Rutile is %s." % spglib.get_spacegroup(rutile))
@@ -169,13 +136,13 @@ print("[get_symmetry]")
 print("  Symmetry operations of Rutile unitcell are:")
 print("")
 symmetry = spglib.get_symmetry(rutile)
-show_symmetry(symmetry)
+_show_symmetry(symmetry)
 print("")
 print("[get_symmetry]")
 print("  Symmetry operations of MgB2 are:")
 print("")
 symmetry = spglib.get_symmetry(MgB2)
-show_symmetry(symmetry)
+_show_symmetry(symmetry)
 print("")
 print("[get_pointgroup]")
 print("  Pointgroup of Rutile is %s." % spglib.get_pointgroup(symmetry["rotations"])[0])
@@ -216,13 +183,13 @@ print("")
 print("[refine_cell]")
 print(" Refine distorted rutile structure")
 lattice, positions, numbers = spglib.refine_cell(rutile_dist, symprec=1e-1)
-show_cell(lattice, positions, numbers)
+_show_cell(lattice, positions, numbers)
 print("")
 
 print("[find_primitive]")
 print(" Fine primitive distorted silicon structure")
 lattice, positions, numbers = spglib.find_primitive(silicon_dist, symprec=1e-1)
-show_cell(lattice, positions, numbers)
+_show_cell(lattice, positions, numbers)
 print("")
 
 print("[standardize_cell]")
@@ -231,7 +198,7 @@ print(" (to_primitive=0 and no_idealize=0)")
 lattice, positions, numbers = spglib.standardize_cell(
     rutile_dist, to_primitive=0, no_idealize=0, symprec=1e-1
 )
-show_cell(lattice, positions, numbers)
+_show_cell(lattice, positions, numbers)
 print("")
 
 print("[standardize_cell]")
@@ -240,7 +207,7 @@ print(" (to_primitive=0 and no_idealize=1)")
 lattice, positions, numbers = spglib.standardize_cell(
     rutile_dist, to_primitive=0, no_idealize=1, symprec=1e-1
 )
-show_cell(lattice, positions, numbers)
+_show_cell(lattice, positions, numbers)
 print("")
 
 print("[standardize_cell]")
@@ -249,7 +216,7 @@ print(" (to_primitive=1 and no_idealize=0)")
 lattice, positions, numbers = spglib.standardize_cell(
     silicon_dist, to_primitive=1, no_idealize=0, symprec=1e-1
 )
-show_cell(lattice, positions, numbers)
+_show_cell(lattice, positions, numbers)
 print("")
 
 print("[standardize_cell]")
@@ -258,29 +225,29 @@ print(" (to_primitive=1 and no_idealize=1)")
 lattice, positions, numbers = spglib.standardize_cell(
     silicon_dist, to_primitive=1, no_idealize=1, symprec=1e-1
 )
-show_cell(lattice, positions, numbers)
+_show_cell(lattice, positions, numbers)
 print("")
 
 symmetry = spglib.get_symmetry(silicon)
 print("[get_symmetry]")
 print("  Number of symmetry operations of silicon conventional")
 print("  unit cell is %d (192)." % len(symmetry["rotations"]))
-show_symmetry(symmetry)
+_show_symmetry(symmetry)
 print("")
 
 symmetry = spglib.get_symmetry_from_database(525)
 print("[get_symmetry_from_database]")
 print("  Number of symmetry operations of silicon conventional")
 print("  unit cell is %d (192)." % len(symmetry["rotations"]))
-show_symmetry(symmetry)
+_show_symmetry(symmetry)
 print("")
 
 reduced_lattice = spglib.niggli_reduce(niggli_lattice)
 print("[niggli_reduce]")
 print("  Original lattice")
-show_lattice(niggli_lattice)
+_show_lattice(niggli_lattice)
 print("  Reduced lattice")
-show_lattice(reduced_lattice)
+_show_lattice(reduced_lattice)
 print("")
 
 
