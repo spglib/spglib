@@ -9,29 +9,17 @@ C library for finding and handling crystal symmetries
 <!-- TOC -->
 
 - [Spglib](#spglib)
-  - [How to compile the main C library](#how-to-compile-the-main-c-library)
-  - [How install the python library](#how-install-the-python-library)
+  - [What does Spglib do?](#what-does-spglib-do)
+  - [How to use Spglib](#how-to-use-spglib)
+    - [How install the python library](#how-install-the-python-library)
+    - [How to manually compile](#how-to-manually-compile)
   - [How to run test](#how-to-run-test)
   - [Contributing](#contributing)
   - [Documentation](#documentation)
 
 <!-- TOC -->
 
-## How to compile the main C library
-
-The minimum configuration, build and install instructions are as follows:
-
-```console
-$ cmake . -B ./build
-$ cmake --build ./build
-$ cmake --install ./build
-```
-
-For more details on configuration options and how to link your project check
-the [cmake documentation](cmake/README.md). A minimal example project using
-spglib is available at [example](example/README.md).
-
-## Conceptual example of the main C library
+## What does Spglib do?
 
 A crystal structure is given to a spglib function to obtain symmetry
 information. `spg_get_dataset` is the function that returns most fruitful
@@ -78,12 +66,29 @@ int main(void) {
 }
 ```
 
-## How install the python library
+## How to use Spglib
+
+We currently only officially support conda and pip packaging of spglib, with plans
+to expand to FedoraProject in the near future. We are looking for additional
+contributors to package on other linux distributions. For the systems that are not
+yet officially supported please look at the instructions for [manual compilation](#how-to-manually-compile)
+
+The main interface for spglib is the C api, but we also officially support Fortran
+and Python interfaces. For a minimal example of how to use this library please
+check the provided [examples](example/README.md)
+
+### How install the python library
 
 Spglib is available on PyPi, so it can be installed as:
 
 ```console
 $ pip install spglib
+```
+
+Alternatively you can install the conda package that bundles the C and Fortran libraries
+
+```console
+$ conda install -c conda-forge spglib
 ```
 
 This python library will default to the system installed Spglib library detected,
@@ -92,6 +97,20 @@ defaulting to a bundled version.
 
 For more details and how to build the python project from source, see the
 [python documentation](python/README.rst).
+
+### How to manually compile
+
+The minimum configuration, build and install instructions are as follows:
+
+```console
+$ cmake . -B ./build
+$ cmake --build ./build
+$ cmake --install ./build
+```
+
+For more details on configuration options and how to link your project check
+the [cmake documentation](cmake/README.md). A minimal example project using
+spglib is available at [example](example/README.md).
 
 ## How to run test
 

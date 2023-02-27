@@ -16,14 +16,10 @@ endif()
 add_executable(example_f example_f08.F90)
 if(Spglib_FOUND)
 	# Linking using native cmake
-	target_link_libraries(example_c PUBLIC
-			Spglib::symspg)
 	target_link_libraries(example_f PUBLIC
 			Spglib::fortran)
 else()
 	# Linking using pkg-config
-	target_link_libraries(example_c PUBLIC
-			PkgConfig::symspg)
 	target_link_libraries(example_f PUBLIC
 			PkgConfig::spglib_f08)
 endif()

@@ -16,3 +16,11 @@ gfortran example.F90 -I[include directory] -L[library directory] -lsymspg
 ```
 
 where `[include directory]` and `[library directory]` are taken from `pkg-config --cflags --libs spglib_f08`.
+
+## Running the example
+
+```console
+$ cmake -B ./build
+$ cmake --build ./build
+$ ./build/example_f
+```

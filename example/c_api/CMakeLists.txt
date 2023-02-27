@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.6)
 project(example_spglib LANGUAGES C)
 
 # Alternatively use pkg-config
+find_package(Spglib)
 if(NOT Spglib_FOUND)
 	find_package(PkgConfig)
 	pkg_check_modules(symspg REQUIRED IMPORTED_TARGET

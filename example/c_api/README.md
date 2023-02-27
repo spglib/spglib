@@ -17,3 +17,11 @@ gcc example.c -I[include directory] -L[library directory] -lsymspg -lm
 
 where the `[include directory]` and `[library directory]` can be obtained
 via `pkg-config --cflags --libs spglib`.
+
+## Running the example
+
+```console
+$ cmake -B ./build
+$ cmake --build ./build
+$ ./build/example_c
+```
