@@ -111,6 +111,7 @@ myst_enable_extensions = [
     "tasklist",
 ]
 myst_dmath_double_inline = True
+myst_heading_anchors = 3
 
 # -- Options for HTML output ---------------------------------------------------
 
