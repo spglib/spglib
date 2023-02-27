@@ -193,6 +193,7 @@ idealization $( \bar{\mathbf{a}}_\mathrm{s} \;
 \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )$ in
 Cartesian coordinates of the given input unit cell. The rotation
 matrix $\boldsymbol{R}$ is defined by
+
 $$
 
 ( \bar{\mathbf{a}}_\mathrm{s} \;
@@ -200,7 +201,8 @@ $$
 = ( \boldsymbol{R} \mathbf{a}_\mathrm{s} \;
 \boldsymbol{R} \mathbf{b}_\mathrm{s} \; \boldsymbol{R}
 \mathbf{c}_\mathrm{s} ).
-$$ (rotation-in-standardization)
+
+$$ (rotation_in_standardization)
 
 More precisely, this rotation matrix is an orthonormal matrix. Since $(
 \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )$ can
