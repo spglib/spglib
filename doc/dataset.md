@@ -2,7 +2,7 @@
 # Spglib dataset
 
 **At version 1.9.4, SpglibDataset was modified.** The member
-name ``setting`` is changed to ``choice`` and ``pointgroup_number`` is
+name `setting` is changed to `choice` and `pointgroup_number` is
 removed.
 
 The dataset is accessible through the C-structure given by
@@ -39,63 +39,63 @@ typedef struct {
 (dataset_spg_get_dataset_spacegroup_type)=
 ## Space group type
 
-### ``spacegroup_number``
+### `spacegroup_number`
 
 The space group type number defined in International Tables for
 Crystallography (ITA).
 
 (spglib_dataset_hall_number)=
-### ``hall_number``
+### `hall_number`
 
 The serial number from 1 to 530 which are found at [list of space
 groups (Seto's web site)](https://yseto.net/?page_id=29>). Be
 sure that this is not a standard crystallographic definition as far as
 the author of spglib knows.
 
-### ``international_symbol``
+### `international_symbol`
 
 The (full) Hermann–Mauguin notation of space group type is given by .
 
-### ``hall_symbol``
+### `hall_symbol`
 
 The Hall symbol is stored here.
 
-### ``choice``
+### `choice`
 
 The information on unique axis, setting or cell choices.
 
 ## Symmetry operations
 
-### ``rotations``, ``translations``, and ``n_operations``
+### `rotations`, `translations`, and `n_operations`
 
 The symmetry operations of the input unit cell are stored in
-``rotations`` and ``translations``. A crystallographic symmetry
+`rotations` and `translations`. A crystallographic symmetry
 operation $(\boldsymbol{W}, \boldsymbol{w})$ is made from a pair
 of rotation $\boldsymbol{W}$ and translation
 $\boldsymbol{w}$ parts with the same index. Number of symmetry
-operations is given as ``n_operations``. The detailed explanation of
+operations is given as `n_operations`. The detailed explanation of
 the values is found at {ref}`api_spg_get_symmetry`.
 
 (dataset_spg_get_dataset_site_symmetry)=
 ## Wyckoff positions and symmetrically equivalent atoms
 
-### ``n_atoms``
+### `n_atoms`
 
 Number of atoms in the input unit cell. This gives the numbers of
-elements in ``wyckoffs`` and ``equivalent_atoms``.
+elements in `wyckoffs` and `equivalent_atoms`.
 
-### ``wyckoffs``
+### `wyckoffs`
 
 This gives the information of Wyckoff letters by integer
 numbers, where 0, 1, 2, $\ldots$, represent the Wyckoff letters
 of a, b, c, $\ldots$. These are assigned to all atomic positions
 of the input unit cell in this order. Therefore the number of elements in
-``wyckoffs`` is same as the number of atoms in the input unit cell,
-which is given by ``n_atoms``.
+`wyckoffs` is same as the number of atoms in the input unit cell,
+which is given by `n_atoms`.
 
 This is determined from the symmetry of the primitive cell.
 
-### ``site_symmetry_symbols``
+### `site_symmetry_symbols`
 
 This gives site-symmetry symbols. These are valid for the standard
 settings. For different settings and choices belonging to the same
@@ -104,36 +104,36 @@ space group type, the same set of the symbols is returned.
 This is determined from the symmetry of the primitive cell.
 
 (spglib_dataset_equivalent_atoms)=
-### ``equivalent_atoms``
+### `equivalent_atoms`
 
 This gives the mapping table from the atomic indices of the input unit
 cell to the atomic indices of symmetrically independent atom, such as
-``[0, 0, 0, 0, 4, 4, 4, 4]``, where the symmetrically independent
+`[0, 0, 0, 0, 4, 4, 4, 4]`, where the symmetrically independent
 atomic indices are 0 and
 4. We can see that the atoms from 0 to 3 are mapped to 0 and those
 from 4 to 7 are mapped to 4.  The number of elements in
-``equivalent_atoms`` is same as the number of atoms in the input unit
-cell, which is given by ``n_atoms``.
+`equivalent_atoms` is same as the number of atoms in the input unit
+cell, which is given by `n_atoms`.
 
 Symmetry operations found for the input cell are used to determine the
-equivalent atoms. ``equivalent_atoms`` and ``crystallographic_orbits``
+equivalent atoms. `equivalent_atoms` and `crystallographic_orbits`
 are almost equivalent, but they can be different in a special
 case as written in {ref}`api_spg_get_symmetry`.
 
-### ``crystallographic_orbits``
+### `crystallographic_orbits`
 
 **New at version 1.15**
 
-This is almost equivalent to ``equivalent_atoms``. But symmetry of the
+This is almost equivalent to `equivalent_atoms`. But symmetry of the
 primitive cell is used to determine the symmetrically equivalent atoms.
 
 (dataset_origin_shift_and_transformation)=
 ## Transformation matrix and origin shift
 
-### ``transformation_matrix`` and ``origin_shift``
+### `transformation_matrix` and `origin_shift`
 
-``transformation_matrix`` ($\boldsymbol{P}$) and
-``origin_shift`` ($\boldsymbol{p}$) are obtained as a result of
+`transformation_matrix` ($\boldsymbol{P}$) and
+`origin_shift` ($\boldsymbol{p}$) are obtained as a result of
 space-group-type matching under a set of unique axis, setting and cell
 choices. These are operated to the basis vectors and atomic point
 coordinates of the input unit cell as
@@ -153,8 +153,8 @@ detailed definition is presented at
 {ref}`definitions_and_conventions`.
 
 At **versions 1.7.x and 1.8 or before**, the set of
-``transformation_matrix`` ($\boldsymbol{P}_\text{old}$) and
-``origin_shift`` ($\boldsymbol{p}_\text{old}$) was differently defined from
+`transformation_matrix` ($\boldsymbol{P}_\text{old}$) and
+`origin_shift` ($\boldsymbol{p}_\text{old}$) was differently defined from
 the current definition as follows:
 
 $$
@@ -168,21 +168,21 @@ $$
 (dataset_idealized_cell)=
 ## Standardized crystal structure after idealization
 
-### ``n_std_atoms``, ``std_lattice``, ``std_types``, and ``std_positions``
+### `n_std_atoms`, `std_lattice`, `std_types`, and `std_positions`
 
 The standardized crystal structure after {ref}`idealization
 <def_idealize_cell>` corresponding to a Hall symbol is stored in
-``n_std_atoms``, ``std_lattice``, ``std_types``, and
-``std_positions``. These output usually contains the rotation in Cartesian
+`n_std_atoms`, `std_lattice`, `std_types`, and
+`std_positions`. These output usually contains the rotation in Cartesian
 coordinates and rearrangement of the order atoms with respect to the
 input unit cell.
 
 **At versions 1.7.x and 1.8 or before**, the variable names of the
-members corresponding to those above are ``n_brv_atoms``,
-``brv_lattice``, ``brv_types``, and ``brv_positions``, respectively.
+members corresponding to those above are `n_brv_atoms`,
+`brv_lattice`, `brv_types`, and `brv_positions`, respectively.
 
 (dataset_std_rotation_matrix)=
-### ``std_rotation_matrix``
+### `std_rotation_matrix`
 
 **New in version 1.11**
 
@@ -218,7 +218,7 @@ $\mathrm{L}$s as $3\times 3$ matrices, $\boldsymbol{R}$ is
 obtained by solving $\bar{\mathrm{L}}_\mathrm{s} = \boldsymbol{R}
 \mathrm{L}_\mathrm{s}$.
 
-### ``std_mapping_to_primitive``
+### `std_mapping_to_primitive`
 
 This is available **at versions 1.10 or later**. This gives a list of
 atomic indices in the primitive cell of the standardized crystal
@@ -229,15 +229,15 @@ is obtained.
 
 ## Crystallographic point group
 
-### ``pointgroup_symbol``
+### `pointgroup_symbol`
 
 **New in version 1.8.1**
 
-% ``pointgroup_number`` is the serial number of the crystallographic
+% `pointgroup_number` is the serial number of the crystallographic
 %    point group, which refers [list of space
 %    groups (Seto's web site)](http://pmsl.planet.sci.kobe-u.ac.jp/~seto/?page_id=37&lang=en).
 
-``pointgroup_symbol`` is the symbol of the crystallographic point
+`pointgroup_symbol` is the symbol of the crystallographic point
 group in the Hermann–Mauguin notation. There are 32 crystallographic
 point groups
 ```
@@ -249,20 +249,20 @@ point groups
 ## Intermediate data in symmetry search
 
 A primitive cell is searched from the translational symmetry. This
-primitive cell is given by ``primitive_lattice`` and
-``mapping_to_primitive`` below.
+primitive cell is given by `primitive_lattice` and
+`mapping_to_primitive` below.
 
 (spglib_dataset_primitive_lattice)=
-### ``primitive_lattice``
+### `primitive_lattice`
 
 **New at version 1.15**
 
 Non-standardized basis vectors of a primitive cell in the input
 cell.
 
-### ``mapping_to_primitive``
+### `mapping_to_primitive`
 
-In version 1.10 or later, ``mapping_to_primitive`` is available. This
+In version 1.10 or later, `mapping_to_primitive` is available. This
 gives a list of atomic indices in the primitive cell of the input
 crystal structure, where the same number presents the same atom in the
 primitive cell. By collective the atoms having the same number, a set
