@@ -33,10 +33,25 @@ standard changes.
 
 ## Releasing a new Spglib version
 
-1. Update \<doc/releases.md>
-2. Increment version at \<CMakeLists.txt>
-3. Push the commit to `rc` branch (Github actions publishes the package to TestPyPI automatically)
-4. Push the commit to `master` branch (Github actions publishes the package to PyPI automatically)
+1. Update [`doc/release.md`](doc/releases.md)
+2. Increment version in [`CMakeLists.txt`](CMakeLists.txt) and [`pyproject.toml`](pyproject.toml)
+3. Push a corresponding tag, or notify the contributors of the request
+   - For official release, push a tag with the appropriate version written in `CMakeLists.txt`, e.g. `v2.1.0`.
+     - This will update the release package on PyPI.
+   - For pre-releases, include a `-rcX` suffix to the tag, e.g. `v2.1.0-rc1`.
+     - Keep the `pyproject.toml` version synchronized with the tag to be correctly reflected on PyPI and Conda, but
+       do
+       not update the `CMakeLists.txt` file.
+     - This will update the package on TestPyPI automatically
+   - For testing, you can push a tag with suffix `-test` to your personal fork, or create a PR to `test-PyPi-action`
+     branch
+     - This will perform the wheel building tests that we use for release. Note that these builds are very
+       time-consuming, so we encourage you to use the tag approach to trigger these tests.
+     - Link in the PR the most recent Github Action run
+     - If you are using the PR approach to `test-PyPi-action` approach, make sure to change the target branch at the
+       end
+     - This will not attempt to upload to PyPI, but the artifacts will still be generated.
+4. Notify the packaging contributors
 
 Note that scikit-build-core does not yet support dynamic variables for the
 updating `pyproject.toml` (follow progress at the upstream issues
