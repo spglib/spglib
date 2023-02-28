@@ -1,12 +1,11 @@
-name: Spglib PyPI Wheel builds for linux
+name: pypi-wheel
+run-name: Spglib PyPI Wheel builds for linux
 
 on:
   push:
-    branches:
-      - rc
-      - master
+    tags: [ "v[0-9]+.[0-9]+.[0-9]+*" ]
   pull_request:
-    branches: [rc]
+    branches: [ test-PyPi-action ]
 
 jobs:
   build_wheels:
@@ -14,23 +13,20 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-20.04, windows-2019, macOS-11]
+        os: [ ubuntu-20.04, windows-2019, macOS-11 ]
 
     steps:
       - uses: actions/checkout@v3
-
       - name: Set up QEMU
         if: runner.os == 'Linux'
         uses: docker/setup-qemu-action@v2
         with:
           platforms: all
-
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.11.4
         env:
           CIBW_ARCHS_LINUX: auto aarch64
           CIBW_ARCHS_MACOS: x86_64 arm64
-
       - uses: actions/upload-artifact@v3
         with:
           path: ./wheelhouse/*.whl
@@ -51,24 +47,23 @@ jobs:
           path: dist/*.tar.gz
 
   upload_pypi:
-    needs: [build_wheels, build_sdist]
+    name: Upload to pypi repository
+    needs: [ build_wheels, build_sdist ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v3
         with:
           name: artifact
           path: dist
-
       - name: Publish package to TestPyPI
-        if: startsWith(github.ref, 'refs/heads/rc')
+        if: ${{ !contains(github.ref, 'test') && contains(github.ref, 'rc') && github.event_name != 'pull_request' }}
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           user: __token__
           password: ${{ secrets.TEST_PYPI_API_TOKEN }}
           repository_url: https://test.pypi.org/legacy/
-
       - name: Publish package to PyPI
-        if: startsWith(github.ref, 'refs/heads/master')
+        if: ${{ !contains(github.ref, 'test') && !contains(github.ref, 'rc') && github.event_name != 'pull_request' }}
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           user: __token__
