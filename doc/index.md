@@ -1,9 +1,10 @@
 # Spglib
 
 ```{toctree}
-   :maxdepth: 1
-   :hidden:
-
+---
+maxdepth: 1
+hidden:
+---
    How to install spglib C-API <install>
    C-APIs <api>
    Spglib dataset <dataset>
@@ -23,7 +24,7 @@ written in C. There are the {ref}`python <python_spglib>`,
 
 The detailed algorithm of spglib is described the following text:
 
-* "$\texttt{Spglib}$: a software library for crystal symmetry search",
+- "$\texttt{Spglib}$: a software library for crystal symmetry search",
   Atsushi Togo and Isao Tanaka,
   <https://arxiv.org/abs/1808.01590> (written at version 1.10.4)
 

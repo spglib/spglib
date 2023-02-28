@@ -7,9 +7,7 @@
 **New in version 1.8.3**
 
 Version number of spglib is obtained. These three functions return
-integers that correspond to spglib version [major].[minor].[micro].
-
-
+integers that correspond to spglib version \[major\].\[minor\].\[micro\].
 
 ## Error
 
@@ -48,6 +46,7 @@ typedef enum {
 ```
 
 The usage is as follows
+
 ```c
 SpglibError error;
 error = spg_get_error_code();
@@ -57,6 +56,7 @@ printf("%s\n", spg_get_error_message(error));
 ## Space-group symmetry search
 
 (api_spg_get_symmetry)=
+
 ### `spg_get_symmetry`
 
 This function finds a set of representative symmetry operations for
@@ -91,6 +91,7 @@ practically useful treatment for research in computational materials
 science.
 
 (api_spg_get_dataset)=
+
 ### `spg_get_dataset` and `spg_get_dataset_with_hall_number`
 
 **Changed in version 1.8.1**
@@ -154,7 +155,6 @@ freed by calling `spg_free_dataset`.
 void spg_free_dataset(SpglibDataset *dataset);
 ```
 
-
 ### `spg_get_multiplicity`
 
 This function returns exact number of symmetry operations. 0 is
@@ -201,8 +201,6 @@ int spg_get_schoenflies(char symbol[7],
                         const int num_atom,
                         const double symprec);
 ```
-
-
 
 ## Standardization and finding primitive cell
 
@@ -302,7 +300,6 @@ space) of these variables, the array size (memory space) for
 `position` and `types` should be prepared **four times more** than
 those required for the input unit cell in general.
 
-
 ## Space-group dataset access
 
 ### `spg_get_symmetry_from_database`
@@ -324,6 +321,7 @@ The returned value is the number of space group operations. The space
 group operations are stored in `rotations` and `translations`.
 
 (api_spg_spacegroup_type)=
+
 ### `spg_get_spacegroup_type`
 
 **Changed at version 1.9.4: Some members are added and the member name 'setting' is changed to 'choice'.**
@@ -341,6 +339,7 @@ SpglibSpacegroupType spg_get_spacegroup_type(const int hall_number)
 ```
 
 `SpglibSpacegroupType` structure is as follows:
+
 ```c
 typedef struct {
     int number;
@@ -359,6 +358,7 @@ typedef struct {
 ```
 
 (api_spg_get_spacegroup_type_from_symmetry)=
+
 ### `spg_get_spacegroup_type_from_symmetry`
 
 **New at version 2.0**
@@ -381,6 +381,7 @@ SpglibSpacegroupType spg_get_spacegroup_type_from_symmetry(
 The `SpglibSpacegroupType` structure is explained at {ref}`api_spg_spacegroup_type`.
 The parameter `lattice` is used as the distance measure for `symprec`. If it
 is unknown, the following may be a reasonable choice.
+
 ```
 lattice[3][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
 ```
@@ -437,10 +438,11 @@ int spg_get_symmetry_with_site_tensors(
 **Experimental: new at version 2.0**
 
 Return magnetic symmetry operations and standardized structure of given structure with site tensors.
+
 - To search magnetic symmetry operations of a structure with collinear spins, set `tensor_rank=0`,
-`is_axial=0`, and `tensors` with length `num_atom`
+  `is_axial=0`, and `tensors` with length `num_atom`
 - To search magnetic symmetry operations of a structure with non-collinear spins, set `tensor_rank=1`,
-`is_axial=1`, and `tensors` with length `num_atom * 3` in cartesian coordinates.
+  `is_axial=1`, and `tensors` with length `num_atom * 3` in cartesian coordinates.
 
 The description of returned dataset is given at {ref}`magnetic_spglib_dataset`.
 
@@ -481,6 +483,7 @@ void spg_free_magnetic_dataset(SpglibMagneticDataset *dataset);
 ```
 
 (api_get_magnetic_spacegroup_type)=
+
 ### `spg_get_magnetic_spacegroup_type`
 
 **Experimental: new at version 2.0**
@@ -494,6 +497,7 @@ SpglibMagneticSpacegroupType spg_get_magnetic_spacegroup_type(
 ```
 
 Returned `SpglibMagneticSpacegroupType` is the following C-structure:
+
 ```c
 typedef struct {
     int uni_number;
@@ -530,6 +534,7 @@ SpglibMagneticSpacegroupType spg_get_magnetic_spacegroup_type_from_symmetry(
 See {ref}`api_get_magnetic_spacegroup_type` for returned `SpglibMagneticSpacegroupType`.
 
 ## Lattice reduction
+
 ### `spg_niggli_reduce`
 
 Niggli reduction is applied to input basis vectors `lattice` and the
@@ -568,7 +573,6 @@ by $\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
 ( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}$ and the matrix
 elements have to be almost integers.
 
-
 ## Kpoints
 
 ### `spg_get_ir_reciprocal_mesh`
@@ -603,6 +607,7 @@ reversal symmetry is imposed by setting `is_time_reversal` 1.
 
 Grid points are stored in the order that runs left most element
 first, e.g. (4x4x4 mesh).
+
 ```
 [[ 0  0  0]
  [ 1  0  0]
@@ -617,13 +622,11 @@ first, e.g. (4x4x4 mesh).
 
 where the first index runs first.  k-qpoints are calculated by
 `(grid_address + is_shift / 2) / mesh`. A grid point index is
-recovered from `grid_address` by `numpy.dot(grid_address % mesh,
-[1, mesh[0], mesh[0] * mesh[1]])` in Python-numpy notation, where
+recovered from `grid_address` by `numpy.dot(grid_address % mesh, [1, mesh[0], mesh[0] * mesh[1]])` in Python-numpy notation, where
 `%` always returns non-negative integers. The order of
 `grid_address` can be changed so that the last index runs first by
 setting the macro `GRID_ORDER_XYZ` in `kpoint.c`. In this case the
-grid point index is recovered by `numpy.dot(grid_address % mesh,
-[mesh[2] * mesh[1], mesh[2], 1])`.
+grid point index is recovered by `numpy.dot(grid_address % mesh, [mesh[2] * mesh[1], mesh[2], 1])`.
 
 ### `spg_get_stabilized_reciprocal_mesh`
 
@@ -654,8 +657,8 @@ This function can be used to obtain all mesh grid points by setting
 `num_rot = 1`, `rotations = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}}`,
 `num_q = 1`, and `qpoints = {0, 0, 0}`.
 
-
 ## Deprecated
+
 ### `spg_get_hall_number_from_symmetry`
 
 **Deprecated at version 2.0. This function is replaced by

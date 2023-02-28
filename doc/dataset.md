@@ -1,4 +1,5 @@
 (spglib_dataset)=
+
 # Spglib dataset
 
 **At version 1.9.4, SpglibDataset was modified.** The member
@@ -37,6 +38,7 @@ typedef struct {
 ```
 
 (dataset_spg_get_dataset_spacegroup_type)=
+
 ## Space group type
 
 ### `spacegroup_number`
@@ -45,10 +47,11 @@ The space group type number defined in International Tables for
 Crystallography (ITA).
 
 (spglib_dataset_hall_number)=
+
 ### `hall_number`
 
 The serial number from 1 to 530 which are found at [list of space
-groups (Seto's web site)](https://yseto.net/?page_id=29>). Be
+groups (Seto's web site)](https://yseto.net/?page_id=29%3E). Be
 sure that this is not a standard crystallographic definition as far as
 the author of spglib knows.
 
@@ -77,6 +80,7 @@ operations is given as `n_operations`. The detailed explanation of
 the values is found at {ref}`api_spg_get_symmetry`.
 
 (dataset_spg_get_dataset_site_symmetry)=
+
 ## Wyckoff positions and symmetrically equivalent atoms
 
 ### `n_atoms`
@@ -104,13 +108,14 @@ space group type, the same set of the symbols is returned.
 This is determined from the symmetry of the primitive cell.
 
 (spglib_dataset_equivalent_atoms)=
+
 ### `equivalent_atoms`
 
 This gives the mapping table from the atomic indices of the input unit
 cell to the atomic indices of symmetrically independent atom, such as
 `[0, 0, 0, 0, 4, 4, 4, 4]`, where the symmetrically independent
 atomic indices are 0 and
-4. We can see that the atoms from 0 to 3 are mapped to 0 and those
+4\. We can see that the atoms from 0 to 3 are mapped to 0 and those
 from 4 to 7 are mapped to 4.  The number of elements in
 `equivalent_atoms` is same as the number of atoms in the input unit
 cell, which is given by `n_atoms`.
@@ -128,6 +133,7 @@ This is almost equivalent to `equivalent_atoms`. But symmetry of the
 primitive cell is used to determine the symmetrically equivalent atoms.
 
 (dataset_origin_shift_and_transformation)=
+
 ## Transformation matrix and origin shift
 
 ### `transformation_matrix` and `origin_shift`
@@ -166,12 +172,12 @@ $$
 $$
 
 (dataset_idealized_cell)=
+
 ## Standardized crystal structure after idealization
 
 ### `n_std_atoms`, `std_lattice`, `std_types`, and `std_positions`
 
-The standardized crystal structure after {ref}`idealization
-<def_idealize_cell>` corresponding to a Hall symbol is stored in
+The standardized crystal structure after {ref}`idealization <def_idealize_cell>` corresponding to a Hall symbol is stored in
 `n_std_atoms`, `std_lattice`, `std_types`, and
 `std_positions`. These output usually contains the rotation in Cartesian
 coordinates and rearrangement of the order atoms with respect to the
@@ -182,6 +188,7 @@ members corresponding to those above are `n_brv_atoms`,
 `brv_lattice`, `brv_types`, and `brv_positions`, respectively.
 
 (dataset_std_rotation_matrix)=
+
 ### `std_rotation_matrix`
 
 **New in version 1.11**
@@ -240,6 +247,7 @@ is obtained.
 `pointgroup_symbol` is the symbol of the crystallographic point
 group in the Hermann–Mauguin notation. There are 32 crystallographic
 point groups
+
 ```
    1, -1, 2, m, 2/m, 222, mm2, mmm, 4, -4, 4/m, 422, 4mm, -42m, 4/mmm,
    3, -3, 32, 3m, -3m, 6, -6, 6/m, 622, 6mm, -6m2, 6/mmm, 23, m-3,
@@ -253,6 +261,7 @@ primitive cell is given by `primitive_lattice` and
 `mapping_to_primitive` below.
 
 (spglib_dataset_primitive_lattice)=
+
 ### `primitive_lattice`
 
 **New at version 1.15**

@@ -176,6 +176,7 @@ magmoms = [m_1, m_2, m_3, ...]  # Works with get_magnetic_symmetry for a colline
 ```
 
 For example, the crystal structure (`cell`) of L1$_{2}$-type AlNi$_{3}$ is:
+
 ```python
 lattice = [[1.0, 0.0, 0.0],
             [0.0, 1.0, 0.0],

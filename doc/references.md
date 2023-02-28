@@ -17,8 +17,10 @@ understanding the crystallography ashamedly.
 {cite:empty}`gen-glazer2012space`
 
 ```{bibliography}
-   :cited:
-   :keyprefix: gen-
+---
+cited:
+keyprefix: gen-
+---
 ```
 
 ## Specific algorithms
@@ -27,8 +29,10 @@ understanding the crystallography ashamedly.
 {cite:empty}`algo-Grosse-Kunstleve:au0265`
 
 ```{bibliography}
-   :cited:
-   :keyprefix: algo-
+---
+cited:
+keyprefix: algo-
+---
 ```
 
 ## Setting and standardization
@@ -39,8 +43,10 @@ understanding the crystallography ashamedly.
 {cite:empty}`std-parthe1985best`
 
 ```{bibliography}
-   :cited:
-   :keyprefix: std-
+---
+cited:
+keyprefix: std-
+---
 ```
 
 ## Magnetic space group
@@ -51,8 +57,10 @@ understanding the crystallography ashamedly.
 {cite:empty}`msg-litvin2014magnetic`
 
 ```{bibliography}
-   :cited:
-   :keyprefix: msg-
+---
+cited:
+keyprefix: msg-
+---
 ```
 
 ## Mathematical treatment
@@ -64,6 +72,8 @@ understanding the crystallography ashamedly.
 {cite:empty}`math-10.2307/2322930`
 
 ```{bibliography}
-   :cited:
-   :keyprefix: math-
+---
+cited:
+keyprefix: math-
+---
 ```

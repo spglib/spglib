@@ -1,4 +1,5 @@
 (magnetic_action_flags)=
+
 # Flags to control action of magnetic symmetry operations
 
 - Narrow functionality of `is_magnetic` and rename to `with_time_reversal`
@@ -21,19 +22,19 @@
 ### Proposed behavior -->
 
 - `tensor_rank=0`
-    - `with_time_reversal=true`: $1' \circ m = -m$
-      - `is_axial=true`: $(\mathbf{R}, \mathbf{v}) \circ m = (\det\mathbf{R}) m$
-      - `is_axial=false`: $(\mathbf{R}, \mathbf{v}) \circ m = m$
-    - `with_time_reversal=false`: $1' \circ m = m$
-      - `is_axial=true`: $(\mathbf{R}, \mathbf{v}) \circ m = (\det\mathbf{R}) m$
-      - `is_axial=false`: $(\mathbf{R}, \mathbf{v}) \circ m = m$
+  - `with_time_reversal=true`: $1' \circ m = -m$
+    - `is_axial=true`: $(\mathbf{R}, \mathbf{v}) \circ m = (\det\mathbf{R}) m$
+    - `is_axial=false`: $(\mathbf{R}, \mathbf{v}) \circ m = m$
+  - `with_time_reversal=false`: $1' \circ m = m$
+    - `is_axial=true`: $(\mathbf{R}, \mathbf{v}) \circ m = (\det\mathbf{R}) m$
+    - `is_axial=false`: $(\mathbf{R}, \mathbf{v}) \circ m = m$
 - `tensor_rank=1`
-    - `with_time_reversal=true`: $1' \circ \mathbf{m} = -\mathbf{m}$
-        - `is_axial=true`: $(\mathbf{R}, \mathbf{v}) \circ \mathbf{m} = (\mathrm{det} \mathbf{R}) \mathbf{R} \mathbf{m}$
-        - `is_axial=false`: $(\mathbf{R}, \mathbf{v}) \circ \mathbf{m} = \mathbf{R} \mathbf{m}$
-    - `with_time_reversal=false`: $1' \circ \mathbf{m} = \mathbf{m}$
-        - `is_axial=true`: $(\mathbf{R}, \mathbf{v}) \circ \mathbf{m} = (\mathrm{det} \mathbf{R}) \mathbf{R} \mathbf{m}$
-        - `is_axial=false`: $(\mathbf{R}, \mathbf{v}) \circ \mathbf{m} = \mathbf{R} \mathbf{m}$
+  - `with_time_reversal=true`: $1' \circ \mathbf{m} = -\mathbf{m}$
+    - `is_axial=true`: $(\mathbf{R}, \mathbf{v}) \circ \mathbf{m} = (\mathrm{det} \mathbf{R}) \mathbf{R} \mathbf{m}$
+    - `is_axial=false`: $(\mathbf{R}, \mathbf{v}) \circ \mathbf{m} = \mathbf{R} \mathbf{m}$
+  - `with_time_reversal=false`: $1' \circ \mathbf{m} = \mathbf{m}$
+    - `is_axial=true`: $(\mathbf{R}, \mathbf{v}) \circ \mathbf{m} = (\mathrm{det} \mathbf{R}) \mathbf{R} \mathbf{m}$
+    - `is_axial=false`: $(\mathbf{R}, \mathbf{v}) \circ \mathbf{m} = \mathbf{R} \mathbf{m}$
 
 <!-- ### Correspondence
 
@@ -62,8 +63,8 @@
 Deprecate `is_magnetic` in `get_symmetry`, and the functionality is replaced by
 `get_magnetic_symmetry`.
 
-Add new function `get_magnetic_symmetry((lattice, positions, numbers, magmoms),
-is_axial=None, with_time_reversal=True)`
+Add new function `get_magnetic_symmetry((lattice, positions, numbers, magmoms), is_axial=None, with_time_reversal=True)`
+
 - `magmoms = None` or not specified: other flags have no effect
 - `magmoms.shape = (num_atoms, )`: call C API with `tensor_rank=0`, `is_axial`
   (default=false), and `with_time_reversal` (collinear magnetic like)

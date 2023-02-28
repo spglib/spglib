@@ -7,7 +7,7 @@ definitions of transformation matrix and origin shift were different
 in the previous versions.
 
 ## Space group operation and change of basis
-`
+
 ### Basis vectors $(\mathbf{a}, \mathbf{b}, \mathbf{c})$ or $(\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)$
 
 In spglib, basis vectors are represented by three column vectors:
@@ -137,8 +137,10 @@ $$ (change_of_basis_2)
 A graphical example is shown below.
 
 ```{image} change-of-basis.png
-:width: 50%
-:align: center
+---
+width: 50%
+align: center
+---
 ```
 
 In this example,
@@ -215,10 +217,10 @@ $$
 $$
 
 (def_standardized_unit_cell)=
+
 ## Spglib conventions of standardized unit cell
 
-The standardization in spglib is achieved by {ref}`a change of basis
-transformation <def_transformation_and_origin_shift>`. If
+The standardization in spglib is achieved by {ref}`a change of basis transformation <def_transformation_and_origin_shift>`. If
 {ref}`idealization <def_idealize_cell>` as shown below is further
 applied, the crystal can be rigidly rotated in Cartesian
 coordinates.
@@ -330,11 +332,15 @@ change-of-basis transformation explained above.
 #### Monoclinic lattice
 
 - $b$ axis is taken as the unique axis.
+
 - $\alpha = 90^\circ$ and $\gamma = 90^\circ$
+
 - $90^\circ < \beta < 120^\circ$.
 
 - $\mathbf{a}$ is set along $+x$ direction of Cartesian coordinates.
+
 - $\mathbf{b}$ is set along $+y$ direction of Cartesian coordinates.
+
 - $\mathbf{c}$ is set in $x\text{-}z$ plane of Cartesian coordinates.
 
 #### Orthorhombic lattice
@@ -342,21 +348,27 @@ change-of-basis transformation explained above.
 - $\alpha = \beta = \gamma = 90^\circ$.
 
 - $\mathbf{a}$ is set along $+x$ direction of Cartesian coordinates.
+
 - $\mathbf{b}$ is set along $+y$ direction of Cartesian coordinates.
+
 - $\mathbf{c}$ is set along $+z$ direction of Cartesian coordinates.
 
 #### Tetragonal lattice
 
 - $\alpha = \beta = \gamma = 90^\circ$.
+
 - $a=b$.
 
 - $\mathbf{a}$ is set along $+x$ direction of Cartesian coordinates.
+
 - $\mathbf{b}$ is set along $+y$ direction of Cartesian coordinates.
+
 - $\mathbf{c}$ is set along $+z$ direction of Cartesian coordinates.
 
 #### Rhombohedral lattice
 
 - $\alpha = \beta = \gamma$.
+
 - $a=b=c$.
 
 - Let $\mathbf{a}$, $\mathbf{b}$, and $\mathbf{c}$
@@ -365,6 +377,7 @@ change-of-basis transformation explained above.
   $\mathbf{c}_{xy}$, respectively, and their angles be
   $\alpha_{xy}$, $\beta_{xy}$,
   $\gamma_{xy}$, respectively.
+
 - Let $\mathbf{a}$, $\mathbf{b}$, and $\mathbf{c}$
   projected along $z$-axis in Cartesian coordinates be
   $\mathbf{a}_{z}$, $\mathbf{b}_{z}$, and
@@ -376,28 +389,37 @@ change-of-basis transformation explained above.
   $\mathbf{c}_{xy}$ are placed by angles $120^\circ$ and
   $240^\circ$ from $\mathbf{a}_{xy}$ counter-clockwise,
   respectively.
-- $\alpha_{xy} = \beta_{xy} = \gamma_{xy} = 120^\circ$.
-- $a_{xy} = b_{xy} = c_{xy}$.
-- $a_{z} = b_{z} = c_{z}$.
 
+- $\alpha_{xy} = \beta_{xy} = \gamma_{xy} = 120^\circ$.
+
+- $a_{xy} = b_{xy} = c_{xy}$.
+
+- $a_{z} = b_{z} = c_{z}$.
 
 #### Hexagonal lattice
 
 - $\alpha = \beta = 90^\circ$.
+
 - $\gamma = 120^\circ$.
+
 - $a=b$.
 
 - $\mathbf{a}$ is set along $+x$ direction of Cartesian coordinates.
+
 - $\mathbf{b}$ is set in $x\text{-}y$ plane of Cartesian coordinates.
+
 - $\mathbf{c}$ is set along $+z$ direction of Cartesian coordinates.
 
 #### Cubic lattice
 
 - $\alpha = \beta = \gamma = 90^\circ$.
+
 - $a=b=c$.
 
 - $\mathbf{a}$ is set along $+x$ direction of Cartesian coordinates.
+
 - $\mathbf{b}$ is set along $+y$ direction of Cartesian coordinates.
+
 - $\mathbf{c}$ is set along $+z$ direction of Cartesian coordinates.
 
 ### Rotation introduced by idealization
@@ -605,7 +627,7 @@ we get the primitive cell basis vectors (shown in row vectors):
 [[ 3.58925715 -1.99971973  0.        ]
  [ 3.58925715  1.99971973  0.        ]
  [ 0.          0.          8.57154746]]
- ```
+```
 
 `find_primitive` gives a primitive cell that is obtained by
 transforming standardized and idealized crystal structure to the
@@ -720,7 +742,7 @@ then we get:
 [[3.95200346 1.12397269 0.        ]
  [1.12397269 3.95200346 0.        ]
  [0.         0.         8.57154746]]
- ```
+```
 
 which is equivalent to that we get manually. However using
 `standardize_cell`, distortion is not removed for the distorted
@@ -845,7 +867,7 @@ approximately the same result:
 [[ 0.70710678  0.70710678  0.        ]
  [-0.70710678  0.70710678  0.        ]
  [ 0.          0.          1.        ]]
- ```
+```
 
 In summary,
 
