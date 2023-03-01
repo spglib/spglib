@@ -1,0 +1,51 @@
+name: release
+run-name: Release
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+      - "v[0-9]+.[0-9]+.[0-9]+-rc[0-9]+"
+
+jobs:
+  tests:
+    uses: ./.github/workflows/test.yml
+    secrets: inherit
+  pypi-wheel:
+    needs: [ tests ]
+    uses: ./.github/workflows/pypi-wheel-builds.yml
+    secrets: inherit
+  upload_pypi:
+    name: Upload to pypi repository
+    needs: [ tests, pypi-wheel ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: artifact
+          path: dist
+      - name: Publish package to TestPyPI
+        if: ${{ contains(github.ref, 'rc') }}
+        # TODO: Maybe we can move this to main PyPI since it is marked rc
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          user: __token__
+          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+          repository_url: https://test.pypi.org/legacy/
+      - name: Publish package to PyPI
+        if: ${{ !contains(github.ref, 'rc') }}
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_API_TOKEN }}
+  release:
+    needs: [ upload_pypi ]
+    name: Create release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: softprops/action-gh-release@v1
+        with:
+          draft: true
+          prerelease: ${{ contains(github.ref, 'rc') }}
+          generate_release_notes: true
