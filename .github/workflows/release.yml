@@ -46,6 +46,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: softprops/action-gh-release@v1
         with:
+          name: Spglib ${{ github.ref_name }}
           draft: true
           prerelease: ${{ contains(github.ref, 'rc') }}
           generate_release_notes: true
