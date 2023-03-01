@@ -70,8 +70,8 @@ mailing list:
 
 ## Links
 
-- Document (this page): <https://spglib.github.io/spglib/>
-- Document (develop): <https://spglib.github.io/spglib/develop>
+- Documentation (this page): <https://spglib.readthedocs.io/>
+- Repository <https://github.com/spglib/spglib>
 - Conda: <https://anaconda.org/conda-forge/spglib>
 - PyPI: <https://pypi.org/project/spglib/>
 

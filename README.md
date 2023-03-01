@@ -66,6 +66,6 @@ improvements. See [Contributing.md](Contributing.md) for more details.
 
 ## Documentation
 
-See [spglib.github.io/spglib/](https://spglib.github.io/spglib/) for further
+See [https://spglib.readthedocs.io/](https://spglib.readthedocs.io/) for further
 documentation. See the [doc documentation](doc/README.md) for more information on
 how to contribute to the documentation.
