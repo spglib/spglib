@@ -1,4 +1,4 @@
-add_library(test_utils STATIC utils.f90 c_interface_module.F90)
+add_library(test_utils STATIC utils.F90 c_interface_module.F90)
 
 # Generated ctest file that switches and displays tests
 # Note must be plain C because generated CPP file does not include extern "C"

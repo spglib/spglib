@@ -1,19 +1,10 @@
-# How to use spglib example files
+# Examples of how to use spglib in your project
 
-This is the README file for spglib examples for C and Fortran.
+`example.c`, `example.F90`, and `example.py` in the following directories show
+how to obtain spglib symmetry dataset from input crystal structure of Wurtzite
+type. More examples, but not all, are found in `example_full.c`,
+`example_full.F90`, and `example_full.py`.
 
-## Examples of using spglib in a cmake project
-
-See the local [`CMakeLists.txt`](CMakeLists.txt) file for how to use
-spglib in a cmake project, using either native cmake options or pkg-config.
-
-## Examples of linking to spglib manually
-
-To manually compile `example.c`:
-
-```console
-$ gcc example.c -I[include directory] -L[library directory] -lsymspg -lm
-```
-
-where the `[include directory]` and `[library directory]` can be obtained
-via `pkg-config --cflags --libs spglib`.
+- [C API](c_api/README.md)
+- [Fortran API](fortran_api/README.md)
+- [Python API](python_api/README.md)
