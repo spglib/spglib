@@ -1,0 +1,12 @@
+releases:
+# Main summary of releases. Used for both releases.md and ChangeLog.md (published in the release notes)
+# No need to include Pull Requests. These are automatically handled in the releases.yaml
+  - version: v2.0.2
+    date: 6 Nov. 2022
+    body: |
+      - Fix segmentation fault in `spgms_get_symmetry_with_site_tensors` with high symprec [\[#195\]](https://github.com/spglib/spglib/pull/195)
+      - Fix possible segmentation fault in `get_magnetic_dataset` with high symprec [\[#196\]](https://github.com/spglib/spglib/pull/196)
+  - version: v2.0.1
+    date: 31 Aug. 2022
+    body: |
+      - Fix magnetic tolerance for judging type-II MSG (#187)
