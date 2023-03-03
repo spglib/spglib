@@ -7,10 +7,16 @@ python:
         - docs
 build:
   os: ubuntu-22.04
+  apt_packages:
+    - cmake
   tools:
     python: "3.11"
   jobs:
     pre_build:
+      ## TODO: unbuntu-22.04 does not ship cmake 3.25
+      #- cmake --workflow --preset docs
+      - cmake -DSPGLIB_WITH_DOCS=ON -DSPGLIB_WITH_TESTS=OFF -B ./cmake-build-release
+      - cmake --build ./cmake-build-release --target Spglib_docs
       - ./scripts/Readthedocs_pre_build.sh
 
 sphinx:

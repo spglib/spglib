@@ -10,7 +10,7 @@
 #
 # All configuration values have a default; values that are commented out
 # serve to show the default.
-
+import os
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
@@ -36,7 +36,8 @@ extensions = [
   "sphinxcontrib.bibtex",
   "myst_parser",
   "sphinx_design",
-  "sphinx_togglebutton"
+  "sphinx_togglebutton",
+  "breathe",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -255,3 +256,8 @@ latex_documents = [
 
 # If false, no module index is generated.
 #latex_use_modindex = True
+
+# -- Breathe configuration -----------------------------------------------------
+cmake_build_dir = os.getenv("CMAKE_BUILD_DIR", "../cmake-build-release/doc/xml")
+breathe_projects = {"spglib": cmake_build_dir}
+breathe_default_project = "spglib"

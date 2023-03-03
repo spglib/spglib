@@ -44,6 +44,7 @@ docs = [
     "linkify-it-py",
     "jinja2",
     "pyyaml",
+    "breathe",
 ]
 test-cov = [
     "spglib[test]",
