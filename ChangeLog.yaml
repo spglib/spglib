@@ -10,3 +10,87 @@ releases:
     date: 31 Aug. 2022
     body: |
       - Fix magnetic tolerance for judging type-II MSG (#187)
+roadmap:
+# Format:
+# - version: v1.x
+#   removed:
+#   deprecation:
+#   release:
+#   experimental:
+# See example item in each section for details
+  - version: v3.x
+    removed:
+      - name: "`spg_get_hall_number_from_symmetry`"
+        version: v3.0
+        tags: [ c_api ]
+      - name: "`spgat_get_symmetry_with_collinear_spin`"
+        version: v3.0
+        tags: [ c_api ]
+      - name: "`get_hall_number_from_symmetry`"
+        version: v3.0
+        tags: [ python_api ]
+    deprecation:
+      - old: "`spg_get_ir_reciprocal_mesh`"
+        tags: [ c_api ]
+      - old: "`spg_get_stabilized_reciprocal_mesh`"
+        tags: [ c_api ]
+      - old: "`get_ir_reciprocal_mesh`"
+        tags: [ python_api ]
+    release:
+    experimental:
+  - version: v2.x
+    removed:
+    deprecation:
+      - old: "`spg_get_hall_number_from_symmetry`"
+        new: "`spg_get_spacegroup_type_from_symmetry`"
+        remove: v3.0
+        tags: [ c_api ]
+      - old: "`spgat_get_symmetry_with_collinear_spin`"
+        new: "`spgms_get_symmetry_with_collinear_spin`"
+        remove: v3.0
+        tags: [ c_api ]
+      - old: "`get_symmetry(is_magnetic=True)`"
+        new: "`get_magnetic_symmetry`"
+        body: |
+          The key-value argument `is_magnetic` is deprecated and has no effect
+        tags: [ python_api ]
+      - old: "`get_hall_number_from_symmetry`"
+        new: "`get_spacegroup_type_from_symmetry`"
+        remove: v3.0
+        tags: [ python_api ]
+    release:
+      - name: "`SpglibSpacegroupType` structure"
+        body: |
+          - Add `hall_number` member at version 2.0
+          - Used as return value of `spg_get_spacegroup_type` and `spg_get_spacegroup_type_from_symmetry`
+        tags: [ c_api ]
+      - name: "`get_spacegroup_type.hall_number`"
+        tags: [ python_api ]
+    experimental:
+      - name: "`spg_get_symmetry_with_site_tensors`"
+        tags: [ c_api ]
+      - name: "`spg_get_magnetic_dataset`"
+        tags: [ c_api ]
+      - name: "`spg_get_magnetic_symmetry_from_database`"
+        tags: [ c_api ]
+      - name: "`spg_free_magnetic_dataset`"
+        tags: [ c_api ]
+      - name: "`spg_get_magnetic_spacegroup_type_from_symmetry`"
+        tags: [ c_api ]
+      - name: "`get_magnetic_symmetry`"
+        tags: [ python_api ]
+      - name: "`get_magnetic_symmetry_dataset`"
+        tags: [ python_api ]
+      - name: "`get_magnetic_spacegroup_type`"
+        tags: [ python_api ]
+      - name: "`get_magnetic_symmetry_from_database`"
+        tags: [ python_api ]
+    body: |
+      This release contains functions to search magnetic space group types which are
+      provided as experimental features. The behaviours of these magnetic related
+      functions (`*_magnetic_*`) with respect to the tolerance parameter (`symprec` or
+      {ref}`variables_mag_symprec`) may be changed in the future.
+
+      We are planning to separate irreducible k-points search from spglib. At spglib
+      version 4.0, those functions will be removed if we succeed to provide an
+      alternative package (hopefully with better functionalities) until then.

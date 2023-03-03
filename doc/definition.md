@@ -136,7 +136,7 @@ $$ (change_of_basis_2)
 
 A graphical example is shown below.
 
-```{image} change-of-basis.png
+```{image} _static/change-of-basis.png
 ---
 width: 50%
 align: center

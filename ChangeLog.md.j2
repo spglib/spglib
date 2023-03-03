@@ -1,0 +1,24 @@
+{% set lstrip_blocks = True %}
+{% set curr_release = releases|selectattr("version", "eq", release)|first %}
+{% set ns = namespace(releases=[]) %}
+{% if release and release is release_candidate %}
+{# If we are generating changelog for a release candidate, only use its body #}
+{% set ns.releases = [curr_release] %}
+{% else %}
+{# Otherwise check if there were release candidates and merge them, unless a body was provided #}
+{% if curr_release and 'body' in curr_release %}
+{% set ns.releases = [curr_release] %}
+{% else %}
+{% set ns.releases = releases|selectattr("version", "release_candidate", release) %}
+{% endif %}
+{% endif %}
+{% if release and ns.releases %}
+## ⭐ Main Changes
+
+{% for rel in ns.releases %}
+{{ rel['body'] }}
+{% endfor %}
+
+---
+
+{% endif %}

@@ -9,7 +9,10 @@ import yaml
 # Path of the repository source
 repo_path = pathlib.Path(__file__).parent.parent.resolve()
 # Files to generate. Must have an associated f"{file}.j2" jinja template file
-files_to_generate = ["ChangeLog.md"]
+files_to_generate = [
+    "doc/releases.md",
+    "ChangeLog.md",
+]
 
 
 def is_release_candidate(val: str, version: str = "") -> bool:

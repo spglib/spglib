@@ -33,13 +33,15 @@ test = [
     "pytest",
     "pyyaml",
 ]
+
 docs = [
-    "Sphinx==4.5.0",
-    "sphinx-autobuild==2021.3.14",
-    "sphinxcontrib-bibtex==2.4.2",
-    "sphinx-book-theme==0.3.3",
-    "myst-parser==0.18.0",
-    "linkify-it-py==2.0.0",
+    "Sphinx >= 6.0",
+    "sphinxcontrib-bibtex",
+    "sphinx-togglebutton",
+    "sphinx-design",
+    "sphinx-book-theme",
+    "myst-parser >= 1.0",
+    "linkify-it-py",
     "jinja2",
     "pyyaml",
 ]
@@ -50,6 +52,10 @@ test-cov = [
 test-benchmark = [
     "spglib[test]",
     "pytest-benchmark",
+]
+test-docs = [
+    "sphinx-autobuild >= 2021.3.14",
+    "spglib[doc]",
 ]
 dev = [
     "spglib[test]",

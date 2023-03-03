@@ -1,0 +1,109 @@
+{% set lstrip_blocks=True %}
+# Summary of releases
+
+## Versions
+{% for rel in releases|reverse %}
+### {{ rel.version }}{% if 'date' in rel %}({{ rel.date }}){% endif +%}
+{{ rel.body }}
+{% endfor %}
+
+{% if roadmap %}
+## Roadmap
+:::::::{tab-set}
+{% for rel in roadmap|reverse %}
+
+::::::{tab-item} {{ rel.version }}
+
+{{ rel.body }}
+
+:::::{tab-set}
+{% if 'removed' in rel and rel['removed'] %}
+::::{tab-item} Removed
+{% for item in rel['removed'] %}
+:::{admonition} {{ item['name'] }}
+---
+{% if 'body' in item or 'version' in item %}
+class: danger, dropdown
+{% else %}
+class: danger
+{% endif %}
+---
+{% if 'version' in item %}
+- Removed in: {{ item['version'] }}
+{% endif %}
+<br/>
+
+{{ item.body }}
+:::
+{% endfor %}
+::::
+{% endif %}
+{% if 'deprecation' in rel and rel['deprecation'] %}
+::::{tab-item} Deprecations
+{% for item in rel['deprecation'] %}
+:::{admonition} {{ item['old'] }}
+---
+{% if 'body' in item or 'new' in item or 'since' in item or 'remove' in item %}
+class: warning, dropdown
+{% else %}
+class: warning
+{% endif %}
+---
+{% if 'new' in item %}
+- Replacement: {{ item['new'] }}
+{% endif %}
+{% if 'since' in item %}
+- Deprecated since: {{ item['since'] }}
+{% endif %}
+{% if 'remove' in item %}
+- Removed from: {{ item['remove'] }}
+{% endif %}
+<br/>
+
+{{ item.body }}
+:::
+{% endfor %}
+::::
+{% endif %}
+{% if 'release' in rel and rel['release'] %}
+::::{tab-item} Release
+{% for item in rel['release'] %}
+:::{admonition} {{ item['name'] }}
+---
+{% if 'body' in item %}
+class: note, dropdown
+{% else %}
+class: note
+{% endif %}
+---
+<br/>
+
+{{ item.body }}
+:::
+{% endfor %}
+::::
+{% endif %}
+{% if 'experimental' in rel and rel['experimental'] %}
+::::{tab-item} Experimental
+{% for item in rel['experimental'] %}
+:::{admonition} {{ item['name'] }}
+---
+{% if 'body' in item %}
+class: note, dropdown
+{% else %}
+class: note
+{% endif %}
+---
+<br/>
+
+{{ item.body }}
+:::
+{% endfor %}
+::::
+{% endif %}
+:::::
+::::::
+
+{% endfor %}
+:::::::
+{% endif %}

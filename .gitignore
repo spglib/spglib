@@ -82,3 +82,4 @@ test-suite.log
 docs_build/
 CMakeUserPresets.json
 /ChangeLog.md
+/doc/releases.md
