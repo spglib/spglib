@@ -60,7 +60,7 @@ def run(src, out, changelog, type, release):
 if __name__ == "__main__":
     parser = ArgumentParser(description="Generate changelogs (doc/releases.md, ChangeLog.md) from ChangeLog.yaml")
     parser.add_argument("--type", help="Documentation type to build releases.md for",
-                        choices=["local", "tag", "external"], default="local")
+                        choices=["release", "tag", "pull-request"], default="release")
     parser.add_argument("--release", help="The most recent release to include",
                         type=str)
     parser.add_argument("--src", help="Location of the source",
