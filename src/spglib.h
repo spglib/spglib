@@ -90,6 +90,15 @@ extern "C" {
    ------------------------------------------------------------------
  */
 
+/**
+ * Example usage
+ *
+ * ```c
+ * SpglibError error;
+ * error = spg_get_error_code();
+ * printf("%s\n", spg_get_error_message(error));
+ * ```
+ */
 typedef enum {
     SPGLIB_SUCCESS = 0,
     SPGERR_SPACEGROUP_SEARCH_FAILED,
