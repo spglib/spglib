@@ -90,17 +90,13 @@ if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 			PUBLIC SPGDEBUG SPGWARNING)
 endif ()
 
-# Should not be needed anymore
-## avoid One Definition Rule problems
-## only available since 3.16.0
-## VERSION_GREATER_EQUAL only available since 3.7.0, so let's do it manually
-#if (NOT CMAKE_MAJOR_VERSION LESS "3")
-#	if (CMAKE_MAJOR_VERSION GREATER "3" OR NOT CMAKE_MINOR_VERSION LESS "16")
-#		set_source_files_properties(
-#				${SOURCES} PROPERTIES SKIP_UNITY_BUILD_INCLUSION ON
-#		)
-#	endif()
-#endif()
+# Avoid One Definition Rule problems. Please fix these
+if (CMAKE_UNITY_BUILD)
+	set_source_files_properties(
+			symmetry.c site_symmetry.c spacegroup.c spglib.c refinement.c pointgroup.c determination.c delaunay.c
+			PROPERTIES SKIP_UNITY_BUILD_INCLUSION ON
+	)
+endif ()
 
 
 # Install
