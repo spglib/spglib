@@ -3,9 +3,9 @@
 
 #include "spglib.h"
 
-void show_symmetry_operations(SPGCONST int (*rotations)[3][3],
+void show_symmetry_operations(const int (*rotations)[3][3],
                               const double (*translations)[3], const int size);
-void show_cell(SPGCONST double lattice[3][3], SPGCONST double positions[][3],
+void show_cell(const double lattice[3][3], const double positions[][3],
                const int types[], const int num_atoms);
 
 #endif  // __test_utils_H__

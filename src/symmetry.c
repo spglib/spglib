@@ -63,7 +63,7 @@ static int relative_axes[][3] = {
 static int identity[3][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
 
 static int get_index_with_least_atoms(const Cell *cell);
-static VecDBL *get_translation(SPGCONST int rot[3][3], const Cell *cell,
+static VecDBL *get_translation(const int rot[3][3], const Cell *cell,
                                const double symprec, const int is_identity);
 static Symmetry *get_operations(const Cell *primitive, const double symprec,
                                 const double angle_symprec);
@@ -73,39 +73,39 @@ static Symmetry *reduce_operation(const Cell *primitive,
                                   const double angle_symprec,
                                   const int is_pure_trans);
 static int search_translation_part(int atoms_found[], const Cell *cell,
-                                   SPGCONST int rot[3][3],
+                                   const int rot[3][3],
                                    const int min_atom_index,
                                    const double origin[3], const double symprec,
                                    const int is_identity);
 static int search_pure_translations(int atoms_found[], const Cell *cell,
                                     const double trans[3],
                                     const double symprec);
-static int is_overlap_all_atoms(const double test_trans[3],
-                                SPGCONST int rot[3][3], const Cell *cell,
-                                const double symprec, const int is_identity);
+static int is_overlap_all_atoms(const double test_trans[3], const int rot[3][3],
+                                const Cell *cell, const double symprec,
+                                const int is_identity);
 static PointSymmetry transform_pointsymmetry(
-    SPGCONST PointSymmetry *point_sym_prim, SPGCONST double new_lattice[3][3],
-    SPGCONST double original_lattice[3][3]);
-static Symmetry *get_space_group_operations(SPGCONST PointSymmetry *lattice_sym,
+    const PointSymmetry *point_sym_prim, const double new_lattice[3][3],
+    const double original_lattice[3][3]);
+static Symmetry *get_space_group_operations(const PointSymmetry *lattice_sym,
                                             const Cell *primitive,
                                             const double symprec);
 static void set_axes(int axes[3][3], const int a1, const int a2, const int a3);
 static PointSymmetry get_lattice_symmetry(const Cell *cell,
                                           const double symprec,
                                           const double angle_symprec);
-static int is_identity_metric(SPGCONST double metric_rotated[3][3],
-                              SPGCONST double metric_orig[3][3],
+static int is_identity_metric(const double metric_rotated[3][3],
+                              const double metric_orig[3][3],
                               const double symprec, const double angle_symprec);
-static double get_angle(SPGCONST double metric[3][3], const int i, const int j);
+static double get_angle(const double metric[3][3], const int i, const int j);
 
 /* get_translation, search_translation_part and search_pure_translations */
 /* are duplicated to get the if statement outside the nested loops */
 /* I have not tested if it is better in efficiency. */
-static VecDBL *get_layer_translation(SPGCONST int rot[3][3], const Cell *cell,
+static VecDBL *get_layer_translation(const int rot[3][3], const Cell *cell,
                                      const double symprec,
                                      const int is_identity);
 static int search_layer_translation_part(int atoms_found[], const Cell *cell,
-                                         SPGCONST int rot[3][3],
+                                         const int rot[3][3],
                                          const int min_atom_index,
                                          const double origin[3],
                                          const double symprec,
@@ -436,7 +436,7 @@ static Symmetry *reduce_operation(const Cell *primitive,
 /* Look for the translations which satisfy the input symmetry operation. */
 /* This function is heaviest in this code. */
 /* Return NULL if failed */
-static VecDBL *get_translation(SPGCONST int rot[3][3], const Cell *cell,
+static VecDBL *get_translation(const int rot[3][3], const Cell *cell,
                                const double symprec, const int is_identity) {
     int i, j, k, min_atom_index, num_trans;
     int *is_found;
@@ -499,7 +499,7 @@ ret:
 
 /* Returns -1 on failure. */
 static int search_translation_part(int atoms_found[], const Cell *cell,
-                                   SPGCONST int rot[3][3],
+                                   const int rot[3][3],
                                    const int min_atom_index,
                                    const double origin[3], const double symprec,
                                    const int is_identity) {
@@ -606,7 +606,7 @@ static int search_pure_translations(int atoms_found[], const Cell *cell,
 /* Thoroughly confirms that a given symmetry operation is a symmetry. */
 /* This is a convenient wrapper around ovl_check_total_overlap. */
 /* -1: Error.  0: Not a symmetry.  1: Is a symmetry. */
-static int is_overlap_all_atoms(const double trans[3], SPGCONST int rot[3][3],
+static int is_overlap_all_atoms(const double trans[3], const int rot[3][3],
                                 const Cell *cell, const double symprec,
                                 const int is_identity) {
     OverlapChecker *checker;
@@ -674,7 +674,7 @@ static int get_index_with_least_atoms(const Cell *cell) {
 /* Look for the translations which satisfy the input symmetry operation. */
 /* This function is heaviest in this code. */
 /* Return NULL if failed */
-static VecDBL *get_layer_translation(SPGCONST int rot[3][3], const Cell *cell,
+static VecDBL *get_layer_translation(const int rot[3][3], const Cell *cell,
                                      const double symprec,
                                      const int is_identity) {
     int i, j, k, min_atom_index, num_trans;
@@ -740,7 +740,7 @@ ret:
 
 /* Returns -1 on failure. */
 static int search_layer_translation_part(int atoms_found[], const Cell *cell,
-                                         SPGCONST int rot[3][3],
+                                         const int rot[3][3],
                                          const int min_atom_index,
                                          const double origin[3],
                                          const double symprec,
@@ -848,7 +848,7 @@ static int search_layer_pure_translations(int atoms_found[], const Cell *cell,
 }
 
 /* Return NULL if failed */
-static Symmetry *get_space_group_operations(SPGCONST PointSymmetry *lattice_sym,
+static Symmetry *get_space_group_operations(const PointSymmetry *lattice_sym,
                                             const Cell *primitive,
                                             const double symprec) {
     int i, j, num_sym, total_num_sym;
@@ -1014,8 +1014,8 @@ err:
     return lattice_sym;
 }
 
-static int is_identity_metric(SPGCONST double metric_rotated[3][3],
-                              SPGCONST double metric_orig[3][3],
+static int is_identity_metric(const double metric_rotated[3][3],
+                              const double metric_orig[3][3],
                               const double symprec,
                               const double angle_symprec) {
     int i, j, k;
@@ -1065,8 +1065,7 @@ fail:
     return 0;
 }
 
-static double get_angle(SPGCONST double metric[3][3], const int i,
-                        const int j) {
+static double get_angle(const double metric[3][3], const int i, const int j) {
     double length_i, length_j;
 
     length_i = sqrt(metric[i][i]);
@@ -1076,8 +1075,8 @@ static double get_angle(SPGCONST double metric[3][3], const int i,
 }
 
 static PointSymmetry transform_pointsymmetry(
-    SPGCONST PointSymmetry *lat_sym_orig, SPGCONST double new_lattice[3][3],
-    SPGCONST double original_lattice[3][3]) {
+    const PointSymmetry *lat_sym_orig, const double new_lattice[3][3],
+    const double original_lattice[3][3]) {
     int i, size;
     double trans_mat[3][3], inv_mat[3][3], drot[3][3];
     PointSymmetry lat_sym_new;

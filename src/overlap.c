@@ -69,9 +69,8 @@ static void permute(void *data_out, const void *data_in, const int *perm,
 static void permute_int(int *data_out, const int *data_in, const int *perm,
                         const int n);
 
-static void permute_double_3(double (*data_out)[3],
-                             SPGCONST double (*data_in)[3], const int *perm,
-                             const int n);
+static void permute_double_3(double (*data_out)[3], const double (*data_in)[3],
+                             const int *perm, const int n);
 
 static int ValueWithIndex_comparator(const void *pa, const void *pb);
 
@@ -84,26 +83,26 @@ static int perm_argsort(int *perm, const int *types, const double *values,
 
 static int check_possible_overlap(OverlapChecker *checker,
                                   const double test_trans[3],
-                                  SPGCONST int rot[3][3], const double symprec);
+                                  const int rot[3][3], const double symprec);
 
 static int argsort_by_lattice_point_distance(
-    int *perm, SPGCONST double lattice[3][3], SPGCONST double (*positions)[3],
+    int *perm, const double lattice[3][3], const double (*positions)[3],
     const int *types, double *distance_temp, void *argsort_work,
     const int size);
 
 static OverlapChecker *overlap_checker_alloc(int size);
 
 static int check_total_overlap_for_sorted(
-    SPGCONST double lattice[3][3], SPGCONST double (*pos_original)[3],
-    SPGCONST double (*pos_rotated)[3], const int types_original[],
+    const double lattice[3][3], const double (*pos_original)[3],
+    const double (*pos_rotated)[3], const int types_original[],
     const int types_rotated[], const int num_pos, const double symprec);
 /* ovl_check_total_overlap ,check_total_overlap_for_sorted, layer_has_overlap */
 /* and layer_has_overlap_with_same_type are copied to get rid of some if
  * statement */
 /* I have not tested if it is better in efficiency. */
 static int check_layer_total_overlap_for_sorted(
-    SPGCONST double lattice[3][3], SPGCONST double (*pos_original)[3],
-    SPGCONST double (*pos_rotated)[3], const int types_original[],
+    const double lattice[3][3], const double (*pos_original)[3],
+    const double (*pos_rotated)[3], const int types_original[],
     const int types_rotated[], const int num_pos, const int periodic_axes[3],
     const double symprec);
 
@@ -114,7 +113,7 @@ static int check_layer_total_overlap_for_sorted(
  * As an aside, yes, significant performance is lost
  * for large structures if these functions aren't inlined. */
 
-static OVL_INLINE double cartesian_norm(SPGCONST double lat[3][3],
+static OVL_INLINE double cartesian_norm(const double lat[3][3],
                                         const double v[3]) {
     double temp[3];
     temp[0] = lat[0][0] * v[0] + lat[0][1] * v[1] + lat[0][2] * v[2];
@@ -132,7 +131,7 @@ static OVL_INLINE int Nint(const double a) {
 }
 
 static OVL_INLINE int has_overlap(const double a[3], const double b[3],
-                                  SPGCONST double lattice[3][3],
+                                  const double lattice[3][3],
                                   const double symprec) {
     double v_diff[3];
     v_diff[0] = a[0] - b[0];
@@ -152,7 +151,7 @@ static OVL_INLINE int has_overlap(const double a[3], const double b[3],
 
 static OVL_INLINE int has_overlap_with_same_type(
     const double a[3], const double b[3], const int type_a, const int type_b,
-    SPGCONST double lattice[3][3], const double symprec) {
+    const double lattice[3][3], const double symprec) {
     if (type_a == type_b) {
         return has_overlap(a, b, lattice, symprec);
     } else {
@@ -162,7 +161,7 @@ static OVL_INLINE int has_overlap_with_same_type(
 
 /* Modified from has_overlap */
 static OVL_INLINE int layer_has_overlap(const double a[3], const double b[3],
-                                        SPGCONST double lattice[3][3],
+                                        const double lattice[3][3],
                                         const int periodic_axes[2],
                                         const double symprec) {
     double v_diff[3];
@@ -182,7 +181,7 @@ static OVL_INLINE int layer_has_overlap(const double a[3], const double b[3],
 
 static OVL_INLINE int layer_has_overlap_with_same_type(
     const double a[3], const double b[3], const int type_a, const int type_b,
-    SPGCONST double lattice[3][3], const int periodic_axes[2],
+    const double lattice[3][3], const int periodic_axes[2],
     const double symprec) {
     if (type_a == type_b) {
         return layer_has_overlap(a, b, lattice, periodic_axes, symprec);
@@ -472,9 +471,8 @@ static void permute_int(int *data_out, const int *data_in, const int *perm,
     permute(data_out, data_in, perm, sizeof(int), n);
 }
 
-static void permute_double_3(double (*data_out)[3],
-                             SPGCONST double (*data_in)[3], const int *perm,
-                             const int n) {
+static void permute_double_3(double (*data_out)[3], const double (*data_in)[3],
+                             const int *perm, const int n) {
     permute(data_out, data_in, perm, sizeof(double[3]), n);
 }
 
@@ -542,7 +540,7 @@ static OverlapChecker *overlap_checker_alloc(int size) {
 }
 
 static int argsort_by_lattice_point_distance(
-    int *perm, SPGCONST double lattice[3][3], SPGCONST double (*positions)[3],
+    int *perm, const double lattice[3][3], const double (*positions)[3],
     const int *types, double *distance_temp, void *argsort_work,
     const int size) {
     double diff[3];
@@ -571,8 +569,7 @@ static int argsort_by_lattice_point_distance(
 /* 0:  Not a symmetry.   1. Possible symmetry. */
 static int check_possible_overlap(OverlapChecker *checker,
                                   const double test_trans[3],
-                                  SPGCONST int rot[3][3],
-                                  const double symprec) {
+                                  const int rot[3][3], const double symprec) {
     double pos_rot[3];
     int i, i_test, k, max_search_num, search_num;
     int type_rot, is_found;
@@ -619,8 +616,8 @@ static int check_possible_overlap(OverlapChecker *checker,
 /* between pos_original and pos_rotated is small. */
 /* -1: Error.  0: False.  1:  True. */
 static int check_total_overlap_for_sorted(
-    SPGCONST double lattice[3][3], SPGCONST double (*pos_original)[3],
-    SPGCONST double (*pos_rotated)[3], const int types_original[],
+    const double lattice[3][3], const double (*pos_original)[3],
+    const double (*pos_rotated)[3], const int types_original[],
     const int types_rotated[], const int num_pos, const double symprec) {
     int *found;
     int i, i_orig, i_rot;
@@ -681,8 +678,8 @@ static int check_total_overlap_for_sorted(
 /* between pos_original and pos_rotated is small. */
 /* -1: Error.  0: False.  1:  True. */
 static int check_layer_total_overlap_for_sorted(
-    SPGCONST double lattice[3][3], SPGCONST double (*pos_original)[3],
-    SPGCONST double (*pos_rotated)[3], const int types_original[],
+    const double lattice[3][3], const double (*pos_original)[3],
+    const double (*pos_rotated)[3], const int types_original[],
     const int types_rotated[], const int num_pos, const int periodic_axes[3],
     const double symprec) {
     int *found;

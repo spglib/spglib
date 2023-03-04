@@ -53,7 +53,7 @@ static VecDBL *get_exact_positions(int *equiv_atoms, const Cell *conv_prim,
                                    const Symmetry *conv_sym,
                                    const double symprec);
 static void set_exact_location(double position[3], const Symmetry *conv_sym,
-                               SPGCONST double bravais_lattice[3][3],
+                               const double bravais_lattice[3][3],
                                const double symprec);
 static int set_equivalent_atom(VecDBL *positions, int *equiv_atoms, const int i,
                                const int num_indep_atoms,
@@ -61,7 +61,7 @@ static int set_equivalent_atom(VecDBL *positions, int *equiv_atoms, const int i,
                                const Symmetry *conv_sym, const double symprec);
 static void set_layer_exact_location(double position[3],
                                      const Symmetry *conv_sym,
-                                     SPGCONST double bravais_lattice[3][3],
+                                     const double bravais_lattice[3][3],
                                      const double symprec);
 static int set_layer_equivalent_atom(VecDBL *positions, int *equiv_atoms,
                                      const int i, const int num_indep_atoms,
@@ -78,11 +78,11 @@ static int get_Wyckoff_notation(char site_sym_symbol[7],
                                 const double position[3],
                                 const Symmetry *conv_sym,
                                 const int ref_multiplicity,
-                                SPGCONST double bravais_lattice[3][3],
+                                const double bravais_lattice[3][3],
                                 const int hall_number, const double symprec);
 static int get_layer_Wyckoff_notation(
     char site_sym_symbol[7], const double position[3], const Symmetry *conv_sym,
-    const int ref_multiplicity, SPGCONST double bravais_lattice[3][3],
+    const int ref_multiplicity, const double bravais_lattice[3][3],
     const int hall_number, const double symprec);
 
 /* Return NULL if failed */
@@ -220,7 +220,7 @@ static int set_equivalent_atom(VecDBL *positions, int *equiv_atoms, const int i,
 /* R. W. Grosse-Kunstleve and P. D. Adams */
 /* Acta Cryst. (2002). A58, 60-65 */
 static void set_exact_location(double position[3], const Symmetry *conv_sym,
-                               SPGCONST double bravais_lattice[3][3],
+                               const double bravais_lattice[3][3],
                                const double symprec) {
     int i, j, k, num_site_sym;
     double sum_rot[3][3];
@@ -308,7 +308,7 @@ static int set_layer_equivalent_atom(VecDBL *positions, int *equiv_atoms,
 /* Acta Cryst. (2002). A58, 60-65 */
 static void set_layer_exact_location(double position[3],
                                      const Symmetry *conv_sym,
-                                     SPGCONST double bravais_lattice[3][3],
+                                     const double bravais_lattice[3][3],
                                      const double symprec) {
     int i, j, k, num_site_sym;
     double sum_rot[3][3];
@@ -438,7 +438,7 @@ static int get_Wyckoff_notation(char site_sym_symbol[7],
                                 const double position[3],
                                 const Symmetry *conv_sym,
                                 const int ref_multiplicity,
-                                SPGCONST double bravais_lattice[3][3],
+                                const double bravais_lattice[3][3],
                                 const int hall_number, const double symprec) {
     int i, j, k, l, num_sitesym, multiplicity, wyckoff_letter;
     int indices_wyc[2];
@@ -517,7 +517,7 @@ end:
 /* Return -1 if failed */
 static int get_layer_Wyckoff_notation(
     char site_sym_symbol[7], const double position[3], const Symmetry *conv_sym,
-    const int ref_multiplicity, SPGCONST double bravais_lattice[3][3],
+    const int ref_multiplicity, const double bravais_lattice[3][3],
     const int hall_number, const double symprec) {
     int i, j, k, l, num_sitesym, multiplicity, wyckoff_letter;
     int indices_wyc[2];

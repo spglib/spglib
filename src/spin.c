@@ -54,31 +54,31 @@ static int *get_symmetry_permutations(const MagneticSymmetry *magnetic_symmetry,
 static int *get_orbits(const int *permutations, const int num_sym,
                        const int num_atoms);
 static int get_operation_sign_on_scalar(
-    const double spin_j, const double spin_k, SPGCONST double rot_cart[3][3],
+    const double spin_j, const double spin_k, const double rot_cart[3][3],
     const int with_time_reversal, const int is_axial, const double mag_symprec);
 static int get_operation_sign_on_vector(const int j, const int k,
                                         const double *vectors,
-                                        SPGCONST double rot_cart[3][3],
+                                        const double rot_cart[3][3],
                                         const int with_time_reversal,
                                         const int is_axial,
                                         const double mag_symprec);
 static void apply_symmetry_to_position(double pos_dst[3],
-                                       SPGCONST double pos_src[3],
-                                       SPGCONST int rot[3][3],
-                                       SPGCONST double trans[3]);
+                                       const double pos_src[3],
+                                       const int rot[3][3],
+                                       const double trans[3]);
 static double apply_symmetry_to_site_scalar(const double src,
-                                            SPGCONST double rot_cart[3][3],
+                                            const double rot_cart[3][3],
                                             const int timerev,
                                             const int with_time_reversal,
                                             const int is_axial);
 static void apply_symmetry_to_site_vector(double dst[3], const int idx,
                                           const double *tensors,
-                                          SPGCONST double rot_cart[3][3],
+                                          const double rot_cart[3][3],
                                           const int timerev,
                                           const int with_time_reversal,
                                           const int is_axial);
 void set_rotations_in_cartesian(double (*rotations_cart)[3][3],
-                                SPGCONST double lattice[3][3],
+                                const double lattice[3][3],
                                 const MagneticSymmetry *magnetic_symmetry);
 static int is_zero(const double a, const double mag_symprec);
 static int is_zero_d3(const double a[3], const double mag_symprec);
@@ -679,7 +679,7 @@ static int *get_orbits(const int *permutations, const int num_sym,
 /* If spin_j and spin_k are not the same dimension, return 0 */
 static int get_operation_sign_on_scalar(const double spin_j,
                                         const double spin_k,
-                                        SPGCONST double rot_cart[3][3],
+                                        const double rot_cart[3][3],
                                         const int with_time_reversal,
                                         const int is_axial,
                                         const double mag_symprec) {
@@ -704,7 +704,7 @@ static int get_operation_sign_on_scalar(const double spin_j,
 /* !is_axial: Usual vector: v'_j = R v_j */
 static int get_operation_sign_on_vector(const int j, const int k,
                                         const double *vectors,
-                                        SPGCONST double rot_cart[3][3],
+                                        const double rot_cart[3][3],
                                         const int with_time_reversal,
                                         const int is_axial,
                                         const double mag_symprec) {
@@ -727,9 +727,9 @@ static int get_operation_sign_on_vector(const int j, const int k,
 
 /* Apply `idx`th operation in `magnetic_symmetry` to position. */
 static void apply_symmetry_to_position(double pos_dst[3],
-                                       SPGCONST double pos_src[3],
-                                       SPGCONST int rot[3][3],
-                                       SPGCONST double trans[3]) {
+                                       const double pos_src[3],
+                                       const int rot[3][3],
+                                       const double trans[3]) {
     int k;
     mat_multiply_matrix_vector_id3(pos_dst, rot, pos_src);
     for (k = 0; k < 3; k++) {
@@ -739,7 +739,7 @@ static void apply_symmetry_to_position(double pos_dst[3],
 
 /* tensor_rank=0 case */
 static double apply_symmetry_to_site_scalar(const double src,
-                                            SPGCONST double rot_cart[3][3],
+                                            const double rot_cart[3][3],
                                             const int timerev,
                                             const int with_time_reversal,
                                             const int is_axial) {
@@ -757,7 +757,7 @@ static double apply_symmetry_to_site_scalar(const double src,
 /* tensor_rank=1 case */
 static void apply_symmetry_to_site_vector(double dst[3], const int idx,
                                           const double *tensors,
-                                          SPGCONST double rot_cart[3][3],
+                                          const double rot_cart[3][3],
                                           const int timerev,
                                           const int with_time_reversal,
                                           const int is_axial) {
@@ -782,7 +782,7 @@ static void apply_symmetry_to_site_vector(double dst[3], const int idx,
 }
 
 void set_rotations_in_cartesian(double (*rotations_cart)[3][3],
-                                SPGCONST double lattice[3][3],
+                                const double lattice[3][3],
                                 const MagneticSymmetry *magnetic_symmetry) {
     int i;
     double inv_lat[3][3];

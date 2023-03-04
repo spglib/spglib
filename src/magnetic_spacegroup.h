@@ -52,11 +52,11 @@ typedef struct {
 } MagneticDataset;
 
 MagneticDataset *msg_identify_magnetic_space_group_type(
-    SPGCONST double lattice[3][3], const MagneticSymmetry *magnetic_symmetry,
+    const double lattice[3][3], const MagneticSymmetry *magnetic_symmetry,
     const double symprec);
-Cell *msg_get_transformed_cell(const Cell *cell, SPGCONST double tmat[3][3],
-                               SPGCONST double origin_shift[3],
-                               SPGCONST double rigid_rot[3][3],
+Cell *msg_get_transformed_cell(const Cell *cell, const double tmat[3][3],
+                               const double origin_shift[3],
+                               const double rigid_rot[3][3],
                                const MagneticSymmetry *magnetic_symmetry,
                                const double symprec,
                                const double angle_tolerance);

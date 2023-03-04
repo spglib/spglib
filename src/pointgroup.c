@@ -348,35 +348,35 @@ static int rot_axes[][3] = {
     {3, 1, -1},  {3, -1, 1},  {3, -1, -1},
 };
 
-static int get_pointgroup_number_by_rotations(SPGCONST int rotations[][3][3],
+static int get_pointgroup_number_by_rotations(const int rotations[][3][3],
                                               const int num_rotations);
-static int get_pointgroup_number(SPGCONST PointSymmetry* pointsym);
+static int get_pointgroup_number(const PointSymmetry* pointsym);
 static int get_pointgroup_class_table(int table[10],
-                                      SPGCONST PointSymmetry* pointsym);
-static int get_rotation_type(SPGCONST int rot[3][3]);
-static int get_rotation_axis(SPGCONST int rot[3][3]);
-static int get_orthogonal_axis(int ortho_axes[], SPGCONST int proper_rot[3][3],
+                                      const PointSymmetry* pointsym);
+static int get_rotation_type(const int rot[3][3]);
+static int get_rotation_axis(const int rot[3][3]);
+static int get_orthogonal_axis(int ortho_axes[], const int proper_rot[3][3],
                                const int rot_order);
-static int laue2m(int axes[3], SPGCONST PointSymmetry* pointsym);
-static int layer_laue2m(int axes[3], SPGCONST PointSymmetry* pointsym,
+static int laue2m(int axes[3], const PointSymmetry* pointsym);
+static int layer_laue2m(int axes[3], const PointSymmetry* pointsym,
                         const int aperiodic_axis);
 
 #ifdef SPGDEBUG
-static int lauemmm(int axes[3], SPGCONST PointSymmetry* pointsym);
-static int laue4m(int axes[3], SPGCONST PointSymmetry* pointsym);
-static int laue4mmm(int axes[3], SPGCONST PointSymmetry* pointsym);
-static int laue3(int axes[3], SPGCONST PointSymmetry* pointsym);
-static int laue3m(int axes[3], SPGCONST PointSymmetry* pointsym);
-static int lauem3m(int axes[3], SPGCONST PointSymmetry* pointsym);
+static int lauemmm(int axes[3], const PointSymmetry* pointsym);
+static int laue4m(int axes[3], const PointSymmetry* pointsym);
+static int laue4mmm(int axes[3], const PointSymmetry* pointsym);
+static int laue3(int axes[3], const PointSymmetry* pointsym);
+static int laue3m(int axes[3], const PointSymmetry* pointsym);
+static int lauem3m(int axes[3], const PointSymmetry* pointsym);
 #endif
 
-static int laue_one_axis(int axes[3], SPGCONST PointSymmetry* pointsym,
+static int laue_one_axis(int axes[3], const PointSymmetry* pointsym,
                          const int rot_order);
-static int lauennn(int axes[3], SPGCONST PointSymmetry* pointsym,
+static int lauennn(int axes[3], const PointSymmetry* pointsym,
                    const int rot_order, const int aperiodic_axis);
-static int get_axes(int axes[3], const Laue laue,
-                    SPGCONST PointSymmetry* pointsym, const int aperiodic_axis);
-static void get_proper_rotation(int prop_rot[3][3], SPGCONST int rot[3][3]);
+static int get_axes(int axes[3], const Laue laue, const PointSymmetry* pointsym,
+                    const int aperiodic_axis);
+static void get_proper_rotation(int prop_rot[3][3], const int rot[3][3]);
 static void set_transformation_matrix(int tmat[3][3], const int axes[3]);
 static int is_exist_axis(const int axis_vec[3], const int axis_index);
 static void sort_axes(int axes[3]);
@@ -384,7 +384,7 @@ static void layer_check_and_sort_axes(int axes[3], const int aperiodic_axis);
 
 /* Return pointgroup.number = 0 if failed */
 Pointgroup ptg_get_transformation_matrix(int transform_mat[3][3],
-                                         SPGCONST int rotations[][3][3],
+                                         const int rotations[][3][3],
                                          const int num_rotations) {
     return ptg_get_layer_transformation_matrix(transform_mat, rotations,
                                                num_rotations, -1);
@@ -392,7 +392,7 @@ Pointgroup ptg_get_transformation_matrix(int transform_mat[3][3],
 
 /* Layer group does not have cubic point groups */
 Pointgroup ptg_get_layer_transformation_matrix(int transform_mat[3][3],
-                                               SPGCONST int rotations[][3][3],
+                                               const int rotations[][3][3],
                                                const int num_rotations,
                                                const int aperiodic_axis) {
     int i, j, pg_num;
@@ -451,7 +451,7 @@ Pointgroup ptg_get_pointgroup(const int pointgroup_number) {
     return pointgroup;
 }
 
-PointSymmetry ptg_get_pointsymmetry(SPGCONST int rotations[][3][3],
+PointSymmetry ptg_get_pointsymmetry(const int rotations[][3][3],
                                     const int num_rotations) {
     int i, j;
     PointSymmetry pointsym;
@@ -471,7 +471,7 @@ PointSymmetry ptg_get_pointsymmetry(SPGCONST int rotations[][3][3],
     return pointsym;
 }
 
-static int get_pointgroup_number_by_rotations(SPGCONST int rotations[][3][3],
+static int get_pointgroup_number_by_rotations(const int rotations[][3][3],
                                               const int num_rotations) {
     PointSymmetry pointsym;
 
@@ -479,7 +479,7 @@ static int get_pointgroup_number_by_rotations(SPGCONST int rotations[][3][3],
     return get_pointgroup_number(&pointsym);
 }
 
-static int get_pointgroup_number(SPGCONST PointSymmetry* pointsym) {
+static int get_pointgroup_number(const PointSymmetry* pointsym) {
     int i, j, pg_num, counter;
     int table[10];
     PointgroupType pointgroup_type;
@@ -513,7 +513,7 @@ end:
 }
 
 static int get_pointgroup_class_table(int table[10],
-                                      SPGCONST PointSymmetry* pointsym) {
+                                      const PointSymmetry* pointsym) {
     /* Look-up table */
     /* Operation   -6 -4 -3 -2 -1  1  2  3  4  6 */
     /* Trace     -  2 -1  0  1 -3  3 -1  0  1  2 */
@@ -552,7 +552,7 @@ err:
     return 0;
 }
 
-static int get_rotation_type(SPGCONST int rot[3][3]) {
+static int get_rotation_type(const int rot[3][3]) {
     int rot_type;
 
     if (mat_get_determinant_i3(rot) == -1) {
@@ -602,8 +602,7 @@ static int get_rotation_type(SPGCONST int rot[3][3]) {
     return rot_type;
 }
 
-static int get_axes(int axes[3], const Laue laue,
-                    SPGCONST PointSymmetry* pointsym,
+static int get_axes(int axes[3], const Laue laue, const PointSymmetry* pointsym,
                     const int aperiodic_axis) {
     switch (laue) {
         case LAUE1:
@@ -652,7 +651,7 @@ static int get_axes(int axes[3], const Laue laue,
     return 1;
 }
 
-static int laue2m(int axes[3], SPGCONST PointSymmetry* pointsym) {
+static int laue2m(int axes[3], const PointSymmetry* pointsym) {
     int i, num_ortho_axis, norm, min_norm, is_found;
     int prop_rot[3][3];
     int ortho_axes[NUM_ROT_AXES];
@@ -727,7 +726,7 @@ err:
     return 0;
 }
 
-static int layer_laue2m(int axes[3], SPGCONST PointSymmetry* pointsym,
+static int layer_laue2m(int axes[3], const PointSymmetry* pointsym,
                         const int aperiodic_axis) {
     int i, num_ortho_axis, norm, min_norm, is_found;
     int prop_rot[3][3];
@@ -834,7 +833,7 @@ err:
 }
 
 #ifdef SPGDEBUG
-static int lauemmm(int axes[3], SPGCONST PointSymmetry* pointsym) {
+static int lauemmm(int axes[3], const PointSymmetry* pointsym) {
     int i, count, axis;
     int prop_rot[3][3];
 
@@ -862,7 +861,7 @@ static int lauemmm(int axes[3], SPGCONST PointSymmetry* pointsym) {
     return 1;
 }
 
-static int laue4m(int axes[3], SPGCONST PointSymmetry* pointsym) {
+static int laue4m(int axes[3], const PointSymmetry* pointsym) {
     int i, num_ortho_axis, norm, min_norm, is_found, tmpval;
     int axis_vec[3];
     int prop_rot[3][3], t_mat[3][3];
@@ -926,7 +925,7 @@ err:
     return 0;
 }
 
-static int laue4mmm(int axes[3], SPGCONST PointSymmetry* pointsym) {
+static int laue4mmm(int axes[3], const PointSymmetry* pointsym) {
     int i, is_found, tmpval, axis;
     int prop_rot[3][3], prop_rot2[3][3], t_mat[3][3];
     int axis_vec[3];
@@ -990,7 +989,7 @@ err:
     return 0;
 }
 
-static int laue3(int axes[3], SPGCONST PointSymmetry* pointsym) {
+static int laue3(int axes[3], const PointSymmetry* pointsym) {
     int i, num_ortho_axis, norm, min_norm, is_found, tmpval;
     int prop_rot[3][3], t_mat[3][3];
     int axis_vec[3];
@@ -1057,7 +1056,7 @@ err:
     return 0;
 }
 
-static int laue3m(int axes[3], SPGCONST PointSymmetry* pointsym) {
+static int laue3m(int axes[3], const PointSymmetry* pointsym) {
     int i, is_found, tmpval, axis;
     int prop_rot[3][3], prop_rot2[3][3], t_mat[3][3];
     int axis_vec[3];
@@ -1127,7 +1126,7 @@ err:
     return 0;
 }
 
-static int lauem3m(int axes[3], SPGCONST PointSymmetry* pointsym) {
+static int lauem3m(int axes[3], const PointSymmetry* pointsym) {
     int i, count, axis;
     int prop_rot[3][3];
 
@@ -1156,7 +1155,7 @@ static int lauem3m(int axes[3], SPGCONST PointSymmetry* pointsym) {
 }
 #endif
 
-static int laue_one_axis(int axes[3], SPGCONST PointSymmetry* pointsym,
+static int laue_one_axis(int axes[3], const PointSymmetry* pointsym,
                          const int rot_order) {
     int i, j, num_ortho_axis, det, is_found, tmpval;
     int axis_vec[3], tmp_axes[3];
@@ -1245,7 +1244,7 @@ end:
     return 1;
 }
 
-static int lauennn(int axes[3], SPGCONST PointSymmetry* pointsym,
+static int lauennn(int axes[3], const PointSymmetry* pointsym,
                    const int rot_order, const int aperiodic_axis) {
     int i, count, axis;
     int prop_rot[3][3];
@@ -1279,7 +1278,7 @@ static int lauennn(int axes[3], SPGCONST PointSymmetry* pointsym,
     return 1;
 }
 
-static int get_rotation_axis(SPGCONST int proper_rot[3][3]) {
+static int get_rotation_axis(const int proper_rot[3][3]) {
     int i, axis = -1;
     int vec[3];
 
@@ -1308,7 +1307,7 @@ end:
     return axis;
 }
 
-static int get_orthogonal_axis(int ortho_axes[], SPGCONST int proper_rot[3][3],
+static int get_orthogonal_axis(int ortho_axes[], const int proper_rot[3][3],
                                const int rot_order) {
     int i, num_ortho_axis;
     int vec[3];
@@ -1334,7 +1333,7 @@ static int get_orthogonal_axis(int ortho_axes[], SPGCONST int proper_rot[3][3],
     return num_ortho_axis;
 }
 
-static void get_proper_rotation(int prop_rot[3][3], SPGCONST int rot[3][3]) {
+static void get_proper_rotation(int prop_rot[3][3], const int rot[3][3]) {
     if (mat_get_determinant_i3(rot) == -1) {
         mat_multiply_matrix_i3(prop_rot, inversion, rot);
     } else {
