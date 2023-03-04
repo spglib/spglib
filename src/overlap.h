@@ -65,11 +65,12 @@ typedef struct {
 OverlapChecker *ovl_overlap_checker_init(const Cell *cell);
 
 int ovl_check_total_overlap(OverlapChecker *checker, const double test_trans[3],
-                            int rot[3][3], const double symprec,
+                            const int rot[3][3], const double symprec,
                             const int is_identity);
 
 int ovl_check_layer_total_overlap(OverlapChecker *checker,
-                                  const double test_trans[3], int rot[3][3],
-                                  const double symprec, const int is_identity);
+                                  const double test_trans[3],
+                                  const int rot[3][3], const double symprec,
+                                  const int is_identity);
 
 void ovl_overlap_checker_free(OverlapChecker *checker);

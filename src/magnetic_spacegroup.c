@@ -46,8 +46,7 @@
 
 static int get_reference_space_group(Spacegroup **ref_sg,
                                      MagneticSymmetry **changed_symmetry,
-                                     const double tmat[3][3],
-                                     const double shift[3],
+                                     double tmat[3][3], double shift[3],
                                      const MagneticSymmetry *magnetic_symmetry,
                                      const double symprec);
 static Symmetry *get_family_space_group_with_magnetic_symmetry(
@@ -407,8 +406,7 @@ err:
 /* Return type of MSG. Return 0 if failed. */
 static int get_reference_space_group(Spacegroup **ref_sg,
                                      MagneticSymmetry **changed_symmetry,
-                                     const double tmat[3][3],
-                                     const double shift[3],
+                                     double tmat[3][3], double shift[3],
                                      const MagneticSymmetry *magnetic_symmetry,
                                      const double symprec) {
     int type;

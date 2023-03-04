@@ -8575,7 +8575,7 @@ static void transform_rotation(double rot_reduced[3][3],
 static int get_origin_shift(double shift[3], const int hall_number,
                             const int rot[3][3][3], const double trans[3][3],
                             const Centering centering, const double VSpU[3][9]);
-static void unpack_generators(int rot[3][3][3], int generators[3][9]);
+static void unpack_generators(int rot[3][3][3], const int generators[3][9]);
 static int set_dw(double dw[3], const int operation_index[2],
                   const int rot[3][3], const double trans[3],
                   const Centering centering);
@@ -9001,7 +9001,7 @@ static int is_hall_symbol_tricli(double shift[3], const int hall_number,
     return 0;
 }
 
-static void unpack_generators(int rot[3][3][3], int generators[3][9]) {
+static void unpack_generators(int rot[3][3][3], const int generators[3][9]) {
     int i, j, k;
     for (i = 0; i < 3; i++) {
         for (j = 0; j < 3; j++) {
