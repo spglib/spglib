@@ -16,7 +16,7 @@ ______________________________________________________________________
 
 <!--
 If you use spglib's Python API, please do not use ASE or Pymatgen's wrapper to make it easier to identify your problem.
-The format for crystal structures is shown here: https://spglib.github.io/spglib/python-spglib.html#variables
+The format for crystal structures is shown here: https://spglib.readthedocs.io/en/latest/python-spglib.html#variables
 If spglib returns different results by changing `symprec`, `angle_tolerance`, or `mag_symprec`, please report it too.
 -->
 

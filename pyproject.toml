@@ -23,10 +23,10 @@ maintainers = [
 ]
 
 [project.urls]
-homepage = "https://spglib.github.io/spglib/"
-documentation = "https://spglib.github.io/spglib/"
+homepage = "https://spglib.readthedocs.io/"
+documentation = "https://spglib.readthedocs.io/"
 repository = "https://github.com/spglib/spglib"
-changelog = "https://spglib.github.io/spglib/releases.html"
+changelog = "https://spglib.readthedocs.io/en/latest/releases.html"
 
 [project.optional-dependencies]
 testing = [
