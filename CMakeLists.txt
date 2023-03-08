@@ -9,8 +9,14 @@ endif ()
 #                                    Basic project definition                                   #
 ]==============================================================================================]
 
+include(cmake/DynamicVersion.cmake)
+# Get dynamic version and save it to PROJECT_VERSION
+dynamic_version(
+		PROJECT_PREFIX Spglib_
+		FALLBACK_VERSION 0.0.0
+)
 project(Spglib
-		VERSION 2.3.0
+		VERSION ${PROJECT_VERSION}
 		LANGUAGES C)
 
 # Back-porting to PROJECT_IS_TOP_LEVEL to older cmake
@@ -114,6 +120,7 @@ endif ()
 
 # Report configuration
 message(STATUS "Spglib:: Build type: ${CMAKE_BUILD_TYPE}")
+message(STATUS "Spglib:: Version ${PROJECT_VERSION}")
 
 #[==============================================================================================[
 #                                       External packages                                       #
