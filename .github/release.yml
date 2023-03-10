@@ -1,0 +1,23 @@
+changelog:
+  categories:
+    - title: 🛠 Breaking Changes
+      labels:
+        # Should automatically detect major change
+        - Semver-Major
+        - breaking-changes
+    - title: 🎉 New Features
+      labels:
+        - new-feature
+        - enhancement
+    - title: ⚠️ Deprecation
+      labels:
+        - deprecation
+    - title: 🐞 Bug fixes
+      labels:
+        - bug
+    - title: 📔 Documentation
+      labels:
+        - documentation
+    - title: Other changes
+      labels:
+        - '*'

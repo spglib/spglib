@@ -6,6 +6,8 @@ on:
     branches: [ develop ]
   pull_request:
     branches: [ develop ]
+  # Make it able to be used in other workflows
+  workflow_call:
 
 jobs:
   pre-commit:

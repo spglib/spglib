@@ -3,9 +3,11 @@ run-name: Spglib PyPI Wheel builds for linux
 
 on:
   push:
-    tags: [ "v[0-9]+.[0-9]+.[0-9]+*" ]
+    tags: [ "*test*" ]
   pull_request:
     branches: [ test-PyPi-action ]
+  # Make it able to be used in other workflows
+  workflow_call:
 
 jobs:
   build_wheels:
@@ -45,26 +47,3 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           path: dist/*.tar.gz
-
-  upload_pypi:
-    name: Upload to pypi repository
-    needs: [ build_wheels, build_sdist ]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v3
-        with:
-          name: artifact
-          path: dist
-      - name: Publish package to TestPyPI
-        if: ${{ !contains(github.ref, 'test') && contains(github.ref, 'rc') && github.event_name != 'pull_request' }}
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          user: __token__
-          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
-          repository_url: https://test.pypi.org/legacy/
-      - name: Publish package to PyPI
-        if: ${{ !contains(github.ref, 'test') && !contains(github.ref, 'rc') && github.event_name != 'pull_request' }}
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          user: __token__
-          password: ${{ secrets.PYPI_API_TOKEN }}
