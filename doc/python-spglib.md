@@ -147,7 +147,7 @@ supported at version 1.9.1 or later.
 
 The tuple format is shown as follows. There are three or four elements
 in the tuple: `cell = (lattice, positions, numbers)` or `cell = (lattice, positions, numbers, magmoms)` where `magmoms` represents
-collinear polarizations on atoms and is optional.
+magnetic moments on atoms and is optional.
 
 Lattice parameters `lattice` are given by a 3x3 matrix with floating
 point values, where {math}`\mathbf{a}, \mathbf{b}, \mathbf{c}` are
@@ -155,9 +155,9 @@ given as rows, which results in the transpose of the definition for
 C-API ({ref}`variables_lattice`). Fractional atomic positions
 `positions` are given by a Nx3 matrix with floating point values,
 where N is the number of atoms. Numbers to distinguish atomic species
-`numbers` are given by a list of N integers. The collinear polarizations
-`magmoms` work with `get_magnetic_symmetry` and are given
-as a list of N floating point values.
+`numbers` are given by a list of N integers.
+The magnetic moments `magmoms` can be specified with `get_magnetic_symmetry`.
+`magmoms` is a list of N floating-point values for collinear cases and a list of Nx3 in **cartesian coordinates** for non-collinear cases.
 
 ```python
 lattice = [[a_x, a_y, a_z],
@@ -168,7 +168,8 @@ positions = [[a_1, b_1, c_1],
                [a_3, b_3, c_3],
                ...]
 numbers = [n_1, n_2, n_3, ...]
-magmoms = [m_1, m_2, m_3, ...]  # Works with get_magnetic_symmetry
+magmoms = [m_1, m_2, m_3, ...]  # Works with get_magnetic_symmetry for a collinear case
+# magmoms = [[m_1x, m_1y, m_1z], ...]  # For a non-collinear case
 ```
 
 For example, the crystal structure (`cell`) of L1{math}`_{2}`-type AlNi{math}`_{3}` is:
@@ -297,7 +298,7 @@ is in `equivalent_atom`) is found by
 `np.where(equivalent_atom=1)[0]`. When the search failed, `None`
 is returned.
 
-If `cell` is given as a tuple and collinear polarizations are given
+If `cell` is given as a tuple and magnetic moments are given
 as the fourth element of this tuple, symmetry operations are searched
 considering this freedom. In ASE Atoms-class object, this is not supported.
 
