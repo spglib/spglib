@@ -141,7 +141,7 @@ jobs:
       - name: Setup spglib
         # TODO: switch to editable installs
         run: |
-          pip install .[testing] \
+          pip install .[test-cov] \
             --config-settings=cmake.define.SPGLIB_TEST_COVERAGE=ON \
             --config-settings=build-dir=build
       - name: Test with pytest and code coverage
