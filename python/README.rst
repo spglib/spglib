@@ -52,7 +52,7 @@ To include testing or documentation environments, simply include the relevant ex
 
 .. code-block:: console
 
-    $ pip install .[testing,doc]
+    $ pip install .[test]
 
 Running tests
 ~~~~~~~~~~~~~
