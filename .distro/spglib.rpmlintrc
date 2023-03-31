@@ -1,0 +1,2 @@
+addFilter("python.?-spglib.* dangling-relative-symlink .*libsymspg.so")
+addFilter("python.?-spglib.* explicit-lib-dependency")
