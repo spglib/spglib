@@ -438,6 +438,9 @@ static int get_reference_space_group(Spacegroup **ref_sg,
     /* Determine type of MSG and generator of factor group of MSG over XSG */
     type = get_magnetic_space_group_type(&representatives, magnetic_symmetry,
                                          sym_fsg->size, sym_xsg->size);
+    if (type == 0) {
+        goto err;
+    }
     debug_print("type=%d\n", type);
 
     /* Choose reference setting */
