@@ -12,8 +12,10 @@ For example, to run `test_symmetry_search.test_spg_get_symmetry`
 
 ```shell
 # at build/test
-./CTests --gtest_filter=test_spg_get_symmetry
+./CTests --gtest_filter=test_symmetry_search.test_spg_get_symmetry
 ```
+
+If you use debuggers like gdb or lldb, recompile with `CMAKE_BUILD_TYPE=Debug`.
 
 ## How to add a new test file
 
