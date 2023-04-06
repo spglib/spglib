@@ -411,12 +411,16 @@ TEST(test_magnetic_symmetry, test_spgms_get_magnetic_dataset_high_mag_symprec) {
         spin_flips, max_size, lattice, positions, types, tensors,
         1 /* tensor_rank */, num_atoms, 1 /* with_time_reversal */,
         1 /* is_axial */, symprec, -1 /* angle_tolerance */, mag_symprec);
+    // spgms_get_symmetry_with_site_tensors should return one or more symmetry
+    // operations
     ASSERT_TRUE(size > 0);
 
     SpglibMagneticDataset *dataset;
     dataset =
         spgms_get_magnetic_dataset(lattice, positions, types, tensors, 1,
                                    num_atoms, 1, symprec, -1, mag_symprec);
+    // MSG identification is failed with the too high mag_symprec
+    ASSERT_TRUE(dataset == NULL);
 
     free(rotations);
     free(translations);
