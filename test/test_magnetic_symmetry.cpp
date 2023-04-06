@@ -364,6 +364,71 @@ TEST(test_magnetic_symmetry, test_spg_get_symmetry_with_tensors_rough_symprec) {
     free(time_reversals);
 }
 
+TEST(test_magnetic_symmetry, test_spgms_get_magnetic_dataset_high_mag_symprec) {
+    // https://github.com/spglib/spglib/issues/249
+    double lattice[3][3] = {
+        {0.00000000, -5.00000000, -2.50000000},
+        {0.00000000, 0.00000000, 4.33012702},
+        {-4.05000000, 0.00000000, 0.00000000},
+    };
+    double positions[][3] = {
+        {0.50000000, 0.33333333, 0.33333333},
+        {0.50000000, 0.66666667, 0.66666667},
+        {0.00000000, 0.00000000, 0.00000000},
+        {0.00000000, 0.00000000, 0.50000000},
+        {0.00000000, 0.50000000, 0.50000000},
+        {0.00000000, 0.50000000, 0.00000000},
+    };
+    int types[] = {1, 1, 1, 2, 2, 2};
+    double tensors[] = {
+        -0.00200000, 0.00200000,  1.90000000,  0.00200000,  0.00000000,
+        1.91100000,  -0.00100000, 0.00200000,  -2.23300000, -0.00000000,
+        -0.00000000, -0.06000000, 0.00000000,  0.00000000,  -0.03200000,
+        0.00000000,  -0.00000000, -0.02900000,
+    };
+    int num_atoms = 6;
+
+    int max_size = num_atoms * 96;
+
+    double symprec = 1e-5;
+    double mag_symprec = 1e-1;  // with high mag_symprec
+
+    int i, size;
+    int equivalent_atoms[3];
+    double primitive_lattice[3][3];
+    int(*rotations)[3][3];
+    double(*translations)[3];
+    int *spin_flips;
+    int *time_reversals;
+
+    rotations = (int(*)[3][3])malloc(sizeof(int[3][3]) * max_size);
+    translations = (double(*)[3])malloc(sizeof(double[3]) * max_size);
+    spin_flips = (int *)malloc(sizeof(int *) * max_size);
+    time_reversals = (int *)malloc(sizeof(int *) * max_size);
+
+    size = spgms_get_symmetry_with_site_tensors(
+        rotations, translations, equivalent_atoms, primitive_lattice,
+        spin_flips, max_size, lattice, positions, types, tensors,
+        1 /* tensor_rank */, num_atoms, 1 /* with_time_reversal */,
+        1 /* is_axial */, symprec, -1 /* angle_tolerance */, mag_symprec);
+    // spgms_get_symmetry_with_site_tensors should return one or more symmetry
+    // operations
+    ASSERT_TRUE(size > 0);
+
+    SpglibMagneticDataset *dataset;
+    dataset =
+        spgms_get_magnetic_dataset(lattice, positions, types, tensors, 1,
+                                   num_atoms, 1, symprec, -1, mag_symprec);
+    // MSG identification is failed with the too high mag_symprec
+    ASSERT_TRUE(dataset == NULL);
+
+    free(rotations);
+    free(translations);
+    free(spin_flips);
+    free(time_reversals);
+    if (dataset != NULL) spg_free_magnetic_dataset(dataset);
+}
+
 TEST(test_magnetic_symmetry, test_with_broken_symmetry) {
     // https://github.com/spglib/spglib/issues/194
     // Part of "mp-806965" in the Materials Project database

@@ -595,8 +595,9 @@ Arguments
 - `mag_symprec`: See {ref}`py_get_magnetic_symmetry`
 - `is_axial`: See {ref}`py_get_magnetic_symmetry`
 
-Returned `dataset` is a dictionary.
+If successful, returned `dataset` is a dictionary.
 The description of its keys is given at {ref}`magnetic_spglib_dataset`.
+If the magnetic symmetry search failed, `dataset` is `None`.
 
 ### `get_magnetic_spacegroup_type`
 

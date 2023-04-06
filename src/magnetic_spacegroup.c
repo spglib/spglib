@@ -439,6 +439,9 @@ static int get_reference_space_group(Spacegroup **ref_sg,
     type = get_magnetic_space_group_type(&representatives, magnetic_symmetry,
                                          sym_fsg->size, sym_xsg->size);
     debug_print("type=%d\n", type);
+    if (type == 0) {
+        goto err;
+    }
 
     /* Choose reference setting */
     /* For type-IV, use setting from Hall symbol of XSG. */
