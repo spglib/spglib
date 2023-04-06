@@ -414,8 +414,9 @@ TEST(test_magnetic_symmetry, test_spgms_get_magnetic_dataset_high_mag_symprec) {
     ASSERT_TRUE(size > 0);
 
     SpglibMagneticDataset *dataset;
-    spgms_get_magnetic_dataset(lattice, positions, types, tensors, 1, num_atoms,
-                               1, symprec, -1, mag_symprec);
+    dataset =
+        spgms_get_magnetic_dataset(lattice, positions, types, tensors, 1,
+                                   num_atoms, 1, symprec, -1, mag_symprec);
 
     free(rotations);
     free(translations);
