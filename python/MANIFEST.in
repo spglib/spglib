@@ -1,6 +1,0 @@
-include src/*.h
-include src/*.c
-include __nanoversion__.txt
-include examples/*.py
-recursive-include test *
-recursive-exclude test *.pyc

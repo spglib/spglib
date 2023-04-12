@@ -63,7 +63,7 @@ testing = [
 ]
 
 [tool.scikit-build]
-#wheel.packages = "python/spglib"
+wheel.packages = ["python/spglib"]
 wheel.install-dir = "spglib"
 cmake.args = [
     "-DSPGLIB_WITH_Python=ON",
