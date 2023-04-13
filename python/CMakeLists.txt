@@ -28,4 +28,7 @@ else()
 endif()
 install(TARGETS Spglib_python
 		LIBRARY DESTINATION ${Python_INSTALL_DIR} COMPONENT Spglib_Runtime)
-install(DIRECTORY spglib/ DESTINATION ${Python_INSTALL_DIR} COMPONENT Spglib_Runtime)
+
+if(NOT SKBUILD)
+  install(DIRECTORY spglib/ DESTINATION ${Python_INSTALL_DIR} COMPONENT Spglib_Runtime)
+endif()

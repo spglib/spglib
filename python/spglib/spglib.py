@@ -38,7 +38,7 @@ import warnings
 import numpy as np
 
 try:
-    from . import _spglib as spg
+    from spglib import _spglib as spg
 except ImportError:
     import os.path
     import re
@@ -56,7 +56,7 @@ except ImportError:
             "Spglib C++ library is not installed and no bundled version was detected"
         )
     cdll.LoadLibrary(os.path.join(os.path.dirname(__file__), bundled_lib))
-    from . import _spglib as spg
+    from spglib import _spglib as spg
 
 
 class SpglibError(object):
