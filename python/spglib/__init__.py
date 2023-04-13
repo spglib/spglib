@@ -33,6 +33,9 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+
+from ._version import __version__  # noqa: F401
+
 # fmt: off
 from .spglib import (  # noqa: F401
     delaunay_reduce,
@@ -64,5 +67,3 @@ from .spglib import (  # noqa: F401
 )
 
 # fmt: on
-
-__version__ = "%d.%d.%d" % get_version()

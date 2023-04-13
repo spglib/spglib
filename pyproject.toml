@@ -4,13 +4,12 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "spglib"
-version = "2.3.0"
 requires-python = ">=3.8"
 description = "This is the spglib module."
 license = { text = "BSD-3-Clause" }
+license-files = { paths = ["COPYING"] }
 readme = "python/README.rst"
-# TODO: Switch to dynamic variables scikit-build/scikit-build-core#172
-#dynamic = ["version", "name", "description"]
+dynamic = ["version"]
 dependencies = [
     "numpy"
 ]
@@ -88,6 +87,11 @@ cmake.args = [
     "-DSPGLIB_WITH_TESTS=OFF",
     "-DSPGLIB_USE_OMP=OFF",
 ]
+metadata.version.provider = "scikit_build_core.metadata.setuptools_scm"
+sdist.include = ["python/spglib/_version.py"]
+
+[tool.setuptools_scm]
+write_to = "python/spglib/_version.py"
 
 [tool.cibuildwheel]
 # cp312: Cannot build numpy yet
