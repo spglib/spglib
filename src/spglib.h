@@ -38,11 +38,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-/* SPGCONST is used instead of 'const' so to avoid gcc warning. */
-/* However there should be better way than this way.... */
-#ifndef SPGCONST
-#define SPGCONST
-#endif
 
 #include <stddef.h>
 
@@ -196,47 +191,43 @@ int spg_get_micro_version(void);
 SpglibError spg_get_error_code(void);
 char *spg_get_error_message(SpglibError spglib_error);
 
-SpglibDataset *spg_get_dataset(SPGCONST double lattice[3][3],
-                               SPGCONST double position[][3], const int types[],
+SpglibDataset *spg_get_dataset(const double lattice[3][3],
+                               const double position[][3], const int types[],
                                const int num_atom, const double symprec);
 
 /* This is for test using */
-SpglibDataset *spg_get_layer_dataset(SPGCONST double lattice[3][3],
-                                     SPGCONST double position[][3],
+SpglibDataset *spg_get_layer_dataset(const double lattice[3][3],
+                                     const double position[][3],
                                      const int types[], const int num_atom,
                                      const int aperiodic_axis,
                                      const double symprec);
 
 SpglibMagneticDataset *spg_get_magnetic_dataset(
-    SPGCONST double lattice[3][3], SPGCONST double position[][3],
-    const int types[], const double *tensors, const int tensor_rank,
-    const int num_atom, const int is_axial, const double symprec);
+    const double lattice[3][3], const double position[][3], const int types[],
+    const double *tensors, const int tensor_rank, const int num_atom,
+    const int is_axial, const double symprec);
 
 SpglibMagneticDataset *spgms_get_magnetic_dataset(
-    SPGCONST double lattice[3][3], SPGCONST double position[][3],
-    const int types[], const double *tensors, const int tensor_rank,
-    const int num_atom, const int is_axial, const double symprec,
-    const double angle_tolerance, const double mag_symprec);
+    const double lattice[3][3], const double position[][3], const int types[],
+    const double *tensors, const int tensor_rank, const int num_atom,
+    const int is_axial, const double symprec, const double angle_tolerance,
+    const double mag_symprec);
 
-SpglibDataset *spgat_get_dataset(SPGCONST double lattice[3][3],
-                                 SPGCONST double position[][3],
-                                 const int types[], const int num_atom,
-                                 const double symprec,
+SpglibDataset *spgat_get_dataset(const double lattice[3][3],
+                                 const double position[][3], const int types[],
+                                 const int num_atom, const double symprec,
                                  const double angle_tolerance);
 
 /* hall_number = 0 gives the same as spg_get_dataset. */
-SpglibDataset *spg_get_dataset_with_hall_number(SPGCONST double lattice[3][3],
-                                                SPGCONST double position[][3],
-                                                const int types[],
-                                                const int num_atom,
-                                                const int hall_number,
-                                                const double symprec);
+SpglibDataset *spg_get_dataset_with_hall_number(
+    const double lattice[3][3], const double position[][3], const int types[],
+    const int num_atom, const int hall_number, const double symprec);
 
 /* hall_number = 0 gives the same as spgat_get_dataset. */
 SpglibDataset *spgat_get_dataset_with_hall_number(
-    SPGCONST double lattice[3][3], SPGCONST double position[][3],
-    const int types[], const int num_atom, const int hall_number,
-    const double symprec, const double angle_tolerance);
+    const double lattice[3][3], const double position[][3], const int types[],
+    const int num_atom, const int hall_number, const double symprec,
+    const double angle_tolerance);
 
 void spg_free_dataset(SpglibDataset *dataset);
 void spg_free_magnetic_dataset(SpglibMagneticDataset *dataset);
@@ -248,34 +239,34 @@ void spg_free_magnetic_dataset(SpglibMagneticDataset *dataset);
 /* ``translation[i]`` with same index give a symmetry operations, */
 /* i.e., these have to be used together. */
 int spg_get_symmetry(int rotation[][3][3], double translation[][3],
-                     const int max_size, SPGCONST double lattice[3][3],
-                     SPGCONST double position[][3], const int types[],
+                     const int max_size, const double lattice[3][3],
+                     const double position[][3], const int types[],
                      const int num_atom, const double symprec);
 
 int spgat_get_symmetry(int rotation[][3][3], double translation[][3],
-                       const int max_size, SPGCONST double lattice[3][3],
-                       SPGCONST double position[][3], const int types[],
+                       const int max_size, const double lattice[3][3],
+                       const double position[][3], const int types[],
                        const int num_atom, const double symprec,
                        const double angle_tolerance);
 
 /* Find symmetry operations with collinear spins on atoms. */
 int spg_get_symmetry_with_collinear_spin(
     int rotation[][3][3], double translation[][3], int equivalent_atoms[],
-    const int max_size, SPGCONST double lattice[3][3],
-    SPGCONST double position[][3], const int types[], const double spins[],
-    const int num_atom, const double symprec);
+    const int max_size, const double lattice[3][3], const double position[][3],
+    const int types[], const double spins[], const int num_atom,
+    const double symprec);
 
 int spgat_get_symmetry_with_collinear_spin(
     int rotation[][3][3], double translation[][3], int equivalent_atoms[],
-    const int max_size, SPGCONST double lattice[3][3],
-    SPGCONST double position[][3], const int types[], const double spins[],
-    const int num_atom, const double symprec, const double angle_tolerance);
+    const int max_size, const double lattice[3][3], const double position[][3],
+    const int types[], const double spins[], const int num_atom,
+    const double symprec, const double angle_tolerance);
 
 int spgms_get_symmetry_with_collinear_spin(
     int rotation[][3][3], double translation[][3], int equivalent_atoms[],
-    const int max_size, SPGCONST double lattice[3][3],
-    SPGCONST double position[][3], const int types[], const double spins[],
-    const int num_atom, const double symprec, const double angle_tolerance,
+    const int max_size, const double lattice[3][3], const double position[][3],
+    const int types[], const double spins[], const int num_atom,
+    const double symprec, const double angle_tolerance,
     const double mag_symprec);
 
 /**
@@ -302,32 +293,30 @@ int spgms_get_symmetry_with_collinear_spin(
 int spg_get_symmetry_with_site_tensors(
     int rotation[][3][3], double translation[][3], int equivalent_atoms[],
     double primitive_lattice[3][3], int *spin_flips, const int max_size,
-    SPGCONST double lattice[3][3], SPGCONST double position[][3],
-    const int types[], const double *tensors, const int tensor_rank,
-    const int num_atom, const int with_time_reversal, const int is_axial,
-    const double symprec);
+    const double lattice[3][3], const double position[][3], const int types[],
+    const double *tensors, const int tensor_rank, const int num_atom,
+    const int with_time_reversal, const int is_axial, const double symprec);
 
 int spgat_get_symmetry_with_site_tensors(
     int rotation[][3][3], double translation[][3], int equivalent_atoms[],
     double primitive_lattice[3][3], int *spin_flips, const int max_size,
-    SPGCONST double lattice[3][3], SPGCONST double position[][3],
-    const int types[], const double *tensors, const int tensor_rank,
-    const int num_atom, const int with_time_reversal, const int is_axial,
-    const double symprec, const double angle_tolerance);
+    const double lattice[3][3], const double position[][3], const int types[],
+    const double *tensors, const int tensor_rank, const int num_atom,
+    const int with_time_reversal, const int is_axial, const double symprec,
+    const double angle_tolerance);
 
 int spgms_get_symmetry_with_site_tensors(
     int rotation[][3][3], double translation[][3], int equivalent_atoms[],
     double primitive_lattice[3][3], int *spin_flips, const int max_size,
-    SPGCONST double lattice[3][3], SPGCONST double position[][3],
-    const int types[], const double *tensors, const int tensor_rank,
-    const int num_atom, const int with_time_reversal, const int is_axial,
-    const double symprec, const double angle_tolerance,
-    const double mag_symprec);
+    const double lattice[3][3], const double position[][3], const int types[],
+    const double *tensors, const int tensor_rank, const int num_atom,
+    const int with_time_reversal, const int is_axial, const double symprec,
+    const double angle_tolerance, const double mag_symprec);
 
 /* Deprecated at v2.0 */
 /* Space group type (hall_number) is searched from symmetry operations. */
-int spg_get_hall_number_from_symmetry(SPGCONST int rotation[][3][3],
-                                      SPGCONST double translation[][3],
+int spg_get_hall_number_from_symmetry(const int rotation[][3][3],
+                                      const double translation[][3],
                                       const int num_operations,
                                       const double symprec);
 /**
@@ -341,53 +330,52 @@ int spg_get_hall_number_from_symmetry(SPGCONST int rotation[][3][3],
  * @return SpglibSpacegroupType
  */
 SpglibSpacegroupType spg_get_spacegroup_type_from_symmetry(
-    SPGCONST int rotation[][3][3], SPGCONST double translation[][3],
-    const int num_operations, SPGCONST double lattice[3][3],
-    const double symprec);
+    const int rotation[][3][3], const double translation[][3],
+    const int num_operations, const double lattice[3][3], const double symprec);
 
 SpglibMagneticSpacegroupType spg_get_magnetic_spacegroup_type_from_symmetry(
-    SPGCONST int rotations[][3][3], SPGCONST double translations[][3],
-    SPGCONST int *time_reversals, const int num_operations,
-    SPGCONST double lattice[3][3], const double symprec);
+    const int rotations[][3][3], const double translations[][3],
+    const int *time_reversals, const int num_operations,
+    const double lattice[3][3], const double symprec);
 
 /* Return exact number of symmetry operations. This function may */
 /* be used in advance to allocate memory space for symmetry */
 /* operations. */
-int spg_get_multiplicity(SPGCONST double lattice[3][3],
-                         SPGCONST double position[][3], const int types[],
-                         const int num_atom, const double symprec);
+int spg_get_multiplicity(const double lattice[3][3], const double position[][3],
+                         const int types[], const int num_atom,
+                         const double symprec);
 
-int spgat_get_multiplicity(SPGCONST double lattice[3][3],
-                           SPGCONST double position[][3], const int types[],
+int spgat_get_multiplicity(const double lattice[3][3],
+                           const double position[][3], const int types[],
                            const int num_atom, const double symprec,
                            const double angle_tolerance);
 
 /* Space group is found in international table symbol (``symbol``) and */
 /* number (return value). 0 is returned when it fails. */
-int spg_get_international(char symbol[11], SPGCONST double lattice[3][3],
-                          SPGCONST double position[][3], const int types[],
+int spg_get_international(char symbol[11], const double lattice[3][3],
+                          const double position[][3], const int types[],
                           const int num_atom, const double symprec);
 
-int spgat_get_international(char symbol[11], SPGCONST double lattice[3][3],
-                            SPGCONST double position[][3], const int types[],
+int spgat_get_international(char symbol[11], const double lattice[3][3],
+                            const double position[][3], const int types[],
                             const int num_atom, const double symprec,
                             const double angle_tolerance);
 
 /* Space group is found in schoenflies (``symbol``) and as number (return */
 /* value).  0 is returned when it fails. */
-int spg_get_schoenflies(char symbol[7], SPGCONST double lattice[3][3],
-                        SPGCONST double position[][3], const int types[],
+int spg_get_schoenflies(char symbol[7], const double lattice[3][3],
+                        const double position[][3], const int types[],
                         const int num_atom, const double symprec);
 
-int spgat_get_schoenflies(char symbol[7], SPGCONST double lattice[3][3],
-                          SPGCONST double position[][3], const int types[],
+int spgat_get_schoenflies(char symbol[7], const double lattice[3][3],
+                          const double position[][3], const int types[],
                           const int num_atom, const double symprec,
                           const double angle_tolerance);
 
 /* Point group symbol is obtained from the rotation part of */
 /* symmetry operations */
 int spg_get_pointgroup(char symbol[6], int trans_mat[3][3],
-                       SPGCONST int rotations[][3][3], const int num_rotations);
+                       const int rotations[][3][3], const int num_rotations);
 
 /* Space-group operations in built-in database are accessed by index */
 /* of hall symbol. The index is defined as number from 1 to 530. */
@@ -497,14 +485,14 @@ size_t spg_get_dense_grid_point_from_address(const int grid_address[3],
 int spg_get_ir_reciprocal_mesh(int grid_address[][3], int ir_mapping_table[],
                                const int mesh[3], const int is_shift[3],
                                const int is_time_reversal,
-                               SPGCONST double lattice[3][3],
-                               SPGCONST double position[][3], const int types[],
+                               const double lattice[3][3],
+                               const double position[][3], const int types[],
                                const int num_atom, const double symprec);
 size_t spg_get_dense_ir_reciprocal_mesh(
     int grid_address[][3], size_t ir_mapping_table[], const int mesh[3],
     const int is_shift[3], const int is_time_reversal,
-    SPGCONST double lattice[3][3], SPGCONST double position[][3],
-    const int types[], const int num_atom, const double symprec);
+    const double lattice[3][3], const double position[][3], const int types[],
+    const int num_atom, const double symprec);
 
 /* The irreducible k-points are searched from unique k-point mesh */
 /* grids from real space lattice vectors and rotation matrices of */
@@ -517,13 +505,11 @@ size_t spg_get_dense_ir_reciprocal_mesh(
 int spg_get_stabilized_reciprocal_mesh(
     int grid_address[][3], int ir_mapping_table[], const int mesh[3],
     const int is_shift[3], const int is_time_reversal, const int num_rot,
-    SPGCONST int rotations[][3][3], const int num_q,
-    SPGCONST double qpoints[][3]);
+    const int rotations[][3][3], const int num_q, const double qpoints[][3]);
 size_t spg_get_dense_stabilized_reciprocal_mesh(
     int grid_address[][3], size_t ir_mapping_table[], const int mesh[3],
     const int is_shift[3], const int is_time_reversal, const int num_rot,
-    SPGCONST int rotations[][3][3], const int num_q,
-    SPGCONST double qpoints[][3]);
+    const int rotations[][3][3], const int num_q, const double qpoints[][3]);
 
 /* Rotation operations in reciprocal space ``rot_reciprocal`` are applied */
 /* to a grid address ``address_orig`` and resulting grid points are stored
@@ -532,23 +518,20 @@ size_t spg_get_dense_stabilized_reciprocal_mesh(
 void spg_get_grid_points_by_rotations(int rot_grid_points[],
                                       const int address_orig[3],
                                       const int num_rot,
-                                      SPGCONST int rot_reciprocal[][3][3],
+                                      const int rot_reciprocal[][3][3],
                                       const int mesh[3], const int is_shift[3]);
-void spg_get_dense_grid_points_by_rotations(size_t rot_grid_points[],
-                                            const int address_orig[3],
-                                            const int num_rot,
-                                            SPGCONST int rot_reciprocal[][3][3],
-                                            const int mesh[3],
-                                            const int is_shift[3]);
+void spg_get_dense_grid_points_by_rotations(
+    size_t rot_grid_points[], const int address_orig[3], const int num_rot,
+    const int rot_reciprocal[][3][3], const int mesh[3], const int is_shift[3]);
 
 void spg_get_BZ_grid_points_by_rotations(
     int rot_grid_points[], const int address_orig[3], const int num_rot,
-    SPGCONST int rot_reciprocal[][3][3], const int mesh[3],
-    const int is_shift[3], const int bz_map[]);
+    const int rot_reciprocal[][3][3], const int mesh[3], const int is_shift[3],
+    const int bz_map[]);
 void spg_get_dense_BZ_grid_points_by_rotations(
     size_t rot_grid_points[], const int address_orig[3], const int num_rot,
-    SPGCONST int rot_reciprocal[][3][3], const int mesh[3],
-    const int is_shift[3], const size_t bz_map[]);
+    const int rot_reciprocal[][3][3], const int mesh[3], const int is_shift[3],
+    const size_t bz_map[]);
 
 /* Grid addresses are relocated inside Brillouin zone. */
 /* Number of ir-grid-points inside Brillouin zone is returned. */
@@ -573,16 +556,12 @@ void spg_get_dense_BZ_grid_points_by_rotations(
 /* surface from grid address. The grid point indices are mapped to */
 /* (mesh[0] * 2) x (mesh[1] * 2) x (mesh[2] * 2) space (bz_map). */
 int spg_relocate_BZ_grid_address(int bz_grid_address[][3], int bz_map[],
-                                 SPGCONST int grid_address[][3],
-                                 const int mesh[3],
-                                 SPGCONST double rec_lattice[3][3],
+                                 const int grid_address[][3], const int mesh[3],
+                                 const double rec_lattice[3][3],
                                  const int is_shift[3]);
-size_t spg_relocate_dense_BZ_grid_address(int bz_grid_address[][3],
-                                          size_t bz_map[],
-                                          SPGCONST int grid_address[][3],
-                                          const int mesh[3],
-                                          SPGCONST double rec_lattice[3][3],
-                                          const int is_shift[3]);
+size_t spg_relocate_dense_BZ_grid_address(
+    int bz_grid_address[][3], size_t bz_map[], const int grid_address[][3],
+    const int mesh[3], const double rec_lattice[3][3], const int is_shift[3]);
 
 /*--------*/
 /* Niggli */

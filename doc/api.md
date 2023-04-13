@@ -126,8 +126,8 @@ To specify the other crystallographic choice (setting, origin, axis,
 or cell choice), `spg_get_dataset_with_hall_number` is used.
 
 ```c
-SpglibDataset * spg_get_dataset_with_hall_number(SPGCONST double lattice[3][3],
-                                                 SPGCONST double position[][3],
+SpglibDataset * spg_get_dataset_with_hall_number(const double lattice[3][3],
+                                                 const double position[][3],
                                                  const int types[],
                                                  const int num_atom,
                                                  const int hall_number,
@@ -373,8 +373,8 @@ source than spglib.
 
 ```c
 SpglibSpacegroupType spg_get_spacegroup_type_from_symmetry(
-    SPGCONST int rotations[][3][3], SPGCONST double translations[][3],
-    const int num_operations, SPGCONST double lattice[3][3], const double symprec
+    const int rotations[][3][3], const double translations[][3],
+    const int num_operations, const double lattice[3][3], const double symprec
 );
 ```
 
@@ -402,8 +402,8 @@ int spg_get_symmetry_with_collinear_spin(int rotation[][3][3],
                                          double translation[][3],
                                          int equivalent_atoms[],
                                          const int max_size,
-                                         SPGCONST double lattice[3][3],
-                                         SPGCONST double position[][3],
+                                         const double lattice[3][3],
+                                         const double position[][3],
                                          const int types[],
                                          const double spins[],
                                          const int num_atom,
@@ -427,7 +427,7 @@ Returned `spin_flips` represents sign of site tensors after applying time-revers
 int spg_get_symmetry_with_site_tensors(
     int rotation[][3][3], double translation[][3], int equivalent_atoms[],
     double primitive_lattice[3][3], int *spin_flips, const int max_size,
-    SPGCONST double lattice[3][3], SPGCONST double position[][3],
+    const double lattice[3][3], const double position[][3],
     const int types[], const double *tensors, const int tensor_rank,
     const int num_atom, const int with_time_reversal, const int is_axial,
     const double symprec);
@@ -448,7 +448,7 @@ The description of returned dataset is given at {ref}`magnetic_spglib_dataset`.
 
 ```c
 SpglibMagneticDataset *spg_get_magnetic_dataset(
-    SPGCONST double lattice[3][3], SPGCONST double position[][3],
+    const double lattice[3][3], const double position[][3],
     const int types[], const double *tensors, const int tensor_rank,
     const int num_atom, const int is_axial, const double symprec);
 ```
@@ -525,9 +525,9 @@ Return magnetic space-group type information from magnetic symmetry operations.
 
 ```c
 SpglibMagneticSpacegroupType spg_get_magnetic_spacegroup_type_from_symmetry(
-    SPGCONST int rotations[][3][3], SPGCONST double translations[][3],
-    SPGCONST int *time_reversals, const int num_operations,
-    SPGCONST double lattice[3][3], const double symprec
+    const int rotations[][3][3], const double translations[][3],
+    const int *time_reversals, const int num_operations,
+    const double lattice[3][3], const double symprec
 );
 ```
 
@@ -676,8 +676,8 @@ different from usual one, but is given in the fractional
 coordinates and so it should be small like `1e-5`.
 
 ```c
-int spg_get_hall_number_from_symmetry(SPGCONST int rotation[][3][3],
-                                       SPGCONST double translation[][3],
+int spg_get_hall_number_from_symmetry(const int rotation[][3][3],
+                                       const double translation[][3],
                                        const int num_operations,
                                        const double symprec)
 ```

@@ -5,7 +5,7 @@ extern "C" {
 #include "utils.h"
 }
 
-static void show_magnetic_symmetry_operations(SPGCONST int (*rotations)[3][3],
+static void show_magnetic_symmetry_operations(const int (*rotations)[3][3],
                                               const double (*translations)[3],
                                               const int *time_reversals,
                                               const int size);
@@ -507,7 +507,7 @@ TEST(test_magnetic_symmetry, test_with_broken_symmetry) {
 // Local functions
 // ****************************************************************************
 
-static void show_magnetic_symmetry_operations(SPGCONST int (*rotations)[3][3],
+static void show_magnetic_symmetry_operations(const int (*rotations)[3][3],
                                               const double (*translations)[3],
                                               const int *time_reversals,
                                               const int size) {

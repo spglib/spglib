@@ -70,15 +70,15 @@ Spacegroup *spa_search_spacegroup(const Primitive *primitive,
                                   const int hall_number, const double symprec,
                                   const double angle_tolerance);
 Spacegroup *spa_search_spacegroup_with_symmetry(const Symmetry *symmetry,
-                                                SPGCONST double prim_lat[3][3],
+                                                const double prim_lat[3][3],
                                                 const double symprec);
 Cell *spa_transform_to_primitive(int *mapping_table, const Cell *cell,
-                                 SPGCONST double trans_mat[3][3],
+                                 const double trans_mat[3][3],
                                  const Centering centering,
                                  const double symprec);
 Cell *spa_transform_from_primitive(const Cell *primitive,
                                    const Centering centering,
                                    const double symprec);
-void spa_copy_spacegroup(Spacegroup *dst, SPGCONST Spacegroup *src);
+void spa_copy_spacegroup(Spacegroup *dst, const Spacegroup *src);
 
 #endif
