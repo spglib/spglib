@@ -30,7 +30,6 @@ changelog = "https://spglib.readthedocs.io/en/latest/releases.html"
 
 [project.optional-dependencies]
 test = [
-    "codecov",
     "pytest",
     "pyyaml",
 ]
