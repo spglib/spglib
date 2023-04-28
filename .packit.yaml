@@ -10,6 +10,16 @@ files_to_sync:
   - .packit.yaml
   - src: .distro/spglib.rpmlintrc
     dest: spglib.rpmlintrc
+  # tmt setup
+  - src: .distro/.fmf/
+    dest: .fmf/
+  - src: .distro/plans/
+    dest: plans/
+    filters:
+      - "- .distro/plans/main.fmf.dist-git"
+      - "- .distro/plans/rpmlint.fmf"
+  - src: .distro/plans/main.fmf.dist-git
+    dest: plans/main.fmf
 upstream_package_name: spglib
 downstream_package_name: spglib
 update_release: false
@@ -26,6 +36,11 @@ jobs:
       - copr://@scikit-build/release
     targets:
       - fedora-development
+  - job: tests
+    trigger: pull_request
+    targets:
+      - fedora-development
+    fmf_path: .distro
   - job: copr_build
     trigger: commit
     branch: main
@@ -47,6 +62,13 @@ jobs:
       - fedora-latest-x86_64
       - fedora-development-aarch64
       - fedora-latest-aarch64
+  - job: tests
+    trigger: commit
+    branch: main
+    targets:
+      - fedora-development
+      - fedora-latest
+    fmf_path: .distro
   - job: propose_downstream
     trigger: release
     dist_git_branches:
