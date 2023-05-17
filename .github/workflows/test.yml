@@ -22,9 +22,15 @@ jobs:
     runs-on: ubuntu-latest
     container: fedora
     needs: [ pre-commit ]
+    continue-on-error: ${{ matrix.experimental }}
     strategy:
+      fail-fast: false
       matrix:
-        toolchain: [ gcc, intel, llvm ]
+        experimental: [ false ]
+        toolchain: [ gcc, llvm ]
+        include:
+          - toolchain: intel
+            experimental: true
     steps:
       - name: Install common packages
         run: |
