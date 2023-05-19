@@ -16,9 +16,14 @@ jobs:
     uses: ./.github/workflows/pypi-wheel-builds.yml
     secrets: inherit
   upload_pypi:
-    name: Upload to pypi repository
+    name: Upload to PyPI repository
     needs: [ tests, pypi-wheel ]
     runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/project/spglib/
+    permissions:
+      id-token: write
     steps:
       - uses: actions/download-artifact@v3
         with:
@@ -29,15 +34,10 @@ jobs:
         # TODO: Maybe we can move this to main PyPI since it is marked rc
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          user: __token__
-          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
           repository_url: https://test.pypi.org/legacy/
       - name: Publish package to PyPI
         if: ${{ !contains(github.ref, 'rc') }}
         uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          user: __token__
-          password: ${{ secrets.PYPI_API_TOKEN }}
   release:
     needs: [ upload_pypi ]
     name: Create release
