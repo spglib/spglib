@@ -1,12 +1,11 @@
 Name:           spglib
 Summary:        C library for finding and handling crystal symmetries
 Version:        0.0.0
-Release:        %{autorelease}
+Release:        %autorelease
 License:        BSD
-URL:            https://%{name}.readthedocs.io/
+URL:            https://spglib.readthedocs.io/
 
-Source0:        https://github.com/spglib/%{name}/archive/refs/tags/v%{version}.tar.gz
-Source1:        %{name}.rpmlintrc
+Source:         https://github.com/spglib/spglib/archive/refs/tags/v%{version}.tar.gz
 
 BuildRequires:  ninja-build
 BuildRequires:  cmake
@@ -20,44 +19,47 @@ BuildRequires:  python3-devel
 C library for finding and handling crystal symmetries.
 
 %package        devel
-Summary:        Development files for %{name}
-Requires:       %{name}%{?_isa} = %{version}-%{release}
+Summary:        Development files for spglib
+Requires:       spglib%{?_isa} = %{version}-%{release}
 
 %description    devel
 This package contains libraries and header files for developing
-applications that use %{name}.
+applications that use spglib.
 
 %package        fortran
-Summary:        Runtime files for %{name} Fortran bindings
-Requires:       %{name} = %{version}-%{release}
+Summary:        Runtime files for spglib Fortran bindings
+Requires:       spglib = %{version}-%{release}
 Requires:       gcc-gfortran%{_isa}
 
 %description    fortran
 This package contains runtime files to run applications that were built
-using %{name}'s Fortran bindings.
+using spglib's Fortran bindings.
 
 %package        fortran-devel
-Summary:        Development files for %{name} with Fortran bindings
-Requires:       %{name}-fortran%{?_isa} = %{version}-%{release}
-Requires:       %{name}-devel = %{version}-%{release}
+Summary:        Development files for spglib with Fortran bindings
+Requires:       spglib-fortran%{?_isa} = %{version}-%{release}
+Requires:       spglib-devel = %{version}-%{release}
 
 %description    fortran-devel
 This package contains Fortran module and header files for developing
-Fortran applications that use %{name}.
+Fortran applications that use spglib.
 
-%package -n     python3-%{name}
-Summary:        Python3 library of %{name}
-Requires:       %{name}
+%package -n     python3-spglib
+Summary:        Python3 library of spglib
+Requires:       spglib = %{version}
 
-%description -n python3-%{name}
+%description -n python3-spglib
 This package contains the libraries to
-develop applications with %{name} Python3 bindings.
+develop applications with spglib Python3 bindings.
+
 
 %prep
-%autosetup -n %{name}-%{version}
+%autosetup -n spglib-%{version}
+
 
 %generate_buildrequires
 %pyproject_buildrequires -x test
+
 
 %build
 %cmake \
@@ -69,15 +71,25 @@ develop applications with %{name} Python3 bindings.
 %cmake_build
 %pyproject_wheel
 
+
 %install
 %cmake_install
 
 %pyproject_install
-%pyproject_save_files %{name}
+%pyproject_save_files spglib
+
+rm %{buildroot}%{python3_sitearch}/spglib/libsymspg.so*
+rm %{buildroot}%{python3_sitearch}/spglib/spglib.h
+# Delete from pyproject_files as well
+sed -i "/libsymspg.so/d" %{pyproject_files}
+sed -i "/spglib.h/d" %{pyproject_files}
+
 
 %check
 %ctest
-%pytest -v
+# Need to set LD_LIBRARY_PATH manually for this test
+LD_LIBRARY_PATH=%{buildroot}%{_libdir} %pytest -v
+
 
 %files
 %doc README.md
@@ -90,27 +102,22 @@ develop applications with %{name} Python3 bindings.
 %files devel
 %{_libdir}/libsymspg.so
 %{_includedir}/spglib.h
-# Note: Different case-sensitivity comapred to %%{name}
-%{_libdir}/cmake/Spglib/SpglibConfig.cmake
-%{_libdir}/cmake/Spglib/SpglibConfigVersion.cmake
-%{_libdir}/cmake/Spglib/SpglibTargets_shared.cmake
-%{_libdir}/cmake/Spglib/SpglibTargets_shared-release.cmake
-%{_libdir}/cmake/Spglib/PackageCompsHelper.cmake
+%{_libdir}/cmake/Spglib
+%exclude %{_libdir}/cmake/Spglib/SpglibTargets_fortran*
 %{_libdir}/pkgconfig/spglib.pc
 
 %files fortran-devel
 %{_libdir}/libspglib_f08.so
 %{_includedir}/spglib_f08.F90
+# TODO: Mod files should be in %%{_fmoddir} according to the guidelines
+# Unclear how to proceed on cmake side to be general
+# https://docs.fedoraproject.org/en-US/packaging-guidelines/Fortran/
 %{_includedir}/spglib_f08.mod
 %{_libdir}/pkgconfig/spglib_f08.pc
-%{_libdir}/cmake/Spglib/SpglibTargets_fortran_shared.cmake
-%{_libdir}/cmake/Spglib/SpglibTargets_fortran_shared-release.cmake
+%{_libdir}/cmake/Spglib/SpglibTargets_fortran*
 
-%files -n python3-%{name}
-%{python3_sitearch}/%{name}/
-%exclude %{python3_sitearch}/%{name}/libsymspg.so*
-%exclude %{python3_sitearch}/%{name}/spglib.h
-%{python3_sitearch}/%{name}-*.dist-info/
+%files -n python3-%{name} -f %{pyproject_files}
+
 
 %changelog
 %autochangelog

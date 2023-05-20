@@ -1,2 +1,1 @@
-addFilter("python.?-spglib.* dangling-relative-symlink .*libsymspg.so")
-addFilter("python.?-spglib.* explicit-lib-dependency")
+addFilter("python.?-spglib.* zero-length .*/entry_points.txt")
