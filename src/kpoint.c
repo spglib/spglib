@@ -135,7 +135,7 @@ int kpt_get_irreducible_reciprocal_mesh(int grid_address[][3],
     num_ir = kpt_get_dense_irreducible_reciprocal_mesh(
         grid_address, dense_ir_mapping_table, mesh, is_shift, rot_reciprocal);
 
-    for (i = 0; i < mesh[0] * mesh[1] * mesh[2]; i++) {
+    for (i = 0; i < (size_t)(mesh[0] * mesh[1] * mesh[2]); i++) {
         ir_mapping_table[i] = dense_ir_mapping_table[i];
     }
 
@@ -176,7 +176,7 @@ int kpt_get_stabilized_reciprocal_mesh(
         grid_address, dense_ir_mapping_table, mesh, is_shift, is_time_reversal,
         rotations, num_q, qpoints);
 
-    for (i = 0; i < mesh[0] * mesh[1] * mesh[2]; i++) {
+    for (i = 0; i < (size_t)(mesh[0] * mesh[1] * mesh[2]); i++) {
         ir_mapping_table[i] = dense_ir_mapping_table[i];
     }
 
@@ -255,7 +255,8 @@ int kpt_relocate_BZ_grid_address(int bz_grid_address[][3], int bz_map[],
                                  const int grid_address[][3], const int mesh[3],
                                  const double rec_lattice[3][3],
                                  const int is_shift[3]) {
-    int i, num_bz_map, num_bzgp;
+    int num_bzgp;
+    size_t i, num_bz_map;
     size_t *dense_bz_map;
 
     num_bz_map = mesh[0] * mesh[1] * mesh[2] * 8;
@@ -380,7 +381,8 @@ static MatINT *get_point_group_reciprocal_with_q(const MatINT *rot_reciprocal,
                                                  const double symprec,
                                                  const size_t num_q,
                                                  const double qpoints[][3]) {
-    int i, j, k, l, is_all_ok, num_rot;
+    int i, l, is_all_ok, num_rot;
+    size_t j, k;
     int *ir_rot;
     double q_rot[3], diff[3];
     MatINT *rot_reciprocal_q;
@@ -466,15 +468,14 @@ static size_t get_dense_ir_reciprocal_mesh_normal(
     /* grid: reducible grid points */
     /* ir_mapping_table: the mapping from each point to ir-point. */
 
-    long i;
-    size_t grid_point_rot;
+    size_t i, grid_point_rot;
     int j;
     int address_double[3], address_double_rot[3];
 
     kgd_get_all_grid_addresses(grid_address, mesh);
 
 #pragma omp parallel for private(j, grid_point_rot, address_double, \
-                                 address_double_rot)
+                                     address_double_rot)
     for (i = 0; i < mesh[0] * mesh[1] * (size_t)(mesh[2]); i++) {
         kgd_get_grid_address_double_mesh(address_double, grid_address[i], mesh,
                                          is_shift);
@@ -501,8 +502,7 @@ static size_t get_dense_ir_reciprocal_mesh_normal(
 static size_t get_dense_ir_reciprocal_mesh_distortion(
     int grid_address[][3], size_t ir_mapping_table[], const int mesh[3],
     const int is_shift[3], const MatINT *rot_reciprocal) {
-    long i;
-    size_t grid_point_rot;
+    size_t i, grid_point_rot;
     int j, k, indivisible;
     int address_double[3], address_double_rot[3];
     long long_address_double[3], long_address_double_rot[3], divisor[3];
@@ -516,9 +516,9 @@ static size_t get_dense_ir_reciprocal_mesh_distortion(
         divisor[j] = mesh[(j + 1) % 3] * mesh[(j + 2) % 3];
     }
 
-#pragma omp parallel for private(j, k, grid_point_rot, address_double,    \
-                                 address_double_rot, long_address_double, \
-                                 long_address_double_rot)
+#pragma omp parallel for private(j, k, grid_point_rot, address_double,        \
+                                     address_double_rot, long_address_double, \
+                                     long_address_double_rot)
     for (i = 0; i < mesh[0] * mesh[1] * (size_t)(mesh[2]); i++) {
         kgd_get_grid_address_double_mesh(address_double, grid_address[i], mesh,
                                          is_shift);
@@ -568,8 +568,7 @@ static size_t get_dense_ir_reciprocal_mesh_distortion(
 }
 
 static size_t get_dense_num_ir(size_t ir_mapping_table[], const int mesh[3]) {
-    long i;
-    size_t num_ir;
+    size_t i, num_ir;
 
     num_ir = 0;
 
