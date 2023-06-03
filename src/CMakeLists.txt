@@ -1,5 +1,12 @@
 configure_file(version.h.in version.h)
 
+# Add compiler warnings
+if (MSVC)
+	target_compile_options(Spglib_symspg PRIVATE /W4)
+else()
+	target_compile_options(Spglib_symspg PRIVATE -Wall -Wextra -Wpedantic)
+endif()
+
 # Configure main target
 target_sources(Spglib_symspg PRIVATE
 		arithmetic.c
