@@ -17,7 +17,7 @@ TEST(test_magnetic_symmetry, test_spg_get_magnetic_symmetry_from_database) {
     int rotations[384][3][3];
     double translations[384][3];
     int time_reversals[384];
-    int i, j, size;
+    int size;
 
     /* bns_number: 146.12, uni_number 1242 */
     /* hall_number: 433 -> 146:h */
@@ -37,7 +37,7 @@ TEST(test_magnetic_symmetry, test_spg_get_symmetry_with_collinear_spin) {
     int equivalent_atoms[2];
     double spins[2];
     int num_atom = 2;
-    int i, j, size, retval, max_size;
+    int size, max_size;
 
     int(*rotation)[3][3];
     double(*translation)[3];
@@ -91,7 +91,7 @@ TEST(test_magnetic_symmetry, test_spg_get_symmetry_with_collinear_spin) {
 TEST(test_magnetic_symmetry, test_spg_get_symmetry_with_site_tensors) {
     /* MAGNDATA #0.1: LaMnO3 */
     /* BNS: Pn'ma' (62.448), MHall: -P 2ac' 2n' (546) */
-    int max_size, size, i, j;
+    int max_size, size, i;
     double lattice[][3] = {{5.7461, 0, 0}, {0, 7.6637, 0}, {0, 0, 5.5333}};
     /* clang-format off */
     double position[][3] = {
@@ -393,7 +393,7 @@ TEST(test_magnetic_symmetry, test_spgms_get_magnetic_dataset_high_mag_symprec) {
     double symprec = 1e-5;
     double mag_symprec = 1e-1;  // with high mag_symprec
 
-    int i, size;
+    int size;
     int equivalent_atoms[3];
     double primitive_lattice[3][3];
     int(*rotations)[3][3];

@@ -17,7 +17,7 @@ TEST(test_symmetry_search, test_spg_get_symmetry) {
         {0.3, 0.3, 0.5},  {0.7, 0.7, 0.5},  {0.2, 0.8, 0.75}, {0.8, 0.2, 0.75}};
     int types[] = {1, 1, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2};
     int num_atom = 12;
-    int i, j, size, retval, max_size;
+    int i, j, size, max_size;
     double origin_shift[3] = {0.1, 0.1, 0};
 
     int(*rotation)[3][3];
