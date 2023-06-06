@@ -77,6 +77,9 @@ alternative package (hopefully with better functionalities) until then.
 
 - get_symmetry with `is_magnetic=True` is deprecated at version 2.0. Use
   `get_magnetic_symmetry` for magnetic symmetry search.
+- As of version 2.0, the behavior of `get_symmetry` with zero magmoms (corresponding to type-II MSG) is changed.
+  When all magmoms are zero, the newer `get_symmetry` returns the same spatial symmetry with `time_reversal=True` and `time-reversal=False`.
+  This doubles the size of symmetry operations compared to the previous version.
 
 #### `get_spacegroup_type`
 
