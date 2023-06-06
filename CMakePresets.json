@@ -6,7 +6,7 @@
     "patch": 0
   },
   "include": [
-    "CMakePresets-defaults.json",
-    "CMakePresets-CI.json"
+    "cmake/CMakePresets-defaults.json",
+    "cmake/CMakePresets-CI.json"
   ]
 }
