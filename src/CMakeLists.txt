@@ -1,7 +1,7 @@
 configure_file(version.h.in version.h)
 
 # Configure main target
-add_library(Spglib_src_obj OBJECT
+target_sources(Spglib_symspg PRIVATE
 		arithmetic.c
 		cell.c
 		debug.c
@@ -29,48 +29,18 @@ add_library(Spglib_src_obj OBJECT
 set_target_properties(Spglib_symspg PROPERTIES
 		PUBLIC_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/spglib.h)
 # TODO: Should move spglib.h to a separate folder so other headers are not included in ExternalProject setups
-target_include_directories(Spglib_symspg INTERFACE
+target_include_directories(Spglib_symspg PUBLIC
 		"$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
+		"$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
 		"$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
-target_sources(Spglib_symspg PRIVATE $<TARGET_OBJECTS:Spglib_src_obj>)
-# Note: Not using the following to avoid exporting Spglib_src_obj
-#target_link_libraries(Spglib_symspg PRIVATE Spglib_src_obj)
-target_include_directories(Spglib_src_obj PRIVATE
-		"$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
-		"$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>")
-# The object is basically a library, it should have similar properties set
-set_target_properties(Spglib_src_obj PROPERTIES
-		POSITION_INDEPENDENT_CODE ${SPGLIB_SHARED_LIBS})
 
 # Link to third-party libraries
-if (OpenMP_FOUND)
-	target_link_libraries(Spglib_symspg INTERFACE OpenMP::OpenMP_C)
-	target_link_libraries(Spglib_src_obj PUBLIC OpenMP::OpenMP_C)
-endif ()
 if (SPGLIB_USE_OMP)
-	# Add additional library that is guaranteed to have omp
-	# TODO: might be better to keep them separate them, but how do we link to either version on fortran/python?
-	add_library(Spglib_omp)
-	target_sources(Spglib_omp PRIVATE $<TARGET_OBJECTS:Spglib_src_obj>)
-	add_library(Spglib::omp ALIAS Spglib_omp)
-	set_target_properties(Spglib_omp PROPERTIES
-			VERSION ${PROJECT_VERSION}
-			SOVERSION ${PROJECT_VERSION_MAJOR}
-			EXPORT_NAME omp
-			OUTPUT_NAME symspg-omp
-			PUBLIC_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/spglib.h)
-	target_include_directories(Spglib_omp INTERFACE
-			"$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
-			"$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
-	target_link_libraries(Spglib_omp INTERFACE OpenMP::OpenMP_C)
+	target_link_libraries(Spglib_symspg PRIVATE OpenMP::OpenMP_C)
 endif ()
-# Should not be needed anymore
 if (NOT MSVC)
 	# Link to mathlibrary
 	target_link_libraries(Spglib_symspg PUBLIC m)
-	if (SPGLIB_USE_OMP)
-		target_link_libraries(Spglib_omp PUBLIC m)
-	endif ()
 endif ()
 
 
@@ -110,26 +80,11 @@ if (NOT SKBUILD AND CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 				ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Spglib_Development
 				PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT Spglib_Development
 				RUNTIME DESTINATION ${CMAKE_INSTALL_RUNTIMEDIR} COMPONENT Spglib_Runtime)
-		if (SPGLIB_USE_OMP)
-			install(TARGETS Spglib_omp
-					EXPORT SpglibTargets-omp
-					LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Spglib_Runtime NAMELINK_COMPONENT Spglib_Development
-					ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Spglib_Development
-					PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT Spglib_Development
-					RUNTIME DESTINATION ${CMAKE_INSTALL_RUNTIMEDIR} COMPONENT Spglib_Runtime)
-		endif ()
 	else ()
 		install(TARGETS Spglib_symspg
 				EXPORT SpglibTargets
 				LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Spglib_Runtime NAMELINK_COMPONENT Spglib_Development
 				ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Spglib_Development
 				PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT Spglib_Development)
-		if (SPGLIB_USE_OMP)
-			install(TARGETS Spglib_omp
-					EXPORT SpglibTargets-omp
-					LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Spglib_Runtime NAMELINK_COMPONENT Spglib_Development
-					ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Spglib_Development
-					PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT Spglib_Development)
-		endif ()
 	endif ()
 endif ()

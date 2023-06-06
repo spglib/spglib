@@ -118,8 +118,4 @@ if (NOT SKBUILD AND CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 			DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Spglib
 			COMPONENT Spglib_Development)
 	export_components(LIB_TYPE ${SPGLIB_LIB_TYPE})
-	if (SPGLIB_USE_OMP)
-		# This is an empty target file
-		export_components(COMPONENT omp LIB_TYPE ${SPGLIB_LIB_TYPE})
-	endif ()
 endif ()
