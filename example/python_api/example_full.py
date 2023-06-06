@@ -125,9 +125,6 @@ def main():
     print("  Spacegroup of Silicon is %s." % spglib.get_spacegroup(silicon))
     print("")
     print("[get_spacegroup]")
-    print("  Spacegroup of Silicon is %s." % spglib.get_spacegroup(silicon))
-    print("")
-    print("[get_spacegroup]")
     print("  Spacegroup of Rutile is %s." % spglib.get_spacegroup(rutile))
     print("")
     print("[get_spacegroup]")
@@ -147,7 +144,7 @@ def main():
     print("")
     print("[get_pointgroup]")
     print(
-        "  Pointgroup of Rutile is %s."
+        "  Pointgroup of MgB2 is %s."
         % spglib.get_pointgroup(symmetry["rotations"])[0]
     )
     print("")
