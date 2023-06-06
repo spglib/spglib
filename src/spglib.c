@@ -62,7 +62,7 @@
 /*-------*/
 /* error */
 /*-------*/
-static SpglibError spglib_error_code = SPGLIB_SUCCESS;
+static _Thread_local SpglibError spglib_error_code = SPGLIB_SUCCESS;
 
 typedef struct {
     SpglibError error;
