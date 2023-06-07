@@ -10,6 +10,7 @@ repos:
     rev: v1.5.3
     hooks:
       - id: clang-format
+        additional_dependencies: [ clang-format >= 16 ]
         args:
           - '-B_build-pre-commit'
           - '-DSPGLIB_WITH_Fortran=ON'
