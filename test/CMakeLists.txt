@@ -1,17 +1,7 @@
-include(CTest)
 enable_language(CXX)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-
-set(gtest_disable_pthreads ON)
-FetchContent_Declare(
-		GTest
-		GIT_REPOSITORY https://github.com/google/googletest
-		GIT_TAG v1.13.0
-		FIND_PACKAGE_ARGS
-)
-FetchContent_MakeAvailable(GTest)
 
 add_executable(CTests
 		test_error.cpp

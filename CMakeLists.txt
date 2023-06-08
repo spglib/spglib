@@ -1,32 +1,56 @@
 cmake_minimum_required(VERSION 3.15)
+# CMake version compatibility
+# TODO: Remove when cmake 3.25 is commonly distributed
+if (POLICY CMP0140)
+	cmake_policy(SET CMP0140 NEW)
+endif ()
+
+#[==============================================================================================[
+#                                    Basic project defintion                                    #
+]==============================================================================================]
+
 project(Spglib
 		VERSION 2.1.0
 		LANGUAGES C)
 
+# Back-porting to PROJECT_IS_TOP_LEVEL to older cmake
+# TODO: Remove when requiring cmake >= 3.21
+if (NOT DEFINED Spglib_IS_TOP_LEVEL)
+	if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+		set(PROJECT_IS_TOP_LEVEL ON)
+	else ()
+		set(PROJECT_IS_TOP_LEVEL OFF)
+	endif ()
+endif ()
+
+#[==============================================================================================[
+#                                            Options                                            #
+]==============================================================================================]
+
 option(SPGLIB_WITH_Fortran "Spglib: Build Fortran interface" OFF)
 option(SPGLIB_WITH_Python "Spglib: Build Python interface" OFF)
 option(SPGLIB_USE_OMP "Spglib: Build with OpenMP support" OFF)
-set(SPGLIB_USE_SANITIZER "" CACHE STRING "Spglib: Sanitizer used in compilation")
-mark_as_advanced(SPGLIB_USE_SANITIZER)
+option(SPGLIB_WITH_TESTS "Spglib: Build unit tests" ${PROJECT_IS_TOP_LEVEL})
+option(SPGLIB_SHARED_LIBS "Spglib: Build as a shared library" ${PROJECT_IS_TOP_LEVEL})
+option(SPGLIB_INSTALL "Spglib: Install project" ${PROJECT_IS_TOP_LEVEL})
 option(SPGLIB_TEST_COVERAGE "Spglib: Test with coverage" OFF)
 mark_as_advanced(SPGLIB_TEST_COVERAGE)
+set(SPGLIB_USE_SANITIZER "" CACHE STRING "Spglib: Sanitizer used in compilation")
+mark_as_advanced(SPGLIB_USE_SANITIZER)
 
-# Sanity check if project is imported
-if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
-	option(SPGLIB_WITH_TESTS "Spglib: Build unit tests" ON)
-	option(SPGLIB_SHARED_LIBS "Spglib: Build as a shared library" ON)
-else ()
-	option(SPGLIB_WITH_TESTS "Spglib: Build unit tests" OFF)
-	option(SPGLIB_SHARED_LIBS "Spglib: Build as a shared library" OFF)
-endif ()
+#[==============================================================================================[
+#                                     Project configuration                                     #
+]==============================================================================================]
 
 # Include basic tools
-include(CMakePackageConfigHelpers)
-if (UNIX)
-	include(GNUInstallDirs)
-endif ()
-include(FetchContent)
 include(cmake/PackageCompsHelper.cmake)
+include(FetchContent)
+if (SPGLIB_INSTALL)
+	include(CMakePackageConfigHelpers)
+	if (UNIX)
+		include(GNUInstallDirs)
+	endif ()
+endif ()
 
 # Define basic parameters
 if (NOT CMAKE_BUILD_TYPE)
@@ -34,14 +58,13 @@ if (NOT CMAKE_BUILD_TYPE)
 endif ()
 set(BUILD_SHARED_LIBS ${SPGLIB_SHARED_LIBS})
 if (BUILD_SHARED_LIBS)
-	set(SPGLIB_LIB_TYPE "shared")
+	set(Spglib_LIB_TYPE "shared")
 else ()
-	set(SPGLIB_LIB_TYPE "static")
+	set(Spglib_LIB_TYPE "static")
 endif ()
 if (NOT CMAKE_Fortran_MODULE_DIRECTORY)
 	set(CMAKE_Fortran_MODULE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/fortran_mods)
 endif ()
-message(STATUS "Spglib:: Build type: ${CMAKE_BUILD_TYPE}")
 
 set(CMAKE_MACOSX_RPATH 1)
 # Windows setup, make sure there is a .lib file to link to
@@ -51,17 +74,38 @@ endif ()
 if (SPGLIB_WITH_Fortran)
 	enable_language(Fortran)
 endif ()
-
-# Include third-party libraries
-if (SPGLIB_USE_OMP)
-	find_package(OpenMP REQUIRED COMPONENTS C)
-endif ()
 if (SPGLIB_TEST_COVERAGE)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage")
 	set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} --coverage -ftest-forall-temp")
-#	set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} --coverage")
 endif ()
+
+# Report configuration
+message(STATUS "Spglib:: Build type: ${CMAKE_BUILD_TYPE}")
+
+#[==============================================================================================[
+#                                       External packages                                       #
+]==============================================================================================]
+
+# Include third-party libraries
+set(spglib_dependencies "")
+if (SPGLIB_USE_OMP)
+	find_package(OpenMP REQUIRED COMPONENTS C)
+endif ()
+if (SPGLIB_WITH_TESTS)
+	set(gtest_disable_pthreads ON)
+	FetchContent_Declare(GTest
+			GIT_REPOSITORY https://github.com/google/googletest
+			GIT_TAG v1.13.0
+			FIND_PACKAGE_ARGS
+	)
+	list(APPEND spglib_dependencies GTest)
+endif ()
+FetchContent_MakeAvailable(${spglib_dependencies})
+
+#[==============================================================================================[
+#                                        Main definition                                        #
+]==============================================================================================]
 
 # Main project
 add_library(Spglib_symspg)
@@ -71,32 +115,31 @@ set_target_properties(Spglib_symspg PROPERTIES
 		EXPORT_NAME symspg
 		OUTPUT_NAME symspg)
 add_library(Spglib::symspg ALIAS Spglib_symspg)
+# Main definitions inside src
 add_subdirectory(src)
 
+# Bindings
 if (SPGLIB_WITH_Fortran)
 	add_subdirectory(fortran)
 endif ()
 if (SPGLIB_WITH_Python)
 	add_subdirectory(python)
 endif ()
+
+# Testing
 if (SPGLIB_WITH_TESTS)
 	enable_testing()
-	if (SPGLIB_TEST_COVERAGE)
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
-		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage")
-		set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} --coverage")
-	endif ()
 	add_subdirectory(test)
 endif ()
 
+#[==============================================================================================[
+#                                       Install or Export                                       #
+]==============================================================================================]
 # Installation
-# TODO: Temporarily disable normal cmake install targets when using scikit-build-core
+# TODO: Temporarily disable installing cmake files when using scikit-build-core
 #  Check how bundled cmake searches CMAKE_MODULE_DIR and add accordingly
 #  (use SKBUILD_PLATLIB_DIR for install root)
-# Note: Completely disabling install when project is included as an ExternalProject
-#       Currently unclear how to expose it and protect it from overwriting other installations
-#       Please contact if such functionality is needed
-if (NOT SKBUILD AND CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+if (NOT SKBUILD AND SPGLIB_INSTALL)
 	# pkg-config files
 	configure_file(cmake/spglib.pc.in spglib.pc @ONLY)
 	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/spglib.pc
@@ -117,9 +160,39 @@ if (NOT SKBUILD AND CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 			cmake/PackageCompsHelper.cmake
 			DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Spglib
 			COMPONENT Spglib_Development)
-	export_components(LIB_TYPE ${SPGLIB_LIB_TYPE})
-	if (SPGLIB_USE_OMP)
-		# This is an empty target file
-		export_components(COMPONENT omp LIB_TYPE ${SPGLIB_LIB_TYPE})
+	export_components(LIB_TYPE ${Spglib_LIB_TYPE})
+endif ()
+
+# Make project available for FetchContent
+if(NOT PROJECT_IS_TOP_LEVEL)
+	# Set variables for FetchContent
+	# All variables have to be consistent with SpglibConfig.cmake
+	set(Spglib_Fortran ${SPGLIB_WITH_Fortran})
+	set(Spglib_Python ${SPGLIB_WITH_Python})
+	set(Spglib_OMP ${SPGLIB_USE_OMP})
+	# Propagate variables
+	if (CMAKE_VERSION VERSION_LESS 3.25)
+		# TODO: Remove when cmake 3.25 is commonly distributed
+		set(Spglib_VERSION ${Spglib_VERSION} PARENT_SCOPE)
+		set(Spglib_VERSION_MAJOR ${Spglib_VERSION_MAJOR} PARENT_SCOPE)
+		set(Spglib_VERSION_MINOR ${Spglib_VERSION_MINOR} PARENT_SCOPE)
+		set(Spglib_VERSION_PATCH ${Spglib_VERSION_PATCH} PARENT_SCOPE)
+		set(Spglib_VERSION_TWEAK ${Spglib_VERSION_TWEAK} PARENT_SCOPE)
+		set(Spglib_Fortran ${Spglib_Fortran} PARENT_SCOPE)
+		set(Spglib_Python ${Spglib_Python} PARENT_SCOPE)
+		set(Spglib_OMP ${Spglib_OMP} PARENT_SCOPE)
+		set(Spglib_LIB_TYPE ${Spglib_LIB_TYPE} PARENT_SCOPE)
+	else ()
+		return(PROPAGATE
+				Spglib_VERSION
+				Spglib_VERSION_MAJOR
+				Spglib_VERSION_MINOR
+				Spglib_VERSION_PATCH
+				Spglib_VERSION_TWEAK
+				Spglib_Fortran
+				Spglib_Python
+				Spglib_OMP
+				Spglib_LIB_TYPE
+				)
 	endif ()
 endif ()

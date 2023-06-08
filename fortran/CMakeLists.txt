@@ -17,7 +17,7 @@ target_link_libraries(Spglib_fortran PUBLIC Spglib_symspg)
 # Note: Fortran wrapper is not linked to OpenMP library because it should not be defining any such setup
 
 # Install
-if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+if (SPGLIB_INSTALL)
 	install(TARGETS Spglib_fortran
 			EXPORT SpglibTargets-fortran
 			LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Spglib_Runtime NAMELINK_COMPONENT Spglib_Development
