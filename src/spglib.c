@@ -62,7 +62,7 @@
 /*-------*/
 /* error */
 /*-------*/
-static SpglibError spglib_error_code = SPGLIB_SUCCESS;
+static _Thread_local SpglibError spglib_error_code = SPGLIB_SUCCESS;
 
 typedef struct {
     SpglibError error;
@@ -207,6 +207,7 @@ int spg_get_micro_version(void) {
 /* error */
 /*-------*/
 SpglibError spg_get_error_code(void) { return spglib_error_code; }
+void spg_set_error_code(SpglibError err) { spglib_error_code = err; }
 
 char *spg_get_error_message(SpglibError error) {
     int i;
