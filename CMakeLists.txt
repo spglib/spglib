@@ -86,9 +86,12 @@ if (NOT CMAKE_Fortran_MODULE_DIRECTORY)
 endif ()
 
 set(CMAKE_MACOSX_RPATH 1)
-# Windows setup, make sure there is a .lib file to link to
-if (SKBUILD AND WIN32)
+# Windows setup
+if (WIN32)
+	# Make sure there is a .lib file to link to
 	set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+	# Add appropriate debug flags
+	set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>")
 endif ()
 if (SPGLIB_WITH_Fortran)
 	enable_language(Fortran)
