@@ -124,6 +124,7 @@ if (SPGLIB_WITH_TESTS)
 			FIND_PACKAGE_ARGS
 	)
 	list(APPEND spglib_dependencies GTest)
+	find_package(Threads REQUIRED)
 endif ()
 if (SPGLIB_WITH_Python)
 	find_package(Python3 COMPONENTS REQUIRED Interpreter Development.Module NumPy)
