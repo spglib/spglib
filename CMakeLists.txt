@@ -112,6 +112,8 @@ if (SPGLIB_USE_OMP)
 	find_package(OpenMP REQUIRED COMPONENTS C)
 endif ()
 if (SPGLIB_WITH_TESTS)
+	set(BUILD_GMOCK OFF)
+	set(INSTALL_GTEST OFF)
 	set(gtest_disable_pthreads ON)
 	FetchContent_Declare(GTest
 			GIT_REPOSITORY https://github.com/google/googletest
