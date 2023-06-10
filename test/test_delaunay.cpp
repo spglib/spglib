@@ -1,9 +1,10 @@
 #include <gtest/gtest.h>
 
 extern "C" {
-    #include <math.h>
-    #include "delaunay.h"
-    #include "debug.h"
+#include <math.h>
+
+#include "debug.h"
+#include "delaunay.h"
 }
 
 TEST(test_delaunay, test_delaunay_reduce_layer) {
@@ -22,7 +23,8 @@ TEST(test_delaunay, test_delaunay_reduce_layer) {
     // Shortest vectors in the periodic plane are [0, 1, 0] and [0, 0, 1]
     debug_print_matrix_d3(min_lattice);
     for (int i = 0; i < 3; ++i) {
-        double sum = fabs(min_lattice[0][i]) + fabs(min_lattice[1][i]) + fabs(min_lattice[2][i]);
+        double sum = fabs(min_lattice[0][i]) + fabs(min_lattice[1][i]) +
+                     fabs(min_lattice[2][i]);
         ASSERT_FLOAT_EQ(sum, 1);
     }
 }

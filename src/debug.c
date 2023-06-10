@@ -62,7 +62,8 @@ void dbg_print_vector_d3(const double a[3]) {
     printf("%f %f %f\n", a[0], a[1], a[2]);
 }
 
-void dbg_print_vectors_with_label(const double a[][3], const int b[], int size) {
+void dbg_print_vectors_with_label(const double a[][3], const int b[],
+                                  int size) {
     int i;
     for (i = 0; i < size; i++) {
         printf("%d: %f %f %f\n", b[i], a[i][0], a[i][1], a[i][2]);

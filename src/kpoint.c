@@ -474,7 +474,7 @@ static size_t get_dense_ir_reciprocal_mesh_normal(
     kgd_get_all_grid_addresses(grid_address, mesh);
 
 #pragma omp parallel for private(j, grid_point_rot, address_double, \
-                                 address_double_rot)
+                                     address_double_rot)
     for (i = 0; i < mesh[0] * mesh[1] * (size_t)(mesh[2]); i++) {
         kgd_get_grid_address_double_mesh(address_double, grid_address[i], mesh,
                                          is_shift);
@@ -516,9 +516,9 @@ static size_t get_dense_ir_reciprocal_mesh_distortion(
         divisor[j] = mesh[(j + 1) % 3] * mesh[(j + 2) % 3];
     }
 
-#pragma omp parallel for private(j, k, grid_point_rot, address_double,    \
-                                 address_double_rot, long_address_double, \
-                                 long_address_double_rot)
+#pragma omp parallel for private(j, k, grid_point_rot, address_double,        \
+                                     address_double_rot, long_address_double, \
+                                     long_address_double_rot)
     for (i = 0; i < mesh[0] * mesh[1] * (size_t)(mesh[2]); i++) {
         kgd_get_grid_address_double_mesh(address_double, grid_address[i], mesh,
                                          is_shift);

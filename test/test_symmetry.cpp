@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
 
 extern "C" {
-    #include "cell.h"
-    #include "symmetry.h"
-    #include "utils.h"
+#include "cell.h"
+#include "symmetry.h"
+#include "utils.h"
 }
 
 TEST(test_symmetry, test_get_lattice_symmetry_layer) {
@@ -19,9 +19,7 @@ TEST(test_symmetry, test_get_lattice_symmetry_layer) {
         {0, 1, 0},
         {0, 0, 1},
     };
-    double positions[1][3] = {
-        {0, 0, 0}
-    };
+    double positions[1][3] = {{0, 0, 0}};
     const int types[1] = {0};
     const int aperiodic_axis = 2;
     const double symprec = 1e-5;

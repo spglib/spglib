@@ -613,8 +613,7 @@ static int get_rotation_type(const int rot[3][3]) {
 // @param[in] laue
 // @param[in] pointsym
 // @param[in] aperiodic_axis
-static int get_axes(int axes[3], const Laue laue,
-                    const PointSymmetry* pointsym,
+static int get_axes(int axes[3], const Laue laue, const PointSymmetry* pointsym,
                     const int aperiodic_axis) {
     switch (laue) {
         case LAUE1:

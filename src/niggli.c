@@ -128,8 +128,8 @@ int niggli_reduce(double *lattice_, const double eps_,
                   const int aperiodic_axis) {
     int i, j, succeeded;
     NiggliParams *p;
-    int (*steps[8])(NiggliParams * p) = {step1, step2, step3, step4,
-                                         step5, step6, step7, step8};
+    int (*steps[8])(NiggliParams *p) = {step1, step2, step3, step4,
+                                        step5, step6, step7, step8};
 
     if (aperiodic_axis != -1) {
         steps[1] = step2_for_layer;

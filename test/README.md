@@ -45,6 +45,7 @@ TEST(<your_test_suite_name>, <test_name>) {
 Although Googletest is automatically prepared, you may need to install it locally to highlight structs and functions.
 
 The below is an example of `c_cpp_properties.json` for Mac (assume Googletest is installed by brew).
+
 ```json
 {
     "configurations": [
