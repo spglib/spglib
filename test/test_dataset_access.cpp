@@ -10,7 +10,7 @@ static void show_spacegroup_type(const SpglibSpacegroupType spgtype);
 TEST(test_dataset_access, test_spg_get_symmetry_from_database) {
     int rotations[192][3][3];
     double translations[192][3];
-    int i, j, size;
+    int size;
 
     size = spg_get_symmetry_from_database(rotations, translations, 460);
     ASSERT_EQ(size, 36);
@@ -29,7 +29,6 @@ TEST(test_dataset_access, test_spg_get_hall_number_from_symmetry) {
     double position[][3] = {{0, 0, 0}, {0.5, 0.5, 0.5}};
     int types[] = {1, 1};
     int num_atom = 2;
-    int retval = 0;
     double symprec = 1e-5;
 
     int hall_number;
@@ -66,10 +65,8 @@ TEST(test_dataset_access, test_spg_get_spacegroup_type_from_symmetry) {
     double position[][3] = {{0, 0, 0}, {0.5, 0.5, 0.5}};
     int types[] = {1, 1};
     int num_atom = 2;
-    int retval = 0;
     double symprec = 1e-5;
 
-    int hall_number;
     SpglibSpacegroupType spgtype;
     SpglibDataset *dataset;
 

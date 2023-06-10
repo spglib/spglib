@@ -10,7 +10,7 @@ TEST(test_kpoints, test_spg_get_ir_reciprocal_mesh) {
         {0, 0, 0},     {0.5, 0.5, 0.5}, {0.3, 0.3, 0},
         {0.7, 0.7, 0}, {0.2, 0.8, 0.5}, {0.8, 0.2, 0.5},
     };
-    int num_ir, retval;
+    int num_ir;
     int types[] = {1, 1, 2, 2, 2, 2};
     int num_atom = 6;
     int m = 40;
@@ -88,7 +88,6 @@ TEST(test_kpoints, test_spg_relocate_BZ_grid_address) {
                                 {0.17573761, 0.17573761, -0.17573761}};
     int rotations[][3][3] = {{{1, 0, 0}, {0, 1, 0}, {0, 0, 1}}};
 
-    int retval = 0;
     int(*bz_grid_address)[3], (*grid_address)[3];
     int *grid_mapping_table, *bz_map;
 
@@ -139,7 +138,6 @@ TEST(test_kpoints, test_spg_relocate_dense_BZ_grid_address) {
                                 {0.17573761, 0.17573761, -0.17573761}};
     int rotations[][3][3] = {{{1, 0, 0}, {0, 1, 0}, {0, 0, 1}}};
 
-    int retval = 0;
     int(*bz_grid_address)[3], (*grid_address)[3];
     size_t *grid_mapping_table, *bz_map;
 

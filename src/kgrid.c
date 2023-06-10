@@ -84,7 +84,7 @@ static void get_all_grid_addresses(int grid_address[][3], const int mesh[3]) {
                 address[2] = k;
                 grid_point = get_grid_point_single_mesh(address, mesh);
 
-                assert(mesh[0] * mesh[1] * mesh[2] > grid_point);
+                assert((size_t)(mesh[0] * mesh[1] * mesh[2]) > grid_point);
 
                 grid_address[grid_point][0] = address[0];
                 grid_address[grid_point][1] = address[1];
