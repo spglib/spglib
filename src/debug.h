@@ -35,6 +35,9 @@
 #ifndef __debug_H__
 #define __debug_H__
 
+#include <stdio.h>
+
+// Macros to either print or do nothing if in debug mode or not
 #ifdef SPGDEBUG
 #define NIGGLI_DEBUG
 #define debug_print(...) printf(__VA_ARGS__)
@@ -45,6 +48,7 @@
 #define debug_print_vectors_with_label(...) \
     dbg_print_vectors_with_label(__VA_ARGS__)
 
+// Just to make sure these are never used, these definitions are #ifdef guarded
 void dbg_print_matrix_d3(const double a[3][3]);
 void dbg_print_matrix_i3(const int a[3][3]);
 void dbg_print_vector_d3(const double a[3]);
@@ -62,8 +66,6 @@ void dbg_print_vectors_with_label(const double a[][3], const int b[], int size);
 
 #ifdef SPGWARNING
 #define NIGGLI_WARNING
-#include <stdio.h>
-/* #define warning_print(...) fprintf (stderr, __VA_ARGS__) */
 #define warning_print(...) fprintf(stderr, __VA_ARGS__)
 #else
 #define warning_print(...)
