@@ -1106,13 +1106,11 @@ static PointSymmetry transform_pointsymmetry(
         }
     }
 
-#ifdef SPGWARNING
     if (!(lat_sym_orig->size == size)) {
         warning_print(
             "spglib: Some of point symmetry operations were dropped.");
         warning_print("(line %d, %s).\n", __LINE__, __FILE__);
     }
-#endif
 
     lat_sym_new.size = size;
     return lat_sym_new;

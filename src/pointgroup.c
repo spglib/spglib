@@ -1308,11 +1308,9 @@ static int get_rotation_axis(const int proper_rot[3][3]) {
     }
 
 end:
-#ifdef SPGDEBUG
     if (axis == -1) {
-        printf("rotation axis could not be found.\n");
+        debug_print("rotation axis could not be found.\n");
     }
-#endif
 
     return axis;
 }
