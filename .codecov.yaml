@@ -28,3 +28,6 @@ coverage:
       python_api:
         flags:
           - python_api
+codecov:
+  notify:
+    after_n_builds: 3
