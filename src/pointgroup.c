@@ -383,11 +383,6 @@ static int is_exist_axis(const int axis_vec[3], const int axis_index);
 static void sort_axes(int axes[3]);
 static void layer_check_and_sort_axes(int axes[3], const int aperiodic_axis);
 
-// @brief Return pointgroup.number = 0 if failed.
-// @param[out] transform_mat
-// @param[in] rotations
-// @param[in] num_rotations
-// @param[in] aperiodic_axis Use `aperiodic_axis=-1` for space group.
 Pointgroup ptg_get_transformation_matrix(int transform_mat[3][3],
                                          const int rotations[][3][3],
                                          const int num_rotations,

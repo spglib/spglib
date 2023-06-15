@@ -72,6 +72,11 @@ typedef struct {
     Laue laue;
 } Pointgroup;
 
+// @brief Return pointgroup.number = 0 if failed.
+// @param[out] transform_mat
+// @param[in] rotations
+// @param[in] num_rotations
+// @param[in] aperiodic_axis Use `aperiodic_axis=-1` for space group.
 Pointgroup ptg_get_transformation_matrix(int transform_mat[3][3],
                                          const int rotations[][3][3],
                                          const int num_rotations,
