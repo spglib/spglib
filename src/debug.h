@@ -39,7 +39,6 @@
 
 // Macros to either print or do nothing if in debug mode or not
 #ifdef SPGDEBUG
-#define NIGGLI_DEBUG
 #define debug_print(...) printf(__VA_ARGS__)
 #define debug_print_matrix_d3(a) dbg_print_matrix_d3(a)
 #define debug_print_matrix_i3(a) dbg_print_matrix_i3(a)
@@ -65,7 +64,6 @@ void dbg_print_vectors_with_label(const double a[][3], const int b[], int size);
 #endif
 
 #ifdef SPGWARNING
-#define NIGGLI_WARNING
 #define warning_print(...) fprintf(stderr, __VA_ARGS__)
 #else
 #define warning_print(...)

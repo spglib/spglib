@@ -39,6 +39,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "debug.h"
+
 #define NIGGLI_MAX_NUM_LOOP 100
 
 typedef struct {
@@ -75,9 +77,7 @@ static double *multiply_matrices(const double *A, const double *B);
 static int layer_swap_axis(NiggliParams *p, const int aperiodic_axis);
 static int step2_for_layer(NiggliParams *p);
 
-#ifdef NIGGLI_DEBUG
-#define debug_print(...) printf(__VA_ARGS__)
-static void debug_show(const int j, const NiggliParams *p);
+#ifdef SPGDEBUG
 static void debug_show(const int j, const NiggliParams *p) {
     /* int i; */
 
@@ -96,15 +96,7 @@ static void debug_show(const int j, const NiggliParams *p) {
     /* } */
 }
 #else
-#define debug_print(...)
 #define debug_show(...)
-#endif
-
-#ifdef NIGGLI_WARNING
-#include <stdio.h>
-#define warning_print(...) fprintf(stderr, __VA_ARGS__)
-#else
-#define warning_print(...)
 #endif
 
 /*--------------------------------------------*/
