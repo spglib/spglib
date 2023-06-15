@@ -32,10 +32,9 @@
 /* ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE */
 /* POSSIBILITY OF SUCH DAMAGE. */
 
-#ifdef SPGDEBUG
-#include "debug.h"
-
 #include <stdio.h>
+
+#include "debug.h"
 
 void dbg_print_matrix_d3(const double a[3][3]) {
     int i;
@@ -69,5 +68,3 @@ void dbg_print_vectors_with_label(const double a[][3], const int b[],
         printf("%d: %f %f %f\n", b[i], a[i][0], a[i][1], a[i][2]);
     }
 }
-
-#endif

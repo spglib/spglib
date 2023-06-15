@@ -23,10 +23,22 @@ if (NOT DEFINED Spglib_IS_TOP_LEVEL)
 	endif ()
 endif ()
 
+if (NOT CMAKE_BUILD_TYPE)
+	set(CMAKE_BUILD_TYPE Release)
+endif ()
+
 #[==============================================================================================[
 #                                            Options                                            #
 ]==============================================================================================]
 
+# Boilerplate default values
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+	set(_Spglib_default_debug ON)
+else ()
+	set(_Spglib_default_debug OFF)
+endif ()
+
+#
 option(SPGLIB_WITH_Fortran "Spglib: Build Fortran interface" OFF)
 option(SPGLIB_WITH_Python "Spglib: Build Python interface" OFF)
 option(SPGLIB_USE_OMP "Spglib: Build with OpenMP support" OFF)
@@ -37,6 +49,10 @@ option(SPGLIB_TEST_COVERAGE "Spglib: Test with coverage" OFF)
 mark_as_advanced(SPGLIB_TEST_COVERAGE)
 set(SPGLIB_USE_SANITIZER "" CACHE STRING "Spglib: Sanitizer used in compilation")
 mark_as_advanced(SPGLIB_USE_SANITIZER)
+option(SPGLIB_WARNINGS "Spglib: Enable warning messages" ON)
+mark_as_advanced(SPGLIB_WITH_WARNINGS)
+option(SPGLIB_DEBUG "Spglib: Build in debug mode" ${_Spglib_default_debug})
+mark_as_advanced(SPGLIB_DEBUG)
 
 #[==============================================================================================[
 #                                     Project configuration                                     #
@@ -53,9 +69,6 @@ if (SPGLIB_INSTALL)
 endif ()
 
 # Define basic parameters
-if (NOT CMAKE_BUILD_TYPE)
-	set(CMAKE_BUILD_TYPE Release)
-endif ()
 set(BUILD_SHARED_LIBS ${SPGLIB_SHARED_LIBS})
 if (BUILD_SHARED_LIBS)
 	set(Spglib_LIB_TYPE "shared")
