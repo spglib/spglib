@@ -219,18 +219,16 @@ Symmetry *prm_get_primitive_symmetry(double t_mat[3][3],
                                       prim_symmetry->trans[i]);
     }
 
-#ifdef SPGDEBUG
-    int j;
     for (i = 0; i < prim_symmetry->size; i++) {
-        fprintf(stderr, "--- %d ---\n", i + 1);
-        for (j = 0; j < 3; j++) {
-            fprintf(stderr, "%d %d %d\n", prim_symmetry->rot[i][j][0],
-                    prim_symmetry->rot[i][j][1], prim_symmetry->rot[i][j][2]);
+        debug_print("--- %d ---\n", i + 1);
+        for (int j = 0; j < 3; j++) {
+            debug_print("%d %d %d\n", prim_symmetry->rot[i][j][0],
+                        prim_symmetry->rot[i][j][1],
+                        prim_symmetry->rot[i][j][2]);
         }
-        fprintf(stderr, "%f %f %f\n", prim_symmetry->trans[i][0],
-                prim_symmetry->trans[i][1], prim_symmetry->trans[i][2]);
+        debug_print("%f %f %f\n", prim_symmetry->trans[i][0],
+                    prim_symmetry->trans[i][1], prim_symmetry->trans[i][2]);
     }
-#endif
 
     return prim_symmetry;
 }
