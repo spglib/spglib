@@ -350,29 +350,29 @@ static int rot_axes[][3] = {
 };
 
 static int get_pointgroup_number_by_rotations(const int rotations[][3][3],
-                                              const int num_rotations);
+                                              int num_rotations);
 static int get_pointgroup_number(const PointSymmetry* pointsym);
 static int get_pointgroup_class_table(int table[10],
                                       const PointSymmetry* pointsym);
 static int get_rotation_type(const int rot[3][3]);
 static int get_rotation_axis(const int rot[3][3]);
 static int get_orthogonal_axis(int ortho_axes[], const int proper_rot[3][3],
-                               const int rot_order);
+                               int rot_order);
 static int laue2m(int axes[3], const PointSymmetry* pointsym);
 static int layer_laue2m(int axes[3], const PointSymmetry* pointsym,
-                        const int aperiodic_axis);
+                        int aperiodic_axis);
 
 static int laue_one_axis(int axes[3], const PointSymmetry* pointsym,
-                         const int rot_order);
-static int lauennn(int axes[3], const PointSymmetry* pointsym,
-                   const int rot_order, const int aperiodic_axis);
-static int get_axes(int axes[3], const Laue laue, const PointSymmetry* pointsym,
-                    const int aperiodic_axis);
+                         int rot_order);
+static int lauennn(int axes[3], const PointSymmetry* pointsym, int rot_order,
+                   int aperiodic_axis);
+static int get_axes(int axes[3], Laue laue, const PointSymmetry* pointsym,
+                    int aperiodic_axis);
 static void get_proper_rotation(int prop_rot[3][3], const int rot[3][3]);
 static void set_transformation_matrix(int tmat[3][3], const int axes[3]);
-static int is_exist_axis(const int axis_vec[3], const int axis_index);
+static int is_exist_axis(const int axis_vec[3], int axis_index);
 static void sort_axes(int axes[3]);
-static void layer_check_and_sort_axes(int axes[3], const int aperiodic_axis);
+static void layer_check_and_sort_axes(int axes[3], int aperiodic_axis);
 
 Pointgroup ptg_get_transformation_matrix(int transform_mat[3][3],
                                          const int rotations[][3][3],

@@ -58,7 +58,7 @@ typedef struct {
     double *lattice;
 } NiggliParams;
 
-static NiggliParams *initialize(const double *lattice_, const double eps_);
+static NiggliParams *initialize(const double *lattice_, double eps_);
 static void finalize(double *lattice_, NiggliParams *p);
 static int reset(NiggliParams *p);
 static int step1(NiggliParams *p);
@@ -74,7 +74,7 @@ static void set_angle_types(NiggliParams *p);
 static double *get_transpose(const double *M);
 static double *get_metric(const double *M);
 static double *multiply_matrices(const double *A, const double *B);
-static int layer_swap_axis(NiggliParams *p, const int aperiodic_axis);
+static int layer_swap_axis(NiggliParams *p, int aperiodic_axis);
 static int step2_for_layer(NiggliParams *p);
 
 #ifdef SPGDEBUG

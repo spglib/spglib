@@ -56,18 +56,16 @@ typedef struct {
     int size;
 } PointSymmetry;
 
-Symmetry *sym_alloc_symmetry(const int size);
+Symmetry *sym_alloc_symmetry(int size);
 void sym_free_symmetry(Symmetry *symmetry);
-MagneticSymmetry *sym_alloc_magnetic_symmetry(const int size);
+MagneticSymmetry *sym_alloc_magnetic_symmetry(int size);
 void sym_free_magnetic_symmetry(MagneticSymmetry *symmetry);
-Symmetry *sym_get_operation(const Cell *primitive, const double symprec,
-                            const double angle_tolerance);
+Symmetry *sym_get_operation(const Cell *primitive, double symprec,
+                            double angle_tolerance);
 Symmetry *sym_reduce_operation(const Cell *primitive, const Symmetry *symmetry,
-                               const double symprec,
-                               const double angle_tolerance);
-VecDBL *sym_get_pure_translation(const Cell *cell, const double symprec);
+                               double symprec, double angle_tolerance);
+VecDBL *sym_get_pure_translation(const Cell *cell, double symprec);
 VecDBL *sym_reduce_pure_translation(const Cell *cell, const VecDBL *pure_trans,
-                                    const double symprec,
-                                    const double angle_tolerance);
+                                    double symprec, double angle_tolerance);
 
 #endif

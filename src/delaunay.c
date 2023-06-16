@@ -44,20 +44,18 @@
 #define ZERO_PREC 1e-10
 
 static int delaunay_reduce(double red_lattice[3][3], const double lattice[3][3],
-                           const int aperiodic_axis, const double symprec);
-static int delaunay_reduce_basis(double basis[4][3], const int lattice_rank,
-                                 const double symprec);
-static void get_delaunay_shortest_vectors(double basis[4][3],
-                                          const int lattice_rank,
-                                          const double symprec);
+                           int aperiodic_axis, double symprec);
+static int delaunay_reduce_basis(double basis[4][3], int lattice_rank,
+                                 double symprec);
+static void get_delaunay_shortest_vectors(double basis[4][3], int lattice_rank,
+                                          double symprec);
 static int get_extended_basis(double basis[4][3], const double lattice[3][3],
-                              const int aperiodic_axis);
-static int delaunay_reduce_basis_2D(double basis[3][3], const int lattice_rank,
-                                    const double symprec);
+                              int aperiodic_axis);
+static int delaunay_reduce_basis_2D(double basis[3][3], int lattice_rank,
+                                    double symprec);
 static void get_delaunay_shortest_vectors_2D(double basis[3][3],
                                              const double unique_vec[3],
-                                             const int lattice_rank,
-                                             const double symprec);
+                                             int lattice_rank, double symprec);
 static void get_extended_basis_2D(double basis[3][3],
                                   const double lattice[3][2]);
 

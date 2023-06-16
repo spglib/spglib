@@ -46,30 +46,28 @@
 #define REDUCE_RATE 0.95
 #define NUM_ATTEMPT 20
 
-static Primitive *get_primitive(const Cell *cell, const double symprec,
-                                const double angle_tolerance);
-static Cell *get_cell_with_smallest_lattice(const Cell *cell,
-                                            const double symprec);
+static Primitive *get_primitive(const Cell *cell, double symprec,
+                                double angle_tolerance);
+static Cell *get_cell_with_smallest_lattice(const Cell *cell, double symprec);
 static Cell *get_primitive_cell(int *mapping_table, const Cell *cell,
-                                const VecDBL *pure_trans, const double symprec,
-                                const double angle_tolerance);
+                                const VecDBL *pure_trans, double symprec,
+                                double angle_tolerance);
 static int get_primitive_lattice_vectors(double prim_lattice[3][3],
                                          const Cell *cell,
                                          const VecDBL *pure_trans,
-                                         const double symprec,
-                                         const double angle_tolerance);
+                                         double symprec,
+                                         double angle_tolerance);
 static int find_primitive_lattice_vectors(double prim_lattice[3][3],
                                           const VecDBL *vectors,
-                                          const Cell *cell,
-                                          const double symprec);
+                                          const Cell *cell, double symprec);
 static VecDBL *get_translation_candidates(const VecDBL *pure_trans);
 static VecDBL *collect_pure_translations(const Symmetry *symmetry);
 static int get_primitive_in_translation_space(double t_mat[3][3],
                                               const VecDBL *pure_trans,
-                                              const int symmetry_size,
-                                              const double symprec);
+                                              int symmetry_size,
+                                              double symprec);
 static Symmetry *collect_primitive_symmetry(const Symmetry *symmetry,
-                                            const int primsym_size);
+                                            int primsym_size);
 
 /* return NULL if failed */
 Primitive *prm_alloc_primitive(const int size) {

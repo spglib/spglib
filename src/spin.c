@@ -43,45 +43,41 @@
 #include "primitive.h"
 #include "symmetry.h"
 
-static MagneticSymmetry *get_operations(
-    const Symmetry *sym_nonspin, const Cell *cell, const int with_time_reversal,
-    const int is_axial, const double symprec, const double mag_symprec);
+static MagneticSymmetry *get_operations(const Symmetry *sym_nonspin,
+                                        const Cell *cell,
+                                        int with_time_reversal, int is_axial,
+                                        double symprec, double mag_symprec);
 static int *get_symmetry_permutations(const MagneticSymmetry *magnetic_symmetry,
-                                      const Cell *cell,
-                                      const int with_time_reversal,
-                                      const int is_axial, const double symprec,
-                                      const double mag_symprec);
-static int *get_orbits(const int *permutations, const int num_sym,
-                       const int num_atoms);
-static int get_operation_sign_on_scalar(
-    const double spin_j, const double spin_k, const double rot_cart[3][3],
-    const int with_time_reversal, const int is_axial, const double mag_symprec);
-static int get_operation_sign_on_vector(const int j, const int k,
-                                        const double *vectors,
+                                      const Cell *cell, int with_time_reversal,
+                                      int is_axial, double symprec,
+                                      double mag_symprec);
+static int *get_orbits(const int *permutations, int num_sym, int num_atoms);
+static int get_operation_sign_on_scalar(double spin_j, double spin_k,
                                         const double rot_cart[3][3],
-                                        const int with_time_reversal,
-                                        const int is_axial,
-                                        const double mag_symprec);
+                                        int with_time_reversal, int is_axial,
+                                        double mag_symprec);
+static int get_operation_sign_on_vector(int j, int k, const double *vectors,
+                                        const double rot_cart[3][3],
+                                        int with_time_reversal, int is_axial,
+                                        double mag_symprec);
 static void apply_symmetry_to_position(double pos_dst[3],
                                        const double pos_src[3],
                                        const int rot[3][3],
                                        const double trans[3]);
-static double apply_symmetry_to_site_scalar(const double src,
+static double apply_symmetry_to_site_scalar(double src,
                                             const double rot_cart[3][3],
-                                            const int timerev,
-                                            const int with_time_reversal,
-                                            const int is_axial);
-static void apply_symmetry_to_site_vector(double dst[3], const int idx,
+                                            int timerev, int with_time_reversal,
+                                            int is_axial);
+static void apply_symmetry_to_site_vector(double dst[3], int idx,
                                           const double *tensors,
                                           const double rot_cart[3][3],
-                                          const int timerev,
-                                          const int with_time_reversal,
-                                          const int is_axial);
+                                          int timerev, int with_time_reversal,
+                                          int is_axial);
 void set_rotations_in_cartesian(double (*rotations_cart)[3][3],
                                 const double lattice[3][3],
                                 const MagneticSymmetry *magnetic_symmetry);
-static int is_zero(const double a, const double mag_symprec);
-static int is_zero_d3(const double a[3], const double mag_symprec);
+static int is_zero(double a, double mag_symprec);
+static int is_zero_d3(const double a[3], double mag_symprec);
 
 /******************************************************************************/
 

@@ -63,37 +63,36 @@ typedef struct {
     double *tensors;
 } Cell;
 
-Cell *cel_alloc_cell(const int size, const SiteTensorType tensor_rank);
+Cell *cel_alloc_cell(int size, SiteTensorType tensor_rank);
 void cel_free_cell(Cell *cell);
 void cel_set_cell(Cell *cell, const double lattice[3][3],
                   const double position[][3], const int types[]);
 void cel_set_layer_cell(Cell *cell, const double lattice[3][3],
                         const double position[][3], const int types[],
-                        const int aperiodic_axis);
+                        int aperiodic_axis);
 void cel_set_cell_with_tensors(Cell *cell, const double lattice[3][3],
                                const double position[][3], const int types[],
                                const double *tensors);
 Cell *cel_copy_cell(const Cell *cell);
 int cel_is_overlap(const double a[3], const double b[3],
-                   const double lattice[3][3], const double symprec);
+                   const double lattice[3][3], double symprec);
 int cel_is_overlap_with_same_type(const double a[3], const double b[3],
-                                  const int type_a, const int type_b,
-                                  const double lattice[3][3],
-                                  const double symprec);
-int cel_any_overlap(const Cell *cell, const double symprec);
-int cel_any_overlap_with_same_type(const Cell *cell, const double symprec);
+                                  int type_a, int type_b,
+                                  const double lattice[3][3], double symprec);
+int cel_any_overlap(const Cell *cell, double symprec);
+int cel_any_overlap_with_same_type(const Cell *cell, double symprec);
 Cell *cel_trim_cell(int *mapping_table, const double trimmed_lattice[3][3],
-                    const Cell *cell, const double symprec);
+                    const Cell *cell, double symprec);
 int cel_layer_is_overlap(const double a[3], const double b[3],
                          const double lattice[3][3], const int periodic_axes[2],
-                         const double symprec);
+                         double symprec);
 int cel_layer_is_overlap_with_same_type(const double a[3], const double b[3],
-                                        const int type_a, const int type_b,
+                                        int type_a, int type_b,
                                         const double lattice[3][3],
                                         const int periodic_axes[2],
-                                        const double symprec);
+                                        double symprec);
 int cel_layer_any_overlap_with_same_type(const Cell *cell,
                                          const int periodic_axes[2],
-                                         const double symprec);
+                                         double symprec);
 
 #endif

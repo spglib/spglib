@@ -49,9 +49,9 @@
 #define NUM_ATTEMPT 20
 
 static DataContainer *get_spacegroup_and_primitive(const Cell *cell,
-                                                   const int hall_number,
-                                                   const double symprec,
-                                                   const double angle_symprec);
+                                                   int hall_number,
+                                                   double symprec,
+                                                   double angle_symprec);
 
 DataContainer *det_determine_all(const Cell *cell, const int hall_number,
                                  const double symprec,

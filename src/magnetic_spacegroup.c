@@ -48,38 +48,38 @@ static int get_reference_space_group(Spacegroup **ref_sg,
                                      MagneticSymmetry **changed_symmetry,
                                      double tmat[3][3], double shift[3],
                                      const MagneticSymmetry *magnetic_symmetry,
-                                     const double symprec);
+                                     double symprec);
 static Symmetry *get_family_space_group_with_magnetic_symmetry(
     Spacegroup **fsg, const MagneticSymmetry *magnetic_symmetry,
-    const double symprec);
+    double symprec);
 static Symmetry *get_maximal_subspace_group_with_magnetic_symmetry(
     Spacegroup **xsg, const MagneticSymmetry *magnetic_symmetry,
-    const double symprec);
+    double symprec);
 static Symmetry *get_space_group_with_magnetic_symmetry(
     Spacegroup **spacegroup, const MagneticSymmetry *magnetic_symmetry,
-    const int ignore_time_reversal, const double symprec);
+    int ignore_time_reversal, double symprec);
 static int get_magnetic_space_group_type(
     MagneticSymmetry **representative,
-    const MagneticSymmetry *magnetic_symmetry, const int num_sym_fsg,
-    const int num_sym_xsg);
+    const MagneticSymmetry *magnetic_symmetry, int num_sym_fsg,
+    int num_sym_xsg);
 static MagneticSymmetry *get_representative(
     const MagneticSymmetry *magnetic_symmetry);
 static MagneticSymmetry *get_changed_magnetic_symmetry(
     const double tmat[3][3], const double shift[3],
     const MagneticSymmetry *representative, const Symmetry *sym_xsg,
-    const MagneticSymmetry *magnetic_symmetry, const double symprec);
+    const MagneticSymmetry *magnetic_symmetry, double symprec);
 static VecDBL *get_changed_pure_translations(const double tmat[3][3],
                                              const VecDBL *pure_trans,
-                                             const double symprec);
-static int is_contained_vec(const double v[3], const VecDBL *trans,
-                            const int size, const double symprec);
+                                             double symprec);
+static int is_contained_vec(const double v[3], const VecDBL *trans, int size,
+                            double symprec);
 static int is_contained_mat(const int a[3][3], const MagneticSymmetry *sym_msg,
-                            const int size);
+                            int size);
 static MagneticSymmetry *get_distinct_changed_magnetic_symmetry(
     const double tmat[3][3], const double shift[3],
     const MagneticSymmetry *sym_msg);
 static int is_equal(const MagneticSymmetry *sym1, const MagneticSymmetry *sym2,
-                    const double symprec);
+                    double symprec);
 void get_rigid_rotation(double rigid_rot[3][3], const double lattice[3][3],
                         const double tmat[3][3], const Spacegroup *ref_sg);
 

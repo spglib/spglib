@@ -46,18 +46,15 @@
 #define NUM_ATTEMPT 100
 
 static Cell *trim_cell(int *mapping_table, const double trimmed_lattice[3][3],
-                       const Cell *cell, const double symprec);
-static void set_positions_and_tensors(Cell *trimmed_cell,
-                                      const VecDBL *position,
-                                      const SiteTensorType tensor_rank,
-                                      const double *tensors,
-                                      const int *mapping_table,
-                                      const int *overlap_table);
+                       const Cell *cell, double symprec);
+static void set_positions_and_tensors(
+    Cell *trimmed_cell, const VecDBL *position, SiteTensorType tensor_rank,
+    const double *tensors, const int *mapping_table, const int *overlap_table);
 static VecDBL *translate_atoms_in_trimmed_lattice(const Cell *cell,
                                                   const double prim_lat[3][3]);
-static int *get_overlap_table(const VecDBL *position, const int cell_size,
+static int *get_overlap_table(const VecDBL *position, int cell_size,
                               const int *cell_types, const Cell *trimmed_cell,
-                              const double symprec);
+                              double symprec);
 
 // @brief Allocate Cell. NULL is returned if failed
 // @param size number of atoms

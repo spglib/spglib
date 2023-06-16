@@ -50,40 +50,39 @@
 /* are duplicated to get the if statement outside the nested loops */
 /* I have not tested if it is better in efficiency. */
 static VecDBL *get_exact_positions(int *equiv_atoms, const Cell *conv_prim,
-                                   const Symmetry *conv_sym,
-                                   const double symprec);
+                                   const Symmetry *conv_sym, double symprec);
 static void set_exact_location(double position[3], const Symmetry *conv_sym,
                                const double bravais_lattice[3][3],
-                               const double symprec);
-static int set_equivalent_atom(VecDBL *positions, int *equiv_atoms, const int i,
-                               const int num_indep_atoms,
-                               const int *indep_atoms, const Cell *conv_prim,
-                               const Symmetry *conv_sym, const double symprec);
+                               double symprec);
+static int set_equivalent_atom(VecDBL *positions, int *equiv_atoms, int i,
+                               int num_indep_atoms, const int *indep_atoms,
+                               const Cell *conv_prim, const Symmetry *conv_sym,
+                               double symprec);
 static void set_layer_exact_location(double position[3],
                                      const Symmetry *conv_sym,
                                      const double bravais_lattice[3][3],
-                                     const double symprec);
-static int set_layer_equivalent_atom(VecDBL *positions, int *equiv_atoms,
-                                     const int i, const int num_indep_atoms,
+                                     double symprec);
+static int set_layer_equivalent_atom(VecDBL *positions, int *equiv_atoms, int i,
+                                     int num_indep_atoms,
                                      const int *indep_atoms,
                                      const Cell *conv_prim,
-                                     const Symmetry *conv_sym,
-                                     const double symprec);
+                                     const Symmetry *conv_sym, double symprec);
 static int set_Wyckoffs_labels(int *wyckoffs, char (*site_symmetry_symbols)[7],
                                const VecDBL *positions, const int *equiv_atoms,
                                const Cell *conv_prim, const Symmetry *conv_sym,
-                               const int num_pure_trans, const int hall_number,
-                               const double symprec);
+                               int num_pure_trans, int hall_number,
+                               double symprec);
 static int get_Wyckoff_notation(char site_sym_symbol[7],
                                 const double position[3],
-                                const Symmetry *conv_sym,
-                                const int ref_multiplicity,
+                                const Symmetry *conv_sym, int ref_multiplicity,
                                 const double bravais_lattice[3][3],
-                                const int hall_number, const double symprec);
-static int get_layer_Wyckoff_notation(
-    char site_sym_symbol[7], const double position[3], const Symmetry *conv_sym,
-    const int ref_multiplicity, const double bravais_lattice[3][3],
-    const int hall_number, const double symprec);
+                                int hall_number, double symprec);
+static int get_layer_Wyckoff_notation(char site_sym_symbol[7],
+                                      const double position[3],
+                                      const Symmetry *conv_sym,
+                                      int ref_multiplicity,
+                                      const double bravais_lattice[3][3],
+                                      int hall_number, double symprec);
 
 /* Return NULL if failed */
 VecDBL *ssm_get_exact_positions(int *wyckoffs, int *equiv_atoms,

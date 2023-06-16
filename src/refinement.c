@@ -54,17 +54,16 @@ static Cell *get_Wyckoff_positions(
     int *wyckoffs, char (*site_symmetry_symbols)[7], int *equiv_atoms,
     int *crystallographic_orbits, int *std_mapping_to_primitive,
     const Cell *primitive, const Cell *cell, const Spacegroup *spacegroup,
-    const Symmetry *symmetry, const int *mapping_table, const double symprec);
+    const Symmetry *symmetry, const int *mapping_table, double symprec);
 static Cell *get_bravais_exact_positions_and_lattice(
     int *wyckoffs, char (*site_symmetry_symbols)[7], int *equiv_atoms,
     int *std_mapping_to_primitive, const Spacegroup *spacegroup,
-    const Cell *primitive, const double symprec);
+    const Cell *primitive, double symprec);
 static Cell *expand_positions_in_bravais(
     int *wyckoffs, char (*site_symmetry_symbols)[7], int *equiv_atoms,
     int *std_mapping_to_primitive, const Cell *conv_prim,
-    const Symmetry *conv_sym, const int num_pure_trans,
-    const int *wyckoffs_prim, const char (*site_symmetry_symbols_prim)[7],
-    const int *equiv_atoms_prim);
+    const Symmetry *conv_sym, int num_pure_trans, const int *wyckoffs_prim,
+    const char (*site_symmetry_symbols_prim)[7], const int *equiv_atoms_prim);
 static Cell *get_conventional_primitive(const Spacegroup *spacegroup,
                                         const Cell *primitive);
 static int get_number_of_pure_translation(const Symmetry *conv_sym);
@@ -82,7 +81,7 @@ static void set_cubic(double lattice[3][3], const double metric[3][3]);
 static Symmetry *get_refined_symmetry_operations(const Cell *cell,
                                                  const Cell *primitive,
                                                  const Spacegroup *spacegroup,
-                                                 const double symprec);
+                                                 double symprec);
 static void set_translation_with_origin_shift(Symmetry *conv_sym,
                                               const double origin_shift[3]);
 static Symmetry *get_primitive_db_symmetry(const double t_mat[3][3],
@@ -97,30 +96,29 @@ static void set_equivalent_atoms_broken_symmetry(int *equiv_atoms_cell,
                                                  const Cell *cell,
                                                  const Symmetry *symmetry,
                                                  const int *mapping_table,
-                                                 const double symprec);
-static int search_equivalent_atom(const int atom_index, const Cell *cell,
-                                  const Symmetry *symmetry,
-                                  const double symprec);
-static int search_layer_equivalent_atom(const int atom_index, const Cell *cell,
+                                                 double symprec);
+static int search_equivalent_atom(int atom_index, const Cell *cell,
+                                  const Symmetry *symmetry, double symprec);
+static int search_layer_equivalent_atom(int atom_index, const Cell *cell,
                                         const Symmetry *symmetry,
                                         const int periodic_axes[2],
-                                        const double symprec);
+                                        double symprec);
 static Symmetry *recover_symmetry_in_original_cell(
     const Symmetry *prim_sym, const int t_mat[3][3], const double lattice[3][3],
-    const int multiplicity, const int aperiodic_axis, const double symprec);
+    int multiplicity, int aperiodic_axis, double symprec);
 static VecDBL *get_lattice_translations(const int frame[3],
                                         const double inv_tmat[3][3]);
 static VecDBL *remove_overlapping_lattice_points(const double lattice[3][3],
                                                  const VecDBL *lattice_trans,
-                                                 const double symprec);
+                                                 double symprec);
 static Symmetry *get_symmetry_in_original_cell(const int t_mat[3][3],
                                                const double inv_tmat[3][3],
                                                const double lattice[3][3],
                                                const Symmetry *prim_sym,
-                                               const double symprec);
+                                               double symprec);
 static Symmetry *copy_symmetry_upon_lattice_points(const VecDBL *pure_trans,
                                                    const Symmetry *t_sym,
-                                                   const int aperiodic_axis);
+                                                   int aperiodic_axis);
 static void get_orthonormal_basis(double basis[3][3],
                                   const double lattice[3][3]);
 static const int identity[3][3] = {

@@ -78,10 +78,9 @@ static int bz_search_space[KPT_NUM_BZ_SEARCH_SPACE][3] = {
     {-1, -1, 0}, {-1, -1, 1}, {-1, -1, 2}, {-1, -1, -2}, {-1, -1, -1}};
 
 static MatINT *get_point_group_reciprocal(const MatINT *rotations,
-                                          const int is_time_reversal);
+                                          int is_time_reversal);
 static MatINT *get_point_group_reciprocal_with_q(const MatINT *rot_reciprocal,
-                                                 const double symprec,
-                                                 const size_t num_q,
+                                                 double symprec, size_t num_q,
                                                  const double qpoints[][3]);
 static size_t get_dense_ir_reciprocal_mesh(int grid_address[][3],
                                            size_t ir_mapping_table[],

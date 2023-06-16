@@ -48,21 +48,18 @@ typedef struct {
     double (*orig_lattice)[3]; /* 3x3 matrix */
 } Primitive;
 
-Primitive *prm_alloc_primitive(const int size);
+Primitive *prm_alloc_primitive(int size);
 void prm_free_primitive(Primitive *primitive);
-Primitive *prm_get_primitive(const Cell *cell, const double symprec,
-                             const double angle_tolerance);
+Primitive *prm_get_primitive(const Cell *cell, double symprec,
+                             double angle_tolerance);
 int prm_get_primitive_with_pure_trans(Primitive *primitive, const Cell *cell,
-                                      const VecDBL *pure_trans,
-                                      const double symprec,
-                                      const double angle_tolerance);
+                                      const VecDBL *pure_trans, double symprec,
+                                      double angle_tolerance);
 Symmetry *prm_get_primitive_symmetry(double t_mat[3][3],
-                                     const Symmetry *symmetry,
-                                     const double symprec);
+                                     const Symmetry *symmetry, double symprec);
 int prm_get_primitive_lattice_vectors(double prim_lattice[3][3],
                                       const Cell *cell,
-                                      const VecDBL *pure_trans,
-                                      const double symprec,
-                                      const double angle_tolerance);
+                                      const VecDBL *pure_trans, double symprec,
+                                      double angle_tolerance);
 
 #endif
