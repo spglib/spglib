@@ -14,3 +14,4 @@ Checks: >
   -*-readability-todo,
   -bugprone-easily-swappable-parameters,
   -altera-id-dependent-backward-branch,
+  -readability-function-cognitive-complexity,
