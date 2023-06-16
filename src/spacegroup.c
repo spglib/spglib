@@ -56,7 +56,7 @@
 #define INT_PREC 0.1
 #define ZERO_PREC 1e-10
 
-static double change_of_basis_monocli[48][3][3] = {
+static const double change_of_basis_monocli[48][3][3] = {
     {{1, 0, 0}, /* b  first turn; two axes are flipped in second turn */
      {0, 1, 0},
      {0, 0, 1}},
@@ -204,9 +204,9 @@ static double change_of_basis_monocli[48][3][3] = {
 };
 
 /* Change of basis for Monoclinic/Rectangular layer group */
-static int index_monocli_rectang[8] = {0, 5, 7, 8, 18, 23, 25, 26};
+static const int index_monocli_rectang[8] = {0, 5, 7, 8, 18, 23, 25, 26};
 
-static Centering change_of_centering_monocli[36] = {
+static const Centering change_of_centering_monocli[36] = {
     C_FACE, /* first turn */
     A_FACE, B_FACE, B_FACE, A_FACE, C_FACE, A_FACE,
     C_FACE, C_FACE, A_FACE, B_FACE, B_FACE, BODY,
@@ -215,21 +215,21 @@ static Centering change_of_centering_monocli[36] = {
     C_FACE, C_FACE, A_FACE, B_FACE, B_FACE, BODY,
     BODY,   BODY,   BODY,   BODY,   BODY};
 
-static int change_of_unique_axis_monocli[48] = {
+static const int change_of_unique_axis_monocli[48] = {
     1, 1, 0, 2, 2, 0, 1, 1, 0, 2, 2, 0, 1, 1, 0, 2, 2, 0, 1, 1, 0, 2, 2, 0,
     1, 1, 0, 2, 2, 0, 1, 1, 0, 2, 2, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2};
 
 // Transformations to {abc, bca, cab, ba-c, a-cb, -cba}
-static double change_of_basis_ortho[6][3][3] = {
+static const double change_of_basis_ortho[6][3][3] = {
     {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}},  {{0, 0, 1}, {1, 0, 0}, {0, 1, 0}},
     {{0, 1, 0}, {0, 0, 1}, {1, 0, 0}},  {{0, 1, 0}, {1, 0, 0}, {0, 0, -1}},
     {{1, 0, 0}, {0, 0, 1}, {0, -1, 0}}, {{0, 0, 1}, {0, 1, 0}, {-1, 0, 0}}};
 
 // Changed centerings of C-centering of abc to {abc, bca, cab, ba-c, a-cb, -cba}
-static Centering change_of_centering_ortho[6] = {C_FACE, B_FACE, A_FACE,
-                                                 C_FACE, B_FACE, A_FACE};
+static const Centering change_of_centering_ortho[6] = {C_FACE, B_FACE, A_FACE,
+                                                       C_FACE, B_FACE, A_FACE};
 // Index of c axis in the changed coordinates system.
-static int change_of_unique_axis_ortho[6] = {2, 1, 0, 2, 1, 0};
+static const int change_of_unique_axis_ortho[6] = {2, 1, 0, 2, 1, 0};
 
 /* n_l : the index of L(g) in N_\epsilon(g) of SPG No.16-74 */
 /* See ITA: Affine normalizer or highest symmetry Euclidean normalizer */
@@ -244,7 +244,7 @@ static int change_of_unique_axis_ortho[6] = {2, 1, 0, 2, 1, 0};
 /* 1, 1, 1, 1, 2, 2, 1, 2, 2, 1, */
 /* 3, 1, 1, 1, 2, 2, 1, 1, 6, 6, */
 /* 6, 2, 3, 1 */
-static int num_axis_choices_ortho[59] = {
+static const int num_axis_choices_ortho[59] = {
     6, 2, 2, 6, 2,                /* 16-20 */
     2, 6, 6, 6, 2, 1, 2, 1, 1, 1, /* 21-30 */
     1, 2, 1, 2, 2, 1, 2, 1, 1, 1, /* 31-40 */
@@ -254,7 +254,7 @@ static int num_axis_choices_ortho[59] = {
     6, 2, 6, 2};                  /* 71-74 */
 
 /* Use n_l of spacegroup with c != a and c != b */
-static int layer_num_axis_choices_ortho[30] = {
+static const int layer_num_axis_choices_ortho[30] = {
     2, 1,                         /* 19-20 */
     2, 2, 2, 1, 2, 2, 1, 1, 1, 1, /* 21-30 */
     1, 1, 1, 1, 1, 1, 2, 1, 2, 1, /* 31-40 */
@@ -268,12 +268,12 @@ static int layer_num_axis_choices_ortho[30] = {
 /*                                 {-1, 1, 1 }, */
 /*                                 { 0,-1, 1 }}; */
 
-static double change_of_basis_rhombo[6][3][3] = {
+static const double change_of_basis_rhombo[6][3][3] = {
     {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}},    {{0, 0, 1}, {1, 0, 0}, {0, 1, 0}},
     {{0, 1, 0}, {0, 0, 1}, {1, 0, 0}},    {{0, 0, -1}, {0, -1, 0}, {-1, 0, 0}},
     {{0, -1, 0}, {-1, 0, 0}, {0, 0, -1}}, {{-1, 0, 0}, {0, 0, -1}, {0, -1, 0}}};
 
-static double change_of_basis_rhombo_hex[6][3][3] = {
+static const double change_of_basis_rhombo_hex[6][3][3] = {
     {{1, 0, 1}, {-1, 1, 1}, {0, -1, 1}},
     {{0, -1, 1}, {1, 0, 1}, {-1, 1, 1}},
     {{-1, 1, 1}, {0, -1, 1}, {1, 0, 1}},
@@ -281,55 +281,55 @@ static double change_of_basis_rhombo_hex[6][3][3] = {
     {{1, -1, -1}, {-1, 0, -1}, {0, 1, -1}},
     {{-1, 0, -1}, {0, 1, -1}, {1, -1, -1}}};
 
-static double change_of_basis_C4[8][3][3] = {
+static const double change_of_basis_C4[8][3][3] = {
     {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}},    {{0, -1, 0}, {1, 0, 0}, {0, 0, 1}},
     {{-1, 0, 0}, {0, -1, 0}, {0, 0, 1}},  {{0, 1, 0}, {-1, 0, 0}, {0, 0, 1}},
     {{0, 1, 0}, {1, 0, 0}, {0, 0, -1}},   {{-1, 0, 0}, {0, 1, 0}, {0, 0, -1}},
     {{0, -1, 0}, {-1, 0, 0}, {0, 0, -1}}, {{1, 0, 0}, {0, -1, 0}, {0, 0, -1}}};
 
-static double change_of_basis_C6[12][3][3] = {{{1, 0, 0}, /* 1 */
-                                               {0, 1, 0},
-                                               {0, 0, 1}},
-                                              {{1, -1, 0}, /* 2 */
-                                               {1, 0, 0},
-                                               {0, 0, 1}},
-                                              {{0, -1, 0}, /* 3 */
-                                               {1, -1, 0},
-                                               {0, 0, 1}},
-                                              {{-1, 0, 0}, /* 4 */
-                                               {0, -1, 0},
-                                               {0, 0, 1}},
-                                              {{-1, 1, 0}, /* 5 */
-                                               {-1, 0, 0},
-                                               {0, 0, 1}},
-                                              {{0, 1, 0}, /* 6 */
-                                               {-1, 1, 0},
-                                               {0, 0, 1}},
-                                              {{0, 1, 0}, /* 7 */
-                                               {1, 0, 0},
-                                               {0, 0, -1}},
-                                              {{-1, 1, 0}, /* 8 */
-                                               {0, 1, 0},
-                                               {0, 0, -1}},
-                                              {{-1, 0, 0}, /* 9 */
-                                               {-1, 1, 0},
-                                               {0, 0, -1}},
-                                              {{0, -1, 0}, /* 10 */
-                                               {-1, 0, 0},
-                                               {0, 0, -1}},
-                                              {{1, -1, 0}, /* 11 */
-                                               {0, -1, 0},
-                                               {0, 0, -1}},
-                                              {{1, 0, 0}, /* 12 */
-                                               {1, -1, 0},
-                                               {0, 0, -1}}};
+static const double change_of_basis_C6[12][3][3] = {{{1, 0, 0}, /* 1 */
+                                                     {0, 1, 0},
+                                                     {0, 0, 1}},
+                                                    {{1, -1, 0}, /* 2 */
+                                                     {1, 0, 0},
+                                                     {0, 0, 1}},
+                                                    {{0, -1, 0}, /* 3 */
+                                                     {1, -1, 0},
+                                                     {0, 0, 1}},
+                                                    {{-1, 0, 0}, /* 4 */
+                                                     {0, -1, 0},
+                                                     {0, 0, 1}},
+                                                    {{-1, 1, 0}, /* 5 */
+                                                     {-1, 0, 0},
+                                                     {0, 0, 1}},
+                                                    {{0, 1, 0}, /* 6 */
+                                                     {-1, 1, 0},
+                                                     {0, 0, 1}},
+                                                    {{0, 1, 0}, /* 7 */
+                                                     {1, 0, 0},
+                                                     {0, 0, -1}},
+                                                    {{-1, 1, 0}, /* 8 */
+                                                     {0, 1, 0},
+                                                     {0, 0, -1}},
+                                                    {{-1, 0, 0}, /* 9 */
+                                                     {-1, 1, 0},
+                                                     {0, 0, -1}},
+                                                    {{0, -1, 0}, /* 10 */
+                                                     {-1, 0, 0},
+                                                     {0, 0, -1}},
+                                                    {{1, -1, 0}, /* 11 */
+                                                     {0, -1, 0},
+                                                     {0, 0, -1}},
+                                                    {{1, 0, 0}, /* 12 */
+                                                     {1, -1, 0},
+                                                     {0, 0, -1}}};
 
 /* Removed after commit 67997654 */
 /* static double change_of_basis_501[3][3] = {{ 0, 0, 1}, */
 /*                                            { 0,-1, 0}, */
 /*                                            { 1, 0, 0}}; */
 
-static int spacegroup_to_hall_number[230] = {
+static const int spacegroup_to_hall_number[230] = {
     1,   2,   3,   6,   9,   18,  21,  30,  39,  57,  60,  63,  72,  81,  90,
     108, 109, 112, 115, 116, 119, 122, 123, 124, 125, 128, 134, 137, 143, 149,
     155, 161, 164, 170, 173, 176, 182, 185, 191, 197, 203, 209, 212, 215, 218,
@@ -348,7 +348,7 @@ static int spacegroup_to_hall_number[230] = {
     524, 525, 527, 529, 530,
 };
 
-static int layer_group_to_hall_number[116] = {
+static const int layer_group_to_hall_number[116] = {
     -1,   -2,   -3,   -4,   -5,   -8,   -9,   -12,  -14,  -16,  -18,  -20,
     -22,  -24,  -26,  -28,  -30,  -32,  -34,  -35,  -37,  -38,  -39,  -40,
     -42,  -43,  -44,  -46,  -48,  -50,  -52,  -54,  -56,  -58,  -60,  -62,
@@ -358,29 +358,29 @@ static int layer_group_to_hall_number[116] = {
     -109, -110, -111, -112, -113, -114, -115, -116,
 };
 
-static double identity[3][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
-static double monocli_i2c[3][3] = {{1, 0, -1}, {0, 1, 0}, {1, 0, 0}};
-static double monocli_a2c[3][3] = {{0, 0, 1}, {0, -1, 0}, {1, 0, 0}};
-static double rhombo_obverse[3][3] = {{2. / 3, -1. / 3, -1. / 3},
-                                      {1. / 3, 1. / 3, -2. / 3},
-                                      {1. / 3, 1. / 3, 1. / 3}};
-static double rhomb_reverse[3][3] = {{1. / 3, -2. / 3, 1. / 3},
-                                     {2. / 3, -1. / 3, -1. / 3},
-                                     {1. / 3, 1. / 3, 1. / 3}};
-static double a2c[3][3] = {{0, 0, 1}, {1, 0, 0}, {0, 1, 0}};
-static double b2c[3][3] = {{0, 1, 0}, {0, 0, 1}, {1, 0, 0}};
+static const double identity[3][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+static const double monocli_i2c[3][3] = {{1, 0, -1}, {0, 1, 0}, {1, 0, 0}};
+static const double monocli_a2c[3][3] = {{0, 0, 1}, {0, -1, 0}, {1, 0, 0}};
+static const double rhombo_obverse[3][3] = {{2. / 3, -1. / 3, -1. / 3},
+                                            {1. / 3, 1. / 3, -2. / 3},
+                                            {1. / 3, 1. / 3, 1. / 3}};
+static const double rhomb_reverse[3][3] = {{1. / 3, -2. / 3, 1. / 3},
+                                           {2. / 3, -1. / 3, -1. / 3},
+                                           {1. / 3, 1. / 3, 1. / 3}};
+static const double a2c[3][3] = {{0, 0, 1}, {1, 0, 0}, {0, 1, 0}};
+static const double b2c[3][3] = {{0, 1, 0}, {0, 0, 1}, {1, 0, 0}};
 
-static double A_mat[3][3] = {
+static const double A_mat[3][3] = {
     {1, 0, 0}, {0, 1. / 2, -1. / 2}, {0, 1. / 2, 1. / 2}};
-static double C_mat[3][3] = {
+static const double C_mat[3][3] = {
     {1. / 2, 1. / 2, 0}, {-1. / 2, 1. / 2, 0}, {0, 0, 1}};
-static double R_mat[3][3] = {{2. / 3, -1. / 3, -1. / 3},
-                             {1. / 3, 1. / 3, -2. / 3},
-                             {1. / 3, 1. / 3, 1. / 3}};
-static double I_mat[3][3] = {{-1. / 2, 1. / 2, 1. / 2},
-                             {1. / 2, -1. / 2, 1. / 2},
-                             {1. / 2, 1. / 2, -1. / 2}};
-static double F_mat[3][3] = {
+static const double R_mat[3][3] = {{2. / 3, -1. / 3, -1. / 3},
+                                   {1. / 3, 1. / 3, -2. / 3},
+                                   {1. / 3, 1. / 3, 1. / 3}};
+static const double I_mat[3][3] = {{-1. / 2, 1. / 2, 1. / 2},
+                                   {1. / 2, -1. / 2, 1. / 2},
+                                   {1. / 2, 1. / 2, -1. / 2}};
+static const double F_mat[3][3] = {
     {0, 1. / 2, 1. / 2}, {1. / 2, 0, 1. / 2}, {1. / 2, 1. / 2, 0}};
 
 static Spacegroup *search_spacegroup_with_symmetry(

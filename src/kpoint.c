@@ -50,7 +50,7 @@
 
 #define KPT_NUM_BZ_SEARCH_SPACE 125
 
-static int bz_search_space[KPT_NUM_BZ_SEARCH_SPACE][3] = {
+static const int bz_search_space[KPT_NUM_BZ_SEARCH_SPACE][3] = {
     {0, 0, 0},   {0, 0, 1},   {0, 0, 2},   {0, 0, -2},   {0, 0, -1},
     {0, 1, 0},   {0, 1, 1},   {0, 1, 2},   {0, 1, -2},   {0, 1, -1},
     {0, 2, 0},   {0, 2, 1},   {0, 2, 2},   {0, 2, -2},   {0, 2, -1},

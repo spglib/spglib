@@ -62,6 +62,7 @@
 /*-------*/
 /* error */
 /*-------*/
+// NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
 static _Thread_local SpglibError spglib_error_code = SPGLIB_SUCCESS;
 
 typedef struct {

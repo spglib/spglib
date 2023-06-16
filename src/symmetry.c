@@ -51,7 +51,7 @@
 #define PI 3.14159265358979323846
 /* Tolerance of angle between lattice vectors in degrees */
 /* Negative value invokes converter from symprec. */
-static int relative_axes[][3] = {
+static const int relative_axes[][3] = {
     {1, 0, 0},   {0, 1, 0},   {0, 0, 1},  {-1, 0, 0},  {0, -1, 0},   /* 5 */
     {0, 0, -1},  {0, 1, 1},   {1, 0, 1},  {1, 1, 0},   {0, -1, -1},  /* 10 */
     {-1, 0, -1}, {-1, -1, 0}, {0, 1, -1}, {-1, 0, 1},  {1, -1, 0},   /* 15 */
@@ -60,7 +60,7 @@ static int relative_axes[][3] = {
     {-1, -1, 1},
 };
 
-static int identity[3][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+static const int identity[3][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
 
 static int get_index_with_least_atoms(const Cell *cell);
 static VecDBL *get_translation(const int rot[3][3], const Cell *cell,
