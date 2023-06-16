@@ -1,0 +1,12 @@
+Checks: >
+  *,
+  -readability-identifier-length,
+  -*magic-numbers,
+  -readability-isolate-declaration,
+  -llvmlibc-*,
+  -altera-unroll-loops,
+  -llvm-header-guard,
+  -bugprone-reserved-identifier,
+  -cert-dcl37-c,
+  -cert-dcl51-cpp,
+  -modernize-macro-to-enum,
