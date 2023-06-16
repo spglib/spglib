@@ -10,3 +10,7 @@ Checks: >
   -cert-dcl37-c,
   -cert-dcl51-cpp,
   -modernize-macro-to-enum,
+  -*-braces-around-statements,
+  -*-readability-todo,
+  -bugprone-easily-swappable-parameters,
+  -altera-id-dependent-backward-branch,
