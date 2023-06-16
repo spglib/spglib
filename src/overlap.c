@@ -199,7 +199,7 @@ typedef struct {
     double value;
     int type;
     int index;
-} ValueWithIndex;
+} __attribute__((aligned(16))) ValueWithIndex;
 
 void ovl_overlap_checker_free(OverlapChecker *checker) {
     if (checker != NULL) {

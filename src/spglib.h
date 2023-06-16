@@ -129,7 +129,7 @@ typedef struct {
     int *std_mapping_to_primitive;
     /* int pointgroup_number; */
     char pointgroup_symbol[6];
-} SpglibDataset;
+} __attribute__((aligned(128))) __attribute__((packed)) SpglibDataset;
 
 typedef struct {
     int number;
@@ -144,7 +144,7 @@ typedef struct {
     char pointgroup_schoenflies[4];
     int arithmetic_crystal_class_number;
     char arithmetic_crystal_class_symbol[7];
-} SpglibSpacegroupType;
+} __attribute__((aligned(128))) SpglibSpacegroupType;
 
 typedef struct {
     /* Magnetic space-group type */
@@ -173,7 +173,7 @@ typedef struct {
     double std_rotation_matrix[3][3];
     /* Intermidiate datum in symmetry search */
     double primitive_lattice[3][3];
-} SpglibMagneticDataset;
+} __attribute__((aligned(128))) __attribute__((packed)) SpglibMagneticDataset;
 
 typedef struct {
     int uni_number;
@@ -182,7 +182,7 @@ typedef struct {
     char og_number[12];
     int number;
     int type;
-} SpglibMagneticSpacegroupType;
+} __attribute__((aligned(64))) SpglibMagneticSpacegroupType;
 
 int spg_get_major_version(void);
 int spg_get_minor_version(void);

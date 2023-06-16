@@ -42,19 +42,19 @@ typedef struct {
     int size;
     int (*rot)[3][3];
     double (*trans)[3];
-} Symmetry;
+} __attribute__((aligned(32))) __attribute__((packed)) Symmetry;
 
 typedef struct {
     int size;
     int (*rot)[3][3];
     double (*trans)[3];
     int *timerev;
-} MagneticSymmetry;
+} __attribute__((aligned(32))) MagneticSymmetry;
 
 typedef struct {
     int rot[48][3][3];
     int size;
-} PointSymmetry;
+} __attribute__((aligned(128))) PointSymmetry;
 
 Symmetry *sym_alloc_symmetry(int size);
 void sym_free_symmetry(Symmetry *symmetry);

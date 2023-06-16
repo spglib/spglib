@@ -67,7 +67,7 @@ static _Thread_local SpglibError spglib_error_code = SPGLIB_SUCCESS;
 typedef struct {
     SpglibError error;
     char *message;
-} SpglibErrorMessage;
+} __attribute__((aligned(16))) SpglibErrorMessage;
 
 static SpglibErrorMessage spglib_error_message[] = {
     {SPGLIB_SUCCESS, "no error"},

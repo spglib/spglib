@@ -56,7 +56,7 @@ typedef struct {
     int n;
     double *tmat;
     double *lattice;
-} NiggliParams;
+} __attribute__((aligned(128))) __attribute__((packed)) NiggliParams;
 
 static NiggliParams *initialize(const double *lattice_, double eps_);
 static void finalize(double *lattice_, NiggliParams *p);

@@ -52,7 +52,7 @@ typedef struct {
     char choice[6];
     double bravais_lattice[3][3];
     double origin_shift[3];
-} Spacegroup;
+} __attribute__((aligned(128))) __attribute__((packed)) Spacegroup;
 
 typedef enum {
     CENTERING_ERROR,

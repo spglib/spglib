@@ -61,7 +61,7 @@ typedef struct {
     /* For tensor_rank=COLLINEAR, site tensors with (size, ).*/
     /* For tensor_rank=NONCOLLINEAR, site tensors with (size * 3, ).*/
     double *tensors;
-} Cell;
+} __attribute__((aligned(64))) __attribute__((packed)) Cell;
 
 Cell *cel_alloc_cell(int size, SiteTensorType tensor_rank);
 void cel_free_cell(Cell *cell);

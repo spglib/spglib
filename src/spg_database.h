@@ -48,7 +48,7 @@ typedef struct {
     char choice[6];
     Centering centering;
     int pointgroup_number;
-} SpacegroupType;
+} __attribute__((aligned(128))) __attribute__((packed)) SpacegroupType;
 
 void spgdb_decode_symmetry(int rot[3][3], double trans[3], int encoded);
 int spgdb_get_operation(int rot[3][3], double trans[3], int hall_number);

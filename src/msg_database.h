@@ -44,7 +44,7 @@ typedef struct {
     char og_number[12];
     int number;
     int type;
-} MagneticSpacegroupType;
+} __attribute__((aligned(64))) MagneticSpacegroupType;
 
 MagneticSpacegroupType msgdb_get_magnetic_spacegroup_type(int uni_number);
 MagneticSymmetry *msgdb_get_spacegroup_operations(int uni_number,

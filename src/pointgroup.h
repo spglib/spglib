@@ -70,7 +70,7 @@ typedef struct {
     char schoenflies[4];
     Holohedry holohedry;
     Laue laue;
-} Pointgroup;
+} __attribute__((aligned(32))) __attribute__((packed)) Pointgroup;
 
 // @brief Return pointgroup.number = 0 if failed.
 // @param[out] transform_mat

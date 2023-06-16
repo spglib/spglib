@@ -51,7 +51,7 @@ typedef struct {
     char schoenflies[4];
     Holohedry holohedry;
     Laue laue;
-} PointgroupType;
+} __attribute__((aligned(64))) __attribute__((packed)) PointgroupType;
 
 static PointgroupType pointgroup_data[33] = {{
                                                  /* 0 */

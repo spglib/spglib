@@ -48,7 +48,7 @@ typedef struct {
     int *crystallographic_orbits;
     int *std_mapping_to_primitive;
     double rotation[3][3];
-} ExactStructure;
+} __attribute__((aligned(128))) ExactStructure;
 
 ExactStructure *ref_get_exact_structure_and_symmetry(Spacegroup *spacegroup,
                                                      const Cell *primitive,

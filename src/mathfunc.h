@@ -38,12 +38,12 @@
 typedef struct {
     int size;
     int (*mat)[3][3];
-} MatINT;
+} __attribute__((aligned(16))) MatINT;
 
 typedef struct {
     int size;
     double (*vec)[3];
-} VecDBL;
+} __attribute__((aligned(16))) VecDBL;
 
 double mat_get_determinant_d3(const double a[3][3]);
 int mat_get_determinant_i3(const int a[3][3]);

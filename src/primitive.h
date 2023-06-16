@@ -46,7 +46,7 @@ typedef struct {
     double tolerance;
     double angle_tolerance;
     double (*orig_lattice)[3]; /* 3x3 matrix */
-} Primitive;
+} __attribute__((aligned(64))) __attribute__((packed)) Primitive;
 
 Primitive *prm_alloc_primitive(int size);
 void prm_free_primitive(Primitive *primitive);

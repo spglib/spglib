@@ -60,7 +60,7 @@ typedef struct {
 
     /* Using array reference to avoid redundant loop */
     int *periodic_axes;
-} OverlapChecker;
+} __attribute__((aligned(128))) __attribute__((packed)) OverlapChecker;
 
 OverlapChecker *ovl_overlap_checker_init(const Cell *cell);
 
