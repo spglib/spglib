@@ -108,14 +108,13 @@ VecDBL *ssm_get_exact_positions(int *wyckoffs, int *equiv_atoms,
                                 equiv_atoms, conv_prim, conv_sym,
                                 num_pure_trans, hall_number, symprec)) {
             break;
-        } else {
-            warning_print(
-                "spglib: ssm_get_exact_positions failed (attempt=%d).", i);
-            warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
-            mat_free_VecDBL(positions);
-            positions = NULL;
-            tolerance *= INCREASE_RATE;
         }
+        warning_print("spglib: ssm_get_exact_positions failed (attempt=%d).",
+                      i);
+        warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
+        mat_free_VecDBL(positions);
+        positions = NULL;
+        tolerance *= INCREASE_RATE;
     }
 
     return positions;

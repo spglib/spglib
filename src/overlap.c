@@ -125,10 +125,8 @@ static OVL_INLINE double cartesian_norm(const double lat[3][3],
 }
 
 static OVL_INLINE int Nint(const double a) {
-    if (a < 0.0)
-        return (int)(a - 0.5);
-    else
-        return (int)(a + 0.5);
+    if (a < 0.0) return (int)(a - 0.5);
+    return (int)(a + 0.5);
 }
 
 static OVL_INLINE int has_overlap(const double a[3], const double b[3],
@@ -145,9 +143,8 @@ static OVL_INLINE int has_overlap(const double a[3], const double b[3],
 
     if (cartesian_norm(lattice, v_diff) <= symprec) {
         return 1;
-    } else {
-        return 0;
     }
+    return 0;
 }
 
 static OVL_INLINE int has_overlap_with_same_type(
@@ -155,9 +152,8 @@ static OVL_INLINE int has_overlap_with_same_type(
     const double lattice[3][3], const double symprec) {
     if (type_a == type_b) {
         return has_overlap(a, b, lattice, symprec);
-    } else {
-        return 0;
     }
+    return 0;
 }
 
 /* Modified from has_overlap */
@@ -175,9 +171,8 @@ static OVL_INLINE int layer_has_overlap(const double a[3], const double b[3],
 
     if (cartesian_norm(lattice, v_diff) <= symprec) {
         return 1;
-    } else {
-        return 0;
     }
+    return 0;
 }
 
 static OVL_INLINE int layer_has_overlap_with_same_type(
@@ -186,9 +181,8 @@ static OVL_INLINE int layer_has_overlap_with_same_type(
     const double symprec) {
     if (type_a == type_b) {
         return layer_has_overlap(a, b, lattice, periodic_axes, symprec);
-    } else {
-        return 0;
     }
+    return 0;
 }
 
 /* ------------------------------------- */

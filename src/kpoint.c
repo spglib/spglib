@@ -451,10 +451,9 @@ static size_t get_dense_ir_reciprocal_mesh(int grid_address[][3],
     if (check_mesh_symmetry(mesh, is_shift, rot_reciprocal)) {
         return get_dense_ir_reciprocal_mesh_normal(
             grid_address, ir_mapping_table, mesh, is_shift, rot_reciprocal);
-    } else {
-        return get_dense_ir_reciprocal_mesh_distortion(
-            grid_address, ir_mapping_table, mesh, is_shift, rot_reciprocal);
     }
+    return get_dense_ir_reciprocal_mesh_distortion(
+        grid_address, ir_mapping_table, mesh, is_shift, rot_reciprocal);
 }
 
 static size_t get_dense_ir_reciprocal_mesh_normal(

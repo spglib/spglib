@@ -220,9 +220,8 @@ int cel_is_overlap(const double a[3], const double b[3],
     mat_multiply_matrix_vector_d3(v_diff, lattice, v_diff);
     if (sqrt(mat_norm_squared_d3(v_diff)) < symprec) {
         return 1;
-    } else {
-        return 0;
     }
+    return 0;
 }
 
 int cel_is_overlap_with_same_type(const double a[3], const double b[3],
@@ -231,9 +230,8 @@ int cel_is_overlap_with_same_type(const double a[3], const double b[3],
                                   const double symprec) {
     if (type_a == type_b) {
         return cel_is_overlap(a, b, lattice, symprec);
-    } else {
-        return 0;
     }
+    return 0;
 }
 
 /* 1: At least one overlap of a pair of atoms was found. */
@@ -286,9 +284,8 @@ int cel_layer_is_overlap(const double a[3], const double b[3],
     mat_multiply_matrix_vector_d3(v_diff, lattice, v_diff);
     if (sqrt(mat_norm_squared_d3(v_diff)) < symprec) {
         return 1;
-    } else {
-        return 0;
     }
+    return 0;
 }
 
 int cel_layer_is_overlap_with_same_type(const double a[3], const double b[3],
@@ -298,9 +295,8 @@ int cel_layer_is_overlap_with_same_type(const double a[3], const double b[3],
                                         const double symprec) {
     if (type_a == type_b) {
         return cel_layer_is_overlap(a, b, lattice, periodic_axes, symprec);
-    } else {
-        return 0;
     }
+    return 0;
 }
 
 /* 1: At least one overlap of a pair of atoms with same type was found. */

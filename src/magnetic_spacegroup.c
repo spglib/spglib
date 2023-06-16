@@ -631,7 +631,8 @@ static int get_magnetic_space_group_type(
         if (num_sym_msg == num_sym_fsg) {
             (*representative)->size = 1; /* shrink size */
             return 1;                    /* Type-I */
-        } else if (num_sym_msg == 2 * num_sym_fsg) {
+        }
+        if (num_sym_msg == 2 * num_sym_fsg) {
             /* Pure anti operation */
             mat_copy_matrix_i3((*representative)->rot[1], identity);
             (*representative)->trans[1][0] = 0;
@@ -639,19 +640,18 @@ static int get_magnetic_space_group_type(
             (*representative)->trans[1][2] = 0;
             (*representative)->timerev[1] = 1;
             return 2; /* Type-II */
-        } else {
-            return 0; /* Unreachable */
         }
-    } else if (num_sym_fsg == 2 * num_sym_xsg) {
+        return 0; /* Unreachable */
+    }
+    if (num_sym_fsg == 2 * num_sym_xsg) {
         *representative = get_representative(magnetic_symmetry);
         if (*representative == NULL) return 0;
 
         /* If primed operation is translation, type-IV. Otherwise, type-III. */
         if (mat_check_identity_matrix_i3(identity, (*representative)->rot[1])) {
             return 4; /* Type-IV */
-        } else {
-            return 3; /* Type-III */
         }
+        return 3; /* Type-III */
     }
 
     return 0; /* Unreachable */

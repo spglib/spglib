@@ -529,10 +529,9 @@ int spg_get_hall_number_from_symmetry(const int rotation[][3][3],
     if (hall_number) {
         spglib_error_code = SPGLIB_SUCCESS;
         return hall_number;
-    } else {
-        spglib_error_code = SPGERR_SPACEGROUP_SEARCH_FAILED;
-        return 0;
     }
+    spglib_error_code = SPGERR_SPACEGROUP_SEARCH_FAILED;
+    return 0;
 }
 
 SpglibSpacegroupType spg_get_spacegroup_type_from_symmetry(
@@ -804,19 +803,16 @@ int spgat_standardize_cell(double lattice[3][3], double position[][3],
         if (no_idealize) {
             return get_standardized_cell(lattice, position, types, num_atom, 0,
                                          1, symprec, angle_tolerance);
-        } else {
-            return standardize_primitive(lattice, position, types, num_atom,
-                                         symprec, angle_tolerance);
         }
-    } else {
-        if (no_idealize) {
-            return get_standardized_cell(lattice, position, types, num_atom, 0,
-                                         0, symprec, angle_tolerance);
-        } else {
-            return standardize_cell(lattice, position, types, num_atom, 0,
-                                    symprec, angle_tolerance);
-        }
+        return standardize_primitive(lattice, position, types, num_atom,
+                                     symprec, angle_tolerance);
     }
+    if (no_idealize) {
+        return get_standardized_cell(lattice, position, types, num_atom, 0, 0,
+                                     symprec, angle_tolerance);
+    }
+    return standardize_cell(lattice, position, types, num_atom, 0, symprec,
+                            angle_tolerance);
 }
 
 /* Return 0 if failed */
@@ -1292,10 +1288,9 @@ finalize:
 
     if (spglib_error_code == SPGLIB_SUCCESS) {
         return dataset;
-    } else {
-        spg_free_magnetic_dataset(dataset);
-        return NULL;
     }
+    spg_free_magnetic_dataset(dataset);
+    return NULL;
 }
 
 static SpglibDataset *init_dataset(void) {

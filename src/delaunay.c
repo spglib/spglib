@@ -278,20 +278,19 @@ static int delaunay_reduce_basis(double basis[4][3], const int lattice_rank,
                         basis[i][k] = -basis[i][k];
                     }
                     return 0;
-                } else {
-                    // Here, lattice_rank==2 and dot(b3, b4) > 0
-                    /* For layer, if b3 lies in a sphere with center -(b1+b2)/2
-                     * and radius |b1+b2|/2, */
-                    /* dot(b3, b4) <= 0 will be impossible. This should not
-                     * affect the final results */
-                    /* except the primitive cell is not a standard Delaunay
-                     * cell, so just a warning. */
-                    warning_print(
-                        "spglib: Dot product between basis %d, %d larger than "
-                        "0 (line %d, %s).\n",
-                        i + 1, j + 1, __LINE__, __FILE__);
-                    debug_print_vectors_d3(basis, 4);
                 }
+                // Here, lattice_rank==2 and dot(b3, b4) > 0
+                /* For layer, if b3 lies in a sphere with center -(b1+b2)/2
+                 * and radius |b1+b2|/2, */
+                /* dot(b3, b4) <= 0 will be impossible. This should not
+                 * affect the final results */
+                /* except the primitive cell is not a standard Delaunay
+                 * cell, so just a warning. */
+                warning_print(
+                    "spglib: Dot product between basis %d, %d larger than "
+                    "0 (line %d, %s).\n",
+                    i + 1, j + 1, __LINE__, __FILE__);
+                debug_print_vectors_d3(basis, 4);
             }
         }
     }
@@ -443,13 +442,12 @@ static int delaunay_reduce_basis_2D(double basis[3][3], const int lattice_rank,
                         basis[i][k] = -basis[i][k];
                     }
                     return 0;
-                } else {
-                    warning_print(
-                        "spglib: Dot product between basis %d, %d larger than "
-                        "0 (line %d, %s).\n",
-                        i + 1, j + 1, __LINE__, __FILE__);
-                    debug_print_vectors_d3(basis, 3);
                 }
+                warning_print(
+                    "spglib: Dot product between basis %d, %d larger than "
+                    "0 (line %d, %s).\n",
+                    i + 1, j + 1, __LINE__, __FILE__);
+                debug_print_vectors_d3(basis, 3);
             }
         }
     }

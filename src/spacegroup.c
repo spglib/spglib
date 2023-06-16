@@ -1596,14 +1596,13 @@ static int match_hall_symbol_db_rhombo(double origin_shift[3],
         if (is_found) {
             /* mat_copy_matrix_d3(conv_lattice, changed_lattice); */
             return 1;
-        } else {
-            return 0;
         }
-    } else { /* Rhombohedral (a=b=c) lattice */
-        return match_hall_symbol_db_change_of_basis_loop(
-            origin_shift, conv_lattice, orig_lattice, change_of_basis_rhombo, 6,
-            hall_number, PRIMITIVE, conv_symmetry, symprec);
-    }
+        return 0;
+
+    } /* Rhombohedral (a=b=c) lattice */
+    return match_hall_symbol_db_change_of_basis_loop(
+        origin_shift, conv_lattice, orig_lattice, change_of_basis_rhombo, 6,
+        hall_number, PRIMITIVE, conv_symmetry, symprec);
 
     return 0;
 }
