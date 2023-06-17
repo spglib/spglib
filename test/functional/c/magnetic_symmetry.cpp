@@ -13,7 +13,7 @@ static void show_magnetic_spacegroup_type(
     const SpglibMagneticSpacegroupType msgtype);
 static void show_spg_magnetic_dataset(const SpglibMagneticDataset *dataset);
 
-TEST(test_magnetic_symmetry, test_spg_get_magnetic_symmetry_from_database) {
+TEST(MagneticSymmetry, test_spg_get_magnetic_symmetry_from_database) {
     int rotations[384][3][3];
     double translations[384][3];
     int time_reversals[384];
@@ -30,7 +30,7 @@ TEST(test_magnetic_symmetry, test_spg_get_magnetic_symmetry_from_database) {
                                       size);
 }
 
-TEST(test_magnetic_symmetry, test_spg_get_symmetry_with_collinear_spin) {
+TEST(MagneticSymmetry, test_spg_get_symmetry_with_collinear_spin) {
     double lattice[3][3] = {{4, 0, 0}, {0, 4, 0}, {0, 0, 4}};
     double position[][3] = {{0, 0, 0}, {0.5, 0.5, 0.5}};
     int types[] = {1, 1};
@@ -88,7 +88,7 @@ TEST(test_magnetic_symmetry, test_spg_get_symmetry_with_collinear_spin) {
     translation = NULL;
 }
 
-TEST(test_magnetic_symmetry, test_spg_get_symmetry_with_site_tensors) {
+TEST(MagneticSymmetry, test_spg_get_symmetry_with_site_tensors) {
     /* MAGNDATA #0.1: LaMnO3 */
     /* BNS: Pn'ma' (62.448), MHall: -P 2ac' 2n' (546) */
     int max_size, size, i;
@@ -185,14 +185,14 @@ TEST(test_magnetic_symmetry, test_spg_get_symmetry_with_site_tensors) {
     time_reversals = NULL;
 }
 
-TEST(test_magnetic_symmetry, test_spg_get_magnetic_spacegroup_type) {
+TEST(MagneticSymmetry, test_spg_get_magnetic_spacegroup_type) {
     SpglibMagneticSpacegroupType msgtype;
     msgtype = spg_get_magnetic_spacegroup_type(1279);
     ASSERT_NE(msgtype.uni_number, 0);
     show_magnetic_spacegroup_type(msgtype);
 }
 
-TEST(test_magnetic_symmetry, test_spg_get_magnetic_dataset) {
+TEST(MagneticSymmetry, test_spg_get_magnetic_dataset) {
     /* Rutile structure (P4_2/mnm) */
     /* Generators: -y+1/2,x+1/2,z+1/2; -x+1/2,y+1/2,-z+1/2; -x,-y,-z */
     double lattice[3][3] = {{5, 0, 0}, {0, 5, 0}, {0, 0, 3}};
@@ -269,7 +269,7 @@ TEST(test_magnetic_symmetry, test_spg_get_magnetic_dataset) {
     }
 }
 
-TEST(test_magnetic_symmetry, test_spg_get_magnetic_dataset_type4) {
+TEST(MagneticSymmetry, test_spg_get_magnetic_dataset_type4) {
     /* double Rutile structure (P4_2/mnm) */
     double lattice[3][3] = {{5, 0, 0}, {0, 5, 0}, {0, 0, 6}};
     double position[][3] = {
@@ -306,7 +306,7 @@ TEST(test_magnetic_symmetry, test_spg_get_magnetic_dataset_type4) {
     spg_free_magnetic_dataset(dataset);
 }
 
-TEST(test_magnetic_symmetry, test_spg_get_symmetry_with_tensors_rough_symprec) {
+TEST(MagneticSymmetry, test_spg_get_symmetry_with_tensors_rough_symprec) {
     // https://github.com/spglib/spglib/issues/186
     double lattice[][3] = {
         // column-wise!
@@ -364,7 +364,7 @@ TEST(test_magnetic_symmetry, test_spg_get_symmetry_with_tensors_rough_symprec) {
     free(time_reversals);
 }
 
-TEST(test_magnetic_symmetry, test_spgms_get_magnetic_dataset_high_mag_symprec) {
+TEST(MagneticSymmetry, test_spgms_get_magnetic_dataset_high_mag_symprec) {
     // https://github.com/spglib/spglib/issues/249
     double lattice[3][3] = {
         {0.00000000, -5.00000000, -2.50000000},
@@ -429,7 +429,7 @@ TEST(test_magnetic_symmetry, test_spgms_get_magnetic_dataset_high_mag_symprec) {
     if (dataset != NULL) spg_free_magnetic_dataset(dataset);
 }
 
-TEST(test_magnetic_symmetry, test_with_broken_symmetry) {
+TEST(MagneticSymmetry, test_with_broken_symmetry) {
     // https://github.com/spglib/spglib/issues/194
     // Part of "mp-806965" in the Materials Project database
     double lattice[][3] = {

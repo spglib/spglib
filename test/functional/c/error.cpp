@@ -8,7 +8,7 @@ extern "C" {
 #include "spglib.h"
 }
 
-TEST(test_error, test_spg_get_error_message) {
+TEST(Error, test_spg_get_error_message) {
     // printf("Primitive cell was not found.\n");
     double lattice[3][3] = {{4, 0, 0}, {0, 4, 0}, {0, 0, 4}};
     double position[][3] = {{0, 0, 0}, {0.5, 0.5, 0.5}, {0.5, 0.5, 0.5}};
@@ -32,7 +32,7 @@ extern "C" {
 void spg_set_error_code(SpglibError err);
 }
 
-TEST(test_error, thread_safety) {
+TEST(Error, thread_safety) {
     auto thread_func = [](SpglibError err_val) {
         spg_set_error_code(err_val);
         // Small delay to make sure other thread has written

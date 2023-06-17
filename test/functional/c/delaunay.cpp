@@ -7,7 +7,7 @@ extern "C" {
 #include "delaunay.h"
 }
 
-TEST(test_delaunay, test_delaunay_reduce_layer) {
+TEST(Delaunay, Delaunay_reduce_layer) {
     double min_lattice[3][3];
     // Unimodular matrix
     double lattice[3][3] = {

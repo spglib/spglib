@@ -6,7 +6,7 @@ extern "C" {
 #include "utils.h"
 }
 
-TEST(test_symmetry, test_get_lattice_symmetry_layer) {
+TEST(Symmetry, test_get_lattice_symmetry_layer) {
     Cell *cell;
     Symmetry *symmetry;
 

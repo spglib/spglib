@@ -7,7 +7,7 @@ extern "C" {
 
 static void show_spacegroup_type(const SpglibSpacegroupType spgtype);
 
-TEST(test_dataset_access, test_spg_get_symmetry_from_database) {
+TEST(DatasetAccess, test_spg_get_symmetry_from_database) {
     int rotations[192][3][3];
     double translations[192][3];
     int size;
@@ -17,13 +17,13 @@ TEST(test_dataset_access, test_spg_get_symmetry_from_database) {
     show_symmetry_operations(rotations, translations, size);
 }
 
-TEST(test_dataset_access, test_spg_get_spacegroup_type) {
+TEST(DatasetAccess, test_spg_get_spacegroup_type) {
     SpglibSpacegroupType spgtype;
     spgtype = spg_get_spacegroup_type(446);
     ASSERT_EQ(spgtype.number, 156);
 }
 
-TEST(test_dataset_access, test_spg_get_hall_number_from_symmetry) {
+TEST(DatasetAccess, test_spg_get_hall_number_from_symmetry) {
     /* Im-3m (229) */
     double lattice[3][3] = {{4, 0, 0}, {0, 4, 0}, {0, 0, 4}};
     double position[][3] = {{0, 0, 0}, {0.5, 0.5, 0.5}};
@@ -59,7 +59,7 @@ TEST(test_dataset_access, test_spg_get_hall_number_from_symmetry) {
     }
 }
 
-TEST(test_dataset_access, test_spg_get_spacegroup_type_from_symmetry) {
+TEST(DatasetAccess, test_spg_get_spacegroup_type_from_symmetry) {
     /* Im-3m (229) */
     double lattice[3][3] = {{4, 0, 0}, {0, 4, 0}, {0, 0, 4}};
     double position[][3] = {{0, 0, 0}, {0.5, 0.5, 0.5}};

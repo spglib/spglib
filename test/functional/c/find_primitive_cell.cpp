@@ -5,7 +5,7 @@ extern "C" {
 #include "utils.h"
 }
 
-TEST(test_find_primitive_cell, test_spg_find_primitive_BCC) {
+TEST(FindPrimitiveCell, test_spg_find_primitive_BCC) {
     double lattice[3][3] = {{4, 0, 0}, {0, 4, 0}, {0, 0, 4}};
     double position[][3] = {{0, 0, 0}, {0.5, 0.5, 0.5}};
     int types[] = {1, 1};
@@ -20,7 +20,7 @@ TEST(test_find_primitive_cell, test_spg_find_primitive_BCC) {
     show_cell(lattice, position, types, num_primitive_atom);
 }
 
-TEST(test_find_primitive_cell, test_spg_find_primitive_corundum) {
+TEST(FindPrimitiveCell, test_spg_find_primitive_corundum) {
     double lattice[3][3] = {{4.8076344022756095, -2.4038172011378047, 0},
                             {0, 4.1635335244786962, 0},
                             {0, 0, 13.1172699198127543}};
@@ -75,7 +75,7 @@ TEST(test_find_primitive_cell, test_spg_find_primitive_corundum) {
     show_cell(lattice, position, types, num_primitive_atom);
 }
 
-TEST(test_find_primitive_cell, test_spg_refine_cell_BCC) {
+TEST(FindPrimitiveCell, test_spg_refine_cell_BCC) {
     double lattice[3][3] = {{0, 2, 2}, {2, 0, 2}, {2, 2, 0}};
 
     /* 4 times larger memory space must be prepared. */

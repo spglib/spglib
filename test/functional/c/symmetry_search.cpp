@@ -9,7 +9,7 @@ int show_spg_dataset(double lattice[3][3], const double origin_shift[3],
                      double position[][3], const int num_atom,
                      const int types[]);
 
-TEST(test_symmetry_search, test_spg_get_symmetry) {
+TEST(SymmetrySearch, test_spg_get_symmetry) {
     double lattice[3][3] = {{4, 0, 0}, {0, 4, 0}, {0, 0, 3}};
     double position[][3] = {
         {0, 0, 0},        {0.5, 0.5, 0.25}, {0.3, 0.3, 0},    {0.7, 0.7, 0},
@@ -45,7 +45,7 @@ TEST(test_symmetry_search, test_spg_get_symmetry) {
     translation = NULL;
 }
 
-TEST(test_symmetry_search, test_spg_get_dataset) {
+TEST(SymmetrySearch, test_spg_get_dataset) {
     double lattice[3][3] = {{4, 0, 0}, {0, 4, 0}, {0, 0, 3}};
     double origin_shift[3] = {0.1, 0.1, 0};
     double position[][3] = {
@@ -75,7 +75,7 @@ TEST(test_symmetry_search, test_spg_get_dataset) {
               0);
 }
 
-TEST(test_symmetry_search, test_spg_get_multiplicity) {
+TEST(SymmetrySearch, test_spg_get_multiplicity) {
     double lattice[3][3] = {{4, 0, 0}, {0, 4, 0}, {0, 0, 4}};
     double position[][3] = {{0, 0, 0}, {0.5, 0.5, 0.5}};
     int types[] = {1, 2};

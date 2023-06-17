@@ -10,7 +10,7 @@ static int sub_spg_standardize_cell(double lattice[3][3], double position[][3],
                                     const int to_primitive,
                                     const int no_idealize);
 
-TEST(test_standardization, test_spg_standardize_cell_BCC) {
+TEST(Standardization, test_spg_standardize_cell_BCC) {
     double lattice[3][3] = {{3.97, 0, 0}, {0, 4.03, 0}, {0, 0, 4.0}};
     double position[][3] = {{0.002, 0, 0}, {0.5, 0.5001, 0.5}};
     int types[] = {1, 1};
@@ -31,7 +31,7 @@ TEST(test_standardization, test_spg_standardize_cell_BCC) {
     }
 }
 
-TEST(test_standardization, test_spg_standardize_cell_corundum) {
+TEST(Standardization, test_spg_standardize_cell_corundum) {
     double lattice[3][3] = {{4.8076344022756095, -2.4038172011378047, 0},
                             {0, 4.1635335244786962, 0},
                             {0, 0, 13.1172699198127543}};
