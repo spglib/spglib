@@ -117,12 +117,15 @@ int niggli_get_minor_version(void) { return NIGGLI_MINOR_VERSION; }
 int niggli_get_micro_version(void) { return NIGGLI_MICRO_VERSION; }
 
 /* return 0 if failed */
-int niggli_reduce(double *lattice_, const double eps_) {
-    return niggli_reduce_periodic(lattice_, eps_, -1);
-}
-
-int niggli_reduce_periodic(double *lattice_, const double eps_,
-                           const int aperiodic_axis) {
+// For bulk, set `aperiodic_axis=-1`
+// @note For layer group, Niggli steps are modified to maintain the non-periodic
+// axis
+//       - First, Move aperiodic axis to c
+//       - Step 2 is skipped
+//       - (Steps 5 and 6 are not modified because axis c is perpendicular to
+//       the plane)
+int niggli_reduce(double *lattice_, const double eps_,
+                  const int aperiodic_axis) {
     int i, j, succeeded;
     NiggliParams *p;
     int (*steps[8])(NiggliParams *p) = {step1, step2, step3, step4,
@@ -140,6 +143,7 @@ int niggli_reduce_periodic(double *lattice_, const double eps_,
     }
 
     /* Step 0 */
+    // Move aperiodic axis to c for layer
     if (!(((aperiodic_axis == 0 || aperiodic_axis == 1) &&
            layer_swap_axis(p, aperiodic_axis)) ||
           ((aperiodic_axis == -1 || aperiodic_axis == 2) &&

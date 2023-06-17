@@ -4,7 +4,9 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_executable(CTests
+		test_delaunay.cpp
 		test_error.cpp
+		test_symmetry.cpp
 		test_symmetry_search.cpp
 		test_spacegroup_type_search.cpp
 		test_find_primitive_cell.cpp

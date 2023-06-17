@@ -52,9 +52,6 @@ static void get_delaunay_shortest_vectors(double basis[4][3],
                                           const double symprec);
 static int get_extended_basis(double basis[4][3], const double lattice[3][3],
                               const int aperiodic_axis);
-static int delaunay_reduce_2D(double red_lattice[3][3],
-                              const double lattice[3][3], const int unique_axis,
-                              const int aperiodic_axis, const double symprec);
 static int delaunay_reduce_basis_2D(double basis[3][3], const int lattice_rank,
                                     const double symprec);
 static void get_delaunay_shortest_vectors_2D(double basis[3][3],
@@ -70,22 +67,6 @@ int del_delaunay_reduce(double min_lattice[3][3], const double lattice[3][3],
     debug_print("del_delaunay_reduce (tolerance = %f):\n", symprec);
 
     return delaunay_reduce(min_lattice, lattice, -1, symprec);
-}
-
-int del_delaunay_reduce_2D(double min_lattice[3][3], const double lattice[3][3],
-                           const int unique_axis, const double symprec) {
-    debug_print("del_delaunay_reduce_2D:\n");
-    return delaunay_reduce_2D(min_lattice, lattice, unique_axis, -1, symprec);
-}
-
-int del_layer_delaunay_reduce_2D(double min_lattice[3][3],
-                                 const double lattice[3][3],
-                                 const int unique_axis,
-                                 const int aperiodic_axis,
-                                 const double symprec) {
-    debug_print("del_layer_delaunay_reduce_2D:\n");
-    return delaunay_reduce_2D(min_lattice, lattice, unique_axis, aperiodic_axis,
-                              symprec);
 }
 
 /* Return 0 if failed */
@@ -174,6 +155,9 @@ err:
     return 0;
 }
 
+// @brief Search the shortest vectors from the Delaunay set. If aperiodic axis
+//        exists, find the shortest two vectors inside period plane and the
+//        shortest one outside.
 static void get_delaunay_shortest_vectors(double basis[4][3],
                                           const int lattice_rank,
                                           const double symprec) {
@@ -223,11 +207,10 @@ static void get_delaunay_shortest_vectors(double basis[4][3],
                 }
             }
         }
-        /* find the shortest 2 vectors inside period plane and the shortest one
-         * outside */
     } else {
-        for (i = 0; i < 2; i++) {
-            for (j = 0; j < 2; j++) {
+        // Sort among {b1, b2, b1 + b}
+        for (i = 0; i <= 1; i++) {
+            for (j = 0; j <= 1; j++) {
                 if (mat_norm_squared_d3(b[j]) >
                     mat_norm_squared_d3(b[j + 1]) + ZERO_PREC) {
                     mat_copy_vector_d3(tmpvec, b[j]);
@@ -236,8 +219,13 @@ static void get_delaunay_shortest_vectors(double basis[4][3],
                 }
             }
         }
-        for (i = 3; i < 6; i++) {
-            for (j = 3; j < 6; j++) {
+        // Sort among {b3, b4, b2+b3, b3+b1}
+        // TODO: Is this part required?
+        //       - b4 > b3 because b4 = -(b1+b2+b3) and dot(d3, b1+b2) = 0
+        //       - b2+b3 > b3 because dot(b3, b2) = 0
+        //       - b3+b1 > b3 because dot(b3, b1) = 0
+        for (i = 3; i <= 5; i++) {
+            for (j = 3; j <= 5; j++) {
                 if (mat_norm_squared_d3(b[j]) >
                     mat_norm_squared_d3(b[j + 1]) + ZERO_PREC) {
                     mat_copy_vector_d3(tmpvec, b[j]);
@@ -248,7 +236,7 @@ static void get_delaunay_shortest_vectors(double basis[4][3],
         }
     }
 
-    /* for layer, i = 2, |tmpmat| = 0 is automatically dropped */
+    // For layer, |tmpmat| != 0 for i=2 never happen
     for (i = 2; i < 7; i++) {
         for (j = 0; j < 3; j++) {
             tmpmat[j][0] = b[0][j];
@@ -261,11 +249,13 @@ static void get_delaunay_shortest_vectors(double basis[4][3],
                 basis[1][j] = b[1][j];
                 basis[2][j] = b[i][j];
             }
-            break;
+            return;
         }
     }
 }
 
+// If `lattice_rank==2`, assume `basis[2]` (b3) is along aperiodic axis.
+// TODO: Change `lattice_rank` to a more informative variable
 static int delaunay_reduce_basis(double basis[4][3], const int lattice_rank,
                                  const double symprec) {
     int i, j, k, l;
@@ -291,6 +281,7 @@ static int delaunay_reduce_basis(double basis[4][3], const int lattice_rank,
                     }
                     return 0;
                 } else {
+                    // Here, lattice_rank==2 and dot(b3, b4) > 0
                     /* For layer, if b3 lies in a sphere with center -(b1+b2)/2
                      * and radius |b1+b2|/2, */
                     /* dot(b3, b4) <= 0 will be impossible. This should not
@@ -310,7 +301,9 @@ static int delaunay_reduce_basis(double basis[4][3], const int lattice_rank,
     return 1;
 }
 
-/* aperiodic_axis (if exists) is temporarily moved to b3 */
+// @brief Get extended basis for three-dimensional Delaunay reduction.
+//        If exists, `aperiodic_axis` is temporarily moved to b3 (`basis[2]`).
+// @return lattice_rank Rank of `lattice`
 static int get_extended_basis(double basis[4][3], const double lattice[3][3],
                               const int aperiodic_axis) {
     int i, j, lattice_rank;
@@ -345,17 +338,19 @@ static int get_extended_basis(double basis[4][3], const double lattice[3][3],
     return lattice_rank;
 }
 
-/* For Monocli/Oblique, unique axis is aperiodic axis, j and k are periodic */
-/* For Monocli/Rectang, k is aperiodic axis, unique axis and j are periodic */
-/* j and k are delaunay reduced, which can be incomplete for Monocli/Rectang */
-static int delaunay_reduce_2D(double red_lattice[3][3],
-                              const double lattice[3][3], const int unique_axis,
-                              const int aperiodic_axis, const double symprec) {
+int del_layer_delaunay_reduce_2D(double red_lattice[3][3],
+                                 const double lattice[3][3],
+                                 const int unique_axis,
+                                 const int aperiodic_axis,
+                                 const double symprec) {
     int i, j, k, attempt, succeeded, lattice_rank;
     double volume;
     double basis[3][3], lattice_2D[3][2], unique_vec[3];
 
+    debug_print("del_layer_delaunay_reduce_2D:\n");
+
     if (aperiodic_axis == -1 || unique_axis == aperiodic_axis) {
+        // bulk or Monoclinic/oblique
         j = -1;
         k = -1;
         for (i = 0; i < 3; i++) {
@@ -369,6 +364,7 @@ static int delaunay_reduce_2D(double red_lattice[3][3],
         }
         lattice_rank = 2;
     } else {
+        // Monoclinic/rectangular
         for (i = 0; i < 3; i++) {
             if (i != unique_axis && i != aperiodic_axis) {
                 j = i;
@@ -401,7 +397,6 @@ static int delaunay_reduce_2D(double red_lattice[3][3],
 
     for (i = 0; i < 3; i++) {
         red_lattice[i][unique_axis] = lattice[i][unique_axis];
-        ;
         red_lattice[i][j] = basis[0][i];
         red_lattice[i][k] = basis[1][i];
     }

@@ -670,8 +670,8 @@ int spg_get_pointgroup(char symbol[6], int transform_mat[3][3],
                        const int rotations[][3][3], const int num_rotations) {
     Pointgroup pointgroup;
 
-    pointgroup =
-        ptg_get_transformation_matrix(transform_mat, rotations, num_rotations);
+    pointgroup = ptg_get_transformation_matrix(
+        transform_mat, rotations, num_rotations, -1 /* aperiodic_axis*/);
 
     if (pointgroup.number == 0) {
         spglib_error_code = SPGERR_POINTGROUP_NOT_FOUND;
@@ -988,7 +988,7 @@ int spg_niggli_reduce(double lattice[3][3], const double symprec) {
         }
     }
 
-    succeeded = niggli_reduce(vals, symprec);
+    succeeded = niggli_reduce(vals, symprec, -1 /* aperiodic_axis */);
 
     if (succeeded) {
         for (i = 0; i < 3; i++) {
