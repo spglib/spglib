@@ -2,13 +2,8 @@
 
 extern "C" {
 #include "spglib.h"
+#include "utils.h"
 }
-
-static int sub_spg_standardize_cell(double lattice[3][3], double position[][3],
-                                    int types[], const int num_atom,
-                                    const double symprec,
-                                    const int to_primitive,
-                                    const int no_idealize);
 
 TEST(Standardization, test_spg_standardize_cell_BCC) {
     double lattice[3][3] = {{3.97, 0, 0}, {0, 4.03, 0}, {0, 0, 4.0}};
@@ -90,74 +85,4 @@ TEST(Standardization, test_spg_standardize_cell_corundum) {
             printf("------------------------------------------------------\n");
         }
     }
-}
-
-// ****************************************************************************
-// Local functions
-// ****************************************************************************
-
-static int sub_spg_standardize_cell(double lattice[3][3], double position[][3],
-                                    int types[], const int num_atom,
-                                    const double symprec,
-                                    const int to_primitive,
-                                    const int no_idealize) {
-    int i, num_primitive_atom, retval;
-    double lat[3][3];
-    double(*pos)[3];
-    int *typ;
-
-    pos = (double(*)[3])malloc(sizeof(double[3]) * num_atom);
-    typ = (int *)malloc(sizeof(int) * num_atom);
-
-    for (i = 0; i < 3; i++) {
-        lat[i][0] = lattice[i][0];
-        lat[i][1] = lattice[i][1];
-        lat[i][2] = lattice[i][2];
-    }
-
-    for (i = 0; i < num_atom; i++) {
-        pos[i][0] = position[i][0];
-        pos[i][1] = position[i][1];
-        pos[i][2] = position[i][2];
-        typ[i] = types[i];
-    }
-
-    /* lattice, position, and types are overwritten. */
-    num_primitive_atom = spg_standardize_cell(
-        lat, pos, typ, num_atom, to_primitive, no_idealize, symprec);
-
-    if (num_primitive_atom) {
-        printf("VASP POSCAR format: ");
-        if (to_primitive == 0) {
-            printf("to_primitive=0 and ");
-        } else {
-            printf("to_primitive=1 and ");
-        }
-
-        if (no_idealize == 0) {
-            printf("no_idealize=0\n");
-        } else {
-            printf("no_idealize=1\n");
-        }
-        printf("1.0\n");
-        for (i = 0; i < 3; i++) {
-            printf("%f %f %f\n", lat[0][i], lat[1][i], lat[2][i]);
-        }
-        printf("%d\n", num_primitive_atom);
-        printf("Direct\n");
-        for (i = 0; i < num_primitive_atom; i++) {
-            printf("%f %f %f\n", pos[i][0], pos[i][1], pos[i][2]);
-        }
-
-        retval = 0;
-    } else {
-        retval = 1;
-    }
-
-    free(typ);
-    typ = NULL;
-    free(pos);
-    pos = NULL;
-
-    return retval;
 }
