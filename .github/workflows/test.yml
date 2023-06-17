@@ -50,14 +50,14 @@ jobs:
     needs: [ ctest-linux ]
     strategy:
       matrix:
-        coverage_api: [ c, fortran ]
+        coverage: [ unit_tests, c_api, fortran_api ]
     steps:
       - uses: actions/checkout@v3
       - uses: lukka/get-cmake@latest
-      - name: Get test coverage for ${{ matrix.coverage_api }} api
+      - name: Get test coverage for ${{ matrix.coverage }}
         uses: lukka/run-cmake@v10.3
         with:
-          workflowPreset: "ci-coverage-${{ matrix.coverage_api }}"
+          workflowPreset: "ci-coverage-${{ matrix.coverage }}"
       - name: Get lcov data
         uses: danielealbano/lcov-action@v3
         with:
@@ -67,9 +67,9 @@ jobs:
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
-          name: ${{ matrix.coverage_api }} api coverage
+          name: ${{ matrix.coverage }} coverage
           files: coverage.info
-          flags: ${{ matrix.coverage_api }}_api
+          flags: ${{ matrix.coverage }}
           verbose: true
 
   pytest-linux:
