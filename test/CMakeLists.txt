@@ -43,7 +43,3 @@ endfunction()
 add_subdirectory(unit)
 add_subdirectory(integration)
 add_subdirectory(functional)
-
-if (SPGLIB_WITH_Fortran)
-	add_subdirectory(fortran)
-endif ()
