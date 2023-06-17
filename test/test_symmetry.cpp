@@ -26,6 +26,8 @@ TEST(test_symmetry, test_get_lattice_symmetry_layer) {
     const double angle_tolerance = -1;
 
     cell = cel_alloc_cell(size, NOSPIN);
+    ASSERT_NE(cell, nullptr);
+    ASSERT_EQ(spg_get_error_code(), SPGLIB_SUCCESS);
     cel_set_layer_cell(cell, lattice, positions, types, aperiodic_axis);
 
     // Bravais group of the two-dimensional lattice is 4/mmm
