@@ -18,6 +18,8 @@ target_link_libraries(Spglib_tests
 		PRIVATE Spglib_symspg
 		PRIVATE GTest::gtest GTest::gtest_main
 		)
+target_include_directories(Spglib_tests
+		PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Define a helper function to configure the google tests
 function(configure_spglib_tests)
@@ -41,27 +43,6 @@ endfunction()
 add_subdirectory(unit)
 add_subdirectory(integration)
 add_subdirectory(functional)
-
-target_sources(Spglib_tests PRIVATE
-		test_delaunay.cpp
-		test_error.cpp
-		test_symmetry.cpp
-		test_symmetry_search.cpp
-		test_spacegroup_type_search.cpp
-		test_find_primitive_cell.cpp
-		test_refine_cell.cpp
-		test_standardization.cpp
-		test_dataset_access.cpp
-		test_magnetic_symmetry.cpp
-		test_kpoints.cpp
-		)
-gtest_add_tests(TARGET Spglib_tests
-		TEST_LIST google_tests)
-
-foreach (g_test IN LISTS google_tests)
-	set_tests_properties(${g_test} PROPERTIES
-			LABELS "c_api;${g_test}")
-endforeach ()
 
 if (SPGLIB_WITH_Fortran)
 	add_subdirectory(fortran)
