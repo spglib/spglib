@@ -1,4 +1,4 @@
-list(APPEND ctest_labels integration_tests)
+list(APPEND ctest_labels c_api)
 set(test_sources "")
 if (test_sources)
 	configure_spglib_tests(TARGET Spglib_tests
