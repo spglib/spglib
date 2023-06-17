@@ -35,12 +35,12 @@ test = [
 ]
 
 docs = [
-    "Sphinx >= 6.0",
-    "sphinxcontrib-bibtex",
+    "Sphinx >= 7.0",
+    "sphinxcontrib-bibtex >= 2.5",
     "sphinx-togglebutton",
     "sphinx-design",
     "sphinx-book-theme",
-    "myst-parser >= 1.0",
+    "myst-parser >= 2.0",
     "linkify-it-py",
     "jinja2",
     "pyyaml",
