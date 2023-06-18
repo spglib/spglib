@@ -16,6 +16,10 @@
           "type": "BOOL",
           "value": true
         },
+        "SPGLIB_WITH_CXX": {
+          "type": "BOOL",
+          "value": true
+        },
         "SPGLIB_WITH_TESTS": {
           "type": "BOOL",
           "value": true
