@@ -1,6 +1,6 @@
 enable_language(CXX)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Define/clear local variables to be used
@@ -12,6 +12,7 @@ set_target_properties(Spglib_tests PROPERTIES
 		OUTPUT_NAME test_suite
 		)
 target_sources(Spglib_tests PRIVATE
+		c_fixtures.cpp
 		utils.c
 		)
 target_link_libraries(Spglib_tests
