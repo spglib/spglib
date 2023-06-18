@@ -35,10 +35,6 @@
 #ifndef __spglib_H__
 #define __spglib_H__
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #ifdef SPG_BUILD
     // When compiling define API for export
     #if defined(_MSC_VER)
@@ -624,7 +620,4 @@ SPG_API size_t spg_relocate_dense_BZ_grid_address(
 /* Return 0 if failed */
 SPG_API int spg_niggli_reduce(double lattice[3][3], double const symprec);
 
-#ifdef __cplusplus
-}
-#endif
 #endif

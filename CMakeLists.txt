@@ -50,6 +50,7 @@ else ()
 endif ()
 
 #
+option(SPGLIB_WITH_CXX "Spglib: Build C++ interface" OFF)
 option(SPGLIB_WITH_Fortran "Spglib: Build Fortran interface" OFF)
 option(SPGLIB_WITH_Python "Spglib: Build Python interface" OFF)
 option(SPGLIB_USE_OMP "Spglib: Build with OpenMP support" OFF)
@@ -124,6 +125,9 @@ add_subdirectory(include)
 add_subdirectory(src)
 
 # Bindings
+if (SPGLIB_WITH_CXX)
+    add_subdirectory(cpp)
+endif ()
 if (SPGLIB_WITH_Fortran)
     add_subdirectory(fortran)
 endif ()
@@ -177,6 +181,7 @@ endif ()
 if (NOT PROJECT_IS_TOP_LEVEL)
     # Set variables for FetchContent
     # All variables have to be consistent with SpglibConfig.cmake
+    set(Spglib_CXX ${SPGLIB_WITH_CXX})
     set(Spglib_Fortran ${SPGLIB_WITH_Fortran})
     set(Spglib_Python ${SPGLIB_WITH_Python})
     set(Spglib_OMP ${SPGLIB_USE_OMP})
@@ -190,6 +195,7 @@ if (NOT PROJECT_IS_TOP_LEVEL)
         set(Spglib_VERSION_TWEAK ${Spglib_VERSION_TWEAK} PARENT_SCOPE)
         set(Spglib_VERSION_FULL ${Spglib_VERSION_FULL} PARENT_SCOPE)
         set(Spglib_COMMIT ${Spglib_COMMIT} PARENT_SCOPE)
+        set(Spglib_CXX ${Spglib_CXX} PARENT_SCOPE)
         set(Spglib_Fortran ${Spglib_Fortran} PARENT_SCOPE)
         set(Spglib_Python ${Spglib_Python} PARENT_SCOPE)
         set(Spglib_OMP ${Spglib_OMP} PARENT_SCOPE)
@@ -203,6 +209,7 @@ if (NOT PROJECT_IS_TOP_LEVEL)
                 Spglib_VERSION_TWEAK
                 Spglib_VERSION_FULL
                 Spglib_COMMIT
+                Spglib_CXX
                 Spglib_Fortran
                 Spglib_Python
                 Spglib_OMP
