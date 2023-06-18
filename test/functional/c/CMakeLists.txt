@@ -1,16 +1,16 @@
 list(APPEND ctest_labels c_api)
 set(test_sources
-		delaunay.cpp
-		error.cpp
-		symmetry.cpp
-		symmetry_search.cpp
-		spacegroup_type_search.cpp
-		find_primitive_cell.cpp
-		refine_cell.cpp
-		standardization.cpp
-		dataset_access.cpp
-		magnetic_symmetry.cpp
-		kpoints.cpp
+		test_delaunay.cpp
+		test_error.cpp
+		test_symmetry.cpp
+		test_symmetry_search.cpp
+		test_spacegroup_type_search.cpp
+		test_find_primitive_cell.cpp
+		test_refine_cell.cpp
+		test_standardization.cpp
+		test_dataset_access.cpp
+		test_magnetic_symmetry.cpp
+		test_kpoints.cpp
 		)
 if (test_sources)
 	configure_spglib_tests(TARGET Spglib_tests
