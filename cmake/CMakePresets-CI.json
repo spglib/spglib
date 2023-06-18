@@ -12,10 +12,6 @@
         "default"
       ],
       "cacheVariables": {
-        "CMAKE_C_STANDARD": {
-          "type": "STRING",
-          "value": "23"
-        },
         "SPGLIB_WITH_Fortran": {
           "type": "BOOL",
           "value": true
