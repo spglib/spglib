@@ -8,14 +8,11 @@ in the previous versions.
 
 ## Space group operation and change of basis
 
-\`
-
-### Basis vectors {math}`(\mathbf{a}, \mathbf{b}, \mathbf{c})` or {math}`(\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)`
+### Basis vectors $(\mathbf{a}, \mathbf{b}, \mathbf{c})$ or $(\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)$
 
 In spglib, basis vectors are represented by three column vectors:
 
-```{math}
-:label: basis_vectors
+$$
 
 \mathbf{a}= \begin{pmatrix}
 a_x \\
@@ -32,74 +29,71 @@ c_x \\
 c_y \\
 c_z \\
 \end{pmatrix},
-```
+$$ (basis_vectors)
 
 in Cartesian coordinates. Depending on the situation,
-{math}`(\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)` is used instead of
-{math}`(\mathbf{a}, \mathbf{b}, \mathbf{c})`.
+$(\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)$ is used instead of
+$(\mathbf{a}, \mathbf{b}, \mathbf{c})$.
 
-### Atomic point coordinates {math}`\boldsymbol{x}`
+### Atomic point coordinates $\boldsymbol{x}$
 
-Coordinates of an atomic point {math}`\boldsymbol{x}` are represented
+Coordinates of an atomic point $\boldsymbol{x}$ are represented
 as three fractional values relative to basis vectors as follows,
 
-```{math}
-:label: coordinate_triplet
+$$
 
 \boldsymbol{x}= \begin{pmatrix}
 x_1 \\
 x_2 \\
 x_3 \\
 \end{pmatrix},
-```
+$$ (coordinate_triplet)
 
-where {math}`0 \le x_i < 1`. A position vector {math}`\mathbf{x}` in
+where $0 \le x_i < 1$. A position vector $\mathbf{x}$ in
 Cartesian coordinates is obtained by
 
-```{math}
-:label: position_vector_1
+$$
 
 \mathbf{x} = (\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{x}.
-```
+$$ (position_vector_1)
 
 or
 
-```{math}
-:label: position_vector_2
+$$
 
 \mathbf{x} = \sum_i x_i \mathbf{a}_i.
-```
+$$ (position_vector_2)
 
-### Symmetry operation {math}`(\boldsymbol{W}, \boldsymbol{w})`
+### Symmetry operation $(\boldsymbol{W}, \boldsymbol{w})$
 
 A symmetry operation consists of a pair of the rotation part
-{math}`\boldsymbol{W}` and translation part {math}`\boldsymbol{w}`,
-and is represented as {math}`(\boldsymbol{W}, \boldsymbol{w})` in the
-spglib document. The symmetry operation transfers {math}`\boldsymbol{x}` to
-{math}`\tilde{\boldsymbol{x}}` as follows:
+$\boldsymbol{W}$ and translation part $\boldsymbol{w}$,
+and is represented as $(\boldsymbol{W}, \boldsymbol{w})$ in the
+spglib document. The symmetry operation transfers $\boldsymbol{x}$ to
+$\tilde{\boldsymbol{x}}$ as follows:
 
-```{math}
-:label: space_group_operation
+$$
 
 \tilde{\boldsymbol{x}} = \boldsymbol{W}\boldsymbol{x} + \boldsymbol{w}.
-```
+$$ (space_group_operation)
 
 (def_transformation_and_origin_shift)=
 
-### Transformation matrix {math}`\boldsymbol{P}` and origin shift {math}`\boldsymbol{p}`
+### Transformation matrix $\boldsymbol{P}$ and origin shift $\boldsymbol{p}$
 
-The transformation matrix {math}`\boldsymbol{P}` changes choice of
+The transformation matrix $\boldsymbol{P}$ changes choice of
 basis vectors as follows
 
-```{math}
-:label: transformation_matrix
+$$
 
 ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
 = ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
 \mathbf{c}_\mathrm{s} )  \boldsymbol{P},
-```
+$$ (transformation_matrix)
 
-where {math}`( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )` and {math}`( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )` are the basis vectors of an arbitrary system
+where $( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )$ and $(
+\mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
+\mathbf{c}_\mathrm{s} )$ are the basis vectors of an arbitrary system
 and of a standardized system, respectively. In general, the
 transformation matrix is not limited for the transformation from the
 standardized system, but can be used in between any systems possibly
@@ -107,58 +101,57 @@ transformed. It has to be emphasized that the transformation matrix
 **doesn't** rotate a crystal in Cartesian coordinates, but just
 changes the choices of basis vectors.
 
-The origin shift {math}`\boldsymbol{p}` gives the vector from the
-origin of the standardized system {math}`\boldsymbol{O}_\mathrm{s}` to
-the origin of the arbitrary system {math}`\boldsymbol{O}`,
+The origin shift $\boldsymbol{p}$ gives the vector from the
+origin of the standardized system $\boldsymbol{O}_\mathrm{s}$ to
+the origin of the arbitrary system $\boldsymbol{O}$,
 
-```{math}
-:label: origin_shift
+$$
 
 \boldsymbol{p} = \boldsymbol{O} - \boldsymbol{O}_\mathrm{s}.
-```
+$$ (origin_shift)
 
 Origin shift **doesn't** move a crystal in Cartesian coordinates, but
 just changes the origin to measure the coordinates of atomic points.
 
 A change of basis is described by the combination of the
 transformation matrix and the origin shift denoted by
-{math}`(\boldsymbol{P}, \boldsymbol{p})` where first the
+$(\boldsymbol{P}, \boldsymbol{p})$ where first the
 transformation matrix is applied and then origin shift. The points in
-the standardized system {math}`\boldsymbol{x}_\mathrm{s}` and
-arbitrary system {math}`\boldsymbol{x}` are related by
+the standardized system $\boldsymbol{x}_\mathrm{s}$ and
+arbitrary system $\boldsymbol{x}$ are related by
 
-```{math}
-:label: change_of_basis_1
+$$
 
 \boldsymbol{x}_\mathrm{s} = \boldsymbol{P}\boldsymbol{x} +
 \boldsymbol{p},
-```
+$$ (change_of_basis_1)
 
 or equivalently,
 
-```{math}
-:label: change_of_basis_2
+$$
 
 \boldsymbol{x} = \boldsymbol{P}^{-1}\boldsymbol{x}_\mathrm{s} -
 \boldsymbol{P}^{-1}\boldsymbol{p}.
-```
+$$ (change_of_basis_2)
 
 A graphical example is shown below.
 
 ```{image} change-of-basis.png
-:width: 50%
-:align: center
+---
+width: 50%
+align: center
+---
 ```
 
 In this example,
 
-```{math}
+$$
 \boldsymbol{P} = \begin{pmatrix}
 \frac{1}{2} & \frac{1}{2} & 0 \\
 \frac{\bar{1}}{2} & \frac{1}{2} & 0 \\
 0 & 0 & 1
 \end{pmatrix}.
-```
+$$
 
 ### Difference between rotation and transformation matrices
 
@@ -169,59 +162,59 @@ basis vectors, but does not rotate the crystal body.
 A space group operation having no translation part sends an atom to
 another point by
 
-```{math}
+$$
 \tilde{\boldsymbol{x}} = \boldsymbol{W}\boldsymbol{x},
-```
+$$
 
-where {math}`\tilde{\boldsymbol{x}}` and {math}`\boldsymbol{x}` are
-represented with respect to the same basis vectors {math}`(\mathbf{a}, \mathbf{b}, \mathbf{c})`. Equivalently the rotation is achieved by
+where $\tilde{\boldsymbol{x}}$ and $\boldsymbol{x}$ are
+represented with respect to the same basis vectors $(\mathbf{a},
+\mathbf{b}, \mathbf{c})$. Equivalently the rotation is achieved by
 rotating the basis vectors:
 
-```{math}
-:label: rotation_matrix
+$$
 
 (\tilde{\mathbf{a}}, \tilde{\mathbf{b}}, \tilde{\mathbf{c}}) =
 (\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{W}
-```
+$$ (rotation_matrix)
 
 with keeping the representation of the atomic point coordinates
-{math}`\boldsymbol{x}` because
+$\boldsymbol{x}$ because
 
-```{math}
+$$
 \tilde{\mathbf{x}} = (\mathbf{a}, \mathbf{b}, \mathbf{c}) \tilde{\boldsymbol{x}}
 = (\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{W}
 \boldsymbol{x}
 = (\tilde{\mathbf{a}}, \tilde{\mathbf{b}}, \tilde{\mathbf{c}})
 \boldsymbol{x}.
-```
+$$
 
 The transformation matrix changes the choice of the basis vectors as:
 
-```{math}
+$$
 (\mathbf{a}', \mathbf{b}', \mathbf{c}') = (\mathbf{a}, \mathbf{b},
 \mathbf{c}) \boldsymbol{P}.
-```
+$$
 
 The atomic position vector is not altered by this transformation, i.e.,
 
-```{math}
+$$
 (\mathbf{a}', \mathbf{b}', \mathbf{c}') \boldsymbol{x}' =
 (\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{x}.
-```
+$$
 
 However the representation of the atomic point coordinates changes as follows:
 
-```{math}
+$$
 \boldsymbol{P} \boldsymbol{x}' = \boldsymbol{x}.
-```
+$$
 
 because
 
-```{math}
+$$
 (\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{P} \boldsymbol{x}'
 = (\mathbf{a}', \mathbf{b}', \mathbf{c}') \boldsymbol{x}' =
 (\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{x}.
-```
+$$
 
 (def_standardized_unit_cell)=
 
@@ -244,7 +237,7 @@ group operations and generators of Euclidean normalizer. Crystals are
 categorized by Hall symbols in 530 different types in terms of 230
 space group types, unique axes, settings, and cell choices. Moreover
 in spglib, lengths of basis vectors are used to choose the order of
-{math}`(\mathbf{a}, \mathbf{b}, \mathbf{c})` if the order can not be
+$(\mathbf{a}, \mathbf{b}, \mathbf{c})$ if the order can not be
 determined only by the symmetrical conventions.
 
 (def_standardized_primitive_cell)=
@@ -256,22 +249,21 @@ types available, base centrings of A and C, rhombohedral (R), body centred
 (I), and face centred (F). The transformation is applied to the
 standardized unit cell by
 
-```{math}
-:label: transformation_to_primitive
+$$
 
 ( \mathbf{a}_\mathrm{p} \; \mathbf{b}_\mathrm{p} \; \mathbf{c}_\mathrm{p} )
 = ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
 \mathbf{c}_\mathrm{s} )  \boldsymbol{P}_\mathrm{c},
-```
+$$ (transformation_to_primitive)
 
-where {math}`\mathbf{a}_\mathrm{p}`, {math}`\mathbf{b}_\mathrm{p}`,
-and {math}`\mathbf{c}_\mathrm{p}` are the basis vectors of the
-primitive cell and {math}`\boldsymbol{P}_\mathrm{c}` is the
+where $\mathbf{a}_\mathrm{p}$, $\mathbf{b}_\mathrm{p}$,
+and $\mathbf{c}_\mathrm{p}$ are the basis vectors of the
+primitive cell and $\boldsymbol{P}_\mathrm{c}$ is the
 transformation matrix from the standardized unit cell to the primitive
-cell. {math}`\boldsymbol{P}_\mathrm{c}` for centring types are given
+cell. $\boldsymbol{P}_\mathrm{c}$ for centring types are given
 as follows:
 
-```{math}
+$$
 \boldsymbol{P}_\mathrm{A} =
 \begin{pmatrix}
 1 & 0 & 0 \\
@@ -302,14 +294,14 @@ as follows:
 \frac{{1}}{2} & 0 & \frac{{1}}{2} \\
 \frac{{1}}{2} & \frac{{1}}{2} & 0
 \end{pmatrix}.
-```
+$$
 
 The choice of transformation matrix depends on purposes. These
 transformation matrices above are just the spglib choices and may not
 be the best.
 
 For rhombohedral lattice systems with the H setting (hexagonal
-lattice), {math}`\boldsymbol{P}_\mathrm{R}` is applied to obtain
+lattice), $\boldsymbol{P}_\mathrm{R}$ is applied to obtain
 primitive basis vectors, but for that with the R setting (rhombohedral
 lattice), no transformation matrix is applied because it is already
 the primitive cell.
@@ -331,124 +323,125 @@ change-of-basis transformation explained above.
 
 #### Triclinic lattice
 
-- Niggli reduced cell is used for choosing {math}`\mathbf{a}, \mathbf{b}, \mathbf{c}`.
-- {math}`\mathbf{a}` is set along {math}`+x` direction of Cartesian coordinates.
-- {math}`\mathbf{b}` is set in {math}`x\text{-}y` plane of Cartesian
-  coordinates so that {math}`\mathbf{a}\times\mathbf{b}` is along
-  {math}`+z` direction of Cartesian coordinates.
+- Niggli reduced cell is used for choosing $\mathbf{a}, \mathbf{b}, \mathbf{c}$.
+- $\mathbf{a}$ is set along $+x$ direction of Cartesian coordinates.
+- $\mathbf{b}$ is set in $x\text{-}y$ plane of Cartesian
+  coordinates so that $\mathbf{a}\times\mathbf{b}$ is along
+  $+z$ direction of Cartesian coordinates.
 
 #### Monoclinic lattice
 
-- {math}`b` axis is taken as the unique axis.
+- $b$ axis is taken as the unique axis.
 
-- {math}`\alpha = 90^\circ` and {math}`\gamma = 90^\circ`
+- $\alpha = 90^\circ$ and $\gamma = 90^\circ$
 
-- {math}`90^\circ < \beta < 120^\circ`.
+- $90^\circ < \beta < 120^\circ$.
 
-- {math}`\mathbf{a}` is set along {math}`+x` direction of Cartesian coordinates.
+- $\mathbf{a}$ is set along $+x$ direction of Cartesian coordinates.
 
-- {math}`\mathbf{b}` is set along {math}`+y` direction of Cartesian coordinates.
+- $\mathbf{b}$ is set along $+y$ direction of Cartesian coordinates.
 
-- {math}`\mathbf{c}` is set in {math}`x\text{-}z` plane of Cartesian coordinates.
+- $\mathbf{c}$ is set in $x\text{-}z$ plane of Cartesian coordinates.
 
 #### Orthorhombic lattice
 
-- {math}`\alpha = \beta = \gamma = 90^\circ`.
+- $\alpha = \beta = \gamma = 90^\circ$.
 
-- {math}`\mathbf{a}` is set along {math}`+x` direction of Cartesian coordinates.
+- $\mathbf{a}$ is set along $+x$ direction of Cartesian coordinates.
 
-- {math}`\mathbf{b}` is set along {math}`+y` direction of Cartesian coordinates.
+- $\mathbf{b}$ is set along $+y$ direction of Cartesian coordinates.
 
-- {math}`\mathbf{c}` is set along {math}`+z` direction of Cartesian coordinates.
+- $\mathbf{c}$ is set along $+z$ direction of Cartesian coordinates.
 
 #### Tetragonal lattice
 
-- {math}`\alpha = \beta = \gamma = 90^\circ`.
+- $\alpha = \beta = \gamma = 90^\circ$.
 
-- {math}`a=b`.
+- $a=b$.
 
-- {math}`\mathbf{a}` is set along {math}`+x` direction of Cartesian coordinates.
+- $\mathbf{a}$ is set along $+x$ direction of Cartesian coordinates.
 
-- {math}`\mathbf{b}` is set along {math}`+y` direction of Cartesian coordinates.
+- $\mathbf{b}$ is set along $+y$ direction of Cartesian coordinates.
 
-- {math}`\mathbf{c}` is set along {math}`+z` direction of Cartesian coordinates.
+- $\mathbf{c}$ is set along $+z$ direction of Cartesian coordinates.
 
 #### Rhombohedral lattice
 
-- {math}`\alpha = \beta = \gamma`.
+- $\alpha = \beta = \gamma$.
 
-- {math}`a=b=c`.
+- $a=b=c$.
 
-- Let {math}`\mathbf{a}`, {math}`\mathbf{b}`, and {math}`\mathbf{c}`
-  projected on {math}`x\text{-}y` plane in Cartesian coordinates be
-  {math}`\mathbf{a}_{xy}`, {math}`\mathbf{b}_{xy}`, and
-  {math}`\mathbf{c}_{xy}`, respectively, and their angles be
-  {math}`\alpha_{xy}`, {math}`\beta_{xy}`,
-  {math}`\gamma_{xy}`, respectively.
+- Let $\mathbf{a}$, $\mathbf{b}$, and $\mathbf{c}$
+  projected on $x\text{-}y$ plane in Cartesian coordinates be
+  $\mathbf{a}_{xy}$, $\mathbf{b}_{xy}$, and
+  $\mathbf{c}_{xy}$, respectively, and their angles be
+  $\alpha_{xy}$, $\beta_{xy}$,
+  $\gamma_{xy}$, respectively.
 
-- Let {math}`\mathbf{a}`, {math}`\mathbf{b}`, and {math}`\mathbf{c}`
-  projected along {math}`z`-axis in Cartesian coordinates be
-  {math}`\mathbf{a}_{z}`, {math}`\mathbf{b}_{z}`, and
-  {math}`\mathbf{c}_{z}`, respectively.
+- Let $\mathbf{a}$, $\mathbf{b}$, and $\mathbf{c}$
+  projected along $z$-axis in Cartesian coordinates be
+  $\mathbf{a}_{z}$, $\mathbf{b}_{z}$, and
+  $\mathbf{c}_{z}$, respectively.
 
-- {math}`\mathbf{a}_{xy}` is set along the ray {math}`30^\circ`
-  rotated counter-clockwise from the {math}`+x`
-  direction of Cartesian coordinates, and {math}`\mathbf{b}_{xy}` and
-  {math}`\mathbf{c}_{xy}` are placed by angles {math}`120^\circ` and
-  {math}`240^\circ` from {math}`\mathbf{a}_{xy}` counter-clockwise,
+- $\mathbf{a}_{xy}$ is set along the ray $30^\circ$
+  rotated counter-clockwise from the $+x$
+  direction of Cartesian coordinates, and $\mathbf{b}_{xy}$ and
+  $\mathbf{c}_{xy}$ are placed by angles $120^\circ$ and
+  $240^\circ$ from $\mathbf{a}_{xy}$ counter-clockwise,
   respectively.
 
-- {math}`\alpha_{xy} = \beta_{xy} = \gamma_{xy} = 120^\circ`.
+- $\alpha_{xy} = \beta_{xy} = \gamma_{xy} = 120^\circ$.
 
-- {math}`a_{xy} = b_{xy} = c_{xy}`.
+- $a_{xy} = b_{xy} = c_{xy}$.
 
-- {math}`a_{z} = b_{z} = c_{z}`.
+- $a_{z} = b_{z} = c_{z}$.
 
 #### Hexagonal lattice
 
-- {math}`\alpha = \beta = 90^\circ`.
+- $\alpha = \beta = 90^\circ$.
 
-- {math}`\gamma = 120^\circ`.
+- $\gamma = 120^\circ$.
 
-- {math}`a=b`.
+- $a=b$.
 
-- {math}`\mathbf{a}` is set along {math}`+x` direction of Cartesian coordinates.
+- $\mathbf{a}$ is set along $+x$ direction of Cartesian coordinates.
 
-- {math}`\mathbf{b}` is set in {math}`x\text{-}y` plane of Cartesian coordinates.
+- $\mathbf{b}$ is set in $x\text{-}y$ plane of Cartesian coordinates.
 
-- {math}`\mathbf{c}` is set along {math}`+z` direction of Cartesian coordinates.
+- $\mathbf{c}$ is set along $+z$ direction of Cartesian coordinates.
 
 #### Cubic lattice
 
-- {math}`\alpha = \beta = \gamma = 90^\circ`.
+- $\alpha = \beta = \gamma = 90^\circ$.
 
-- {math}`a=b=c`.
+- $a=b=c$.
 
-- {math}`\mathbf{a}` is set along {math}`+x` direction of Cartesian coordinates.
+- $\mathbf{a}$ is set along $+x$ direction of Cartesian coordinates.
 
-- {math}`\mathbf{b}` is set along {math}`+y` direction of Cartesian coordinates.
+- $\mathbf{b}$ is set along $+y$ direction of Cartesian coordinates.
 
-- {math}`\mathbf{c}` is set along {math}`+z` direction of Cartesian coordinates.
+- $\mathbf{c}$ is set along $+z$ direction of Cartesian coordinates.
 
 ### Rotation introduced by idealization
 
 In the idealization step presented above, the input unit cell crystal
 structure can be rotated in the Cartesian coordinates.  The rotation
-matrix {math}`\boldsymbol{R}` of this rotation is defined by
+matrix $\boldsymbol{R}$ of this rotation is defined by
 
-```{math}
-:label: rigid_rotation_matrix
+$$
 
 ( \bar{\mathbf{a}}_\mathrm{s} \;
 \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )
 = ( \boldsymbol{R} \mathbf{a}_\mathrm{s} \;
 \boldsymbol{R} \mathbf{b}_\mathrm{s} \; \boldsymbol{R}
 \mathbf{c}_\mathrm{s} ).
-```
+$$ (rigid_rotation_matrix)
 
 This rotation matrix rotates the standardized
-crystal structure before idealization {math}`( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )` to that after
-idealization {math}`( \bar{\mathbf{a}}_\mathrm{s} \; \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )` in
+crystal structure before idealization $( \mathbf{a}_\mathrm{s}
+\; \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )$ to that after
+idealization $( \bar{\mathbf{a}}_\mathrm{s} \;
+\bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )$ in
 Cartesian coordinates of the given input unit cell.
 
 ## Examples
@@ -457,7 +450,7 @@ Cartesian coordinates of the given input unit cell.
 
 The following example of a python script gives a crystal structure of
 Br whose space group type is *Cmce*. The basis vectors
-{math}`(\mathbf{a}, \mathbf{b}, \mathbf{c})` are fixed by the symmetry
+$(\mathbf{a}, \mathbf{b}, \mathbf{c})$ are fixed by the symmetry
 crystal in the standardization. The C-centrng determines the c-axis,
 and *m* and *c* operations in *Cmce* fix which directions a- and
 b-axes should be with respect to each other axis. This is the first
@@ -548,7 +541,7 @@ We get a non-identity transformation matrix, which wants to transform
 back to the original (above) crystal structure by swapping a- and
 c-axes. The transformation back of the basis vectors is achieved by
 Eq. {eq}`transformation_matrix`. Next, we try to rotate rigidly the
-crystal structure by {math}`45^\circ` around c-axis in Cartesian
+crystal structure by $45^\circ$ around c-axis in Cartesian
 coordinates from the first one:
 
 ```python
@@ -615,7 +608,7 @@ lattice = [[7.17851431, 0, 0],  # a
 This has the C-centring, so it must be transformed to a primitive
 cell. A possible transformation is shown at
 {ref}`def_standardized_primitive_cell`, which is
-{math}`\boldsymbol{P}_\mathrm{C}`. With the following script:
+$\boldsymbol{P}_\mathrm{C}$. With the following script:
 
 ```python
 import numpy as np
@@ -761,7 +754,7 @@ In spglib, rigid rotation is purposely introduced in the idealization
 step though this is unlikely as a crystallographic operation.
 
 The crystal structure in the following script is the same as shown
-above, which is the one {math}`45^\circ` rotated around c-axis:
+above, which is the one $45^\circ$ rotated around c-axis:
 
 ```python
 import spglib
@@ -806,7 +799,8 @@ std_lattice_after_idealization:
 ```
 
 From Eq. {eq}`transformation_matrix`, the standardized basis vectors
-**before** idealization {math}`( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )` is obtained by (after `import numpy as np`)
+**before** idealization $( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s}
+\; \mathbf{c}_\mathrm{s} )$ is obtained by (after `import numpy as np`)
 
 ```python
 std_lattice_before_idealization = np.dot(
@@ -824,20 +818,21 @@ which is (in row vectors)
 ```
 
 This is different from the standardized basis vectors **after**
-idealization {math}`( \bar{\mathbf{a}}_\mathrm{s} \; \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )`.  Unless
+idealization $( \bar{\mathbf{a}}_\mathrm{s} \;
+\bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )$.  Unless
 this crystal structure is distorted from the crystal structure that
 has the ideal symmetry, this means that the crystal was rotated
 rigidly in the idealization step by
 
-```{math}
+$$
 ( \bar{\mathbf{a}}_\mathrm{s} \;
 \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )
 = ( \boldsymbol{R} \mathbf{a}_\mathrm{s} \;
 \boldsymbol{R} \mathbf{b}_\mathrm{s} \; \boldsymbol{R}
 \mathbf{c}_\mathrm{s} ).
-```
+$$
 
-where {math}`\boldsymbol{R}` is the rotation
+where $\boldsymbol{R}$ is the rotation
 matrix. This is computed by
 
 ```python
@@ -856,15 +851,15 @@ and we get
 
 This equals to
 
-```{math}
+$$
 \begin{pmatrix}
 \cos\theta & -\sin\theta & 0 \\
 \sin\theta & \cos\theta & 0 \\
 0 & 0 & 1
 \end{pmatrix},
-```
+$$
 
-with {math}`\theta = -\pi/4` and {math}`\det(\boldsymbol{R})=1` when
+with $\theta = -\pi/4$ and $\det(\boldsymbol{R})=1$ when
 no distortion. `dataset['std_rotation_matrix']` gives
 approximately the same result:
 
@@ -876,13 +871,14 @@ approximately the same result:
 
 In summary,
 
-```{math}
+$$
 ( \bar{\mathbf{a}}_\mathrm{s} \;
 \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )  \boldsymbol{P}
 = ( \boldsymbol{R} \mathbf{a} \; \boldsymbol{R} \mathbf{b} \;
 \boldsymbol{R} \mathbf{c} ).
-```
+$$
 
-The atomic point coordinates in {math}`( \bar{\mathbf{a}}_\mathrm{s} \; \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )`
+The atomic point coordinates in $( \bar{\mathbf{a}}_\mathrm{s}
+\; \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )$
 are simply obtained by Eq. {eq}`change_of_basis_1` since the
 rotation doesn't affect them.

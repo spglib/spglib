@@ -73,9 +73,9 @@ The information on unique axis, setting or cell choices.
 
 The symmetry operations of the input unit cell are stored in
 `rotations` and `translations`. A crystallographic symmetry
-operation {math}`(\boldsymbol{W}, \boldsymbol{w})` is made from a pair
-of rotation {math}`\boldsymbol{W}` and translation
-{math}`\boldsymbol{w}` parts with the same index. Number of symmetry
+operation $(\boldsymbol{W}, \boldsymbol{w})$ is made from a pair
+of rotation $\boldsymbol{W}$ and translation
+$\boldsymbol{w}$ parts with the same index. Number of symmetry
 operations is given as `n_operations`. The detailed explanation of
 the values is found at {ref}`api_spg_get_symmetry`.
 
@@ -91,8 +91,8 @@ elements in `wyckoffs` and `equivalent_atoms`.
 ### `wyckoffs`
 
 This gives the information of Wyckoff letters by integer
-numbers, where 0, 1, 2, {math}`\ldots`, represent the Wyckoff letters
-of a, b, c, {math}`\ldots`. These are assigned to all atomic positions
+numbers, where 0, 1, 2, $\ldots$, represent the Wyckoff letters
+of a, b, c, $\ldots$. These are assigned to all atomic positions
 of the input unit cell in this order. Therefore the number of elements in
 `wyckoffs` is same as the number of atoms in the input unit cell,
 which is given by `n_atoms`.
@@ -138,19 +138,19 @@ primitive cell is used to determine the symmetrically equivalent atoms.
 
 ### `transformation_matrix` and `origin_shift`
 
-`transformation_matrix` ({math}`\boldsymbol{P}`) and
-`origin_shift` ({math}`\boldsymbol{p}`) are obtained as a result of
+`transformation_matrix` ($\boldsymbol{P}$) and
+`origin_shift` ($\boldsymbol{p}$) are obtained as a result of
 space-group-type matching under a set of unique axis, setting and cell
 choices. These are operated to the basis vectors and atomic point
 coordinates of the input unit cell as
 
-```{math}
+$$
 ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
 \mathbf{c}_\mathrm{s} ) = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c}
 ) \boldsymbol{P}^{-1} \;\; \text{and} \;\; \boldsymbol{x}_\mathrm{s} =
 \boldsymbol{P}\boldsymbol{x} + \boldsymbol{p}
 \;\;(\mathrm{mod}\; \mathbf{1}),
-```
+$$
 
 by which the basis vectors are transformed to those of a
 standardized unit cell. Atomic point coordinates are shifted so that
@@ -159,17 +159,17 @@ detailed definition is presented at
 {ref}`definitions_and_conventions`.
 
 At **versions 1.7.x and 1.8 or before**, the set of
-`transformation_matrix` ({math}`\boldsymbol{P}_\text{old}`) and
-`origin_shift` ({math}`\boldsymbol{p}_\text{old}`) was differently defined from
+`transformation_matrix` ($\boldsymbol{P}_\text{old}$) and
+`origin_shift` ($\boldsymbol{p}_\text{old}$) was differently defined from
 the current definition as follows:
 
-```{math}
+$$
 ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
 \mathbf{c}_\mathrm{s} ) = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c}
 ) \boldsymbol{P}_\text{old} \;\; \text{and} \;\; \boldsymbol{x}_\mathrm{s} =
 \boldsymbol{P}^{-1}_\text{old}\boldsymbol{x} - \boldsymbol{p}_\text{old}
 \;\;(\mathrm{mod}\; \mathbf{1}).
-```
+$$
 
 (dataset_idealized_cell)=
 
@@ -194,27 +194,36 @@ members corresponding to those above are `n_brv_atoms`,
 **New in version 1.11**
 
 Rotation matrix that rotates the standardized crystal structure
-before idealization {math}`( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )` to that after
-idealization {math}`( \bar{\mathbf{a}}_\mathrm{s} \; \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )` in
+before idealization $( \mathbf{a}_\mathrm{s} \;
+\mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )$ to that after
+idealization $( \bar{\mathbf{a}}_\mathrm{s} \;
+\bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )$ in
 Cartesian coordinates of the given input unit cell. The rotation
-matrix {math}`\boldsymbol{R}` is defined by
+matrix $\boldsymbol{R}$ is defined by
 
-```{math}
-:label: rotation-in-standardization
+$$
 
 ( \bar{\mathbf{a}}_\mathrm{s} \;
 \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )
 = ( \boldsymbol{R} \mathbf{a}_\mathrm{s} \;
 \boldsymbol{R} \mathbf{b}_\mathrm{s} \; \boldsymbol{R}
 \mathbf{c}_\mathrm{s} ).
-```
 
-More precisely, this rotation matrix is an orthonormal matrix. Since {math}`( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )` can
-be distored, to make {math}`\boldsymbol{R}` orthonormal, it is calculated as
-follows. Make cubes of {math}`( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )` and {math}`( \bar{\mathbf{a}}_\mathrm{s} \; \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )` by
-{math}`\mathrm{L} = \begin{pmatrix}\frac{\mathbf{a}}{|\mathbf{a}|} & \frac{(\mathbf{a} \times \mathbf{b}) \times \mathbf{a}}{|(\mathbf{a} \times \mathbf{b}) \times \mathbf{a}|} & \frac{\mathbf{a} \times \mathbf{b}}{|\mathbf{a} \times \mathbf{b}|} \end{pmatrix}`. Watching
-{math}`\mathrm{L}`s as {math}`3\times 3` matrices, {math}`\boldsymbol{R}` is
-obtained by solving {math}`\bar{\mathrm{L}}_\mathrm{s} = \boldsymbol{R} \mathrm{L}_\mathrm{s}`.
+$$ (rotation_in_standardization)
+
+More precisely, this rotation matrix is an orthonormal matrix. Since $(
+\mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \; \mathbf{c}_\mathrm{s} )$ can
+be distored, to make $\boldsymbol{R}$ orthonormal, it is calculated as
+follows. Make cubes of $( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s}
+\; \mathbf{c}_\mathrm{s} )$ and $( \bar{\mathbf{a}}_\mathrm{s} \;
+\bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )$ by
+$\mathrm{L} = \begin{pmatrix}\frac{\mathbf{a}}{|\mathbf{a}|} &
+\frac{(\mathbf{a} \times \mathbf{b}) \times \mathbf{a}}{|(\mathbf{a} \times
+\mathbf{b}) \times \mathbf{a}|} & \frac{\mathbf{a} \times
+\mathbf{b}}{|\mathbf{a} \times \mathbf{b}|} \end{pmatrix}$. Watching
+$\mathrm{L}$s as $3\times 3$ matrices, $\boldsymbol{R}$ is
+obtained by solving $\bar{\mathrm{L}}_\mathrm{s} = \boldsymbol{R}
+\mathrm{L}_\mathrm{s}$.
 
 ### `std_mapping_to_primitive`
 

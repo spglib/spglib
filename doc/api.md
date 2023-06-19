@@ -85,7 +85,7 @@ basis vectors whose lattice breaks crystallographic point group, the
 crystallographic symmetry operations are searched within this broken
 symmetry, i.e., at most the crystallographic point group found in this
 case is the point group of the lattice. For example, this happens for
-the {math}`2\times 1\times 1` supercell of a conventional cubic unit
+the $2\times 1\times 1$ supercell of a conventional cubic unit
 cell. This may not be understandable in crystallographic sense, but is
 practically useful treatment for research in computational materials
 science.
@@ -417,7 +417,7 @@ int spg_get_symmetry_with_collinear_spin(int rotation[][3][3],
 Returns magnetic symmetry operations represented by `rotation`, `translation`, and `spin_flips`
 from crystal structure with `lattice`, `position`, `types`, and `tensors`.
 When you need magnetic symmetry operations of non-collinear spins, set `tensor_rank=1`, `is_axial=1`,
-and `tensors` with length `num_atom * 3` (ordered by {math}`[ m_{1x}, m_{1y}, m_{1z}, \dots ]`)
+and `tensors` with length `num_atom * 3` (ordered by $[ m_{1x}, m_{1y}, m_{1z}, \dots ]$)
 in cartesian coordinates.
 For other combinations of `tensor_rank` and `is_axial`, see {ref}`magnetic_action_flags`.
 Returned `spin_flips` represents sign of site tensors after applying time-reversal operations:
@@ -545,10 +545,13 @@ it failed.
 int spg_niggli_reduce(double lattice[3][3], const double symprec);
 ```
 
-The transformation from original basis vectors {math}`( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )` to final basis vectors {math}`( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )` is achieved by linear
+The transformation from original basis vectors $( \mathbf{a}
+\; \mathbf{b} \; \mathbf{c} )$ to final basis vectors $(
+\mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )$ is achieved by linear
 combination of basis vectors with integer coefficients without
 rotating coordinates. Therefore the transformation matrix is obtained
-by {math}`\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} ) ( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}` and the matrix
+by $\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
+( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}$ and the matrix
 elements have to be almost integers.
 
 ### `spg_delaunay_reduce`
@@ -561,10 +564,13 @@ returned if it failed.
 int spg_delaunay_reduce(double lattice[3][3], const double symprec);
 ```
 
-The transformation from original basis vectors {math}`( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )` to final basis vectors {math}`( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )` is achieved by linear
+The transformation from original basis vectors $( \mathbf{a}
+\; \mathbf{b} \; \mathbf{c} )$ to final basis vectors $(
+\mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )$ is achieved by linear
 combination of basis vectors with integer coefficients without
 rotating coordinates. Therefore the transformation matrix is obtained
-by {math}`\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} ) ( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}` and the matrix
+by $\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
+( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}$ and the matrix
 elements have to be almost integers.
 
 ## Kpoints

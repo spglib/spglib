@@ -2,19 +2,17 @@
 
 # Spglib for Python
 
+## Usage note
+
+The python binding will first try to use your system installed version of spglib. This can
+be controlled by setting an appropriate `LD_LIBRARY_PATH` (linux) or `DYLD_LIBRAY_PATH`
+(macos) to the appropriate location of the `libsymspg.so` library file. If no suitable
+version is found, it will default to using the bundled version.
+
 ## Installation
 
-The source code is downloaded at
-<https://github.com/spglib/spglib/tags>.
-But minor updates are not included in this package. If you want the
-latest version, you can git-clone the spglib repository
-
-```shell
-% git clone https://github.com/spglib/spglib.git
-```
-
-It is also possible to install spglib for python via the following
-package distribution services or from building using setup.py.
+The main installation method we support are using [pip](#using-pip) and [conda](#using-conda).
+Additionally, you can build and install [from source](#building-from-source).
 
 The following pip and conda packages are made and maintained by
 [Paweł T. Jochym](https://github.com/jochym), which is of great help
@@ -22,82 +20,87 @@ to keeping spglib handy and useful.
 
 ### Using pip
 
-Numpy is required before the python-spglib installation. The command to
-install spglib is
+You can find all the spglib release versions on our [PyPI project page](https://pypi.org/project/spglib/).
+To install it use the standard pip install commands:
 
-```shell
-% pip install --user spglib
+```console
+$ pip install spglib
 ```
 
-If you see the error message like below in the installation process
+Release candidates can be found at the equivalent [PyPI testing project page](https://pypi.org/project/spglib/).
+You can test a specific release candidate locally using the following command:
 
-```shell
-_spglib.c:35:20: fatal error: Python.h: No such file or directory
-```
-
-development tools for building python module are additionally
-necessary and are installed using OS's package management system,
-e.g.,:
-
-```shell
-% sudo apt-get install python-dev
-```
-
-If your installation by pip failed, you may need to
-upgrade setuptools, e.g., by
-
-```shell
-% pip install --upgrade --user setuptools
+```console
+$ pip install -i https://test.pypi.org/simple/ spglib==2.1.0rc1
 ```
 
 ### Using conda
 
-Conda is another choice:
+We also maintain a [conda package](https://anaconda.org/conda-forge/spglib) which you
+can install:
 
-```shell
-% conda install -c conda-forge spglib
+```console
+$ conda install -c conda-forge spglib
 ```
 
-### Building using setup.py
+### Building from source
 
-To manually install python-spglib using `setup.py`, python header
-files (python-dev), C-compiler (e.g., gcc, clang), and numpy are
-required before the build. The installation steps are shown as
-follows:
+For this section we are assuming you have cloned or downloaded the spglib source
+code, and we are working from the top-level directory.
 
-1. Go to the `python` directory
-2. Type the command:
-   ```shell
-   % python setup.py install --user
-   ```
-   Document about where spglib is installed is found at the
-   links below:
-   - <https://docs.python.org/2/install/#alternate-installation-the-user-scheme>
-   - <https://docs.python.org/3/install/#alternate-installation-the-user-scheme>
-
-If your installation by setup.py failed, you may need to upgrade
-setuptools, e.g., by
-
-```shell
-% pip install --upgrade --user setuptools
+```console
+$ git clone https://github.com/spglib/spglib
+$ cd spglib
 ```
+
+To manually install spglib you will need `cmake` with any make tool like
+`make`, a C compiler (e.g. gcc, clang), and python development files (python-dev),
+including numpy ones.
+
+There are two ways of building spglib with the python bindings using either a
+python-centric or cmake-centric approach
+
+#### Python controlled
+
+This is the primary installation method suitable for production that we use to
+distribute the spglib package.
+
+```console
+$ pip install .
+```
+
+All build configurations are defined in the top-level `pyproject.toml` file.
+We are using [scikit-build-core](https://github.com/scikit-build/scikit-build-core)
+to build both the main spglib C library and the python apis. You can thus
+further configure your local installation, e.g. to use OpenMP:
+
+```console
+$ pip install . --config-settings=cmake.define.SPGLIB_USE_OMP=ON
+```
+
+Currently `scikit-build-core` does not support editable installs for development.
+
+#### Cmake controlled
+
+This method is not suitable for production, and it is only meant for quick development
+
+```console
+$ cmake -B ./build -DSPGLIB_WITH_Fortran=ON
+$ cmake --build ./build
+$ cmake --install ./build
+```
+
+This will detect and install the python manually in the currently activated virtual
+environment's site-package folder (e.g. `venv/lib64/python3.11/site-packages`),
+otherwise defaulting to the system (`/usr/lib64/python3.11/site-packages`). You may
+edit this location by passing a `Python_INSTALL_DIR` option.
 
 ## Test
 
-The test script `test_spglib.py` is found in `python/test`
-directory. Got to this directory and run this script. It will be like below::
+You may execute the python tests locally from the git repository root:
 
-```
-% python test_spglib.py
-test_find_primitive (__main__.TestSpglib) ... ok
-test_get_symmetry (__main__.TestSpglib) ... ok
-test_get_symmetry_dataset (__main__.TestSpglib) ... ok
-test_refine_cell (__main__.TestSpglib) ... ok
-
-----------------------------------------------------------------------
-Ran 4 tests in 13.147s
-
-OK
+```console
+$ pytest
 ```
 
 ## How to import spglib module
@@ -150,7 +153,7 @@ in the tuple: `cell = (lattice, positions, numbers)` or `cell = (lattice, positi
 magnetic moments on atoms and is optional.
 
 Lattice parameters `lattice` are given by a 3x3 matrix with floating
-point values, where {math}`\mathbf{a}, \mathbf{b}, \mathbf{c}` are
+point values, where $\mathbf{a}, \mathbf{b}, \mathbf{c}$ are
 given as rows, which results in the transpose of the definition for
 C-API ({ref}`variables_lattice`). Fractional atomic positions
 `positions` are given by a Nx3 matrix with floating point values,
@@ -172,7 +175,7 @@ magmoms = [m_1, m_2, m_3, ...]  # Works with get_magnetic_symmetry for a colline
 # magmoms = [[m_1x, m_1y, m_1z], ...]  # For a non-collinear case
 ```
 
-For example, the crystal structure (`cell`) of L1{math}`_{2}`-type AlNi{math}`_{3}` is:
+For example, the crystal structure (`cell`) of L1$_{2}$-type AlNi$_{3}$ is:
 
 ```python
 lattice = [[1.0, 0.0, 0.0],
@@ -657,10 +660,10 @@ dot product being close to zero or not.  The detail is shown at
 
 When the search failed, `None` is returned.
 
-The transformation from original basis vectors {math}`( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )` to final basis vectors {math}`( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )` is achieved by linear
+The transformation from original basis vectors $( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )$ to final basis vectors $( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )$ is achieved by linear
 combination of basis vectors with integer coefficients without
 rotating coordinates. Therefore the transformation matrix is obtained
-by {math}`\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} ) ( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}` and the matrix
+by $\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} ) ( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}$ and the matrix
 elements have to be almost integers.
 
 ### `delaunay_reduce`
@@ -684,10 +687,10 @@ to zero or not.
 
 When the search failed, `None` is returned.
 
-The transformation from original basis vectors {math}`( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )` to final basis vectors {math}`( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )` is achieved by linear
+The transformation from original basis vectors $( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )$ to final basis vectors $( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )$ is achieved by linear
 combination of basis vectors with integer coefficients without
 rotating coordinates. Therefore the transformation matrix is obtained
-by {math}`\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} ) ( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}` and the matrix
+by $\boldsymbol{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} ) ( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}$ and the matrix
 elements have to be almost integers.
 
 ## Methods (kpoints)

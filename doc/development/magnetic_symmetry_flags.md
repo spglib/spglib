@@ -12,29 +12,29 @@
 
 <!-- ### Previous behavior
 
-- `tensor_rank=0`: {math}`(\mathbf{R}, \mathbf{v}) \circ m = m`
-    - `is_magnetic_old=true`: {math}`1' \circ m = -m`
-    - `is_magnetic_old=false`: {math}`1' \circ m = m`
-- `tensor_rank=1`: {math}`(\mathbf{R}, \mathbf{v}) \circ \mathbf{m} = (\mathrm{det} \mathbf{R}) \mathbf{R} \mathbf{m}`
-    - `is_magnetic_old=true`: {math}`1' \circ \mathbf{m} = -\mathbf{m}`
-    - `is_magnetic_old=false`: {math}`1' \circ \mathbf{m} = \mathbf{m}`
+- `tensor_rank=0`: $(\mathbf{R}, \mathbf{v}) \circ m = m$
+    - `is_magnetic_old=true`: $1' \circ m = -m$
+    - `is_magnetic_old=false`: $1' \circ m = m$
+- `tensor_rank=1`: $(\mathbf{R}, \mathbf{v}) \circ \mathbf{m} = (\mathrm{det} \mathbf{R}) \mathbf{R} \mathbf{m}$
+    - `is_magnetic_old=true`: $1' \circ \mathbf{m} = -\mathbf{m}$
+    - `is_magnetic_old=false`: $1' \circ \mathbf{m} = \mathbf{m}$
 
 ### Proposed behavior -->
 
 - `tensor_rank=0`
-  - `with_time_reversal=true`: {math}`1' \circ m = -m`
-    - `is_axial=true`: {math}`(\mathbf{R}, \mathbf{v}) \circ m = (\det\mathbf{R}) m`
-    - `is_axial=false`: {math}`(\mathbf{R}, \mathbf{v}) \circ m = m`
-  - `with_time_reversal=false`: {math}`1' \circ m = m`
-    - `is_axial=true`: {math}`(\mathbf{R}, \mathbf{v}) \circ m = (\det\mathbf{R}) m`
-    - `is_axial=false`: {math}`(\mathbf{R}, \mathbf{v}) \circ m = m`
+  - `with_time_reversal=true`: $1' \circ m = -m$
+    - `is_axial=true`: $(\mathbf{R}, \mathbf{v}) \circ m = (\det\mathbf{R}) m$
+    - `is_axial=false`: $(\mathbf{R}, \mathbf{v}) \circ m = m$
+  - `with_time_reversal=false`: $1' \circ m = m$
+    - `is_axial=true`: $(\mathbf{R}, \mathbf{v}) \circ m = (\det\mathbf{R}) m$
+    - `is_axial=false`: $(\mathbf{R}, \mathbf{v}) \circ m = m$
 - `tensor_rank=1`
-  - `with_time_reversal=true`: {math}`1' \circ \mathbf{m} = -\mathbf{m}`
-    - `is_axial=true`: {math}`(\mathbf{R}, \mathbf{v}) \circ \mathbf{m} = (\mathrm{det} \mathbf{R}) \mathbf{R} \mathbf{m}`
-    - `is_axial=false`: {math}`(\mathbf{R}, \mathbf{v}) \circ \mathbf{m} = \mathbf{R} \mathbf{m}`
-  - `with_time_reversal=false`: {math}`1' \circ \mathbf{m} = \mathbf{m}`
-    - `is_axial=true`: {math}`(\mathbf{R}, \mathbf{v}) \circ \mathbf{m} = (\mathrm{det} \mathbf{R}) \mathbf{R} \mathbf{m}`
-    - `is_axial=false`: {math}`(\mathbf{R}, \mathbf{v}) \circ \mathbf{m} = \mathbf{R} \mathbf{m}`
+  - `with_time_reversal=true`: $1' \circ \mathbf{m} = -\mathbf{m}$
+    - `is_axial=true`: $(\mathbf{R}, \mathbf{v}) \circ \mathbf{m} = (\mathrm{det} \mathbf{R}) \mathbf{R} \mathbf{m}$
+    - `is_axial=false`: $(\mathbf{R}, \mathbf{v}) \circ \mathbf{m} = \mathbf{R} \mathbf{m}$
+  - `with_time_reversal=false`: $1' \circ \mathbf{m} = \mathbf{m}$
+    - `is_axial=true`: $(\mathbf{R}, \mathbf{v}) \circ \mathbf{m} = (\mathrm{det} \mathbf{R}) \mathbf{R} \mathbf{m}$
+    - `is_axial=false`: $(\mathbf{R}, \mathbf{v}) \circ \mathbf{m} = \mathbf{R} \mathbf{m}$
 
 <!-- ### Correspondence
 

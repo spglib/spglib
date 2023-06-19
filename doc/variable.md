@@ -19,15 +19,15 @@ Basis vectors (in Cartesian)
   [ a_z, b_z, c_z ] ]
 ```
 
-Cartesian position {math}`\mathbf{x}_\mathrm{Cart}` is obtained by
+Cartesian position $\mathbf{x}_\mathrm{Cart}$ is obtained by
 
-```{math}
+$$
   \mathbf{x}_\mathrm{Cart} = \mathrm{L}\cdot\mathbf{x}_\mathrm{frac}
-```
+$$
 
-where {math}`\mathrm{L}` is the basis vectors defined above and is
-{math}`\mathrm{L}=(\mathbf{a},\mathbf{b},\mathbf{c})`, and
-{math}`\mathbf{x}_\mathrm{frac}` is the atomic position in fractional
+where $\mathrm{L}$ is the basis vectors defined above and is
+$\mathrm{L}=(\mathbf{a},\mathbf{b},\mathbf{c})$, and
+$\mathbf{x}_\mathrm{frac}$ is the atomic position in fractional
 coordinates given below.
 
 ## `position`
