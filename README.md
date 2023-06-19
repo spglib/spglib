@@ -66,6 +66,11 @@ int main(void) {
 }
 ```
 
+## Requirements
+
+- C standard: As of version 2.1.0, Spglib explicitly enforces a minimum standard of
+  [C11](https://en.cppreference.com/w/c/11)
+
 ## How to use Spglib
 
 We currently only officially support conda and pip packaging of spglib, with plans

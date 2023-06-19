@@ -28,6 +28,11 @@ The detailed algorithm of spglib is described the following text:
   Atsushi Togo and Isao Tanaka,
   <https://arxiv.org/abs/1808.01590> (written at version 1.10.4)
 
+## Requirements
+
+- C standard: As of version 2.1.0, Spglib explicitly enforces a minimum standard of
+  [C11](https://en.cppreference.com/w/c/11)
+
 ## Features
 
 - Find symmetry operations
