@@ -4,7 +4,7 @@ extern "C" {
 #include "spglib.h"
 }
 
-TEST(test_kpoints, test_spg_get_ir_reciprocal_mesh) {
+TEST(Kpoints, test_spg_get_ir_reciprocal_mesh) {
     double lattice[3][3] = {{4, 0, 0}, {0, 4, 0}, {0, 0, 3}};
     double position[][3] = {
         {0, 0, 0},     {0.5, 0.5, 0.5}, {0.3, 0.3, 0},
@@ -38,7 +38,7 @@ TEST(test_kpoints, test_spg_get_ir_reciprocal_mesh) {
     grid_mapping_table = NULL;
 }
 
-TEST(test_kpoints, test_spg_get_stabilized_reciprocal_mesh) {
+TEST(Kpoints, test_spg_get_stabilized_reciprocal_mesh) {
     SpglibDataset *dataset;
     double lattice[3][3] = {{4, 0, 0}, {0, 4, 0}, {0, 0, 3}};
     double position[][3] = {
@@ -82,7 +82,7 @@ TEST(test_kpoints, test_spg_get_stabilized_reciprocal_mesh) {
     grid_mapping_table = NULL;
 }
 
-TEST(test_kpoints, test_spg_relocate_BZ_grid_address) {
+TEST(Kpoints, test_spg_relocate_BZ_grid_address) {
     double rec_lattice[3][3] = {{-0.17573761, 0.17573761, 0.17573761},
                                 {0.17573761, -0.17573761, 0.17573761},
                                 {0.17573761, 0.17573761, -0.17573761}};
@@ -132,7 +132,7 @@ TEST(test_kpoints, test_spg_relocate_BZ_grid_address) {
     grid_mapping_table = NULL;
 }
 
-TEST(test_kpoints, test_spg_relocate_dense_BZ_grid_address) {
+TEST(Kpoints, test_spg_relocate_dense_BZ_grid_address) {
     double rec_lattice[3][3] = {{-0.17573761, 0.17573761, 0.17573761},
                                 {0.17573761, -0.17573761, 0.17573761},
                                 {0.17573761, 0.17573761, -0.17573761}};

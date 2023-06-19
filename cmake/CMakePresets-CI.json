@@ -231,7 +231,19 @@
       "configurePreset": "llvm-ci"
     },
     {
-      "name": "ci-coverage-c",
+      "name": "ci-coverage-unit_tests",
+      "displayName": "Test preset for test coverage of unit tests",
+      "inherits": [
+        "ci-coverage"
+      ],
+      "filter": {
+        "include": {
+          "label": "c_api"
+        }
+      }
+    },
+    {
+      "name": "ci-coverage-c_api",
       "displayName": "Test preset for test coverage of C api",
       "inherits": [
         "ci-coverage"
@@ -243,7 +255,7 @@
       }
     },
     {
-      "name": "ci-coverage-fortran",
+      "name": "ci-coverage-fortran_api",
       "displayName": "Test preset for test coverage of Fortran api",
       "inherits": [
         "ci-coverage"
@@ -311,7 +323,25 @@
       ]
     },
     {
-      "name": "ci-coverage-c",
+      "name": "ci-coverage-unit_tests",
+      "displayName": "Coverage tests for unit tests",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "ci-coverage"
+        },
+        {
+          "type": "build",
+          "name": "ci-coverage"
+        },
+        {
+          "type": "test",
+          "name": "ci-coverage-unit_tests"
+        }
+      ]
+    },
+    {
+      "name": "ci-coverage-c_api",
       "displayName": "Coverage tests for C api",
       "steps": [
         {
@@ -324,12 +354,12 @@
         },
         {
           "type": "test",
-          "name": "ci-coverage-c"
+          "name": "ci-coverage-c_api"
         }
       ]
     },
     {
-      "name": "ci-coverage-fortran",
+      "name": "ci-coverage-fortran_api",
       "displayName": "Coverage tests for Fortran api",
       "steps": [
         {
@@ -342,7 +372,7 @@
         },
         {
           "type": "test",
-          "name": "ci-coverage-fortran"
+          "name": "ci-coverage-fortran_api"
         }
       ]
     }

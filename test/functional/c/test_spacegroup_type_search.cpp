@@ -4,7 +4,7 @@ extern "C" {
 #include "spglib.h"
 }
 
-TEST(test_spacegroup_type_search, test_spg_get_international) {
+TEST(SpacegroupTypeSearch, test_spg_get_international) {
     double lattice[3][3] = {{4, 0, 0}, {0, 4, 0}, {0, 0, 3}};
     double position[][3] = {
         {0, 0, 0},     {0.5, 0.5, 0.5}, {0.3, 0.3, 0},
@@ -22,7 +22,7 @@ TEST(test_spacegroup_type_search, test_spg_get_international) {
     ASSERT_STREQ(symbol, symbol_expect);
 }
 
-TEST(test_spacegroup_type_search, test_spg_get_schoenflies) {
+TEST(SpacegroupTypeSearch, test_spg_get_schoenflies) {
     double lattice[3][3] = {{4, 0, 0}, {0, 4, 0}, {0, 0, 3}};
     double position[][3] = {
         {0, 0, 0},     {0.5, 0.5, 0.5}, {0.3, 0.3, 0},

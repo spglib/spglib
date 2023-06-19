@@ -5,7 +5,7 @@ extern "C" {
 #include "utils.h"
 }
 
-TEST(test_refine_cell, test_spg_refine_cell_BCC) {
+TEST(RefineCell, test_spg_refine_cell_BCC) {
     double lattice[3][3] = {{0, 2, 2}, {2, 0, 2}, {2, 2, 0}};
 
     /* 4 times larger memory space must be prepared. */

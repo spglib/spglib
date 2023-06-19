@@ -1,9 +1,15 @@
+list(APPEND ctest_labels fortran_api)
+
+# Cannot use native googletest. Using a rudimentary ctest native testing suite
 add_library(test_utils STATIC utils.F90 c_interface_module.F90)
 
 # Generated ctest file that switches and displays tests
 # Note must be plain C because generated CPP file does not include extern "C"
 set(TestsDriver fortran_test.c)
-set(SubTests_test_fortran_spg_get_symmetry "test_rutile112;test_zincblende")
+set(SubTests_test_fortran_spg_get_symmetry
+		test_rutile112
+		test_zincblende
+		)
 
 # Add fortran tests here
 create_test_sourcelist(FortranTests_Files
@@ -33,16 +39,16 @@ foreach (test ${TestsToRun})
 		foreach (subtest ${SubTests_${test_name}})
 			# Call test via ${FortranTests_Executable} ${test_name} ${subtest}
 			# E.g. running manually: ./FortranTests_Executable test_fortran_spg_get_symmetry test_rutile112
-			add_test(NAME "${test_name}/${subtest}"
+			add_test(NAME "${test_name}.${subtest}"
 					COMMAND $<TARGET_FILE:FortranTests> ${test_name} ${subtest})
-			set_tests_properties("${test_name}/${subtest}" PROPERTIES
-					LABELS "fortran_api;${test_name};${test_name}.${subtest}")
+			set_tests_properties("${test_name}.${subtest}" PROPERTIES
+					LABELS "${ctest_labels}")
 		endforeach ()
 	else ()
 		# Only run the main test without arguments. Maybe can pass other variable data though :-?
 		add_test(NAME ${test_name}
 				COMMAND $<TARGET_FILE:FortranTests> ${test_name})
 		set_tests_properties(${test_name} PROPERTIES
-				LABELS "fortran_api;${test_name}")
+				LABELS "${ctest_labels}")
 	endif ()
 endforeach ()

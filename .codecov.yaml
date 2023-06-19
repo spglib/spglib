@@ -16,6 +16,7 @@ coverage:
     project:
       default:
         flags:
+          - unit_tests
           - c_api
           - fortran_api
           - python_api
@@ -30,4 +31,4 @@ coverage:
           - python_api
 codecov:
   notify:
-    after_n_builds: 3
+    after_n_builds: 4

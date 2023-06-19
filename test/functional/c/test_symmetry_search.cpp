@@ -5,11 +5,7 @@ extern "C" {
 #include "utils.h"
 }
 
-int show_spg_dataset(double lattice[3][3], const double origin_shift[3],
-                     double position[][3], const int num_atom,
-                     const int types[]);
-
-TEST(test_symmetry_search, test_spg_get_symmetry) {
+TEST(SymmetrySearch, test_spg_get_symmetry) {
     double lattice[3][3] = {{4, 0, 0}, {0, 4, 0}, {0, 0, 3}};
     double position[][3] = {
         {0, 0, 0},        {0.5, 0.5, 0.25}, {0.3, 0.3, 0},    {0.7, 0.7, 0},
@@ -45,7 +41,7 @@ TEST(test_symmetry_search, test_spg_get_symmetry) {
     translation = NULL;
 }
 
-TEST(test_symmetry_search, test_spg_get_dataset) {
+TEST(SymmetrySearch, test_spg_get_dataset) {
     double lattice[3][3] = {{4, 0, 0}, {0, 4, 0}, {0, 0, 3}};
     double origin_shift[3] = {0.1, 0.1, 0};
     double position[][3] = {
@@ -75,7 +71,7 @@ TEST(test_symmetry_search, test_spg_get_dataset) {
               0);
 }
 
-TEST(test_symmetry_search, test_spg_get_multiplicity) {
+TEST(SymmetrySearch, test_spg_get_multiplicity) {
     double lattice[3][3] = {{4, 0, 0}, {0, 4, 0}, {0, 0, 4}};
     double position[][3] = {{0, 0, 0}, {0.5, 0.5, 0.5}};
     int types[] = {1, 2};
@@ -84,76 +80,4 @@ TEST(test_symmetry_search, test_spg_get_multiplicity) {
 
     size = spg_get_multiplicity(lattice, position, types, num_atom, 1e-5);
     ASSERT_EQ(size, 48);
-}
-
-// ****************************************************************************
-// Local functions
-// ****************************************************************************
-
-int show_spg_dataset(double lattice[3][3], const double origin_shift[3],
-                     double position[][3], const int num_atom,
-                     const int types[]) {
-    SpglibDataset *dataset;
-    char ptsymbol[6];
-    int pt_trans_mat[3][3];
-    int i, j;
-    int retval = 0;
-    const char *wl = "abcdefghijklmnopqrstuvwxyz";
-
-    for (i = 0; i < num_atom; i++) {
-        for (j = 0; j < 3; j++) {
-            position[i][j] += origin_shift[j];
-        }
-    }
-
-    dataset = spg_get_dataset(lattice, position, types, num_atom, 1e-5);
-
-    if (dataset == NULL) {
-        retval = 1;
-        goto end;
-    }
-
-    printf("International: %s (%d)\n", dataset->international_symbol,
-           dataset->spacegroup_number);
-    printf("Hall symbol:   %s\n", dataset->hall_symbol);
-    if (spg_get_pointgroup(ptsymbol, pt_trans_mat, dataset->rotations,
-                           dataset->n_operations)) {
-        printf("Point group:   %s\n", ptsymbol);
-        printf("Transformation matrix:\n");
-        for (i = 0; i < 3; i++) {
-            printf("%f %f %f\n", dataset->transformation_matrix[i][0],
-                   dataset->transformation_matrix[i][1],
-                   dataset->transformation_matrix[i][2]);
-        }
-        printf("Wyckoff letters:\n");
-        for (i = 0; i < dataset->n_atoms; i++) {
-            printf("%c ", wl[dataset->wyckoffs[i]]);
-        }
-        printf("\n");
-        printf("Equivalent atoms:\n");
-        for (i = 0; i < dataset->n_atoms; i++) {
-            printf("%d ", dataset->equivalent_atoms[i]);
-        }
-        printf("\n");
-
-        for (i = 0; i < dataset->n_operations; i++) {
-            printf("--- %d ---\n", i + 1);
-            for (j = 0; j < 3; j++) {
-                printf("%2d %2d %2d\n", dataset->rotations[i][j][0],
-                       dataset->rotations[i][j][1],
-                       dataset->rotations[i][j][2]);
-            }
-            printf("%f %f %f\n", dataset->translations[i][0],
-                   dataset->translations[i][1], dataset->translations[i][2]);
-        }
-    } else {
-        retval = 1;
-    }
-
-    if (dataset) {
-        spg_free_dataset(dataset);
-    }
-
-end:
-    return retval;
 }

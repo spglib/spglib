@@ -8,11 +8,18 @@
 ## How to run single test
 
 In the `test` folder of the build directory (e.g. `build/test`), run the specific test executable.
-For example, to run `test_symmetry_search.test_spg_get_symmetry`
+For example, to run `SymmetrySearch.test_spg_get_symmetry`
 
-```shell
-# at build/test
-./CTests --gtest_filter=test_symmetry_search.test_spg_get_symmetry
+```console
+In the build_directory
+$ ctest -R "SymmetrySearch.test_spg_get_symmetry"
+```
+
+You can use any regex expression, e.g. `-R "SymmetrySearch\..*"` to run the whole test_suite of
+`SymmetrySearch`. You can also use the labels provided in `ctest --print-labels`, e.g.:
+
+```console
+$ ctest -L unint_tests
 ```
 
 If you use debuggers like gdb or lldb, recompile with `CMAKE_BUILD_TYPE=Debug`.

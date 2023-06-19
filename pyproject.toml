@@ -89,7 +89,7 @@ repair-wheel-command = ""
 
 [tool.pytest.ini_options]
 addopts = "-m 'not benchmark'"
-testpaths = ["python/test"]
+testpaths = ["test/functional/python"]
 
 [tool.coverage.run]
 command_line = '-m pytest --cov'

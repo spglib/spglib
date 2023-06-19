@@ -5,22 +5,28 @@ extern "C" {
 #include "utils.h"
 }
 
-TEST(test_find_primitive_cell, test_spg_find_primitive_BCC) {
-    double lattice[3][3] = {{4, 0, 0}, {0, 4, 0}, {0, 0, 4}};
-    double position[][3] = {{0, 0, 0}, {0.5, 0.5, 0.5}};
+TEST(Standardization, test_spg_standardize_cell_BCC) {
+    double lattice[3][3] = {{3.97, 0, 0}, {0, 4.03, 0}, {0, 0, 4.0}};
+    double position[][3] = {{0.002, 0, 0}, {0.5, 0.5001, 0.5}};
     int types[] = {1, 1};
+    int j, k;
     int num_atom = 2;
-    int num_primitive_atom;
-    double symprec = 1e-5;
+    double symprec = 1e-1;
 
     /* lattice, position, and types are overwritten. */
-    num_primitive_atom =
-        spg_find_primitive(lattice, position, types, num_atom, symprec);
-    ASSERT_EQ(num_primitive_atom, 1);
-    show_cell(lattice, position, types, num_primitive_atom);
+    printf("*** spg_standardize_cell (BCC unitcell --> primitive) ***:\n");
+    printf("------------------------------------------------------\n");
+    for (j = 0; j < 2; j++) {
+        for (k = 0; k < 2; k++) {
+            ASSERT_EQ(sub_spg_standardize_cell(lattice, position, types,
+                                               num_atom, symprec, j, k),
+                      0);
+            printf("------------------------------------------------------\n");
+        }
+    }
 }
 
-TEST(test_find_primitive_cell, test_spg_find_primitive_corundum) {
+TEST(Standardization, test_spg_standardize_cell_corundum) {
     double lattice[3][3] = {{4.8076344022756095, -2.4038172011378047, 0},
                             {0, 4.1635335244786962, 0},
                             {0, 0, 13.1172699198127543}};
@@ -57,7 +63,7 @@ TEST(test_find_primitive_cell, test_spg_find_primitive_corundum) {
         {0.6395007239788255, 0.9728340573121541, 0.4166666666666643},
     };
     int types[30];
-    int i, num_primitive_atom;
+    int i, j, k;
     int num_atom = 30;
     double symprec = 1e-5;
 
@@ -69,31 +75,14 @@ TEST(test_find_primitive_cell, test_spg_find_primitive_corundum) {
     }
 
     /* lattice, position, and types are overwritten. */
-    num_primitive_atom =
-        spg_find_primitive(lattice, position, types, num_atom, symprec);
-    ASSERT_EQ(num_primitive_atom, 10);
-    show_cell(lattice, position, types, num_primitive_atom);
-}
-
-TEST(test_find_primitive_cell, test_spg_refine_cell_BCC) {
-    double lattice[3][3] = {{0, 2, 2}, {2, 0, 2}, {2, 2, 0}};
-
-    /* 4 times larger memory space must be prepared. */
-    double position[4][3];
-    int types[4];
-
-    int num_atom_bravais;
-    int num_atom = 1;
-    double symprec = 1e-5;
-
-    position[0][0] = 0;
-    position[0][1] = 0;
-    position[0][2] = 0;
-    types[0] = 1;
-
-    /* lattice, position, and types are overwritten. */
-    num_atom_bravais =
-        spg_refine_cell(lattice, position, types, num_atom, symprec);
-    ASSERT_EQ(num_atom_bravais, 4);
-    show_cell(lattice, position, types, num_atom_bravais);
+    printf("*** spg_standardize_cell (Corundum) ***:\n");
+    printf("------------------------------------------------------\n");
+    for (j = 0; j < 2; j++) {
+        for (k = 0; k < 2; k++) {
+            ASSERT_EQ(sub_spg_standardize_cell(lattice, position, types,
+                                               num_atom, symprec, j, k),
+                      0);
+            printf("------------------------------------------------------\n");
+        }
+    }
 }
