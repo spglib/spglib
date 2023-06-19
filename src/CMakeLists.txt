@@ -4,7 +4,9 @@ configure_file(version.h.in version.h)
 if (MSVC)
 	target_compile_options(Spglib_symspg PRIVATE /W4)
 else()
-	target_compile_options(Spglib_symspg PRIVATE -Wall -Wextra -Wpedantic)
+	# TODO: C23: Disabled -Wpedantic because of warning spam
+	#  Add it back when C23 standard is widespread and revert this [Temp][C23] commit
+	target_compile_options(Spglib_symspg PRIVATE -Wall -Wextra)
 endif()
 
 # Configure main target
