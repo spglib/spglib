@@ -83,26 +83,17 @@ jobs:
       - uses: actions/checkout@v3
       - name: Set up Python
         uses: actions/setup-python@v4
-      - name: Add conda to system path
-        run: |
-          # $CONDA is an environment variable pointing to the root of the miniconda directory
-          echo $CONDA/bin >> $GITHUB_PATH
-      - name: Install dependencies
-        run: |
-          conda install --yes -c conda-forge python=3.9
-          conda install --yes -c conda-forge numpy gcc_linux-64 pip pyyaml make cmake scikit-build-core build
+        with:
+          cache: pip
       - name: Setup spglib
-        # TODO: switch to editable installs
         run: |
+          python -m pip install --upgrade pip
           pip install .[test-cov] \
-            --config-settings=cmake.define.SPGLIB_TEST_COVERAGE=ON \
-            --config-settings=build-dir=build
-      - name: Test with pytest and code coverage
-        # TODO: switch to `coverage run`
-        # Cannot use coverage run without editable installs (probably)
-        run: |
-          # coverage run
-          pytest --cov=spglib
+             --config-settings=cmake.define.CMAKE_C_COMPILER=gcc \
+             --config-settings=cmake.define.SPGLIB_TEST_COVERAGE=ON \
+             --config-settings=build-dir=build
+      - name: Test pytest with coverage
+        run: pytest --cov=spglib
       - name: Get lcov data
         uses: danielealbano/lcov-action@v3
         with:
