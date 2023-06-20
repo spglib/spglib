@@ -1,6 +1,10 @@
 name: test
 run-name: Run tests
 
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     branches: [ develop ]
