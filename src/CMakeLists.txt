@@ -13,7 +13,6 @@ endif()
 target_sources(Spglib_symspg PRIVATE
 		arithmetic.c
 		cell.c
-		debug.c
 		delaunay.c
 		determination.c
 		hall_symbol.c
@@ -35,6 +34,11 @@ target_sources(Spglib_symspg PRIVATE
 		spin.c
 		symmetry.c
 		)
+if (SPGLIB_DEBUG)
+	target_sources(Spglib_symspg PRIVATE
+			debug.c
+			)
+endif ()
 set_target_properties(Spglib_symspg PROPERTIES
 		PUBLIC_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/spglib.h)
 # TODO: Should move spglib.h to a separate folder so other headers are not included in ExternalProject setups
@@ -64,9 +68,11 @@ if (SPGLIB_USE_SANITIZER)
 		target_link_options(Spglib_symspg PUBLIC -fsanitize=${SPGLIB_USE_SANITIZER})
 	endif ()
 endif ()
-if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-	target_compile_definitions(Spglib_symspg
-			PUBLIC SPGDEBUG SPGWARNING)
+if (SPGLIB_DEBUG)
+	target_compile_definitions(Spglib_symspg PRIVATE SPGDEBUG)
+endif ()
+if (SPGLIB_WARNINGS)
+	target_compile_definitions(Spglib_symspg PRIVATE SPGWARNING)
 endif ()
 
 # Avoid One Definition Rule problems. Please fix these

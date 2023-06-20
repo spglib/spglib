@@ -1,7 +1,7 @@
-/* Copyright (C) 2015 Atsushi Togo */
+/* Copyright (C) 2023 Atsushi Togo */
 /* All rights reserved. */
 
-/* This file is part of niggli. */
+/* This file is part of spglib. */
 
 /* Redistribution and use in source and binary forms, with or without */
 /* modification, are permitted provided that the following conditions */
@@ -15,7 +15,7 @@
 /*   the documentation and/or other materials provided with the */
 /*   distribution. */
 
-/* * Neither the name of the niggli project nor the names of its */
+/* * Neither the name of the spglib project nor the names of its */
 /*   contributors may be used to endorse or promote products derived */
 /*   from this software without specific prior written permission. */
 
@@ -38,6 +38,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "debug.h"
 
 #define NIGGLI_MAX_NUM_LOOP 100
 
@@ -75,9 +77,7 @@ static double *multiply_matrices(const double *A, const double *B);
 static int layer_swap_axis(NiggliParams *p, const int aperiodic_axis);
 static int step2_for_layer(NiggliParams *p);
 
-#ifdef NIGGLI_DEBUG
-#define debug_print(...) printf(__VA_ARGS__)
-static void debug_show(const int j, const NiggliParams *p);
+#ifdef SPGDEBUG
 static void debug_show(const int j, const NiggliParams *p) {
     /* int i; */
 
@@ -96,15 +96,7 @@ static void debug_show(const int j, const NiggliParams *p) {
     /* } */
 }
 #else
-#define debug_print(...)
 #define debug_show(...)
-#endif
-
-#ifdef NIGGLI_WARNING
-#include <stdio.h>
-#define warning_print(...) fprintf(stderr, __VA_ARGS__)
-#else
-#define warning_print(...)
 #endif
 
 /*--------------------------------------------*/

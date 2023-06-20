@@ -1468,13 +1468,12 @@ static int set_dataset(SpglibDataset *dataset, const Cell *cell,
     debug_print("[line %d, %s]\n", __LINE__, __FILE__);
     debug_print("refined cell after ref_get_Wyckoff_positions\n");
     debug_print_matrix_d3(exstr->bravais->lattice);
-#ifdef SPGDEBUG
     for (i = 0; i < exstr->bravais->size; i++) {
-        printf("%d: %f %f %f\n", exstr->bravais->types[i],
-               exstr->bravais->position[i][0], exstr->bravais->position[i][1],
-               exstr->bravais->position[i][2]);
+        debug_print("%d: %f %f %f\n", exstr->bravais->types[i],
+                    exstr->bravais->position[i][0],
+                    exstr->bravais->position[i][1],
+                    exstr->bravais->position[i][2]);
     }
-#endif
 
     mat_copy_matrix_d3(dataset->primitive_lattice, primitive->cell->lattice);
     for (i = 0; i < dataset->n_atoms; i++) {
