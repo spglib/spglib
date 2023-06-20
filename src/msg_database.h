@@ -44,13 +44,12 @@ typedef struct {
     char og_number[12];
     int number;
     int type;
-} MagneticSpacegroupType;
+} __attribute__((aligned(64))) MagneticSpacegroupType;
 
-MagneticSpacegroupType msgdb_get_magnetic_spacegroup_type(const int uni_number);
-MagneticSymmetry *msgdb_get_spacegroup_operations(const int uni_number,
-                                                  const int hall_number);
-void msgdb_get_uni_candidates(int uni_number_range[2], const int hall_number);
-Symmetry *msgdb_get_std_transformations(const int uni_number,
-                                        const int hall_number);
+MagneticSpacegroupType msgdb_get_magnetic_spacegroup_type(int uni_number);
+MagneticSymmetry *msgdb_get_spacegroup_operations(int uni_number,
+                                                  int hall_number);
+void msgdb_get_uni_candidates(int uni_number_range[2], int hall_number);
+Symmetry *msgdb_get_std_transformations(int uni_number, int hall_number);
 
 #endif /* __msg_database_H__ */

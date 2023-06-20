@@ -48,16 +48,15 @@ typedef struct {
     int *crystallographic_orbits;
     int *std_mapping_to_primitive;
     double rotation[3][3];
-} ExactStructure;
+} __attribute__((aligned(128))) ExactStructure;
 
 ExactStructure *ref_get_exact_structure_and_symmetry(Spacegroup *spacegroup,
                                                      const Cell *primitive,
                                                      const Cell *cell,
                                                      const int *mapping_table,
-                                                     const double symprec);
+                                                     double symprec);
 void ref_free_exact_structure(ExactStructure *exstr);
-int ref_find_similar_bravais_lattice(Spacegroup *spacegroup,
-                                     const double symprec);
+int ref_find_similar_bravais_lattice(Spacegroup *spacegroup, double symprec);
 void ref_get_conventional_lattice(double lattice[3][3],
                                   const Spacegroup *spacegroup);
 void ref_measure_rigid_rotation(double rotation[3][3],

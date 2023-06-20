@@ -39,7 +39,7 @@
 
 #include "debug.h"
 
-static int arithmetic_crystal_classes[231] = {
+static const int arithmetic_crystal_classes[231] = {
     0,  1,  2,  3,  3,  4,  5,  5,  6,  6,  7,  7,  8,  7,  7,  8,  9,  9,
     9,  9,  10, 10, 11, 12, 12, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 14,
     14, 14, 15, 15, 15, 15, 16, 16, 17, 17, 17, 18, 18, 18, 18, 18, 18, 18,
@@ -132,15 +132,13 @@ static const char arithmetic_crystal_class_symbols[74][7] = {
 };
 
 int arth_get_symbol(char symbol[7], const int spgroup_number) {
-    int i, arth_number;
-
     if (spgroup_number < 1 || spgroup_number > 230) {
         return 0;
     }
 
-    arth_number = arithmetic_crystal_classes[spgroup_number];
+    int arth_number = arithmetic_crystal_classes[spgroup_number];
     memcpy(symbol, arithmetic_crystal_class_symbols[arth_number], 7);
-    for (i = 0; i < 6; i++) {
+    for (int i = 0; i < 6; i++) {
         if (symbol[i] == ' ') {
             symbol[i] = '\0';
         }

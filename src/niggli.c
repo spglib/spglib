@@ -56,9 +56,9 @@ typedef struct {
     int n;
     double *tmat;
     double *lattice;
-} NiggliParams;
+} __attribute__((aligned(128))) __attribute__((packed)) NiggliParams;
 
-static NiggliParams *initialize(const double *lattice_, const double eps_);
+static NiggliParams *initialize(const double *lattice_, double eps_);
 static void finalize(double *lattice_, NiggliParams *p);
 static int reset(NiggliParams *p);
 static int step1(NiggliParams *p);
@@ -74,7 +74,7 @@ static void set_angle_types(NiggliParams *p);
 static double *get_transpose(const double *M);
 static double *get_metric(const double *M);
 static double *multiply_matrices(const double *A, const double *B);
-static int layer_swap_axis(NiggliParams *p, const int aperiodic_axis);
+static int layer_swap_axis(NiggliParams *p, int aperiodic_axis);
 static int step2_for_layer(NiggliParams *p);
 
 #ifdef SPGDEBUG
@@ -89,7 +89,7 @@ static void debug_show(const int j, const NiggliParams *p) {
     printf("%f %f %f %f %f %f\n", p->A, p->B, p->C, p->xi, p->eta, p->zeta);
 
     /* printf("%d %d %d\n", p->l, p->m, p->n); */
-    /* for (i = 0; i < 3; i++) { */
+    /* for (int i = 0; i < 3; i++) { */
     /*   printf("%f %f %f\n", */
     /*       p->lattice[i * 3], p->lattice[i * 3 + 1], p->lattice[i * 3 + 2]);
      */
@@ -118,8 +118,6 @@ int niggli_get_micro_version(void) { return NIGGLI_MICRO_VERSION; }
 //       the plane)
 int niggli_reduce(double *lattice_, const double eps_,
                   const int aperiodic_axis) {
-    int i, j, succeeded;
-    NiggliParams *p;
     int (*steps[8])(NiggliParams *p) = {step1, step2, step3, step4,
                                         step5, step6, step7, step8};
 
@@ -127,15 +125,12 @@ int niggli_reduce(double *lattice_, const double eps_,
         steps[1] = step2_for_layer;
     }
 
-    p = NULL;
-    succeeded = 0;
-
-    if ((p = initialize(lattice_, eps_)) == NULL) {
-        return 0;
-    }
+    NiggliParams *p = initialize(lattice_, eps_);
+    if (p == NULL) return 0;
 
     /* Step 0 */
     // Move aperiodic axis to c for layer
+    int succeeded = 0;
     if (!(((aperiodic_axis == 0 || aperiodic_axis == 1) &&
            layer_swap_axis(p, aperiodic_axis)) ||
           ((aperiodic_axis == -1 || aperiodic_axis == 2) &&
@@ -143,8 +138,9 @@ int niggli_reduce(double *lattice_, const double eps_,
         goto ret;
     }
 
-    for (i = 0; i < NIGGLI_MAX_NUM_LOOP; i++) {
-        for (j = 0; j < 8; j++) {
+    for (int i = 0; i < NIGGLI_MAX_NUM_LOOP; i++) {
+        int j = 0;
+        for (; j < 8; j++) {
             if ((*steps[j])(p)) {
                 debug_show(j + 1, p);
                 if (!reset(p)) {
@@ -169,11 +165,8 @@ ret:
 }
 
 static NiggliParams *initialize(const double *lattice_, const double eps_) {
-    NiggliParams *p;
-
-    p = NULL;
-
-    if ((p = (NiggliParams *)malloc(sizeof(NiggliParams))) == NULL) {
+    NiggliParams *p = (NiggliParams *)malloc(sizeof(NiggliParams));
+    if (p == NULL) {
         warning_print("niggli: Memory could not be allocated.");
         return NULL;
     }
@@ -188,18 +181,19 @@ static NiggliParams *initialize(const double *lattice_, const double eps_) {
     p->l = 0;
     p->m = 0;
     p->n = 0;
-    p->tmat = NULL;
+    p->eps = eps_;
     p->lattice = NULL;
 
-    if ((p->tmat = (double *)malloc(sizeof(double) * 9)) == NULL) {
+    p->tmat = (double *)malloc(sizeof(double) * 9);
+    if (p->tmat == NULL) {
         warning_print("niggli: Memory could not be allocated.");
         free(p);
         p = NULL;
         return NULL;
     }
 
-    p->eps = eps_;
-    if ((p->lattice = (double *)malloc(sizeof(double) * 9)) == NULL) {
+    p->lattice = (double *)malloc(sizeof(double) * 9);
+    if (p->lattice == NULL) {
         warning_print("niggli: Memory could not be allocated.");
         free(p->tmat);
         p->tmat = NULL;
@@ -239,11 +233,8 @@ static void finalize(double *lattice_, NiggliParams *p) {
 }
 
 static int reset(NiggliParams *p) {
-    double *lat_tmp;
-
-    lat_tmp = NULL;
-
-    if ((lat_tmp = multiply_matrices(p->lattice, p->tmat)) == NULL) {
+    double *lat_tmp = multiply_matrices(p->lattice, p->tmat);
+    if (lat_tmp == NULL) {
         return 0;
     }
     memcpy(p->lattice, lat_tmp, sizeof(double) * 9);
@@ -254,11 +245,8 @@ static int reset(NiggliParams *p) {
 }
 
 static int set_parameters(NiggliParams *p) {
-    double *G;
-
-    G = NULL;
-
-    if ((G = get_metric(p->lattice)) == NULL) {
+    double *G = get_metric(p->lattice);
+    if (G == NULL) {
         return 0;
     }
 
@@ -308,9 +296,8 @@ static int step1(NiggliParams *p) {
         p->tmat[3] = -1, p->tmat[4] = 0, p->tmat[5] = 0;
         p->tmat[6] = 0, p->tmat[7] = 0, p->tmat[8] = -1;
         return 1;
-    } else {
-        return 0;
     }
+    return 0;
 }
 
 static int step2(NiggliParams *p) {
@@ -320,9 +307,8 @@ static int step2(NiggliParams *p) {
         p->tmat[3] = 0, p->tmat[4] = 0, p->tmat[5] = -1;
         p->tmat[6] = 0, p->tmat[7] = -1, p->tmat[8] = 0;
         return 1;
-    } else {
-        return 0;
     }
+    return 0;
 }
 
 /* Aperiodic axis is fixed to C, the output may not be a standard Niggli cell */
@@ -338,58 +324,31 @@ static int step2_for_layer(NiggliParams *p) {
 }
 
 static int step3(NiggliParams *p) {
-    int i, j, k;
     if (p->l * p->m * p->n == 1) {
-        if (p->l == -1) {
-            i = -1;
-        } else {
-            i = 1;
-        }
-        if (p->m == -1) {
-            j = -1;
-        } else {
-            j = 1;
-        }
-        if (p->n == -1) {
-            k = -1;
-        } else {
-            k = 1;
-        }
+        int i = (p->l == -1) ? -1 : 1;
+        int j = (p->m == -1) ? -1 : 1;
+        int k = (p->n == -1) ? -1 : 1;
         p->tmat[0] = i, p->tmat[1] = 0, p->tmat[2] = 0;
         p->tmat[3] = 0, p->tmat[4] = j, p->tmat[5] = 0;
         p->tmat[6] = 0, p->tmat[7] = 0, p->tmat[8] = k;
         return 1;
-    } else {
-        return 0;
     }
+    return 0;
 }
 
 static int step4(NiggliParams *p) {
-    int i, j, k, r;
-
     if (p->l == -1 && p->m == -1 && p->n == -1) {
         return 0;
     }
 
     if (p->l * p->m * p->n == 0 || p->l * p->m * p->n == -1) {
-        i = 1;
-        j = 1;
-        k = 1;
-        r = -1; /* 0: i, 1: j, 2: k */
-        if (p->l == 1) {
-            i = -1;
-        }
-        if (p->l == 0) {
-            r = 0;
-        }
-        if (p->m == 1) {
-            j = -1;
-        }
+        // TODO: Assignment logic is hard to follow
+        int i = (p->l == 1) ? -1 : 1;
+        int j = (p->m == 1) ? -1 : 1;
+        int r = (p->l == 0) ? 0 : -1;
+        int k = (p->n == 1) ? -1 : 1;
         if (p->m == 0) {
             r = 1;
-        }
-        if (p->n == 1) {
-            k = -1;
         }
         if (p->n == 0) {
             r = 2;
@@ -411,9 +370,8 @@ static int step4(NiggliParams *p) {
         p->tmat[3] = 0, p->tmat[4] = j, p->tmat[5] = 0;
         p->tmat[6] = 0, p->tmat[7] = 0, p->tmat[8] = k;
         return 1;
-    } else {
-        return 0;
     }
+    return 0;
 }
 
 static int step5(NiggliParams *p) {
@@ -430,9 +388,8 @@ static int step5(NiggliParams *p) {
             p->tmat[5] = 1;
         }
         return 1;
-    } else {
-        return 0;
     }
+    return 0;
 }
 
 static int step6(NiggliParams *p) {
@@ -449,9 +406,8 @@ static int step6(NiggliParams *p) {
             p->tmat[2] = 1;
         }
         return 1;
-    } else {
-        return 0;
     }
+    return 0;
 }
 
 static int step7(NiggliParams *p) {
@@ -468,9 +424,8 @@ static int step7(NiggliParams *p) {
             p->tmat[1] = 1;
         }
         return 1;
-    } else {
-        return 0;
     }
+    return 0;
 }
 
 static int step8(NiggliParams *p) {
@@ -481,24 +436,19 @@ static int step8(NiggliParams *p) {
         p->tmat[3] = 0, p->tmat[4] = 1, p->tmat[5] = 1;
         p->tmat[6] = 0, p->tmat[7] = 0, p->tmat[8] = 1;
         return 1;
-    } else {
-        return 0;
     }
+    return 0;
 }
 
 static double *get_transpose(const double *M) {
-    int i, j;
-    double *M_T;
-
-    M_T = NULL;
-
-    if ((M_T = (double *)malloc(sizeof(double) * 9)) == NULL) {
+    double *M_T = (double *)malloc(sizeof(double) * 9);
+    if (M_T == NULL) {
         warning_print("niggli: Memory could not be allocated.");
         return NULL;
     }
 
-    for (i = 0; i < 3; i++) {
-        for (j = 0; j < 3; j++) {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
             M_T[i * 3 + j] = M[j * 3 + i];
         }
     }
@@ -507,39 +457,27 @@ static double *get_transpose(const double *M) {
 }
 
 static double *get_metric(const double *M) {
-    double *G, *M_T;
-
-    G = NULL;
-    M_T = NULL;
-
-    if ((M_T = get_transpose(M)) == NULL) {
+    double *M_T = get_transpose(M);
+    if (M_T == NULL) {
         return NULL;
     }
-    if ((G = multiply_matrices(M_T, M)) == NULL) {
-        return NULL;
-    }
-
+    double *G = multiply_matrices(M_T, M);
     free(M_T);
     M_T = NULL;
-
     return G;
 }
 
 static double *multiply_matrices(const double *L, const double *R) {
-    int i, j, k;
-    double *M;
-
-    M = NULL;
-
-    if ((M = (double *)malloc(sizeof(double) * 9)) == NULL) {
+    double *M = (double *)malloc(sizeof(double) * 9);
+    if (M == NULL) {
         warning_print("niggli: Memory could not be allocated.");
         return NULL;
     }
 
-    for (i = 0; i < 3; i++) {
-        for (j = 0; j < 3; j++) {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
             M[i * 3 + j] = 0;
-            for (k = 0; k < 3; k++) {
+            for (int k = 0; k < 3; k++) {
                 M[i * 3 + j] += L[i * 3 + k] * R[k * 3 + j];
             }
         }

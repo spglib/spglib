@@ -41,7 +41,7 @@
 
 int hal_match_hall_symbol_db(double origin_shift[3],
                              const double bravais_lattice[3][3],
-                             const int hall_number, const Centering centering,
-                             const Symmetry *symmetry, const double symprec);
+                             int hall_number, Centering centering,
+                             const Symmetry *symmetry, double symprec);
 
 #endif

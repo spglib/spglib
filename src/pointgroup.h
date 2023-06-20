@@ -70,7 +70,7 @@ typedef struct {
     char schoenflies[4];
     Holohedry holohedry;
     Laue laue;
-} Pointgroup;
+} __attribute__((aligned(32))) __attribute__((packed)) Pointgroup;
 
 // @brief Return pointgroup.number = 0 if failed.
 // @param[out] transform_mat
@@ -79,9 +79,8 @@ typedef struct {
 // @param[in] aperiodic_axis Use `aperiodic_axis=-1` for space group.
 Pointgroup ptg_get_transformation_matrix(int transform_mat[3][3],
                                          const int rotations[][3][3],
-                                         const int num_rotations,
-                                         const int aperiodic_axis);
-Pointgroup ptg_get_pointgroup(const int pointgroup_number);
+                                         int num_rotations, int aperiodic_axis);
+Pointgroup ptg_get_pointgroup(int pointgroup_number);
 PointSymmetry ptg_get_pointsymmetry(const int rotations[][3][3],
-                                    const int num_rotations);
+                                    int num_rotations);
 #endif

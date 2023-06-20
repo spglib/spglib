@@ -60,17 +60,17 @@ typedef struct {
 
     /* Using array reference to avoid redundant loop */
     int *periodic_axes;
-} OverlapChecker;
+} __attribute__((aligned(128))) __attribute__((packed)) OverlapChecker;
 
 OverlapChecker *ovl_overlap_checker_init(const Cell *cell);
 
 int ovl_check_total_overlap(OverlapChecker *checker, const double test_trans[3],
-                            const int rot[3][3], const double symprec,
-                            const int is_identity);
+                            const int rot[3][3], double symprec,
+                            int is_identity);
 
 int ovl_check_layer_total_overlap(OverlapChecker *checker,
                                   const double test_trans[3],
-                                  const int rot[3][3], const double symprec,
-                                  const int is_identity);
+                                  const int rot[3][3], double symprec,
+                                  int is_identity);
 
 void ovl_overlap_checker_free(OverlapChecker *checker);

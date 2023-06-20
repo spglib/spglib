@@ -10146,11 +10146,9 @@ static const int layer_symmetry_operation_index[][2] = {
     {24, 8123}, /* 116 */
 };
 
-static void replace_equal_char(char symbol[], const int position);
+static void replace_equal_char(char symbol[], int position);
 
 void spgdb_decode_symmetry(int rot[3][3], double trans[3], const int encoded) {
-    int i, j, r, t, degit;
-
     /* A space group operation is compressed using ternary numerical system for
      */
     /* rotation and duodecimal system for translation. This is achieved because
@@ -10161,18 +10159,18 @@ void spgdb_decode_symmetry(int rot[3][3], double trans[3], const int encoded) {
     /* group operations. In principle, octal numerical system can be used */
     /* for translation, but duodecimal system is more convenient. */
 
-    r = encoded % 19683; /* 19683 = 3**9 */
-    degit = 6561;        /* 6561 = 3**8 */
-    for (i = 0; i < 3; i++) {
-        for (j = 0; j < 3; j++) {
+    int r = encoded % 19683; /* 19683 = 3**9 */
+    int degit = 6561;        /* 6561 = 3**8 */
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
             rot[i][j] = (r % (degit * 3)) / degit - 1;
             degit /= 3;
         }
     }
 
-    t = encoded / 19683; /* 19683 = 3**9 */
+    int t = encoded / 19683; /* 19683 = 3**9 */
     degit = 144;
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         trans[i] = ((double)((t % (degit * 12)) / degit)) / 12;
         degit /= 12;
     }
@@ -10198,13 +10196,9 @@ void spgdb_get_operation_index(int indices[2], const int hall_number) {
 
 /* Return NULL if failed */
 Symmetry *spgdb_get_spacegroup_operations(const int hall_number) {
-    int i;
     int operation_index[2];
     int rot[3][3];
     double trans[3];
-    Symmetry *symmetry;
-
-    symmetry = NULL;
 
     if (hall_number == 0 || 530 < hall_number || hall_number < -116) {
         return NULL;
@@ -10212,11 +10206,12 @@ Symmetry *spgdb_get_spacegroup_operations(const int hall_number) {
 
     spgdb_get_operation_index(operation_index, hall_number);
 
-    if ((symmetry = sym_alloc_symmetry(operation_index[0])) == NULL) {
+    Symmetry *symmetry = sym_alloc_symmetry(operation_index[0]);
+    if (symmetry == NULL) {
         return NULL;
     }
 
-    for (i = 0; i < operation_index[0]; i++) {
+    for (int i = 0; i < operation_index[0]; i++) {
         /* rotation matrix matching and set difference of translations */
         spgdb_get_operation(rot, trans, operation_index[1] + i);
         mat_copy_matrix_i3(symmetry->rot[i], rot);
@@ -10228,7 +10223,6 @@ Symmetry *spgdb_get_spacegroup_operations(const int hall_number) {
 
 /* Return spgtype.number = 0 if hall_number is out of range. */
 SpacegroupType spgdb_get_spacegroup_type(const int hall_number) {
-    int position;
     SpacegroupType spgtype;
 
     spgtype.number = 0;
@@ -10242,7 +10236,7 @@ SpacegroupType spgdb_get_spacegroup_type(const int hall_number) {
     }
 
     spgdb_remove_space(spgtype.schoenflies, 7);
-    position = spgdb_remove_space(spgtype.hall_symbol, 17);
+    int position = spgdb_remove_space(spgtype.hall_symbol, 17);
     replace_equal_char(spgtype.hall_symbol, position);
     spgdb_remove_space(spgtype.international, 32);
     spgdb_remove_space(spgtype.international_full, 20);
@@ -10253,22 +10247,18 @@ SpacegroupType spgdb_get_spacegroup_type(const int hall_number) {
 }
 
 int spgdb_remove_space(char symbol[], const int num_char) {
-    int i;
-
-    for (i = num_char - 2; i > -1; i--) {
+    for (int i = num_char - 2; i > -1; i--) {
         if (symbol[i] == ' ') {
             symbol[i] = '\0';
         } else {
             return i;
         }
     }
-    return i;
+    return -1;
 }
 
 static void replace_equal_char(char symbol[], const int position) {
-    int i;
-
-    for (i = position; i > -1; i--) {
+    for (int i = position; i > -1; i--) {
         if (symbol[i] == '=') {
             symbol[i] = '\"';
         }
