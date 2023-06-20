@@ -92,7 +92,7 @@ addopts = "-m 'not benchmark'"
 testpaths = ["test/functional/python"]
 
 [tool.coverage.run]
-command_line = '-m pytest --cov'
+command_line = '-m pytest'
 # TODO: Cannot report relative to project path because we cannot do editable installs yet
 #source = ['python/spglib']
 source = ['spglib']
