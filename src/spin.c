@@ -102,26 +102,31 @@ MagneticSymmetry *spn_get_operations_with_site_tensors(
         mag_symprec = mag_symprec_;
     }
 
-    if ((magnetic_symmetry =
-             get_operations(sym_nonspin, cell, with_time_reversal, is_axial,
-                            symprec, mag_symprec)) == NULL) {
+    magnetic_symmetry = get_operations(sym_nonspin, cell, with_time_reversal,
+                                       is_axial, symprec, mag_symprec);
+    if (magnetic_symmetry == NULL) {
         goto err;
     }
 
     /* equivalent atoms */
-    if ((*permutations = get_symmetry_permutations(
-             magnetic_symmetry, cell, with_time_reversal, is_axial, symprec,
-             mag_symprec)) == NULL) {
+    *permutations =
+        get_symmetry_permutations(magnetic_symmetry, cell, with_time_reversal,
+                                  is_axial, symprec, mag_symprec);
+    if (*permutations == NULL) {
+        sym_free_magnetic_symmetry(magnetic_symmetry);
         goto err;
     }
-    if ((*equivalent_atoms = get_orbits(*permutations, magnetic_symmetry->size,
-                                        cell->size)) == NULL) {
+    *equivalent_atoms =
+        get_orbits(*permutations, magnetic_symmetry->size, cell->size);
+    if (*equivalent_atoms == NULL) {
         goto err;
     }
 
-    if ((pure_trans = spn_collect_pure_translations_from_magnetic_symmetry(
-             magnetic_symmetry)) == NULL)
+    pure_trans =
+        spn_collect_pure_translations_from_magnetic_symmetry(magnetic_symmetry);
+    if (pure_trans == NULL) {
         goto err;
+    }
 
     multi = prm_get_primitive_lattice_vectors(prim_lattice, cell, pure_trans,
                                               symprec, angle_tolerance);
@@ -153,7 +158,8 @@ VecDBL *spn_collect_pure_translations_from_magnetic_symmetry(
     pure_trans = NULL;
     ret_pure_trans = NULL;
 
-    if ((pure_trans = mat_alloc_VecDBL(sym_msg->size)) == NULL) return NULL;
+    pure_trans = mat_alloc_VecDBL(sym_msg->size);
+    if (pure_trans == NULL) return NULL;
 
     for (i = 0; i < sym_msg->size; i++) {
         /* Take translation with rot=identity and timerev=false */
@@ -168,7 +174,8 @@ VecDBL *spn_collect_pure_translations_from_magnetic_symmetry(
     }
 
     /* Shrink allocated size of VecDBL */
-    if ((ret_pure_trans = mat_alloc_VecDBL(num_pure_trans)) == NULL) {
+    ret_pure_trans = mat_alloc_VecDBL(num_pure_trans);
+    if (ret_pure_trans == NULL) {
         mat_free_VecDBL(pure_trans);
         pure_trans = NULL;
         return NULL;
@@ -200,19 +207,22 @@ Cell *spn_get_idealized_cell(const int *permutations, const Cell *cell,
     rotations_cart = NULL;
     inv_perm = NULL;
 
-    if ((inv_perm = (int *)malloc(sizeof(int) * cell->size)) == NULL) {
+    inv_perm = (int *)malloc(sizeof(int) * cell->size);
+    if (inv_perm == NULL) {
         return NULL;
     }
 
-    if ((exact_cell = cel_alloc_cell(cell->size, cell->tensor_rank)) == NULL) {
+    exact_cell = cel_alloc_cell(cell->size, cell->tensor_rank);
+    if (cell == NULL) {
         return NULL;
     }
     mat_copy_matrix_d3(exact_cell->lattice, cell->lattice);
     exact_cell->aperiodic_axis = cell->aperiodic_axis;
     exact_cell->size = cell->size;
 
-    if ((rotations_cart = (double(*)[3][3])malloc(
-             sizeof(double[3][3]) * magnetic_symmetry->size)) == NULL) {
+    rotations_cart =
+        (double(*)[3][3])malloc(sizeof(double[3][3]) * magnetic_symmetry->size);
+    if (rotations_cart == NULL) {
         return NULL;
     }
     set_rotations_in_cartesian(rotations_cart, cell->lattice,
@@ -305,11 +315,13 @@ Cell *spn_get_idealized_cell(const int *permutations, const Cell *cell,
 double *spn_alloc_site_tensors(const int num_atoms, const int tensor_rank) {
     double *ret;
     if (tensor_rank == 0) {
-        if ((ret = (double *)malloc(sizeof(double) * num_atoms)) == NULL) {
+        ret = (double *)malloc(sizeof(double) * num_atoms);
+        if (ret == NULL) {
             return NULL;
         }
     } else if (tensor_rank == 1) {
-        if ((ret = (double *)malloc(sizeof(double) * num_atoms * 3)) == NULL) {
+        ret = (double *)malloc(sizeof(double) * num_atoms * 3);
+        if (ret == NULL) {
             return NULL;
         }
     } else {
@@ -342,8 +354,9 @@ static MagneticSymmetry *get_operations(
     rotations_cart = NULL;
 
     /* Site tensors in cartesian */
-    if ((rotations_cart = (double(*)[3][3])malloc(sizeof(double[3][3]) *
-                                                  sym_nonspin->size)) == NULL) {
+    rotations_cart =
+        (double(*)[3][3])malloc(sizeof(double[3][3]) * sym_nonspin->size);
+    if (rotations_cart == NULL) {
         goto err;
     }
     mat_inverse_matrix_d3(inv_lat, cell->lattice, 0);
@@ -360,7 +373,8 @@ static MagneticSymmetry *get_operations(
     max_size = 2 * sym_nonspin->size;
     rotations = mat_alloc_MatINT(max_size);
     trans = mat_alloc_VecDBL(max_size);
-    if ((spin_flips = (int *)malloc(sizeof(int) * max_size)) == NULL) {
+    spin_flips = (int *)malloc(sizeof(int) * max_size);
+    if (spin_flips == NULL) {
         goto err;
     }
 
@@ -563,14 +577,16 @@ static int *get_symmetry_permutations(const MagneticSymmetry *magnetic_symmetry,
     rotations_cart = NULL;
     permutations = NULL;
 
-    if ((permutations = (int *)malloc(sizeof(int) * magnetic_symmetry->size *
-                                      cell->size)) == NULL) {
+    permutations =
+        (int *)malloc(sizeof(int) * magnetic_symmetry->size * cell->size);
+    if (permutations == NULL) {
         return NULL;
     }
 
     /* Site tensors in cartesian */
-    if ((rotations_cart = (double(*)[3][3])malloc(
-             sizeof(double[3][3]) * magnetic_symmetry->size)) == NULL) {
+    rotations_cart =
+        (double(*)[3][3])malloc(sizeof(double[3][3]) * magnetic_symmetry->size);
+    if (rotations_cart == NULL) {
         free(permutations);
         permutations = NULL;
         return NULL;
@@ -649,7 +665,8 @@ static int *get_orbits(const int *permutations, const int num_sym,
     int s, i;
     int *equivalent_atoms;
 
-    if ((equivalent_atoms = (int *)malloc(sizeof(int) * num_atoms)) == NULL) {
+    equivalent_atoms = (int *)malloc(sizeof(int) * num_atoms);
+    if (equivalent_atoms == NULL) {
         return NULL;
     }
 

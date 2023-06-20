@@ -68,13 +68,14 @@ DataContainer *det_determine_all(const Cell *cell, const int hall_number,
 
     tolerance = symprec;
     for (attempt = 0; attempt < NUM_ATTEMPT_OUTER; attempt++) {
-        if ((container = get_spacegroup_and_primitive(
-                 cell, hall_number, tolerance, angle_symprec)) != NULL) {
-            if ((container->exact_structure =
-                     ref_get_exact_structure_and_symmetry(
-                         container->spacegroup, container->primitive->cell,
-                         cell, container->primitive->mapping_table,
-                         container->primitive->tolerance)) != NULL) {
+        container = get_spacegroup_and_primitive(cell, hall_number, tolerance,
+                                                 angle_symprec);
+        if (container != NULL) {
+            container->exact_structure = ref_get_exact_structure_and_symmetry(
+                container->spacegroup, container->primitive->cell, cell,
+                container->primitive->mapping_table,
+                container->primitive->tolerance);
+            if (container->exact_structure != NULL) {
                 goto found;
             }
             warning_print(
@@ -121,7 +122,8 @@ static DataContainer *get_spacegroup_and_primitive(const Cell *cell,
 
     container = NULL;
 
-    if ((container = (DataContainer *)malloc(sizeof(DataContainer))) == NULL) {
+    container = (DataContainer *)malloc(sizeof(DataContainer));
+    if (container == NULL) {
         warning_print("spglib: Memory could not be allocated.");
         return NULL;
     }
@@ -134,16 +136,18 @@ static DataContainer *get_spacegroup_and_primitive(const Cell *cell,
     angle_tolerance = angle_symprec;
 
     for (attempt = 0; attempt < NUM_ATTEMPT; attempt++) {
-        if ((container->primitive =
-                 prm_get_primitive(cell, tolerance, angle_tolerance)) != NULL) {
+        container->primitive =
+            prm_get_primitive(cell, tolerance, angle_tolerance);
+        if (container->primitive != NULL) {
             debug_print("[line %d, %s]\n", __LINE__, __FILE__);
             debug_print("primitive lattice\n");
             debug_print_matrix_d3(container->primitive->cell->lattice);
 
-            if ((container->spacegroup = spa_search_spacegroup(
-                     container->primitive, hall_number,
-                     container->primitive->tolerance,
-                     container->primitive->angle_tolerance)) != NULL) {
+            container->spacegroup =
+                spa_search_spacegroup(container->primitive, hall_number,
+                                      container->primitive->tolerance,
+                                      container->primitive->angle_tolerance);
+            if (container->spacegroup != NULL) {
                 goto found;
             }
 

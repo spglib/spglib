@@ -365,15 +365,16 @@ MatINT *mat_alloc_MatINT(const int size) {
 
     matint = NULL;
 
-    if ((matint = (MatINT *)malloc(sizeof(MatINT))) == NULL) {
+    matint = (MatINT *)malloc(sizeof(MatINT));
+    if (matint == NULL) {
         warning_print("spglib: Memory could not be allocated.");
         return NULL;
     }
 
     matint->size = size;
     if (size > 0) {
-        if ((matint->mat = (int(*)[3][3])malloc(sizeof(int[3][3]) * size)) ==
-            NULL) {
+        matint->mat = (int(*)[3][3])malloc(sizeof(int[3][3]) * size);
+        if (matint->mat == NULL) {
             warning_print("spglib: Memory could not be allocated ");
             warning_print("(MatINT, line %d, %s).\n", __LINE__, __FILE__);
             free(matint);
@@ -397,15 +398,16 @@ VecDBL *mat_alloc_VecDBL(const int size) {
 
     vecdbl = NULL;
 
-    if ((vecdbl = (VecDBL *)malloc(sizeof(VecDBL))) == NULL) {
+    vecdbl = (VecDBL *)malloc(sizeof(VecDBL));
+    if (vecdbl == NULL) {
         warning_print("spglib: Memory could not be allocated.");
         return NULL;
     }
 
     vecdbl->size = size;
     if (size > 0) {
-        if ((vecdbl->vec = (double(*)[3])malloc(sizeof(double[3]) * size)) ==
-            NULL) {
+        vecdbl->vec = (double(*)[3])malloc(sizeof(double[3]) * size);
+        if (vecdbl->vec == NULL) {
             warning_print("spglib: Memory could not be allocated ");
             warning_print("(VecDBL, line %d, %s).\n", __LINE__, __FILE__);
             free(vecdbl);

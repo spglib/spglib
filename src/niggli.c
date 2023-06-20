@@ -130,7 +130,8 @@ int niggli_reduce(double *lattice_, const double eps_,
     p = NULL;
     succeeded = 0;
 
-    if ((p = initialize(lattice_, eps_)) == NULL) {
+    p = initialize(lattice_, eps_);
+    if (p == NULL) {
         return 0;
     }
 
@@ -173,7 +174,8 @@ static NiggliParams *initialize(const double *lattice_, const double eps_) {
 
     p = NULL;
 
-    if ((p = (NiggliParams *)malloc(sizeof(NiggliParams))) == NULL) {
+    p = (NiggliParams *)malloc(sizeof(NiggliParams));
+    if (p == NULL) {
         warning_print("niggli: Memory could not be allocated.");
         return NULL;
     }
@@ -191,7 +193,8 @@ static NiggliParams *initialize(const double *lattice_, const double eps_) {
     p->tmat = NULL;
     p->lattice = NULL;
 
-    if ((p->tmat = (double *)malloc(sizeof(double) * 9)) == NULL) {
+    p->tmat = (double *)malloc(sizeof(double) * 9);
+    if (p->tmat == NULL) {
         warning_print("niggli: Memory could not be allocated.");
         free(p);
         p = NULL;
@@ -199,7 +202,9 @@ static NiggliParams *initialize(const double *lattice_, const double eps_) {
     }
 
     p->eps = eps_;
-    if ((p->lattice = (double *)malloc(sizeof(double) * 9)) == NULL) {
+
+    p->lattice = (double *)malloc(sizeof(double) * 9);
+    if (p->lattice == NULL) {
         warning_print("niggli: Memory could not be allocated.");
         free(p->tmat);
         p->tmat = NULL;
@@ -243,7 +248,8 @@ static int reset(NiggliParams *p) {
 
     lat_tmp = NULL;
 
-    if ((lat_tmp = multiply_matrices(p->lattice, p->tmat)) == NULL) {
+    lat_tmp = multiply_matrices(p->lattice, p->tmat);
+    if (lat_tmp == NULL) {
         return 0;
     }
     memcpy(p->lattice, lat_tmp, sizeof(double) * 9);
@@ -258,7 +264,8 @@ static int set_parameters(NiggliParams *p) {
 
     G = NULL;
 
-    if ((G = get_metric(p->lattice)) == NULL) {
+    G = get_metric(p->lattice);
+    if (G == NULL) {
         return 0;
     }
 
@@ -484,7 +491,8 @@ static double *get_transpose(const double *M) {
 
     M_T = NULL;
 
-    if ((M_T = (double *)malloc(sizeof(double) * 9)) == NULL) {
+    M_T = (double *)malloc(sizeof(double) * 9);
+    if (M_T == NULL) {
         warning_print("niggli: Memory could not be allocated.");
         return NULL;
     }
@@ -504,10 +512,12 @@ static double *get_metric(const double *M) {
     G = NULL;
     M_T = NULL;
 
-    if ((M_T = get_transpose(M)) == NULL) {
+    M_T = get_transpose(M);
+    if (M_T == NULL) {
         return NULL;
     }
-    if ((G = multiply_matrices(M_T, M)) == NULL) {
+    G = multiply_matrices(M_T, M);
+    if (G == NULL) {
         return NULL;
     }
 
@@ -523,7 +533,8 @@ static double *multiply_matrices(const double *L, const double *R) {
 
     M = NULL;
 
-    if ((M = (double *)malloc(sizeof(double) * 9)) == NULL) {
+    M = (double *)malloc(sizeof(double) * 9);
+    if (M == NULL) {
         warning_print("niggli: Memory could not be allocated.");
         return NULL;
     }

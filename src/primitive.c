@@ -76,7 +76,8 @@ Primitive *prm_alloc_primitive(const int size) {
 
     primitive = NULL;
 
-    if ((primitive = (Primitive *)malloc(sizeof(Primitive))) == NULL) {
+    primitive = (Primitive *)malloc(sizeof(Primitive));
+    if (primitive == NULL) {
         warning_print("spglib: Memory could not be allocated ");
         return NULL;
     }
@@ -89,8 +90,8 @@ Primitive *prm_alloc_primitive(const int size) {
     primitive->orig_lattice = NULL;
 
     if (size > 0) {
-        if ((primitive->mapping_table = (int *)malloc(sizeof(int) * size)) ==
-            NULL) {
+        primitive->mapping_table = (int *)malloc(sizeof(int) * size);
+        if (primitive->mapping_table == NULL) {
             warning_print("spglib: Memory could not be allocated ");
             warning_print("(Primitive, line %d, %s).\n", __LINE__, __FILE__);
             free(primitive);
@@ -142,25 +143,26 @@ int prm_get_primitive_with_pure_trans(Primitive *primitive, const Cell *cell,
     int i;
 
     if (pure_trans->size == 1) {
-        if ((primitive->cell = get_cell_with_smallest_lattice(cell, symprec)) ==
-            NULL) {
+        primitive->cell = get_cell_with_smallest_lattice(cell, symprec);
+        if (primitive->cell == NULL) {
             return 0;
         }
         for (i = 0; i < cell->size; i++) {
             primitive->mapping_table[i] = i;
         }
     } else {
-        if ((primitive->cell =
-                 get_primitive_cell(primitive->mapping_table, cell, pure_trans,
-                                    symprec, angle_tolerance)) == NULL) {
+        primitive->cell =
+            get_primitive_cell(primitive->mapping_table, cell, pure_trans,
+                               symprec, angle_tolerance);
+        if (primitive->cell == NULL) {
             return 0;
         }
     }
 
     primitive->tolerance = symprec;
     primitive->angle_tolerance = angle_tolerance;
-    if ((primitive->orig_lattice =
-             (double(*)[3])malloc(sizeof(double[3]) * 3)) == NULL) {
+    primitive->orig_lattice = (double(*)[3])malloc(sizeof(double[3]) * 3);
+    if (primitive->orig_lattice == NULL) {
         warning_print("spglib: Memory could not be allocated.");
         return 0;
     }
@@ -182,7 +184,8 @@ Symmetry *prm_get_primitive_symmetry(double t_mat[3][3],
     pure_trans = NULL;
     prim_symmetry = NULL;
 
-    if ((pure_trans = collect_pure_translations(symmetry)) == NULL) {
+    pure_trans = collect_pure_translations(symmetry);
+    if (pure_trans == NULL) {
         return NULL;
     }
     primsym_size = symmetry->size / pure_trans->size;
@@ -203,8 +206,8 @@ Symmetry *prm_get_primitive_symmetry(double t_mat[3][3],
     }
 
     /* Collect operations for primitive cell from operations in 'symmetry' */
-    if ((prim_symmetry = collect_primitive_symmetry(symmetry, primsym_size)) ==
-        NULL) {
+    prim_symmetry = collect_primitive_symmetry(symmetry, primsym_size);
+    if (prim_symmetry == NULL) {
         return NULL;
     }
 
@@ -257,14 +260,16 @@ static Primitive *get_primitive(const Cell *cell, const double symprec,
     primitive = NULL;
     pure_trans = NULL;
 
-    if ((primitive = prm_alloc_primitive(cell->size)) == NULL) {
+    primitive = prm_alloc_primitive(cell->size);
+    if (primitive == NULL) {
         goto notfound;
     }
 
     tolerance = symprec;
     for (attempt = 0; attempt < NUM_ATTEMPT; attempt++) {
         debug_print("get_primitive (attempt = %d):\n", attempt);
-        if ((pure_trans = sym_get_pure_translation(cell, tolerance)) != NULL) {
+        pure_trans = sym_get_pure_translation(cell, tolerance);
+        if (pure_trans != NULL) {
             if (prm_get_primitive_with_pure_trans(primitive, cell, pure_trans,
                                                   tolerance, angle_tolerance)) {
                 goto found;
@@ -314,8 +319,8 @@ static Cell *get_cell_with_smallest_lattice(const Cell *cell,
     mat_inverse_matrix_d3(inv_lat, min_lat, 0);
     mat_multiply_matrix_d3(trans_mat, inv_lat, cell->lattice);
 
-    if ((smallest_cell = cel_alloc_cell(cell->size, cell->tensor_rank)) ==
-        NULL) {
+    smallest_cell = cel_alloc_cell(cell->size, cell->tensor_rank);
+    if (smallest_cell == NULL) {
         return NULL;
     }
 
@@ -359,8 +364,8 @@ static Cell *get_primitive_cell(int *mapping_table, const Cell *cell,
     }
 
     /* Fit atoms into new primitive cell */
-    if ((primitive_cell = cel_trim_cell(mapping_table, prim_lattice, cell,
-                                        symprec)) == NULL) {
+    primitive_cell = cel_trim_cell(mapping_table, prim_lattice, cell, symprec);
+    if (primitive_cell == NULL) {
         goto not_found;
     }
 
@@ -389,7 +394,8 @@ static int get_primitive_lattice_vectors(double prim_lattice[3][3],
 
     tolerance = symprec;
 
-    if ((pure_trans_reduced = mat_alloc_VecDBL(pure_trans->size)) == NULL) {
+    pure_trans_reduced = mat_alloc_VecDBL(pure_trans->size);
+    if (pure_trans_reduced == NULL) {
         goto fail;
     }
 
@@ -400,8 +406,8 @@ static int get_primitive_lattice_vectors(double prim_lattice[3][3],
     for (attempt = 0; attempt < NUM_ATTEMPT; attempt++) {
         multi = pure_trans_reduced->size;
 
-        if ((vectors = get_translation_candidates(pure_trans_reduced)) ==
-            NULL) {
+        vectors = get_translation_candidates(pure_trans_reduced);
+        if (vectors == NULL) {
             mat_free_VecDBL(pure_trans_reduced);
             pure_trans_reduced = NULL;
             goto fail;
@@ -426,7 +432,8 @@ static int get_primitive_lattice_vectors(double prim_lattice[3][3],
             goto found;
 
         } else {
-            if ((tmp_vec = mat_alloc_VecDBL(multi)) == NULL) {
+            tmp_vec = mat_alloc_VecDBL(pure_trans_reduced->size);
+            if (tmp_vec == NULL) {
                 mat_free_VecDBL(vectors);
                 vectors = NULL;
                 mat_free_VecDBL(pure_trans_reduced);
@@ -580,7 +587,8 @@ static VecDBL *get_translation_candidates(const VecDBL *pure_trans) {
     vectors = NULL;
     multi = pure_trans->size;
 
-    if ((vectors = mat_alloc_VecDBL(multi + 2)) == NULL) {
+    vectors = mat_alloc_VecDBL(multi + 2);
+    if (vectors == NULL) {
         return NULL;
     }
 
@@ -614,7 +622,8 @@ static VecDBL *collect_pure_translations(const Symmetry *symmetry) {
     pure_trans = NULL;
     ret_pure_trans = NULL;
 
-    if ((pure_trans = mat_alloc_VecDBL(symmetry->size)) == NULL) {
+    pure_trans = mat_alloc_VecDBL(symmetry->size);
+    if (pure_trans == NULL) {
         return NULL;
     }
 
@@ -626,7 +635,8 @@ static VecDBL *collect_pure_translations(const Symmetry *symmetry) {
         }
     }
 
-    if ((ret_pure_trans = mat_alloc_VecDBL(num_pure_trans)) == NULL) {
+    ret_pure_trans = mat_alloc_VecDBL(num_pure_trans);
+    if (ret_pure_trans == NULL) {
         mat_free_VecDBL(pure_trans);
         pure_trans = NULL;
         return NULL;
@@ -653,7 +663,8 @@ static int get_primitive_in_translation_space(double t_mat_inv[3][3],
     cell = NULL;
     primitive = NULL;
 
-    if ((cell = cel_alloc_cell(pure_trans->size, NOSPIN)) == NULL) {
+    cell = cel_alloc_cell(pure_trans->size, NOSPIN);
+    if (cell == NULL) {
         return 0;
     }
 

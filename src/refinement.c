@@ -36,6 +36,7 @@
 
 #include "refinement.h"
 
+#include <assert.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -155,51 +156,53 @@ ExactStructure *ref_get_exact_structure_and_symmetry(Spacegroup *spacegroup,
     if (!ref_find_similar_bravais_lattice(spacegroup, symprec)) {
         goto err;
     }
-
-    if ((symmetry = get_refined_symmetry_operations(cell, primitive, spacegroup,
-                                                    symprec)) == NULL) {
+    symmetry =
+        get_refined_symmetry_operations(cell, primitive, spacegroup, symprec);
+    if (symmetry == NULL) {
+        warning_print("spglib: Memory could not be allocated.");
         goto err;
     }
-
-    if ((wyckoffs = (int *)malloc(sizeof(int) * cell->size)) == NULL) {
+    assert(cell != NULL);
+    wyckoffs = (int *)malloc(sizeof(int) * cell->size);
+    if (wyckoffs == NULL) {
+        warning_print("spglib: Memory could not be allocated.");
+        goto err;
+    }
+    site_symmetry_symbols = (char(*)[7])malloc(sizeof(char[7]) * cell->size);
+    if (site_symmetry_symbols == NULL) {
         warning_print("spglib: Memory could not be allocated.");
         goto err;
     }
 
-    if ((site_symmetry_symbols =
-             (char(*)[7])malloc(sizeof(char[7]) * cell->size)) == NULL) {
+    equivalent_atoms = (int *)malloc(sizeof(int) * cell->size);
+    if (equivalent_atoms == NULL) {
+        warning_print("spglib: Memory could not be allocated.");
+        goto err;
+    }
+    crystallographic_orbits = (int *)malloc(sizeof(int) * cell->size);
+    if (crystallographic_orbits == NULL) {
         warning_print("spglib: Memory could not be allocated.");
         goto err;
     }
 
-    if ((equivalent_atoms = (int *)malloc(sizeof(int) * cell->size)) == NULL) {
+    std_mapping_to_primitive = (int *)malloc(sizeof(int) * primitive->size * 4);
+    if (std_mapping_to_primitive == NULL) {
         warning_print("spglib: Memory could not be allocated.");
         goto err;
     }
 
-    if ((crystallographic_orbits = (int *)malloc(sizeof(int) * cell->size)) ==
-        NULL) {
-        warning_print("spglib: Memory could not be allocated.");
-        goto err;
-    }
-
-    if ((std_mapping_to_primitive =
-             (int *)malloc(sizeof(int) * primitive->size * 4)) == NULL) {
-        warning_print("spglib: Memory could not be allocated.");
-        goto err;
-    }
-
-    if ((bravais = get_Wyckoff_positions(
-             wyckoffs, site_symmetry_symbols, equivalent_atoms,
-             crystallographic_orbits, std_mapping_to_primitive, primitive, cell,
-             spacegroup, symmetry, mapping_table, symprec)) == NULL) {
+    bravais = get_Wyckoff_positions(
+        wyckoffs, site_symmetry_symbols, equivalent_atoms,
+        crystallographic_orbits, std_mapping_to_primitive, primitive, cell,
+        spacegroup, symmetry, mapping_table, symprec);
+    if (bravais == NULL) {
         sym_free_symmetry(symmetry);
         symmetry = NULL;
         goto err;
     }
 
-    if ((exact_structure = (ExactStructure *)malloc(sizeof(ExactStructure))) ==
-        NULL) {
+    exact_structure = (ExactStructure *)malloc(sizeof(ExactStructure));
+    if (exact_structure == NULL) {
         warning_print("spglib: Memory could not be allocated.");
         sym_free_symmetry(symmetry);
         symmetry = NULL;
@@ -301,22 +304,23 @@ static Cell *get_Wyckoff_positions(
     site_symmetry_symbols_bravais = NULL;
     equiv_atoms_bravais = NULL;
 
-    if ((wyckoffs_bravais = (int *)malloc(sizeof(int) * primitive->size * 4)) ==
-        NULL) {
+    wyckoffs_bravais = (int *)malloc(sizeof(int) * primitive->size * 4);
+    if (wyckoffs_bravais == NULL) {
         warning_print("spglib: Memory could not be allocated ");
         return NULL;
     }
 
-    if ((site_symmetry_symbols_bravais = (char(*)[7])malloc(
-             sizeof(char[7]) * primitive->size * 4)) == NULL) {
+    site_symmetry_symbols_bravais =
+        (char(*)[7])malloc(sizeof(char[7]) * primitive->size * 4);
+    if (site_symmetry_symbols_bravais == NULL) {
         warning_print("spglib: Memory could not be allocated.");
         free(wyckoffs_bravais);
         wyckoffs_bravais = NULL;
         return NULL;
     }
 
-    if ((equiv_atoms_bravais =
-             (int *)malloc(sizeof(int) * primitive->size * 4)) == NULL) {
+    equiv_atoms_bravais = (int *)malloc(sizeof(int) * primitive->size * 4);
+    if (equiv_atoms_bravais == NULL) {
         warning_print("spglib: Memory could not be allocated ");
         free(wyckoffs_bravais);
         wyckoffs_bravais = NULL;
@@ -325,10 +329,10 @@ static Cell *get_Wyckoff_positions(
         return NULL;
     }
 
-    if ((bravais = get_bravais_exact_positions_and_lattice(
-             wyckoffs_bravais, site_symmetry_symbols_bravais,
-             equiv_atoms_bravais, std_mapping_to_primitive, spacegroup,
-             primitive, symprec)) == NULL) {
+    bravais = get_bravais_exact_positions_and_lattice(
+        wyckoffs_bravais, site_symmetry_symbols_bravais, equiv_atoms_bravais,
+        std_mapping_to_primitive, spacegroup, primitive, symprec);
+    if (bravais == NULL) {
         warning_print(
             "spglib: get_bravais_exact_positions_and_lattice failed.");
         warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
@@ -410,22 +414,23 @@ static Cell *get_bravais_exact_positions_and_lattice(
     exact_positions = NULL;
 
     /* Symmetrize atomic positions of conventional unit cell */
-    if ((wyckoffs_prim = (int *)malloc(sizeof(int) * primitive->size)) ==
-        NULL) {
+    wyckoffs_prim = (int *)malloc(sizeof(int) * primitive->size);
+    if (wyckoffs_prim == NULL) {
         warning_print("spglib: Memory could not be allocated ");
         return NULL;
     }
 
-    if ((site_symmetry_symbols_prim =
-             (char(*)[7])malloc(sizeof(char[7]) * primitive->size)) == NULL) {
+    site_symmetry_symbols_prim =
+        (char(*)[7])malloc(sizeof(char[7]) * primitive->size);
+    if (site_symmetry_symbols_prim == NULL) {
         warning_print("spglib: Memory could not be allocated ");
         free(wyckoffs_prim);
         wyckoffs_prim = NULL;
         return NULL;
     }
 
-    if ((equiv_atoms_prim = (int *)malloc(sizeof(int) * primitive->size)) ==
-        NULL) {
+    equiv_atoms_prim = (int *)malloc(sizeof(int) * primitive->size);
+    if (equiv_atoms_prim == NULL) {
         warning_print("spglib: Memory could not be allocated ");
         free(site_symmetry_symbols_prim);
         site_symmetry_symbols_prim = NULL;
@@ -443,8 +448,10 @@ static Cell *get_bravais_exact_positions_and_lattice(
     }
 
     /* Positions of primitive atoms are represented wrt Bravais lattice */
-    if ((conv_prim = get_conventional_primitive(spacegroup, primitive)) ==
-        NULL) {
+    conv_prim = get_conventional_primitive(spacegroup, primitive);
+    if (conv_prim == NULL) {
+        warning_print("spglib: get_conventional_primitive failed.");
+        warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
         free(wyckoffs_prim);
         wyckoffs_prim = NULL;
         free(equiv_atoms_prim);
@@ -455,8 +462,8 @@ static Cell *get_bravais_exact_positions_and_lattice(
     }
 
     /* Symmetries in database (wrt Bravais lattice) */
-    if ((conv_sym = spgdb_get_spacegroup_operations(spacegroup->hall_number)) ==
-        NULL) {
+    conv_sym = spgdb_get_spacegroup_operations(spacegroup->hall_number);
+    if (conv_sym == NULL) {
         goto err;
     }
     num_pure_trans = get_number_of_pure_translation(conv_sym);
@@ -467,10 +474,10 @@ static Cell *get_bravais_exact_positions_and_lattice(
     /* Aperiodic axis is set. */
     conv_prim->aperiodic_axis = spacegroup->hall_number > 0 ? -1 : 2;
 
-    if ((exact_positions = ssm_get_exact_positions(
-             wyckoffs_prim, equiv_atoms_prim, site_symmetry_symbols_prim,
-             conv_prim, conv_sym, num_pure_trans, spacegroup->hall_number,
-             symprec)) == NULL) {
+    exact_positions = ssm_get_exact_positions(
+        wyckoffs_prim, equiv_atoms_prim, site_symmetry_symbols_prim, conv_prim,
+        conv_sym, num_pure_trans, spacegroup->hall_number, symprec);
+    if (exact_positions == NULL) {
         sym_free_symmetry(conv_sym);
         conv_sym = NULL;
         warning_print("spglib: ssm_get_exact_positions failed.");
@@ -519,8 +526,9 @@ static Cell *expand_positions_in_bravais(
 
     bravais = NULL;
 
-    if ((bravais = cel_alloc_cell(conv_prim->size * num_pure_trans,
-                                  conv_prim->tensor_rank)) == NULL) {
+    bravais = cel_alloc_cell(conv_prim->size * num_pure_trans,
+                             conv_prim->tensor_rank);
+    if (bravais == NULL) {
         return NULL;
     }
 
@@ -585,8 +593,8 @@ static Cell *get_conventional_primitive(const Spacegroup *spacegroup,
 
     conv_prim = NULL;
 
-    if ((conv_prim = cel_alloc_cell(primitive->size, primitive->tensor_rank)) ==
-        NULL) {
+    conv_prim = cel_alloc_cell(primitive->size, primitive->tensor_rank);
+    if (conv_prim == NULL) {
         return NULL;
     }
 
@@ -875,8 +883,8 @@ static Symmetry *get_refined_symmetry_operations(const Cell *cell,
     symmetry = NULL;
 
     /* Primitive symmetry from database */
-    if ((conv_sym = spgdb_get_spacegroup_operations(spacegroup->hall_number)) ==
-        NULL) {
+    conv_sym = spgdb_get_spacegroup_operations(spacegroup->hall_number);
+    if (conv_sym == NULL) {
         return NULL;
     }
 
@@ -885,7 +893,8 @@ static Symmetry *get_refined_symmetry_operations(const Cell *cell,
 
     set_translation_with_origin_shift(conv_sym, spacegroup->origin_shift);
 
-    if ((prim_sym = get_primitive_db_symmetry(t_mat, conv_sym)) == NULL) {
+    prim_sym = get_primitive_db_symmetry(t_mat, conv_sym);
+    if (prim_sym == NULL) {
         sym_free_symmetry(conv_sym);
         conv_sym = NULL;
         return NULL;
@@ -917,7 +926,8 @@ static int set_crystallographic_orbits(int *equiv_atoms_cell,
 
     equiv_atoms = NULL;
 
-    if ((equiv_atoms = (int *)malloc(sizeof(int) * primitive->size)) == NULL) {
+    equiv_atoms = (int *)malloc(sizeof(int) * primitive->size);
+    if (equiv_atoms == NULL) {
         warning_print("spglib: Memory could not be allocated ");
         return 0;
     }
@@ -1069,11 +1079,13 @@ static Symmetry *get_primitive_db_symmetry(const double t_mat[3][3],
     t_prim = NULL;
     prim_sym = NULL;
 
-    if ((r_prim = mat_alloc_MatINT(conv_sym->size)) == NULL) {
+    r_prim = mat_alloc_MatINT(conv_sym->size);
+    if (r_prim == NULL) {
         return NULL;
     }
 
-    if ((t_prim = mat_alloc_VecDBL(conv_sym->size)) == NULL) {
+    t_prim = mat_alloc_VecDBL(conv_sym->size);
+    if (t_prim == NULL) {
         mat_free_MatINT(r_prim);
         r_prim = NULL;
         return NULL;
@@ -1102,7 +1114,8 @@ static Symmetry *get_primitive_db_symmetry(const double t_mat[3][3],
     pass:;
     }
 
-    if ((prim_sym = sym_alloc_symmetry(num_op)) == NULL) {
+    prim_sym = sym_alloc_symmetry(num_op);
+    if (prim_sym == NULL) {
         goto ret;
     }
 
@@ -1190,19 +1203,21 @@ static Symmetry *recover_symmetry_in_original_cell(
     mat_cast_matrix_3i_to_3d(tmp_mat, t_mat);
     mat_inverse_matrix_d3(inv_tmat, tmp_mat, 0);
 
-    if ((lattice_trans = get_lattice_translations(frame, inv_tmat)) == NULL) {
+    lattice_trans = get_lattice_translations(frame, inv_tmat);
+    if (lattice_trans == NULL) {
         return NULL;
     }
 
-    if ((pure_trans = remove_overlapping_lattice_points(lattice, lattice_trans,
-                                                        symprec)) == NULL) {
+    pure_trans =
+        remove_overlapping_lattice_points(lattice, lattice_trans, symprec);
+    if (pure_trans == NULL) {
         mat_free_VecDBL(lattice_trans);
         lattice_trans = NULL;
         return NULL;
     }
-
-    if ((t_sym = get_symmetry_in_original_cell(t_mat, inv_tmat, lattice,
-                                               prim_sym, symprec)) == NULL) {
+    t_sym = get_symmetry_in_original_cell(t_mat, inv_tmat, lattice, prim_sym,
+                                          symprec);
+    if (t_sym == NULL) {
         mat_free_VecDBL(pure_trans);
         pure_trans = NULL;
         mat_free_VecDBL(lattice_trans);
@@ -1233,8 +1248,8 @@ static VecDBL *get_lattice_translations(const int frame[3],
 
     lattice_trans = NULL;
 
-    if ((lattice_trans = mat_alloc_VecDBL(frame[0] * frame[1] * frame[2])) ==
-        NULL) {
+    lattice_trans = mat_alloc_VecDBL(frame[0] * frame[1] * frame[2]);
+    if (lattice_trans == NULL) {
         return NULL;
     }
 
@@ -1273,7 +1288,8 @@ static VecDBL *remove_overlapping_lattice_points(const double lattice[3][3],
 
     num_pure_trans = 0;
 
-    if ((t = mat_alloc_VecDBL(lattice_trans->size)) == NULL) {
+    t = mat_alloc_VecDBL(lattice_trans->size);
+    if (t == NULL) {
         return NULL;
     }
 
@@ -1292,7 +1308,8 @@ static VecDBL *remove_overlapping_lattice_points(const double lattice[3][3],
         }
     }
 
-    if ((pure_trans = mat_alloc_VecDBL(num_pure_trans)) == NULL) {
+    pure_trans = mat_alloc_VecDBL(num_pure_trans);
+    if (pure_trans == NULL) {
         mat_free_VecDBL(t);
         t = NULL;
         return NULL;
@@ -1321,7 +1338,8 @@ static Symmetry *get_symmetry_in_original_cell(const int t_mat[3][3],
     t_sym = NULL;
     t_red_sym = NULL;
 
-    if ((t_sym = sym_alloc_symmetry(prim_sym->size)) == NULL) {
+    t_sym = sym_alloc_symmetry(prim_sym->size);
+    if (t_sym == NULL) {
         return NULL;
     }
 
@@ -1351,7 +1369,8 @@ static Symmetry *get_symmetry_in_original_cell(const int t_mat[3][3],
 
     /* Broken symmetry due to supercell multiplicity */
     if (size_sym_orig != prim_sym->size) {
-        if ((t_red_sym = sym_alloc_symmetry(size_sym_orig)) == NULL) {
+        t_red_sym = sym_alloc_symmetry(size_sym_orig);
+        if (t_red_sym == NULL) {
             sym_free_symmetry(t_sym);
             t_sym = NULL;
             return NULL;
@@ -1383,8 +1402,8 @@ static Symmetry *copy_symmetry_upon_lattice_points(const VecDBL *pure_trans,
 
     size_sym_orig = t_sym->size;
 
-    if ((symmetry = sym_alloc_symmetry(pure_trans->size * size_sym_orig)) ==
-        NULL) {
+    symmetry = sym_alloc_symmetry(pure_trans->size * size_sym_orig);
+    if (symmetry == NULL) {
         return NULL;
     }
 
@@ -1421,8 +1440,8 @@ int ref_find_similar_bravais_lattice(Spacegroup *spacegroup,
 
     conv_sym = NULL;
 
-    if ((conv_sym = spgdb_get_spacegroup_operations(spacegroup->hall_number)) ==
-        NULL) {
+    conv_sym = spgdb_get_spacegroup_operations(spacegroup->hall_number);
+    if (conv_sym == NULL) {
         return 0;
     }
 

@@ -483,8 +483,8 @@ Spacegroup *spa_search_spacegroup(const Primitive *primitive,
     symmetry = NULL;
     spacegroup = NULL;
 
-    if ((symmetry = sym_get_operation(primitive->cell, symprec,
-                                      angle_tolerance)) == NULL) {
+    symmetry = sym_get_operation(primitive->cell, symprec, angle_tolerance);
+    if (symmetry == NULL) {
         return NULL;
     }
 
@@ -522,10 +522,12 @@ Spacegroup *spa_search_spacegroup_with_symmetry(const Symmetry *symmetry,
 
     spacegroup = NULL;
 
-    if ((primitive = prm_alloc_primitive(1)) == NULL) {
+    primitive = prm_alloc_primitive(1);
+    if (primitive == NULL) {
         return 0;
     }
-    if ((primitive->cell = cel_alloc_cell(1, NOSPIN)) == NULL) {
+    primitive->cell = cel_alloc_cell(1, NOSPIN);
+    if (primitive->cell == NULL) {
         return 0;
     }
     mat_copy_matrix_d3(primitive->cell->lattice, prim_lat);
@@ -578,8 +580,9 @@ Cell *spa_transform_to_primitive(int *mapping_table, const Cell *cell,
     }
 
     mat_multiply_matrix_d3(prim_lat, cell->lattice, tmat);
-    if ((primitive = cel_trim_cell(mapping_table, prim_lat, cell, symprec)) ==
-        NULL) {
+
+    primitive = cel_trim_cell(mapping_table, prim_lat, cell, symprec);
+    if (primitive == NULL) {
         warning_print("spglib: cel_trim_cell failed.");
         warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
     }
@@ -632,14 +635,14 @@ Cell *spa_transform_from_primitive(const Cell *primitive,
 
     multi = get_centering_shifts(shift, centering);
 
-    if ((mapping_table =
-             (int *)malloc(sizeof(int) * primitive->size * multi)) == NULL) {
+    mapping_table = (int *)malloc(sizeof(int) * primitive->size * multi);
+    if (mapping_table == NULL) {
         warning_print("spglib: Memory could not be allocated ");
         goto ret;
     }
 
-    if ((std_cell = cel_alloc_cell(primitive->size * multi,
-                                   primitive->tensor_rank)) == NULL) {
+    std_cell = cel_alloc_cell(primitive->size * multi, primitive->tensor_rank);
+    if (std_cell == NULL) {
         free(mapping_table);
         mapping_table = NULL;
         goto ret;
@@ -738,7 +741,8 @@ static Spacegroup *get_spacegroup(const int hall_number,
 
     spacegroup = NULL;
 
-    if ((spacegroup = (Spacegroup *)malloc(sizeof(Spacegroup))) == NULL) {
+    spacegroup = (Spacegroup *)malloc(sizeof(Spacegroup));
+    if (spacegroup == NULL) {
         warning_print("spglib: Memory could not be allocated.");
         return NULL;
     }
@@ -885,8 +889,9 @@ static int search_hall_number(double origin_shift[3], double conv_lattice[3][3],
 
     /* For rhombohedral system, symmetry for a=b=c primitive lattice */
     /* basis is returned although centering == R_CENTER. */
-    if ((conv_symmetry = get_initial_conventional_symmetry(centering, tmat,
-                                                           symmetry)) == NULL) {
+    conv_symmetry =
+        get_initial_conventional_symmetry(centering, tmat, symmetry);
+    if (conv_symmetry == NULL) {
         goto err;
     }
 
@@ -1071,8 +1076,9 @@ static int match_hall_symbol_db(
                 mat_inverse_matrix_d3(inv_lattice, conv_lattice, 0);
                 mat_multiply_matrix_d3(tmat, inv_lattice, changed_lattice);
 
-                if ((changed_symmetry = get_conventional_symmetry(
-                         tmat, PRIMITIVE, symmetry)) == NULL) {
+                changed_symmetry =
+                    get_conventional_symmetry(tmat, PRIMITIVE, symmetry);
+                if (changed_symmetry == NULL) {
                     goto err;
                 }
 
@@ -1327,8 +1333,9 @@ static int match_hall_symbol_db_monocli_in_loop(
         }
     }
 
-    if ((changed_symmetry = get_conventional_symmetry(
-             change_of_basis, PRIMITIVE, conv_symmetry)) == NULL) {
+    changed_symmetry =
+        get_conventional_symmetry(change_of_basis, PRIMITIVE, conv_symmetry);
+    if (changed_symmetry == NULL) {
         goto cont;
     }
 
@@ -1480,8 +1487,9 @@ static int match_hall_symbol_db_ortho_in_loop(
         }
     }
 
-    if ((changed_symmetry = get_conventional_symmetry(
-             change_of_basis, PRIMITIVE, symmetry)) == NULL) {
+    changed_symmetry =
+        get_conventional_symmetry(change_of_basis, PRIMITIVE, symmetry);
+    if (changed_symmetry == NULL) {
         goto cont;
     }
 
@@ -1557,8 +1565,9 @@ static int match_hall_symbol_db_cubic_in_loop(
         }
     }
 
-    if ((changed_symmetry = get_conventional_symmetry(
-             change_of_basis, PRIMITIVE, conv_symmetry)) == NULL) {
+    changed_symmetry =
+        get_conventional_symmetry(change_of_basis, PRIMITIVE, conv_symmetry);
+    if (changed_symmetry == NULL) {
         goto cont;
     }
 
@@ -1684,9 +1693,9 @@ static int match_hall_symbol_db_change_of_basis_loop(
 
     /* No check of similarity of basis vectors to those of input */
     for (i = 0; i < num_change_of_basis; i++) {
-        if ((changed_symmetry = get_conventional_symmetry(
-                 change_of_basis[i], centering_for_symmetry, conv_symmetry)) ==
-            NULL) {
+        changed_symmetry = get_conventional_symmetry(
+            change_of_basis[i], centering_for_symmetry, conv_symmetry);
+        if (changed_symmetry == NULL) {
             continue;
         }
         mat_multiply_matrix_d3(changed_lattice, conv_lattice,
@@ -1720,12 +1729,14 @@ static Symmetry *get_conventional_symmetry(const double tmat[3][3],
 
     switch (centering) {
         case FACE:
-            if ((symmetry = sym_alloc_symmetry(size * 4)) == NULL) {
+            symmetry = sym_alloc_symmetry(size * 4);
+            if (symmetry == NULL) {
                 return NULL;
             }
             break;
         case R_CENTER:
-            if ((symmetry = sym_alloc_symmetry(size * 3)) == NULL) {
+            symmetry = sym_alloc_symmetry(size * 3);
+            if (symmetry == NULL) {
                 return NULL;
             }
             break;
@@ -1733,7 +1744,8 @@ static Symmetry *get_conventional_symmetry(const double tmat[3][3],
         case A_FACE:
         case B_FACE:
         case C_FACE:
-            if ((symmetry = sym_alloc_symmetry(size * 2)) == NULL) {
+            symmetry = sym_alloc_symmetry(size * 2);
+            if (symmetry == NULL) {
                 return NULL;
             }
             break;

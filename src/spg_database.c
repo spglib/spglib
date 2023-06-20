@@ -10212,7 +10212,8 @@ Symmetry *spgdb_get_spacegroup_operations(const int hall_number) {
 
     spgdb_get_operation_index(operation_index, hall_number);
 
-    if ((symmetry = sym_alloc_symmetry(operation_index[0])) == NULL) {
+    symmetry = sym_alloc_symmetry(operation_index[0]);
+    if (symmetry == NULL) {
         return NULL;
     }
 

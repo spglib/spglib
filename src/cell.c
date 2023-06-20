@@ -69,7 +69,8 @@ Cell *cel_alloc_cell(const int size, const SiteTensorType tensor_rank) {
         return NULL;
     }
 
-    if ((cell = (Cell *)malloc(sizeof(Cell))) == NULL) {
+    cell = (Cell *)malloc(sizeof(Cell));
+    if (cell == NULL) {
         goto fail;
     }
 
@@ -190,7 +191,8 @@ Cell *cel_copy_cell(const Cell *cell) {
 
     cell_new = NULL;
 
-    if ((cell_new = cel_alloc_cell(cell->size, cell->tensor_rank)) == NULL) {
+    cell_new = cel_alloc_cell(cell->size, cell->tensor_rank);
+    if (cell_new == NULL) {
         return NULL;
     }
 
@@ -365,14 +367,12 @@ static Cell *trim_cell(int *mapping_table, const double trimmed_lattice[3][3],
         warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
         goto err;
     }
-
-    if ((trimmed_cell =
-             cel_alloc_cell(cell->size / ratio, cell->tensor_rank)) == NULL) {
+    trimmed_cell = cel_alloc_cell(cell->size / ratio, cell->tensor_rank);
+    if (trimmed_cell == NULL) {
         goto err;
     }
-
-    if ((position = translate_atoms_in_trimmed_lattice(
-             cell, trimmed_lattice)) == NULL) {
+    position = translate_atoms_in_trimmed_lattice(cell, trimmed_lattice);
+    if (position == NULL) {
         warning_print("spglib: translate_atoms_in_trimmed_lattice failed.\n");
         warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
         cel_free_cell(trimmed_cell);
@@ -383,9 +383,9 @@ static Cell *trim_cell(int *mapping_table, const double trimmed_lattice[3][3],
     mat_copy_matrix_d3(trimmed_cell->lattice, trimmed_lattice);
     /* aperiodic axis of trimmed_cell is directly copied from cell */
     trimmed_cell->aperiodic_axis = cell->aperiodic_axis;
-
-    if ((overlap_table = get_overlap_table(position, cell->size, cell->types,
-                                           trimmed_cell, symprec)) == NULL) {
+    overlap_table = get_overlap_table(position, cell->size, cell->types,
+                                      trimmed_cell, symprec);
+    if (overlap_table == NULL) {
         warning_print("spglib: get_overlap_table failed.\n");
         warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
         mat_free_VecDBL(position);
@@ -503,7 +503,8 @@ static VecDBL *translate_atoms_in_trimmed_lattice(
 
     position = NULL;
 
-    if ((position = mat_alloc_VecDBL(cell->size)) == NULL) {
+    position = mat_alloc_VecDBL(cell->size);
+    if (position == NULL) {
         return NULL;
     }
 
@@ -545,7 +546,8 @@ static int *get_overlap_table(const VecDBL *position, const int cell_size,
 
     ratio = cell_size / trimmed_cell->size;
 
-    if ((overlap_table = (int *)malloc(sizeof(int) * cell_size)) == NULL) {
+    overlap_table = (int *)malloc(sizeof(int) * cell_size);
+    if (overlap_table == NULL) {
         return NULL;
     }
 

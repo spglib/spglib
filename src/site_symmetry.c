@@ -99,8 +99,9 @@ VecDBL *ssm_get_exact_positions(int *wyckoffs, int *equiv_atoms,
     /* Attempt slightly loosen tolerance */
     tolerance = symprec;
     for (i = 0; i < NUM_ATTEMPT; i++) {
-        if ((positions = get_exact_positions(equiv_atoms, conv_prim, conv_sym,
-                                             tolerance)) == NULL) {
+        positions =
+            get_exact_positions(equiv_atoms, conv_prim, conv_sym, tolerance);
+        if (positions == NULL) {
             return NULL;
         }
 
@@ -133,11 +134,13 @@ static VecDBL *get_exact_positions(int *equiv_atoms, const Cell *conv_prim,
     positions = NULL;
     indep_atoms = NULL;
 
-    if ((positions = mat_alloc_VecDBL(conv_prim->size)) == NULL) {
+    positions = mat_alloc_VecDBL(conv_prim->size);
+    if (positions == NULL) {
         return NULL;
     }
 
-    if ((indep_atoms = (int *)malloc(sizeof(int) * conv_prim->size)) == NULL) {
+    indep_atoms = (int *)malloc(sizeof(int) * conv_prim->size);
+    if (indep_atoms == NULL) {
         warning_print("spglib: Memory could not be allocated ");
         mat_free_VecDBL(positions);
         return NULL;
@@ -449,7 +452,8 @@ static int get_Wyckoff_notation(char site_sym_symbol[7],
     wyckoff_letter = -1;
     pos_rot = NULL;
 
-    if ((pos_rot = mat_alloc_VecDBL(conv_sym->size)) == NULL) {
+    pos_rot = mat_alloc_VecDBL(conv_sym->size);
+    if (pos_rot == NULL) {
         return -1;
     }
 
@@ -529,7 +533,8 @@ static int get_layer_Wyckoff_notation(
     wyckoff_letter = -1;
     pos_rot = NULL;
 
-    if ((pos_rot = mat_alloc_VecDBL(conv_sym->size)) == NULL) {
+    pos_rot = mat_alloc_VecDBL(conv_sym->size);
+    if (pos_rot == NULL) {
         return -1;
     }
 
