@@ -642,8 +642,13 @@ static int get_primitive_in_translation_space(double t_mat_inv[3][3],
 
 static Symmetry *collect_primitive_symmetry(const Symmetry *symmetry,
                                             const int primsym_size) {
+    if (symmetry == NULL) {
+        return NULL;
+    }
     Symmetry *prim_symmetry = sym_alloc_symmetry(primsym_size);
-    assert(prim_symmetry != NULL);
+    if (prim_symmetry == NULL) {
+        return NULL;
+    }
     mat_copy_matrix_i3(prim_symmetry->rot[0], symmetry->rot[0]);
     mat_copy_vector_d3(prim_symmetry->trans[0], symmetry->trans[0]);
     int num_psym = 1;

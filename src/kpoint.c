@@ -186,9 +186,19 @@ size_t kpt_get_dense_stabilized_reciprocal_mesh(
     const size_t num_q, const double qpoints[][3]) {
     MatINT *rot_reciprocal =
         get_point_group_reciprocal(rotations, is_time_reversal);
+    if (rot_reciprocal == NULL) {
+        // TOODO: Signal error
+        return 0;
+    }
     double tolerance = 0.01 / (mesh[0] + mesh[1] + mesh[2]);
     MatINT *rot_reciprocal_q = get_point_group_reciprocal_with_q(
         rot_reciprocal, tolerance, num_q, qpoints);
+    if (rot_reciprocal_q == NULL) {
+        // TOODO: Signal error
+        mat_free_MatINT(rot_reciprocal);
+        rot_reciprocal = NULL;
+        return 0;
+    }
 
     size_t num_ir = get_dense_ir_reciprocal_mesh(
         grid_address, ir_mapping_table, mesh, is_shift, rot_reciprocal_q);
