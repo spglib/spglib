@@ -34,7 +34,9 @@
 
 #include "overlap.h"
 
+#include <assert.h>
 #include <math.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -210,12 +212,8 @@ void ovl_overlap_checker_free(OverlapChecker *checker) {
 }
 
 OverlapChecker *ovl_overlap_checker_init(const Cell *cell) {
-    int i, lattice_rank;
-    OverlapChecker *checker;
-    checker = NULL;
-
     /* Allocate */
-    checker = overlap_checker_alloc(cell->size);
+    OverlapChecker *checker = overlap_checker_alloc(cell->size);
     if (checker == NULL) {
         return NULL;
     }
@@ -238,8 +236,8 @@ OverlapChecker *ovl_overlap_checker_init(const Cell *cell) {
     permute_int(checker->types_sorted, cell->types, checker->perm_temp,
                 cell->size);
 
-    lattice_rank = 0;
-    for (i = 0; i < 3; i++) {
+    int lattice_rank = 0;
+    for (int i = 0; i < 3; i++) {
         if (i != cell->aperiodic_axis) {
             checker->periodic_axes[lattice_rank] = i;
             lattice_rank++;
@@ -259,8 +257,6 @@ OverlapChecker *ovl_overlap_checker_init(const Cell *cell) {
 int ovl_check_total_overlap(OverlapChecker *checker, const double test_trans[3],
                             const int rot[3][3], const double symprec,
                             const int is_identity) {
-    int i, k, check;
-
     /* Check a few atoms by brute force before continuing. */
     /* For bad translations, this can be much cheaper than sorting. */
     if (!check_possible_overlap(checker, test_trans, rot, symprec)) {
@@ -268,9 +264,9 @@ int ovl_check_total_overlap(OverlapChecker *checker, const double test_trans[3],
     }
 
     /* Write rotated positions to 'pos_temp_1' */
-    for (i = 0; i < checker->size; i++) {
+    for (int i = 0; i < checker->size; i++) {
         if (is_identity) {
-            for (k = 0; k < 3; k++) {
+            for (int k = 0; k < 3; k++) {
                 checker->pos_temp_1[i][k] = checker->pos_sorted[i][k];
             }
         } else {
@@ -278,7 +274,7 @@ int ovl_check_total_overlap(OverlapChecker *checker, const double test_trans[3],
                                            checker->pos_sorted[i]);
         }
 
-        for (k = 0; k < 3; k++) {
+        for (int k = 0; k < 3; k++) {
             checker->pos_temp_1[i][k] += test_trans[k];
         }
     }
@@ -296,7 +292,7 @@ int ovl_check_total_overlap(OverlapChecker *checker, const double test_trans[3],
                      checker->perm_temp, checker->size);
 
     /* Do optimized check for overlap between sorted coordinates. */
-    check = check_total_overlap_for_sorted(
+    int check = check_total_overlap_for_sorted(
         checker->lattice, checker->pos_sorted, /* pos_original */
         checker->pos_temp_2,                   /* pos_rotated */
         checker->types_sorted,                 /* types_original */
@@ -321,8 +317,6 @@ int ovl_check_layer_total_overlap(OverlapChecker *checker,
                                   const double test_trans[3],
                                   const int rot[3][3], const double symprec,
                                   const int is_identity) {
-    int i, k, check;
-
     /* Check a few atoms by brute force before continuing. */
     /* For bad translations, this can be much cheaper than sorting. */
     if (!check_possible_overlap(checker, test_trans, rot, symprec)) {
@@ -330,9 +324,9 @@ int ovl_check_layer_total_overlap(OverlapChecker *checker,
     }
 
     /* Write rotated positions to 'pos_temp_1' */
-    for (i = 0; i < checker->size; i++) {
+    for (int i = 0; i < checker->size; i++) {
         if (is_identity) {
-            for (k = 0; k < 3; k++) {
+            for (int k = 0; k < 3; k++) {
                 checker->pos_temp_1[i][k] = checker->pos_sorted[i][k];
             }
         } else {
@@ -340,7 +334,7 @@ int ovl_check_layer_total_overlap(OverlapChecker *checker,
                                            checker->pos_sorted[i]);
         }
 
-        for (k = 0; k < 3; k++) {
+        for (int k = 0; k < 3; k++) {
             checker->pos_temp_1[i][k] += test_trans[k];
         }
     }
@@ -358,7 +352,7 @@ int ovl_check_layer_total_overlap(OverlapChecker *checker,
                      checker->perm_temp, checker->size);
 
     /* Do optimized check for overlap between sorted coordinates. */
-    check = check_layer_total_overlap_for_sorted(
+    int check = check_layer_total_overlap_for_sorted(
         checker->lattice, checker->pos_sorted, /* pos_original */
         checker->pos_temp_2,                   /* pos_rotated */
         checker->types_sorted,                 /* types_original */
@@ -373,14 +367,13 @@ int ovl_check_layer_total_overlap(OverlapChecker *checker,
 }
 
 static int ValueWithIndex_comparator(const void *pa, const void *pb) {
-    int cmp;
     ValueWithIndex a, b;
 
     a = *((ValueWithIndex *)pa);
     b = *((ValueWithIndex *)pb);
 
     /* order by atom type, then by value */
-    cmp = (b.type < a.type) - (a.type < b.type);
+    int cmp = (b.type < a.type) - (a.type < b.type);
     if (!cmp) {
         cmp = (b.value < a.value) - (a.value < b.value);
     }
@@ -389,11 +382,8 @@ static int ValueWithIndex_comparator(const void *pa, const void *pb) {
 }
 
 static void *perm_argsort_work_malloc(int n) {
-    ValueWithIndex *work;
-
-    work = NULL;
-
-    work = (ValueWithIndex *)(malloc(sizeof(ValueWithIndex) * n));
+    ValueWithIndex *work =
+        (ValueWithIndex *)(malloc(sizeof(ValueWithIndex) * n));
     if (work == NULL) {
         warning_print(
             "spglib: Memory could not be allocated for argsort workspace.");
@@ -411,22 +401,15 @@ static void perm_argsort_work_free(void *work) { free(work); }
 /* Returns 0 on failure. */
 static int perm_argsort(int *perm, const int *types, const double *values,
                         void *provided_work, const int n) {
-    int i;
-    ValueWithIndex *work;
-
-    work = NULL;
-
-    if (provided_work) {
-        work = (ValueWithIndex *)provided_work;
-    } else {
-        work = perm_argsort_work_malloc(n);
-        if (work == NULL) {
-            return 0;
-        }
+    ValueWithIndex *work = provided_work ? (ValueWithIndex *)provided_work
+                                         : perm_argsort_work_malloc(n);
+    if (work == NULL) {
+        assert(!provided_work);
+        return 0;
     }
 
     /* Make array of all data for each value. */
-    for (i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++) {
         work[i].value = values[i];
         work[i].index = i;
         work[i].type = types ? types[i] : 0;
@@ -436,7 +419,7 @@ static int perm_argsort(int *perm, const int *types, const double *values,
     qsort(work, n, sizeof(ValueWithIndex), &ValueWithIndex_comparator);
 
     /* Retrieve indices.  This is the permutation. */
-    for (i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++) {
         perm[i] = work[i].index;
     }
 
@@ -452,13 +435,10 @@ static int perm_argsort(int *perm, const int *types, const double *values,
 /* data_out and data_in MUST NOT ALIAS. */
 static void permute(void *data_out, const void *data_in, const int *perm,
                     int value_size, int n) {
-    int i;
-    const void *read;
-    void *write;
-
-    for (i = 0; i < n; i++) {
-        read = (void *)((char *)data_in + perm[i] * value_size);
-        write = (void *)((char *)data_out + i * value_size);
+    for (ptrdiff_t i = 0; i < n; i++) {
+        const void *read = (const void *)((const char *)data_in +
+                                          (ptrdiff_t)(perm[i] * value_size));
+        void *write = (void *)((char *)data_out + i * value_size);
         memcpy(write, read, value_size);
     }
 }
@@ -477,31 +457,23 @@ static void permute_double_3(double (*data_out)[3], const double (*data_in)[3],
 }
 
 static OverlapChecker *overlap_checker_alloc(int size) {
-    int offset_pos_temp_1, offset_pos_temp_2, offset_distance_temp;
-    int offset_perm_temp, offset_pos_sorted, offset_types_sorted,
-        offset_lattice;
-    int offset_periodic_axes;
-    int offset, blob_size;
-    char *chr_blob;
-    OverlapChecker *checker;
-
-    chr_blob = NULL;
-    checker = NULL;
-
     /* checker->blob is going to contain lots of things. */
     /* Compute its total size and the number of bytes before each thing. */
-    offset = 0;
-    offset_pos_temp_1 = SPG_POST_INCREMENT(offset, size * sizeof(double[3]));
-    offset_pos_temp_2 = SPG_POST_INCREMENT(offset, size * sizeof(double[3]));
-    offset_distance_temp = SPG_POST_INCREMENT(offset, size * sizeof(double));
-    offset_perm_temp = SPG_POST_INCREMENT(offset, size * sizeof(int));
-    offset_lattice = SPG_POST_INCREMENT(offset, 9 * sizeof(double));
-    offset_pos_sorted = SPG_POST_INCREMENT(offset, size * sizeof(double[3]));
-    offset_types_sorted = SPG_POST_INCREMENT(offset, size * sizeof(int));
-    offset_periodic_axes = SPG_POST_INCREMENT(offset, 3 * sizeof(int));
-    blob_size = offset;
+    int blob_size = 0;
+    int offset_pos_temp_1 =
+        SPG_POST_INCREMENT(blob_size, size * sizeof(double[3]));
+    int offset_pos_temp_2 =
+        SPG_POST_INCREMENT(blob_size, size * sizeof(double[3]));
+    int offset_distance_temp =
+        SPG_POST_INCREMENT(blob_size, size * sizeof(double));
+    int offset_perm_temp = SPG_POST_INCREMENT(blob_size, size * sizeof(int));
+    int offset_lattice = SPG_POST_INCREMENT(blob_size, 9 * sizeof(double));
+    int offset_pos_sorted =
+        SPG_POST_INCREMENT(blob_size, size * sizeof(double[3]));
+    int offset_types_sorted = SPG_POST_INCREMENT(blob_size, size * sizeof(int));
+    int offset_periodic_axes = SPG_POST_INCREMENT(blob_size, 3 * sizeof(int));
 
-    checker = (OverlapChecker *)malloc(sizeof(OverlapChecker));
+    OverlapChecker *checker = (OverlapChecker *)malloc(sizeof(OverlapChecker));
     if (checker == NULL) {
         warning_print("spglib: Memory could not be allocated for checker.");
         return NULL;
@@ -529,7 +501,9 @@ static OverlapChecker *overlap_checker_alloc(int size) {
     /* Create the pointers to the things contained in checker->blob. */
     /* The C spec doesn't allow arithmetic directly on 'void *', */
     /* so a 'char *' is used. */
-    chr_blob = (char *)checker->blob;
+
+    char *chr_blob = (char *)checker->blob;
+    assert(chr_blob != NULL);
     checker->pos_temp_1 = (double(*)[3])(chr_blob + offset_pos_temp_1);
     checker->pos_temp_2 = (double(*)[3])(chr_blob + offset_pos_temp_2);
     checker->distance_temp = (double *)(chr_blob + offset_distance_temp);
@@ -547,14 +521,12 @@ static int argsort_by_lattice_point_distance(
     const int *types, double *distance_temp, void *argsort_work,
     const int size) {
     double diff[3];
-    int i, k;
-    double x;
 
     /* Fill distance_temp with distances. */
-    for (i = 0; i < size; i++) {
+    for (int i = 0; i < size; i++) {
         /* Fractional vector to nearest lattice point. */
-        for (k = 0; k < 3; k++) {
-            x = positions[i][k];
+        for (int k = 0; k < 3; k++) {
+            double x = positions[i][k];
             diff[k] = x - mat_Nint(x);
         }
 
@@ -574,20 +546,18 @@ static int check_possible_overlap(OverlapChecker *checker,
                                   const double test_trans[3],
                                   const int rot[3][3], const double symprec) {
     double pos_rot[3];
-    int i, i_test, k, max_search_num, search_num;
-    int type_rot, is_found;
 
-    max_search_num = 3;
-    search_num =
-        checker->size <= max_search_num ? checker->size : max_search_num;
+    static const int max_search_num = 3;
+    int search_num =
+        (checker->size <= max_search_num) ? checker->size : max_search_num;
 
     /* Check a few rotated positions. */
     /* (this could be optimized by focusing on the min_atom_type) */
-    for (i_test = 0; i_test < search_num; i_test++) {
-        type_rot = checker->types_sorted[i_test];
+    for (int i_test = 0; i_test < search_num; i_test++) {
+        int type_rot = checker->types_sorted[i_test];
         mat_multiply_matrix_vector_id3(pos_rot, rot,
                                        checker->pos_sorted[i_test]);
-        for (k = 0; k < 3; k++) {
+        for (int k = 0; k < 3; k++) {
             pos_rot[k] += test_trans[k];
         }
 
@@ -595,8 +565,8 @@ static int check_possible_overlap(OverlapChecker *checker,
         /* (this could be optimized by saving the sorted ValueWithIndex data */
         /*  for the original Cell and using it to binary search for lower and */
         /*  upper bounds on 'i'. For now though, brute force is good enough) */
-        is_found = 0;
-        for (i = 0; i < checker->size; i++) {
+        int is_found = 0;
+        for (int i = 0; i < checker->size; i++) {
             if (has_overlap_with_same_type(pos_rot, checker->pos_sorted[i],
                                            type_rot, checker->types_sorted[i],
                                            checker->lattice, symprec)) {
@@ -622,31 +592,21 @@ static int check_total_overlap_for_sorted(
     const double lattice[3][3], const double (*pos_original)[3],
     const double (*pos_rotated)[3], const int types_original[],
     const int types_rotated[], const int num_pos, const double symprec) {
-    int *found;
-    int i, i_orig, i_rot;
-    int search_start;
-
-    found = NULL;
-
-    found = (int *)malloc(num_pos * sizeof(int));
+    int *found = (int *)calloc(num_pos, sizeof(int));
     if (found == NULL) {
         warning_print("spglib: Memory could not be allocated");
         return -1;
     }
 
-    /* found[i] = 1 if pos_rotated[i] has been found in pos_original */
-    for (i = 0; i < num_pos; i++) {
-        found[i] = 0;
-    }
-
-    search_start = 0;
-    for (i_orig = 0; i_orig < num_pos; i_orig++) {
+    int search_start = 0;
+    for (int i_orig = 0; i_orig < num_pos; i_orig++) {
         /* Permanently skip positions filled near the beginning. */
         while ((search_start < num_pos) && found[search_start]) {
             search_start++;
         }
 
-        for (i_rot = search_start; i_rot < num_pos; i_rot++) {
+        int i_rot = search_start;
+        for (; i_rot < num_pos; i_rot++) {
             /* Skip any filled positions that aren't near the beginning. */
             if (found[i_rot]) {
                 continue;
@@ -686,31 +646,20 @@ static int check_layer_total_overlap_for_sorted(
     const double (*pos_rotated)[3], const int types_original[],
     const int types_rotated[], const int num_pos, const int periodic_axes[3],
     const double symprec) {
-    int *found;
-    int i, i_orig, i_rot;
-    int search_start;
-
-    found = NULL;
-
-    found = (int *)malloc(num_pos * sizeof(int));
+    int *found = (int *)calloc(num_pos, sizeof(int));
     if (found == NULL) {
         warning_print("spglib: Memory could not be allocated");
         return -1;
     }
 
-    /* found[i] = 1 if pos_rotated[i] has been found in pos_original */
-    for (i = 0; i < num_pos; i++) {
-        found[i] = 0;
-    }
-
-    search_start = 0;
-    for (i_orig = 0; i_orig < num_pos; i_orig++) {
+    int search_start = 0;
+    for (int i_orig = 0; i_orig < num_pos; i_orig++) {
         /* Permanently skip positions filled near the beginning. */
         while (found[search_start]) {
             search_start++;
         }
-
-        for (i_rot = search_start; i_rot < num_pos; i_rot++) {
+        int i_rot = search_start;
+        for (; i_rot < num_pos; i_rot++) {
             /* Skip any filled positions that aren't near the beginning. */
             if (found[i_rot]) {
                 continue;

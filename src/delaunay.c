@@ -34,6 +34,7 @@
 
 #include "delaunay.h"
 
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -79,39 +80,34 @@ int del_layer_delaunay_reduce(double min_lattice[3][3],
 /* Delaunay reduction */
 /* Reference can be found in International table A. */
 /* Return 0 if failed */
+// TODO: This should return bool or invert the standard (return 0 -> successful)
 static int delaunay_reduce(double red_lattice[3][3], const double lattice[3][3],
                            const int aperiodic_axis, const double symprec) {
-    int i, j, attempt, succeeded, lattice_rank;
     int tmp_mat_int[3][3];
-    double volume;
     double orig_lattice[3][3], tmp_mat[3][3], basis[4][3];
 
     mat_copy_matrix_d3(orig_lattice, lattice);
 
-    lattice_rank = get_extended_basis(basis, lattice, aperiodic_axis);
+    int lattice_rank = get_extended_basis(basis, lattice, aperiodic_axis);
 
-    for (attempt = 0; attempt < NUM_ATTEMPT; attempt++) {
-        succeeded = delaunay_reduce_basis(basis, lattice_rank, symprec);
-        if (succeeded) {
+    for (int attempt = 0;; attempt++) {
+        if (delaunay_reduce_basis(basis, lattice_rank, symprec)) {
             break;
         }
-    }
-
-    if (!succeeded) {
-        goto err;
+        if (attempt == NUM_ATTEMPT) return 0;
     }
 
     get_delaunay_shortest_vectors(basis, lattice_rank, symprec);
 
-    for (i = 0; i < 3; i++) {
-        for (j = 0; j < 3; j++) {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
             red_lattice[i][j] = basis[j][i];
         }
     }
     /* move the aperiodic axis from b3 back to its original direction */
     if (lattice_rank == 2 && aperiodic_axis != 2) {
-        for (i = 0; i < 3; i++) {
-            for (j = 0; j < 3; j++) {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
                 if (j == aperiodic_axis) {
                     red_lattice[i][j] = basis[2][i];
                     red_lattice[i][2] = basis[j][i];
@@ -120,17 +116,17 @@ static int delaunay_reduce(double red_lattice[3][3], const double lattice[3][3],
         }
     }
 
-    volume = mat_get_determinant_d3(red_lattice);
+    double volume = mat_get_determinant_d3(red_lattice);
     if (mat_Dabs(volume) < symprec) {
         warning_print("spglib: Minimum lattice has no volume (line %d, %s).\n",
                       __LINE__, __FILE__);
-        goto err;
+        return 0;
     }
 
     if (volume < 0) {
         /* Flip axes */
-        for (i = 0; i < 3; i++) {
-            for (j = 0; j < 3; j++) {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
                 red_lattice[i][j] = -red_lattice[i][j];
             }
         }
@@ -144,13 +140,10 @@ static int delaunay_reduce(double red_lattice[3][3], const double lattice[3][3],
             "spglib: Determinant of Delaunay change of basis matrix "
             "has to be 1 or -1 (line %d, %s).\n",
             __LINE__, __FILE__);
-        goto err;
+        return 0;
     }
-
+    // Other
     return 1;
-
-err:
-    return 0;
 }
 
 // @brief Search the shortest vectors from the Delaunay set. If aperiodic axis
@@ -159,44 +152,43 @@ err:
 static void get_delaunay_shortest_vectors(double basis[4][3],
                                           const int lattice_rank,
                                           const double symprec) {
-    int i, j;
     double tmpmat[3][3], b[7][3], tmpvec[3];
 
     /* Search in the set {b1, b2, b1+b2, b3, b4, b2+b3, b3+b1} */
-    for (i = 0; i < 2; i++) {
-        for (j = 0; j < 3; j++) {
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 3; j++) {
             b[i][j] = basis[i][j];
         }
     }
 
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         b[2][i] = basis[0][i] + basis[1][i];
     }
 
-    for (i = 2; i < 4; i++) {
-        for (j = 0; j < 3; j++) {
+    for (int i = 2; i < 4; i++) {
+        for (int j = 0; j < 3; j++) {
             b[i + 1][j] = basis[i][j];
         }
     }
 
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         b[5][i] = basis[1][i] + basis[2][i];
     }
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         b[6][i] = basis[2][i] + basis[0][i];
     }
 
     /* Bubble sort */
     if (lattice_rank == 3) {
         /* Uncomment to pass original POSCAR-074-ref
-        for (i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++) {
           b[2][i] = basis[2][i];
           b[3][i] = basis[3][i];
           b[4][i] = basis[0][i] + basis[1][i];
         }
         */
-        for (i = 0; i < 6; i++) {
-            for (j = 0; j < 6; j++) {
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 6; j++) {
                 if (mat_norm_squared_d3(b[j]) >
                     mat_norm_squared_d3(b[j + 1]) + ZERO_PREC) {
                     mat_copy_vector_d3(tmpvec, b[j]);
@@ -207,8 +199,8 @@ static void get_delaunay_shortest_vectors(double basis[4][3],
         }
     } else {
         // Sort among {b1, b2, b1 + b}
-        for (i = 0; i <= 1; i++) {
-            for (j = 0; j <= 1; j++) {
+        for (int i = 0; i <= 1; i++) {
+            for (int j = 0; j <= 1; j++) {
                 if (mat_norm_squared_d3(b[j]) >
                     mat_norm_squared_d3(b[j + 1]) + ZERO_PREC) {
                     mat_copy_vector_d3(tmpvec, b[j]);
@@ -222,8 +214,8 @@ static void get_delaunay_shortest_vectors(double basis[4][3],
         //       - b4 > b3 because b4 = -(b1+b2+b3) and dot(d3, b1+b2) = 0
         //       - b2+b3 > b3 because dot(b3, b2) = 0
         //       - b3+b1 > b3 because dot(b3, b1) = 0
-        for (i = 3; i <= 5; i++) {
-            for (j = 3; j <= 5; j++) {
+        for (int i = 3; i <= 5; i++) {
+            for (int j = 3; j <= 5; j++) {
                 if (mat_norm_squared_d3(b[j]) >
                     mat_norm_squared_d3(b[j + 1]) + ZERO_PREC) {
                     mat_copy_vector_d3(tmpvec, b[j]);
@@ -235,14 +227,14 @@ static void get_delaunay_shortest_vectors(double basis[4][3],
     }
 
     // For layer, |tmpmat| != 0 for i=2 never happen
-    for (i = 2; i < 7; i++) {
-        for (j = 0; j < 3; j++) {
+    for (int i = 2; i < 7; i++) {
+        for (int j = 0; j < 3; j++) {
             tmpmat[j][0] = b[0][j];
             tmpmat[j][1] = b[1][j];
             tmpmat[j][2] = b[i][j];
         }
         if (mat_Dabs(mat_get_determinant_d3(tmpmat)) > symprec) {
-            for (j = 0; j < 3; j++) {
+            for (int j = 0; j < 3; j++) {
                 basis[0][j] = b[0][j];
                 basis[1][j] = b[1][j];
                 basis[2][j] = b[i][j];
@@ -254,27 +246,25 @@ static void get_delaunay_shortest_vectors(double basis[4][3],
 
 // If `lattice_rank==2`, assume `basis[2]` (b3) is along aperiodic axis.
 // TODO: Change `lattice_rank` to a more informative variable
+// TODO: This should return bool or invert the standard (return 0 -> successful)
 static int delaunay_reduce_basis(double basis[4][3], const int lattice_rank,
                                  const double symprec) {
-    int i, j, k, l;
-    double dot_product;
-
-    for (i = 0; i < 3; i++) {
-        for (j = i + 1; j < 4; j++) {
-            dot_product = 0.0;
-            for (k = 0; k < 3; k++) {
+    for (int i = 0; i < 3; i++) {
+        for (int j = i + 1; j < 4; j++) {
+            double dot_product = 0.0;
+            for (int k = 0; k < 3; k++) {
                 dot_product += basis[i][k] * basis[j][k];
             }
             if (dot_product > symprec) {
                 if (i < lattice_rank) {
-                    for (k = 0; k < 4; k++) {
+                    for (int k = 0; k < 4; k++) {
                         if (!(k == i || k == j)) {
-                            for (l = 0; l < 3; l++) {
+                            for (int l = 0; l < 3; l++) {
                                 basis[k][l] += basis[i][l];
                             }
                         }
                     }
-                    for (k = 0; k < 3; k++) {
+                    for (int k = 0; k < 3; k++) {
                         basis[i][k] = -basis[i][k];
                     }
                     return 0;
@@ -303,32 +293,36 @@ static int delaunay_reduce_basis(double basis[4][3], const int lattice_rank,
 // @return lattice_rank Rank of `lattice`
 static int get_extended_basis(double basis[4][3], const double lattice[3][3],
                               const int aperiodic_axis) {
-    int i, j, lattice_rank;
+    // TODO: basis values are not outside of lattice_rank (e.g. basis[3][])
+    //  are not set to 0
+    int lattice_rank = 0;
 
     if (aperiodic_axis == -1) {
         lattice_rank = 3;
-        for (i = 0; i < 3; i++) {
-            for (j = 0; j < 3; j++) {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
                 basis[i][j] = lattice[j][i];
             }
         }
     } else {
-        lattice_rank = 0;
-        for (i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++) {
             if (i != aperiodic_axis) {
-                for (j = 0; j < 3; j++) {
+                for (int j = 0; j < 3; j++) {
+                    // Logically not needed, but that's the purpose of assert
+                    assert(lattice_rank < 4);
                     basis[lattice_rank][j] = lattice[j][i];
                 }
                 lattice_rank++;
             }
         }
+        assert(lattice_rank < 4);
 
-        for (j = 0; j < 3; j++) {
+        for (int j = 0; j < 3; j++) {
             basis[lattice_rank][j] = lattice[j][aperiodic_axis];
         }
     }
 
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         basis[3][i] = -lattice[i][0] - lattice[i][1] - lattice[i][2];
     }
 
@@ -340,17 +334,18 @@ int del_layer_delaunay_reduce_2D(double red_lattice[3][3],
                                  const int unique_axis,
                                  const int aperiodic_axis,
                                  const double symprec) {
-    int i, j, k, attempt, succeeded, lattice_rank;
-    double volume;
     double basis[3][3], lattice_2D[3][2], unique_vec[3];
 
     debug_print("del_layer_delaunay_reduce_2D:\n");
 
+    // TODO: code documentation
+    //  - magic variables j,k
+    //  - purpose of each if/for loop
+    int j = -1;
+    int k = -1;
+    int lattice_rank = 0;
     if (aperiodic_axis == -1 || unique_axis == aperiodic_axis) {
-        // bulk or Monoclinic/oblique
-        j = -1;
-        k = -1;
-        for (i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++) {
             if (i != unique_axis) {
                 if (j == -1) {
                     j = i;
@@ -362,7 +357,7 @@ int del_layer_delaunay_reduce_2D(double red_lattice[3][3],
         lattice_rank = 2;
     } else {
         // Monoclinic/rectangular
-        for (i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++) {
             if (i != unique_axis && i != aperiodic_axis) {
                 j = i;
             }
@@ -370,8 +365,9 @@ int del_layer_delaunay_reduce_2D(double red_lattice[3][3],
         k = aperiodic_axis;
         lattice_rank = 1;
     }
+    assert(lattice_rank != 0);
 
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         unique_vec[i] = lattice[i][unique_axis];
         lattice_2D[i][0] = lattice[i][j];
         lattice_2D[i][1] = lattice[i][k];
@@ -379,66 +375,57 @@ int del_layer_delaunay_reduce_2D(double red_lattice[3][3],
 
     get_extended_basis_2D(basis, lattice_2D);
 
-    for (attempt = 0; attempt < NUM_ATTEMPT; attempt++) {
-        succeeded = delaunay_reduce_basis_2D(basis, lattice_rank, symprec);
-        if (succeeded) {
-            break;
-        }
-    }
-
-    if (!succeeded) {
-        goto err;
+    for (int attempt = 0;; attempt++) {
+        if (delaunay_reduce_basis_2D(basis, lattice_rank, symprec)) break;
+        if (attempt == NUM_ATTEMPT)
+            // return error
+            return 0;
     }
 
     get_delaunay_shortest_vectors_2D(basis, unique_vec, lattice_rank, symprec);
 
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         red_lattice[i][unique_axis] = lattice[i][unique_axis];
         red_lattice[i][j] = basis[0][i];
         red_lattice[i][k] = basis[1][i];
     }
 
-    volume = mat_get_determinant_d3(red_lattice);
+    double volume = mat_get_determinant_d3(red_lattice);
     if (mat_Dabs(volume) < symprec) {
         warning_print("spglib: Minimum lattice has no volume (line %d, %s).\n",
                       __LINE__, __FILE__);
-        goto err;
+        return 0;
     }
 
     if (volume < 0) {
-        for (i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++) {
             red_lattice[i][unique_axis] = -red_lattice[i][unique_axis];
         }
     }
 
     return 1;
-
-err:
-    return 0;
 }
 
+// TODO: This should return bool or invert the standard (return 0 -> successful)
 static int delaunay_reduce_basis_2D(double basis[3][3], const int lattice_rank,
                                     const double symprec) {
-    int i, j, k, l;
-    double dot_product;
-
-    for (i = 0; i < 2; i++) {
-        for (j = i + 1; j < 3; j++) {
-            dot_product = 0.0;
-            for (k = 0; k < 3; k++) {
+    for (int i = 0; i < 2; i++) {
+        for (int j = i + 1; j < 3; j++) {
+            double dot_product = 0.0;
+            for (int k = 0; k < 3; k++) {
                 dot_product += basis[i][k] * basis[j][k];
             }
             if (dot_product > symprec) {
                 if (i < lattice_rank) {
-                    for (k = 0; k < 3; k++) {
+                    for (int k = 0; k < 3; k++) {
                         if (!(k == i || k == j)) {
-                            for (l = 0; l < 3; l++) {
+                            for (int l = 0; l < 3; l++) {
                                 basis[k][l] += 2 * basis[i][l];
                             }
                             break;
                         }
                     }
-                    for (k = 0; k < 3; k++) {
+                    for (int k = 0; k < 3; k++) {
                         basis[i][k] = -basis[i][k];
                     }
                     return 0;
@@ -459,24 +446,23 @@ static void get_delaunay_shortest_vectors_2D(double basis[3][3],
                                              const double unique_vec[3],
                                              const int lattice_rank,
                                              const double symprec) {
-    int i, j;
     double b[4][3], tmpmat[3][3];
     double tmpvec[3];
 
     /* Search in the set {b1, b2, b3, b1+b2} */
-    for (i = 0; i < 3; i++) {
-        for (j = 0; j < 3; j++) {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
             b[i][j] = basis[i][j];
         }
     }
 
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         b[3][i] = basis[0][i] + basis[1][i];
     }
 
     /* Bubble sort */
-    for (i = lattice_rank % 2; i < 3; i++) {
-        for (j = lattice_rank % 2; j < 3; j++) {
+    for (int i = lattice_rank % 2; i < 3; i++) {
+        for (int j = lattice_rank % 2; j < 3; j++) {
             if (mat_norm_squared_d3(b[j]) >
                 mat_norm_squared_d3(b[j + 1]) + ZERO_PREC) {
                 mat_copy_vector_d3(tmpvec, b[j]);
@@ -486,17 +472,17 @@ static void get_delaunay_shortest_vectors_2D(double basis[3][3],
         }
     }
 
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         tmpmat[i][0] = b[0][i];
         tmpmat[i][1] = unique_vec[i];
     }
 
-    for (i = 1; i < 4; i++) {
-        for (j = 0; j < 3; j++) {
+    for (int i = 1; i < 4; i++) {
+        for (int j = 0; j < 3; j++) {
             tmpmat[j][2] = b[i][j];
         }
         if (mat_Dabs(mat_get_determinant_d3(tmpmat)) > symprec) {
-            for (j = 0; j < 3; j++) {
+            for (int j = 0; j < 3; j++) {
                 basis[0][j] = b[0][j];
                 basis[1][j] = b[i][j];
             }
@@ -507,15 +493,13 @@ static void get_delaunay_shortest_vectors_2D(double basis[3][3],
 
 static void get_extended_basis_2D(double basis[3][3],
                                   const double lattice[3][2]) {
-    int i, j;
-
-    for (i = 0; i < 2; i++) {
-        for (j = 0; j < 3; j++) {
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 3; j++) {
             basis[i][j] = lattice[j][i];
         }
     }
 
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         basis[2][i] = -lattice[i][0] - lattice[i][1];
     }
 }

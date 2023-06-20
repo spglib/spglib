@@ -1616,7 +1616,6 @@ static const char site_symmetry_symbols[][7] = {
 };
 
 int ssmdb_get_coordinate(int rot[3][3], double trans[3], const int index) {
-    int i, rot_enc, trans_enc;
     int rows[3], trans_int[3];
 
     /* 'Coordinates' are compressed using ternary numerical system for */
@@ -1629,22 +1628,22 @@ int ssmdb_get_coordinate(int rot[3][3], double trans[3], const int index) {
     /* divided by 24. Therefore 45^3 * 24^3 = 1259712000 different values */
     /* are enough to map coordinates of Wyckoff positions. */
 
-    rot_enc = coordinates_first[index] % 91125; /* = 45**3 */
-    rows[0] = rot_enc / 2025;                   /* = 45**2 */
+    int rot_enc = coordinates_first[index] % 91125; /* = 45**3 */
+    rows[0] = rot_enc / 2025;                       /* = 45**2 */
     rows[1] = (rot_enc % 2025) / 45;
     rows[2] = rot_enc % 45;
 
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         rot[i][0] = rows[i] / 9 - 2;
         rot[i][1] = (rows[i] % 9) / 3 - 1;
         rot[i][2] = rows[i] % 3 - 1;
     }
 
-    trans_enc = coordinates_first[index] / 91125; /* = 45**3 */
+    int trans_enc = coordinates_first[index] / 91125; /* = 45**3 */
     trans_int[0] = trans_enc / 576;
     trans_int[1] = (trans_enc % 576) / 24;
     trans_int[2] = trans_enc % 24;
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         trans[i] = ((double)trans_int[i]) / 24;
     }
 
@@ -1665,9 +1664,7 @@ void ssmdb_get_wyckoff_indices(int indices[2], const int index) {
 }
 
 void ssmdb_get_site_symmetry_symbol(char symbol[7], const int index) {
-    int i;
-
-    for (i = 0; i < 6; i++) {
+    for (int i = 0; i < 6; i++) {
         symbol[i] = site_symmetry_symbols[index][i];
     }
     symbol[6] = '\0';

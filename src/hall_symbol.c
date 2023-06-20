@@ -8733,19 +8733,18 @@ found:
     return 1;
 }
 
+// TODO: This should return bool or invert the standard (return 0 -> successful)
 static int is_hall_symbol_cubic(double shift[3], const int hall_number,
                                 const double primitive_lattice[3][3],
                                 const Symmetry *symmetry,
                                 const Centering centering,
                                 const double symprec) {
-    int i;
-
-    for (i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; i++) {
         if (centering == PRIMITIVE) {
             if (is_hall_symbol(shift, hall_number, primitive_lattice, symmetry,
                                centering, cubic_generators[i], cubic_VSpU[i],
                                symprec)) {
-                goto found;
+                return 1;
             }
         }
 
@@ -8753,7 +8752,7 @@ static int is_hall_symbol_cubic(double shift[3], const int hall_number,
             if (is_hall_symbol(shift, hall_number, primitive_lattice, symmetry,
                                centering, cubic_generators[i], cubic_I_VSpU[i],
                                symprec)) {
-                goto found;
+                return 1;
             }
         }
 
@@ -8761,23 +8760,19 @@ static int is_hall_symbol_cubic(double shift[3], const int hall_number,
             if (is_hall_symbol(shift, hall_number, primitive_lattice, symmetry,
                                centering, cubic_generators[i], cubic_F_VSpU[i],
                                symprec)) {
-                goto found;
+                return 1;
             }
         }
     }
 
     return 0;
-
-found:
-    return 1;
 }
 
+// TODO: This should return bool or invert the standard (return 0 -> successful)
 static int is_hall_symbol_hexa(double shift[3], const int hall_number,
                                const double primitive_lattice[3][3],
                                const Symmetry *symmetry, const double symprec) {
-    int i;
-
-    for (i = 0; i < 8; i++) {
+    for (int i = 0; i < 8; i++) {
         if (is_hall_symbol(shift, hall_number, primitive_lattice, symmetry,
                            PRIMITIVE, hexa_generators[i], hexa_VSpU[i],
                            symprec)) {
@@ -8788,13 +8783,12 @@ static int is_hall_symbol_hexa(double shift[3], const int hall_number,
     return 0;
 }
 
+// TODO: This should return bool or invert the standard (return 0 -> successful)
 static int is_hall_symbol_trigonal(double shift[3], const int hall_number,
                                    const double primitive_lattice[3][3],
                                    const Symmetry *symmetry,
                                    const double symprec) {
-    int i;
-
-    for (i = 0; i < 13; i++) {
+    for (int i = 0; i < 13; i++) {
         if (is_hall_symbol(shift, hall_number, primitive_lattice, symmetry,
                            PRIMITIVE, trigo_generators[i], trigo_VSpU[i],
                            symprec)) {
@@ -8805,17 +8799,16 @@ static int is_hall_symbol_trigonal(double shift[3], const int hall_number,
     return 0;
 }
 
+// TODO: This should return bool or invert the standard (return 0 -> successful)
 static int is_hall_symbol_rhombo(double shift[3], const int hall_number,
                                  const double primitive_lattice[3][3],
                                  const Symmetry *symmetry,
                                  const double symprec) {
-    int i;
-
     if (hall_number == 433 || hall_number == 436 || hall_number == 444 ||
         hall_number == 450 || hall_number == 452 || hall_number == 458 ||
         hall_number == 460) {
         /* hP */
-        for (i = 0; i < 8; i++) {
+        for (int i = 0; i < 8; i++) {
             if (is_hall_symbol(shift, hall_number, primitive_lattice, symmetry,
                                R_CENTER, rhombo_h_generators[i],
                                rhombo_h_VSpU[i], symprec)) {
@@ -8824,7 +8817,7 @@ static int is_hall_symbol_rhombo(double shift[3], const int hall_number,
         }
     } else {
         /* hR */
-        for (i = 0; i < 8; i++) {
+        for (int i = 0; i < 8; i++) {
             if (is_hall_symbol(shift, hall_number, primitive_lattice, symmetry,
                                PRIMITIVE, rhombo_p_generators[i],
                                rhombo_p_VSpU[i], symprec)) {
@@ -8836,14 +8829,13 @@ static int is_hall_symbol_rhombo(double shift[3], const int hall_number,
     return 0;
 }
 
+// TODO: This should return bool or invert the standard (return 0 -> successful)
 static int is_hall_symbol_tetra(double shift[3], const int hall_number,
                                 const double primitive_lattice[3][3],
                                 const Symmetry *symmetry,
                                 const Centering centering,
                                 const double symprec) {
-    int i;
-
-    for (i = 0; i < 8; i++) {
+    for (int i = 0; i < 8; i++) {
         if (centering == PRIMITIVE) {
             if (is_hall_symbol(shift, hall_number, primitive_lattice, symmetry,
                                centering, tetra_generators[i], tetra_VSpU[i],
@@ -8864,14 +8856,13 @@ static int is_hall_symbol_tetra(double shift[3], const int hall_number,
     return 0;
 }
 
+// TODO: This should return bool or invert the standard (return 0 -> successful)
 static int is_hall_symbol_ortho(double shift[3], const int hall_number,
                                 const double primitive_lattice[3][3],
                                 const Symmetry *symmetry,
                                 const Centering centering,
                                 const double symprec) {
-    int i;
-
-    for (i = 0; i < 5; i++) {
+    for (int i = 0; i < 5; i++) {
         if (centering == PRIMITIVE) {
             if (is_hall_symbol(shift, hall_number, primitive_lattice, symmetry,
                                centering, ortho_generators[i], ortho_VSpU[i],
@@ -8924,14 +8915,13 @@ static int is_hall_symbol_ortho(double shift[3], const int hall_number,
     return 0;
 }
 
+// TODO: This should return bool or invert the standard (return 0 -> successful)
 static int is_hall_symbol_monocli(double shift[3], const int hall_number,
                                   const double primitive_lattice[3][3],
                                   const Symmetry *symmetry,
                                   const Centering centering,
                                   const double symprec) {
-    int i;
-
-    for (i = 0; i < 9; i++) {
+    for (int i = 0; i < 9; i++) {
         if (centering == PRIMITIVE) {
             if (is_hall_symbol(shift, hall_number, primitive_lattice, symmetry,
                                centering, monocli_generators[i],
@@ -8976,13 +8966,12 @@ static int is_hall_symbol_monocli(double shift[3], const int hall_number,
     return 0;
 }
 
+// TODO: This should return bool or invert the standard (return 0 -> successful)
 static int is_hall_symbol_tricli(double shift[3], const int hall_number,
                                  const double primitive_lattice[3][3],
                                  const Symmetry *symmetry,
                                  const double symprec) {
-    int i;
-
-    for (i = 0; i < 2; i++) {
+    for (int i = 0; i < 2; i++) {
         if (is_hall_symbol(shift, hall_number, primitive_lattice, symmetry,
                            PRIMITIVE, tricli_generators[i], tricli_VSpU[i],
                            symprec)) {
@@ -8994,10 +8983,9 @@ static int is_hall_symbol_tricli(double shift[3], const int hall_number,
 }
 
 static void unpack_generators(int rot[3][3][3], const int generators[3][9]) {
-    int i, j, k;
-    for (i = 0; i < 3; i++) {
-        for (j = 0; j < 3; j++) {
-            for (k = 0; k < 3; k++) {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            for (int k = 0; k < 3; k++) {
                 rot[i][j][k] = generators[i][j * 3 + k];
             }
         }
@@ -9009,7 +8997,6 @@ static int is_hall_symbol(double shift[3], const int hall_number,
                           const Symmetry *symmetry, const Centering centering,
                           const int generators[3][9], const double VSpU[3][9],
                           const double symprec) {
-    int is_origin_shift;
     int operation_index[2];
     int rot[3][3][3];
     double trans[3][3];
@@ -9021,57 +9008,47 @@ static int is_hall_symbol(double shift[3], const int hall_number,
     spgdb_get_operation_index(operation_index, hall_number);
 
     if (!(operation_index[0] == symmetry->size)) {
-        goto not_found;
+        return 0;
     }
 
     unpack_generators(rot, generators);
     if (get_translations(trans, symmetry, rot)) {
-        is_origin_shift =
+        int is_origin_shift =
             get_origin_shift(shift, hall_number, rot, trans, centering, VSpU);
 
         if (is_origin_shift) {
             if (is_match_database(hall_number, shift, primitive_lattice,
                                   centering, symmetry, symprec)) {
-                goto found;
+                debug_print("[line %d, %s]\n", __LINE__, __FILE__);
+                debug_print("origin shift\n");
+                debug_print_vector_d3(shift);
+                return 1;
             }
         }
-    } else {
-        goto not_found;
     }
-
-not_found:
     return 0;
-
-found:
-    debug_print("[line %d, %s]\n", __LINE__, __FILE__);
-    debug_print("origin shift\n");
-    debug_print_vector_d3(shift);
-
-    return 1;
 }
 
 static int get_translations(double trans[3][3], const Symmetry *symmetry,
                             const int rot[3][3][3]) {
-    int i, j;
-    int is_found;
     static const int zero[3][3] = {
         {0, 0, 0},
         {0, 0, 0},
         {0, 0, 0},
     };
 
-    for (i = 0; i < 3; i++) {
-        for (j = 0; j < 3; j++) {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
             trans[i][j] = 0;
         }
     }
 
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         if (mat_check_identity_matrix_i3(rot[i], zero)) {
             continue;
         }
-        is_found = 0;
-        for (j = 0; j < symmetry->size; j++) {
+        int is_found = 0;
+        for (int j = 0; j < symmetry->size; j++) {
             if (mat_check_identity_matrix_i3(symmetry->rot[j], rot[i])) {
                 mat_copy_vector_d3(trans[i], symmetry->trans[j]);
                 is_found = 1;
@@ -9079,15 +9056,11 @@ static int get_translations(double trans[3][3], const Symmetry *symmetry,
             }
         }
         if (!is_found) {
-            goto not_found;
+            return 0;
         }
     }
 
     return 1;
-
-not_found:
-
-    return 0;
 }
 
 static void transform_translation(double trans_reduced[3],
@@ -9124,7 +9097,7 @@ static void transform_translation(double trans_reduced[3],
     }
 
     /* This is done in get_origin_shift
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
       trans_reduced[i] = mat_Dmod1(trans_reduced[i]);
     }
     */
@@ -9169,17 +9142,16 @@ static int get_origin_shift(double shift[3], const int hall_number,
                             const int rot[3][3][3], const double trans[3][3],
                             const Centering centering,
                             const double VSpU[3][9]) {
-    int i, j;
     int operation_index[2];
     double dw[9], tmp_dw[3];
 
     spgdb_get_operation_index(operation_index, hall_number);
 
     /* The obtained dw is reduced to that of primitive cell by centerings. */
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         /* Zero matrix is the sign to set dw 0 */
         if (mat_get_determinant_i3(rot[i]) == 0) {
-            for (j = 0; j < 3; j++) {
+            for (int j = 0; j < 3; j++) {
                 dw[i * 3 + j] = 0;
             }
         } else {
@@ -9189,15 +9161,15 @@ static int get_origin_shift(double shift[3], const int hall_number,
                 dw[i * 3 + 2] =
                     hall_number > 0 ? mat_Dmod1(tmp_dw[2]) : tmp_dw[2];
             } else {
-                goto not_found;
+                return 0;
             }
         }
     }
 
     /* VSpU*dw is given for the primitive cell if there is centering. */
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         shift[i] = 0;
-        for (j = 0; j < 9; j++) {
+        for (int j = 0; j < 9; j++) {
             shift[i] += VSpU[i][j] * dw[j];
         }
     }
@@ -9207,36 +9179,29 @@ static int get_origin_shift(double shift[3], const int hall_number,
     shift[2] = hall_number > 0 ? mat_Dmod1(shift[2]) : shift[2];
 
     return 1;
-
-not_found:
-    return 0;
 }
 
 static int set_dw(double dw[3], const int operation_index[2],
                   const int rot[3][3], const double trans[3],
                   const Centering centering) {
-    int i, j;
     int rot_db[3][3];
     double trans_db[3], trans_prim[3], trans_db_prim[3];
 
     transform_translation(trans_prim, centering, trans);
-    for (i = 0; i < operation_index[0]; i++) {
+    for (int i = 0; i < operation_index[0]; i++) {
         spgdb_get_operation(rot_db, trans_db, operation_index[1] + i);
         transform_translation(trans_db_prim, centering, trans_db);
         if (mat_check_identity_matrix_i3(rot_db, rot)) {
-            for (j = 0; j < 3; j++) {
+            for (int j = 0; j < 3; j++) {
                 dw[j] = trans_prim[j] - trans_db_prim[j];
                 /* dw[j] = mat_Dmod1(dw[j]); */
             }
-            goto found;
+            return 1;
         }
     }
 
     /* Not found */
     return 0;
-
-found:
-    return 1;
 }
 
 static int is_match_database(const int hall_number,
@@ -9244,7 +9209,6 @@ static int is_match_database(const int hall_number,
                              const double primitive_lattice[3][3],
                              const Centering centering,
                              const Symmetry *symmetry, const double symprec) {
-    int i, j, k, is_found;
     int operation_index[2];
     int rot_db[3][3];
     int found_list[192];
@@ -9254,19 +9218,19 @@ static int is_match_database(const int hall_number,
 
     spgdb_get_operation_index(operation_index, hall_number);
 
-    for (i = 0; i < symmetry->size; i++) {
+    for (int i = 0; i < symmetry->size; i++) {
         found_list[i] = 0;
     }
-    for (i = 0; i < symmetry->size; i++) {
-        is_found = 0;
-        for (j = 0; j < operation_index[0]; j++) {
+    for (int i = 0; i < symmetry->size; i++) {
+        int is_found = 0;
+        for (int j = 0; j < operation_index[0]; j++) {
             spgdb_get_operation(rot_db, trans_db, operation_index[1] + j);
             if (mat_check_identity_matrix_i3(symmetry->rot[i], rot_db)) {
                 transform_translation(trans_db_prim, centering, trans_db);
                 transform_translation(trans_prim, centering,
                                       symmetry->trans[i]);
                 transform_rotation(rot_prim, centering, rot_db);
-                for (k = 0; k < 3; k++) {
+                for (int k = 0; k < 3; k++) {
                     diff[k] =
                         trans_prim[k] - trans_db_prim[k] + origin_shift[k];
                 }
@@ -9288,12 +9252,9 @@ static int is_match_database(const int hall_number,
         }
 
         if (!is_found) {
-            goto not_found;
+            return 0;
         }
     }
 
     return 1;
-
-not_found:
-    return 0;
 }

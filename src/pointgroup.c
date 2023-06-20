@@ -34,6 +34,7 @@
 
 #include "pointgroup.h"
 
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -379,20 +380,19 @@ Pointgroup ptg_get_transformation_matrix(int transform_mat[3][3],
                                          const int rotations[][3][3],
                                          const int num_rotations,
                                          const int aperiodic_axis) {
-    int i, j, pg_num;
     int axes[3];
     PointSymmetry pointsym;
     Pointgroup pointgroup;
 
     debug_print("ptg_get_transformation_matrix:\n");
 
-    for (i = 0; i < 3; i++) {
-        for (j = 0; j < 3; j++) {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
             transform_mat[i][j] = 0;
         }
     }
 
-    pg_num = get_pointgroup_number_by_rotations(rotations, num_rotations);
+    int pg_num = get_pointgroup_number_by_rotations(rotations, num_rotations);
 
     // Layer group does not have cubic point groups (28 <= pg_num < 32)
     if (pg_num > 0 && (aperiodic_axis == -1 || pg_num < 28)) {
@@ -411,7 +411,6 @@ Pointgroup ptg_get_transformation_matrix(int transform_mat[3][3],
 }
 
 Pointgroup ptg_get_pointgroup(const int pointgroup_number) {
-    int i;
     Pointgroup pointgroup;
     PointgroupType pointgroup_type;
 
@@ -419,12 +418,12 @@ Pointgroup ptg_get_pointgroup(const int pointgroup_number) {
     pointgroup_type = pointgroup_data[pointgroup_number];
     memcpy(pointgroup.symbol, pointgroup_type.symbol, 6);
     memcpy(pointgroup.schoenflies, pointgroup_type.schoenflies, 4);
-    for (i = 0; i < 5; i++) {
+    for (int i = 0; i < 5; i++) {
         if (pointgroup.symbol[i] == ' ') {
             pointgroup.symbol[i] = '\0';
         }
     }
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         if (pointgroup.schoenflies[i] == ' ') {
             pointgroup.schoenflies[i] = '\0';
         }
@@ -440,12 +439,11 @@ Pointgroup ptg_get_pointgroup(const int pointgroup_number) {
 // @brief Construct PointSymmetry from given `rotations`
 PointSymmetry ptg_get_pointsymmetry(const int rotations[][3][3],
                                     const int num_rotations) {
-    int i, j;
     PointSymmetry pointsym;
 
     pointsym.size = 0;
-    for (i = 0; i < num_rotations; i++) {
-        for (j = 0; j < pointsym.size; j++) {
+    for (int i = 0; i < num_rotations; i++) {
+        for (int j = 0; j < pointsym.size; j++) {
             if (mat_check_identity_matrix_i3(rotations[i], pointsym.rot[j])) {
                 goto escape;
             }
@@ -460,43 +458,37 @@ PointSymmetry ptg_get_pointsymmetry(const int rotations[][3][3],
 
 static int get_pointgroup_number_by_rotations(const int rotations[][3][3],
                                               const int num_rotations) {
-    PointSymmetry pointsym;
-
-    pointsym = ptg_get_pointsymmetry(rotations, num_rotations);
+    PointSymmetry pointsym = ptg_get_pointsymmetry(rotations, num_rotations);
     return get_pointgroup_number(&pointsym);
 }
 
 static int get_pointgroup_number(const PointSymmetry* pointsym) {
-    int i, j, pg_num, counter;
     int table[10];
     PointgroupType pointgroup_type;
 
-    debug_print("get_pointgroup_number:");
-
-    pg_num = 0;
+    debug_print("get_pointgroup_number: ");
 
     /* Get list of point symmetry operations */
     if (!get_pointgroup_class_table(table, pointsym)) {
-        goto end;
+        debug_print("get_pointgroup_class_table returned 0\n");
+        return 0;
     }
 
-    for (i = 1; i < 33; i++) {
-        counter = 0;
+    for (int i = 1; i < 33; i++) {
+        int counter = 0;
         pointgroup_type = pointgroup_data[i];
-        for (j = 0; j < 10; j++) {
+        for (int j = 0; j < 10; j++) {
             if (pointgroup_type.table[j] == table[j]) {
                 counter++;
             }
         }
         if (counter == 10) {
-            pg_num = i;
-            break;
+            debug_print("%d\n", i);
+            return i;
         }
     }
-
-end:
-    debug_print(" %d\n", pg_num);
-    return pg_num;
+    debug_print("0\n");
+    return 0;
 }
 
 // @brief Return counts of types of rotations
@@ -521,76 +513,53 @@ static int get_pointgroup_class_table(int table[10],
     /* table[8] =  4 axis */
     /* table[9] =  6 axis */
 
-    int i, rot_type;
-
-    for (i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; i++) {
         table[i] = 0;
     }
-    for (i = 0; i < pointsym->size; i++) {
-        rot_type = get_rotation_type(pointsym->rot[i]);
+    for (int i = 0; i < pointsym->size; i++) {
+        int rot_type = get_rotation_type(pointsym->rot[i]);
         if (rot_type == -1) {
-            goto err;
-        } else {
-            table[rot_type]++;
+            warning_print("spglib: No point group symbol found ");
+            warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+            return 0;
         }
+        table[rot_type]++;
     }
-
     return 1;
-
-err:
-    warning_print("spglib: No point group symbol found ");
-    warning_print("(line %d, %s).\n", __LINE__, __FILE__);
-    return 0;
 }
 
 static int get_rotation_type(const int rot[3][3]) {
-    int rot_type;
-
     if (mat_get_determinant_i3(rot) == -1) {
         switch (mat_get_trace_i3(rot)) {
             case -2: /* -6 */
-                rot_type = 0;
-                break;
+                return 0;
             case -1: /* -4 */
-                rot_type = 1;
-                break;
+                return 1;
             case 0: /* -3 */
-                rot_type = 2;
-                break;
+                return 2;
             case 1: /* -2 */
-                rot_type = 3;
-                break;
+                return 3;
             case -3: /* -1 */
-                rot_type = 4;
-                break;
+                return 4;
             default:
-                rot_type = -1;
-                break;
+                return -1;
         }
     } else {
         switch (mat_get_trace_i3(rot)) {
             case 3: /* 1 */
-                rot_type = 5;
-                break;
+                return 5;
             case -1: /* 2 */
-                rot_type = 6;
-                break;
+                return 6;
             case 0: /* 3 */
-                rot_type = 7;
-                break;
+                return 7;
             case 1: /* 4 */
-                rot_type = 8;
-                break;
+                return 8;
             case 2: /* 6 */
-                rot_type = 9;
-                break;
+                return 9;
             default:
-                rot_type = -1;
-                break;
+                return -1;
         }
     }
-
-    return rot_type;
 }
 
 // @brief Get conventional axes for point group `pointsym`
@@ -619,20 +588,12 @@ static int get_axes(int axes[3], const Laue laue, const PointSymmetry* pointsym,
             lauennn(axes, pointsym, 2, aperiodic_axis);
             break;
         case LAUE4M:
-            laue_one_axis(axes, pointsym, 4);
-            break;
         case LAUE4MMM:
             laue_one_axis(axes, pointsym, 4);
             break;
         case LAUE3:
-            laue_one_axis(axes, pointsym, 3);
-            break;
         case LAUE3M:
-            laue_one_axis(axes, pointsym, 3);
-            break;
         case LAUE6M:
-            laue_one_axis(axes, pointsym, 3);
-            break;
         case LAUE6MMM:
             laue_one_axis(axes, pointsym, 3);
             break;
@@ -650,7 +611,6 @@ static int get_axes(int axes[3], const Laue laue, const PointSymmetry* pointsym,
 }
 
 static int laue2m(int axes[3], const PointSymmetry* pointsym) {
-    int i, num_ortho_axis, norm, min_norm, is_found;
     int prop_rot[3][3];
     int ortho_axes[NUM_ROT_AXES];
     /* Uncomment to pass original POSCAR-14-227-47-ref,
@@ -659,7 +619,7 @@ static int laue2m(int axes[3], const PointSymmetry* pointsym) {
     int tmpval, t_mat[3][3];
     */
 
-    for (i = 0; i < pointsym->size; i++) {
+    for (int i = 0; i < pointsym->size; i++) {
         get_proper_rotation(prop_rot, pointsym->rot[i]);
 
         /* Search two-fold rotation */
@@ -673,15 +633,16 @@ static int laue2m(int axes[3], const PointSymmetry* pointsym) {
     }
 
     /* The second axis */
-    num_ortho_axis = get_orthogonal_axis(ortho_axes, prop_rot, 2);
+    int num_ortho_axis = get_orthogonal_axis(ortho_axes, prop_rot, 2);
     if (!num_ortho_axis) {
-        goto err;
+        // Error could not get orthogonal axis
+        return 0;
     }
 
-    min_norm = 8;
-    is_found = 0;
-    for (i = 0; i < num_ortho_axis; i++) {
-        norm = mat_norm_squared_i3(rot_axes[ortho_axes[i]]);
+    int min_norm = 8;
+    int is_found = 0;
+    for (int i = 0; i < num_ortho_axis; i++) {
+        int norm = mat_norm_squared_i3(rot_axes[ortho_axes[i]]);
         if (norm < min_norm) {
             min_norm = norm;
             axes[0] = ortho_axes[i];
@@ -689,14 +650,15 @@ static int laue2m(int axes[3], const PointSymmetry* pointsym) {
         }
     }
     if (!is_found) {
-        goto err;
+        // Error not found
+        return 0;
     }
 
     /* The third axis */
     min_norm = 8;
     is_found = 0;
-    for (i = 0; i < num_ortho_axis; i++) {
-        norm = mat_norm_squared_i3(rot_axes[ortho_axes[i]]);
+    for (int i = 0; i < num_ortho_axis; i++) {
+        int norm = mat_norm_squared_i3(rot_axes[ortho_axes[i]]);
         if ((norm < min_norm) && (ortho_axes[i] != axes[0])) {
             min_norm = norm;
             axes[2] = ortho_axes[i];
@@ -704,7 +666,8 @@ static int laue2m(int axes[3], const PointSymmetry* pointsym) {
         }
     }
     if (!is_found) {
-        goto err;
+        // Error not found
+        return 0;
     }
 
     /* Uncomment to pass original POSCAR-14-227-47-ref,
@@ -719,20 +682,16 @@ static int laue2m(int axes[3], const PointSymmetry* pointsym) {
     */
 
     return 1;
-
-err:
-    return 0;
 }
 
 // @note The two-fold axis is set to axis-a. Axes b and c forms the periodic
 // plane.
 static int layer_laue2m(int axes[3], const PointSymmetry* pointsym,
                         const int aperiodic_axis) {
-    int i, num_ortho_axis, norm, min_norm, is_found;
     int prop_rot[3][3];
     int ortho_axes[NUM_ROT_AXES];
 
-    for (i = 0; i < pointsym->size; i++) {
+    for (int i = 0; i < pointsym->size; i++) {
         get_proper_rotation(prop_rot, pointsym->rot[i]);
 
         /* Search two-fold rotation */
@@ -747,19 +706,19 @@ static int layer_laue2m(int axes[3], const PointSymmetry* pointsym,
         break;
     }
 
-    num_ortho_axis = get_orthogonal_axis(ortho_axes, prop_rot, 2);
+    int num_ortho_axis = get_orthogonal_axis(ortho_axes, prop_rot, 2);
     if (!num_ortho_axis) {
-        goto err;
+        return 0;
     }
 
     if (rot_axes[axes[0]][aperiodic_axis] == 1 ||
         rot_axes[axes[0]][aperiodic_axis] == -1) {
         /* For Monoclinic/Oblique. */
         /* The second axis */
-        min_norm = 8;
-        is_found = 0;
-        for (i = 0; i < num_ortho_axis; i++) {
-            norm = mat_norm_squared_i3(rot_axes[ortho_axes[i]]);
+        int min_norm = 8;
+        int is_found = 0;
+        for (int i = 0; i < num_ortho_axis; i++) {
+            int norm = mat_norm_squared_i3(rot_axes[ortho_axes[i]]);
             if (norm < min_norm) {
                 min_norm = norm;
                 axes[1] = ortho_axes[i];
@@ -767,14 +726,14 @@ static int layer_laue2m(int axes[3], const PointSymmetry* pointsym,
             }
         }
         if (!is_found) {
-            goto err;
+            return 0;
         }
 
         /* The third axis */
         min_norm = 8;
         is_found = 0;
-        for (i = 0; i < num_ortho_axis; i++) {
-            norm = mat_norm_squared_i3(rot_axes[ortho_axes[i]]);
+        for (int i = 0; i < num_ortho_axis; i++) {
+            int norm = mat_norm_squared_i3(rot_axes[ortho_axes[i]]);
             if ((norm < min_norm) && (ortho_axes[i] != axes[1])) {
                 min_norm = norm;
                 axes[2] = ortho_axes[i];
@@ -782,16 +741,16 @@ static int layer_laue2m(int axes[3], const PointSymmetry* pointsym,
             }
         }
         if (!is_found) {
-            goto err;
+            return 0;
         }
     } else if (rot_axes[axes[0]][aperiodic_axis] == 0) {
         /* For Monoclinic/Rectangular. */
         /* The second axis in the periodic plane */
-        min_norm = 8;
-        is_found = 0;
-        for (i = 0; i < num_ortho_axis; i++) {
+        int min_norm = 8;
+        int is_found = 0;
+        for (int i = 0; i < num_ortho_axis; i++) {
             if (rot_axes[ortho_axes[i]][aperiodic_axis] == 0) {
-                norm = mat_norm_squared_i3(rot_axes[ortho_axes[i]]);
+                int norm = mat_norm_squared_i3(rot_axes[ortho_axes[i]]);
                 if (norm < min_norm) {
                     min_norm = norm;
                     axes[1] = ortho_axes[i];
@@ -800,16 +759,16 @@ static int layer_laue2m(int axes[3], const PointSymmetry* pointsym,
             }
         }
         if (!is_found) {
-            goto err;
+            return 0;
         }
 
         /* The third axis outside the periodic plane */
         min_norm = 8;
         is_found = 0;
-        for (i = 0; i < num_ortho_axis; i++) {
+        for (int i = 0; i < num_ortho_axis; i++) {
             if (rot_axes[ortho_axes[i]][aperiodic_axis] == 1 ||
                 rot_axes[ortho_axes[i]][aperiodic_axis] == -1) {
-                norm = mat_norm_squared_i3(rot_axes[ortho_axes[i]]);
+                int norm = mat_norm_squared_i3(rot_axes[ortho_axes[i]]);
                 if (norm < min_norm) {
                     min_norm = norm;
                     axes[2] = ortho_axes[i];
@@ -818,31 +777,26 @@ static int layer_laue2m(int axes[3], const PointSymmetry* pointsym,
             }
         }
         if (!is_found) {
-            goto err;
+            return 0;
         }
-    } else {
-        goto err;
-    }
+    } else
+        return 0;
 
     /* det(t_mat) > 0 in 2D delaunay reduce */
 
     return 1;
-
-err:
-    return 0;
 }
 
 // For Laue classes 4/m, 4/mmm, -3, -3/m, 6/m, 6/mmm
 static int laue_one_axis(int axes[3], const PointSymmetry* pointsym,
                          const int rot_order) {
-    int i, j, num_ortho_axis, det, is_found, tmpval;
     int axis_vec[3], tmp_axes[3];
     int prop_rot[3][3], t_mat[3][3];
     int ortho_axes[NUM_ROT_AXES];
 
     debug_print("laue_one_axis with rot_order %d\n", rot_order);
 
-    for (i = 0; i < pointsym->size; i++) {
+    for (int i = 0; i < pointsym->size; i++) {
         get_proper_rotation(prop_rot, pointsym->rot[i]);
 
         /* Search four-fold rotation */
@@ -865,19 +819,21 @@ static int laue_one_axis(int axes[3], const PointSymmetry* pointsym,
     }
 
     /* Candidates of the second axis */
-    num_ortho_axis = get_orthogonal_axis(ortho_axes, prop_rot, rot_order);
+    int num_ortho_axis = get_orthogonal_axis(ortho_axes, prop_rot, rot_order);
     if (!num_ortho_axis) {
-        goto err;
+        warning_print("spglib: Secondary axis is not found.");
+        warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+        return 0;
     }
 
     tmp_axes[1] = -1;
     tmp_axes[2] = axes[2];
-    for (i = 0; i < num_ortho_axis; i++) {
-        is_found = 0;
+    for (int i = 0; i < num_ortho_axis; i++) {
+        int is_found = 0;
         tmp_axes[0] = ortho_axes[i];
         mat_multiply_matrix_vector_i3(axis_vec, prop_rot,
                                       rot_axes[tmp_axes[0]]);
-        for (j = 0; j < num_ortho_axis; j++) {
+        for (int j = 0; j < num_ortho_axis; j++) {
             is_found = is_exist_axis(axis_vec, ortho_axes[j]);
             if (is_found == 1) {
                 tmp_axes[1] = ortho_axes[j];
@@ -894,23 +850,17 @@ static int laue_one_axis(int axes[3], const PointSymmetry* pointsym,
         }
 
         set_transformation_matrix(t_mat, tmp_axes);
-        det = abs(mat_get_determinant_i3(t_mat));
+        int det = abs(mat_get_determinant_i3(t_mat));
         if (det < 4) { /* to avoid F-center choice det=4 */
             axes[0] = tmp_axes[0];
             axes[1] = tmp_axes[1];
-            goto end;
+            break;
         }
     }
 
-err: /* axes are not correctly found. */
-    warning_print("spglib: Secondary axis is not found.");
-    warning_print("(line %d, %s).\n", __LINE__, __FILE__);
-    return 0;
-
-end:
     set_transformation_matrix(t_mat, axes);
     if (mat_get_determinant_i3(t_mat) < 0) {
-        tmpval = axes[0];
+        int tmpval = axes[0];
         axes[0] = axes[1];
         axes[1] = tmpval;
     }
@@ -925,21 +875,19 @@ end:
 // For Laue classes mmm, m-3, m-3m
 static int lauennn(int axes[3], const PointSymmetry* pointsym,
                    const int rot_order, const int aperiodic_axis) {
-    int i, count, axis;
     int prop_rot[3][3];
 
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         axes[i] = -1;
     }
 
-    count = 0;
-    for (i = 0; i < pointsym->size; i++) {
+    for (int i = 0, count = 0; i < pointsym->size; i++) {
         get_proper_rotation(prop_rot, pointsym->rot[i]);
 
         /* Search two- or four-fold rotation */
         if ((mat_get_trace_i3(prop_rot) == -1 && rot_order == 2) ||
             (mat_get_trace_i3(prop_rot) == 1 && rot_order == 4)) {
-            axis = get_rotation_axis(prop_rot);
+            int axis = get_rotation_axis(prop_rot);
             if (!((axis == axes[0]) || (axis == axes[1]) ||
                   (axis == axes[2]))) {
                 axes[count] = axis;
@@ -958,30 +906,25 @@ static int lauennn(int axes[3], const PointSymmetry* pointsym,
 }
 
 static int get_rotation_axis(const int proper_rot[3][3]) {
-    int i, axis = -1;
     int vec[3];
 
     /* No specific axis for I and -I */
     if (mat_check_identity_matrix_i3(proper_rot, identity)) {
-        goto end;
+        warning_print("No specific axis for I and -I.\n");
+        return -1;
     }
 
     /* Look for eigenvector = rotation axis */
-    for (i = 0; i < NUM_ROT_AXES; i++) {
+    for (int i = 0; i < NUM_ROT_AXES; i++) {
         mat_multiply_matrix_vector_i3(vec, proper_rot, rot_axes[i]);
         if (vec[0] == rot_axes[i][0] && vec[1] == rot_axes[i][1] &&
             vec[2] == rot_axes[i][2]) {
-            axis = i;
-            break;
+            return i;
         }
     }
 
-end:
-    if (axis == -1) {
-        debug_print("rotation axis could not be found.\n");
-    }
-
-    return axis;
+    debug_print("rotation axis could not be found.\n");
+    return -1;
 }
 
 // Output indices of `rot_axes` orthogonal to the axis of `proper_rot`
@@ -991,21 +934,19 @@ end:
 // @return Size of orthogonal axes
 static int get_orthogonal_axis(int ortho_axes[], const int proper_rot[3][3],
                                const int rot_order) {
-    int i, num_ortho_axis;
     int vec[3];
     int sum_rot[3][3], rot[3][3];
-
-    num_ortho_axis = 0;
 
     // sum_rot = proper_rot + ... + proper_rot^rot_order
     mat_copy_matrix_i3(sum_rot, identity);
     mat_copy_matrix_i3(rot, identity);
-    for (i = 0; i < rot_order - 1; i++) {
+    for (int i = 0; i < rot_order - 1; i++) {
         mat_multiply_matrix_i3(rot, proper_rot, rot);
         mat_add_matrix_i3(sum_rot, rot, sum_rot);
     }
 
-    for (i = 0; i < NUM_ROT_AXES; i++) {
+    int num_ortho_axis = 0;
+    for (int i = 0; i < NUM_ROT_AXES; i++) {
         // Kernel of `sum_rot` is always orthogonal to the axis of `proper_rot`
         mat_multiply_matrix_vector_i3(vec, sum_rot, rot_axes[i]);
         if (vec[0] == 0 && vec[1] == 0 && vec[2] == 0) {
@@ -1028,20 +969,15 @@ static void get_proper_rotation(int prop_rot[3][3], const int rot[3][3]) {
 
 // @brief Construct `tmat` from given indices corresponding to `rot_axes`
 static void set_transformation_matrix(int tmat[3][3], const int axes[3]) {
-    int i, j, s[3];
+    int s[3];
 
-    for (i = 0; i < 3; i++) {
-        if (axes[i] < NUM_ROT_AXES) {
-            s[i] = 1;
-        } else {
-            s[i] = -1; /* axes[i] + NUM_ROT_AXES means improper rotation. */
-        }
-    }
-    for (i = 0; i < 3; i++) {
-        for (j = 0; j < 3; j++) {
+    for (int i = 0; i < 3; i++)
+        /* axes[i] + NUM_ROT_AXES means improper rotation. */
+        s[i] = (axes[i] < NUM_ROT_AXES) ? 1 : -1;
+    for (int i = 0; i < 3; i++)
+        for (int j = 0; j < 3; j++)
+            // NOLINTNEXTLINE(clang-analyzer-core.UndefinedBinaryOperatorResult)
             tmat[i][j] = s[j] * rot_axes[axes[j] % NUM_ROT_AXES][i];
-        }
-    }
 }
 
 // @brief Return 1 if axis_vec == rot_axes[axis_index],
@@ -1061,30 +997,29 @@ static int is_exist_axis(const int axis_vec[3], const int axis_index) {
 }
 
 static void sort_axes(int axes[3]) {
-    int axis;
     int t_mat[3][3];
 
     if (axes[1] > axes[2]) {
-        axis = axes[1];
+        int axis = axes[1];
         axes[1] = axes[2];
         axes[2] = axis;
     }
 
     if (axes[0] > axes[1]) {
-        axis = axes[0];
+        int axis = axes[0];
         axes[0] = axes[1];
         axes[1] = axis;
     }
 
     if (axes[1] > axes[2]) {
-        axis = axes[1];
+        int axis = axes[1];
         axes[1] = axes[2];
         axes[2] = axis;
     }
 
     set_transformation_matrix(t_mat, axes);
     if (mat_get_determinant_i3(t_mat) < 0) {
-        axis = axes[1];
+        int axis = axes[1];
         axes[1] = axes[2];
         axes[2] = axis;
     }
@@ -1093,12 +1028,13 @@ static void sort_axes(int axes[3]) {
 // Sort two-fold axes for Laue class mmm for layer group.
 // Non-periodic axis is maintained to be c-axis.
 static void layer_check_and_sort_axes(int axes[3], const int aperiodic_axis) {
-    int i, lattice_rank, arank, axis, axis_i;
     int t_mat[3][3];
 
-    lattice_rank = 0;
-    arank = 0;
-    for (i = 0; i < 3; i++) {
+    int lattice_rank = 0;
+    int arank = 0;
+    int axis_i = -1;
+    int axis = -1;
+    for (int i = 0; i < 3; i++) {
         if (rot_axes[axes[i]][aperiodic_axis] == 0) {
             lattice_rank++;
         } else if (rot_axes[axes[i]][aperiodic_axis] == 1 ||
@@ -1108,6 +1044,8 @@ static void layer_check_and_sort_axes(int axes[3], const int aperiodic_axis) {
             arank++;
         }
     }
+    assert(axis_i > -1);
+    assert(axis > -1);
 
     if (lattice_rank == 2 && arank == 1) {
         axes[axis_i] = axes[2];
@@ -1124,7 +1062,7 @@ static void layer_check_and_sort_axes(int axes[3], const int aperiodic_axis) {
         // I am not sure if this would ever happen.
         warning_print("spglib: Invalid axes were found ");
         warning_print("(line %d, %s).\n", __LINE__, __FILE__);
-        for (i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++) {
             axes[i] = 0;
         }
     }

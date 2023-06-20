@@ -135,10 +135,10 @@ int mat_check_identity_matrix_id3(const int a[3][3], const double b[3][3],
 /* m=axb */
 void mat_multiply_matrix_d3(double m[3][3], const double a[3][3],
                             const double b[3][3]) {
-    int i, j; /* a_ij */
     double c[3][3];
-    for (i = 0; i < 3; i++) {
-        for (j = 0; j < 3; j++) {
+    /* a_ij */
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
             c[i][j] = a[i][0] * b[0][j] + a[i][1] * b[1][j] + a[i][2] * b[2][j];
         }
     }
@@ -146,10 +146,10 @@ void mat_multiply_matrix_d3(double m[3][3], const double a[3][3],
 }
 
 void mat_multiply_matrix_i3(int m[3][3], const int a[3][3], const int b[3][3]) {
-    int i, j; /* a_ij */
     int c[3][3];
-    for (i = 0; i < 3; i++) {
-        for (j = 0; j < 3; j++) {
+    /* a_ij */
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
             c[i][j] = a[i][0] * b[0][j] + a[i][1] * b[1][j] + a[i][2] * b[2][j];
         }
     }
@@ -158,10 +158,10 @@ void mat_multiply_matrix_i3(int m[3][3], const int a[3][3], const int b[3][3]) {
 
 void mat_multiply_matrix_di3(double m[3][3], const double a[3][3],
                              const int b[3][3]) {
-    int i, j; /* a_ij */
     double c[3][3];
-    for (i = 0; i < 3; i++) {
-        for (j = 0; j < 3; j++) {
+    /* a_ij */
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
             c[i][j] = a[i][0] * b[0][j] + a[i][1] * b[1][j] + a[i][2] * b[2][j];
         }
     }
@@ -170,10 +170,10 @@ void mat_multiply_matrix_di3(double m[3][3], const double a[3][3],
 
 void mat_multiply_matrix_id3(double m[3][3], const int a[3][3],
                              const double b[3][3]) {
-    int i, j; /* a_ij */
     double c[3][3];
-    for (i = 0; i < 3; i++) {
-        for (j = 0; j < 3; j++) {
+    /* a_ij */
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
             c[i][j] = a[i][0] * b[0][j] + a[i][1] * b[1][j] + a[i][2] * b[2][j];
         }
     }
@@ -182,45 +182,40 @@ void mat_multiply_matrix_id3(double m[3][3], const int a[3][3],
 
 void mat_multiply_matrix_vector_i3(int v[3], const int a[3][3],
                                    const int b[3]) {
-    int i;
     int c[3];
-    for (i = 0; i < 3; i++)
+    for (int i = 0; i < 3; i++)
         c[i] = a[i][0] * b[0] + a[i][1] * b[1] + a[i][2] * b[2];
-    for (i = 0; i < 3; i++) v[i] = c[i];
+    for (int i = 0; i < 3; i++) v[i] = c[i];
 }
 
 /* v[3] <- a[3][3] * b[3] */
 void mat_multiply_matrix_vector_d3(double v[3], const double a[3][3],
                                    const double b[3]) {
-    int i;
     double c[3];
-    for (i = 0; i < 3; i++)
+    for (int i = 0; i < 3; i++)
         c[i] = a[i][0] * b[0] + a[i][1] * b[1] + a[i][2] * b[2];
-    for (i = 0; i < 3; i++) v[i] = c[i];
+    for (int i = 0; i < 3; i++) v[i] = c[i];
 }
 
 void mat_multiply_matrix_vector_id3(double v[3], const int a[3][3],
                                     const double b[3]) {
-    int i;
     double c[3];
-    for (i = 0; i < 3; i++)
+    for (int i = 0; i < 3; i++)
         c[i] = a[i][0] * b[0] + a[i][1] * b[1] + a[i][2] * b[2];
-    for (i = 0; i < 3; i++) v[i] = c[i];
+    for (int i = 0; i < 3; i++) v[i] = c[i];
 }
 
 void mat_multiply_matrix_vector_di3(double v[3], const double a[3][3],
                                     const int b[3]) {
-    int i;
     double c[3];
-    for (i = 0; i < 3; i++)
+    for (int i = 0; i < 3; i++)
         c[i] = a[i][0] * b[0] + a[i][1] * b[1] + a[i][2] * b[2];
-    for (i = 0; i < 3; i++) v[i] = c[i];
+    for (int i = 0; i < 3; i++) v[i] = c[i];
 }
 
 void mat_add_matrix_i3(int m[3][3], const int a[3][3], const int b[3][3]) {
-    int i, j;
-    for (i = 0; i < 3; i++) {
-        for (j = 0; j < 3; j++) {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
             m[i][j] = a[i][j] + b[i][j];
         }
     }
@@ -259,9 +254,8 @@ void mat_cast_matrix_3d_to_3i(int m[3][3], const double a[3][3]) {
 /* }} */
 int mat_inverse_matrix_d3(double m[3][3], const double a[3][3],
                           const double precision) {
-    double det;
     double c[3][3];
-    det = mat_get_determinant_d3(a);
+    double det = mat_get_determinant_d3(a);
     if (mat_Dabs(det) < precision) {
         warning_print("spglib: No inverse matrix (det=%f)\n", det);
         return 0;
@@ -353,19 +347,14 @@ int mat_Nint(const double a) {
 }
 
 double mat_Dmod1(const double a) {
-    double b;
-    b = a - mat_Nint(a);
+    double b = a - mat_Nint(a);
 
     if (b < 0.0 - ZERO_PREC) return b + 1.0;
     return b;
 }
 
 MatINT *mat_alloc_MatINT(const int size) {
-    MatINT *matint;
-
-    matint = NULL;
-
-    matint = (MatINT *)malloc(sizeof(MatINT));
+    MatINT *matint = (MatINT *)malloc(sizeof(MatINT));
     if (matint == NULL) {
         warning_print("spglib: Memory could not be allocated.");
         return NULL;
@@ -394,11 +383,7 @@ void mat_free_MatINT(MatINT *matint) {
 }
 
 VecDBL *mat_alloc_VecDBL(const int size) {
-    VecDBL *vecdbl;
-
-    vecdbl = NULL;
-
-    vecdbl = (VecDBL *)malloc(sizeof(VecDBL));
+    VecDBL *vecdbl = (VecDBL *)malloc(sizeof(VecDBL));
     if (vecdbl == NULL) {
         warning_print("spglib: Memory could not be allocated.");
         return NULL;
@@ -427,9 +412,8 @@ void mat_free_VecDBL(VecDBL *vecdbl) {
 }
 
 int mat_is_int_matrix(const double mat[3][3], const double symprec) {
-    int i, j;
-    for (i = 0; i < 3; i++) {
-        for (j = 0; j < 3; j++) {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
             if (mat_Dabs(mat_Nint(mat[i][j]) - mat[i][j]) > symprec) {
                 return 0;
             }

@@ -56,18 +56,14 @@ static DataContainer *get_spacegroup_and_primitive(const Cell *cell,
 DataContainer *det_determine_all(const Cell *cell, const int hall_number,
                                  const double symprec,
                                  const double angle_symprec) {
-    int attempt;
-    double tolerance;
-    DataContainer *container;
-
-    container = NULL;
+    DataContainer *container = NULL;
 
     if (hall_number > 530) {
         return NULL;
     }
 
-    tolerance = symprec;
-    for (attempt = 0; attempt < NUM_ATTEMPT_OUTER; attempt++) {
+    double tolerance = symprec;
+    for (int attempt = 0; attempt < NUM_ATTEMPT_OUTER; attempt++) {
         container = get_spacegroup_and_primitive(cell, hall_number, tolerance,
                                                  angle_symprec);
         if (container != NULL) {
@@ -76,7 +72,7 @@ DataContainer *det_determine_all(const Cell *cell, const int hall_number,
                 container->primitive->mapping_table,
                 container->primitive->tolerance);
             if (container->exact_structure != NULL) {
-                goto found;
+                return container;
             }
             warning_print(
                 "spglib: ref_get_exact_structure_and_symmetry failed.");
@@ -86,8 +82,6 @@ DataContainer *det_determine_all(const Cell *cell, const int hall_number,
         }
         tolerance *= REDUCE_RATE_OUTER;
     }
-
-found:
     return container;
 }
 
@@ -114,15 +108,9 @@ static DataContainer *get_spacegroup_and_primitive(const Cell *cell,
                                                    const int hall_number,
                                                    const double symprec,
                                                    const double angle_symprec) {
-    int attempt;
-    double tolerance, angle_tolerance;
-    DataContainer *container;
-
     debug_print("get_spacegroup_and_primitive (tolerance = %f):\n", symprec);
 
-    container = NULL;
-
-    container = (DataContainer *)malloc(sizeof(DataContainer));
+    DataContainer *container = (DataContainer *)malloc(sizeof(DataContainer));
     if (container == NULL) {
         warning_print("spglib: Memory could not be allocated.");
         return NULL;
@@ -132,23 +120,22 @@ static DataContainer *get_spacegroup_and_primitive(const Cell *cell,
     container->spacegroup = NULL;
     container->exact_structure = NULL;
 
-    tolerance = symprec;
-    angle_tolerance = angle_symprec;
+    double tolerance = symprec;
+    double angle_tolerance = angle_symprec;
 
-    for (attempt = 0; attempt < NUM_ATTEMPT; attempt++) {
+    for (int attempt = 0; attempt < NUM_ATTEMPT; attempt++) {
         container->primitive =
             prm_get_primitive(cell, tolerance, angle_tolerance);
         if (container->primitive != NULL) {
             debug_print("[line %d, %s]\n", __LINE__, __FILE__);
             debug_print("primitive lattice\n");
             debug_print_matrix_d3(container->primitive->cell->lattice);
-
             container->spacegroup =
                 spa_search_spacegroup(container->primitive, hall_number,
                                       container->primitive->tolerance,
                                       container->primitive->angle_tolerance);
             if (container->spacegroup != NULL) {
-                goto found;
+                return container;
             }
 
             prm_free_primitive(container->primitive);
@@ -169,7 +156,4 @@ static DataContainer *get_spacegroup_and_primitive(const Cell *cell,
     container = NULL;
 
     return NULL;
-
-found:
-    return container;
 }

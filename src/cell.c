@@ -61,15 +61,13 @@ static int *get_overlap_table(const VecDBL *position, int cell_size,
 // @param tensor_rank rank of site tensors for magnetic symmetry. Set -1 if not
 // used.
 Cell *cel_alloc_cell(const int size, const SiteTensorType tensor_rank) {
-    Cell *cell;
-
-    cell = NULL;
-
+    // NOLINTBEGIN(bugprone-easily-swappable-parameters)
     if (size < 1) {
         return NULL;
     }
 
-    cell = (Cell *)malloc(sizeof(Cell));
+    Cell *cell = (Cell *)malloc(sizeof(Cell));
+
     if (cell == NULL) {
         goto fail;
     }
@@ -104,6 +102,7 @@ Cell *cel_alloc_cell(const int size, const SiteTensorType tensor_rank) {
             goto fail;
         }
     }
+    // NOLINTEND(bugprone-easily-swappable-parameters)
 
     return cell;
 
@@ -139,10 +138,9 @@ void cel_free_cell(Cell *cell) {
 
 void cel_set_cell(Cell *cell, const double lattice[3][3],
                   const double position[][3], const int types[]) {
-    int i, j;
     mat_copy_matrix_d3(cell->lattice, lattice);
-    for (i = 0; i < cell->size; i++) {
-        for (j = 0; j < 3; j++) {
+    for (int i = 0; i < cell->size; i++) {
+        for (int j = 0; j < 3; j++) {
             cell->position[i][j] = position[i][j] - mat_Nint(position[i][j]);
         }
         cell->types[i] = types[i];
@@ -153,10 +151,9 @@ void cel_set_cell(Cell *cell, const double lattice[3][3],
 void cel_set_layer_cell(Cell *cell, const double lattice[3][3],
                         const double position[][3], const int types[],
                         const int aperiodic_axis) {
-    int i, j;
     mat_copy_matrix_d3(cell->lattice, lattice);
-    for (i = 0; i < cell->size; i++) {
-        for (j = 0; j < 3; j++) {
+    for (int i = 0; i < cell->size; i++) {
+        for (int j = 0; j < 3; j++) {
             if (j != aperiodic_axis) {
                 cell->position[i][j] =
                     position[i][j] - mat_Nint(position[i][j]);
@@ -172,14 +169,12 @@ void cel_set_layer_cell(Cell *cell, const double lattice[3][3],
 void cel_set_cell_with_tensors(Cell *cell, const double lattice[3][3],
                                const double position[][3], const int types[],
                                const double *tensors) {
-    int i, j;
-
     cel_set_cell(cell, lattice, position, types);
-    for (i = 0; i < cell->size; i++) {
+    for (int i = 0; i < cell->size; i++) {
         if (cell->tensor_rank == COLLINEAR) {
             cell->tensors[i] = tensors[i];
         } else if (cell->tensor_rank == NONCOLLINEAR) {
-            for (j = 0; j < 3; j++) {
+            for (int j = 0; j < 3; j++) {
                 cell->tensors[i * 3 + j] = tensors[i * 3 + j];
             }
         }
@@ -187,11 +182,8 @@ void cel_set_cell_with_tensors(Cell *cell, const double lattice[3][3],
 }
 
 Cell *cel_copy_cell(const Cell *cell) {
-    Cell *cell_new;
+    Cell *cell_new = cel_alloc_cell(cell->size, cell->tensor_rank);
 
-    cell_new = NULL;
-
-    cell_new = cel_alloc_cell(cell->size, cell->tensor_rank);
     if (cell_new == NULL) {
         return NULL;
     }
@@ -211,10 +203,9 @@ Cell *cel_copy_cell(const Cell *cell) {
 
 int cel_is_overlap(const double a[3], const double b[3],
                    const double lattice[3][3], const double symprec) {
-    int i;
     double v_diff[3];
 
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         v_diff[i] = a[i] - b[i];
         v_diff[i] -= mat_Nint(v_diff[i]);
     }
@@ -239,10 +230,8 @@ int cel_is_overlap_with_same_type(const double a[3], const double b[3],
 /* 1: At least one overlap of a pair of atoms was found. */
 /* 0: No overlap of atoms was found. */
 int cel_any_overlap(const Cell *cell, const double symprec) {
-    int i, j;
-
-    for (i = 0; i < cell->size; i++) {
-        for (j = i + 1; j < cell->size; j++) {
+    for (int i = 0; i < cell->size; i++) {
+        for (int j = i + 1; j < cell->size; j++) {
             if (cel_is_overlap(cell->position[i], cell->position[j],
                                cell->lattice, symprec)) {
                 return 1;
@@ -255,10 +244,8 @@ int cel_any_overlap(const Cell *cell, const double symprec) {
 /* 1: At least one overlap of a pair of atoms with same type was found. */
 /* 0: No overlap of atoms was found. */
 int cel_any_overlap_with_same_type(const Cell *cell, const double symprec) {
-    int i, j;
-
-    for (i = 0; i < cell->size; i++) {
-        for (j = i + 1; j < cell->size; j++) {
+    for (int i = 0; i < cell->size; i++) {
+        for (int j = i + 1; j < cell->size; j++) {
             if (cel_is_overlap_with_same_type(
                     cell->position[i], cell->position[j], cell->types[i],
                     cell->types[j], cell->lattice, symprec)) {
@@ -306,10 +293,8 @@ int cel_layer_is_overlap_with_same_type(const double a[3], const double b[3],
 int cel_layer_any_overlap_with_same_type(const Cell *cell,
                                          const int periodic_axes[2],
                                          const double symprec) {
-    int i, j;
-
-    for (i = 0; i < cell->size; i++) {
-        for (j = i + 1; j < cell->size; j++) {
+    for (int i = 0; i < cell->size; i++) {
+        for (int j = i + 1; j < cell->size; j++) {
             if (cel_layer_is_overlap_with_same_type(
                     cell->position[i], cell->position[j], cell->types[i],
                     cell->types[j], cell->lattice, periodic_axes, symprec)) {
@@ -334,21 +319,13 @@ Cell *cel_trim_cell(int *mapping_table, const double trimmed_lattice[3][3],
 /* Return NULL if failed */
 static Cell *trim_cell(int *mapping_table, const double trimmed_lattice[3][3],
                        const Cell *cell, const double symprec) {
-    int i, index_atom, ratio;
-    Cell *trimmed_cell;
-    VecDBL *position;
-    int *overlap_table;
     int tmp_mat_int[3][3];
     double tmp_mat[3][3];
 
     debug_print("trim_cell\n");
 
-    position = NULL;
-    overlap_table = NULL;
-    trimmed_cell = NULL;
-
-    ratio = abs(mat_Nint(mat_get_determinant_d3(cell->lattice) /
-                         mat_get_determinant_d3(trimmed_lattice)));
+    int ratio = abs(mat_Nint(mat_get_determinant_d3(cell->lattice) /
+                             mat_get_determinant_d3(trimmed_lattice)));
 
     mat_inverse_matrix_d3(tmp_mat, trimmed_lattice, symprec);
     mat_multiply_matrix_d3(tmp_mat, tmp_mat, cell->lattice);
@@ -367,11 +344,12 @@ static Cell *trim_cell(int *mapping_table, const double trimmed_lattice[3][3],
         warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
         goto err;
     }
-    trimmed_cell = cel_alloc_cell(cell->size / ratio, cell->tensor_rank);
+    Cell *trimmed_cell = cel_alloc_cell(cell->size / ratio, cell->tensor_rank);
     if (trimmed_cell == NULL) {
         goto err;
     }
-    position = translate_atoms_in_trimmed_lattice(cell, trimmed_lattice);
+    VecDBL *position =
+        translate_atoms_in_trimmed_lattice(cell, trimmed_lattice);
     if (position == NULL) {
         warning_print("spglib: translate_atoms_in_trimmed_lattice failed.\n");
         warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
@@ -383,8 +361,8 @@ static Cell *trim_cell(int *mapping_table, const double trimmed_lattice[3][3],
     mat_copy_matrix_d3(trimmed_cell->lattice, trimmed_lattice);
     /* aperiodic axis of trimmed_cell is directly copied from cell */
     trimmed_cell->aperiodic_axis = cell->aperiodic_axis;
-    overlap_table = get_overlap_table(position, cell->size, cell->types,
-                                      trimmed_cell, symprec);
+    int *overlap_table = get_overlap_table(position, cell->size, cell->types,
+                                           trimmed_cell, symprec);
     if (overlap_table == NULL) {
         warning_print("spglib: get_overlap_table failed.\n");
         warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
@@ -395,8 +373,8 @@ static Cell *trim_cell(int *mapping_table, const double trimmed_lattice[3][3],
         goto err;
     }
 
-    index_atom = 0;
-    for (i = 0; i < cell->size; i++) {
+    int index_atom = 0;
+    for (int i = 0; i < cell->size; i++) {
         if (overlap_table[i] == i) {
             mapping_table[i] = index_atom;
             trimmed_cell->types[index_atom] = cell->types[i];
@@ -427,27 +405,25 @@ static void set_positions_and_tensors(Cell *trimmed_cell,
                                       const double *tensors,
                                       const int *mapping_table,
                                       const int *overlap_table) {
-    int i, j, k, l, multi, atom_idx;
-
-    for (i = 0; i < trimmed_cell->size; i++) {
-        for (j = 0; j < 3; j++) {
+    for (int i = 0; i < trimmed_cell->size; i++) {
+        for (int j = 0; j < 3; j++) {
             trimmed_cell->position[i][j] = 0;
         }
 
         if (tensor_rank == COLLINEAR) {
             trimmed_cell->tensors[i] = 0;
         } else if (tensor_rank == NONCOLLINEAR) {
-            for (j = 0; j < 3; j++) {
+            for (int j = 0; j < 3; j++) {
                 trimmed_cell->tensors[3 * i + j] = 0;
             }
         }
     }
 
     /* Positions of overlapped atoms are averaged. */
-    for (i = 0; i < position->size; i++) {
-        j = mapping_table[i];
-        k = overlap_table[i];
-        for (l = 0; l < 3; l++) {
+    for (int i = 0; i < position->size; i++) {
+        int j = mapping_table[i];
+        int k = overlap_table[i];
+        for (int l = 0; l < 3; l++) {
             /* boundary treatment */
             /* One is at right and one is at left or vice versa. */
             if (mat_Dabs(position->vec[k][l] - position->vec[i][l]) > 0.5) {
@@ -463,20 +439,20 @@ static void set_positions_and_tensors(Cell *trimmed_cell,
     }
 
     /* Site tensors of overlapped atoms are averaged. */
-    for (i = 0; i < position->size; i++) {
-        atom_idx = mapping_table[i];
+    for (int i = 0; i < position->size; i++) {
+        int atom_idx = mapping_table[i];
         if (tensor_rank == COLLINEAR) {
             trimmed_cell->tensors[atom_idx] += tensors[i];
         } else if (tensor_rank == NONCOLLINEAR) {
-            for (j = 0; j < 3; j++) {
+            for (int j = 0; j < 3; j++) {
                 trimmed_cell->tensors[3 * atom_idx + j] += tensors[3 * i + j];
             }
         }
     }
 
-    multi = position->size / trimmed_cell->size;
-    for (i = 0; i < trimmed_cell->size; i++) {
-        for (j = 0; j < 3; j++) {
+    int multi = position->size / trimmed_cell->size;
+    for (int i = 0; i < trimmed_cell->size; i++) {
+        for (int j = 0; j < 3; j++) {
             trimmed_cell->position[i][j] /= multi;
             if (j != trimmed_cell->aperiodic_axis) {
                 trimmed_cell->position[i][j] =
@@ -487,7 +463,7 @@ static void set_positions_and_tensors(Cell *trimmed_cell,
         if (tensor_rank == COLLINEAR) {
             trimmed_cell->tensors[i] /= multi;
         } else if (tensor_rank == NONCOLLINEAR) {
-            for (j = 0; j < 3; j++) {
+            for (int j = 0; j < 3; j++) {
                 trimmed_cell->tensors[3 * i + j] /= multi;
             }
         }
@@ -497,13 +473,9 @@ static void set_positions_and_tensors(Cell *trimmed_cell,
 /* Return NULL if failed */
 static VecDBL *translate_atoms_in_trimmed_lattice(
     const Cell *cell, const double trimmed_lattice[3][3]) {
-    int i, j;
     double tmp_matrix[3][3], axis_inv[3][3];
-    VecDBL *position;
 
-    position = NULL;
-
-    position = mat_alloc_VecDBL(cell->size);
+    VecDBL *position = mat_alloc_VecDBL(cell->size);
     if (position == NULL) {
         return NULL;
     }
@@ -512,10 +484,10 @@ static VecDBL *translate_atoms_in_trimmed_lattice(
     mat_multiply_matrix_d3(axis_inv, tmp_matrix, cell->lattice);
 
     /* Send atoms into the trimmed cell */
-    for (i = 0; i < cell->size; i++) {
+    for (int i = 0; i < cell->size; i++) {
         mat_multiply_matrix_vector_d3(position->vec[i], axis_inv,
                                       cell->position[i]);
-        for (j = 0; j < 3; j++) {
+        for (int j = 0; j < 3; j++) {
             if (j != cell->aperiodic_axis) {
                 position->vec[i][j] = mat_Dmod1(position->vec[i][j]);
             }
@@ -529,32 +501,29 @@ static VecDBL *translate_atoms_in_trimmed_lattice(
 static int *get_overlap_table(const VecDBL *position, const int cell_size,
                               const int *cell_types, const Cell *trimmed_cell,
                               const double symprec) {
-    int i, j, attempt, num_overlap, ratio, lattice_rank;
-    double trim_tolerance;
-    int *overlap_table;
     int periodic_axes[3];
     /* use periodic_axes to avoid for loop in cel_layer_is_overlap */
-    lattice_rank = 0;
-    for (i = 0; i < 3; i++) {
+    int lattice_rank = 0;
+    for (int i = 0; i < 3; i++) {
         if (i != trimmed_cell->aperiodic_axis) {
             periodic_axes[lattice_rank] = i;
             lattice_rank++;
         }
     }
 
-    trim_tolerance = symprec;
+    double trim_tolerance = symprec;
 
-    ratio = cell_size / trimmed_cell->size;
+    int ratio = cell_size / trimmed_cell->size;
 
-    overlap_table = (int *)malloc(sizeof(int) * cell_size);
+    int *overlap_table = (int *)malloc(sizeof(int) * cell_size);
     if (overlap_table == NULL) {
         return NULL;
     }
 
-    for (attempt = 0; attempt < NUM_ATTEMPT; attempt++) {
-        for (i = 0; i < cell_size; i++) {
+    for (int attempt = 0; attempt < NUM_ATTEMPT; attempt++) {
+        for (int i = 0; i < cell_size; i++) {
             overlap_table[i] = i;
-            for (j = 0; j < cell_size; j++) {
+            for (int j = 0; j < cell_size; j++) {
                 if (cell_types[i] == cell_types[j]) {
                     if ((lattice_rank == 3 &&
                          cel_is_overlap(position->vec[i], position->vec[j],
@@ -574,13 +543,13 @@ static int *get_overlap_table(const VecDBL *position, const int cell_size,
             }
         }
 
-        for (i = 0; i < cell_size; i++) {
+        for (int i = 0; i < cell_size; i++) {
             if (overlap_table[i] != i) {
                 continue;
             }
 
-            num_overlap = 0;
-            for (j = 0; j < cell_size; j++) {
+            int num_overlap = 0;
+            for (int j = 0; j < cell_size; j++) {
                 if (i == overlap_table[j]) {
                     num_overlap++;
                 }

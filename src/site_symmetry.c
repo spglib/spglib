@@ -90,16 +90,10 @@ VecDBL *ssm_get_exact_positions(int *wyckoffs, int *equiv_atoms,
                                 const Cell *conv_prim, const Symmetry *conv_sym,
                                 const int num_pure_trans, const int hall_number,
                                 const double symprec) {
-    int i;
-    double tolerance;
-    VecDBL *positions;
-
-    positions = NULL;
-
     /* Attempt slightly loosen tolerance */
-    tolerance = symprec;
-    for (i = 0; i < NUM_ATTEMPT; i++) {
-        positions =
+    double tolerance = symprec;
+    for (int i = 0; i < NUM_ATTEMPT; i++) {
+        VecDBL *positions =
             get_exact_positions(equiv_atoms, conv_prim, conv_sym, tolerance);
         if (positions == NULL) {
             return NULL;
@@ -108,7 +102,7 @@ VecDBL *ssm_get_exact_positions(int *wyckoffs, int *equiv_atoms,
         if (set_Wyckoffs_labels(wyckoffs, site_symmetry_symbols, positions,
                                 equiv_atoms, conv_prim, conv_sym,
                                 num_pure_trans, hall_number, symprec)) {
-            break;
+            return positions;
         }
         warning_print("spglib: ssm_get_exact_positions failed (attempt=%d).",
                       i);
@@ -118,37 +112,29 @@ VecDBL *ssm_get_exact_positions(int *wyckoffs, int *equiv_atoms,
         tolerance *= INCREASE_RATE;
     }
 
-    return positions;
+    return NULL;
 }
 
 /* Return 0: succeeded, 1: tolerance too large, -1: tolerance too short */
 static VecDBL *get_exact_positions(int *equiv_atoms, const Cell *conv_prim,
                                    const Symmetry *conv_sym,
                                    const double symprec) {
-    int i, num_indep_atoms;
-    int *indep_atoms;
-    VecDBL *positions;
-
     debug_print("get_exact_positions\n");
 
-    positions = NULL;
-    indep_atoms = NULL;
-
-    positions = mat_alloc_VecDBL(conv_prim->size);
+    VecDBL *positions = mat_alloc_VecDBL(conv_prim->size);
     if (positions == NULL) {
         return NULL;
     }
 
-    indep_atoms = (int *)malloc(sizeof(int) * conv_prim->size);
+    int *indep_atoms = (int *)malloc(sizeof(int) * conv_prim->size);
     if (indep_atoms == NULL) {
         warning_print("spglib: Memory could not be allocated ");
         mat_free_VecDBL(positions);
         return NULL;
     }
 
-    num_indep_atoms = 0;
     if (conv_prim->aperiodic_axis == -1) {
-        for (i = 0; i < conv_prim->size; i++) {
+        for (int i = 0, num_indep_atoms = 0; i < conv_prim->size; i++) {
             /* Check if atom_i overlap to an atom already set at the exact
              * position. */
             if (!set_equivalent_atom(positions, equiv_atoms, i, num_indep_atoms,
@@ -164,7 +150,7 @@ static VecDBL *get_exact_positions(int *equiv_atoms, const Cell *conv_prim,
             }
         }
     } else {
-        for (i = 0; i < conv_prim->size; i++) {
+        for (int i = 0, num_indep_atoms = 0; i < conv_prim->size; i++) {
             /* Check if atom_i overlap to an atom already set at the exact
              * position. */
             if (!set_layer_equivalent_atom(positions, equiv_atoms, i,
@@ -191,21 +177,20 @@ static int set_equivalent_atom(VecDBL *positions, int *equiv_atoms, const int i,
                                const int num_indep_atoms,
                                const int *indep_atoms, const Cell *conv_prim,
                                const Symmetry *conv_sym, const double symprec) {
-    int j, k, l;
     double pos[3];
 
-    for (j = 0; j < num_indep_atoms; j++) {
-        for (k = 0; k < conv_sym->size; k++) {
+    for (int j = 0; j < num_indep_atoms; j++) {
+        for (int k = 0; k < conv_sym->size; k++) {
             mat_multiply_matrix_vector_id3(pos, conv_sym->rot[k],
                                            positions->vec[indep_atoms[j]]);
-            for (l = 0; l < 3; l++) {
+            for (int l = 0; l < 3; l++) {
                 pos[l] += conv_sym->trans[k][l];
             }
             if (cel_is_overlap_with_same_type(pos, conv_prim->position[i],
                                               conv_prim->types[indep_atoms[j]],
                                               conv_prim->types[i],
                                               conv_prim->lattice, symprec)) {
-                for (l = 0; l < 3; l++) {
+                for (int l = 0; l < 3; l++) {
                     positions->vec[i][l] = mat_Dmod1(pos[l]);
                 }
                 equiv_atoms[i] = indep_atoms[j];
@@ -223,29 +208,28 @@ static int set_equivalent_atom(VecDBL *positions, int *equiv_atoms, const int i,
 static void set_exact_location(double position[3], const Symmetry *conv_sym,
                                const double bravais_lattice[3][3],
                                const double symprec) {
-    int i, j, k, num_site_sym;
     double sum_rot[3][3];
     double pos[3], sum_trans[3];
 
     debug_print("set_exact_location\n");
 
-    num_site_sym = 0;
-    for (i = 0; i < 3; i++) {
+    int num_site_sym = 0;
+    for (int i = 0; i < 3; i++) {
         sum_trans[i] = 0.0;
-        for (j = 0; j < 3; j++) {
+        for (int j = 0; j < 3; j++) {
             sum_rot[i][j] = 0;
         }
     }
 
-    for (i = 0; i < conv_sym->size; i++) {
+    for (int i = 0; i < conv_sym->size; i++) {
         mat_multiply_matrix_vector_id3(pos, conv_sym->rot[i], position);
-        for (j = 0; j < 3; j++) {
+        for (int j = 0; j < 3; j++) {
             pos[j] += conv_sym->trans[i][j];
         }
 
         if (cel_is_overlap(pos, position, bravais_lattice, symprec)) {
-            for (j = 0; j < 3; j++) {
-                for (k = 0; k < 3; k++) {
+            for (int j = 0; j < 3; j++) {
+                for (int k = 0; k < 3; k++) {
                     sum_rot[j][k] += conv_sym->rot[i][j][k];
                 }
                 sum_trans[j] +=
@@ -255,9 +239,9 @@ static void set_exact_location(double position[3], const Symmetry *conv_sym,
         }
     }
 
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         sum_trans[i] /= num_site_sym;
-        for (j = 0; j < 3; j++) {
+        for (int j = 0; j < 3; j++) {
             sum_rot[i][j] /= num_site_sym;
         }
     }
@@ -266,7 +250,7 @@ static void set_exact_location(double position[3], const Symmetry *conv_sym,
     /* Elements of sum_rot can be fractional values. */
     mat_multiply_matrix_vector_d3(position, sum_rot, position);
 
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         position[i] += sum_trans[i];
     }
 }
@@ -277,15 +261,14 @@ static int set_layer_equivalent_atom(VecDBL *positions, int *equiv_atoms,
                                      const Cell *conv_prim,
                                      const Symmetry *conv_sym,
                                      const double symprec) {
-    int j, k, l;
     double pos[3];
     int periodic_axes[2] = {0, 1};
 
-    for (j = 0; j < num_indep_atoms; j++) {
-        for (k = 0; k < conv_sym->size; k++) {
+    for (int j = 0; j < num_indep_atoms; j++) {
+        for (int k = 0; k < conv_sym->size; k++) {
             mat_multiply_matrix_vector_id3(pos, conv_sym->rot[k],
                                            positions->vec[indep_atoms[j]]);
-            for (l = 0; l < 3; l++) {
+            for (int l = 0; l < 3; l++) {
                 pos[l] += conv_sym->trans[k][l];
             }
             if (cel_layer_is_overlap_with_same_type(
@@ -311,31 +294,30 @@ static void set_layer_exact_location(double position[3],
                                      const Symmetry *conv_sym,
                                      const double bravais_lattice[3][3],
                                      const double symprec) {
-    int i, j, k, num_site_sym;
     double sum_rot[3][3];
     double pos[3], sum_trans[3];
     int periodic_axes[2] = {0, 1};
 
     debug_print("set_layer_exact_location\n");
 
-    num_site_sym = 0;
-    for (i = 0; i < 3; i++) {
+    int num_site_sym = 0;
+    for (int i = 0; i < 3; i++) {
         sum_trans[i] = 0.0;
-        for (j = 0; j < 3; j++) {
+        for (int j = 0; j < 3; j++) {
             sum_rot[i][j] = 0;
         }
     }
 
-    for (i = 0; i < conv_sym->size; i++) {
+    for (int i = 0; i < conv_sym->size; i++) {
         mat_multiply_matrix_vector_id3(pos, conv_sym->rot[i], position);
-        for (j = 0; j < 3; j++) {
+        for (int j = 0; j < 3; j++) {
             pos[j] += conv_sym->trans[i][j];
         }
 
         if (cel_layer_is_overlap(pos, position, bravais_lattice, periodic_axes,
                                  symprec)) {
-            for (j = 0; j < 3; j++) {
-                for (k = 0; k < 3; k++) {
+            for (int j = 0; j < 3; j++) {
+                for (int k = 0; k < 3; k++) {
                     sum_rot[j][k] += conv_sym->rot[i][j][k];
                 }
                 sum_trans[j] +=
@@ -345,9 +327,9 @@ static void set_layer_exact_location(double position[3],
         }
     }
 
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         sum_trans[i] /= num_site_sym;
-        for (j = 0; j < 3; j++) {
+        for (int j = 0; j < 3; j++) {
             sum_rot[i][j] /= num_site_sym;
         }
     }
@@ -356,7 +338,7 @@ static void set_layer_exact_location(double position[3],
     /* Elements of sum_rot can be fractional values. */
     mat_multiply_matrix_vector_d3(position, sum_rot, position);
 
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         position[i] += sum_trans[i];
     }
 }
@@ -366,58 +348,58 @@ static int set_Wyckoffs_labels(int *wyckoffs, char (*site_symmetry_symbols)[7],
                                const Cell *conv_prim, const Symmetry *conv_sym,
                                const int num_pure_trans, const int hall_number,
                                const double symprec) {
-    int i, j, w;
-    int *nums_equiv_atoms;
-
-    nums_equiv_atoms = (int *)malloc(sizeof(int) * conv_prim->size);
-    for (i = 0; i < conv_prim->size; i++) {
+    int *nums_equiv_atoms = (int *)malloc(sizeof(int) * conv_prim->size);
+    if (nums_equiv_atoms == NULL) return 0;
+    for (int i = 0; i < conv_prim->size; i++) {
         nums_equiv_atoms[i] = 0;
     }
 
-    for (i = 0; i < conv_prim->size; i++) {
+    for (int i = 0; i < conv_prim->size; i++) {
         nums_equiv_atoms[equiv_atoms[i]]++;
     }
 
     debug_print("num_pure_trans: %d\n", num_pure_trans);
 
     if (hall_number > 0) {
-        for (i = 0; i < conv_prim->size; i++) {
+        for (int i = 0; i < conv_prim->size; i++) {
             if (i == equiv_atoms[i]) {
                 debug_print("num_equiv_atoms[%d]: %d\n", i,
                             nums_equiv_atoms[i]);
-                w = get_Wyckoff_notation(
+                int w = get_Wyckoff_notation(
                     site_symmetry_symbols[i], positions->vec[i], conv_sym,
                     nums_equiv_atoms[i] * num_pure_trans, conv_prim->lattice,
                     hall_number, symprec);
                 if (w < 0) {
-                    goto err;
-                } else {
-                    wyckoffs[i] = w;
+                    free(nums_equiv_atoms);
+                    nums_equiv_atoms = NULL;
+                    return 0;
                 }
+                wyckoffs[i] = w;
             }
         }
     } else {
-        for (i = 0; i < conv_prim->size; i++) {
+        for (int i = 0; i < conv_prim->size; i++) {
             if (i == equiv_atoms[i]) {
                 debug_print("num_equiv_atoms[%d]: %d\n", i,
                             nums_equiv_atoms[i]);
-                w = get_layer_Wyckoff_notation(
+                int w = get_layer_Wyckoff_notation(
                     site_symmetry_symbols[i], positions->vec[i], conv_sym,
                     nums_equiv_atoms[i] * num_pure_trans, conv_prim->lattice,
                     hall_number, symprec);
                 if (w < 0) {
-                    goto err;
-                } else {
-                    wyckoffs[i] = w;
+                    free(nums_equiv_atoms);
+                    nums_equiv_atoms = NULL;
+                    return 0;
                 }
+                wyckoffs[i] = w;
             }
         }
     }
 
-    for (i = 0; i < conv_prim->size; i++) {
+    for (int i = 0; i < conv_prim->size; i++) {
         if (i != equiv_atoms[i]) {
             wyckoffs[i] = wyckoffs[equiv_atoms[i]];
-            for (j = 0; j < 7; j++) {
+            for (int j = 0; j < 7; j++) {
                 site_symmetry_symbols[i][j] =
                     site_symmetry_symbols[equiv_atoms[i]][j];
             }
@@ -427,11 +409,6 @@ static int set_Wyckoffs_labels(int *wyckoffs, char (*site_symmetry_symbols)[7],
     free(nums_equiv_atoms);
     nums_equiv_atoms = NULL;
     return 1;
-
-err:
-    free(nums_equiv_atoms);
-    nums_equiv_atoms = NULL;
-    return 0;
 }
 
 /* Return -1 if failed */
@@ -441,32 +418,27 @@ static int get_Wyckoff_notation(char site_sym_symbol[7],
                                 const int ref_multiplicity,
                                 const double bravais_lattice[3][3],
                                 const int hall_number, const double symprec) {
-    int i, j, k, l, num_sitesym, multiplicity, wyckoff_letter;
     int indices_wyc[2];
     int rot[3][3];
     double trans[3], orbit[3];
-    VecDBL *pos_rot;
 
     debug_print("get_Wyckoff_notation\n");
 
-    wyckoff_letter = -1;
-    pos_rot = NULL;
-
-    pos_rot = mat_alloc_VecDBL(conv_sym->size);
+    VecDBL *pos_rot = mat_alloc_VecDBL(conv_sym->size);
     if (pos_rot == NULL) {
         return -1;
     }
 
-    for (i = 0; i < conv_sym->size; i++) {
+    for (int i = 0; i < conv_sym->size; i++) {
         mat_multiply_matrix_vector_id3(pos_rot->vec[i], conv_sym->rot[i],
                                        position);
-        for (j = 0; j < 3; j++) {
+        for (int j = 0; j < 3; j++) {
             pos_rot->vec[i][j] += conv_sym->trans[i][j];
         }
     }
 
     ssmdb_get_wyckoff_indices(indices_wyc, hall_number);
-    for (i = 0; i < indices_wyc[1]; i++) {
+    for (int i = 0; i < indices_wyc[1]; i++) {
         /* (rot, trans) gives the first element of each Wyckoff position */
         /* of the 'Coordinates' in ITA */
         /* Example: (x,1/4,1/2)      */
@@ -474,17 +446,16 @@ static int get_Wyckoff_notation(char site_sym_symbol[7],
         /* [1, 0, 0]   [0, 1/4, 1/2] */
         /* [0, 0, 0]                 */
         /* [0, 0, 0]                 */
-        multiplicity = ssmdb_get_coordinate(rot, trans, i + indices_wyc[0]);
+        int multiplicity = ssmdb_get_coordinate(rot, trans, i + indices_wyc[0]);
 
         /* Effectively this iteration runs over all 'Coordinates' of each */
         /* Wyckoff position, i.e., works as looking for the first element. */
-        for (j = 0; j < pos_rot->size; j++) {
-            num_sitesym = 0;
-            for (k = 0; k < pos_rot->size; k++) {
+        for (int j = 0, num_sitesym = 0; j < pos_rot->size; j++) {
+            for (int k = 0; k < pos_rot->size; k++) {
                 if (cel_is_overlap(pos_rot->vec[j], pos_rot->vec[k],
                                    bravais_lattice, symprec)) {
                     mat_multiply_matrix_vector_id3(orbit, rot, pos_rot->vec[k]);
-                    for (l = 0; l < 3; l++) {
+                    for (int l = 0; l < 3; l++) {
                         orbit[l] += trans[l];
                     }
                     if (cel_is_overlap(pos_rot->vec[k], orbit, bravais_lattice,
@@ -502,18 +473,17 @@ static int get_Wyckoff_notation(char site_sym_symbol[7],
                 /* Database is made reversed order, e.g., gfedcba. */
                 /* wyckoff is set 0 1 2 3 4... for a b c d e..., respectively.
                  */
-                wyckoff_letter = indices_wyc[1] - i - 1;
+                mat_free_VecDBL(pos_rot);
+                pos_rot = NULL;
                 ssmdb_get_site_symmetry_symbol(site_sym_symbol,
                                                indices_wyc[0] + i);
-                goto end;
+                return indices_wyc[1] - i - 1;
             }
         }
     }
-
-end:
     mat_free_VecDBL(pos_rot);
     pos_rot = NULL;
-    return wyckoff_letter;
+    return -1;
 }
 
 /* Return -1 if failed */
@@ -521,33 +491,28 @@ static int get_layer_Wyckoff_notation(
     char site_sym_symbol[7], const double position[3], const Symmetry *conv_sym,
     const int ref_multiplicity, const double bravais_lattice[3][3],
     const int hall_number, const double symprec) {
-    int i, j, k, l, num_sitesym, multiplicity, wyckoff_letter;
     int indices_wyc[2];
     int rot[3][3];
     double trans[3], orbit[3];
-    VecDBL *pos_rot;
     int periodic_axis[2] = {0, 1};
 
     debug_print("get_layer_Wyckoff_notation\n");
 
-    wyckoff_letter = -1;
-    pos_rot = NULL;
-
-    pos_rot = mat_alloc_VecDBL(conv_sym->size);
+    VecDBL *pos_rot = mat_alloc_VecDBL(conv_sym->size);
     if (pos_rot == NULL) {
         return -1;
     }
 
-    for (i = 0; i < conv_sym->size; i++) {
+    for (int i = 0; i < conv_sym->size; i++) {
         mat_multiply_matrix_vector_id3(pos_rot->vec[i], conv_sym->rot[i],
                                        position);
-        for (j = 0; j < 3; j++) {
+        for (int j = 0; j < 3; j++) {
             pos_rot->vec[i][j] += conv_sym->trans[i][j];
         }
     }
 
     ssmdb_get_wyckoff_indices(indices_wyc, hall_number);
-    for (i = 0; i < indices_wyc[1]; i++) {
+    for (int i = 0; i < indices_wyc[1]; i++) {
         /* (rot, trans) gives the first element of each Wyckoff position */
         /* of the 'Coordinates' in ITA */
         /* Example: (x,1/4,1/2)      */
@@ -555,18 +520,17 @@ static int get_layer_Wyckoff_notation(
         /* [1, 0, 0]   [0, 1/4, 1/2] */
         /* [0, 0, 0]                 */
         /* [0, 0, 0]                 */
-        multiplicity = ssmdb_get_coordinate(rot, trans, i + indices_wyc[0]);
+        int multiplicity = ssmdb_get_coordinate(rot, trans, i + indices_wyc[0]);
 
         /* Effectively this iteration runs over all 'Coordinates' of each */
         /* Wyckoff position, i.e., works as looking for the first element. */
-        for (j = 0; j < pos_rot->size; j++) {
-            num_sitesym = 0;
-            for (k = 0; k < pos_rot->size; k++) {
+        for (int j = 0, num_sitesym = 0; j < pos_rot->size; j++) {
+            for (int k = 0; k < pos_rot->size; k++) {
                 if (cel_layer_is_overlap(pos_rot->vec[j], pos_rot->vec[k],
                                          bravais_lattice, periodic_axis,
                                          symprec)) {
                     mat_multiply_matrix_vector_id3(orbit, rot, pos_rot->vec[k]);
-                    for (l = 0; l < 3; l++) {
+                    for (int l = 0; l < 3; l++) {
                         orbit[l] += trans[l];
                     }
                     if (cel_layer_is_overlap(pos_rot->vec[k], orbit,
@@ -585,16 +549,15 @@ static int get_layer_Wyckoff_notation(
                 /* Database is made reversed order, e.g., gfedcba. */
                 /* wyckoff is set 0 1 2 3 4... for a b c d e..., respectively.
                  */
-                wyckoff_letter = indices_wyc[1] - i - 1;
+                mat_free_VecDBL(pos_rot);
+                pos_rot = NULL;
                 ssmdb_get_site_symmetry_symbol(site_sym_symbol,
                                                indices_wyc[0] + i);
-                goto end;
+                return indices_wyc[1] - i - 1;
             }
         }
     }
-
-end:
     mat_free_VecDBL(pos_rot);
     pos_rot = NULL;
-    return wyckoff_letter;
+    return -1;
 }
