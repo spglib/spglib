@@ -175,6 +175,10 @@
         "SPGLIB_USE_SANITIZER": {
           "type": "STRING",
           "value": "address"
+        },
+        "SPGLIB_SHARED_LIBS": {
+          "type": "BOOL",
+          "value": false
         }
       }
     },
