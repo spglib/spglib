@@ -10,7 +10,7 @@
 #
 # All configuration values have a default; values that are commented out
 # serve to show the default.
-
+import os
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
@@ -31,10 +31,13 @@ version = ".".join(release.split(".")[:3])  # e.g. "v.1.16"
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = [
-  'sphinx.ext.mathjax',
+  "sphinx.ext.mathjax",
   "sphinx.ext.viewcode",
   "sphinxcontrib.bibtex",
   "myst_parser",
+  "sphinx_design",
+  "sphinx_togglebutton",
+  "breathe",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -109,6 +112,7 @@ myst_enable_extensions = [
     "replacements",
     "smartquotes",
     "tasklist",
+    "colon_fence",
 ]
 myst_dmath_double_inline = True
 myst_heading_anchors = 3
@@ -252,3 +256,8 @@ latex_documents = [
 
 # If false, no module index is generated.
 #latex_use_modindex = True
+
+# -- Breathe configuration -----------------------------------------------------
+cmake_build_dir = os.getenv("CMAKE_BUILD_DIR", "../cmake-build-release/doc/xml")
+breathe_projects = {"spglib": cmake_build_dir}
+breathe_default_project = "spglib"

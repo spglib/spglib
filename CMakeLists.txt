@@ -47,6 +47,7 @@ endif ()
 #
 option(SPGLIB_WITH_Fortran "Spglib: Build Fortran interface" OFF)
 option(SPGLIB_WITH_Python "Spglib: Build Python interface" OFF)
+option(SPGLIB_WITH_DOCS "Spglib: Build Doxygen documentation" OFF)
 option(SPGLIB_USE_OMP "Spglib: Build with OpenMP support" OFF)
 option(SPGLIB_WITH_TESTS "Spglib: Build unit tests" ${PROJECT_IS_TOP_LEVEL})
 option(SPGLIB_SHARED_LIBS "Spglib: Build as a shared library" ${PROJECT_IS_TOP_LEVEL})
@@ -149,6 +150,9 @@ endif ()
 if (SPGLIB_WITH_TESTS)
 	enable_testing()
 	add_subdirectory(test)
+endif ()
+if (SPGLIB_WITH_DOCS)
+	add_subdirectory(doc)
 endif ()
 
 #[==============================================================================================[

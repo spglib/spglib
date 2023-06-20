@@ -81,3 +81,5 @@ test-suite.log
 .vscode/
 docs_build/
 CMakeUserPresets.json
+/ChangeLog.md
+/doc/releases.md

@@ -44,9 +44,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+      - name: Get python packages
+        run: pip install .[doc]
+      - name: Prepare release notes
+        run: scripts/generate_changelog.py --release ${{ github.ref_name }} --type tag
       - uses: softprops/action-gh-release@v1
         with:
           name: Spglib ${{ github.ref_name }}
+          body_path: ChangeLog.md
           draft: true
           prerelease: ${{ contains(github.ref, 'rc') }}
           generate_release_notes: true
