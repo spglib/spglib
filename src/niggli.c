@@ -56,9 +56,9 @@ typedef struct {
     int n;
     double *tmat;
     double *lattice;
-} NiggliParams;
+} __attribute__((aligned(128))) __attribute__((packed)) NiggliParams;
 
-static NiggliParams *initialize(const double *lattice_, const double eps_);
+static NiggliParams *initialize(const double *lattice_, double eps_);
 static void finalize(double *lattice_, NiggliParams *p);
 static int reset(NiggliParams *p);
 static int step1(NiggliParams *p);
@@ -74,7 +74,7 @@ static void set_angle_types(NiggliParams *p);
 static double *get_transpose(const double *M);
 static double *get_metric(const double *M);
 static double *multiply_matrices(const double *A, const double *B);
-static int layer_swap_axis(NiggliParams *p, const int aperiodic_axis);
+static int layer_swap_axis(NiggliParams *p, int aperiodic_axis);
 static int step2_for_layer(NiggliParams *p);
 
 #ifdef SPGDEBUG
@@ -308,9 +308,8 @@ static int step1(NiggliParams *p) {
         p->tmat[3] = -1, p->tmat[4] = 0, p->tmat[5] = 0;
         p->tmat[6] = 0, p->tmat[7] = 0, p->tmat[8] = -1;
         return 1;
-    } else {
-        return 0;
     }
+    return 0;
 }
 
 static int step2(NiggliParams *p) {
@@ -320,9 +319,8 @@ static int step2(NiggliParams *p) {
         p->tmat[3] = 0, p->tmat[4] = 0, p->tmat[5] = -1;
         p->tmat[6] = 0, p->tmat[7] = -1, p->tmat[8] = 0;
         return 1;
-    } else {
-        return 0;
     }
+    return 0;
 }
 
 /* Aperiodic axis is fixed to C, the output may not be a standard Niggli cell */
@@ -359,9 +357,8 @@ static int step3(NiggliParams *p) {
         p->tmat[3] = 0, p->tmat[4] = j, p->tmat[5] = 0;
         p->tmat[6] = 0, p->tmat[7] = 0, p->tmat[8] = k;
         return 1;
-    } else {
-        return 0;
     }
+    return 0;
 }
 
 static int step4(NiggliParams *p) {
@@ -411,9 +408,8 @@ static int step4(NiggliParams *p) {
         p->tmat[3] = 0, p->tmat[4] = j, p->tmat[5] = 0;
         p->tmat[6] = 0, p->tmat[7] = 0, p->tmat[8] = k;
         return 1;
-    } else {
-        return 0;
     }
+    return 0;
 }
 
 static int step5(NiggliParams *p) {
@@ -430,9 +426,8 @@ static int step5(NiggliParams *p) {
             p->tmat[5] = 1;
         }
         return 1;
-    } else {
-        return 0;
     }
+    return 0;
 }
 
 static int step6(NiggliParams *p) {
@@ -449,9 +444,8 @@ static int step6(NiggliParams *p) {
             p->tmat[2] = 1;
         }
         return 1;
-    } else {
-        return 0;
     }
+    return 0;
 }
 
 static int step7(NiggliParams *p) {
@@ -468,9 +462,8 @@ static int step7(NiggliParams *p) {
             p->tmat[1] = 1;
         }
         return 1;
-    } else {
-        return 0;
     }
+    return 0;
 }
 
 static int step8(NiggliParams *p) {
@@ -481,9 +474,8 @@ static int step8(NiggliParams *p) {
         p->tmat[3] = 0, p->tmat[4] = 1, p->tmat[5] = 1;
         p->tmat[6] = 0, p->tmat[7] = 0, p->tmat[8] = 1;
         return 1;
-    } else {
-        return 0;
     }
+    return 0;
 }
 
 static double *get_transpose(const double *M) {

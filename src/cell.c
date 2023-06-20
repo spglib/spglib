@@ -46,18 +46,15 @@
 #define NUM_ATTEMPT 100
 
 static Cell *trim_cell(int *mapping_table, const double trimmed_lattice[3][3],
-                       const Cell *cell, const double symprec);
-static void set_positions_and_tensors(Cell *trimmed_cell,
-                                      const VecDBL *position,
-                                      const SiteTensorType tensor_rank,
-                                      const double *tensors,
-                                      const int *mapping_table,
-                                      const int *overlap_table);
+                       const Cell *cell, double symprec);
+static void set_positions_and_tensors(
+    Cell *trimmed_cell, const VecDBL *position, SiteTensorType tensor_rank,
+    const double *tensors, const int *mapping_table, const int *overlap_table);
 static VecDBL *translate_atoms_in_trimmed_lattice(const Cell *cell,
                                                   const double prim_lat[3][3]);
-static int *get_overlap_table(const VecDBL *position, const int cell_size,
+static int *get_overlap_table(const VecDBL *position, int cell_size,
                               const int *cell_types, const Cell *trimmed_cell,
-                              const double symprec);
+                              double symprec);
 
 // @brief Allocate Cell. NULL is returned if failed
 // @param size number of atoms
@@ -223,9 +220,8 @@ int cel_is_overlap(const double a[3], const double b[3],
     mat_multiply_matrix_vector_d3(v_diff, lattice, v_diff);
     if (sqrt(mat_norm_squared_d3(v_diff)) < symprec) {
         return 1;
-    } else {
-        return 0;
     }
+    return 0;
 }
 
 int cel_is_overlap_with_same_type(const double a[3], const double b[3],
@@ -234,9 +230,8 @@ int cel_is_overlap_with_same_type(const double a[3], const double b[3],
                                   const double symprec) {
     if (type_a == type_b) {
         return cel_is_overlap(a, b, lattice, symprec);
-    } else {
-        return 0;
     }
+    return 0;
 }
 
 /* 1: At least one overlap of a pair of atoms was found. */
@@ -289,9 +284,8 @@ int cel_layer_is_overlap(const double a[3], const double b[3],
     mat_multiply_matrix_vector_d3(v_diff, lattice, v_diff);
     if (sqrt(mat_norm_squared_d3(v_diff)) < symprec) {
         return 1;
-    } else {
-        return 0;
     }
+    return 0;
 }
 
 int cel_layer_is_overlap_with_same_type(const double a[3], const double b[3],
@@ -301,9 +295,8 @@ int cel_layer_is_overlap_with_same_type(const double a[3], const double b[3],
                                         const double symprec) {
     if (type_a == type_b) {
         return cel_layer_is_overlap(a, b, lattice, periodic_axes, symprec);
-    } else {
-        return 0;
     }
+    return 0;
 }
 
 /* 1: At least one overlap of a pair of atoms with same type was found. */

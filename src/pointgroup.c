@@ -51,287 +51,288 @@ typedef struct {
     char schoenflies[4];
     Holohedry holohedry;
     Laue laue;
-} PointgroupType;
+} __attribute__((aligned(64))) __attribute__((packed)) PointgroupType;
 
-static PointgroupType pointgroup_data[33] = {{
-                                                 /* 0 */
-                                                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                                                 "     ",
-                                                 "   ",
-                                                 HOLOHEDRY_NONE,
-                                                 LAUE_NONE,
-                                             },
-                                             {
-                                                 /* 1 */
-                                                 {0, 0, 0, 0, 0, 1, 0, 0, 0, 0},
-                                                 "1    ",
-                                                 "C1 ",
-                                                 TRICLI,
-                                                 LAUE1,
-                                             },
-                                             {
-                                                 /* 2 */
-                                                 {0, 0, 0, 0, 1, 1, 0, 0, 0, 0},
-                                                 "-1   ",
-                                                 "Ci ",
-                                                 TRICLI,
-                                                 LAUE1,
-                                             },
-                                             {
-                                                 /* 3 */
-                                                 {0, 0, 0, 0, 0, 1, 1, 0, 0, 0},
-                                                 "2    ",
-                                                 "C2 ",
-                                                 MONOCLI,
-                                                 LAUE2M,
-                                             },
-                                             {
-                                                 /* 4 */
-                                                 {0, 0, 0, 1, 0, 1, 0, 0, 0, 0},
-                                                 "m    ",
-                                                 "Cs ",
-                                                 MONOCLI,
-                                                 LAUE2M,
-                                             },
-                                             {
-                                                 /* 5 */
-                                                 {0, 0, 0, 1, 1, 1, 1, 0, 0, 0},
-                                                 "2/m  ",
-                                                 "C2h",
-                                                 MONOCLI,
-                                                 LAUE2M,
-                                             },
-                                             {
-                                                 /* 6 */
-                                                 {0, 0, 0, 0, 0, 1, 3, 0, 0, 0},
-                                                 "222  ",
-                                                 "D2 ",
-                                                 ORTHO,
-                                                 LAUEMMM,
-                                             },
-                                             {
-                                                 /* 7 */
-                                                 {0, 0, 0, 2, 0, 1, 1, 0, 0, 0},
-                                                 "mm2  ",
-                                                 "C2v",
-                                                 ORTHO,
-                                                 LAUEMMM,
-                                             },
-                                             {
-                                                 /* 8 */
-                                                 {0, 0, 0, 3, 1, 1, 3, 0, 0, 0},
-                                                 "mmm  ",
-                                                 "D2h",
-                                                 ORTHO,
-                                                 LAUEMMM,
-                                             },
-                                             {
-                                                 /* 9 */
-                                                 {0, 0, 0, 0, 0, 1, 1, 0, 2, 0},
-                                                 "4    ",
-                                                 "C4 ",
-                                                 TETRA,
-                                                 LAUE4M,
-                                             },
-                                             {
-                                                 /* 10 */
-                                                 {0, 2, 0, 0, 0, 1, 1, 0, 0, 0},
-                                                 "-4   ",
-                                                 "S4 ",
-                                                 TETRA,
-                                                 LAUE4M,
-                                             },
-                                             {
-                                                 /* 11 */
-                                                 {0, 2, 0, 1, 1, 1, 1, 0, 2, 0},
-                                                 "4/m  ",
-                                                 "C4h",
-                                                 TETRA,
-                                                 LAUE4M,
-                                             },
-                                             {
-                                                 /* 12 */
-                                                 {0, 0, 0, 0, 0, 1, 5, 0, 2, 0},
-                                                 "422  ",
-                                                 "D4 ",
-                                                 TETRA,
-                                                 LAUE4MMM,
-                                             },
-                                             {
-                                                 /* 13 */
-                                                 {0, 0, 0, 4, 0, 1, 1, 0, 2, 0},
-                                                 "4mm  ",
-                                                 "C4v",
-                                                 TETRA,
-                                                 LAUE4MMM,
-                                             },
-                                             {
-                                                 /* 14 */
-                                                 {0, 2, 0, 2, 0, 1, 3, 0, 0, 0},
-                                                 "-42m ",
-                                                 "D2d",
-                                                 TETRA,
-                                                 LAUE4MMM,
-                                             },
-                                             {
-                                                 /* 15 */
-                                                 {0, 2, 0, 5, 1, 1, 5, 0, 2, 0},
-                                                 "4/mmm",
-                                                 "D4h",
-                                                 TETRA,
-                                                 LAUE4MMM,
-                                             },
-                                             {
-                                                 /* 16 */
-                                                 {0, 0, 0, 0, 0, 1, 0, 2, 0, 0},
-                                                 "3    ",
-                                                 "C3 ",
-                                                 TRIGO,
-                                                 LAUE3,
-                                             },
-                                             {
-                                                 /* 17 */
-                                                 {0, 0, 2, 0, 1, 1, 0, 2, 0, 0},
-                                                 "-3   ",
-                                                 "C3i",
-                                                 TRIGO,
-                                                 LAUE3,
-                                             },
-                                             {
-                                                 /* 18 */
-                                                 {0, 0, 0, 0, 0, 1, 3, 2, 0, 0},
-                                                 "32   ",
-                                                 "D3 ",
-                                                 TRIGO,
-                                                 LAUE3M,
-                                             },
-                                             {
-                                                 /* 19 */
-                                                 {0, 0, 0, 3, 0, 1, 0, 2, 0, 0},
-                                                 "3m   ",
-                                                 "C3v",
-                                                 TRIGO,
-                                                 LAUE3M,
-                                             },
-                                             {
-                                                 /* 20 */
-                                                 {0, 0, 2, 3, 1, 1, 3, 2, 0, 0},
-                                                 "-3m  ",
-                                                 "D3d",
-                                                 TRIGO,
-                                                 LAUE3M,
-                                             },
-                                             {
-                                                 /* 21 */
-                                                 {0, 0, 0, 0, 0, 1, 1, 2, 0, 2},
-                                                 "6    ",
-                                                 "C6 ",
-                                                 HEXA,
-                                                 LAUE6M,
-                                             },
-                                             {
-                                                 /* 22 */
-                                                 {2, 0, 0, 1, 0, 1, 0, 2, 0, 0},
-                                                 "-6   ",
-                                                 "C3h",
-                                                 HEXA,
-                                                 LAUE6M,
-                                             },
-                                             {
-                                                 /* 23 */
-                                                 {2, 0, 2, 1, 1, 1, 1, 2, 0, 2},
-                                                 "6/m  ",
-                                                 "C6h",
-                                                 HEXA,
-                                                 LAUE6M,
-                                             },
-                                             {
-                                                 /* 24 */
-                                                 {0, 0, 0, 0, 0, 1, 7, 2, 0, 2},
-                                                 "622  ",
-                                                 "D6 ",
-                                                 HEXA,
-                                                 LAUE6MMM,
-                                             },
-                                             {
-                                                 /* 25 */
-                                                 {0, 0, 0, 6, 0, 1, 1, 2, 0, 2},
-                                                 "6mm  ",
-                                                 "C6v",
-                                                 HEXA,
-                                                 LAUE6MMM,
-                                             },
-                                             {
-                                                 /* 26 */
-                                                 {2, 0, 0, 4, 0, 1, 3, 2, 0, 0},
-                                                 "-6m2 ",
-                                                 "D3h",
-                                                 HEXA,
-                                                 LAUE6MMM,
-                                             },
-                                             {
-                                                 /* 27 */
-                                                 {2, 0, 2, 7, 1, 1, 7, 2, 0, 2},
-                                                 "6/mmm",
-                                                 "D6h",
-                                                 HEXA,
-                                                 LAUE6MMM,
-                                             },
-                                             {
-                                                 /* 28 */
-                                                 {0, 0, 0, 0, 0, 1, 3, 8, 0, 0},
-                                                 "23   ",
-                                                 "T  ",
-                                                 CUBIC,
-                                                 LAUEM3,
-                                             },
-                                             {
-                                                 /* 29 */
-                                                 {0, 0, 8, 3, 1, 1, 3, 8, 0, 0},
-                                                 "m-3  ",
-                                                 "Th ",
-                                                 CUBIC,
-                                                 LAUEM3,
-                                             },
-                                             {
-                                                 /* 30 */
-                                                 {0, 0, 0, 0, 0, 1, 9, 8, 6, 0},
-                                                 "432  ",
-                                                 "O  ",
-                                                 CUBIC,
-                                                 LAUEM3M,
-                                             },
-                                             {
-                                                 /* 31 */
-                                                 {0, 6, 0, 6, 0, 1, 3, 8, 0, 0},
-                                                 "-43m ",
-                                                 "Td ",
-                                                 CUBIC,
-                                                 LAUEM3M,
-                                             },
-                                             {
-                                                 /* 32 */
-                                                 {0, 6, 8, 9, 1, 1, 9, 8, 6, 0},
-                                                 "m-3m ",
-                                                 "Oh ",
-                                                 CUBIC,
-                                                 LAUEM3M,
-                                             }};
+static const PointgroupType pointgroup_data[33] = {
+    {
+        /* 0 */
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        "     ",
+        "   ",
+        HOLOHEDRY_NONE,
+        LAUE_NONE,
+    },
+    {
+        /* 1 */
+        {0, 0, 0, 0, 0, 1, 0, 0, 0, 0},
+        "1    ",
+        "C1 ",
+        TRICLI,
+        LAUE1,
+    },
+    {
+        /* 2 */
+        {0, 0, 0, 0, 1, 1, 0, 0, 0, 0},
+        "-1   ",
+        "Ci ",
+        TRICLI,
+        LAUE1,
+    },
+    {
+        /* 3 */
+        {0, 0, 0, 0, 0, 1, 1, 0, 0, 0},
+        "2    ",
+        "C2 ",
+        MONOCLI,
+        LAUE2M,
+    },
+    {
+        /* 4 */
+        {0, 0, 0, 1, 0, 1, 0, 0, 0, 0},
+        "m    ",
+        "Cs ",
+        MONOCLI,
+        LAUE2M,
+    },
+    {
+        /* 5 */
+        {0, 0, 0, 1, 1, 1, 1, 0, 0, 0},
+        "2/m  ",
+        "C2h",
+        MONOCLI,
+        LAUE2M,
+    },
+    {
+        /* 6 */
+        {0, 0, 0, 0, 0, 1, 3, 0, 0, 0},
+        "222  ",
+        "D2 ",
+        ORTHO,
+        LAUEMMM,
+    },
+    {
+        /* 7 */
+        {0, 0, 0, 2, 0, 1, 1, 0, 0, 0},
+        "mm2  ",
+        "C2v",
+        ORTHO,
+        LAUEMMM,
+    },
+    {
+        /* 8 */
+        {0, 0, 0, 3, 1, 1, 3, 0, 0, 0},
+        "mmm  ",
+        "D2h",
+        ORTHO,
+        LAUEMMM,
+    },
+    {
+        /* 9 */
+        {0, 0, 0, 0, 0, 1, 1, 0, 2, 0},
+        "4    ",
+        "C4 ",
+        TETRA,
+        LAUE4M,
+    },
+    {
+        /* 10 */
+        {0, 2, 0, 0, 0, 1, 1, 0, 0, 0},
+        "-4   ",
+        "S4 ",
+        TETRA,
+        LAUE4M,
+    },
+    {
+        /* 11 */
+        {0, 2, 0, 1, 1, 1, 1, 0, 2, 0},
+        "4/m  ",
+        "C4h",
+        TETRA,
+        LAUE4M,
+    },
+    {
+        /* 12 */
+        {0, 0, 0, 0, 0, 1, 5, 0, 2, 0},
+        "422  ",
+        "D4 ",
+        TETRA,
+        LAUE4MMM,
+    },
+    {
+        /* 13 */
+        {0, 0, 0, 4, 0, 1, 1, 0, 2, 0},
+        "4mm  ",
+        "C4v",
+        TETRA,
+        LAUE4MMM,
+    },
+    {
+        /* 14 */
+        {0, 2, 0, 2, 0, 1, 3, 0, 0, 0},
+        "-42m ",
+        "D2d",
+        TETRA,
+        LAUE4MMM,
+    },
+    {
+        /* 15 */
+        {0, 2, 0, 5, 1, 1, 5, 0, 2, 0},
+        "4/mmm",
+        "D4h",
+        TETRA,
+        LAUE4MMM,
+    },
+    {
+        /* 16 */
+        {0, 0, 0, 0, 0, 1, 0, 2, 0, 0},
+        "3    ",
+        "C3 ",
+        TRIGO,
+        LAUE3,
+    },
+    {
+        /* 17 */
+        {0, 0, 2, 0, 1, 1, 0, 2, 0, 0},
+        "-3   ",
+        "C3i",
+        TRIGO,
+        LAUE3,
+    },
+    {
+        /* 18 */
+        {0, 0, 0, 0, 0, 1, 3, 2, 0, 0},
+        "32   ",
+        "D3 ",
+        TRIGO,
+        LAUE3M,
+    },
+    {
+        /* 19 */
+        {0, 0, 0, 3, 0, 1, 0, 2, 0, 0},
+        "3m   ",
+        "C3v",
+        TRIGO,
+        LAUE3M,
+    },
+    {
+        /* 20 */
+        {0, 0, 2, 3, 1, 1, 3, 2, 0, 0},
+        "-3m  ",
+        "D3d",
+        TRIGO,
+        LAUE3M,
+    },
+    {
+        /* 21 */
+        {0, 0, 0, 0, 0, 1, 1, 2, 0, 2},
+        "6    ",
+        "C6 ",
+        HEXA,
+        LAUE6M,
+    },
+    {
+        /* 22 */
+        {2, 0, 0, 1, 0, 1, 0, 2, 0, 0},
+        "-6   ",
+        "C3h",
+        HEXA,
+        LAUE6M,
+    },
+    {
+        /* 23 */
+        {2, 0, 2, 1, 1, 1, 1, 2, 0, 2},
+        "6/m  ",
+        "C6h",
+        HEXA,
+        LAUE6M,
+    },
+    {
+        /* 24 */
+        {0, 0, 0, 0, 0, 1, 7, 2, 0, 2},
+        "622  ",
+        "D6 ",
+        HEXA,
+        LAUE6MMM,
+    },
+    {
+        /* 25 */
+        {0, 0, 0, 6, 0, 1, 1, 2, 0, 2},
+        "6mm  ",
+        "C6v",
+        HEXA,
+        LAUE6MMM,
+    },
+    {
+        /* 26 */
+        {2, 0, 0, 4, 0, 1, 3, 2, 0, 0},
+        "-6m2 ",
+        "D3h",
+        HEXA,
+        LAUE6MMM,
+    },
+    {
+        /* 27 */
+        {2, 0, 2, 7, 1, 1, 7, 2, 0, 2},
+        "6/mmm",
+        "D6h",
+        HEXA,
+        LAUE6MMM,
+    },
+    {
+        /* 28 */
+        {0, 0, 0, 0, 0, 1, 3, 8, 0, 0},
+        "23   ",
+        "T  ",
+        CUBIC,
+        LAUEM3,
+    },
+    {
+        /* 29 */
+        {0, 0, 8, 3, 1, 1, 3, 8, 0, 0},
+        "m-3  ",
+        "Th ",
+        CUBIC,
+        LAUEM3,
+    },
+    {
+        /* 30 */
+        {0, 0, 0, 0, 0, 1, 9, 8, 6, 0},
+        "432  ",
+        "O  ",
+        CUBIC,
+        LAUEM3M,
+    },
+    {
+        /* 31 */
+        {0, 6, 0, 6, 0, 1, 3, 8, 0, 0},
+        "-43m ",
+        "Td ",
+        CUBIC,
+        LAUEM3M,
+    },
+    {
+        /* 32 */
+        {0, 6, 8, 9, 1, 1, 9, 8, 6, 0},
+        "m-3m ",
+        "Oh ",
+        CUBIC,
+        LAUEM3M,
+    }};
 
-static int identity[3][3] = {
+static const int identity[3][3] = {
     {1, 0, 0},
     {0, 1, 0},
     {0, 0, 1},
 };
 
-static int inversion[3][3] = {
+static const int inversion[3][3] = {
     {-1, 0, 0},
     {0, -1, 0},
     {0, 0, -1},
 };
 
 // length of `rot_axes` should be equal to `NUM_ROT_AXES`
-static int rot_axes[][3] = {
+static const int rot_axes[][3] = {
     {1, 0, 0},   {0, 1, 0},   {0, 0, 1},   {0, 1, 1},   {1, 0, 1},
     {1, 1, 0},   {0, 1, -1},  {-1, 0, 1},  {1, -1, 0},  {1, 1, 1}, /* 10 */
     {-1, 1, 1},  {1, -1, 1},  {1, 1, -1},  {0, 1, 2},   {2, 0, 1},
@@ -350,29 +351,29 @@ static int rot_axes[][3] = {
 };
 
 static int get_pointgroup_number_by_rotations(const int rotations[][3][3],
-                                              const int num_rotations);
+                                              int num_rotations);
 static int get_pointgroup_number(const PointSymmetry* pointsym);
 static int get_pointgroup_class_table(int table[10],
                                       const PointSymmetry* pointsym);
 static int get_rotation_type(const int rot[3][3]);
 static int get_rotation_axis(const int rot[3][3]);
 static int get_orthogonal_axis(int ortho_axes[], const int proper_rot[3][3],
-                               const int rot_order);
+                               int rot_order);
 static int laue2m(int axes[3], const PointSymmetry* pointsym);
 static int layer_laue2m(int axes[3], const PointSymmetry* pointsym,
-                        const int aperiodic_axis);
+                        int aperiodic_axis);
 
 static int laue_one_axis(int axes[3], const PointSymmetry* pointsym,
-                         const int rot_order);
-static int lauennn(int axes[3], const PointSymmetry* pointsym,
-                   const int rot_order, const int aperiodic_axis);
-static int get_axes(int axes[3], const Laue laue, const PointSymmetry* pointsym,
-                    const int aperiodic_axis);
+                         int rot_order);
+static int lauennn(int axes[3], const PointSymmetry* pointsym, int rot_order,
+                   int aperiodic_axis);
+static int get_axes(int axes[3], Laue laue, const PointSymmetry* pointsym,
+                    int aperiodic_axis);
 static void get_proper_rotation(int prop_rot[3][3], const int rot[3][3]);
 static void set_transformation_matrix(int tmat[3][3], const int axes[3]);
-static int is_exist_axis(const int axis_vec[3], const int axis_index);
+static int is_exist_axis(const int axis_vec[3], int axis_index);
 static void sort_axes(int axes[3]);
-static void layer_check_and_sort_axes(int axes[3], const int aperiodic_axis);
+static void layer_check_and_sort_axes(int axes[3], int aperiodic_axis);
 
 Pointgroup ptg_get_transformation_matrix(int transform_mat[3][3],
                                          const int rotations[][3][3],

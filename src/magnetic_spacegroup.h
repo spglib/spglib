@@ -49,16 +49,15 @@ typedef struct {
     double origin_shift[3];
     /* Rigid rotation to standardized lattice */
     double std_rotation_matrix[3][3];
-} MagneticDataset;
+} __attribute__((aligned(128))) __attribute__((packed)) MagneticDataset;
 
 MagneticDataset *msg_identify_magnetic_space_group_type(
     const double lattice[3][3], const MagneticSymmetry *magnetic_symmetry,
-    const double symprec);
+    double symprec);
 Cell *msg_get_transformed_cell(const Cell *cell, const double tmat[3][3],
                                const double origin_shift[3],
                                const double rigid_rot[3][3],
                                const MagneticSymmetry *magnetic_symmetry,
-                               const double symprec,
-                               const double angle_tolerance);
+                               double symprec, double angle_tolerance);
 
 #endif /*__msg_H__ */

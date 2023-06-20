@@ -10146,7 +10146,7 @@ static const int layer_symmetry_operation_index[][2] = {
     {24, 8123}, /* 116 */
 };
 
-static void replace_equal_char(char symbol[], const int position);
+static void replace_equal_char(char symbol[], int position);
 
 void spgdb_decode_symmetry(int rot[3][3], double trans[3], const int encoded) {
     int i, j, r, t, degit;

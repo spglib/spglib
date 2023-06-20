@@ -44,11 +44,10 @@ typedef struct {
     Primitive *primitive;
     Spacegroup *spacegroup;
     ExactStructure *exact_structure;
-} DataContainer;
+} __attribute__((aligned(32))) DataContainer;
 
-DataContainer *det_determine_all(const Cell *cell, const int hall_number,
-                                 const double symprec,
-                                 const double angle_symprec);
+DataContainer *det_determine_all(const Cell *cell, int hall_number,
+                                 double symprec, double angle_symprec);
 void det_free_container(DataContainer *container);
 
 #endif

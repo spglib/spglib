@@ -38,10 +38,10 @@
 #include "mathfunc.h"
 
 int del_delaunay_reduce(double lattice_new[3][3], const double lattice[3][3],
-                        const double symprec);
+                        double symprec);
 int del_layer_delaunay_reduce(double min_lattice[3][3],
-                              const double lattice[3][3],
-                              const int aperiodic_axis, const double symprec);
+                              const double lattice[3][3], int aperiodic_axis,
+                              double symprec);
 
 // @brief Delaunay reduction for monoclinic/oblique or monoclinic/rectangular
 // @param[out] red_lattice
@@ -56,9 +56,7 @@ int del_layer_delaunay_reduce(double min_lattice[3][3],
 //       k(=aperiodic_axis)}. j and k are delaunay reduced, which can be
 //       incomplete for Monoclinic/Rectangular
 int del_layer_delaunay_reduce_2D(double min_lattice[3][3],
-                                 const double lattice[3][3],
-                                 const int unique_axis,
-                                 const int aperiodic_axis,
-                                 const double symprec);
+                                 const double lattice[3][3], int unique_axis,
+                                 int aperiodic_axis, double symprec);
 
 #endif

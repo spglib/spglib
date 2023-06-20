@@ -42,63 +42,63 @@
 #include "spg_database.h"
 #include "symmetry.h"
 
-static int M_bcc[3][3] = {
+static const int M_bcc[3][3] = {
     {0, 1, 1},
     {1, 0, 1},
     {1, 1, 0},
 };
-static int M_fcc[3][3] = {
+static const int M_fcc[3][3] = {
     {-1, 1, 1},
     {1, -1, 1},
     {1, 1, -1},
 };
-static int M_ac[3][3] = {
+static const int M_ac[3][3] = {
     {1, 0, 0},
     {0, 1, 1},
     {0, -1, 1},
 };
-static int M_bc[3][3] = {
+static const int M_bc[3][3] = {
     {1, 0, 1},
     {0, 1, 0},
     {-1, 0, 1},
 };
-static int M_cc[3][3] = {
+static const int M_cc[3][3] = {
     {1, -1, 0},
     {1, 1, 0},
     {0, 0, 1},
 };
-static int M_rc[3][3] = {
+static const int M_rc[3][3] = {
     {1, 0, 1},
     {-1, 1, 1},
     {0, -1, 1},
 };
 
-static double M_bcc_inv[3][3] = {
+static const double M_bcc_inv[3][3] = {
     {-0.5, 0.5, 0.5},
     {0.5, -0.5, 0.5},
     {0.5, 0.5, -0.5},
 };
-static double M_fcc_inv[3][3] = {
+static const double M_fcc_inv[3][3] = {
     {0.0, 0.5, 0.5},
     {0.5, 0.0, 0.5},
     {0.5, 0.5, 0.0},
 };
-static double M_ac_inv[3][3] = {
+static const double M_ac_inv[3][3] = {
     {1.0, 0.0, 0.0},
     {0.0, 0.5, -0.5},
     {0.0, 0.5, 0.5},
 };
-static double M_bc_inv[3][3] = {
+static const double M_bc_inv[3][3] = {
     {0.5, 0.0, -0.5},
     {0.0, 1.0, 0.0},
     {0.5, 0.0, 0.5},
 };
-static double M_cc_inv[3][3] = {
+static const double M_cc_inv[3][3] = {
     {0.5, 0.5, 0.0},
     {-0.5, 0.5, 0.0},
     {0.0, 0.0, 1.0},
 };
-static double M_rc_inv[3][3] = {
+static const double M_rc_inv[3][3] = {
     {2. / 3, -1. / 3, -1. / 3},
     {1. / 3, 1. / 3, -2. / 3},
     {1. / 3, 1. / 3, 1. / 3},
@@ -116,7 +116,7 @@ static double M_rc_inv[3][3] = {
 /* S+ is given by the operations of inversion of the diagonal elements */
 /* and then transpose. */
 
-static double tricli_VSpU[][3][9] = {
+static const double tricli_VSpU[][3][9] = {
     {
         /* 1 */
         {
@@ -191,7 +191,7 @@ static double tricli_VSpU[][3][9] = {
     },
 };
 
-static int tricli_generators[][3][9] = {
+static const int tricli_generators[][3][9] = {
     {
         /* 1 */
         {
@@ -266,7 +266,7 @@ static int tricli_generators[][3][9] = {
     },
 };
 
-static double monocli_VSpU[][3][9] = {
+static const double monocli_VSpU[][3][9] = {
     {
         /* 1 */
         {
@@ -593,7 +593,7 @@ static double monocli_VSpU[][3][9] = {
     },
 };
 
-static double monocli_A_VSpU[][3][9] = {
+static const double monocli_A_VSpU[][3][9] = {
     {
         /* 1 */
         {
@@ -920,7 +920,7 @@ static double monocli_A_VSpU[][3][9] = {
     },
 };
 
-static double monocli_B_VSpU[][3][9] = {
+static const double monocli_B_VSpU[][3][9] = {
     {
         /* 1 */
         {
@@ -1247,7 +1247,7 @@ static double monocli_B_VSpU[][3][9] = {
     },
 };
 
-static double monocli_C_VSpU[][3][9] = {
+static const double monocli_C_VSpU[][3][9] = {
     {
         /* 1 */
         {
@@ -1574,7 +1574,7 @@ static double monocli_C_VSpU[][3][9] = {
     },
 };
 
-static double monocli_I_VSpU[][3][9] = {
+static const double monocli_I_VSpU[][3][9] = {
     {
         /* 1 */
         {
@@ -1901,7 +1901,7 @@ static double monocli_I_VSpU[][3][9] = {
     },
 };
 
-static int monocli_generators[][3][9] = {
+static const int monocli_generators[][3][9] = {
     {
         /* 1 */
         {
@@ -2228,7 +2228,7 @@ static int monocli_generators[][3][9] = {
     },
 };
 
-static double ortho_VSpU[][3][9] = {
+static const double ortho_VSpU[][3][9] = {
     {
         /* 1 */
         {
@@ -2411,7 +2411,7 @@ static double ortho_VSpU[][3][9] = {
     },
 };
 
-static double ortho_F_VSpU[][3][9] = {
+static const double ortho_F_VSpU[][3][9] = {
     {
         /* 1 */
         {
@@ -2594,7 +2594,7 @@ static double ortho_F_VSpU[][3][9] = {
     },
 };
 
-static double ortho_I_VSpU[][3][9] = {
+static const double ortho_I_VSpU[][3][9] = {
     {
         /* 1 */
         {
@@ -2776,7 +2776,7 @@ static double ortho_I_VSpU[][3][9] = {
         },
     },
 };
-static double ortho_A_VSpU[][3][9] = {
+static const double ortho_A_VSpU[][3][9] = {
     {
         /* 1 */
         {
@@ -2942,372 +2942,6 @@ static double ortho_A_VSpU[][3][9] = {
             0,
             -1.0 / 2,
             0,
-            0,
-            0,
-        },
-        {
-            0,
-            0,
-            0,
-            0,
-            0,
-            -1.0 / 2,
-            0,
-            0,
-            0,
-        },
-    },
-};
-
-static double ortho_B_VSpU[][3][9] = {
-    {
-        /* 1 */
-        {
-            -1.0 / 2,
-            0,
-            0,
-            -1.0 / 2,
-            0,
-            0,
-            0,
-            0,
-            0,
-        },
-        {
-            0,
-            -1.0 / 2,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-        },
-        {
-            1.0 / 2,
-            0,
-            0,
-            -1.0 / 2,
-            0,
-            0,
-            0,
-            0,
-            0,
-        },
-    },
-    {
-        /* 2 */
-        {
-            0,
-            0,
-            0,
-            -1,
-            0,
-            0,
-            0,
-            0,
-            0,
-        },
-        {
-            0,
-            -1.0 / 2,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-        },
-        {
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-        },
-    },
-    {
-        /* 3 */
-        {
-            0,
-            0,
-            0,
-            -1,
-            0,
-            0,
-            0,
-            0,
-            0,
-        },
-        {
-            0,
-            0,
-            0,
-            0,
-            -1.0 / 2,
-            0,
-            0,
-            0,
-            0,
-        },
-        {
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-        },
-    },
-    {
-        /* 4 */
-        {
-            -1.0 / 2,
-            0,
-            0,
-            -1.0 / 2,
-            0,
-            0,
-            0,
-            0,
-            0,
-        },
-        {
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-        },
-        {
-            -1.0 / 2,
-            0,
-            0,
-            1.0 / 2,
-            0,
-            0,
-            0,
-            0,
-            0,
-        },
-    },
-    {
-        /* 5 */
-        {
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            -1.0 / 2,
-            0,
-            0,
-        },
-        {
-            0,
-            0,
-            0,
-            0,
-            -1.0 / 2,
-            0,
-            0,
-            0,
-            0,
-        },
-        {
-            0,
-            0,
-            0,
-            -1,
-            0,
-            0,
-            1.0 / 2,
-            0,
-            0,
-        },
-    },
-};
-
-static double ortho_C_VSpU[][3][9] = {
-    {
-        /* 1 */
-        {
-            -1.0 / 2,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-        },
-        {
-            -1.0 / 2,
-            0,
-            0,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-        },
-        {
-            0,
-            0,
-            0,
-            0,
-            0,
-            -1.0 / 2,
-            0,
-            0,
-            0,
-        },
-    },
-    {
-        /* 2 */
-        {
-            -1.0 / 2,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-        },
-        {
-            1.0 / 2,
-            0,
-            0,
-            -1,
-            0,
-            0,
-            0,
-            0,
-            0,
-        },
-        {
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-        },
-    },
-    {
-        /* 3 */
-        {
-            0,
-            0,
-            0,
-            -1,
-            0,
-            0,
-            0,
-            0,
-            0,
-        },
-        {
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-        },
-        {
-            0,
-            0,
-            -1.0 / 2,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-        },
-    },
-    {
-        /* 4 */
-        {
-            0,
-            0,
-            0,
-            -1,
-            0,
-            0,
-            0,
-            0,
-            0,
-        },
-        {
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-        },
-        {
-            0,
-            0,
-            -1.0 / 2,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-        },
-    },
-    {
-        /* 5 */
-        {
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            -1.0 / 2,
-            0,
-            0,
-        },
-        {
-            0,
-            0,
-            0,
-            1,
-            0,
-            0,
-            -1.0 / 2,
             0,
             0,
         },
@@ -3325,7 +2959,373 @@ static double ortho_C_VSpU[][3][9] = {
     },
 };
 
-static int ortho_generators[][3][9] = {
+static const double ortho_B_VSpU[][3][9] = {
+    {
+        /* 1 */
+        {
+            -1.0 / 2,
+            0,
+            0,
+            -1.0 / 2,
+            0,
+            0,
+            0,
+            0,
+            0,
+        },
+        {
+            0,
+            -1.0 / 2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+        },
+        {
+            1.0 / 2,
+            0,
+            0,
+            -1.0 / 2,
+            0,
+            0,
+            0,
+            0,
+            0,
+        },
+    },
+    {
+        /* 2 */
+        {
+            0,
+            0,
+            0,
+            -1,
+            0,
+            0,
+            0,
+            0,
+            0,
+        },
+        {
+            0,
+            -1.0 / 2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+        },
+        {
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+        },
+    },
+    {
+        /* 3 */
+        {
+            0,
+            0,
+            0,
+            -1,
+            0,
+            0,
+            0,
+            0,
+            0,
+        },
+        {
+            0,
+            0,
+            0,
+            0,
+            -1.0 / 2,
+            0,
+            0,
+            0,
+            0,
+        },
+        {
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+        },
+    },
+    {
+        /* 4 */
+        {
+            -1.0 / 2,
+            0,
+            0,
+            -1.0 / 2,
+            0,
+            0,
+            0,
+            0,
+            0,
+        },
+        {
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+        },
+        {
+            -1.0 / 2,
+            0,
+            0,
+            1.0 / 2,
+            0,
+            0,
+            0,
+            0,
+            0,
+        },
+    },
+    {
+        /* 5 */
+        {
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            -1.0 / 2,
+            0,
+            0,
+        },
+        {
+            0,
+            0,
+            0,
+            0,
+            -1.0 / 2,
+            0,
+            0,
+            0,
+            0,
+        },
+        {
+            0,
+            0,
+            0,
+            -1,
+            0,
+            0,
+            1.0 / 2,
+            0,
+            0,
+        },
+    },
+};
+
+static const double ortho_C_VSpU[][3][9] = {
+    {
+        /* 1 */
+        {
+            -1.0 / 2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+        },
+        {
+            -1.0 / 2,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+        },
+        {
+            0,
+            0,
+            0,
+            0,
+            0,
+            -1.0 / 2,
+            0,
+            0,
+            0,
+        },
+    },
+    {
+        /* 2 */
+        {
+            -1.0 / 2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+        },
+        {
+            1.0 / 2,
+            0,
+            0,
+            -1,
+            0,
+            0,
+            0,
+            0,
+            0,
+        },
+        {
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+        },
+    },
+    {
+        /* 3 */
+        {
+            0,
+            0,
+            0,
+            -1,
+            0,
+            0,
+            0,
+            0,
+            0,
+        },
+        {
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+        },
+        {
+            0,
+            0,
+            -1.0 / 2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+        },
+    },
+    {
+        /* 4 */
+        {
+            0,
+            0,
+            0,
+            -1,
+            0,
+            0,
+            0,
+            0,
+            0,
+        },
+        {
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+        },
+        {
+            0,
+            0,
+            -1.0 / 2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+        },
+    },
+    {
+        /* 5 */
+        {
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            -1.0 / 2,
+            0,
+            0,
+        },
+        {
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            -1.0 / 2,
+            0,
+            0,
+        },
+        {
+            0,
+            0,
+            0,
+            0,
+            0,
+            -1.0 / 2,
+            0,
+            0,
+            0,
+        },
+    },
+};
+
+static const int ortho_generators[][3][9] = {
     {
         /* 1 */
         {
@@ -3508,7 +3508,7 @@ static int ortho_generators[][3][9] = {
     },
 };
 
-static double tetra_VSpU[][3][9] = {
+static const double tetra_VSpU[][3][9] = {
     {
         /* 1 */
         {
@@ -3799,7 +3799,7 @@ static double tetra_VSpU[][3][9] = {
     },
 };
 
-static double tetra_I_VSpU[][3][9] = {
+static const double tetra_I_VSpU[][3][9] = {
     {
         /* 1 */
         {
@@ -4090,7 +4090,7 @@ static double tetra_I_VSpU[][3][9] = {
     },
 };
 
-static int tetra_generators[][3][9] = {
+static const int tetra_generators[][3][9] = {
     {
         /* 1 */
         {
@@ -4381,7 +4381,7 @@ static int tetra_generators[][3][9] = {
     },
 };
 
-static double trigo_VSpU[][3][9] = {
+static const double trigo_VSpU[][3][9] = {
     {
         /* 1 */
         {
@@ -4852,7 +4852,7 @@ static double trigo_VSpU[][3][9] = {
     },
 };
 
-static int trigo_generators[][3][9] = {
+static const int trigo_generators[][3][9] = {
     {
         /* 1 */
         {
@@ -5323,7 +5323,7 @@ static int trigo_generators[][3][9] = {
     },
 };
 
-static double rhombo_h_VSpU[][3][9] = {
+static const double rhombo_h_VSpU[][3][9] = {
     {
         /* 1 */
         {
@@ -5614,7 +5614,7 @@ static double rhombo_h_VSpU[][3][9] = {
     },
 };
 
-static int rhombo_h_generators[][3][9] = {
+static const int rhombo_h_generators[][3][9] = {
     {
         /* 1 */
         {
@@ -5905,7 +5905,7 @@ static int rhombo_h_generators[][3][9] = {
     },
 };
 
-static double rhombo_p_VSpU[][3][9] = {
+static const double rhombo_p_VSpU[][3][9] = {
     {
         /* 1 */
         {
@@ -6196,7 +6196,7 @@ static double rhombo_p_VSpU[][3][9] = {
     },
 };
 
-static int rhombo_p_generators[][3][9] = {
+static const int rhombo_p_generators[][3][9] = {
     {
         /* 1 */
         {
@@ -6487,7 +6487,7 @@ static int rhombo_p_generators[][3][9] = {
     },
 };
 
-static double hexa_VSpU[][3][9] = {
+static const double hexa_VSpU[][3][9] = {
     {
         /* 1 */
         {
@@ -6778,7 +6778,7 @@ static double hexa_VSpU[][3][9] = {
     },
 };
 
-static int hexa_generators[][3][9] = {
+static const int hexa_generators[][3][9] = {
     {
         /* 1 */
         {
@@ -7069,7 +7069,7 @@ static int hexa_generators[][3][9] = {
     },
 };
 
-static double cubic_VSpU[][3][9] = {
+static const double cubic_VSpU[][3][9] = {
     {
         /* 1 */
         {
@@ -7432,7 +7432,7 @@ static double cubic_VSpU[][3][9] = {
     },
 };
 
-static double cubic_F_VSpU[][3][9] = {
+static const double cubic_F_VSpU[][3][9] = {
     {
         /* 1 */
         {
@@ -7795,7 +7795,7 @@ static double cubic_F_VSpU[][3][9] = {
     },
 };
 
-static double cubic_I_VSpU[][3][9] = {
+static const double cubic_I_VSpU[][3][9] = {
     {
         /* 1 */
         {
@@ -8158,7 +8158,7 @@ static double cubic_I_VSpU[][3][9] = {
     },
 };
 
-static int cubic_generators[][3][9] = {
+static const int cubic_generators[][3][9] = {
     {
         /* 1 */
         {
@@ -8522,67 +8522,59 @@ static int cubic_generators[][3][9] = {
 };
 
 static int find_hall_symbol(double origin_shift[3],
-                            const double bravais_lattice[3][3],
-                            const int hall_number, const Centering centering,
-                            const Symmetry *symmetry, const double symprec);
-static int is_hall_symbol(double shift[3], const int hall_number,
+                            const double bravais_lattice[3][3], int hall_number,
+                            Centering centering, const Symmetry *symmetry,
+                            double symprec);
+static int is_hall_symbol(double shift[3], int hall_number,
                           const double primitive_lattice[3][3],
-                          const Symmetry *symmetry, const Centering centering,
+                          const Symmetry *symmetry, Centering centering,
                           const int generators[3][9], const double VSpU[3][9],
-                          const double symprec);
-static int is_hall_symbol_cubic(double shift[3], const int hall_number,
+                          double symprec);
+static int is_hall_symbol_cubic(double shift[3], int hall_number,
                                 const double primitive_lattice[3][3],
-                                const Symmetry *symmetry,
-                                const Centering centering,
-                                const double symprec);
-static int is_hall_symbol_hexa(double shift[3], const int hall_number,
+                                const Symmetry *symmetry, Centering centering,
+                                double symprec);
+static int is_hall_symbol_hexa(double shift[3], int hall_number,
                                const double primitive_lattice[3][3],
-                               const Symmetry *symmetry, const double symprec);
-static int is_hall_symbol_rhombo(double shift[3], const int hall_number,
+                               const Symmetry *symmetry, double symprec);
+static int is_hall_symbol_rhombo(double shift[3], int hall_number,
                                  const double primitive_lattice[3][3],
-                                 const Symmetry *symmetry,
-                                 const double symprec);
-static int is_hall_symbol_trigonal(double shift[3], const int hall_number,
+                                 const Symmetry *symmetry, double symprec);
+static int is_hall_symbol_trigonal(double shift[3], int hall_number,
                                    const double primitive_lattice[3][3],
-                                   const Symmetry *symmetry,
-                                   const double symprec);
-static int is_hall_symbol_tetra(double shift[3], const int hall_number,
+                                   const Symmetry *symmetry, double symprec);
+static int is_hall_symbol_tetra(double shift[3], int hall_number,
                                 const double primitive_lattice[3][3],
-                                const Symmetry *symmetry,
-                                const Centering centering,
-                                const double symprec);
-static int is_hall_symbol_ortho(double shift[3], const int hall_number,
+                                const Symmetry *symmetry, Centering centering,
+                                double symprec);
+static int is_hall_symbol_ortho(double shift[3], int hall_number,
                                 const double primitive_lattice[3][3],
-                                const Symmetry *symmetry,
-                                const Centering centering,
-                                const double symprec);
-static int is_hall_symbol_monocli(double shift[3], const int hall_number,
+                                const Symmetry *symmetry, Centering centering,
+                                double symprec);
+static int is_hall_symbol_monocli(double shift[3], int hall_number,
                                   const double primitive_lattice[3][3],
-                                  const Symmetry *symmetry,
-                                  const Centering centering,
-                                  const double symprec);
-static int is_hall_symbol_tricli(double shift[3], const int hall_number,
+                                  const Symmetry *symmetry, Centering centering,
+                                  double symprec);
+static int is_hall_symbol_tricli(double shift[3], int hall_number,
                                  const double primitive_lattice[3][3],
-                                 const Symmetry *symmetry,
-                                 const double symprec);
+                                 const Symmetry *symmetry, double symprec);
 static int get_translations(double trans[3][3], const Symmetry *symmetry,
                             const int rot[3][3][3]);
-static void transform_translation(double trans_reduced[3],
-                                  const Centering centering,
+static void transform_translation(double trans_reduced[3], Centering centering,
                                   const double trans[3]);
-static void transform_rotation(double rot_reduced[3][3],
-                               const Centering centering, const int rot[3][3]);
-static int get_origin_shift(double shift[3], const int hall_number,
+static void transform_rotation(double rot_reduced[3][3], Centering centering,
+                               const int rot[3][3]);
+static int get_origin_shift(double shift[3], int hall_number,
                             const int rot[3][3][3], const double trans[3][3],
-                            const Centering centering, const double VSpU[3][9]);
+                            Centering centering, const double VSpU[3][9]);
 static void unpack_generators(int rot[3][3][3], const int generators[3][9]);
 static int set_dw(double dw[3], const int operation_index[2],
                   const int rot[3][3], const double trans[3],
-                  const Centering centering);
-static int is_match_database(const int hall_number, const double shift[3],
+                  Centering centering);
+static int is_match_database(int hall_number, const double shift[3],
                              const double primitive_lattice[3][3],
-                             const Centering centering,
-                             const Symmetry *symmetry, const double symprec);
+                             Centering centering, const Symmetry *symmetry,
+                             double symprec);
 
 int hal_match_hall_symbol_db(double origin_shift[3],
                              const double bravais_lattice[3][3],

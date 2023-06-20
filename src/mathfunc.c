@@ -96,9 +96,8 @@ int mat_check_identity_matrix_i3(const int a[3][3], const int b[3][3]) {
         a[1][0] - b[1][0] || a[1][1] - b[1][1] || a[1][2] - b[1][2] ||
         a[2][0] - b[2][0] || a[2][1] - b[2][1] || a[2][2] - b[2][2]) {
         return 0;
-    } else {
-        return 1;
     }
+    return 1;
 }
 
 int mat_check_identity_matrix_d3(const double a[3][3], const double b[3][3],
@@ -113,9 +112,8 @@ int mat_check_identity_matrix_d3(const double a[3][3], const double b[3][3],
         mat_Dabs(a[2][1] - b[2][1]) > symprec ||
         mat_Dabs(a[2][2] - b[2][2]) > symprec) {
         return 0;
-    } else {
-        return 1;
     }
+    return 1;
 }
 
 int mat_check_identity_matrix_id3(const int a[3][3], const double b[3][3],
@@ -130,9 +128,8 @@ int mat_check_identity_matrix_id3(const int a[3][3], const double b[3][3],
         mat_Dabs(a[2][1] - b[2][1]) > symprec ||
         mat_Dabs(a[2][2] - b[2][2]) > symprec) {
         return 0;
-    } else {
-        return 1;
     }
+    return 1;
 }
 
 /* m=axb */
@@ -345,28 +342,22 @@ void mat_cross_product_d3(double v[3], const double a[3], const double b[3]) {
 }
 
 double mat_Dabs(const double a) {
-    if (a < 0.0)
-        return -a;
-    else
-        return a;
+    if (a < 0.0) return -a;
+    return a;
 }
 
 /* Round to a nearest integer */
 int mat_Nint(const double a) {
-    if (a < 0.0)
-        return (int)(a - 0.5);
-    else
-        return (int)(a + 0.5);
+    if (a < 0.0) return (int)(a - 0.5);
+    return (int)(a + 0.5);
 }
 
 double mat_Dmod1(const double a) {
     double b;
     b = a - mat_Nint(a);
 
-    if (b < 0.0 - ZERO_PREC)
-        return b + 1.0;
-    else
-        return b;
+    if (b < 0.0 - ZERO_PREC) return b + 1.0;
+    return b;
 }
 
 MatINT *mat_alloc_MatINT(const int size) {

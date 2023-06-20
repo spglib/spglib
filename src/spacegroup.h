@@ -52,7 +52,7 @@ typedef struct {
     char choice[6];
     double bravais_lattice[3][3];
     double origin_shift[3];
-} Spacegroup;
+} __attribute__((aligned(128))) __attribute__((packed)) Spacegroup;
 
 typedef enum {
     CENTERING_ERROR,
@@ -66,19 +66,16 @@ typedef enum {
     R_CENTER,
 } Centering;
 
-Spacegroup *spa_search_spacegroup(const Primitive *primitive,
-                                  const int hall_number, const double symprec,
-                                  const double angle_tolerance);
+Spacegroup *spa_search_spacegroup(const Primitive *primitive, int hall_number,
+                                  double symprec, double angle_tolerance);
 Spacegroup *spa_search_spacegroup_with_symmetry(const Symmetry *symmetry,
                                                 const double prim_lat[3][3],
-                                                const double symprec);
+                                                double symprec);
 Cell *spa_transform_to_primitive(int *mapping_table, const Cell *cell,
                                  const double trans_mat[3][3],
-                                 const Centering centering,
-                                 const double symprec);
-Cell *spa_transform_from_primitive(const Cell *primitive,
-                                   const Centering centering,
-                                   const double symprec);
+                                 Centering centering, double symprec);
+Cell *spa_transform_from_primitive(const Cell *primitive, Centering centering,
+                                   double symprec);
 void spa_copy_spacegroup(Spacegroup *dst, const Spacegroup *src);
 
 #endif
