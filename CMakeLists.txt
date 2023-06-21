@@ -120,6 +120,9 @@ if (SPGLIB_WITH_TESTS)
 	)
 	list(APPEND spglib_dependencies GTest)
 endif ()
+if (SPGLIB_WITH_Python)
+	find_package(Python3 COMPONENTS REQUIRED Interpreter Development.Module NumPy)
+endif ()
 FetchContent_MakeAvailable(${spglib_dependencies})
 
 #[==============================================================================================[
