@@ -1,3 +1,15 @@
+<!-- Keep a Changelog guide -> https://keepachangelog.com --> 
+<!-- Main summary of releases. No need to include Pull Requests, these are handled by release workflow -->
+
+# Spglib Changelog
+
+All notable changes to this project are documented here. More details can be found in the
+GitHub release pages and in the git history.
+
+## [Unreleased]
+
+## Old changelog
+
 2022-08-09 Atsushi Togo <atz.togo@gmail.com>
 
     * This ChangeLog is obsolete.
