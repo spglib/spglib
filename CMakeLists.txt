@@ -86,9 +86,12 @@ if (NOT CMAKE_Fortran_MODULE_DIRECTORY)
 endif ()
 
 set(CMAKE_MACOSX_RPATH 1)
-# Windows setup, make sure there is a .lib file to link to
-if (SKBUILD AND WIN32)
+# Windows setup
+if (WIN32)
+	# Make sure there is a .lib file to link to
 	set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+	# Add appropriate debug flags
+	set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>")
 endif ()
 if (SPGLIB_WITH_Fortran)
 	enable_language(Fortran)
@@ -112,6 +115,8 @@ if (SPGLIB_USE_OMP)
 	find_package(OpenMP REQUIRED COMPONENTS C)
 endif ()
 if (SPGLIB_WITH_TESTS)
+	set(BUILD_GMOCK OFF)
+	set(INSTALL_GTEST OFF)
 	set(gtest_disable_pthreads ON)
 	FetchContent_Declare(GTest
 			GIT_REPOSITORY https://github.com/google/googletest
@@ -119,6 +124,7 @@ if (SPGLIB_WITH_TESTS)
 			FIND_PACKAGE_ARGS
 	)
 	list(APPEND spglib_dependencies GTest)
+	find_package(Threads REQUIRED)
 endif ()
 if (SPGLIB_WITH_Python)
 	find_package(Python3 COMPONENTS REQUIRED Interpreter Development.Module NumPy)

@@ -23,6 +23,10 @@
         "SPGLIB_WITH_Python": {
           "type": "BOOL",
           "value": true
+        },
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "RelWithDebInfo"
         }
       },
       "errors": {
@@ -72,7 +76,7 @@
       "inherits": [
         "ci-base"
       ],
-      "binaryDir": "cmake-build-release-gcc",
+      "binaryDir": "cmake-build-ci-gcc",
       "cacheVariables": {
         "CMAKE_C_COMPILER": {
           "type": "FILEPATH",
@@ -102,7 +106,7 @@
       "inherits": [
         "ci-base"
       ],
-      "binaryDir": "cmake-build-release-intel",
+      "binaryDir": "cmake-build-ci-intel",
       "cacheVariables": {
         "CMAKE_C_COMPILER": {
           "type": "FILEPATH",
@@ -128,7 +132,7 @@
       "inherits": [
         "ci-base"
       ],
-      "binaryDir": "cmake-build-release-llvm",
+      "binaryDir": "cmake-build-ci-llvm",
       "cacheVariables": {
         "CMAKE_C_COMPILER": {
           "type": "FILEPATH",
@@ -145,6 +149,62 @@
         "CMAKE_LINKER": {
           "type": "FILEPATH",
           "value": "lld"
+        },
+        "SPGLIB_USE_SANITIZER": {
+          "type": "STRING",
+          "value": "address"
+        }
+      }
+    },
+    {
+      "name": "windows-ci",
+      "displayName": "Configure preset for Windows native toolchain",
+      "inherits": [
+        "ci-base"
+      ],
+      "binaryDir": "cmake-build-ci-windows",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": {
+          "type": "FILEPATH",
+          "value": "cl"
+        },
+        "CMAKE_CXX_COMPILER": {
+          "type": "FILEPATH",
+          "value": "cl"
+        },
+        "SPGLIB_WITH_Fortran": {
+          "type": "BOOL",
+          "value": false
+        },
+        "SPGLIB_USE_SANITIZER": {
+          "type": "STRING",
+          "value": "address"
+        },
+        "SPGLIB_SHARED_LIBS": {
+          "type": "BOOL",
+          "value": false
+        }
+      }
+    },
+    {
+      "name": "macos-ci",
+      "displayName": "Configure preset for MacOS native toolchain",
+      "inherits": [
+        "ci-base"
+      ],
+      "binaryDir": "cmake-build-ci-macos",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": {
+          "type": "FILEPATH",
+          "value": "clang"
+        },
+        "CMAKE_CXX_COMPILER": {
+          "type": "FILEPATH",
+          "value": "clang++"
+        },
+        "SPGLIB_WITH_Fortran": {
+          "type": "BOOL",
+          "value": false
         },
         "SPGLIB_USE_SANITIZER": {
           "type": "STRING",
@@ -193,6 +253,22 @@
         "ci-base"
       ],
       "configurePreset": "llvm-ci"
+    },
+    {
+      "name": "windows-ci",
+      "displayName": "Build preset for Windows native toolchain",
+      "inherits": [
+        "ci-base"
+      ],
+      "configurePreset": "windows-ci"
+    },
+    {
+      "name": "macos-ci",
+      "displayName": "Build preset for MacOS native toolchain",
+      "inherits": [
+        "ci-base"
+      ],
+      "configurePreset": "macos-ci"
     }
   ],
   "testPresets": [
@@ -237,6 +313,22 @@
         "ci-base"
       ],
       "configurePreset": "llvm-ci"
+    },
+    {
+      "name": "windows-ci",
+      "displayName": "Test preset for Windows native toolchain",
+      "inherits": [
+        "ci-base"
+      ],
+      "configurePreset": "windows-ci"
+    },
+    {
+      "name": "macos-ci",
+      "displayName": "Test preset for MacOS native toolchain",
+      "inherits": [
+        "ci-base"
+      ],
+      "configurePreset": "macos-ci"
     },
     {
       "name": "ci-coverage-unit_tests",
@@ -327,6 +419,42 @@
         {
           "type": "test",
           "name": "llvm-ci"
+        }
+      ]
+    },
+    {
+      "name": "windows-ci",
+      "displayName": "CI test for Windows native toolchain",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "windows-ci"
+        },
+        {
+          "type": "build",
+          "name": "windows-ci"
+        },
+        {
+          "type": "test",
+          "name": "windows-ci"
+        }
+      ]
+    },
+    {
+      "name": "macos-ci",
+      "displayName": "CI test for MacOS native toolchain",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "macos-ci"
+        },
+        {
+          "type": "build",
+          "name": "macos-ci"
+        },
+        {
+          "type": "test",
+          "name": "macos-ci"
         }
       ]
     },

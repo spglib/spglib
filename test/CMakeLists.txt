@@ -17,6 +17,7 @@ target_sources(Spglib_tests PRIVATE
 target_link_libraries(Spglib_tests
 		PRIVATE Spglib_symspg
 		PRIVATE GTest::gtest GTest::gtest_main
+		PRIVATE Threads::Threads
 		)
 target_include_directories(Spglib_tests
 		PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
