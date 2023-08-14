@@ -1,0 +1,4 @@
+summary:
+  Fortran api example
+require+:
+  - gcc-gfortran

@@ -1,0 +1,7 @@
+summary:
+  Python api example
+require:
+  - python3
+framework: shell
+path: .
+test: python3 ./example.py

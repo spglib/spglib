@@ -13,13 +13,14 @@ if(NOT Spglib_FOUND)
 endif()
 
 
-add_executable(example_f example.F90)
+add_executable(example example.F90)
+add_executable(example_full example_full.F90)
 if(Spglib_FOUND)
 	# Linking using native cmake
-	target_link_libraries(example_f PUBLIC
-			Spglib::fortran)
+	target_link_libraries(example PRIVATE Spglib::fortran)
+	target_link_libraries(example_full PRIVATE Spglib::fortran)
 else()
 	# Linking using pkg-config
-	target_link_libraries(example_f PUBLIC
-			PkgConfig::spglib_f08)
+	target_link_libraries(example PRIVATE PkgConfig::spglib_f08)
+	target_link_libraries(example_full PRIVATE PkgConfig::spglib_f08)
 endif()

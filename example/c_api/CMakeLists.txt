@@ -9,13 +9,14 @@ if(NOT Spglib_FOUND)
 			spglib)
 endif()
 
-add_executable(example_c example.c)
+add_executable(example example.c)
+add_executable(example_full example_full.c)
 if(Spglib_FOUND)
 	# Linking using native cmake
-	target_link_libraries(example_c PUBLIC
-			Spglib::symspg)
+	target_link_libraries(example PRIVATE Spglib::symspg)
+	target_link_libraries(example_full PRIVATE Spglib::symspg)
 else()
 	# Linking using pkg-config
-	target_link_libraries(example_c PUBLIC
-			PkgConfig::symspg)
+	target_link_libraries(example PRIVATE PkgConfig::symspg)
+	target_link_libraries(example_full PRIVATE PkgConfig::symspg)
 endif()
