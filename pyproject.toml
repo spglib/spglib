@@ -71,7 +71,10 @@ cmake.args = [
 ]
 
 [tool.cibuildwheel]
-skip = ["pp*", "*-win32", "*-manylinux_i686", "*-musllinux*", "*-macosx_arm64"]
+# cp312: Cannot build numpy yet
+# macosx_arm64: Cannot test on Github. Could add Cirrus CI/Circle CI
+# pp, win32, i686, muslinux: Remove 32bit variants, PyPY interpreter and unnecessary musl variant
+skip = ["pp*", "*-win32", "*-manylinux_i686", "*-musllinux*", "*-macosx_arm64", "cp312-*"]
 test-extras = "test"
 test-command = "pytest {package}/test/functional/python"
 # Do not run test on emulated environments
