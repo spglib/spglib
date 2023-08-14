@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      upload-wheel:
+        type: boolean
+        required: false
+        default: false
+        description: Upload wheel as an artifact
+      cibw_archs_linux:
+        required: false
+        type: string
+        default: auto aarch64
+        description: Linux architectures
+      cibw_archs_macos:
+        required: false
+        type: string
+        default: x86_64 arm64
+        description: Macos architectures
+      cibw_build:
+        required: false
+        type: string
+        description: Overwrite build targets
+  pull_request:
+    branches: [ develop ]
+  push:
+    branches: [ develop ]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    uses: ./.github/workflows/step_test.yaml
+
+  build-wheel:
+    uses: ./.github/workflows/step_build-wheel.yaml
+    needs: [ tests ]
+    with:
+      upload: ${{ inputs.upload-wheel || false }}
+      cibw_archs_linux: ${{ inputs.cibw_archs_linux || 'x86_64' }}
+      cibw_archs_macos: ${{ inputs.cibw_archs_macos || 'x86_64' }}
+      cibw_build: ${{ inputs.cibw_build }}

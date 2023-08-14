@@ -6,12 +6,10 @@ concurrency:
   cancel-in-progress: true
 
 on:
-  push:
-    branches: [ develop ]
-  pull_request:
-    branches: [ develop ]
-  # Make it able to be used in other workflows
   workflow_call:
+
+permissions:
+  contents: read
 
 jobs:
   pre-commit:
@@ -32,7 +30,7 @@ jobs:
       fail-fast: false
       matrix:
         toolchain: [ gcc, llvm, intel, windows, macos ]
-        python-version: [ "3.9", "3.10", "3.11"]
+        python-version: [ "3.8", "3.9", "3.10", "3.11"]
         include:
           - os: windows-latest
             toolchain: windows
