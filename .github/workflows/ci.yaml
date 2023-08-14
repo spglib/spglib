@@ -45,4 +45,4 @@ jobs:
       upload: ${{ inputs.upload-wheel || false }}
       cibw_archs_linux: ${{ inputs.cibw_archs_linux || 'x86_64' }}
       cibw_archs_macos: ${{ inputs.cibw_archs_macos || 'x86_64' }}
-      cibw_build: ${{ inputs.cibw_build }}
+      cibw_build: ${{ inputs.cibw_build || 'cp311-*' }}
