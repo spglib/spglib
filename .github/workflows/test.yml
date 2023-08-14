@@ -36,7 +36,7 @@ jobs:
         include:
           - os: windows-latest
             toolchain: windows
-          - os: macos-latest
+          - os: macos-11
             toolchain: macos
     steps:
       - name: Enable msvc toolchain on windows
