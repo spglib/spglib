@@ -19,6 +19,10 @@
         "SPGLIB_WITH_TESTS": {
           "type": "BOOL",
           "value": true
+        },
+        "SPGLIB_WITH_Python": {
+          "type": "BOOL",
+          "value": true
         }
       },
       "errors": {
@@ -52,6 +56,10 @@
         "SPGLIB_TEST_COVERAGE": {
           "type": "BOOL",
           "value": true
+        },
+        "SPGLIB_WITH_Python": {
+          "type": "BOOL",
+          "value": false
         }
       },
       "errors": {
@@ -238,7 +246,7 @@
       ],
       "filter": {
         "include": {
-          "label": "c_api"
+          "label": "unit_tests"
         }
       }
     },

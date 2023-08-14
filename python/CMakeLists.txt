@@ -1,4 +1,3 @@
-find_package(Python3 COMPONENTS REQUIRED Interpreter Development.Module NumPy)
 Python3_add_library(Spglib_python MODULE WITH_SOABI _spglib.c)
 set_target_properties(Spglib_python PROPERTIES
 		OUTPUT_NAME _spglib)

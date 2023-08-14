@@ -24,14 +24,14 @@ jobs:
 
   ctest-linux:
     runs-on: ubuntu-latest
-    container: ghcr.io/lecrisut/dev-env:f37
+    container: ghcr.io/lecrisut/dev-env:main
     needs: [ pre-commit ]
-    continue-on-error: ${{ matrix.experimental }}
+    continue-on-error: ${{ matrix.experimental || false }}
     strategy:
       fail-fast: false
       matrix:
-        experimental: [ false ]
         toolchain: [ gcc, llvm, intel ]
+        python-version: [ "3.9", "3.10", "3.11" ]
     steps:
       - name: Activate Intel compilers
         # Not elegant, it will propagate all environment variable.
@@ -43,6 +43,13 @@ jobs:
           echo $PATH >> $GITHUB_PATH
         if: matrix.toolchain == 'intel'
       - uses: actions/checkout@v3
+      - name: Setup python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+        # TODO: Replace with editable install once configure presets are available
+      - name: Install python bindings
+        run: python3 -m pip install .[test]
       - uses: lukka/get-cmake@latest
       - name: Run CMake configuration for ${{ matrix.toolchain }} toolchain
         uses: lukka/run-cmake@v10.3
