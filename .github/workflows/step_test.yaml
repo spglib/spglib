@@ -30,12 +30,15 @@ jobs:
       fail-fast: false
       matrix:
         toolchain: [ gcc, llvm, intel, windows, macos ]
-        python-version: [ "3.8", "3.9", "3.10", "3.11"]
+        python-version: [ "3.8", "3.9", "3.10", "3.11", "3.12"]
         include:
           - os: windows-latest
             toolchain: windows
           - os: macos-11
             toolchain: macos
+          - python-version: "3.12"
+            experimental: true
+            pip-extra-flags: --pre
     steps:
       - name: Enable msvc toolchain on windows
         uses: ilammy/msvc-dev-cmd@v1
@@ -54,9 +57,10 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
+          allow-prereleases: true
         # TODO: Replace with editable install once configure presets are available
       - name: Install python bindings
-        run: python3 -m pip install .[test]
+        run: python3 -m pip install  ${{ matrix.pip-extra-flags }} .[test]
       - uses: lukka/get-cmake@latest
       - name: Run CMake configuration for ${{ matrix.toolchain }} toolchain
         uses: lukka/run-cmake@v10.3
