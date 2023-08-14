@@ -64,6 +64,14 @@ mark_as_advanced(SPGLIB_DEBUG)
 #                                     Project configuration                                     #
 ]==============================================================================================]
 
+# Compatibilities
+# TODO: Remove when requiring cmake >= 3.20
+if (NOT COMMAND cmake_path)
+	# Note: This is not an actual replacement of cmake_path, just a minimal implementation for
+	# this project
+	include(cmake/compat/cmake_path.cmake)
+endif ()
+
 # Include basic tools
 include(cmake/PackageCompsHelper.cmake)
 include(FetchContent)
