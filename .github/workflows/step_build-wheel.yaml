@@ -1,0 +1,67 @@
+name: pypi-wheel
+run-name: Spglib PyPI Wheel builds for linux
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+on:
+  # Make it able to be used in other workflows
+  workflow_call:
+    inputs:
+      upload:
+        required: false
+        type: boolean
+        default: true
+        description: Upload wheel as artifact
+      cibw_archs_linux:
+        required: false
+        type: string
+        default: auto aarch64
+        description: Linux architectures
+      cibw_archs_macos:
+        required: false
+        type: string
+        default: x86_64 arm64
+        description: Macos architectures
+      cibw_build:
+        required: false
+        type: string
+        description: Overwrite build targets
+
+jobs:
+  build_wheels:
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macOS-11 ]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.15.0
+        env:
+          CIBW_BUILD: ${{ inputs.cibw_build }}
+          CIBW_ARCHS_LINUX: ${{ inputs.cibw_archs_linux }}
+          CIBW_ARCHS_MACOS: ${{ inputs.cibw_archs_macos }}
+      - uses: actions/upload-artifact@v3
+        with:
+          path: ./wheelhouse/*.whl
+        if: ${{ inputs.upload }}
+
+  build_sdist:
+    name: Build source distribution
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build sdist
+        run: pipx run build
+      - uses: actions/upload-artifact@v3
+        with:
+          path: dist/*.tar.gz
+        if: ${{ inputs.upload }}

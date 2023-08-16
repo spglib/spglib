@@ -9,12 +9,10 @@ on:
 
 jobs:
   tests:
-    uses: ./.github/workflows/test.yml
-    secrets: inherit
+    uses: ./.github/workflows/step_test.yaml
   pypi-wheel:
     needs: [ tests ]
-    uses: ./.github/workflows/pypi-wheel-builds.yml
-    secrets: inherit
+    uses: ./.github/workflows/step_build-wheel.yaml
   upload_pypi:
     name: Upload to PyPI repository
     needs: [ tests, pypi-wheel ]
