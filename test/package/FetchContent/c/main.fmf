@@ -1,0 +1,5 @@
+summary:
+  Test FetchContent for C library
+require+:
+  - gcc
+tag+: [ c_api ]

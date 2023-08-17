@@ -1,0 +1,5 @@
+summary:
+  Test find_package for C library
+require+:
+  - gcc
+tag+: [ c_api ]
