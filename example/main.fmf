@@ -1,7 +1,6 @@
-tag: examples
+tag: [ examples ]
 require:
   - cmake
-  - gcc
   - rsync
   - tree
 framework: beakerlib

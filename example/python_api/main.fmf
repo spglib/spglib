@@ -3,5 +3,8 @@ summary:
 require:
   - python3
 framework: shell
-path: .
-test: python3 ./example.py
+path: /python_api
+test: |
+  python3 ./example.py
+  python3 ./example_full.py
+tag+: [ python_api ]

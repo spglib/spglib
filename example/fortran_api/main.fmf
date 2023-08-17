@@ -2,3 +2,4 @@ summary:
   Fortran api example
 require+:
   - gcc-gfortran
+tag+: [ fortran_api ]
