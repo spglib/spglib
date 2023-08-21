@@ -53,6 +53,11 @@ jobs:
           echo $PATH >> $GITHUB_PATH
         if: matrix.toolchain == 'intel'
       - uses: actions/checkout@v3
+      - name: Patch /etc/lsb-release for experimental python
+        # Mimic Ubuntu in order to be able to download experimental python
+        run : |
+          echo -en 'DISTRIB_ID=Ubuntu\nDISTRIB_RELEASE=22.04\nDISTRIB_CODENAME=jammy\nDISTRIB_DESCRIPTION="Ubuntu 22.04.3 LTS"' >> /etc/lsb-release
+        if: ${{ !matrix.os && matrix.experimental }}
       - name: Setup python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
