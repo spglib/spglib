@@ -1,0 +1,5 @@
+summary:
+  Test find_package for Fortran library
+require+:
+  - gcc-gfortran
+tag+: [ fortran_api ]

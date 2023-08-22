@@ -1,0 +1,8 @@
+summary:
+  Examples
+discover+:
+  how: fmf
+  filter: "tag: examples"
+  path: example
+execute:
+    how: tmt

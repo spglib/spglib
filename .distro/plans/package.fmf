@@ -1,0 +1,8 @@
+summary:
+  Test importing package
+discover+:
+  how: fmf
+  filter: "tag: package"
+  path: test
+execute:
+  how: tmt

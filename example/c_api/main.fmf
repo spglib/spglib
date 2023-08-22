@@ -1,0 +1,5 @@
+summary:
+  C api example
+require+:
+  - gcc-gfortran
+tag+: [ c_api ]

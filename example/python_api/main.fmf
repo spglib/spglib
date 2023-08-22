@@ -1,0 +1,10 @@
+summary:
+  Python api example
+require:
+  - python3
+framework: shell
+path: /python_api
+test: |
+  python3 ./example.py
+  python3 ./example_full.py
+tag+: [ python_api ]

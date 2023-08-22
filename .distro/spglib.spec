@@ -66,7 +66,8 @@ develop applications with spglib Python3 bindings.
     -DSPGLIB_SHARED_LIBS=ON \
     -DSPGLIB_WITH_Fortran=ON \
     -DSPGLIB_WITH_Python=OFF \
-    -DSPGLIB_WITH_TESTS=ON
+    -DSPGLIB_WITH_TESTS=ON \
+    -DCMAKE_INSTALL_MODULEDIR=%{_fmoddir}
 
 %cmake_build
 %pyproject_wheel
@@ -109,10 +110,7 @@ LD_LIBRARY_PATH=%{buildroot}%{_libdir} %pytest -v
 %files fortran-devel
 %{_libdir}/libspglib_f08.so
 %{_includedir}/spglib_f08.F90
-# TODO: Mod files should be in %%{_fmoddir} according to the guidelines
-# Unclear how to proceed on cmake side to be general
-# https://docs.fedoraproject.org/en-US/packaging-guidelines/Fortran/
-%{_includedir}/spglib_f08.mod
+%{_fmoddir}/spglib_f08.mod
 %{_libdir}/pkgconfig/spglib_f08.pc
 %{_libdir}/cmake/Spglib/SpglibTargets_fortran*
 

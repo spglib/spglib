@@ -1,0 +1,5 @@
+summary:
+  Test pkg-config for Fortran library
+require+:
+  - gcc-gfortran
+tag+: [ fortran_api ]

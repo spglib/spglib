@@ -1,21 +1,14 @@
 cmake_minimum_required(VERSION 3.6)
 project(example_spglib LANGUAGES C)
 
-# Alternatively use pkg-config
-find_package(Spglib)
-if(NOT Spglib_FOUND)
-	find_package(PkgConfig)
-	pkg_check_modules(symspg REQUIRED IMPORTED_TARGET
-			spglib)
-endif()
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_C_EXTENSIONS ON)
 
-add_executable(example_c example.c)
-if(Spglib_FOUND)
-	# Linking using native cmake
-	target_link_libraries(example_c PUBLIC
-			Spglib::symspg)
-else()
-	# Linking using pkg-config
-	target_link_libraries(example_c PUBLIC
-			PkgConfig::symspg)
-endif()
+find_package(Spglib REQUIRED)
+
+add_executable(example example.c)
+add_executable(example_full example_full.c)
+
+target_link_libraries(example PRIVATE Spglib::symspg)
+target_link_libraries(example_full PRIVATE Spglib::symspg)

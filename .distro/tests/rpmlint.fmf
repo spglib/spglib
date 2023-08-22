@@ -7,7 +7,7 @@ path: /
 # Define tests
 /rpmlint:
   summary: Rpmlint spec and rpmfiles
-  test: rpmlint -c packit.toml -r spglib.rpmlintrc ./*.spec /tmp/*.rpm
+  test: rpmlint -c packit.toml -r spglib.rpmlintrc ./*.spec /var/share/test-artifacts/*.rpm
 /rpminspect-rpms:
   summary: Rpminspect the rpms
-  test: ls /tmp/*.rpm | xargs -L1 rpminspect-fedora -E metadata,disttag
+  test: ls /var/share/test-artifacts/*.rpm | xargs -L1 rpminspect-fedora -E metadata,disttag
