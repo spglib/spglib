@@ -43,6 +43,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        # CIBW requires emulation to build for arm linux
+        # https://cibuildwheel.readthedocs.io/en/stable/faq/#emulation
+      - name: Set up QEMU for Linux-arm
+        if: runner.os == 'Linux'
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: all
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.15.0
         env:
