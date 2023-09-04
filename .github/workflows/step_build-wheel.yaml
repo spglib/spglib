@@ -42,7 +42,7 @@ jobs:
         os: [ ubuntu-latest, windows-latest, macOS-11 ]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         # CIBW requires emulation to build for arm linux
         # https://cibuildwheel.readthedocs.io/en/stable/faq/#emulation
       - name: Set up QEMU for Linux-arm
@@ -65,7 +65,7 @@ jobs:
     name: Build source distribution
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
         with:
           python-version: 3.x

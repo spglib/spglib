@@ -16,7 +16,7 @@ jobs:
     name: Check pre-commit
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
         with:
           python-version: 3.x
@@ -54,7 +54,7 @@ jobs:
           printenv >> $GITHUB_ENV
           echo $PATH >> $GITHUB_PATH
         if: matrix.toolchain == 'intel'
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Patch /etc/lsb-release for experimental python
         # Mimic Ubuntu in order to be able to download experimental python
         run : |
@@ -82,7 +82,7 @@ jobs:
       matrix:
         coverage: [ unit_tests, c_api, fortran_api ]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: lukka/get-cmake@latest
       - name: Get test coverage for ${{ matrix.coverage }}
         uses: lukka/run-cmake@v10.3
@@ -107,7 +107,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ tests ]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
