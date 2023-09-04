@@ -18,6 +18,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
       - uses: pre-commit/action@v3.0.0
 
   tests:
@@ -109,6 +111,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
+          python-version: 3.x
           cache: pip
       - name: Setup spglib
         run: |
