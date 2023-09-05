@@ -46,3 +46,12 @@ jobs:
       cibw_archs_linux: ${{ inputs.cibw_archs_linux || 'x86_64' }}
       cibw_archs_macos: ${{ inputs.cibw_archs_macos || 'x86_64' }}
       cibw_build: ${{ inputs.cibw_build || 'cp311-*' }}
+  pass:
+    needs: [tests, build-wheel]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check all CI jobs
+        uses: re-actors/alls-green@release/v1
+        with:
+          jobs: ${{ toJSON(needs) }}
+    if: always()

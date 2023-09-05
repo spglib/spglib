@@ -135,3 +135,12 @@ jobs:
           files: coverage.info,.coverage
           flags: python_api
           verbose: true
+  pass:
+    needs: [pre-commit, tests, coverage, coverage-pytest]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check test jobs
+        uses: re-actors/alls-green@release/v1
+        with:
+          jobs: ${{ toJSON(needs) }}
+    if: always()
