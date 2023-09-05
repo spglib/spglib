@@ -54,7 +54,7 @@ jobs:
     fmf_path: .distro
   - job: copr_build
     trigger: commit
-    branch: main
+    branch: develop
     owner: lecris
     project: nightly
     additional_repos:
@@ -79,7 +79,7 @@ jobs:
       - fedora-latest-stable-aarch64
   - job: tests
     trigger: commit
-    branch: main
+    branch: develop
     targets:
       - fedora-development-x86_64
       - fedora-latest-x86_64
