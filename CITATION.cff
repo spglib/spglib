@@ -5,13 +5,14 @@ title: >-
 message: >-
   If you use this software, please cite it using the
   metadata from this file.
-type: software
 authors:
   - given-names: Atsushi
     family-names: Togo
   - given-names: Isao
     family-names: Tanaka
-identifiers:
-  - type: doi
-    value: 10.48550/arXiv.1808.01590
+type: misc
+doi: 10.48550/arXiv.1808.01590
+year: 2018
+archivePrefix: arXiv
+primaryClass: cond-mat.mtrl-sci
 repository-code: 'https://github.com/spglib/spglib'
