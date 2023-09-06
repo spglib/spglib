@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+title: >-
+  $\texttt{Spglib}$: a software library for crystal symmetry
+  search
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Atsushi
+    family-names: Togo
+  - given-names: Isao
+    family-names: Tanaka
+identifiers:
+  - type: doi
+    value: 10.48550/arXiv.1808.01590
+repository-code: 'https://github.com/spglib/spglib'
