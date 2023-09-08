@@ -41,7 +41,7 @@ jobs:
     name: Create release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: softprops/action-gh-release@v1
         with:
           name: Spglib ${{ github.ref_name }}

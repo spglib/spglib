@@ -42,7 +42,14 @@ jobs:
         os: [ ubuntu-latest, windows-latest, macOS-11 ]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+        # CIBW requires emulation to build for arm linux
+        # https://cibuildwheel.readthedocs.io/en/stable/faq/#emulation
+      - name: Set up QEMU for Linux-arm
+        if: runner.os == 'Linux'
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: all
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.15.0
         env:
@@ -58,7 +65,10 @@ jobs:
     name: Build source distribution
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
       - name: Build sdist
         run: pipx run build
       - uses: actions/upload-artifact@v3
