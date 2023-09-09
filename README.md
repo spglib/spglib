@@ -10,10 +10,12 @@ C library for finding and handling crystal symmetries
 
 - [Spglib](#spglib)
   - [What does Spglib do?](#what-does-spglib-do)
+  - [Requirements](#requirements)
   - [How to use Spglib](#how-to-use-spglib)
     - [How install the python library](#how-install-the-python-library)
     - [How to manually compile](#how-to-manually-compile)
   - [How to run test](#how-to-run-test)
+  - [How to cite Spglib](#how-to-cite-spglib)
   - [Contributing](#contributing)
   - [Documentation](#documentation)
 
@@ -129,6 +131,41 @@ $ ctest --test-dir ./build
 
 Additionally, there are python tests that cover more use-cases.
 See the [README](python/README.rst) in the python folder for more details
+
+## How to cite Spglib
+
+If you use spglib in your research, please consider citing the following work:
+
+- [Atsushi Togo and Isao Tanaka, Spglib: a software library for crystal symmetry search, arXiv:1808.01590 (2018)](https://arxiv.org/abs/1808.01590)
+
+```
+@misc{spglibv1,
+  Author = {Atsushi Togo and Isao Tanaka},
+  Title = {$\texttt{Spglib}$: a software library for crystal symmetry search},
+  Eprint = {arXiv:1808.01590},
+  howpublished = {\url{https://github.com/spglib/spglib}},
+  year = {2018}
+}
+```
+
+If you use functions to search for magnetic symmetry operations in spglib, please also consider citing the following work:
+
+- [Kohei Shinohara, Atsushi Togo, and Isao Tanaka, Algorithms for magnetic symmetry operation search and identification of magnetic space group from magnetic crystal structure, Acta Cryst. A 79, 390-398 (2023)](https://onlinelibrary.wiley.com/iucr/doi/10.1107/S2053273323005016) (open access)
+
+```
+@article{spglibv2,
+  author = "Shinohara, Kohei and Togo, Atsushi and Tanaka, Isao",
+  title = "{Algorithms for magnetic symmetry operation search and identification of magnetic space group from magnetic crystal structure}",
+  journal = "Acta Cryst. A",
+  year = "2023",
+  volume = "79",
+  number = "5",
+  pages = "390--398",
+  month = "Sep",
+  doi = {10.1107/S2053273323005016},
+  url = {https://doi.org/10.1107/S2053273323005016},
+}
+```
 
 ## Contributing
 

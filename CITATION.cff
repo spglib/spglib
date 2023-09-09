@@ -1,0 +1,37 @@
+cff-version: 1.2.0
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+repository-code: 'https://github.com/spglib/spglib'
+preferred-citation:
+  title: >-
+    $\texttt{Spglib}$: a software library for crystal symmetry
+    search
+  authors:
+    - given-names: Atsushi
+      family-names: Togo
+    - given-names: Isao
+      family-names: Tanaka
+  type: misc
+  doi: 10.48550/arXiv.1808.01590
+  year: 2018
+  archivePrefix: arXiv
+  primaryClass: cond-mat.mtrl-sci
+references:
+  - authors:
+      - given-names: Kohei
+        family-names: Shinohara
+      - given-names: Atsushi
+        family-names: Togo
+      - given-names: Isao
+        family-names: Tanaka
+    type: article
+    title: Algorithms for magnetic symmetry operation search and identification of magnetic space group from magnetic crystal structure
+    journal: Acta Cryst. A
+    year: 2023
+    volume: 79
+    number: 5
+    pages: 390--398
+    month: Sep
+    doi: 10.1107/S2053273323005016
+    url: https://doi.org/10.1107/S2053273323005016
