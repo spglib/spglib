@@ -333,10 +333,7 @@ class HallSymbol:
         return T
 
     def _change_of_basis_symbol(self, V):
-        if V[0] == '-':
-            return np.array([0, 0, -1])
-        else:
-            return np.array([0, 0, 1])
+        return np.array([0, 0, int(V[:-1])])
 
 
 def dump_operations(filename):
