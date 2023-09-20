@@ -111,3 +111,5 @@ Site tensors of the standardized crystal structure {ref}`idealization <def_ideal
 ### `primitive_lattice`
 
 See {ref}`spglib_dataset_primitive_lattice`.
+`primitive_lattice` generates pure translations without time reversals.
+Thus, for type-IV magnetic space groups, a unit cell spanned by `primitive_lattice` contains an anti-translation lattice point.
