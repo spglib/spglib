@@ -62,6 +62,28 @@ module spglib_f08
       integer(kind(SPGLIB_SUCCESS)) :: spglib_error
    end type SpglibDataset
 
+   type :: SpglibMagneticDataset
+      integer(c_int) :: uni_number
+      integer(c_int) :: msg_type
+      integer(c_int) :: hall_number
+      integer(c_int) :: tensor_rank
+      integer(c_int) :: n_operations
+      integer(c_int), allocatable :: rotations(:, :, :)
+      real(c_double), allocatable :: translations(:, :)
+      integer(c_int), allocatable :: time_reversals(:)
+      integer(c_int) :: n_atoms
+      integer(c_int), allocatable :: equivalent_atoms(:)
+      real(c_double) :: transformation_matrix(3, 3)
+      real(c_double) :: origin_shift(3)
+      integer(c_int) :: n_std_atoms
+      real(c_double) :: std_lattice(3, 3)
+      integer(c_int), allocatable :: std_types(:)
+      real(c_double), allocatable :: std_positions(:, :)
+      real(c_double), allocatable :: std_tensors(:)
+      real(c_double) :: std_rotation_matrix(3, 3)
+      real(c_double) :: primitive_lattice(3, 3)
+   end type SpglibMagneticDataset
+
    interface
 
       function spg_get_symmetry(rotation, translation, max_size, lattice, &
@@ -352,7 +374,8 @@ module spglib_f08
 
    end interface
 
-   public :: SpglibDataset, spg_get_dataset, &
+   public :: SpglibDataset, SpglibMagneticDataset, &
+        & spg_get_dataset, spg_get_magnetic_dataset, &
         & spg_get_symmetry, spgat_get_symmetry, &
         & spg_get_symmetry_with_collinear_spin, &
         & spgat_get_symmetry_with_collinear_spin, &
@@ -559,14 +582,14 @@ contains
       end type SpglibDataset_c
 
       interface
-         function spg_get_dataset_c(lattice, position, types, num_atom, symprec) &
+         function spg_get_dataset_c(lattice_c, position_c, types_c, num_atom_c, symprec_c) &
               & bind(c, name='spg_get_dataset')
             import c_int, c_double, c_ptr
-            real(c_double), intent(in) :: lattice(3, 3)
-            real(c_double), intent(in) :: position(3, *)
-            integer(c_int), intent(in) :: types(*)
-            integer(c_int), intent(in), value :: num_atom
-            real(c_double), intent(in), value :: symprec
+            real(c_double), intent(in) :: lattice_c(3, 3)
+            real(c_double), intent(in) :: position_c(3, *)
+            integer(c_int), intent(in) :: types_c(*)
+            integer(c_int), intent(in), value :: num_atom_c
+            real(c_double), intent(in), value :: symprec_c
             type(c_ptr) :: spg_get_dataset_c
          end function spg_get_dataset_c
 
@@ -585,6 +608,8 @@ contains
       real(c_double), pointer :: translations(:, :), std_positions(:, :)
       integer(c_int), pointer :: rotations(:, :, :), wyckoffs(:), equivalent_atoms(:)
       integer(c_int), pointer :: crystallographic_orbits(:), std_types(:)
+      character(len=7), pointer :: site_symmetry_symbols(:)
+      integer(c_int), pointer :: mapping_to_primitive(:), std_mapping_to_primitive(:)
 
       dataset_ptr_c = spg_get_dataset_c(lattice, position, types, num_atom, symprec)
 
@@ -645,26 +670,35 @@ contains
          call c_f_pointer(dset_c%rotations, rotations, shape=[3, 3, n_operations])
          call c_f_pointer(dset_c%translations, translations, shape=[3, n_operations])
          call c_f_pointer(dset_c%wyckoffs, wyckoffs, shape=[n_atoms])
+         call c_f_pointer(dset_c%site_symmetry_symbols, site_symmetry_symbols, shape=[n_atoms])
          call c_f_pointer(dset_c%equivalent_atoms, equivalent_atoms, shape=[n_atoms])
          call c_f_pointer(dset_c%crystallographic_orbits, crystallographic_orbits, shape=[n_atoms])
+         call c_f_pointer(dset_c%mapping_to_primitive, mapping_to_primitive, shape=[n_atoms])
          call c_f_pointer(dset_c%std_types, std_types, shape=[n_std_atoms])
          call c_f_pointer(dset_c%std_positions, std_positions, shape=[3, n_std_atoms])
+         call c_f_pointer(dset_c%std_mapping_to_primitive, std_mapping_to_primitive, shape=[n_std_atoms])
 
          allocate (dset%rotations(3, 3, n_operations))
          allocate (dset%translations(3, n_operations))
          allocate (dset%wyckoffs(n_atoms))
+         allocate (dset%site_symmetry_symbols(n_atoms))
          allocate (dset%equivalent_atoms(n_atoms))
          allocate (dset%crystallographic_orbits(n_atoms))
+         allocate (dset%mapping_to_primitive(n_atoms))
          allocate (dset%std_types(n_std_atoms))
          allocate (dset%std_positions(3, n_std_atoms))
+         allocate (dset%std_mapping_to_primitive(n_std_atoms))
 
          dset%rotations = rotations
          dset%translations = translations
          dset%wyckoffs = wyckoffs
+         dset%site_symmetry_symbols = site_symmetry_symbols
          dset%equivalent_atoms = equivalent_atoms
          dset%crystallographic_orbits = crystallographic_orbits
+         dset%mapping_to_primitive = mapping_to_primitive
          dset%std_types = std_types
          dset%std_positions = std_positions
+         dset%std_mapping_to_primitive = std_mapping_to_primitive
 
          call spg_free_dataset_c(dset_c)
 
@@ -682,12 +716,152 @@ contains
          dset%n_operations = 0
          dset%n_atoms = 0
          dset%n_std_atoms = 0
-         dset%std_lattice = 0.0_c_double
          dset%primitive_lattice = 0.0_c_double
+         dset%std_lattice = 0.0_c_double
+         dset%std_rotation_matrix = 0.0_c_double
          dset%pointgroup_symbol = ' '
 
       end if
 
    end function spg_get_dataset
+
+   function spg_get_magnetic_dataset(lattice, position, types, tensors, tensor_rank, num_atom, is_axial, symprec) result(dset)
+
+      real(c_double), intent(in) :: lattice(3, 3)
+      real(c_double), intent(in) :: position(3, *)
+      integer(c_int), intent(in) :: types(*)
+      real(c_double), intent(in) :: tensors(*)
+      integer(c_int), intent(in), value :: tensor_rank
+      integer(c_int), intent(in), value :: num_atom
+      integer(c_int), intent(in), value :: is_axial
+      real(c_double), intent(in), value :: symprec
+      type(SpglibMagneticDataset) :: dset
+
+      type, bind(c) :: SpglibMagneticDataset_c
+         integer(c_int) :: uni_number
+         integer(c_int) :: msg_type
+         integer(c_int) :: hall_number
+         integer(c_int) :: tensor_rank
+         integer(c_int) :: n_operations
+         type(c_ptr) :: rotations
+         type(c_ptr) :: translations
+         type(c_ptr) :: time_reversals
+         integer(c_int) :: n_atoms
+         type(c_ptr) :: equivalent_atoms
+         real(c_double) :: transformation_matrix(3, 3)
+         real(c_double) :: origin_shift(3)
+         integer(c_int) :: n_std_atoms
+         real(c_double) :: std_lattice(3, 3)
+         type(c_ptr) :: std_types
+         type(c_ptr) :: std_positions
+         type(c_ptr) :: std_tensors
+         real(c_double) :: std_rotation_matrix(3, 3)
+         real(c_double) :: primitive_lattice(3, 3)
+      end type SpglibMagneticDataset_c
+
+      interface
+         function spg_get_magnetic_dataset_c &
+           & (lattice_c, position_c, types_c, tensors_c, tensor_rank_c, num_atom_c, is_axial_c, symprec_c) &
+                                   & bind(c, name='spg_get_magnetic_dataset')
+            import c_int, c_double, c_ptr
+            real(c_double), intent(in) :: lattice_c(3, 3)
+            real(c_double), intent(in) :: position_c(3, *)
+            integer(c_int), intent(in) :: types_c(*)
+            real(c_double), intent(in) :: tensors_c(*)
+            integer(c_int), intent(in), value :: tensor_rank_c
+            integer(c_int), intent(in), value :: num_atom_c
+            integer(c_int), intent(in), value :: is_axial_c
+            real(c_double), intent(in), value :: symprec_c
+            type(c_ptr) :: spg_get_magnetic_dataset_c
+         end function spg_get_magnetic_dataset_c
+
+         subroutine spg_free_magnetic_dataset_c(dataset) bind(c, name='spg_free_magnetic_dataset')
+            import SpglibMagneticDataset_c
+            type(SpglibMagneticDataset_c), intent(inout) :: dataset
+         end subroutine spg_free_magnetic_dataset_c
+
+      end interface
+
+      type(SpglibMagneticDataset_c), pointer :: dset_c
+      type(c_ptr) :: dataset_ptr_c
+      integer(c_int) :: n_operations, n_atoms, n_std_atoms, n_std_tensors
+      real(c_double), pointer :: translations(:, :), std_positions(:, :), std_tensors(:)
+      integer(c_int), pointer :: rotations(:, :, :), equivalent_atoms(:), time_reversals(:)
+      integer(c_int), pointer :: std_types(:)
+
+      dataset_ptr_c = spg_get_magnetic_dataset_c(lattice, position, types, tensors, tensor_rank, num_atom, is_axial, symprec)
+
+      if (c_associated(dataset_ptr_c)) then
+
+         call c_f_pointer(dataset_ptr_c, dset_c)
+
+         dset%uni_number = dset_c%uni_number
+         dset%msg_type = dset_c%msg_type
+         dset%hall_number = dset_c%hall_number
+         dset%tensor_rank = dset_c%tensor_rank
+         dset%n_operations = dset_c%n_operations
+         dset%n_atoms = dset_c%n_atoms
+         dset%transformation_matrix = dset_c%transformation_matrix
+         dset%origin_shift = dset_c%origin_shift
+         dset%n_std_atoms = dset_c%n_std_atoms
+         dset%std_lattice = dset_c%std_lattice
+         dset%std_rotation_matrix = dset_c%std_rotation_matrix
+         dset%primitive_lattice = dset_c%primitive_lattice
+
+         n_operations = dset_c%n_operations
+         n_atoms = dset_c%n_atoms
+         n_std_atoms = dset_c%n_std_atoms
+         if (dset_c%tensor_rank == 0) then
+            n_std_tensors = dset_c%n_std_atoms
+         else if (dset_c%tensor_rank == 1) then
+            n_std_tensors = dset_c%n_std_atoms*3
+         else
+            n_std_tensors = 0  ! This must not happen.
+         end if
+
+         call c_f_pointer(dset_c%rotations, rotations, shape=[3, 3, n_operations])
+         call c_f_pointer(dset_c%translations, translations, shape=[3, n_operations])
+         call c_f_pointer(dset_c%time_reversals, time_reversals, shape=[n_operations])
+         call c_f_pointer(dset_c%equivalent_atoms, equivalent_atoms, shape=[n_atoms])
+         call c_f_pointer(dset_c%std_types, std_types, shape=[n_std_atoms])
+         call c_f_pointer(dset_c%std_positions, std_positions, shape=[3, n_std_atoms])
+         call c_f_pointer(dset_c%std_tensors, std_tensors, shape=[n_std_tensors])
+
+         allocate (dset%rotations(3, 3, n_operations))
+         allocate (dset%translations(3, n_operations))
+         allocate (dset%time_reversals(n_operations))
+         allocate (dset%equivalent_atoms(n_atoms))
+         allocate (dset%std_types(n_std_atoms))
+         allocate (dset%std_positions(3, n_std_atoms))
+         allocate (dset%std_tensors(n_std_tensors))
+
+         dset%rotations = rotations
+         dset%translations = translations
+         dset%time_reversals = time_reversals
+         dset%equivalent_atoms = equivalent_atoms
+         dset%std_types = std_types
+         dset%std_positions = std_positions
+         dset%std_tensors = std_tensors
+
+         call spg_free_magnetic_dataset_c(dset_c)
+
+      else
+
+         dset%uni_number = 0
+         dset%msg_type = 0
+         dset%hall_number = 0
+         dset%tensor_rank = 0
+         dset%n_operations = 0
+         dset%n_atoms = 0
+         dset%transformation_matrix = 0.0_c_double
+         dset%origin_shift = 0.0_c_double
+         dset%n_std_atoms = 0
+         dset%std_lattice = 0.0_c_double
+         dset%std_rotation_matrix = 0.0_c_double
+         dset%primitive_lattice = 0.0_c_double
+
+      end if
+
+   end function spg_get_magnetic_dataset
 
 end module spglib_f08

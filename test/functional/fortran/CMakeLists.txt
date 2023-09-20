@@ -10,10 +10,20 @@ set(SubTests_test_fortran_spg_get_symmetry
 		test_rutile112
 		test_zincblende
 		)
+set(SubTests_test_fortran_spg_get_dataset
+        test_dataset_rutile112
+		test_dataset_zincblende
+		)
+set(SubTests_test_fortran_spg_get_magnetic_dataset
+        test_rutile_type_III
+        test_Cr_type_IV
+		)
 
 # Add fortran tests here
 create_test_sourcelist(FortranTests_Files
 		${TestsDriver}
+		test_fortran_spg_get_dataset.F90
+		test_fortran_spg_get_magnetic_dataset.F90
 		test_fortran_spg_get_symmetry.F90
 		test_fortran_spg_refine_cell.F90)
 # Define any subtests (would be nice to auto-detect them like Catch2)
