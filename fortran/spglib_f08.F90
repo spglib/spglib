@@ -1,4 +1,3 @@
-! fprettify -i 4
 module spglib_f08
 
     use iso_c_binding, only: c_char, c_int, c_double, c_ptr, c_null_char, c_f_pointer, c_associated
