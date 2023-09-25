@@ -14,15 +14,23 @@ set(SubTests_test_fortran_spg_get_dataset
         test_dataset_rutile112
 		test_dataset_zincblende
 		)
+set(SubTests_test_fortran_spg_get_spacegroup_type
+        test_spacegroup_type_rutile
+		)
 set(SubTests_test_fortran_spg_get_magnetic_dataset
         test_rutile_type_III
         test_Cr_type_IV
+		)
+set(SubTests_test_fortran_spg_get_magnetic_spacegroup_type
+        test_magnetic_spacegroup_type_Cr
 		)
 
 # Add fortran tests here
 create_test_sourcelist(FortranTests_Files
 		${TestsDriver}
+        test_fortran_spg_get_spacegroup_type.F90
 		test_fortran_spg_get_dataset.F90
+        test_fortran_spg_get_magnetic_spacegroup_type.F90
 		test_fortran_spg_get_magnetic_dataset.F90
 		test_fortran_spg_get_symmetry.F90
 		test_fortran_spg_refine_cell.F90)

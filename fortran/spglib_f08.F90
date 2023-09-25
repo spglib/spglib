@@ -62,6 +62,15 @@ module spglib_f08
       integer(kind(SPGLIB_SUCCESS)) :: spglib_error
    end type SpglibDataset
 
+   type :: SpglibMagneticSpacegroupType
+      integer(c_int) :: uni_number
+      integer(c_int) :: litvin_number
+      character(len=8) :: bns_number
+      character(len=12) :: og_number
+      integer(c_int) :: number
+      integer(c_int) :: type
+   end type SpglibMagneticSpacegroupType
+
    type :: SpglibMagneticDataset
       integer(c_int) :: uni_number
       integer(c_int) :: msg_type
@@ -391,7 +400,8 @@ module spglib_f08
         & spg_get_ir_reciprocal_mesh, &
         & spg_get_stabilized_reciprocal_mesh, &
         & spg_get_error_code, spg_get_error_message, &
-        & SpglibSpacegroupType, spg_get_spacegroup_type
+        & SpglibSpacegroupType, spg_get_spacegroup_type, &
+        & SpglibMagneticSpacegroupType, spg_get_magnetic_spacegroup_type
 
 contains
 
@@ -724,6 +734,59 @@ contains
       end if
 
    end function spg_get_dataset
+
+   function spg_get_magnetic_spacegroup_type(uni_number) result(magspgtype)
+    integer(c_int), intent(in) :: uni_number
+    type(SpglibMagneticSpacegroupType) :: magspgtype
+
+    type, bind(c) :: SpglibMagneticSpacegroupType_c
+       integer(c_int) :: uni_number
+       integer(c_int) :: litvin_number
+       character(kind=c_char) :: bns_number(8)
+       character(kind=c_char) :: og_number(12)
+       integer(c_int) :: number
+       integer(c_int) :: type
+    end type SpglibMagneticSpacegroupType_c
+
+    interface
+
+       function spg_get_magnetic_spacegroup_type_c(uni_number_c) &
+            & bind(c, name='spg_get_magnetic_spacegroup_type')
+          import c_int, SpglibMagneticSpacegroupType_c
+          integer(c_int), intent(in), value :: uni_number_c
+          type(SpglibMagneticSpacegroupType_c) :: spg_get_magnetic_spacegroup_type_c
+       end function spg_get_magnetic_spacegroup_type_c
+
+    end interface
+
+    type(SpglibMagneticSpacegroupType_c):: magspgtype_c
+    integer :: i
+
+    magspgtype_c = spg_get_magnetic_spacegroup_type_c(uni_number)
+
+    magspgtype%uni_number = magspgtype_c%uni_number
+    magspgtype%litvin_number = magspgtype_c%litvin_number
+
+    do i = 1, size(magspgtype_c%og_number)
+        if (magspgtype_c%og_number(i) == C_NULL_CHAR) then
+           magspgtype%og_number(i:) = ' '
+           exit
+        end if
+        magspgtype%og_number(i:i) = magspgtype_c%og_number(i)
+     end do
+
+    do i = 1, size(magspgtype_c%bns_number)
+       if (magspgtype_c%bns_number(i) == C_NULL_CHAR) then
+          magspgtype%bns_number(i:) = ' '
+          exit
+       end if
+       magspgtype%bns_number(i:i) = magspgtype_c%bns_number(i)
+    end do
+      
+    magspgtype%number = magspgtype_c%number
+    magspgtype%type = magspgtype_c%type
+
+   end function spg_get_magnetic_spacegroup_type
 
    function spg_get_magnetic_dataset(lattice, position, types, tensors, tensor_rank, num_atom, is_axial, symprec) result(dset)
 

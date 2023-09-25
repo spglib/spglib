@@ -2,9 +2,8 @@ module test_utils
     use, intrinsic :: iso_c_binding
     implicit none
 
-
     interface assert
-        module procedure assert_int, assert_1D_array_c_int, assert_2D_array_c_int
+        module procedure assert_int, assert_1D_array_c_int, assert_2D_array_c_int, assert_character
     end interface
 contains
 
@@ -48,4 +47,16 @@ subroutine assert_2D_array_c_int(vals, ref_vals, shape_of_array)
         end do
     end do
 end subroutine assert_2D_array_c_int
+
+subroutine assert_character(vals, ref_vals)
+    character(*), intent(in) :: vals
+    character(*), intent(in) :: ref_vals
+
+    if (vals /= ref_vals) then
+        print '()'
+        print '(a, "/=", a)', vals, ref_vals
+        error stop
+    end if
+end subroutine assert_character
+
 end module test_utils
