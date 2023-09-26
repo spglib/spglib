@@ -35,21 +35,15 @@ contains
     end function test_fortran_spg_get_magnetic_spacegroup_type
 
     subroutine test_magnetic_spacegroup_type_Cr() bind(C)
-        integer(c_int) :: uni_number = 1599
-        integer(c_int) :: litvin_number = 1643
-        integer(c_int) :: number = 221
-        integer(c_int) :: construction_type = 4
-        character(len=8) :: bns_number = "221.97"
-        character(len=12) :: og_number = "229.6.1643"
         type(SpglibMagneticSpacegroupType) :: magspg_type
 
-        magspg_type = spg_get_magnetic_spacegroup_type(uni_number)
-        call assert(magspg_type%uni_number, uni_number)
-        call assert(magspg_type%litvin_number, litvin_number)
-        call assert(magspg_type%bns_number, bns_number)
-        call assert(magspg_type%og_number, og_number)
-        call assert(magspg_type%number, number)
-        call assert(magspg_type%type, construction_type)
+        magspg_type = spg_get_magnetic_spacegroup_type(1599)
+        call assert(magspg_type%uni_number, 1599)
+        call assert(magspg_type%litvin_number, 1643)
+        call assert(magspg_type%bns_number, "221.97")
+        call assert(magspg_type%og_number, "229.6.1643")
+        call assert(magspg_type%number, 221)
+        call assert(magspg_type%type, 4)
     end subroutine test_magnetic_spacegroup_type_Cr
 
 end module test_spg_get_magnetic_spacegroup_type
