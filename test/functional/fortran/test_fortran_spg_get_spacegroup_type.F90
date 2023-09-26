@@ -15,7 +15,7 @@ contains
         character(len=:), allocatable :: str
 
         if (argc < 2) then
-            write (output_unit, *) "test_dataset_rutile112"
+            write (output_unit, *) "test_spacegroup_type_rutile"
             call test_spacegroup_type_rutile()
         else
             len = c_strlen(argv(2))
@@ -26,6 +26,7 @@ contains
                 call test_spacegroup_type_rutile()
             case default
                 write (error_unit, *) "No known sub-test passed"
+                ret = 1
             end select
             deallocate (str)
         end if

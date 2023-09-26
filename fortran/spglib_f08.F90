@@ -96,7 +96,7 @@ module spglib_f08
     interface
 
         function spg_get_symmetry(rotation, translation, max_size, lattice, &
-             & position, types, num_atom, symprec) bind(c)
+             & position, types, num_atom, symprec) bind(c) result(retval)
             import c_int, c_double
             integer(c_int), intent(out) :: rotation(3, 3, *)
             real(c_double), intent(out) :: translation(3, *)
@@ -105,11 +105,11 @@ module spglib_f08
             integer(c_int), intent(in) :: types(*)
             integer(c_int), intent(in), value :: num_atom
             real(c_double), intent(in), value :: symprec
-            integer(c_int) :: spg_get_symmetry
+            integer(c_int) :: retval
         end function spg_get_symmetry
 
         function spgat_get_symmetry(rotation, translation, max_size, lattice, &
-             & position, types, num_atom, symprec, angle_tolerance) bind(c)
+             & position, types, num_atom, symprec, angle_tolerance) bind(c) result(retval)
             import c_int, c_double
             integer(c_int), intent(out) :: rotation(3, 3, *)
             real(c_double), intent(out) :: translation(3, *)
@@ -118,12 +118,12 @@ module spglib_f08
             integer(c_int), intent(in) :: types(*)
             integer(c_int), intent(in), value :: num_atom
             real(c_double), intent(in), value :: symprec, angle_tolerance
-            integer(c_int) :: spgat_get_symmetry
+            integer(c_int) :: retval
         end function spgat_get_symmetry
 
         function spg_get_symmetry_with_collinear_spin(rotation, translation, &
              & equivalent_atoms, max_size, lattice, position, types, spins, &
-             & num_atom, symprec) bind(c)
+             & num_atom, symprec) bind(c) result(retval)
             import c_int, c_double
             integer(c_int), intent(out) :: rotation(3, 3, *)
             real(c_double), intent(out) :: translation(3, *)
@@ -134,12 +134,12 @@ module spglib_f08
             real(c_double), intent(in) :: spins(*)
             integer(c_int), intent(in), value :: num_atom
             real(c_double), intent(in), value :: symprec
-            integer(c_int) :: spg_get_symmetry_with_collinear_spin
+            integer(c_int) :: retval
         end function spg_get_symmetry_with_collinear_spin
 
         function spgat_get_symmetry_with_collinear_spin(rotation, translation, &
              & equivalent_atoms, max_size, lattice, position, types, spins, &
-             & num_atom, symprec, angle_tolerance) bind(c)
+             & num_atom, symprec, angle_tolerance) bind(c) result(retval)
             import c_int, c_double
             integer(c_int), intent(out) :: rotation(3, 3, *)
             real(c_double), intent(out) :: translation(3, *)
@@ -150,13 +150,13 @@ module spglib_f08
             real(c_double), intent(in) :: spins(*)
             integer(c_int), intent(in), value :: num_atom
             real(c_double), intent(in), value :: symprec, angle_tolerance
-            integer(c_int) :: spgat_get_symmetry_with_collinear_spin
+            integer(c_int) :: retval
         end function spgat_get_symmetry_with_collinear_spin
 
         function spg_get_symmetry_with_site_tensors(rotation, translation, &
              & equivalent_atoms, primitive_lattice, spin_flips, max_size, lattice, &
              & position, types, tensors, tensor_rank, num_atom, with_time_reversal, &
-             & is_axial, symprec) bind(c)
+             & is_axial, symprec) bind(c) result(retval)
             import c_int, c_double
             integer(c_int), intent(out) :: rotation(3, 3, *)
             real(c_double), intent(out) :: translation(3, *)
@@ -172,13 +172,13 @@ module spglib_f08
             integer(c_int), intent(in), value :: with_time_reversal
             integer(c_int), intent(in), value :: is_axial
             real(c_double), intent(in), value :: symprec
-            integer(c_int) :: spg_get_symmetry_with_site_tensors
+            integer(c_int) :: retval
         end function spg_get_symmetry_with_site_tensors
 
         function spgat_get_symmetry_with_site_tensors(rotation, translation, &
              & equivalent_atoms, primitive_lattice, spin_flips, max_size, lattice, &
              & position, types, tensors, tensor_rank, num_atom, with_time_reversal, &
-             & is_axial, symprec, angle_tolerance) bind(c)
+             & is_axial, symprec, angle_tolerance) bind(c) result(retval)
             import c_int, c_double
             integer(c_int), intent(out) :: rotation(3, 3, *)
             real(c_double), intent(out) :: translation(3, *)
@@ -194,160 +194,160 @@ module spglib_f08
             integer(c_int), intent(in), value :: with_time_reversal
             integer(c_int), intent(in), value :: is_axial
             real(c_double), intent(in), value :: symprec, angle_tolerance
-            integer(c_int) :: spgat_get_symmetry_with_site_tensors
+            integer(c_int) :: retval
         end function spgat_get_symmetry_with_site_tensors
 
         function spg_get_multiplicity(lattice, position, types, num_atom, &
-             & symprec) bind(c)
+             & symprec) bind(c) result(retval)
             import c_int, c_double
             real(c_double), intent(in) :: lattice(3, 3), position(3, *)
             integer(c_int), intent(in) :: types(*)
             integer(c_int), intent(in), value :: num_atom
             real(c_double), intent(in), value :: symprec
-            integer(c_int) :: spg_get_multiplicity
+            integer(c_int) :: retval
         end function spg_get_multiplicity
 
         function spgat_get_multiplicity(lattice, position, types, num_atom, &
-             & symprec, angle_tolerance) bind(c)
+             & symprec, angle_tolerance) bind(c) result(retval)
             import c_int, c_double
             real(c_double), intent(in) :: lattice(3, 3), position(3, *)
             integer(c_int), intent(in) :: types(*)
             integer(c_int), intent(in), value :: num_atom
             real(c_double), intent(in), value :: symprec, angle_tolerance
-            integer(c_int) :: spgat_get_multiplicity
+            integer(c_int) :: retval
         end function spgat_get_multiplicity
 
-        function spg_delaunay_reduce(lattice, symprec) bind(c)
+        function spg_delaunay_reduce(lattice, symprec) bind(c) result(retval)
             import c_int, c_double
             real(c_double), intent(inout) :: lattice(3, 3)
             real(c_double), intent(in), value :: symprec
-            integer(c_int) :: spg_delaunay_reduce
+            integer(c_int) :: retval
         end function spg_delaunay_reduce
 
-        function spg_niggli_reduce(lattice, symprec) bind(c)
+        function spg_niggli_reduce(lattice, symprec) bind(c) result(retval)
             import c_int, c_double
             real(c_double), intent(inout) :: lattice(3, 3)
             real(c_double), intent(in), value :: symprec
-            integer(c_int) :: spg_niggli_reduce
+            integer(c_int) :: retval
         end function spg_niggli_reduce
 
         function spg_find_primitive(lattice, position, types, num_atom, symprec) &
-          & bind(c)
+          & bind(c) result(retval)
             import c_int, c_double
             real(c_double), intent(inout) :: lattice(3, 3), position(3, *)
             integer(c_int), intent(inout) :: types(*)
             integer(c_int), intent(in), value :: num_atom
             real(c_double), intent(in), value :: symprec
-            integer(c_int) :: spg_find_primitive
+            integer(c_int) :: retval
         end function spg_find_primitive
 
         function spgat_find_primitive(lattice, position, types, num_atom, symprec, &
-             & angle_tolerance) bind(c)
+             & angle_tolerance) bind(c) result(retval)
             import c_int, c_double
             real(c_double), intent(inout) :: lattice(3, 3), position(3, *)
             integer(c_int), intent(inout) :: types(*)
             integer(c_int), intent(in), value :: num_atom
             real(c_double), intent(in), value :: symprec, angle_tolerance
-            integer(c_int) :: spgat_find_primitive
+            integer(c_int) :: retval
         end function spgat_find_primitive
 
         function spg_get_international(symbol, lattice, position, types, num_atom, &
-             & symprec) bind(c)
+             & symprec) bind(c) result(retval)
             import c_char, c_int, c_double
             character(kind=c_char), intent(out) :: symbol(11)
             real(c_double), intent(in) :: lattice(3, 3), position(3, *)
             integer(c_int), intent(in) :: types(*)
             integer(c_int), intent(in), value :: num_atom
             real(c_double), intent(in), value :: symprec
-            integer(c_int) :: spg_get_international ! the number corresponding to 'symbol'. 0 on failure
+            integer(c_int) :: retval ! the number corresponding to 'symbol'. 0 on failure
         end function spg_get_international
 
         function spgat_get_international(symbol, lattice, position, types, num_atom, &
-             & symprec, angle_tolerance) bind(c)
+             & symprec, angle_tolerance) bind(c) result(retval)
             import c_char, c_int, c_double
             character(kind=c_char), intent(out) :: symbol(11)
             real(c_double), intent(in) :: lattice(3, 3), position(3, *)
             integer(c_int), intent(in) :: types(*)
             integer(c_int), intent(in), value :: num_atom
             real(c_double), intent(in), value :: symprec, angle_tolerance
-            integer(c_int) :: spgat_get_international ! the number corresponding to 'symbol'. 0 on failure
+            integer(c_int) :: retval ! the number corresponding to 'symbol'. 0 on failure
         end function spgat_get_international
 
         function spg_get_schoenflies(symbol, lattice, position, types, num_atom, &
-             & symprec) bind(c)
+             & symprec) bind(c) result(retval)
             import c_char, c_int, c_double
             character(kind=c_char), intent(out) :: symbol(7)
             real(c_double), intent(in) :: lattice(3, 3), position(3, *)
             integer(c_int), intent(in) :: types(*)
             integer(c_int), intent(in), value :: num_atom
             real(c_double), intent(in), value :: symprec
-            integer(c_int) :: spg_get_schoenflies ! the number corresponding to 'symbol'. 0 on failure
+            integer(c_int) :: retval ! the number corresponding to 'symbol'. 0 on failure
         end function spg_get_schoenflies
 
         function spgat_get_schoenflies(symbol, lattice, position, types, num_atom, &
-             & symprec, angle_tolerance) bind(c)
+             & symprec, angle_tolerance) bind(c) result(retval)
             import c_char, c_int, c_double
             character(kind=c_char), intent(out) :: symbol(7)
             real(c_double), intent(in) :: lattice(3, 3), position(3, *)
             integer(c_int), intent(in) :: types(*)
             integer(c_int), intent(in), value :: num_atom
             real(c_double), intent(in), value :: symprec, angle_tolerance
-            integer(c_int) :: spgat_get_schoenflies ! the number corresponding to 'symbol'. 0 on failure
+            integer(c_int) :: retval ! the number corresponding to 'symbol'. 0 on failure
         end function spgat_get_schoenflies
 
         function spg_get_pointgroup(symbol, trans_mat, rotations, num_rotations) &
-             & bind(c)
+             & bind(c) result(retval)
             import c_char, c_int, c_double
             character(kind=c_char) :: symbol(6)
             integer(c_int), intent(out) :: trans_mat(3, 3)
             integer(c_int), intent(in) :: rotations(3, 3, *)
             integer(c_int), intent(in), value :: num_rotations
-            integer(c_int) :: spg_get_pointgroup
+            integer(c_int) :: retval
         end function spg_get_pointgroup
 
-        function spg_refine_cell(lattice, position, types, num_atom, symprec) bind(c)
+        function spg_refine_cell(lattice, position, types, num_atom, symprec) bind(c) result(retval)
             import c_int, c_double
             real(c_double), intent(inout) :: lattice(3, 3), position(3, *)
             integer(c_int), intent(inout) :: types(*)
             integer(c_int), intent(in), value :: num_atom
             real(c_double), intent(in), value :: symprec
-            integer(c_int) :: spg_refine_cell
+            integer(c_int) :: retval
         end function spg_refine_cell
 
         function spgat_refine_cell(lattice, position, types, num_atom, symprec, &
-             & angle_tolerance) bind(c)
+             & angle_tolerance) bind(c) result(retval)
             import c_int, c_double
             real(c_double), intent(inout) :: lattice(3, 3), position(3, *)
             integer(c_int), intent(inout) :: types(*)
             integer(c_int), intent(in), value :: num_atom
             real(c_double), intent(in), value :: symprec, angle_tolerance
-            integer(c_int) :: spgat_refine_cell
+            integer(c_int) :: retval
         end function spgat_refine_cell
 
         function spg_standardize_cell(lattice, position, types, num_atom, &
-             & to_primitive, no_idealize, symprec) bind(c)
+             & to_primitive, no_idealize, symprec) bind(c) result(retval)
             import c_int, c_double
             real(c_double), intent(inout) :: lattice(3, 3), position(3, *)
             integer(c_int), intent(inout) :: types(*)
             integer(c_int), intent(in), value :: num_atom
             integer(c_int), intent(in), value :: to_primitive, no_idealize
             real(c_double), intent(in), value :: symprec
-            integer(c_int) :: spg_standardize_cell
+            integer(c_int) :: retval
         end function spg_standardize_cell
 
         function spgat_standardize_cell(lattice, position, types, num_atom, &
-             & to_primitive, no_idealize, symprec, angle_tolerance) bind(c)
+             & to_primitive, no_idealize, symprec, angle_tolerance) bind(c) result(retval)
             import c_int, c_double
             real(c_double), intent(inout) :: lattice(3, 3), position(3, *)
             integer(c_int), intent(inout) :: types(*)
             integer(c_int), intent(in), value :: num_atom
             integer(c_int), intent(in), value :: to_primitive, no_idealize
             real(c_double), intent(in), value :: symprec, angle_tolerance
-            integer(c_int) :: spgat_standardize_cell
+            integer(c_int) :: retval
         end function spgat_standardize_cell
 
         function spg_get_ir_reciprocal_mesh(grid_point, map, mesh, is_shift, &
-             & is_time_reversal, lattice, position, types, num_atom, symprec) bind(c)
+             & is_time_reversal, lattice, position, types, num_atom, symprec) bind(c) result(retval)
             import c_int, c_double
             !   Beware the map refers to positions starting at 0
             integer(c_int), intent(out) :: grid_point(3, *), map(*) ! size is product(mesh)
@@ -357,11 +357,11 @@ module spglib_f08
             integer(c_int), intent(in) :: types(*)
             integer(c_int), intent(in), value :: num_atom
             real(c_double), intent(in), value :: symprec
-            integer(c_int) :: spg_get_ir_reciprocal_mesh ! the number of points in the reduced mesh
+            integer(c_int) :: retval ! the number of points in the reduced mesh
         end function spg_get_ir_reciprocal_mesh
 
         function spg_get_stabilized_reciprocal_mesh(grid_point, map, mesh, is_shift, &
-             & is_time_reversal, lattice, num_rot, rotations, num_q, qpoints) bind(c)
+             & is_time_reversal, lattice, num_rot, rotations, num_q, qpoints) bind(c) result(retval)
             import c_int, c_double
             !   Beware the map refers to positions starting at 0
             integer(c_int), intent(out) :: grid_point(3, *), map(*)
@@ -373,12 +373,12 @@ module spglib_f08
             integer(c_int), intent(in) :: rotations(3, 3, *)
             integer(c_int), intent(in), value :: num_q
             real(c_double), intent(in) :: qpoints(3, *)
-            integer(c_int) :: spg_get_stabilized_reciprocal_mesh
+            integer(c_int) :: retval
         end function spg_get_stabilized_reciprocal_mesh
 
-        function spg_get_error_code() bind(c, name='spg_get_error_code')
+        function spg_get_error_code() bind(c) result(error_code)
             import SPGLIB_SUCCESS
-            integer(kind(SPGLIB_SUCCESS)) :: spg_get_error_code
+            integer(kind(SPGLIB_SUCCESS)) :: error_code
         end function spg_get_error_code
 
     end interface
@@ -405,9 +405,9 @@ module spglib_f08
 
 contains
 
-    function spg_get_error_message(spglib_error)
+    function spg_get_error_message(spglib_error) result(error_message)
         integer(kind(SPGLIB_SUCCESS)) :: spglib_error
-        character(len=32) :: spg_get_error_message
+        character(len=32) :: error_message
 
         character, pointer, dimension(:) :: message
         type(c_ptr) :: message_ptr
@@ -416,24 +416,24 @@ contains
 
         interface
 
-            function spg_get_error_message_c(spglib_error) &
-                 & bind(c, name='spg_get_error_message')
+            function spg_get_error_message_c(spglib_error_c) &
+                 & bind(c, name='spg_get_error_message') result(error_message_c)
                 import c_ptr, SPGLIB_SUCCESS
 
-                integer(kind(SPGLIB_SUCCESS)), value :: spglib_error
-                type(c_ptr) :: spg_get_error_message_c
+                integer(kind(SPGLIB_SUCCESS)), value :: spglib_error_c
+                type(c_ptr) :: error_message_c
 
             end function spg_get_error_message_c
 
         end interface
 
         message_ptr = spg_get_error_message_c(spglib_error)
-        call c_f_pointer(message_ptr, message, [len(spg_get_error_message)])
+        call c_f_pointer(message_ptr, message, [len(error_message)])
 
-        spg_get_error_message = ' '
-        do i = 1, len(spg_get_error_message)
+        error_message = ' '
+        do i = 1, len(error_message)
             if (message(i) == C_NULL_CHAR) exit
-            spg_get_error_message(i:i) = message(i)
+            error_message(i:i) = message(i)
         end do
 
     end function spg_get_error_message
@@ -459,19 +459,19 @@ contains
 
         interface
 
-            function spg_get_spacegroup_type_c(hall_number) &
-                 & bind(c, name='spg_get_spacegroup_type')
+            function spg_get_spacegroup_type_c(hall_number_c) &
+                 & bind(c, name='spg_get_spacegroup_type') result(spgtype_c)
                 import c_int, SpglibSpacegroupType_c
-                integer(c_int), intent(in), value :: hall_number
-                type(SpglibSpacegroupType_c) :: spg_get_spacegroup_type_c
+                integer(c_int), intent(in), value :: hall_number_c
+                type(SpglibSpacegroupType_c) :: spgtype_c
             end function spg_get_spacegroup_type_c
 
         end interface
 
-        type(SpglibSpacegroupType_c):: spgtype_c
+        type(SpglibSpacegroupType_c), allocatable:: spgtype_c
         integer :: i
 
-        spgtype_c = spg_get_spacegroup_type_c(hall_number)
+        allocate (spgtype_c, source=spg_get_spacegroup_type_c(hall_number))
 
         spgtype%number = spgtype_c%number
         spgtype%hall_number = spgtype_c%hall_number
@@ -593,14 +593,14 @@ contains
 
         interface
             function spg_get_dataset_c(lattice_c, position_c, types_c, num_atom_c, symprec_c) &
-                 & bind(c, name='spg_get_dataset')
+                 & bind(c, name='spg_get_dataset') result(retval)
                 import c_int, c_double, c_ptr
                 real(c_double), intent(in) :: lattice_c(3, 3)
                 real(c_double), intent(in) :: position_c(3, *)
                 integer(c_int), intent(in) :: types_c(*)
                 integer(c_int), intent(in), value :: num_atom_c
                 real(c_double), intent(in), value :: symprec_c
-                type(c_ptr) :: spg_get_dataset_c
+                type(c_ptr) :: retval
             end function spg_get_dataset_c
 
             subroutine spg_free_dataset_c(dataset) bind(c, name='spg_free_dataset')
@@ -614,7 +614,6 @@ contains
         type(c_ptr) :: dataset_ptr_c
         integer(c_int) :: n_operations, n_atoms, n_std_atoms
         integer :: i
-        integer(kind(SPGLIB_SUCCESS)) :: SpglibErrcode
         real(c_double), pointer :: translations(:, :), std_positions(:, :)
         integer(c_int), pointer :: rotations(:, :, :), wyckoffs(:), equivalent_atoms(:)
         integer(c_int), pointer :: crystallographic_orbits(:), std_types(:)
@@ -751,18 +750,18 @@ contains
         interface
 
             function spg_get_magnetic_spacegroup_type_c(uni_number_c) &
-                 & bind(c, name='spg_get_magnetic_spacegroup_type')
+                 & bind(c, name='spg_get_magnetic_spacegroup_type') result(magspgtype_c)
                 import c_int, SpglibMagneticSpacegroupType_c
                 integer(c_int), intent(in), value :: uni_number_c
-                type(SpglibMagneticSpacegroupType_c) :: spg_get_magnetic_spacegroup_type_c
+                type(SpglibMagneticSpacegroupType_c) :: magspgtype_c
             end function spg_get_magnetic_spacegroup_type_c
 
         end interface
 
-        type(SpglibMagneticSpacegroupType_c):: magspgtype_c
+        type(SpglibMagneticSpacegroupType_c), allocatable:: magspgtype_c
         integer :: i
 
-        magspgtype_c = spg_get_magnetic_spacegroup_type_c(uni_number)
+        allocate (magspgtype_c, source=spg_get_magnetic_spacegroup_type_c(uni_number))
 
         magspgtype%uni_number = magspgtype_c%uni_number
         magspgtype%litvin_number = magspgtype_c%litvin_number
@@ -825,7 +824,7 @@ contains
         interface
             function spg_get_magnetic_dataset_c &
               & (lattice_c, position_c, types_c, tensors_c, tensor_rank_c, num_atom_c, is_axial_c, symprec_c) &
-                                      & bind(c, name='spg_get_magnetic_dataset')
+                                      & bind(c, name='spg_get_magnetic_dataset') result(mag_dset_c)
                 import c_int, c_double, c_ptr
                 real(c_double), intent(in) :: lattice_c(3, 3)
                 real(c_double), intent(in) :: position_c(3, *)
@@ -835,7 +834,7 @@ contains
                 integer(c_int), intent(in), value :: num_atom_c
                 integer(c_int), intent(in), value :: is_axial_c
                 real(c_double), intent(in), value :: symprec_c
-                type(c_ptr) :: spg_get_magnetic_dataset_c
+                type(c_ptr) :: mag_dset_c
             end function spg_get_magnetic_dataset_c
 
             subroutine spg_free_magnetic_dataset_c(dataset) bind(c, name='spg_free_magnetic_dataset')

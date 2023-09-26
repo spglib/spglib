@@ -30,6 +30,7 @@ contains
                 call test_dataset_zincblende()
             case default
                 write (error_unit, *) "No known sub-test passed"
+                ret = 1
             end select
             deallocate (str)
         end if
