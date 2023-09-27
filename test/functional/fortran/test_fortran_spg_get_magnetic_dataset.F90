@@ -31,6 +31,7 @@ contains
             case default
                 write (error_unit, *) "No known sub-test passed"
                 ret = 1
+                return
             end select
             deallocate (str)
         end if
