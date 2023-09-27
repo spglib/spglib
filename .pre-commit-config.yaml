@@ -77,3 +77,8 @@ repos:
     hooks:
       - id: check-github-workflows
       - id: check-readthedocs
+  - repo: https://github.com/pseewald/fprettify
+    rev: v0.3.7
+    hooks:
+      - id: fprettify
+        args: [ '-i', '4' ]

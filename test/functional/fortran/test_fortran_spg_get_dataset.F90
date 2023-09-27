@@ -30,6 +30,8 @@ contains
                 call test_dataset_zincblende()
             case default
                 write (error_unit, *) "No known sub-test passed"
+                ret = 1
+                return
             end select
             deallocate (str)
         end if
@@ -42,7 +44,7 @@ contains
         real(c_double) :: position(3, 12)
         integer(c_int) :: types(12)
 
-        integer :: i, j, num_atom
+        integer :: i, num_atom
         real :: origin_shift(3)
         real(c_double) :: symprec
         type(SpglibDataset) :: dataset
@@ -66,6 +68,12 @@ contains
 
         dataset = spg_get_dataset(lattice, position, types, num_atom, symprec)
         call assert(dataset%n_operations, 32)
+        call assert(dataset%spacegroup_number, 136)
+        call assert(dataset%hall_number, 419)
+        call assert(dataset%hall_symbol, "-P 4n 2n")
+        call assert(dataset%international_symbol, "P4_2/mnm")
+        call assert(dataset%choice, "")
+        call assert(dataset%pointgroup_symbol, "4/mmm")
     end subroutine test_dataset_rutile112
 
     subroutine test_dataset_zincblende() bind(C)
@@ -73,7 +81,7 @@ contains
         real(c_double) :: position(3, 4)
         integer(c_int) :: types(4)
 
-        integer :: i, j, num_atom
+        integer :: i, num_atom
         real :: origin_shift(3)
         real(c_double) :: symprec
         type(SpglibDataset) :: dataset
