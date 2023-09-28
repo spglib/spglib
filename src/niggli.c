@@ -41,7 +41,7 @@
 
 #include "debug.h"
 
-#define NIGGLI_MAX_NUM_LOOP 100
+#define NIGGLI_MAX_NUM_LOOP 1000
 
 typedef struct {
     double A;

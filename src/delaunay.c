@@ -40,7 +40,7 @@
 #include "debug.h"
 #include "mathfunc.h"
 
-#define NUM_ATTEMPT 100
+#define NUM_ATTEMPT 1000
 #define ZERO_PREC 1e-10
 
 static int delaunay_reduce(double red_lattice[3][3], const double lattice[3][3],
