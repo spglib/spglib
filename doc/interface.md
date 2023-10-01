@@ -21,7 +21,7 @@ found at <https://docs.rs/crate/spglib/>.
 
 ## Julia interface
 
-Julia interface contributed by [Qi Zhang](@singularitti). The documentation is
+Julia interface contributed by [Qi Zhang](https://github.com/singularitti). The documentation is
 found at <https://singularitti.github.io/Spglib.jl/stable/>.
 
 ## Ruby interface
