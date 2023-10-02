@@ -20,6 +20,7 @@ set(SubTests_test_fortran_spg_get_spacegroup_type
 set(SubTests_test_fortran_spg_get_magnetic_dataset
 		test_rutile_type_III
 		test_Cr_type_IV
+        test_magnetic_dataset_non_collinear
 		)
 set(SubTests_test_fortran_spg_get_magnetic_spacegroup_type
         test_magnetic_spacegroup_type_Cr
