@@ -19,6 +19,11 @@ obsolete and is not recommended to use.
 Rust interface contributed by Seaton Ullberg. The documentation is
 found at <https://docs.rs/crate/spglib/>.
 
+## Julia interface
+
+[Julia interface](https://juliahub.com/ui/Packages/General/Spglib) contributed by [Qi Zhang](https://github.com/singularitti).
+The documentation is found at <https://singularitti.github.io/Spglib.jl/stable/>.
+
 ## Ruby interface
 
 Note that this ruby interface was written in ancient times, so may not
