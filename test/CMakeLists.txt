@@ -1,4 +1,5 @@
 enable_language(CXX)
+include(GoogleTest)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
