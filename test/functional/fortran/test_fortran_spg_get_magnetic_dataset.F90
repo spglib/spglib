@@ -93,7 +93,7 @@ contains
         integer(c_int) :: types(2)
         integer(c_int) :: tensor_rank, is_axial
 
-        integer :: i, j, num_atom, num_timerev
+        integer :: i, num_atom, num_timerev
         real :: origin_shift(3)
         real(c_double) :: symprec
         type(SpglibMagneticDataset) :: dataset
@@ -103,10 +103,7 @@ contains
         is_axial = 0
 
         lattice(:, :) = reshape([4, 0, 0, 0, 4, 0, 0, 0, 4], [3, 3])
-        position(:, :) = reshape( &
-                         [ &
-                         0.0, 0.0, 0.0, 0.5, 0.5, 0.5 &
-                         ], [3, 2])
+        position(:, :) = reshape([0.0, 0.0, 0.0, 0.5, 0.5, 0.5], [3, 2])
         types(:) = [1, 1]
         origin_shift(:) = [0.1, 0.1, 0.0]
         tensors(:) = [1, -1]
@@ -134,7 +131,7 @@ contains
         integer(c_int) :: types(1)
         integer(c_int) :: tensor_rank, is_axial
 
-        integer :: i, j, num_atom, num_timerev
+        integer :: i, j, num_atom
         real(c_double) :: symprec
         type(SpglibMagneticDataset) :: dataset
 
