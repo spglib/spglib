@@ -511,7 +511,7 @@ typedef struct {
 
 - `uni_number` serial number of UNI (or BNS) symbols
 - `litvin_number` serial number in Litvin's [Magnetic group tables](https://www.iucr.org/publ/978-0-9553602-2-0)
-- `bns_number` BNS number e.g. "156.32"
+- `bns_number` BNS number e.g. "151.32"
 - `og_number` OG number e.g. "153.4.1270"
 - `number` ITA's serial number of space group for reference setting
 - `type` Type of MSG from 1 to 4
