@@ -140,6 +140,8 @@ TEST(MagneticSymmetry, test_spg_get_symmetry_with_site_tensors) {
     double(*translation)[3];
     int *spin_flips;
 
+    // 96  = 48 * 2
+    // = (max number of order of point group) * (spin degrees of freedom)
     max_size = num_atom * 96;
     rotation = (int(*)[3][3])malloc(sizeof(int[3][3]) * max_size);
     translation = (double(*)[3])malloc(sizeof(double[3]) * max_size);
@@ -314,8 +316,9 @@ TEST(MagneticSymmetry, test_spg_get_symmetry_with_tensors_rough_symprec) {
     int types[] = {0, 1, 1};
     double tensors[] = {0.005, 0.002, 0.002};
     int num_atoms = 3;
+    // 96  = 48 * 2
+    // = (max number of order of point group) * (spin degrees of freedom)
     int max_size = num_atoms * 96;
-
     double symprec = 1e-2;         // with high symprec
     double mag_symprec = symprec;  // with high mag_symprec
 
@@ -379,9 +382,9 @@ TEST(MagneticSymmetry, test_spgms_get_magnetic_dataset_high_mag_symprec) {
         0.00000000,  -0.00000000, -0.02900000,
     };
     int num_atoms = 6;
-
+    // 96  = 48 * 2
+    // = (max number of order of point group) * (spin degrees of freedom)
     int max_size = num_atoms * 96;
-
     double symprec = 1e-5;
     double mag_symprec = 1e-1;  // with high mag_symprec
 
@@ -446,6 +449,8 @@ TEST(MagneticSymmetry, test_spg_get_symmetry_with_site_tensors_non_collinear) {
     int types[] = {1};
     double tensors[3] = {1, 0, 0};
     int num_atoms = 1;
+    // 96  = 48 * 2
+    // = (max number of order of point group) * (spin degrees of freedom)
     int max_size = num_atoms * 96;
 
     int size;
@@ -491,6 +496,8 @@ TEST(MagneticSymmetry, test_with_broken_symmetry) {
     int types[] = {0, 0, 0, 0};
     double tensors[] = {1.927, 1.947, 1.928, 1.949};
     int num_atoms = 4;
+    // 96  = 48 * 2
+    // = (max number of order of point group) * (spin degrees of freedom)
     int max_size = num_atoms * 96;
 
     double symprec = 0.1;  // with very high symprec

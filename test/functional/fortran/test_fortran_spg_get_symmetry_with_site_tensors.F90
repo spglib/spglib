@@ -47,7 +47,6 @@ contains
         real(c_double) :: lattice(3, 3)
         real(c_double) :: positions(3, 6)
         real(c_double) :: tensors(6)
-        real(c_double) :: translations(3, 6*96)
         real(c_double) :: primitive_lattice(3, 3)
         real(c_double) :: symprec = 1e-5
         integer(c_int) :: types(6)
@@ -56,10 +55,14 @@ contains
         integer(c_int) :: with_time_reversal = 1
         integer(c_int) :: tensor_rank = 0
         integer(c_int) :: is_axial = 0
-        integer(c_int) :: max_size = 96*6
-        integer(c_int) :: rotations(3, 3, 96*6)
         integer(c_int) :: equivalent_atoms(6)
-        integer(c_int) :: spin_flips(96*6)
+        ! 96  = 48 * 2
+        ! = (max number of order of point group) * (spin degrees of freedom)
+        ! 6 = num_atom
+        integer(c_int) :: max_size = 6*96
+        integer(c_int) :: rotations(3, 3, 6*96)
+        real(c_double) :: translations(3, 6*96)
+        integer(c_int) :: spin_flips(6*96)
 
         integer :: i, num_timerev
         real :: origin_shift(3)
@@ -97,7 +100,6 @@ contains
         real(c_double) :: lattice(3, 3)
         real(c_double) :: positions(3, 2)
         real(c_double) :: tensors(2)
-        real(c_double) :: translations(3, 2*96)
         real(c_double) :: primitive_lattice(3, 3)
         real(c_double) :: symprec = 1e-5
         integer(c_int) :: types(2)
@@ -106,10 +108,14 @@ contains
         integer(c_int) :: with_time_reversal = 1
         integer(c_int) :: tensor_rank = 0
         integer(c_int) :: is_axial = 0
-        integer(c_int) :: max_size = 96*2
-        integer(c_int) :: rotations(3, 3, 96*2)
         integer(c_int) :: equivalent_atoms(2)
-        integer(c_int) :: spin_flips(96*2)
+        ! 96  = 48 * 2
+        ! = (max number of order of point group) * (spin degrees of freedom)
+        ! 2 = num_atom
+        integer(c_int) :: max_size = 2*96
+        integer(c_int) :: rotations(3, 3, 2*96)
+        real(c_double) :: translations(3, 2*96)
+        integer(c_int) :: spin_flips(2*96)
 
         integer :: i, num_timerev
         real :: origin_shift(3)
@@ -143,7 +149,6 @@ contains
         real(c_double) :: lattice(3, 3)
         real(c_double) :: positions(3, 1)
         real(c_double) :: tensors(3)
-        real(c_double) :: translations(3, 96)
         real(c_double) :: primitive_lattice(3, 3)
         real(c_double) :: symprec = 1e-5
         integer(c_int) :: types(1)
@@ -152,10 +157,14 @@ contains
         integer(c_int) :: with_time_reversal = 1
         integer(c_int) :: tensor_rank = 1
         integer(c_int) :: is_axial = 1
-        integer(c_int) :: max_size = 96
-        integer(c_int) :: rotations(3, 3, 96)
         integer(c_int) :: equivalent_atoms(1)
-        integer(c_int) :: spin_flips(96)
+        ! 96  = 48 * 2
+        ! = (max number of order of point group) * (spin degrees of freedom)
+        ! 1 = num_atom
+        integer(c_int) :: max_size = 1*96
+        integer(c_int) :: rotations(3, 3, 1*96)
+        real(c_double) :: translations(3, 1*96)
+        integer(c_int) :: spin_flips(1*96)
 
         lattice(:, :) = reshape([10, 0, 0, 0, 10, 0, 0, 0, 10], [3, 3])
         positions(:, :) = reshape([0.0, 0.0, 0.0], [3, 1])
