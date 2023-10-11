@@ -438,8 +438,7 @@ TEST(MagneticSymmetry, test_spg_get_magnetic_dataset_non_collinear) {
 
     ASSERT_NE(dataset, nullptr);
     EXPECT_EQ(dataset->n_operations, 16);
-    if (HasFailure())
-      show_spg_magnetic_dataset(dataset);
+    if (HasFailure()) show_spg_magnetic_dataset(dataset);
     spg_free_magnetic_dataset(dataset);
 }
 
