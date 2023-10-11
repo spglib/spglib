@@ -27,6 +27,10 @@
         "CMAKE_BUILD_TYPE": {
           "type": "STRING",
           "value": "RelWithDebInfo"
+        },
+        "SPGLIB_COMPILATION_WARNING": {
+          "type": "BOOL",
+          "value": true
         }
       },
       "errors": {

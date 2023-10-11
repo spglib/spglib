@@ -59,6 +59,8 @@ option(SPGLIB_WARNINGS "Spglib: Enable warning messages" ON)
 mark_as_advanced(SPGLIB_WITH_WARNINGS)
 option(SPGLIB_DEBUG "Spglib: Build in debug mode" ${_Spglib_default_debug})
 mark_as_advanced(SPGLIB_DEBUG)
+option(SPGLIB_COMPILATION_WARNING "Spglib: Enable compilation warnings" OFF)
+mark_as_advanced(SPGLIB_COMPILATION_WARNING)
 
 #[==============================================================================================[
 #                                     Project configuration                                     #
