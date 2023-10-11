@@ -20,9 +20,15 @@ set(SubTests_test_fortran_spg_get_spacegroup_type
 set(SubTests_test_fortran_spg_get_magnetic_dataset
 		test_rutile_type_III
 		test_Cr_type_IV
+        test_magnetic_dataset_non_collinear
 		)
 set(SubTests_test_fortran_spg_get_magnetic_spacegroup_type
         test_magnetic_spacegroup_type_Cr
+		)
+set(SubTests_test_fortran_spg_get_symmetry_with_site_tensors
+        test_site_tensors_rutile_type_III
+        test_site_tensors_Cr_type_IV
+        test_site_tensors_non_collinear
 		)
 
 # Add fortran tests here
@@ -32,6 +38,7 @@ create_test_sourcelist(FortranTests_Files
 		test_fortran_spg_get_dataset.F90
 		test_fortran_spg_get_magnetic_spacegroup_type.F90
 		test_fortran_spg_get_magnetic_dataset.F90
+        test_fortran_spg_get_symmetry_with_site_tensors.F90
 		test_fortran_spg_get_symmetry.F90
 		test_fortran_spg_refine_cell.F90)
 # Define any subtests (would be nice to auto-detect them like Catch2)
