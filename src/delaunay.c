@@ -34,14 +34,16 @@
 
 #include "delaunay.h"
 
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "debug.h"
 #include "mathfunc.h"
 
-#define NUM_ATTEMPT 1000
 #define ZERO_PREC 1e-10
+
+static int get_num_attempts();
 
 static int delaunay_reduce(double red_lattice[3][3], const double lattice[3][3],
                            const int aperiodic_axis, const double symprec);
@@ -60,6 +62,23 @@ static void get_delaunay_shortest_vectors_2D(double basis[3][3],
                                              const double symprec);
 static void get_extended_basis_2D(double basis[3][3],
                                   const double lattice[3][2]);
+
+int get_num_attempts() {
+    const char *num_attempts_str = getenv("SPGLIB_NUM_ATTEMPTS");
+    if (num_attempts_str != NULL) {
+        // Try to parse the string as an integer
+        char *end;
+        long num_attempts = strtol(num_attempts_str, &end, 10);
+        // If conversion fails end == num_attempts_str
+        if (end != num_attempts_str && num_attempts > 0 &&
+            num_attempts < INT_MAX)
+            return (int)num_attempts;
+        warning_print("Could not parse SPGLIB_NUM_ATTEMPTS=%s\n",
+                      num_attempts_str);
+    }
+    // Otherwise return default number of attempts
+    return 1000;
+}
 
 /* Return 0 if failed */
 int del_delaunay_reduce(double min_lattice[3][3], const double lattice[3][3],
@@ -92,7 +111,9 @@ static int delaunay_reduce(double red_lattice[3][3], const double lattice[3][3],
 
     lattice_rank = get_extended_basis(basis, lattice, aperiodic_axis);
 
-    for (attempt = 0; attempt < NUM_ATTEMPT; attempt++) {
+    for (attempt = 0; attempt < get_num_attempts(); attempt++) {
+        debug_print("Trying delaunay_reduce_basis: attempt %d/%d\n", attempt,
+                    get_num_attempts());
         succeeded = delaunay_reduce_basis(basis, lattice_rank, symprec);
         if (succeeded) {
             break;
@@ -382,7 +403,9 @@ int del_layer_delaunay_reduce_2D(double red_lattice[3][3],
 
     get_extended_basis_2D(basis, lattice_2D);
 
-    for (attempt = 0; attempt < NUM_ATTEMPT; attempt++) {
+    for (attempt = 0; attempt < get_num_attempts(); attempt++) {
+        debug_print("Trying delaunay_reduce_basis_2D: attempt %d/%d\n", attempt,
+                    get_num_attempts());
         succeeded = delaunay_reduce_basis_2D(basis, lattice_rank, symprec);
         if (succeeded) {
             break;

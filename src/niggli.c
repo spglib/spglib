@@ -34,14 +34,13 @@
 
 #include "niggli.h"
 
+#include <limits.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "debug.h"
-
-#define NIGGLI_MAX_NUM_LOOP 1000
 
 typedef struct {
     double A;
@@ -58,6 +57,7 @@ typedef struct {
     double *lattice;
 } NiggliParams;
 
+static int get_num_attempts();
 static NiggliParams *initialize(const double *lattice_, const double eps_);
 static void finalize(double *lattice_, NiggliParams *p);
 static int reset(NiggliParams *p);
@@ -98,6 +98,23 @@ static void debug_show(const int j, const NiggliParams *p) {
 #else
 #define debug_show(...)
 #endif
+
+int get_num_attempts() {
+    const char *num_attempts_str = getenv("SPGLIB_NUM_ATTEMPTS");
+    if (num_attempts_str != NULL) {
+        // Try to parse the string as an integer
+        char *end;
+        long num_attempts = strtol(num_attempts_str, &end, 10);
+        // If conversion fails end == num_attempts_str
+        if (end != num_attempts_str && num_attempts > 0 &&
+            num_attempts < INT_MAX)
+            return (int)num_attempts;
+        warning_print("Could not parse SPGLIB_NUM_ATTEMPTS=%s\n",
+                      num_attempts_str);
+    }
+    // Otherwise return default number of attempts
+    return 1000;
+}
 
 /*--------------------------------------------*/
 /* Version: niggli-[major].[minor].[micro] */
@@ -143,7 +160,7 @@ int niggli_reduce(double *lattice_, const double eps_,
         goto ret;
     }
 
-    for (i = 0; i < NIGGLI_MAX_NUM_LOOP; i++) {
+    for (i = 0; i < get_num_attempts(); i++) {
         for (j = 0; j < 8; j++) {
             if ((*steps[j])(p)) {
                 debug_show(j + 1, p);
