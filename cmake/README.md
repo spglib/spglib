@@ -37,7 +37,7 @@ e.g. `-DSPGLIB_WITH_Fortran=ON`.
 | **SPGLIB_WITH_Fortran**  |                 OFF                 | Build Fortran API                                                                  |
 | **SPGLIB_WITH_Python**   |                 OFF                 | Build Python API                                                                   |
 | **SPGLIB_WITH_TESTS**    |                 ON                  | Include basic tests                                                                |
-| **SPGLIB_USE_OMP**       |                 OFF                 | Use OpenMPI                                                                        |
+| **SPGLIB_USE_OMP**       |                 OFF                 | Use OpenMP                                                                         |
 | **SPGLIB_USE_SANITIZER** |                 ""                  | Specify a sanitizer to compile with<br/> e.g. `address`                            |
 | CMAKE_INSTALL_PREFIX     | OS specific<br/>(e.g. `/usr/local`) | Location where to install built project                                            |
 | BUILD_SHARED_LIBS        |                 ON                  | Whether to build shared or statically linked libraries<br/>(Currently unsupported) |
