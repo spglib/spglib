@@ -5,6 +5,7 @@
 
 void show_symmetry_operations(const int (*rotations)[3][3],
                               const double (*translations)[3], const int size);
+void show_matrix_3d(const double lattice[3][3]);
 void show_cell(const double lattice[3][3], const double positions[][3],
                const int types[], const int num_atoms);
 void show_spacegroup_type(const SpglibSpacegroupType spgtype);

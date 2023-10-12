@@ -4,33 +4,12 @@ extern "C" {
 #include <math.h>
 
 #include "debug.h"
-#include "delaunay.h"
 #include "mathfunc.h"
+#include "niggli.h"
 #include "utils.h"
 }
 
-TEST(Delaunay, Delaunay_reduce_layer) {
-    double min_lattice[3][3];
-    // Unimodular matrix
-    double lattice[3][3] = {
-        {1, 0, 0},
-        {0, 37, 10},
-        {0, 11, 3},
-    };
-    const int aperiodic_axis = 0;
-    const double symprec = 1e-5;
-
-    del_layer_delaunay_reduce(min_lattice, lattice, aperiodic_axis, symprec);
-
-    // Shortest vectors in the periodic plane are [0, 1, 0] and [0, 0, 1]
-    for (int i = 0; i < 3; ++i) {
-        double sum = fabs(min_lattice[0][i]) + fabs(min_lattice[1][i]) +
-                     fabs(min_lattice[2][i]);
-        ASSERT_FLOAT_EQ(sum, 1);
-    }
-}
-
-TEST(Delaunay, Delaunay_reduce) {
+TEST(Niggli, Niggli_reduce) {
     double min_lattice[3][3];
     double lattice[3][3] = {
         {-2.2204639179669590, -4.4409278359339179, 179.8575773553236843},
@@ -41,7 +20,10 @@ TEST(Delaunay, Delaunay_reduce) {
     int int_tmat[3][3];
 
     const double symprec = 1e-5;
-    int succeeded = del_delaunay_reduce(min_lattice, lattice, symprec);
+    // Default get_num_attempts() == 1000 --> succeeded == 1.
+    // With get_num_attempts() == 100 --> succeded == 0.
+    mat_copy_matrix_d3(min_lattice, lattice);
+    int succeeded = niggli_reduce((double*)min_lattice, symprec, -1);
     // Default get_num_attempts() == 1000 --> succeeded == 1.
     // With get_num_attempts() == 100 --> succeded == 0.
     // ASSERT_EQ(succeeded, 0);
