@@ -326,12 +326,14 @@ int cel_layer_any_overlap_with_same_type(const Cell *cell,
     return 0;
 }
 
-/// @param[out] mapping_table array (cell->size, ), maps atom-`i` in cell to
-/// non-overlapped atom-`mapping_table[i]`
-/// @param[in] trimmed_lattice
-/// @param[in] cell
-/// @param[in] symprec
-/// @return trimmed_cell
+/// @param[out] mapping_table array (`cell->size`, ), maps atom-`i` in `cell` to
+/// atom-`j` in smaller cell to be returned.
+/// @param[in] trimmed_lattice basis vectors of smaller cell which are
+/// commensure with basis vectors of larger cell.
+/// @param[in] cell larger cell from which smaller cell having basis vectors of
+/// `trimmed_lattice` is created.
+/// @param[in] symprec tolerance parameter.
+/// @return smaller cell having basis vectors of `trimmed_lattice`.
 Cell *cel_trim_cell(int *mapping_table, const double trimmed_lattice[3][3],
                     const Cell *cell, const double symprec) {
     return trim_cell(mapping_table, trimmed_lattice, cell, symprec);
@@ -528,7 +530,17 @@ static VecDBL *translate_atoms_in_trimmed_lattice(const Cell *cell,
     return position;
 }
 
-/* Return NULL if failed */
+/// @brief Find translationally equivalent atoms in larger cell with respect to
+/// lattice of smaller cell.
+/// @param position array of positions of atoms in larger cells that are reduced
+/// in smaller cells.
+/// @param cell_size number of atoms in larger cell.
+/// @param cell_types yypes of atoms in larger cell.
+/// @param trimmed_cell basis vectors of smaller cell.
+/// @param symprec tolerance parameter.
+/// @return array (cell_size, ) If `position[i]` and `position[j]` with `i` <=
+/// `j` are equivalent, `overlap_table[i]` = `overlap_table[j]` = `i`. Return
+/// NULL if failed.
 static int *get_overlap_table(const VecDBL *position, const int cell_size,
                               const int *cell_types, const Cell *trimmed_cell,
                               const double symprec) {
