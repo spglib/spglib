@@ -54,15 +54,15 @@ static void set_positions_and_tensors(Cell *trimmed_cell,
                                       const int *mapping_table,
                                       const int *overlap_table);
 static VecDBL *translate_atoms_in_trimmed_lattice(const Cell *cell,
-                                                  const double prim_lat[3][3]);
+                                                  const int tmat_p_i[3][3]);
 static int *get_overlap_table(const VecDBL *position, const int cell_size,
                               const int *cell_types, const Cell *trimmed_cell,
                               const double symprec);
 
 // @brief Allocate Cell. NULL is returned if failed
 // @param size number of atoms
-// @param tensor_rank rank of site tensors for magnetic symmetry. Set -1 if not
-// used.
+// @param tensor_rank rank of site tensors for magnetic symmetry. Set -1 if
+// not used.
 Cell *cel_alloc_cell(const int size, const SiteTensorType tensor_rank) {
     Cell *cell;
 
@@ -131,7 +131,8 @@ void cel_free_cell(Cell *cell) {
             cell->types = NULL;
         }
         if ((cell->tensor_rank != NOSPIN) && (cell->tensors != NULL)) {
-            // When cell->tensor_rank==NOSPIN, cell->tensors is already NULL.
+            // When cell->tensor_rank==NOSPIN, cell->tensors is already
+            // NULL.
             free(cell->tensors);
             cell->tensors = NULL;
         }
@@ -378,8 +379,8 @@ static Cell *trim_cell(int *mapping_table, const double trimmed_lattice[3][3],
         goto err;
     }
 
-    if ((position = translate_atoms_in_trimmed_lattice(
-             cell, trimmed_lattice)) == NULL) {
+    if ((position = translate_atoms_in_trimmed_lattice(cell, tmp_mat_int)) ==
+        NULL) {
         warning_print("spglib: translate_atoms_in_trimmed_lattice failed.\n");
         warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
         cel_free_cell(trimmed_cell);
@@ -502,10 +503,9 @@ static void set_positions_and_tensors(Cell *trimmed_cell,
 }
 
 /* Return NULL if failed */
-static VecDBL *translate_atoms_in_trimmed_lattice(
-    const Cell *cell, const double trimmed_lattice[3][3]) {
+static VecDBL *translate_atoms_in_trimmed_lattice(const Cell *cell,
+                                                  const int tmat_p_i[3][3]) {
     int i, j;
-    double tmp_matrix[3][3], axis_inv[3][3];
     VecDBL *position;
 
     position = NULL;
@@ -514,13 +514,10 @@ static VecDBL *translate_atoms_in_trimmed_lattice(
         return NULL;
     }
 
-    mat_inverse_matrix_d3(tmp_matrix, trimmed_lattice, 0);
-    mat_multiply_matrix_d3(axis_inv, tmp_matrix, cell->lattice);
-
     /* Send atoms into the trimmed cell */
     for (i = 0; i < cell->size; i++) {
-        mat_multiply_matrix_vector_d3(position->vec[i], axis_inv,
-                                      cell->position[i]);
+        mat_multiply_matrix_vector_id3(position->vec[i], tmat_p_i,
+                                       cell->position[i]);
         for (j = 0; j < 3; j++) {
             if (j != cell->aperiodic_axis) {
                 position->vec[i][j] = mat_Dmod1(position->vec[i][j]);
