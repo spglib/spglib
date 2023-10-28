@@ -359,6 +359,27 @@ TEST(MagneticSymmetry, test_spg_get_symmetry_with_tensors_rough_symprec) {
     free(time_reversals);
 }
 
+TEST(MagneticSymmetry, test_spg_get_magnetic_dataset_high_mag_symprec) {
+    // https://github.com/spglib/spglib/issues/348
+    double lattice[3][3] = {{4, 0, 0}, {0, 4, 0}, {0, 0, 18}};
+    double positions[][3] = {
+        {0, 0, 0.57},
+        {0.5, 0.5, 0.43},
+        {0.5, 1, 0.5},
+        {0, 0.5, 0.5},
+    };
+    int types[] = {1, 1, 2, 2};
+    double tensors[] = {0, 0, -1, 1};
+    int num_atoms = 4;
+    double symprec = 3.0;
+
+    SpglibMagneticDataset *dataset;
+    dataset = spg_get_magnetic_dataset(lattice, positions, types, tensors, 0,
+                                       num_atoms, 0, symprec);
+    // MSG identification is failed with the too high mag_symprec
+    ASSERT_TRUE(dataset == NULL);
+}
+
 TEST(MagneticSymmetry, test_spgms_get_magnetic_dataset_high_mag_symprec) {
     // https://github.com/spglib/spglib/issues/249
     double lattice[3][3] = {

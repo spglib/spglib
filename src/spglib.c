@@ -1310,7 +1310,7 @@ finalize:
     if (spglib_error_code == SPGLIB_SUCCESS) {
         return dataset;
     } else {
-        spg_free_magnetic_dataset(dataset);
+        if (dataset != NULL) spg_free_magnetic_dataset(dataset);
         return NULL;
     }
 }
