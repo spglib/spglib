@@ -102,7 +102,7 @@ int del_layer_delaunay_reduce(double min_lattice[3][3],
 /* Return 0 if failed */
 static int delaunay_reduce(double red_lattice[3][3], const double lattice[3][3],
                            const int aperiodic_axis, const double symprec) {
-    int i, j, attempt, succeeded, lattice_rank;
+    int succeeded, lattice_rank;
     int tmp_mat_int[3][3];
     double volume;
     double orig_lattice[3][3], tmp_mat[3][3], basis[4][3];
@@ -111,7 +111,8 @@ static int delaunay_reduce(double red_lattice[3][3], const double lattice[3][3],
 
     lattice_rank = get_extended_basis(basis, lattice, aperiodic_axis);
 
-    for (attempt = 0; attempt < get_num_attempts(); attempt++) {
+    for (int attempt = 0, max_attempt = get_num_attempts();
+         attempt < max_attempt; attempt++) {
         debug_print("Trying delaunay_reduce_basis: attempt %d/%d\n", attempt,
                     get_num_attempts());
         succeeded = delaunay_reduce_basis(basis, lattice_rank, symprec);
@@ -126,15 +127,15 @@ static int delaunay_reduce(double red_lattice[3][3], const double lattice[3][3],
 
     get_delaunay_shortest_vectors(basis, lattice_rank, symprec);
 
-    for (i = 0; i < 3; i++) {
-        for (j = 0; j < 3; j++) {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
             red_lattice[i][j] = basis[j][i];
         }
     }
     /* move the aperiodic axis from b3 back to its original direction */
     if (lattice_rank == 2 && aperiodic_axis != 2) {
-        for (i = 0; i < 3; i++) {
-            for (j = 0; j < 3; j++) {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
                 if (j == aperiodic_axis) {
                     red_lattice[i][j] = basis[2][i];
                     red_lattice[i][2] = basis[j][i];
@@ -152,8 +153,8 @@ static int delaunay_reduce(double red_lattice[3][3], const double lattice[3][3],
 
     if (volume < 0) {
         /* Flip axes */
-        for (i = 0; i < 3; i++) {
-            for (j = 0; j < 3; j++) {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
                 red_lattice[i][j] = -red_lattice[i][j];
             }
         }

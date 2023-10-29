@@ -135,7 +135,7 @@ int niggli_get_micro_version(void) { return NIGGLI_MICRO_VERSION; }
 //       the plane)
 int niggli_reduce(double *lattice_, const double eps_,
                   const int aperiodic_axis) {
-    int i, j, succeeded;
+    int succeeded;
     NiggliParams *p;
     int (*steps[8])(NiggliParams *p) = {step1, step2, step3, step4,
                                         step5, step6, step7, step8};
@@ -160,8 +160,9 @@ int niggli_reduce(double *lattice_, const double eps_,
         goto ret;
     }
 
-    for (i = 0; i < get_num_attempts(); i++) {
-        for (j = 0; j < 8; j++) {
+    for (int i = 0, max_attempts = get_num_attempts(); i < max_attempts; i++) {
+        int j = 0;
+        for (; j < 8; j++) {
             if ((*steps[j])(p)) {
                 debug_show(j + 1, p);
                 if (!reset(p)) {
