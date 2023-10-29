@@ -1,8 +1,9 @@
+#include <cmath>
+#include <cstdlib>
+
 #include <gtest/gtest.h>
 
 extern "C" {
-#include <math.h>
-
 #include "debug.h"
 #include "delaunay.h"
 #include "mathfunc.h"
@@ -26,7 +27,7 @@ TEST(Delaunay, Delaunay_reduce_layer) {
     for (int i = 0; i < 3; ++i) {
         double sum = fabs(min_lattice[0][i]) + fabs(min_lattice[1][i]) +
                      fabs(min_lattice[2][i]);
-        ASSERT_FLOAT_EQ(sum, 1);
+        EXPECT_FLOAT_EQ(sum, 1);
     }
 }
 
@@ -40,27 +41,41 @@ TEST(Delaunay, Delaunay_reduce) {
     double inv_lat[3][3], tmat[3][3], metric[3][3];
     int int_tmat[3][3];
 
+    auto setenv_result = setenv("SPGLIB_NUM_ATTEMPTS", "100", 1);
+    ASSERT_EQ(setenv_result, 0);
+
     const double symprec = 1e-5;
     int succeeded = del_delaunay_reduce(min_lattice, lattice, symprec);
     // Default get_num_attempts() == 1000 --> succeeded == 1.
     // With get_num_attempts() == 100 --> succeded == 0.
-    // ASSERT_EQ(succeeded, 0);
-    ASSERT_EQ(succeeded, 1);
+    EXPECT_EQ(succeeded, 0);
+
+    setenv_result = setenv("SPGLIB_NUM_ATTEMPTS", "1000", 1);
+    ASSERT_EQ(setenv_result, 0);
+
+    succeeded = del_delaunay_reduce(min_lattice, lattice, symprec);
+
+    EXPECT_EQ(succeeded, 1);
+
+    mat_get_metric(metric, min_lattice);
+
+    if (HasFailure()) {
+        printf("min_lattice\n");
+        show_matrix_3d(min_lattice);
+        printf("tmat\n");
+        show_matrix_3d(tmat);
+        printf("matric tensor\n");
+        show_matrix_3d(metric);
+        return;
+    }
     mat_inverse_matrix_d3(inv_lat, lattice, symprec);
     mat_multiply_matrix_d3(tmat, inv_lat, min_lattice);
     mat_cast_matrix_3d_to_3i(int_tmat, tmat);
-    printf("min_lattice\n");
-    show_matrix_3d(min_lattice);
-    printf("tmat\n");
-    show_matrix_3d(tmat);
     // tmat must be almost integers.
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 3; ++j) {
-            ASSERT_LT(fabs(int_tmat[i][j] - tmat[i][j]), 1e-8);
+            EXPECT_NEAR(int_tmat[i][j], tmat[i][j], 1e-8);
         }
     }
-    mat_get_metric(metric, min_lattice);
-    printf("matric tensor\n");
-    show_matrix_3d(metric);
-    ASSERT_FLOAT_EQ(metric[0][0] + metric[1][1] + metric[2][2], 156.599853);
+    EXPECT_FLOAT_EQ(metric[0][0] + metric[1][1] + metric[2][2], 156.599853);
 }
