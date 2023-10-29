@@ -266,3 +266,16 @@ int show_spg_dataset(double lattice[3][3], const double origin_shift[3],
 end:
     return retval;
 }
+
+#ifdef _MSC_VER
+// https://stackoverflow.com/a/23616164
+int setenv(const char *name, const char *value, int overwrite) {
+    int errcode = 0;
+    if (!overwrite) {
+        size_t envsize = 0;
+        errcode = getenv_s(&envsize, NULL, 0, name);
+        if (errcode || envsize) return errcode;
+    }
+    return _putenv_s(name, value);
+}
+#endif

@@ -23,4 +23,9 @@ int show_spg_dataset(double lattice[3][3], const double origin_shift[3],
                      double position[][3], const int num_atom,
                      const int types[]);
 
+#ifdef _MSC_VER
+// https://stackoverflow.com/a/23616164
+int setenv(const char *name, const char *value, int overwrite);
+#endif
+
 #endif  // __test_utils_H__
