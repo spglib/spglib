@@ -34,6 +34,7 @@
 
 #include "delaunay.h"
 
+#include <assert.h>
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -365,17 +366,16 @@ int del_layer_delaunay_reduce_2D(double red_lattice[3][3],
                                  const int unique_axis,
                                  const int aperiodic_axis,
                                  const double symprec) {
-    int i, j, k, attempt, succeeded, lattice_rank;
+    int succeeded, lattice_rank;
     double volume;
     double basis[3][3], lattice_2D[3][2], unique_vec[3];
 
     debug_print("del_layer_delaunay_reduce_2D:\n");
 
+    int j = -1, k = -1;
     if (aperiodic_axis == -1 || unique_axis == aperiodic_axis) {
         // bulk or Monoclinic/oblique
-        j = -1;
-        k = -1;
-        for (i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++) {
             if (i != unique_axis) {
                 if (j == -1) {
                     j = i;
@@ -387,7 +387,7 @@ int del_layer_delaunay_reduce_2D(double red_lattice[3][3],
         lattice_rank = 2;
     } else {
         // Monoclinic/rectangular
-        for (i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++) {
             if (i != unique_axis && i != aperiodic_axis) {
                 j = i;
             }
@@ -396,7 +396,10 @@ int del_layer_delaunay_reduce_2D(double red_lattice[3][3],
         lattice_rank = 1;
     }
 
-    for (i = 0; i < 3; i++) {
+    assert(j >= 0);
+    assert(k >= 0);
+
+    for (int i = 0; i < 3; i++) {
         unique_vec[i] = lattice[i][unique_axis];
         lattice_2D[i][0] = lattice[i][j];
         lattice_2D[i][1] = lattice[i][k];
@@ -420,7 +423,7 @@ int del_layer_delaunay_reduce_2D(double red_lattice[3][3],
 
     get_delaunay_shortest_vectors_2D(basis, unique_vec, lattice_rank, symprec);
 
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         red_lattice[i][unique_axis] = lattice[i][unique_axis];
         red_lattice[i][j] = basis[0][i];
         red_lattice[i][k] = basis[1][i];
@@ -434,7 +437,7 @@ int del_layer_delaunay_reduce_2D(double red_lattice[3][3],
     }
 
     if (volume < 0) {
-        for (i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++) {
             red_lattice[i][unique_axis] = -red_lattice[i][unique_axis];
         }
     }
