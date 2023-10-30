@@ -404,7 +404,8 @@ int del_layer_delaunay_reduce_2D(double red_lattice[3][3],
 
     get_extended_basis_2D(basis, lattice_2D);
 
-    for (attempt = 0; attempt < get_num_attempts(); attempt++) {
+    for (int attempt = 0, max_attempt = get_num_attempts();
+         attempt < max_attempt; attempt++) {
         debug_print("Trying delaunay_reduce_basis_2D: attempt %d/%d\n", attempt,
                     get_num_attempts());
         succeeded = delaunay_reduce_basis_2D(basis, lattice_rank, symprec);
