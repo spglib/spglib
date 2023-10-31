@@ -372,12 +372,16 @@ TEST(MagneticSymmetry, test_spg_get_magnetic_dataset_high_mag_symprec) {
     double tensors[] = {0, 0, -1, 1};
     int num_atoms = 4;
     double symprec = 3.0;
+    SpglibError error;
 
     SpglibMagneticDataset *dataset;
     dataset = spg_get_magnetic_dataset(lattice, positions, types, tensors, 0,
                                        num_atoms, 0, symprec);
     // MSG identification is failed with the too high mag_symprec
-    ASSERT_TRUE(dataset == NULL);
+    EXPECT_EQ(dataset, nullptr);
+
+    error = spg_get_error_code();
+    EXPECT_EQ(error, SpglibError::SPGERR_ATOMS_TOO_CLOSE);
 }
 
 TEST(MagneticSymmetry, test_spgms_get_magnetic_dataset_high_mag_symprec) {
