@@ -7,7 +7,7 @@ symmetries
 Installation
 ------------
 
-The package is developed on github. You can get the source for the
+The package is developed on GitHub. You can get the source for the
 released versions from the
 `repository <https://github.com/spglib/spglib/releases>`__.
 
@@ -41,7 +41,7 @@ Building from source
 ~~~~~~~~~~~~~~~~~~~~
 
 To build from source, make sure you have installed the build requirements
-in :code:`pyproject.toml`. Then simply run the following in the current directory.
+in :code:`pyproject.toml`. Then simply run the following in the root directory.
 
 .. code-block:: console
 
