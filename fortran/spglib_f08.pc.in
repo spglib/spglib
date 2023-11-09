@@ -1,6 +1,7 @@
 Name: @PROJECT_NAME@
 Description: The spglib f08 library
-depends: spglib
 Version: @PROJECT_VERSION@
+
+Requires: spglib
 Libs: -L@CMAKE_INSTALL_FULL_LIBDIR@ -lspglib_f08 -lsymspg
 Cflags: -I@CMAKE_INSTALL_FULL_MODULEDIR@
