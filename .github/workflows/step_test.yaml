@@ -38,6 +38,12 @@ jobs:
             toolchain: windows
           - os: macos-11
             toolchain: macos
+          - os: windows-latest
+            toolchain: windows
+            experimental: true
+          - os: macos-latest
+            toolchain: macos
+            experimental: true
           - python-version: "3.12"
             experimental: true
             pip-extra-flags: --pre
