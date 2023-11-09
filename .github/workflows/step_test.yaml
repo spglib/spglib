@@ -34,7 +34,7 @@ jobs:
         toolchain: [ gcc, llvm, intel, windows, macos ]
         python-version: [ "3.8", "3.9", "3.10", "3.11", "3.12"]
         include:
-          - os: windows-latest
+          - os: windows-2019
             toolchain: windows
           - os: macos-11
             toolchain: macos
