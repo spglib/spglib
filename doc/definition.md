@@ -451,7 +451,7 @@ Cartesian coordinates of the given input unit cell.
 The following example of a python script gives a crystal structure of
 Br whose space group type is *Cmce*. The basis vectors
 $(\mathbf{a}, \mathbf{b}, \mathbf{c})$ are fixed by the symmetry
-crystal in the standardization. The C-centering determines the c-axis,
+crystal in the standardization. The C-centring determines the c-axis,
 and *m* and *c* operations in *Cmce* fix which directions a- and
 b-axes should be with respect to each other axis. This is the first
 one choice appearing in the list of Hall symbols among 6 different
