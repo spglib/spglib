@@ -147,8 +147,8 @@ In this example,
 
 $$
 \boldsymbol{P} = \begin{pmatrix}
+\frac{1}{2} & \frac{\bar{1}}{2} & 0 \\
 \frac{1}{2} & \frac{1}{2} & 0 \\
-\frac{\bar{1}}{2} & \frac{1}{2} & 0 \\
 0 & 0 & 1
 \end{pmatrix}.
 $$
