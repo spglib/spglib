@@ -27,6 +27,8 @@ GitHub release pages and in the git history.
 ### Python API
 
 - Fixed the Python module build and installation in the pure CMake environment (without scikit-build-core)
+- Use importlib to search and load the bundled spglib C library
+- Support editable installs
 
 ### CI
 

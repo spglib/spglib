@@ -104,10 +104,10 @@ if (SPGLIB_INSTALL)
 		# TODO: Cmake forces to install PUBLIC_HEADER when defined
 		# https://gitlab.kitware.com/cmake/cmake/-/issues/24326
 		install(TARGETS Spglib_symspg
-				LIBRARY DESTINATION ${Python_INSTALL_DIR}/spglib COMPONENT Spglib_Runtime
+				LIBRARY DESTINATION ${Python_INSTALL_DIR}/spglib/lib COMPONENT Spglib_Runtime
 				NAMELINK_COMPONENT Spglib_Development
-				ARCHIVE DESTINATION ${Python_INSTALL_DIR}/spglib COMPONENT Spglib_Development
-				PUBLIC_HEADER DESTINATION ${Python_INSTALL_DIR}/spglib COMPONENT Spglib_Development
+				ARCHIVE DESTINATION ${Python_INSTALL_DIR}/spglib/lib COMPONENT Spglib_Development
+				PUBLIC_HEADER DESTINATION ${Python_INSTALL_DIR}/spglib/include COMPONENT Spglib_Development
 				RUNTIME DESTINATION ${Python_INSTALL_DIR}/spglib COMPONENT Spglib_Runtime
 		)
 	endif ()

@@ -41,25 +41,33 @@ from typing import TYPE_CHECKING
 import numpy as np
 
 try:
-    from spglib import _spglib as spg  # type: ignore[attr-defined]
+    from . import _spglib as spg  # type: ignore[attr-defined]
 except ImportError:
-    import os.path
-    import re
+    import sys
+
+    if sys.version_info < (3, 10):
+        from importlib_resources import as_file, files
+    else:
+        from importlib.resources import as_file, files
     from ctypes import cdll
 
-    bundled_lib = next(
-        filter(
-            lambda fl: re.match(".*symspg\\..*", fl),
-            sorted(os.listdir(os.path.dirname(__file__))),
-        ),
-        None,
-    )
-    if not bundled_lib:
+    root = files("spglib.lib")
+    for file in root.iterdir():
+        if "symspg." in file.name:
+            with as_file(file) as bundled_lib:
+                try:
+                    cdll.LoadLibrary(str(bundled_lib))
+                    from . import _spglib as spg  # type: ignore[attr-defined]
+
+                    break
+                except ImportError as err:
+                    raise FileNotFoundError(
+                        "Could not load bundled Spglib C library"
+                    ) from err
+    else:
         raise FileNotFoundError(
             "Spglib C library is not installed and no bundled version was detected"
         )
-    cdll.LoadLibrary(os.path.join(os.path.dirname(__file__), bundled_lib))
-    from spglib import _spglib as spg  # type: ignore[attr-defined]
 
 
 if TYPE_CHECKING:
