@@ -1,10 +1,6 @@
 name: pypi-wheel
 run-name: Spglib PyPI Wheel builds for linux
 
-concurrency:
-  group: ${{ github.ref }}
-  cancel-in-progress: true
-
 permissions:
   contents: read
 
