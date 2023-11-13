@@ -12,23 +12,11 @@ permissions:
   contents: read
 
 jobs:
-  pre-commit:
-    name: Check pre-commit
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-python@v4
-        with:
-          python-version: 3.x
-      - uses: pre-commit/action@v3.0.0
 
   tests:
     name: Check ${{ matrix.toolchain }} and Python ${{ matrix.python-version }}
     runs-on: ${{ matrix.os || 'ubuntu-latest' }}
     container: ${{ !matrix.os && 'ghcr.io/lecrisut/dev-env:main' || '' }}
-    needs: [ pre-commit ]
     continue-on-error: ${{ matrix.experimental || false }}
     strategy:
       fail-fast: false
@@ -153,7 +141,7 @@ jobs:
           flags: python_api
           verbose: true
   pass:
-    needs: [pre-commit, tests, coverage, coverage-pytest]
+    needs: [ tests, coverage, coverage-pytest ]
     runs-on: ubuntu-latest
     steps:
       - name: Check test jobs

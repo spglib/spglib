@@ -35,7 +35,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  pre-commit:
+    uses: ./.github/workflows/step_pre-commit.yaml
+
   tests:
+    needs: [ pre-commit ]
     uses: ./.github/workflows/step_test.yaml
 
   build-wheel:
@@ -48,10 +52,11 @@ jobs:
       cibw_build: ${{ inputs.cibw_build || 'cp311-*' }}
 
   test-docs:
+    needs: [ pre-commit ]
     uses: ./.github/workflows/step_test-docs.yaml
 
   pass:
-    needs: [tests, test-docs, build-wheel]
+    needs: [ pre-commit, tests, test-docs, build-wheel ]
     runs-on: ubuntu-latest
     steps:
       - name: Check all CI jobs
