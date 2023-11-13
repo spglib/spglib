@@ -113,7 +113,7 @@ static const char arithmetic_crystal_class_symbols[74][7] = {
     "6mmP  ", /* 55 */
     "-62mP ", /* 56 */
     "-6m2P ", /* 57 */
-    "6/mmm ", /* 58 */
+    "6/mmmP", /* 58 */
     "23P   ", /* 59 */
     "23F   ", /* 60 */
     "23I   ", /* 61 */
