@@ -1,5 +1,4 @@
-name: test-docs
-run-name: Run documentation tests
+name: 📘 test-docs
 
 on:
   workflow_call:

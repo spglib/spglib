@@ -1,5 +1,4 @@
 name: pre-commit
-run-name: Pre-commit checks
 
 on:
   workflow_call:
