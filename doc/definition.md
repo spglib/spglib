@@ -147,8 +147,8 @@ In this example,
 
 $$
 \boldsymbol{P} = \begin{pmatrix}
+\frac{1}{2} & \frac{\bar{1}}{2} & 0 \\
 \frac{1}{2} & \frac{1}{2} & 0 \\
-\frac{\bar{1}}{2} & \frac{1}{2} & 0 \\
 0 & 0 & 1
 \end{pmatrix}.
 $$
@@ -451,7 +451,7 @@ Cartesian coordinates of the given input unit cell.
 The following example of a python script gives a crystal structure of
 Br whose space group type is *Cmce*. The basis vectors
 $(\mathbf{a}, \mathbf{b}, \mathbf{c})$ are fixed by the symmetry
-crystal in the standardization. The C-centrng determines the c-axis,
+crystal in the standardization. The C-centring determines the c-axis,
 and *m* and *c* operations in *Cmce* fix which directions a- and
 b-axes should be with respect to each other axis. This is the first
 one choice appearing in the list of Hall symbols among 6 different
@@ -490,10 +490,10 @@ This python script is saved in the file `example.py`. Then we get
 % python example.py
 Space group type: Cmce (64)
 Transformation matrix:
-    1  0  0
-    0  1  0
-    0  0  1
-Origin shift: 0.000000 0.500000 0.500000
+   1  0  0
+   0  1  0
+   0  0  1
+Origin shift: 0.000000 0.000000 0.000000
 ```
 
 No rotation was introduced in the idealization. Next, we swap a- and c-axes.
@@ -531,9 +531,9 @@ By this,
 % python spglib-example2.py
 Space group type: Cmce (64)
 Transformation matrix:
-    0  0  1
-    0  1  0
-   -1  0  0
+   0  0  1
+   0  1  0
+  -1  0  0
 Origin shift: 0.000000 0.000000 0.000000
 ```
 
@@ -577,10 +577,10 @@ and
 % python spglib-example3.py
 Space group type: Cmce (64)
 Transformation matrix:
-    1  0  0
-    0  1  0
-    0  0  1
-Origin shift: 0.000000 0.000000 0.500000
+   1  0  0
+   0  1  0
+   0  0  1
+Origin shift: 0.000000 0.000000 0.000000
 ```
 
 The transformation matrix is kept unchanged even though the crystal
