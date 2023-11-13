@@ -46,8 +46,12 @@ jobs:
       cibw_archs_linux: ${{ inputs.cibw_archs_linux || 'x86_64' }}
       cibw_archs_macos: ${{ inputs.cibw_archs_macos || 'x86_64' }}
       cibw_build: ${{ inputs.cibw_build || 'cp311-*' }}
+
+  test-docs:
+    uses: ./.github/workflows/step_test-docs.yaml
+
   pass:
-    needs: [tests, build-wheel]
+    needs: [tests, test-docs, build-wheel]
     runs-on: ubuntu-latest
     steps:
       - name: Check all CI jobs

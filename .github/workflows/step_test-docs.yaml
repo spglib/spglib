@@ -1,0 +1,33 @@
+name: test-docs
+run-name: Run documentation tests
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  doc-test:
+    name: Sphinx-${{ matrix.builder }}
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.experimental || false }}
+    strategy:
+      fail-fast: false
+      matrix:
+        builder: [ linkcheck, doctest, html ]
+        include:
+          # Run default html builder with warnings as error
+          - builder: html
+            args: -W
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
+      - name: Install the project and docs dependencies
+        # TODO: Switch to editable install
+        run: pip install .[docs]
+      - name: Run sphinx builder ${{ matrix.builder }}
+        # TODO: Sphinx convention is to use `docs` instead of `doc`
+        run: sphinx-build -b ${{ matrix.builder }} ${{ matrix.args }} ./doc ./doc/_build
