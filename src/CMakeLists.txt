@@ -59,7 +59,7 @@ endif ()
 
 # Additional settings
 if (SPGLIB_USE_SANITIZER)
-	if (CMAKE_Fortran_COMPILER_ID MATCHES "Intel.*")
+	if (CMAKE_C_COMPILER_ID MATCHES "Intel.*")
 		# TODO: Address sanitizer cannot run on intel
 		message(WARNING "Sanitizer are not bundled well with intel compiler")
 	else ()
