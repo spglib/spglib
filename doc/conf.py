@@ -9,6 +9,7 @@ extensions = [
     "sphinxcontrib.bibtex",
     "myst_parser",
     "autodoc2",
+    "sphinx.ext.doctest",
 ]
 
 exclude_patterns = [
