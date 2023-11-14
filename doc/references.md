@@ -19,6 +19,7 @@ understanding the crystallography ashamedly.
 ```{bibliography}
 ---
 cited:
+labelprefix: gen-
 keyprefix: gen-
 labelprefix: gen-
 ---
@@ -32,6 +33,7 @@ labelprefix: gen-
 ```{bibliography}
 ---
 cited:
+labelprefix: algo-
 keyprefix: algo-
 labelprefix: algo-
 ---
@@ -47,6 +49,7 @@ labelprefix: algo-
 ```{bibliography}
 ---
 cited:
+labelprefix: std-
 keyprefix: std-
 labelprefix: std-
 ---
@@ -62,6 +65,7 @@ labelprefix: std-
 ```{bibliography}
 ---
 cited:
+labelprefix: msg-
 keyprefix: msg-
 labelprefix: msg-
 ---
@@ -78,6 +82,7 @@ labelprefix: msg-
 ```{bibliography}
 ---
 cited:
+labelprefix: math-
 keyprefix: math-
 labelprefix: math-
 ---
