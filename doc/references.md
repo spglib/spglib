@@ -7,10 +7,10 @@ understanding the crystallography ashamedly.
 
 ## General materials
 
-- [Bilbao Crystallographic Server](http://www.cryst.ehu.es/). The
-  references of many useful papers are found at
-  <http://www.cryst.ehu.es/wiki/index.php/Articles>.
-- [Online dictionary of crystallography](http://reference.iucr.org/dictionary/)
+- [Bilbao Crystallographic Server](https://www.cryst.ehu.es/). The
+  references of many useful papers are found in the
+  [Articles page](https://www.cryst.ehu.es/wiki/index.php/Articles).
+- [Online dictionary of crystallography](https://dictionary.iucr.org/Main_Page)
 
 {cite:empty}`gen-ITA2016`
 {cite:empty}`gen-muller2013symmetry`

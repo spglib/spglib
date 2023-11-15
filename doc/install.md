@@ -2,7 +2,7 @@
 
 ## Download
 
-The source code is downloaded at <https://github.com/spglib/spglib/archive/master.zip> or you can
+The source code is downloaded at <https://github.com/spglib/spglib/archive/develop.zip> or you can
 git-clone the spglib repository by
 
 ```
@@ -59,7 +59,7 @@ https://github.com/spglib/spglib/issues/118.
 1. Include `spglib.h`
 2. Link `libsymspg.a` or `libsymspg.so`
 3. A compilation example is shown in
-   [example/README.md](https://github.com/spglib/spglib/tree/master/example/README.md).
+   [example/README.md](https://github.com/spglib/spglib/blob/develop/example/README.md).
 
 ## Example
 
