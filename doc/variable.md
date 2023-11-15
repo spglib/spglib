@@ -80,7 +80,7 @@ symmetry.
 
 For atomic positions, roughly speaking, two position vectors `x` and `x'` in
 Cartesian coordinates are considered to be the same if `|x' - x| < symprec`.
-For more details, see the [spglib paper](https://arxiv.org/abs/1808.01590%3E),
+For more details, see the [spglib paper](https://arxiv.org/abs/1808.01590),
 Sec. II-A.
 
 The angle distortion between basis vectors is converted to a length
