@@ -1,37 +1,15 @@
-#include <cmath>
 #include <cstdlib>
 
 #include <gtest/gtest.h>
 
 extern "C" {
 #include "debug.h"
-#include "delaunay.h"
 #include "mathfunc.h"
+#include "niggli.h"
 #include "utils.h"
 }
 
-TEST(Delaunay, Delaunay_reduce_layer) {
-    double min_lattice[3][3];
-    // Unimodular matrix
-    double lattice[3][3] = {
-        {1, 0, 0},
-        {0, 37, 10},
-        {0, 11, 3},
-    };
-    const int aperiodic_axis = 0;
-    const double symprec = 1e-5;
-
-    del_layer_delaunay_reduce(min_lattice, lattice, aperiodic_axis, symprec);
-
-    // Shortest vectors in the periodic plane are [0, 1, 0] and [0, 0, 1]
-    for (int i = 0; i < 3; ++i) {
-        double sum = fabs(min_lattice[0][i]) + fabs(min_lattice[1][i]) +
-                     fabs(min_lattice[2][i]);
-        EXPECT_FLOAT_EQ(sum, 1);
-    }
-}
-
-TEST(Delaunay, Delaunay_reduce) {
+TEST(Niggli, Niggli_reduce) {
     double min_lattice[3][3];
     double lattice[3][3] = {
         {-2.2204639179669590, -4.4409278359339179, 179.8575773553236843},
@@ -41,11 +19,13 @@ TEST(Delaunay, Delaunay_reduce) {
     double inv_lat[3][3], tmat[3][3], metric[3][3];
     int int_tmat[3][3];
 
+    const double symprec = 1e-5;
+    mat_copy_matrix_d3(min_lattice, lattice);
+
     auto setenv_result = setenv("SPGLIB_NUM_ATTEMPTS", "100", 1);
     ASSERT_EQ(setenv_result, 0);
 
-    const double symprec = 1e-5;
-    int succeeded = del_delaunay_reduce(min_lattice, lattice, symprec);
+    int succeeded = niggli_reduce((double*)min_lattice, symprec, -1);
     // Default get_num_attempts() == 1000 --> succeeded == 1.
     // With get_num_attempts() == 100 --> succeded == 0.
     EXPECT_EQ(succeeded, 0);
@@ -53,10 +33,12 @@ TEST(Delaunay, Delaunay_reduce) {
     setenv_result = setenv("SPGLIB_NUM_ATTEMPTS", "1000", 1);
     ASSERT_EQ(setenv_result, 0);
 
-    succeeded = del_delaunay_reduce(min_lattice, lattice, symprec);
-
+    succeeded = niggli_reduce((double*)min_lattice, symprec, -1);
     EXPECT_EQ(succeeded, 1);
 
+    mat_inverse_matrix_d3(inv_lat, lattice, symprec);
+    mat_multiply_matrix_d3(tmat, inv_lat, min_lattice);
+    mat_cast_matrix_3d_to_3i(int_tmat, tmat);
     mat_get_metric(metric, min_lattice);
 
     if (HasFailure()) {
@@ -68,9 +50,7 @@ TEST(Delaunay, Delaunay_reduce) {
         show_matrix_3d(metric);
         return;
     }
-    mat_inverse_matrix_d3(inv_lat, lattice, symprec);
-    mat_multiply_matrix_d3(tmat, inv_lat, min_lattice);
-    mat_cast_matrix_3d_to_3i(int_tmat, tmat);
+
     // tmat must be almost integers.
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 3; ++j) {

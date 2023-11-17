@@ -17,16 +17,18 @@ void show_symmetry_operations(const int (*rotations)[3][3],
     }
 }
 
-void show_cell(const double lattice[3][3], const double positions[][3],
-               const int types[], const int num_atoms) {
-    int i;
-
-    printf("Lattice parameter:\n");
-    for (i = 0; i < 3; i++) {
+void show_matrix_3d(const double lattice[3][3]) {
+    for (int i = 0; i < 3; i++) {
         printf("%f %f %f\n", lattice[0][i], lattice[1][i], lattice[2][i]);
     }
+}
+
+void show_cell(const double lattice[3][3], const double positions[][3],
+               const int types[], const int num_atoms) {
+    printf("Lattice parameter:\n");
+    show_matrix_3d(lattice);
     printf("Atomic positions:\n");
-    for (i = 0; i < num_atoms; i++) {
+    for (int i = 0; i < num_atoms; i++) {
         printf("%d: %f %f %f\n", types[i], positions[i][0], positions[i][1],
                positions[i][2]);
     }
@@ -264,3 +266,16 @@ int show_spg_dataset(double lattice[3][3], const double origin_shift[3],
 end:
     return retval;
 }
+
+#ifdef _MSC_VER
+// https://stackoverflow.com/a/23616164
+int setenv(const char *name, const char *value, int overwrite) {
+    int errcode = 0;
+    if (!overwrite) {
+        size_t envsize = 0;
+        errcode = getenv_s(&envsize, NULL, 0, name);
+        if (errcode || envsize) return errcode;
+    }
+    return _putenv_s(name, value);
+}
+#endif

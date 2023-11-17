@@ -1,6 +1,7 @@
 list(APPEND ctest_labels c_api)
 set(test_sources
 		test_delaunay.cpp
+		test_niggli.cpp
 		test_error.cpp
 		test_symmetry.cpp
 		test_symmetry_search.cpp

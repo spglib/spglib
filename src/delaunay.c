@@ -34,14 +34,17 @@
 
 #include "delaunay.h"
 
+#include <assert.h>
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "debug.h"
 #include "mathfunc.h"
 
-#define NUM_ATTEMPT 100
 #define ZERO_PREC 1e-10
+
+static int get_num_attempts();
 
 static int delaunay_reduce(double red_lattice[3][3], const double lattice[3][3],
                            const int aperiodic_axis, const double symprec);
@@ -60,6 +63,23 @@ static void get_delaunay_shortest_vectors_2D(double basis[3][3],
                                              const double symprec);
 static void get_extended_basis_2D(double basis[3][3],
                                   const double lattice[3][2]);
+
+int get_num_attempts() {
+    const char *num_attempts_str = getenv("SPGLIB_NUM_ATTEMPTS");
+    if (num_attempts_str != NULL) {
+        // Try to parse the string as an integer
+        char *end;
+        long num_attempts = strtol(num_attempts_str, &end, 10);
+        // If conversion fails end == num_attempts_str
+        if (end != num_attempts_str && num_attempts > 0 &&
+            num_attempts < INT_MAX)
+            return (int)num_attempts;
+        warning_print("Could not parse SPGLIB_NUM_ATTEMPTS=%s\n",
+                      num_attempts_str);
+    }
+    // Otherwise return default number of attempts
+    return 1000;
+}
 
 /* Return 0 if failed */
 int del_delaunay_reduce(double min_lattice[3][3], const double lattice[3][3],
@@ -83,7 +103,7 @@ int del_layer_delaunay_reduce(double min_lattice[3][3],
 /* Return 0 if failed */
 static int delaunay_reduce(double red_lattice[3][3], const double lattice[3][3],
                            const int aperiodic_axis, const double symprec) {
-    int i, j, attempt, succeeded, lattice_rank;
+    int succeeded, lattice_rank;
     int tmp_mat_int[3][3];
     double volume;
     double orig_lattice[3][3], tmp_mat[3][3], basis[4][3];
@@ -92,7 +112,10 @@ static int delaunay_reduce(double red_lattice[3][3], const double lattice[3][3],
 
     lattice_rank = get_extended_basis(basis, lattice, aperiodic_axis);
 
-    for (attempt = 0; attempt < NUM_ATTEMPT; attempt++) {
+    for (int attempt = 0, max_attempt = get_num_attempts();
+         attempt < max_attempt; attempt++) {
+        debug_print("Trying delaunay_reduce_basis: attempt %d/%d\n", attempt,
+                    get_num_attempts());
         succeeded = delaunay_reduce_basis(basis, lattice_rank, symprec);
         if (succeeded) {
             break;
@@ -105,15 +128,15 @@ static int delaunay_reduce(double red_lattice[3][3], const double lattice[3][3],
 
     get_delaunay_shortest_vectors(basis, lattice_rank, symprec);
 
-    for (i = 0; i < 3; i++) {
-        for (j = 0; j < 3; j++) {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
             red_lattice[i][j] = basis[j][i];
         }
     }
     /* move the aperiodic axis from b3 back to its original direction */
     if (lattice_rank == 2 && aperiodic_axis != 2) {
-        for (i = 0; i < 3; i++) {
-            for (j = 0; j < 3; j++) {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
                 if (j == aperiodic_axis) {
                     red_lattice[i][j] = basis[2][i];
                     red_lattice[i][2] = basis[j][i];
@@ -131,8 +154,8 @@ static int delaunay_reduce(double red_lattice[3][3], const double lattice[3][3],
 
     if (volume < 0) {
         /* Flip axes */
-        for (i = 0; i < 3; i++) {
-            for (j = 0; j < 3; j++) {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
                 red_lattice[i][j] = -red_lattice[i][j];
             }
         }
@@ -343,17 +366,16 @@ int del_layer_delaunay_reduce_2D(double red_lattice[3][3],
                                  const int unique_axis,
                                  const int aperiodic_axis,
                                  const double symprec) {
-    int i, j, k, attempt, succeeded, lattice_rank;
+    int succeeded, lattice_rank;
     double volume;
     double basis[3][3], lattice_2D[3][2], unique_vec[3];
 
     debug_print("del_layer_delaunay_reduce_2D:\n");
 
+    int j = -1, k = -1;
     if (aperiodic_axis == -1 || unique_axis == aperiodic_axis) {
         // bulk or Monoclinic/oblique
-        j = -1;
-        k = -1;
-        for (i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++) {
             if (i != unique_axis) {
                 if (j == -1) {
                     j = i;
@@ -365,7 +387,7 @@ int del_layer_delaunay_reduce_2D(double red_lattice[3][3],
         lattice_rank = 2;
     } else {
         // Monoclinic/rectangular
-        for (i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++) {
             if (i != unique_axis && i != aperiodic_axis) {
                 j = i;
             }
@@ -374,7 +396,10 @@ int del_layer_delaunay_reduce_2D(double red_lattice[3][3],
         lattice_rank = 1;
     }
 
-    for (i = 0; i < 3; i++) {
+    assert(j >= 0);
+    assert(k >= 0);
+
+    for (int i = 0; i < 3; i++) {
         unique_vec[i] = lattice[i][unique_axis];
         lattice_2D[i][0] = lattice[i][j];
         lattice_2D[i][1] = lattice[i][k];
@@ -382,7 +407,10 @@ int del_layer_delaunay_reduce_2D(double red_lattice[3][3],
 
     get_extended_basis_2D(basis, lattice_2D);
 
-    for (attempt = 0; attempt < NUM_ATTEMPT; attempt++) {
+    for (int attempt = 0, max_attempt = get_num_attempts();
+         attempt < max_attempt; attempt++) {
+        debug_print("Trying delaunay_reduce_basis_2D: attempt %d/%d\n", attempt,
+                    get_num_attempts());
         succeeded = delaunay_reduce_basis_2D(basis, lattice_rank, symprec);
         if (succeeded) {
             break;
@@ -395,7 +423,7 @@ int del_layer_delaunay_reduce_2D(double red_lattice[3][3],
 
     get_delaunay_shortest_vectors_2D(basis, unique_vec, lattice_rank, symprec);
 
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         red_lattice[i][unique_axis] = lattice[i][unique_axis];
         red_lattice[i][j] = basis[0][i];
         red_lattice[i][k] = basis[1][i];
@@ -409,7 +437,7 @@ int del_layer_delaunay_reduce_2D(double red_lattice[3][3],
     }
 
     if (volume < 0) {
-        for (i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++) {
             red_lattice[i][unique_axis] = -red_lattice[i][unique_axis];
         }
     }
