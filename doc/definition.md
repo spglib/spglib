@@ -15,7 +15,6 @@ in the previous versions.
 In spglib, basis vectors are represented by three column vectors:
 
 $$
-
 \mathbf{a}= \begin{pmatrix}
 a_x \\
 a_y \\
@@ -45,30 +44,24 @@ Coordinates of an atomic point $\boldsymbol{x}$ are represented
 as three fractional values relative to basis vectors as follows,
 
 $$
-
 \boldsymbol{x}= \begin{pmatrix}
 x_1 \\
 x_2 \\
 x_3 \\
 \end{pmatrix},
-
 $$ (coordinate_triplet)
 
 where $0 \le x_i < 1$. A position vector $\mathbf{x}$ in
 Cartesian coordinates is obtained by
 
 $$
-
 \mathbf{x} = (\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{x}.
-
 $$ (position_vector_1)
 
 or
 
 $$
-
 \mathbf{x} = \sum_i x_i \mathbf{a}_i.
-
 $$ (position_vector_2)
 
 (def_symmetry_operation)=
@@ -82,9 +75,7 @@ spglib document. The symmetry operation transfers $\boldsymbol{x}$ to
 $\tilde{\boldsymbol{x}}$ as follows:
 
 $$
-
 \tilde{\boldsymbol{x}} = \boldsymbol{W}\boldsymbol{x} + \boldsymbol{w}.
-
 $$ (space_group_operation)
 
 (def_transformation_and_origin_shift)=
@@ -95,11 +86,9 @@ The transformation matrix $\boldsymbol{P}$ changes choice of
 basis vectors as follows
 
 $$
-
 ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
 = ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
 \mathbf{c}_\mathrm{s} )  \boldsymbol{P},
-
 $$ (transformation_matrix)
 
 where $( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )$ and $(
@@ -117,9 +106,7 @@ origin of the standardized system $\boldsymbol{O}_\mathrm{s}$ to
 the origin of the arbitrary system $\boldsymbol{O}$,
 
 $$
-
 \boldsymbol{p} = \boldsymbol{O} - \boldsymbol{O}_\mathrm{s}.
-
 $$ (origin_shift)
 
 Origin shift **doesn't** move a crystal in Cartesian coordinates, but
@@ -133,19 +120,15 @@ the standardized system $\boldsymbol{x}_\mathrm{s}$ and
 arbitrary system $\boldsymbol{x}$ are related by
 
 $$
-
 \boldsymbol{x}_\mathrm{s} = \boldsymbol{P}\boldsymbol{x} +
 \boldsymbol{p},
-
 $$ (change_of_basis_1)
 
 or equivalently,
 
 $$
-
 \boldsymbol{x} = \boldsymbol{P}^{-1}\boldsymbol{x}_\mathrm{s} -
 \boldsymbol{P}^{-1}\boldsymbol{p}.
-
 $$ (change_of_basis_2)
 
 A graphical example is shown below.
@@ -160,13 +143,11 @@ align: center
 In this example,
 
 $$
-
 \boldsymbol{P} = \begin{pmatrix}
 \frac{1}{2} & \frac{\bar{1}}{2} & 0 \\
 \frac{1}{2} & \frac{1}{2} & 0 \\
 0 & 0 & 1
 \end{pmatrix}.
-
 $$
 
 ### Difference between rotation and transformation matrices
@@ -179,9 +160,7 @@ A space group operation having no translation part sends an atom to
 another point by
 
 $$
-
 \tilde{\boldsymbol{x}} = \boldsymbol{W}\boldsymbol{x},
-
 $$
 
 where $\tilde{\boldsymbol{x}}$ and $\boldsymbol{x}$ are
@@ -190,59 +169,47 @@ represented with respect to the same basis vectors $(\mathbf{a},
 rotating the basis vectors:
 
 $$
-
 (\tilde{\mathbf{a}}, \tilde{\mathbf{b}}, \tilde{\mathbf{c}}) =
 (\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{W}
-
 $$ (rotation_matrix)
 
 with keeping the representation of the atomic point coordinates
 $\boldsymbol{x}$ because
 
 $$
-
 \tilde{\mathbf{x}} = (\mathbf{a}, \mathbf{b}, \mathbf{c}) \tilde{\boldsymbol{x}}
 = (\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{W}
 \boldsymbol{x}
 = (\tilde{\mathbf{a}}, \tilde{\mathbf{b}}, \tilde{\mathbf{c}})
 \boldsymbol{x}.
-
 $$
 
 The transformation matrix changes the choice of the basis vectors as:
 
 $$
-
 (\mathbf{a}', \mathbf{b}', \mathbf{c}') = (\mathbf{a}, \mathbf{b},
 \mathbf{c}) \boldsymbol{P}.
-
 $$
 
 The atomic position vector is not altered by this transformation, i.e.,
 
 $$
-
 (\mathbf{a}', \mathbf{b}', \mathbf{c}') \boldsymbol{x}' =
 (\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{x}.
-
 $$
 
 However the representation of the atomic point coordinates changes as follows:
 
 $$
-
 \boldsymbol{P} \boldsymbol{x}' = \boldsymbol{x}.
-
 $$
 
 because
 
 $$
-
 (\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{P} \boldsymbol{x}'
 = (\mathbf{a}', \mathbf{b}', \mathbf{c}') \boldsymbol{x}' =
 (\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{x}.
-
 $$
 
 (def_standardized_unit_cell)=
@@ -279,11 +246,9 @@ types available, base centrings of A and C, rhombohedral (R), body centred
 standardized unit cell by
 
 $$
-
 ( \mathbf{a}_\mathrm{p} \; \mathbf{b}_\mathrm{p} \; \mathbf{c}_\mathrm{p} )
 = ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
 \mathbf{c}_\mathrm{s} )  \boldsymbol{P}_\mathrm{c},
-
 $$ (transformation_to_primitive)
 
 where $\mathbf{a}_\mathrm{p}$, $\mathbf{b}_\mathrm{p}$,
@@ -294,7 +259,6 @@ cell. $\boldsymbol{P}_\mathrm{c}$ for centring types are given
 as follows:
 
 $$
-
 \boldsymbol{P}_\mathrm{A} =
 \begin{pmatrix}
 1 & 0 & 0 \\
@@ -325,7 +289,6 @@ $$
 \frac{{1}}{2} & 0 & \frac{{1}}{2} \\
 \frac{{1}}{2} & \frac{{1}}{2} & 0
 \end{pmatrix}.
-
 $$
 
 The choice of transformation matrix depends on purposes. These
@@ -461,13 +424,11 @@ structure can be rotated in the Cartesian coordinates.  The rotation
 matrix $\boldsymbol{R}$ of this rotation is defined by
 
 $$
-
 ( \bar{\mathbf{a}}_\mathrm{s} \;
 \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )
 = ( \boldsymbol{R} \mathbf{a}_\mathrm{s} \;
 \boldsymbol{R} \mathbf{b}_\mathrm{s} \; \boldsymbol{R}
 \mathbf{c}_\mathrm{s} ).
-
 $$ (rigid_rotation_matrix)
 
 This rotation matrix rotates the standardized
@@ -858,13 +819,11 @@ has the ideal symmetry, this means that the crystal was rotated
 rigidly in the idealization step by
 
 $$
-
 ( \bar{\mathbf{a}}_\mathrm{s} \;
 \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )
 = ( \boldsymbol{R} \mathbf{a}_\mathrm{s} \;
 \boldsymbol{R} \mathbf{b}_\mathrm{s} \; \boldsymbol{R}
 \mathbf{c}_\mathrm{s} ).
-
 $$
 
 where $\boldsymbol{R}$ is the rotation
@@ -887,13 +846,11 @@ and we get
 This equals to
 
 $$
-
 \begin{pmatrix}
 \cos\theta & -\sin\theta & 0 \\
 \sin\theta & \cos\theta & 0 \\
 0 & 0 & 1
 \end{pmatrix},
-
 $$
 
 with $\theta = -\pi/4$ and $\det(\boldsymbol{R})=1$ when
@@ -909,12 +866,10 @@ approximately the same result:
 In summary,
 
 $$
-
 ( \bar{\mathbf{a}}_\mathrm{s} \;
 \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )  \boldsymbol{P}
 = ( \boldsymbol{R} \mathbf{a} \; \boldsymbol{R} \mathbf{b} \;
 \boldsymbol{R} \mathbf{c} ).
-
 $$
 
 The atomic point coordinates in $( \bar{\mathbf{a}}_\mathrm{s}
