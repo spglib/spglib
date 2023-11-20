@@ -19,7 +19,7 @@ Basis vectors (in Cartesian coordinates)
   [ a_z, b_z, c_z ] ]
 ```
 
-See {ref}`basis vectors <def_basis_vectors>` and {ref}`point coordinates <def_point_coordinates>` for more details.
+See [basis vectors](../definition.md#def_basis_vectors) and [point coordinates](../definition.md#def_point_coordinates) for more details.
 
 ## `position`
 
