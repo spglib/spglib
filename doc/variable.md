@@ -9,9 +9,9 @@ for Python interface is transposed.
 ## `lattice`
 
 **Attention**: In Python interface, `lattice` is transposed
-({ref}`py_variables_crystal_structure`).
+[](#py_variables_crystal_structure).
 
-Basis vectors (in Cartesian)
+Basis vectors (in Cartesian coordinates)
 
 ```
 [ [ a_x, b_x, c_x ],
@@ -19,27 +19,22 @@ Basis vectors (in Cartesian)
   [ a_z, b_z, c_z ] ]
 ```
 
-Cartesian position $\mathbf{x}_\mathrm{Cart}$ is obtained by
-
-$$
-  \mathbf{x}_\mathrm{Cart} = \mathrm{L}\cdot\mathbf{x}_\mathrm{frac}
-$$
-
-where $\mathrm{L}$ is the basis vectors defined above and is
-$\mathrm{L}=(\mathbf{a},\mathbf{b},\mathbf{c})$, and
-$\mathbf{x}_\mathrm{frac}$ is the atomic position in fractional
-coordinates given below.
+See [Basis vectors](#def_basis_vectors) and [Atomic point
+coordinates](#def_point_coordinates) for more details.
 
 ## `position`
 
 Atomic points (in fractional coordinates with respect to basis vectors)
 
 ```
-[ [ x1_a, x1_b, x1_c ],
-  [ x2_a, x2_b, x2_c ],
-  [ x3_a, x3_b, x3_c ],
+[ [ x1_1, x1_2, x1_3 ],
+  [ x2_1, x2_2, x2_3 ],
+  [ x3_1, x3_2, x3_3 ],
   ...                   ]
 ```
+
+See [Basis vectors](#def_basis_vectors) and [Atomic point
+coordinates](#def_point_coordinates) for more details.
 
 ## `types`
 
@@ -57,10 +52,12 @@ The number of elements is same as the number of atoms.
 Rotation matrices (integer) of symmetry operations.
 
 ```
-[ [ r_aa, r_ab, r_ac ],
-  [ r_ba, r_bb, r_bc ],
-  [ r_ca, r_cb, r_cc ] ]
+[ [ W_11, W_12, W_13 ],
+  [ W_21, W_22, W_23 ],
+  [ W_31, W_32, W_33 ] ]
 ```
+
+See [Symmetry operation](#def_symmetry_operation) for more details.
 
 ## `translation`
 
@@ -68,8 +65,10 @@ Translation vectors corresponding to symmetry operations in fractional
 coordinates.
 
 ```
-[ t_a, t_b, t_c ]
+[ w_1, w_2, w_3 ]
 ```
+
+See [Symmetry operation](#def_symmetry_operation) for more details.
 
 (variables_symprec)=
 
@@ -87,7 +86,7 @@ The angle distortion between basis vectors is converted to a length
 and compared with this distance tolerance. For more details, see the
 [spglib paper](https://arxiv.org/abs/1808.01590), Sec. IV-A. It is
 possible to specify angle tolerance explicitly, see
-{ref}`variables_angle_tolerance`.
+[](#variables_angle_tolerance).
 
 (variables_angle_tolerance)=
 

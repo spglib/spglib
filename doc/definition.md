@@ -8,12 +8,13 @@ in the previous versions.
 
 ## Space group operation and change of basis
 
+(def_basis_vectors)=
+
 ### Basis vectors $(\mathbf{a}, \mathbf{b}, \mathbf{c})$ or $(\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)$
 
 In spglib, basis vectors are represented by three column vectors:
 
 $$
-
 \mathbf{a}= \begin{pmatrix}
 a_x \\
 a_y \\
@@ -35,13 +36,14 @@ in Cartesian coordinates. Depending on the situation,
 $(\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3)$ is used instead of
 $(\mathbf{a}, \mathbf{b}, \mathbf{c})$.
 
+(def_point_coordinates)=
+
 ### Atomic point coordinates $\boldsymbol{x}$
 
 Coordinates of an atomic point $\boldsymbol{x}$ are represented
 as three fractional values relative to basis vectors as follows,
 
 $$
-
 \boldsymbol{x}= \begin{pmatrix}
 x_1 \\
 x_2 \\
@@ -53,16 +55,16 @@ where $0 \le x_i < 1$. A position vector $\mathbf{x}$ in
 Cartesian coordinates is obtained by
 
 $$
-
 \mathbf{x} = (\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{x}.
 $$ (position_vector_1)
 
 or
 
 $$
-
 \mathbf{x} = \sum_i x_i \mathbf{a}_i.
 $$ (position_vector_2)
+
+(def_symmetry_operation)=
 
 ### Symmetry operation $(\boldsymbol{W}, \boldsymbol{w})$
 
@@ -73,7 +75,6 @@ spglib document. The symmetry operation transfers $\boldsymbol{x}$ to
 $\tilde{\boldsymbol{x}}$ as follows:
 
 $$
-
 \tilde{\boldsymbol{x}} = \boldsymbol{W}\boldsymbol{x} + \boldsymbol{w}.
 $$ (space_group_operation)
 
@@ -85,7 +86,6 @@ The transformation matrix $\boldsymbol{P}$ changes choice of
 basis vectors as follows
 
 $$
-
 ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )
 = ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
 \mathbf{c}_\mathrm{s} )  \boldsymbol{P},
@@ -106,7 +106,6 @@ origin of the standardized system $\boldsymbol{O}_\mathrm{s}$ to
 the origin of the arbitrary system $\boldsymbol{O}$,
 
 $$
-
 \boldsymbol{p} = \boldsymbol{O} - \boldsymbol{O}_\mathrm{s}.
 $$ (origin_shift)
 
@@ -121,7 +120,6 @@ the standardized system $\boldsymbol{x}_\mathrm{s}$ and
 arbitrary system $\boldsymbol{x}$ are related by
 
 $$
-
 \boldsymbol{x}_\mathrm{s} = \boldsymbol{P}\boldsymbol{x} +
 \boldsymbol{p},
 $$ (change_of_basis_1)
@@ -129,7 +127,6 @@ $$ (change_of_basis_1)
 or equivalently,
 
 $$
-
 \boldsymbol{x} = \boldsymbol{P}^{-1}\boldsymbol{x}_\mathrm{s} -
 \boldsymbol{P}^{-1}\boldsymbol{p}.
 $$ (change_of_basis_2)
@@ -172,7 +169,6 @@ represented with respect to the same basis vectors $(\mathbf{a},
 rotating the basis vectors:
 
 $$
-
 (\tilde{\mathbf{a}}, \tilde{\mathbf{b}}, \tilde{\mathbf{c}}) =
 (\mathbf{a}, \mathbf{b}, \mathbf{c}) \boldsymbol{W}
 $$ (rotation_matrix)
@@ -220,8 +216,9 @@ $$
 
 ## Spglib conventions of standardized unit cell
 
-The standardization in spglib is achieved by {ref}`a change of basis transformation <def_transformation_and_origin_shift>`. If
-{ref}`idealization <def_idealize_cell>` as shown below is further
+The standardization in spglib is achieved by [a change of basis
+transformation](#def_transformation_and_origin_shift). If
+[idealization](#def_idealize_cell) as shown below is further
 applied, the crystal can be rigidly rotated in Cartesian
 coordinates.
 
@@ -250,7 +247,6 @@ types available, base centrings of A and C, rhombohedral (R), body centred
 standardized unit cell by
 
 $$
-
 ( \mathbf{a}_\mathrm{p} \; \mathbf{b}_\mathrm{p} \; \mathbf{c}_\mathrm{p} )
 = ( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s} \;
 \mathbf{c}_\mathrm{s} )  \boldsymbol{P}_\mathrm{c},
@@ -429,7 +425,6 @@ structure can be rotated in the Cartesian coordinates.  The rotation
 matrix $\boldsymbol{R}$ of this rotation is defined by
 
 $$
-
 ( \bar{\mathbf{a}}_\mathrm{s} \;
 \bar{\mathbf{b}}_\mathrm{s} \; \bar{\mathbf{c}}_\mathrm{s} )
 = ( \boldsymbol{R} \mathbf{a}_\mathrm{s} \;
@@ -607,7 +602,7 @@ lattice = [[7.17851431, 0, 0],  # a
 
 This has the C-centring, so it must be transformed to a primitive
 cell. A possible transformation is shown at
-{ref}`def_standardized_primitive_cell`, which is
+[](#def_standardized_primitive_cell), which is
 $\boldsymbol{P}_\mathrm{C}$. With the following script:
 
 ```python
