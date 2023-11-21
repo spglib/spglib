@@ -216,8 +216,9 @@ $$
 
 ## Spglib conventions of standardized unit cell
 
-The standardization in spglib is achieved by {ref}`a change of basis transformation <def_transformation_and_origin_shift>`. If
-{ref}`idealization <def_idealize_cell>` as shown below is further
+The standardization in spglib is achieved by [a change of basis
+transformation](#def_transformation_and_origin_shift). If
+[idealization](#def_idealize_cell) as shown below is further
 applied, the crystal can be rigidly rotated in Cartesian
 coordinates.
 
@@ -601,7 +602,7 @@ lattice = [[7.17851431, 0, 0],  # a
 
 This has the C-centring, so it must be transformed to a primitive
 cell. A possible transformation is shown at
-{ref}`def_standardized_primitive_cell`, which is
+[](#def_standardized_primitive_cell), which is
 $\boldsymbol{P}_\mathrm{C}$. With the following script:
 
 ```python

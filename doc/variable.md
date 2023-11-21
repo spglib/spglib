@@ -9,7 +9,7 @@ for Python interface is transposed.
 ## `lattice`
 
 **Attention**: In Python interface, `lattice` is transposed
-({ref}`py_variables_crystal_structure`).
+[](#py_variables_crystal_structure).
 
 Basis vectors (in Cartesian coordinates)
 
@@ -19,7 +19,8 @@ Basis vectors (in Cartesian coordinates)
   [ a_z, b_z, c_z ] ]
 ```
 
-See [basis vectors](../definition.md#def_basis_vectors) and [point coordinates](../definition.md#def_point_coordinates) for more details.
+See [Basis vectors](#def_basis_vectors) and [Atomic point
+coordinates](#def_point_coordinates) for more details.
 
 ## `position`
 
@@ -32,7 +33,8 @@ Atomic points (in fractional coordinates with respect to basis vectors)
   ...                   ]
 ```
 
-See {ref}`basis vectors <def_basis_vectors>` and {ref}`point coordinates <def_point_coordinates>` for more details.
+See [Basis vectors](#def_basis_vectors) and [Atomic point
+coordinates](#def_point_coordinates) for more details.
 
 ## `types`
 
@@ -55,7 +57,7 @@ Rotation matrices (integer) of symmetry operations.
   [ W_31, W_32, W_33 ] ]
 ```
 
-See {ref}`symmetry operation <def_symmetry_operation>` for more details.
+See [Symmetry operation](#def_symmetry_operation) for more details.
 
 ## `translation`
 
@@ -66,7 +68,7 @@ coordinates.
 [ w_1, w_2, w_3 ]
 ```
 
-See {ref}`symmetry operation <def_symmetry_operation>` for more details.
+See [Symmetry operation](#def_symmetry_operation) for more details.
 
 (variables_symprec)=
 
@@ -84,7 +86,7 @@ The angle distortion between basis vectors is converted to a length
 and compared with this distance tolerance. For more details, see the
 [spglib paper](https://arxiv.org/abs/1808.01590), Sec. IV-A. It is
 possible to specify angle tolerance explicitly, see
-{ref}`variables_angle_tolerance`.
+[](#variables_angle_tolerance).
 
 (variables_angle_tolerance)=
 
