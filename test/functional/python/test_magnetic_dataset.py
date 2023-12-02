@@ -2,7 +2,11 @@ import unittest
 
 import numpy as np
 
-from spglib import get_magnetic_symmetry_dataset, get_symmetry_dataset
+from spglib import (
+    get_magnetic_symmetry,
+    get_magnetic_symmetry_dataset,
+    get_symmetry_dataset,
+)
 
 
 class TestMagneticDataset(unittest.TestCase):
@@ -620,6 +624,40 @@ class TestMagneticDataset(unittest.TestCase):
         assert np.allclose(dataset_msg["std_lattice"], np.diag([a, b, c]))
         assert np.allclose(dataset_msg["transformation_matrix"], np.eye(3))
         assert np.allclose(dataset_msg["std_rotation_matrix"], rigid_rotation.T)
+
+    def test_primitive_lattice(self):
+        # https://github.com/spglib/spglib/issues/370
+        lattice = np.array(
+            [
+                [10.6949, 0, 0],
+                [0, 6.2875, 0],
+                [0, 0, 5.056],
+            ]
+        )
+        positions = np.array(
+            [
+                [0.0, 0.0, 0.0],
+                [0.5, 0.0, 0.5],
+                [0.5, 0.5, 0.5],
+                [0.0, 0.5, 0.0],
+            ]
+        )
+        numbers = [0, 0, 0, 0]
+        magmoms = np.array(
+            [
+                [3.0, 0.4, 0.0],
+                [-3.0, -0.4, 0.0],
+                [-3.0, 0.4, 0.0],
+                [3.0, -0.4, 0.0],
+            ]
+        )
+        primitive_lattice1 = get_magnetic_symmetry_dataset(
+            (lattice, positions, numbers, magmoms)
+        )["primitive_lattice"]
+        primitive_lattice2 = get_magnetic_symmetry(
+            (lattice, positions, numbers, magmoms)
+        )["primitive_lattice"]
+        assert np.allclose(primitive_lattice1, primitive_lattice2)
 
 
 if __name__ == "__main__":
