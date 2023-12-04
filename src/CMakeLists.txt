@@ -1,13 +1,15 @@
 configure_file(version.h.in version.h)
 
 # Add compiler warnings
-if (MSVC)
-	target_compile_options(Spglib_symspg PRIVATE /W4)
-else()
-	# TODO: C23: Disabled -Wpedantic because of warning spam
-	#  Add it back when C23 standard is widespread and revert this [Temp][C23] commit
-	target_compile_options(Spglib_symspg PRIVATE -Wall -Wextra)
-endif()
+if (SPGLIB_COMPILATION_WARNING)
+	if (MSVC)
+		target_compile_options(Spglib_symspg PRIVATE /W4)
+	else()
+		# TODO: C23: Disabled -Wpedantic because of warning spam
+		#  Add it back when C23 standard is widespread and revert this [Temp][C23] commit
+		target_compile_options(Spglib_symspg PRIVATE -Wall -Wextra)
+	endif()
+endif ()
 
 # Configure main target
 target_sources(Spglib_symspg PRIVATE
