@@ -315,7 +315,9 @@ def get_magnetic_symmetry(
             "translations": np.array(translations[:num_sym], dtype="double", order="C"),
             "time_reversals": time_reversals,
             "equivalent_atoms": equivalent_atoms,
-            "primitive_lattice": primitive_lattice,
+            "primitive_lattice": np.array(
+                np.transpose(primitive_lattice), dtype="double", order="C"
+            ),
         }
 
 
