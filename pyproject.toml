@@ -20,6 +20,7 @@ authors = [
 maintainers = [
     {name="Atsushi Togo", email="atz.togo@gmail.com"},
     {name="Cristian Le", email="git@lecris.dev"},
+    {name="Kohei Shinohara", email="kshinohara0508@gmail.com"},
 ]
 
 [project.urls]
