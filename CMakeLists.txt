@@ -10,7 +10,7 @@ endif ()
 ]==============================================================================================]
 
 project(Spglib
-		VERSION 2.1.0
+		VERSION 2.2.0
 		LANGUAGES C)
 
 # Back-porting to PROJECT_IS_TOP_LEVEL to older cmake
