@@ -37,7 +37,7 @@ test = [
 docs = [
     "Sphinx >= 7.0",
     "sphinxcontrib-bibtex >= 2.5",
-    "sphinx-book-theme @ git+https://github.com/LecrisUT/sphinx-book-theme@sphinx-7",
+    "sphinx-book-theme",
     "myst-parser >= 2.0",
     "linkify-it-py",
 ]
