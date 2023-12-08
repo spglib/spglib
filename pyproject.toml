@@ -4,8 +4,8 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "spglib"
-version = "2.2.0"
-requires-python = ">=3.7"
+version = "2.3.0"
+requires-python = ">=3.8"
 description = "This is the spglib module."
 license = { text = "BSD-3-Clause" }
 readme = "python/README.rst"

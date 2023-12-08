@@ -11,6 +11,10 @@ GitHub release pages and in the git history.
 
 ## \[Unreleased\]
 
+### Python interface
+
+- Dropped Python 3.7 support
+
 ## v2.2.0 (6 Dec. 2023)
 
 This minor release includes update of crystallographic databases to adopt the latest editions of *International Tables for Crystallography*:
