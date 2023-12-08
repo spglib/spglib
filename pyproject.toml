@@ -4,7 +4,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "spglib"
-version = "2.1.0"
+version = "2.2.0"
 requires-python = ">=3.7"
 description = "This is the spglib module."
 license = { text = "BSD-3-Clause" }
@@ -20,6 +20,7 @@ authors = [
 maintainers = [
     {name="Atsushi Togo", email="atz.togo@gmail.com"},
     {name="Cristian Le", email="git@lecris.dev"},
+    {name="Kohei Shinohara", email="kshinohara0508@gmail.com"},
 ]
 
 [project.urls]

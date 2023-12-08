@@ -11,6 +11,145 @@ GitHub release pages and in the git history.
 
 ## \[Unreleased\]
 
+## v2.2.0 (6 Dec. 2023)
+
+This minor release includes update of crystallographic databases to adopt the latest editions of *International Tables for Crystallography*:
+
+<details>
+  <summary>Table of the new Hall symbols for space groups in spglib</summary>
+
+| hall_number | spg_database (previous) | spg_database (new) |
+| ----------- | ----------------------- | ------------------ |
+| 40          | A -2yac                 | A -2yab            |
+| 43          | C -2ybc                 | C -2yac            |
+| 46          | B -2bc                  | B -2ab             |
+| 49          | A -2ac                  | A -2ab             |
+| 52          | C -2xbc                 | C -2xac            |
+| 55          | B -2xbc                 | B -2xab            |
+| 91          | -A 2yac                 | -A 2yab            |
+| 94          | -C 2ybc                 | -C 2yac            |
+| 97          | -B 2bc                  | -B 2ab             |
+| 100         | -A 2ac                  | -A 2ab             |
+| 103         | -C 2xbc                 | -C 2xac            |
+| 106         | -B 2xbc                 | -B 2xab            |
+| 191         | A 2 -2c                 | A 2 -2b            |
+| 192         | B 2 -2c                 | B 2 -2a            |
+| 193         | B -2c 2                 | B -2a 2            |
+| 194         | C -2b 2                 | C -2a 2            |
+| 195         | C -2b -2b               | C -2a -2a          |
+| 196         | A -2c -2c               | A -2b -2b          |
+| 203         | A 2 -2ac                | A 2 -2ab           |
+| 204         | B 2 -2bc                | B 2 -2ab           |
+| 205         | B -2bc 2                | B -2ab 2           |
+| 206         | C -2bc 2                | C -2ac 2           |
+| 207         | C -2bc -2bc             | C -2ac -2ac        |
+| 208         | A -2ac -2ac             | A -2ab -2ab        |
+| 304         | -C 2bc 2                | -C 2ac 2           |
+| 305         | -C 2bc 2bc              | -C 2ac 2ac         |
+| 306         | -A 2ac 2ac              | -A 2ab 2ab         |
+| 307         | -A 2 2ac                | -A 2 2ab           |
+| 308         | -B 2 2bc                | -B 2 2ab           |
+| 309         | -B 2bc 2                | -B 2ab 2           |
+| 316         | -C 2b 2                 | -C 2a 2            |
+| 317         | -C 2b 2b                | -C 2a 2a           |
+| 318         | -A 2c 2c                | -A 2b 2b           |
+| 319         | -A 2 2c                 | -A 2 2b            |
+| 320         | -B 2 2c                 | -B 2 2a            |
+| 321         | -B 2c 2                 | -B 2a 2            |
+| 322         | C 2 2 -1bc              | C 2 2 -1ac         |
+| 323         | -C 2b 2bc               | -C 2a 2ac          |
+| 324         | C 2 2 -1bc              | C 2 2 -1ac         |
+| 325         | -C 2b 2c                | -C 2a 2c           |
+| 326         | A 2 2 -1ac              | A 2 2 -1ab         |
+| 327         | -A 2a 2c                | -A 2a 2b           |
+| 328         | A 2 2 -1ac              | A 2 2 -1ab         |
+| 329         | -A 2ac 2c               | -A 2ab 2b          |
+| 330         | B 2 2 -1bc              | B 2 2 -1ab         |
+| 331         | -B 2bc 2b               | -B 2ab 2b          |
+| 332         | B 2 2 -1bc              | B 2 2 -1ab         |
+| 333         | -B 2b 2bc               | -B 2b 2ab          |
+| 440         | P 31 2c (0 0 1)         | P 31 2 (0 0 4)     |
+| 442         | P 32 2c (0 0 -1)        | P 32 2 (0 0 2)     |
+| 472         | P 61 2 (0 0 -1)         | P 61 2 (0 0 5)     |
+| 474         | P 62 2c (0 0 1)         | P 62 2 (0 0 4)     |
+| 475         | P 64 2c (0 0 -1)        | P 64 2 (0 0 2)     |
+| 515         | F -4c 2 3               | F -4a 2 3          |
+| 524         | -F 4c 2 3               | -F 4a 2 3          |
+| 527         | F 4d 2 3 -1cd           | F 4d 2 3 -1ad      |
+| 528         | -F 4cvw 2vw 3           | -F 4ud 2vw 3       |
+
+</details>
+
+<details>
+  <summary>Table of the new H-M symbols for space groups in spglib</summary>
+
+| hall_number | spg_database (previous) | spg_database (new) |
+| ----------- | ----------------------- | ------------------ |
+| 494         | P m 3                   | P m -3             |
+| 495         | P n 3                   | P n -3             |
+| 496         | P n 3                   | P n -3             |
+| 497         | F m 3                   | F m -3             |
+| 498         | F d 3                   | F d -3             |
+| 499         | F d 3                   | F d -3             |
+| 500         | I m 3                   | I m -3             |
+| 501         | P a 3                   | P a -3             |
+| 502         | I a 3                   | I a -3             |
+
+</details>
+
+<details>
+  <summary>Table of the new Hall symbols for layer groups in spglib</summary>
+
+| layer group hall number | spg_database (previous) | spg_database (new) |
+| ----------------------- | ----------------------- | ------------------ |
+| 62                      | c -2b -2b               | c -2a -2a          |
+| 63                      | c -2b 2                 | c -2a 2            |
+| 81                      | -c 2b 2                 | -c 2a 2            |
+
+</details>
+
+In addition, this minor release includes a range of improvements across documentation, crystallographic database fixes, magnetic space group fixes, refactoring of the C codebase, enhancements to the Fortran and Julia interfaces, and continuous integration (CI) improvements.
+
+### Documentation
+
+- [\[#369\]](https://github.com/spglib/spglib/pull/369) - Minor update of variable.md
+- [\[#355\]](https://github.com/spglib/spglib/pull/355) - Fix example wrong results in definition.md
+- [\[#343\]](https://github.com/spglib/spglib/pull/343) - Fix BNS number in API example
+- [\[#257\]](https://github.com/spglib/spglib/pull/257) - Improve release documentation
+- [\[#332\]](https://github.com/spglib/spglib/pull/332) - Clarify definition of primitive_lattice for MSG
+
+### Fixes (crystallographic database)
+
+- [\[#367\]](https://github.com/spglib/spglib/pull/367) - Fix arithmetic crystal class for -6m2P and -62mP
+- [\[#360\]](https://github.com/spglib/spglib/pull/360) - Fix typo for arithmetic crystal class 6/mmmP
+- [\[#317\]](https://github.com/spglib/spglib/pull/317) - fix #155 refactor(database): standardize Hall symbols
+
+### Fixes (magnetic space group)
+
+- [\[#371\]](https://github.com/spglib/spglib/pull/371) - Fix order of primitive basis for get_magnetic_symmetry
+- [\[#349\]](https://github.com/spglib/spglib/pull/349) - Check pointer to magnetic dataset before free
+
+### C codebase Refactoring
+
+- [\[#347\]](https://github.com/spglib/spglib/pull/347) - Minor simplification of trim_cell
+- [\[#339\]](https://github.com/spglib/spglib/pull/339) - Increase max attempts for reduced cells
+
+### Fortran interface
+
+- [\[#357\]](https://github.com/spglib/spglib/pull/357) - fix: Fortran pkg-config file
+- [\[#342\]](https://github.com/spglib/spglib/pull/342) - Tests for noncollinear case and spg_get_symmetry_with_site_tensors of fortran interface
+- [\[#337\]](https://github.com/spglib/spglib/pull/337) - Add Fortran interface and Fortran interface tests
+- [\[#333\]](https://github.com/spglib/spglib/pull/333) - Add magnetic dataset support in Fortran
+
+### Julia interface
+
+- [\[#341\]](https://github.com/spglib/spglib/pull/341) - fix: Julia packaging issues
+- [\[#340\]](https://github.com/spglib/spglib/pull/340) - Add "Julia interface" to interface.md
+
+### CI and releasing
+
+- [\[#358\]](https://github.com/spglib/spglib/pull/358) - fix: windows-ci
+
 ## v2.1.0 (10 Sep. 2023)
 
 This minor release includes a lot of improvements in build system and CI.
