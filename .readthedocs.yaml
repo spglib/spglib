@@ -8,9 +8,9 @@ python:
 build:
   os: ubuntu-22.04
   tools:
-    python: "3.11"
+    python: "3"
   jobs:
-    pre_build:
-      - echo "Placeholder for doxygen builds via cmake"
+    post_create_environment:
+      - pip install --pre --upgrade sphinx-book-theme
 sphinx:
   configuration: doc/conf.py
