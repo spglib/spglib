@@ -4,8 +4,8 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "spglib"
-version = "2.2.0"
-requires-python = ">=3.7"
+version = "2.3.0"
+requires-python = ">=3.8"
 description = "This is the spglib module."
 license = { text = "BSD-3-Clause" }
 readme = "python/README.rst"
@@ -21,6 +21,24 @@ maintainers = [
     {name="Atsushi Togo", email="atz.togo@gmail.com"},
     {name="Cristian Le", email="git@lecris.dev"},
     {name="Kohei Shinohara", email="kshinohara0508@gmail.com"},
+]
+classifiers = [
+    "Topic :: Scientific/Engineering :: Physics",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: C",
+    "Operating System :: Unix",
+    "Operating System :: MacOS",
+    "Operating System :: Microsoft :: Windows",
+    "License :: OSI Approved :: BSD License",
+    "Programming Language :: C",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Development Status :: 5 - Production/Stable",
 ]
 
 [project.urls]
