@@ -9797,9 +9797,9 @@ static const SpacegroupType layer_group_types[] = {
     {2, "Ci^1  ", "-p 1            ", "p -1                           ",
      "p -1               ", "p-1       ", "     ", PRIMITIVE, 2}, /*   2 */
     {3, "C2^1  ", "p 2             ", "p 1 1 2                        ",
-     "p 1 1 2            ", "p112      ", "     ", PRIMITIVE, 3}, /*   3 */
+     "p 1 1 2            ", "p112      ", "c    ", PRIMITIVE, 3}, /*   3 */
     {4, "Cs^1  ", "p -2            ", "p 1 1 m                        ",
-     "p 1 1 m            ", "p11m      ", "     ", PRIMITIVE, 4}, /*   4 */
+     "p 1 1 m            ", "p11m      ", "c    ", PRIMITIVE, 4}, /*   4 */
     {5, "Cs^2  ", "p -2a           ", "p 1 1 a                        ",
      "p 1 1 a            ", "p11a      ", "c1   ", PRIMITIVE, 4}, /*   5 */
     {5, "Cs^2  ", "p -2ab          ", "p 1 1 n                        ",
@@ -9807,7 +9807,7 @@ static const SpacegroupType layer_group_types[] = {
     {5, "Cs^2  ", "p -2b           ", "p 1 1 b                        ",
      "p 1 1 b            ", "p11b      ", "c3   ", PRIMITIVE, 4}, /*   7 */
     {6, "C2h^1 ", "-p 2            ", "p 1 1 2/m                      ",
-     "p 1 1 2/m          ", "p112/m    ", "     ", PRIMITIVE, 5}, /*   8 */
+     "p 1 1 2/m          ", "p112/m    ", "c    ", PRIMITIVE, 5}, /*   8 */
     {7, "C2h^2 ", "-p 2a           ", "p 1 1 2/a                      ",
      "p 1 1 2/a          ", "p112/a    ", "c1   ", PRIMITIVE, 5}, /*   9 */
     {7, "C2h^2 ", "-p 2ab          ", "p 1 1 2/n                      ",
