@@ -959,11 +959,38 @@ static PointSymmetry get_lattice_symmetry(const Cell *cell,
         for (i = 0; i < 26; i++) {
             for (j = 0; j < 26; j++) {
                 for (k = 0; k < 26; k++) {
-                    /* For layer group, some rotations are not permitted. */
+                    /* For layer group, when aperiodic_axis == 2, W has the form
+                       {{W_11, W_12,      0},
+                        {W_21, W_22,      0},
+                        {   0,    0, (+/-)1}},
+                       when aperiodic_axis == 0, W has the form
+                       {{(+/-)1,    0,    0},
+                        {     0, W_22, W_23},
+                        {     0, W_32, W_33}},
+                       when aperiodic_axis == 1, W has the form
+                       {{W_11,      0, W_13},
+                        {   0, (+/-)1,    0},
+                        {W_13,      0, W_33}},
+                       where W_ij = 0, 1 or -1. */
                     if (aperiodic_axis != -1 &&
-                        ((aperiodic_axis == 2 && ((k != 2 && k != 5) || (i != 0 && i != 1 && i != 3 && i != 4 && i != 8 && i != 11 && i != 14 && i != 17) || (j != 0 && j != 1 && j != 3 && j != 4 && j != 8 && j != 11 && j != 14 && j != 17))) ||
-                         (aperiodic_axis == 0 && ((i != 0 && i != 3) || (j != 1 && j != 2 && j != 4 && j != 5 && j != 6 && j != 9  && j != 12 && j != 15) || (k != 1 && k != 2 && k != 4 && k != 5 && k != 6 && k != 9  && k != 12 && k != 15))) ||
-                         (aperiodic_axis == 1 && ((j != 1 && j != 4) || (i != 0 && i != 2 && i != 3 && i != 5 && i != 7 && i != 10 && i != 13 && i != 16) || (k != 0 && k != 2 && k != 3 && k != 5 && k != 7 && k != 10 && k != 13 && k != 16))))) {
+                        ((aperiodic_axis == 2 &&
+                          ((k != 2 && k != 5) ||
+                           (i != 0 && i != 1 && i != 3 && i != 4 && i != 8 &&
+                            i != 11 && i != 14 && i != 17) ||
+                           (j != 0 && j != 1 && j != 3 && j != 4 && j != 8 &&
+                            j != 11 && j != 14 && j != 17))) ||
+                         (aperiodic_axis == 0 &&
+                          ((i != 0 && i != 3) ||
+                           (j != 1 && j != 2 && j != 4 && j != 5 && j != 6 &&
+                            j != 9 && j != 12 && j != 15) ||
+                           (k != 1 && k != 2 && k != 4 && k != 5 && k != 6 &&
+                            k != 9 && k != 12 && k != 15))) ||
+                         (aperiodic_axis == 1 &&
+                          ((j != 1 && j != 4) ||
+                           (i != 0 && i != 2 && i != 3 && i != 5 && i != 7 &&
+                            i != 10 && i != 13 && i != 16) ||
+                           (k != 0 && k != 2 && k != 3 && k != 5 && k != 7 &&
+                            k != 10 && k != 13 && k != 16))))) {
                         continue;
                     }
                     set_axes(axes, i, j, k);
