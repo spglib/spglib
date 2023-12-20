@@ -43,6 +43,7 @@
 #include "delaunay.h"
 #include "mathfunc.h"
 #include "overlap.h"
+#include "pointgroup.h"
 
 #define NUM_ATOMS_CRITERION_FOR_OPENMP 1000
 #define ANGLE_REDUCE_RATE 0.95
@@ -927,7 +928,7 @@ ret:
 static PointSymmetry get_lattice_symmetry(const Cell *cell,
                                           const double symprec,
                                           const double angle_symprec) {
-    int i, j, k, attempt, num_sym, aperiodic_axis;
+    int i, j, k, attempt, num_sym, aperiodic_axis, is_vertical;
     double angle_tol;
     int axes[3][3];
     double lattice[3][3], min_lattice[3][3];
@@ -954,38 +955,64 @@ static PointSymmetry get_lattice_symmetry(const Cell *cell,
     mat_get_metric(metric_orig, min_lattice);
     angle_tol = angle_symprec;
 
+    /* check if aperiodic axis is vertical to the lattice plane */
+    mat_copy_matrix_d3(metric, metric_orig);
+    switch (aperiodic_axis) {
+        case 2:
+            /*    {{a.a, a.b,   0}, *
+             * G = {a.b, b.b,   0}, *
+             *     {  0,   0, c.c}} */
+            metric[0][2] = 0.0;
+            metric[1][2] = 0.0;
+            break;
+        case 0:
+            /*    {{a.a,   0,   0}, *
+             * G = {  0, b.b, b.c}, *
+             *     {  0, b.c, c.c}} */
+            metric[0][1] = 0.0;
+            metric[0][2] = 0.0;
+            break;
+        case 1:
+            /*    {{a.a,   0, a.c}, *
+             * G = {  0, b.b,   0}, *
+             *     {a.c,   0, c.c}} */
+            metric[0][1] = 0.0;
+            metric[1][2] = 0.0;
+            break;
+        default:
+            break;
+    }
+    if (aperiodic_axis != -1) {
+        is_vertical =
+            is_identity_metric(metric, metric_orig, symprec, angle_tol);
+    }
+
     for (attempt = 0; attempt < NUM_ATTEMPT; attempt++) {
         num_sym = 0;
         for (i = 0; i < 26; i++) {
             for (j = 0; j < 26; j++) {
                 for (k = 0; k < 26; k++) {
                     set_axes(axes, i, j, k);
-                    /* For layer groups, the off-diagonal elements for the
-                     * aperiodic axis are zero. */
+                    /* For layer groups, lattice basis vectors cannot have
+                     * aperiodic component. */
                     switch (aperiodic_axis) {
                         case 2:
-                            /*    {{W_11, W_12,      0}, *
-                             * W = {W_21, W_22,      0}, *
+                            /*    {{W_11, W_12,   W_13}, *
+                             * W = {W_21, W_22,   W_23}, *
                              *     {   0,    0, (+/-)1}} */
-                            if (axes[0][2] || axes[1][2] || axes[2][0] ||
-                                axes[2][1])
-                                continue;
+                            if (axes[2][0] || axes[2][1]) continue;
                             break;
                         case 0:
                             /*    {{(+/-)1,    0,    0}, *
-                             * W = {     0, W_22, W_23}, *
-                             *     {     0, W_32, W_33}} */
-                            if (axes[0][1] || axes[0][2] || axes[1][0] ||
-                                axes[2][0])
-                                continue;
+                             * W = {  W_21, W_22, W_23}, *
+                             *     {  W_31, W_32, W_33}} */
+                            if (axes[0][1] || axes[0][2]) continue;
                             break;
                         case 1:
-                            /*    {{W_11,      0, W_13}, *
+                            /*    {{W_11,   W_12, W_13}, *
                              * W = {   0, (+/-)1,    0}, *
-                             *     {W_13,      0, W_33}} */
-                            if (axes[0][1] || axes[1][0] || axes[1][2] ||
-                                axes[2][1])
-                                continue;
+                             *     {W_31,   W_32, W_33}} */
+                            if (axes[1][0] || axes[1][2]) continue;
                             break;
                         default:
                             break;
@@ -1015,13 +1042,16 @@ static PointSymmetry get_lattice_symmetry(const Cell *cell,
                             goto next_attempt;
                         }
 
-                        mat_copy_matrix_i3(lattice_sym.rot[num_sym], axes);
-                        num_sym++;
+                        /* Additional check for inclined aperiodic axis. */
+                        if (aperiodic_axis == -1 || is_vertical ||
+                            ptg_layer_check_axis(axes, aperiodic_axis)) {
+                            mat_copy_matrix_i3(lattice_sym.rot[num_sym], axes);
+                            num_sym++;
+                        }
                     }
                 }
             }
         }
-
         if ((aperiodic_axis == -1 && num_sym <= 48) ||
             (aperiodic_axis != -1 && num_sym <= 24) || angle_tol < 0) {
             lattice_sym.size = num_sym;
