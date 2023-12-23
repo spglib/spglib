@@ -84,5 +84,4 @@ Pointgroup ptg_get_transformation_matrix(int transform_mat[3][3],
 Pointgroup ptg_get_pointgroup(const int pointgroup_number);
 PointSymmetry ptg_get_pointsymmetry(const int rotations[][3][3],
                                     const int num_rotations);
-int ptg_layer_check_axis(const int rot[3][3], const int aperiodic_axis);
 #endif
