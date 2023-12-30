@@ -5,7 +5,7 @@ extern "C" {
 #include "utils.h"
 }
 
-TEST(MagneticSymmetry, test_spg_get_magnetic_dataset) {
+TEST(MagneticDataset, test_spg_get_magnetic_dataset) {
     /* Rutile structure (P4_2/mnm) */
     /* Generators: -y+1/2,x+1/2,z+1/2; -x+1/2,y+1/2,-z+1/2; -x,-y,-z */
     double lattice[3][3] = {{5, 0, 0}, {0, 5, 0}, {0, 0, 3}};
@@ -82,7 +82,7 @@ TEST(MagneticSymmetry, test_spg_get_magnetic_dataset) {
     }
 }
 
-TEST(MagneticSymmetry, test_spg_get_magnetic_dataset_type4) {
+TEST(MagneticDataset, test_spg_get_magnetic_dataset_type4) {
     /* double Rutile structure (P4_2/mnm) */
     double lattice[3][3] = {{5, 0, 0}, {0, 5, 0}, {0, 0, 6}};
     double position[][3] = {
@@ -119,7 +119,7 @@ TEST(MagneticSymmetry, test_spg_get_magnetic_dataset_type4) {
     spg_free_magnetic_dataset(dataset);
 }
 
-TEST(MagneticSymmetry, test_spg_get_magnetic_dataset_high_mag_symprec) {
+TEST(MagneticDataset, test_spg_get_magnetic_dataset_high_mag_symprec) {
     // https://github.com/spglib/spglib/issues/348
     double lattice[3][3] = {{4, 0, 0}, {0, 4, 0}, {0, 0, 18}};
     double positions[][3] = {
@@ -142,7 +142,7 @@ TEST(MagneticSymmetry, test_spg_get_magnetic_dataset_high_mag_symprec) {
     EXPECT_EQ(error, SpglibError::SPGERR_ATOMS_TOO_CLOSE);
 }
 
-TEST(MagneticSymmetry, test_spgms_get_magnetic_dataset_high_mag_symprec) {
+TEST(MagneticDataset, test_spgms_get_magnetic_dataset_high_mag_symprec) {
     // https://github.com/spglib/spglib/issues/249
     double lattice[3][3] = {
         {0.00000000, -5.00000000, -2.50000000},
@@ -207,7 +207,7 @@ TEST(MagneticSymmetry, test_spgms_get_magnetic_dataset_high_mag_symprec) {
     if (dataset != NULL) spg_free_magnetic_dataset(dataset);
 }
 
-TEST(MagneticSymmetry, test_spg_get_magnetic_dataset_non_collinear) {
+TEST(MagneticDataset, test_spg_get_magnetic_dataset_non_collinear) {
     double lattice[3][3] = {{10, 0, 0}, {0, 10, 0}, {0, 0, 10}};
     double position[][3] = {
         {0, 0, 0},
@@ -225,7 +225,7 @@ TEST(MagneticSymmetry, test_spg_get_magnetic_dataset_non_collinear) {
     spg_free_magnetic_dataset(dataset);
 }
 
-TEST(MagneticSymmetry, test_with_broken_symmetry) {
+TEST(MagneticDataset, test_with_broken_symmetry) {
     // https://github.com/spglib/spglib/issues/194
     // Part of "mp-806965" in the Materials Project database
     double lattice[][3] = {
@@ -297,6 +297,32 @@ TEST(MagneticSymmetry, test_with_broken_symmetry) {
     free(time_reversals);
     if (dataset != NULL) spg_free_magnetic_dataset(dataset);
     free(dataset);
+}
+
+TEST(MagneticDataset, test_with_slightly_distorted_positions) {
+    // https://github.com/spglib/spglib/issues/381
+    double lattice[3][3] = {
+        {4.33379984, -2.16689992, 0.},
+        {0., 3.75318076, 2.50211874},
+        {0., 0., 27.27326917},
+    };
+    double positions[][3] = {
+        {0, 0, 0},
+        {0.5 + 1e-5, 0, 0.5},
+    };
+    int types[] = {0, 0};
+    double tensors[] = {1, -1};
+    int num_atoms = 2;
+    double symprec = 1e-4;
+
+    SpglibMagneticDataset *dataset;
+    dataset = spg_get_magnetic_dataset(lattice, positions, types, tensors,
+                                       0 /* tensor_rank */, num_atoms,
+                                       0 /* is_axial */, symprec);
+    ASSERT_EQ(dataset->uni_number,
+              1332);  // should be the same as no distortion case
+
+    spg_free_magnetic_dataset(dataset);
 }
 
 // TODO: test get_magnetic_dataset with distorted positions

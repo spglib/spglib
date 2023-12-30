@@ -87,6 +87,7 @@ void mat_cross_product_d3(double v[3], const double a[3], const double b[3]);
 double mat_Dabs(const double a);
 int mat_Nint(const double a);
 double mat_Dmod1(const double a);
+double mat_rem1(const double a);
 MatINT* mat_alloc_MatINT(const int size);
 void mat_free_MatINT(MatINT* matint);
 VecDBL* mat_alloc_VecDBL(const int size);

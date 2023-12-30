@@ -369,6 +369,11 @@ double mat_Dmod1(const double a) {
         return b;
 }
 
+/// @brief Return the remainder of a divided by 1.
+/// @param a
+/// @return Remainder between -0.5 and 0.5
+double mat_rem1(const double a) { return a - mat_Nint(a); }
+
 MatINT *mat_alloc_MatINT(const int size) {
     MatINT *matint;
 
