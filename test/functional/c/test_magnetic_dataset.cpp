@@ -36,8 +36,9 @@ TEST(MagneticDataset, test_spg_get_magnetic_dataset) {
         dataset = spg_get_magnetic_dataset(lattice, position, types, spins,
                                            0 /* tensor_rank */, num_atom,
                                            0 /* is_axial */, 1e-5);
-        ASSERT_EQ(dataset->msg_type, 1);
-        ASSERT_EQ(dataset->uni_number, 1155);
+        EXPECT_EQ(dataset->msg_type, 1);
+        EXPECT_EQ(dataset->uni_number, 1155);
+        EXPECT_EQ(spg_get_error_code(), SpglibError::SPGLIB_SUCCESS);
         show_spg_magnetic_dataset(dataset);
 
         spg_free_magnetic_dataset(dataset);
@@ -55,8 +56,9 @@ TEST(MagneticDataset, test_spg_get_magnetic_dataset) {
         dataset = spg_get_magnetic_dataset(lattice, position, types, spins,
                                            0 /* tensor_rank */, num_atom,
                                            0 /* is_axial */, 1e-5);
-        ASSERT_EQ(dataset->msg_type, 2);
-        ASSERT_EQ(dataset->uni_number, 1156);
+        EXPECT_EQ(dataset->msg_type, 2);
+        EXPECT_EQ(dataset->uni_number, 1156);
+        EXPECT_EQ(spg_get_error_code(), SpglibError::SPGLIB_SUCCESS);
         show_spg_magnetic_dataset(dataset);
 
         spg_free_magnetic_dataset(dataset);
@@ -74,8 +76,9 @@ TEST(MagneticDataset, test_spg_get_magnetic_dataset) {
         dataset = spg_get_magnetic_dataset(lattice, position, types, spins,
                                            0 /* tensor_rank */, num_atom,
                                            0 /* is_axial */, 1e-5);
-        ASSERT_EQ(dataset->msg_type, 3);
-        ASSERT_EQ(dataset->uni_number, 1158);
+        EXPECT_EQ(dataset->msg_type, 3);
+        EXPECT_EQ(dataset->uni_number, 1158);
+        EXPECT_EQ(spg_get_error_code(), SpglibError::SPGLIB_SUCCESS);
         show_spg_magnetic_dataset(dataset);
 
         spg_free_magnetic_dataset(dataset);
@@ -112,8 +115,9 @@ TEST(MagneticDataset, test_spg_get_magnetic_dataset_type4) {
     dataset = spg_get_magnetic_dataset(lattice, position, types, spins,
                                        0 /* tensor_rank */, num_atom,
                                        0 /* is_axial */, 1e-5);
-    ASSERT_EQ(dataset->msg_type, 4);
-    ASSERT_EQ(dataset->uni_number, 932);
+    EXPECT_EQ(dataset->msg_type, 4);
+    EXPECT_EQ(dataset->uni_number, 932);
+    EXPECT_EQ(spg_get_error_code(), SpglibError::SPGLIB_SUCCESS);
     show_spg_magnetic_dataset(dataset);
 
     spg_free_magnetic_dataset(dataset);
@@ -204,7 +208,7 @@ TEST(MagneticDataset, test_spgms_get_magnetic_dataset_high_mag_symprec) {
     free(translations);
     free(spin_flips);
     free(time_reversals);
-    if (dataset != NULL) spg_free_magnetic_dataset(dataset);
+    // No need to free SpglibMagneticDataset here
 }
 
 TEST(MagneticDataset, test_spg_get_magnetic_dataset_non_collinear) {
@@ -219,8 +223,9 @@ TEST(MagneticDataset, test_spg_get_magnetic_dataset_non_collinear) {
     dataset = spg_get_magnetic_dataset(lattice, position, types, spins, 1,
                                        num_atom, 1, 1e-5);
 
-    ASSERT_NE(dataset, nullptr);
+    EXPECT_NE(dataset, nullptr);
     EXPECT_EQ(dataset->n_operations, 16);
+    EXPECT_EQ(spg_get_error_code(), SpglibError::SPGLIB_SUCCESS);
     if (HasFailure()) show_spg_magnetic_dataset(dataset);
     spg_free_magnetic_dataset(dataset);
 }
@@ -295,8 +300,7 @@ TEST(MagneticDataset, test_with_broken_symmetry) {
     free(translations);
     free(spin_flips);
     free(time_reversals);
-    if (dataset != NULL) spg_free_magnetic_dataset(dataset);
-    free(dataset);
+    // No need to free SpglibMagneticDataset here
 }
 
 TEST(MagneticDataset, test_with_slightly_distorted_positions) {
@@ -319,8 +323,9 @@ TEST(MagneticDataset, test_with_slightly_distorted_positions) {
     dataset = spg_get_magnetic_dataset(lattice, positions, types, tensors,
                                        0 /* tensor_rank */, num_atoms,
                                        0 /* is_axial */, symprec);
-    ASSERT_EQ(dataset->uni_number,
+    EXPECT_EQ(dataset->uni_number,
               1332);  // should be the same as no distortion case
+    EXPECT_EQ(spg_get_error_code(), SpglibError::SPGLIB_SUCCESS);
 
     spg_free_magnetic_dataset(dataset);
 }
