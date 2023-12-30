@@ -73,7 +73,7 @@ Below is an example of `c_cpp_properties.json` for Mac.
 }
 ```
 
-The below `launch.json` configures debugger in running a single test:
+The `launch.json` below runs a single test with a debugger:
 
 ```json
 {
