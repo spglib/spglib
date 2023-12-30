@@ -13,7 +13,7 @@
 
 ## How to configure the spglib library
 
-The configuration is done by passing cmake options and environment variables at the
+The configuration is done by passing CMake options and environment variables at the
 configuration stage, i.e.:
 
 ```console
@@ -21,14 +21,14 @@ $ cmake . -B build  ${CMAKE_OPTIONS}
 ```
 
 Replace the variable `CMAKE_OPTIONS` with appropriate built-in CMake options, e.g.
-`-DCMAKE_C_COMPILER=gcc`, and Spglib specific options. For a list of useful options
+`-DCMAKE_C_COMPILER=gcc`, and spglib-specific options. For a list of useful options
 check [CMake Options](#cmake-options).
 
 ## CMake Options
 
-All spglib specific options are prefixed with `SPGLIB_` in order to avoid clashes
+All spglib-specific options are prefixed with `SPGLIB_` in order to avoid clashes
 and allow the project to be included via `FetchContent`.
-Keep in mind that in order to pass cmake options they have to be prefixed with `-D`,
+Keep in mind that in order to pass CMake options they have to be prefixed with `-D`,
 e.g. `-DSPGLIB_WITH_Fortran=ON`.
 
 | Option                   |               Default               | Description                                                                        |
@@ -47,7 +47,7 @@ e.g. `-DSPGLIB_WITH_Fortran=ON`.
 ### Linking against locally installed spglib
 
 We currently support two ways of linking this project: using native `cmake` or via `pkg-config`.
-The native cmake package and namespace are `Spglib`. The cmake targets and pkg-config files
+The native CMake package and namespace are `Spglib`. The CMake targets and pkg-config files
 exported are:
 
 |   CMake target    | pkg-config file | Description                                                      |
