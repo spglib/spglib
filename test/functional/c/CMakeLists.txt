@@ -11,6 +11,7 @@ set(test_sources
 		test_standardization.cpp
 		test_dataset_access.cpp
 		test_magnetic_symmetry.cpp
+		test_magnetic_dataset.cpp
 		test_kpoints.cpp
 		)
 if (test_sources)
