@@ -34,6 +34,7 @@
 
 #include "magnetic_spacegroup.h"
 
+#include <math.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -169,6 +170,12 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
     }
     if (uni_number > uni_number_range[1]) {
         warning_print("Failed to match with UNI number!\n");
+        for (int i = 0; i < magnetic_symmetry->size; i++) {
+            debug_print("--- %d ---\n", i + 1);
+            debug_print_matrix_i3(magnetic_symmetry->rot[i]);
+            debug_print_vector_d3(magnetic_symmetry->trans[i]);
+            debug_print("%2d\n", magnetic_symmetry->timerev[i]);
+        }
         goto err;
     }
     debug_print("UNI number: %d\n", uni_number);
@@ -1004,9 +1011,12 @@ static int is_equal(const MagneticSymmetry *sym1, const MagneticSymmetry *sym2,
         found = 0;
         for (j = 0; j < sym2->size; j++) {
             if (mat_check_identity_matrix_i3(sym1->rot[i], sym2->rot[j]) &&
-                mat_Dmod1(sym1->trans[i][0] - sym2->trans[j][0]) < symprec &&
-                mat_Dmod1(sym1->trans[i][1] - sym2->trans[j][1]) < symprec &&
-                mat_Dmod1(sym1->trans[i][2] - sym2->trans[j][2]) < symprec &&
+                fabs(mat_rem1(sym1->trans[i][0] - sym2->trans[j][0])) <
+                    symprec &&
+                fabs(mat_rem1(sym1->trans[i][1] - sym2->trans[j][1])) <
+                    symprec &&
+                fabs(mat_rem1(sym1->trans[i][2] - sym2->trans[j][2])) <
+                    symprec &&
                 sym1->timerev[i] == sym2->timerev[j]) {
                 found = 1;
                 debug_print("sym1[%d] -> sym2[%d]\n", i, j);

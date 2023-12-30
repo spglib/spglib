@@ -24,6 +24,10 @@ $ ctest -L unint_tests
 
 If you use debuggers like gdb or lldb, recompile with `CMAKE_BUILD_TYPE=Debug`.
 
+```console
+$ cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+```
+
 ## How to add a new test file
 
 1. Create `<your_test_suite_name>.cpp`
@@ -51,7 +55,7 @@ TEST(<your_test_suite_name>, <test_name>) {
 
 Although Googletest is automatically prepared, you may need to install it locally to highlight structs and functions.
 
-The below is an example of `c_cpp_properties.json` for Mac (assume Googletest is installed by brew).
+Below is an example of `c_cpp_properties.json` for Mac.
 
 ```json
 {
@@ -60,12 +64,29 @@ The below is an example of `c_cpp_properties.json` for Mac (assume Googletest is
             ...
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/src",
-                "${workspaceFolder}/test",
-                "/opt/homebrew/include/"
+                "${workspaceFolder}/cmake-build-release-gcc/_deps/googletest-src/googletest/include",
+                "${workspaceFolder}/cmake-build-release-llvm/_deps/googletest-src/googletest/include"
             ],
             ...
         }
+    ]
+}
+```
+
+The `launch.json` below runs a single test with a debugger:
+
+```json
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Launch(lldb): #381",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/test/test_suite",
+            "args": ["--gtest_filter=MagneticDataset.test_with_slightly_distorted_positions"],
+            "cwd": "${workspaceFolder}/build/test",
+        },
     ]
 }
 ```
