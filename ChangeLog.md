@@ -14,6 +14,7 @@ GitHub release pages and in the git history.
 ### Python interface
 
 - Dropped Python 3.7 support
+- Dropped ASE Atoms-like input
 
 ## v2.2.0 (6 Dec. 2023)
 
