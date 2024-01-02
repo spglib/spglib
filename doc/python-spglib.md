@@ -191,35 +191,6 @@ numbers = [1, 2, 2, 2]        # Al, Ni, Ni, Ni
 Version 1.9.5 or later: The methods that use the crystal structure
 will return `None` when a crystal structure is not properly given.
 
-#### ASE Atoms-like input is deprecated.
-
-In the previous versions, ASE Atoms-like input was supported, but it
-is deprecated. It is recommended to use the above tuple-style input
-for the future support. `DeprecationWarning` is issued at version
-1.10.0 or later.
-
-The reason to make this feature deprecated is that ASE Atoms class is
-too huge and users may expect spglib can understand its full
-feature. However spglib actually collects only the following values
-from the ASE Atoms-class instance::
-
-```python
-   lattice = cell.get_cell()
-   positions = cell.get_scaled_positions()
-   numbers = cell.get_atomic_numbers()
-   magmoms = None
-```
-
-for which the corresponding code is written out of API and it is found at
-[here](https://github.com/spglib/spglib/blob/e0851894ccdad1abb87d519b228d056128b56806/python/spglib/spglib.py#L737-L741).
-Nevertheless the ASE Atoms-like input will be accepted for a while.  An
-alternative Atoms class
-([atoms.py](https://github.com/spglib/spglib/blob/master/python/examples/atoms.py))
-that contains minimum set of methods is prepared in the
-[examples](https://github.com/spglib/spglib/tree/master/python/examples)
-directory. `get_symmetry` with collinear polarizations is not supported when
-ASE Atoms-class instance.
-
 ### Symmetry tolerance (`symprec`, `angle_tolerance`, `mag_symprec`)
 
 Distance tolerance in Cartesian coordinates to find crystal symmetry. For more
@@ -303,7 +274,7 @@ is returned.
 
 If `cell` is given as a tuple and magnetic moments are given
 as the fourth element of this tuple, symmetry operations are searched
-considering this freedom. In ASE Atoms-class object, this is not supported.
+considering this freedom.
 
 (py_method_get_symmetry_dataset)=
 

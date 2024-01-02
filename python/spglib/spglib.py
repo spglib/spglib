@@ -1541,19 +1541,12 @@ def get_error_message():
 
 
 def _expand_cell(cell):
-    if isinstance(cell, tuple):
-        lattice = np.array(np.transpose(cell[0]), dtype="double", order="C")
-        positions = np.array(cell[1], dtype="double", order="C")
-        numbers = np.array(cell[2], dtype="intc")
-        if len(cell) > 3:
-            magmoms = np.array(cell[3], order="C", dtype="double")
-        else:
-            magmoms = None
+    lattice = np.array(np.transpose(cell[0]), dtype="double", order="C")
+    positions = np.array(cell[1], dtype="double", order="C")
+    numbers = np.array(cell[2], dtype="intc")
+    if len(cell) > 3:
+        magmoms = np.array(cell[3], order="C", dtype="double")
     else:
-        warnings.warn("ASE Atoms-like input is deprecated.", DeprecationWarning)
-        lattice = np.array(cell.get_cell().T, dtype="double", order="C")
-        positions = np.array(cell.get_scaled_positions(), dtype="double", order="C")
-        numbers = np.array(cell.get_atomic_numbers(), dtype="intc")
         magmoms = None
 
     if _check(lattice, positions, numbers, magmoms):
