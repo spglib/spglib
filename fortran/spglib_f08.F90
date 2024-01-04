@@ -1,6 +1,7 @@
 module spglib_f08
 
     use iso_c_binding, only: c_char, c_int, c_double, c_ptr, c_null_char, c_f_pointer, c_associated
+    use spglib_version
 
     implicit none
 
@@ -22,7 +23,9 @@ module spglib_f08
             & spg_get_stabilized_reciprocal_mesh, &
             & spg_get_error_code, spg_get_error_message, &
             & spg_get_spacegroup_type, &
-            & spg_get_magnetic_spacegroup_type
+            & spg_get_magnetic_spacegroup_type, &
+            & version, version_full, commit, &
+            & spg_get_version, spg_get_version_full, spg_get_commit
 
     enum, bind(C)
         enumerator ::  SPGLIB_SUCCESS = 0
@@ -144,6 +147,18 @@ module spglib_f08
             integer(kind(SPGLIB_SUCCESS)) :: spglib_error
             character(len=32) :: error_message
         end function spg_get_error_message
+
+        module function spg_get_version() result(version)
+            character(len=16) :: version
+        end function spg_get_version
+
+        module function spg_get_version_full() result(version_full)
+            character(len=64) :: version_full
+        end function spg_get_version_full
+
+        module function spg_get_commit() result(commit)
+            character(len=40) :: commit
+        end function spg_get_commit
 
         module function spg_get_magnetic_dataset(lattice, position, types, &
                                                  tensors, tensor_rank, num_atom, is_axial, symprec) result(dset)
@@ -538,6 +553,24 @@ submodule(spglib_f08) impl
     end type SpglibMagneticSpacegroupType_c
 
     interface
+        function spg_get_version_c() &
+                & bind(c, name='spg_get_version') result(version)
+            import c_ptr
+            type(c_ptr) :: version
+        end function spg_get_version_c
+
+        function spg_get_version_full_c() &
+                & bind(c, name='spg_get_version_full') result(version_full)
+            import c_ptr
+            type(c_ptr) :: version_full
+        end function spg_get_version_full_c
+
+        function spg_get_commit_c() &
+                & bind(c, name='spg_get_commit') result(commit)
+            import c_ptr
+            type(c_ptr) :: commit
+        end function spg_get_commit_c
+
         function spg_get_error_message_c(spglib_error_c) &
                 & bind(c, name='spg_get_error_message') result(error_message_c)
             import c_ptr, SPGLIB_SUCCESS
@@ -598,24 +631,46 @@ submodule(spglib_f08) impl
         end subroutine spg_free_magnetic_dataset_c
     end interface
 contains
+    ! TODO: Modernize this function to output allocatable string
+    subroutine c_to_f_string(c_str, f_str)
+        type(c_ptr), intent(in)    :: c_str
+        character(*), intent(inout) :: f_str
+
+        character, pointer, dimension(:) :: f_ptr
+        integer :: i
+
+        call c_f_pointer(c_str, f_ptr, [len(f_str)])
+
+        f_str = ' '
+        do i = 1, len(f_str)
+            if (f_ptr(i) == C_NULL_CHAR) exit
+            f_str(i:i) = f_ptr(i)
+        end do
+    end subroutine c_to_f_string
+
+    module function spg_get_version() result(version)
+        character(len=16) :: version
+
+        call c_to_f_string(spg_get_version_c(), version)
+    end function spg_get_version
+
+    module function spg_get_version_full() result(version_full)
+        character(len=64) :: version_full
+
+        call c_to_f_string(spg_get_version_full_c(), version_full)
+    end function spg_get_version_full
+
+    module function spg_get_commit() result(commit)
+        character(len=40) :: commit
+
+        call c_to_f_string(spg_get_commit_c(), commit)
+    end function spg_get_commit
+
     module function spg_get_error_message(spglib_error) result(error_message)
         integer(kind(SPGLIB_SUCCESS)) :: spglib_error
         character(len=32) :: error_message
 
-        character, pointer, dimension(:) :: message
-        type(c_ptr) :: message_ptr
-
-        integer :: i
-
-        message_ptr = spg_get_error_message_c(spglib_error)
-        call c_f_pointer(message_ptr, message, [len(error_message)])
-
-        error_message = ' '
-        do i = 1, len(error_message)
-            if (message(i) == C_NULL_CHAR) exit
-            error_message(i:i) = message(i)
-        end do
-
+        call c_to_f_string(spg_get_error_message_c(spglib_error), error_message)
     end function spg_get_error_message
 
     module function spg_get_spacegroup_type(hall_number) result(spgtype)

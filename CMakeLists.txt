@@ -18,6 +18,8 @@ dynamic_version(
 project(Spglib
 		VERSION ${PROJECT_VERSION}
 		LANGUAGES C)
+set(Spglib_VERSION_FULL ${PROJECT_VERSION_FULL})
+set(Spglib_COMMIT ${GIT_COMMIT})
 
 # Back-porting to PROJECT_IS_TOP_LEVEL to older cmake
 # TODO: Remove when requiring cmake >= 3.21
@@ -120,7 +122,7 @@ endif ()
 
 # Report configuration
 message(STATUS "Spglib:: Build type: ${CMAKE_BUILD_TYPE}")
-message(STATUS "Spglib:: Version ${PROJECT_VERSION}")
+message(STATUS "Spglib:: Version ${PROJECT_VERSION_FULL}")
 
 #[==============================================================================================[
 #                                       External packages                                       #
@@ -223,6 +225,8 @@ if(NOT PROJECT_IS_TOP_LEVEL)
 		set(Spglib_VERSION_MINOR ${Spglib_VERSION_MINOR} PARENT_SCOPE)
 		set(Spglib_VERSION_PATCH ${Spglib_VERSION_PATCH} PARENT_SCOPE)
 		set(Spglib_VERSION_TWEAK ${Spglib_VERSION_TWEAK} PARENT_SCOPE)
+		set(Spglib_VERSION_FULL ${Spglib_VERSION_FULL} PARENT_SCOPE)
+		set(Spglib_COMMIT ${Spglib_COMMIT} PARENT_SCOPE)
 		set(Spglib_Fortran ${Spglib_Fortran} PARENT_SCOPE)
 		set(Spglib_Python ${Spglib_Python} PARENT_SCOPE)
 		set(Spglib_OMP ${Spglib_OMP} PARENT_SCOPE)
@@ -234,6 +238,8 @@ if(NOT PROJECT_IS_TOP_LEVEL)
 				Spglib_VERSION_MINOR
 				Spglib_VERSION_PATCH
 				Spglib_VERSION_TWEAK
+				Spglib_VERSION_FULL
+				Spglib_COMMIT
 				Spglib_Fortran
 				Spglib_Python
 				Spglib_OMP

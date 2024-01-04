@@ -6,6 +6,8 @@
 set(Spglib_Supported_Comps static shared omp fortran)
 # Define deprecated components. For each deprecated component define ${comp}_Replacement
 set(Spglib_Deprecated_Comps "")
+set(Spglib_VERSION_FULL @Spglib_VERSION_FULL@)
+set(Spglib_COMMIT @Spglib_COMMIT@)
 set(Spglib_Fortran @SPGLIB_WITH_Fortran@)
 set(Spglib_Python @SPGLIB_WITH_Python@)
 set(Spglib_OMP @SPGLIB_USE_OMP@)

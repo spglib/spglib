@@ -202,17 +202,32 @@ static size_t get_dense_stabilized_reciprocal_mesh(
 /*-----------------------------------------*/
 /* Version: spglib-[major].[minor].[micro] */
 /*-----------------------------------------*/
-int spg_get_major_version(void) {
+const char *spg_get_version() {
+    spglib_error_code = SPGLIB_SUCCESS;
+    return SPGLIB_VERSION;
+}
+
+const char *spg_get_version_full() {
+    spglib_error_code = SPGLIB_SUCCESS;
+    return SPGLIB_VERSION_FULL;
+}
+
+const char *spg_get_commit() {
+    spglib_error_code = SPGLIB_SUCCESS;
+    return SPGLIB_COMMIT;
+}
+
+int spg_get_major_version() {
     spglib_error_code = SPGLIB_SUCCESS;
     return SPGLIB_MAJOR_VERSION;
 }
 
-int spg_get_minor_version(void) {
+int spg_get_minor_version() {
     spglib_error_code = SPGLIB_SUCCESS;
     return SPGLIB_MINOR_VERSION;
 }
 
-int spg_get_micro_version(void) {
+int spg_get_micro_version() {
     spglib_error_code = SPGLIB_SUCCESS;
     return SPGLIB_MICRO_VERSION;
 }

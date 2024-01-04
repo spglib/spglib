@@ -40,7 +40,9 @@ create_test_sourcelist(FortranTests_Files
 		test_fortran_spg_get_magnetic_dataset.F90
         test_fortran_spg_get_symmetry_with_site_tensors.F90
 		test_fortran_spg_get_symmetry.F90
-		test_fortran_spg_refine_cell.F90)
+		test_fortran_spg_refine_cell.F90
+		test_fortran_version.F90
+)
 # Define any subtests (would be nice to auto-detect them like Catch2)
 
 
@@ -50,6 +52,11 @@ if (CMAKE_Fortran_COMPILER_ID MATCHES "Intel.*")
 	target_link_options(FortranTests PRIVATE
 			"$<$<COMPILE_LANGUAGE:Fortran>:-nofor-main>")
 endif ()
+target_compile_definitions(FortranTests PRIVATE
+		Spglib_VERSION=${Spglib_VERSION}
+		Spglib_VERSION_FULL=${Spglib_VERSION_FULL}
+		Spglib_COMMIT=${Spglib_COMMIT}
+)
 
 # Remove the driver executable from the list for add_test
 set(TestsToRun ${FortranTests_Files})

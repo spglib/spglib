@@ -73,12 +73,47 @@ spglib_error = SpglibError()
 def get_version():
     """Return version number of spglib with tuple of three numbers.
 
-    Notes
-    -----
     .. versionadded:: 1.8.3
+    .. deprecated:: 2.3.0
+        Use :py:func:`spg_get_version` and ``spglib.__version__`` instead
+    """
+    warnings.warn(
+        "get_version() is deprecated. Use __version__ for the python binding"
+        "version and get_spg_version for the detected spglib library version.",
+        DeprecationWarning,
+    )
+    _set_no_error()
+    return spg.version_tuple()
+
+
+def spg_get_version():
+    """Get the X.Y.Z version of the detected spglib C library.
+
+    .. versionadded:: 2.3.0
+    :return: version string
     """
     _set_no_error()
-    return tuple(spg.version())
+    return spg.version_string()
+
+
+def spg_get_version_full():
+    """Get the full version of the detected spglib C library.
+
+    .. versionadded:: 2.3.0
+    :return: full version string
+    """
+    _set_no_error()
+    return spg.version_full()
+
+
+def spg_get_commit():
+    """Get the commit of the detected spglib C library.
+
+    .. versionadded:: 2.3.0
+    :return: commit string
+    """
+    _set_no_error()
+    return spg.commit()
 
 
 def get_symmetry(
