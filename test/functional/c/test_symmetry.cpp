@@ -29,14 +29,15 @@ TEST(Symmetry, test_get_lattice_symmetry_layer) {
     ASSERT_EQ(spg_get_error_code(), SPGLIB_SUCCESS);
     for (int aperiodic_axis = 0; aperiodic_axis < 3; aperiodic_axis++) {
         cel_set_layer_cell(cell, lattice, positions, types, aperiodic_axis);
+
+        // Bravais group of the two-dimensional lattice is 4/mmm
+        symmetry = sym_get_operation(cell, symprec, angle_tolerance);
+        ASSERT_EQ(symmetry->size, 16);
+
+        sym_free_symmetry(symmetry);
+        symmetry = NULL;
     }
 
-    // Bravais group of the two-dimensional lattice is 4/mmm
-    symmetry = sym_get_operation(cell, symprec, angle_tolerance);
-    ASSERT_EQ(symmetry->size, 16);
-
-    sym_free_symmetry(symmetry);
     cel_free_cell(cell);
-    symmetry = NULL;
     cell = NULL;
 }
