@@ -10,8 +10,8 @@ TEST(Symmetry, test_get_lattice_symmetry_layer) {
     Cell *cell;
     Symmetry *symmetry;
 
-    cell = NULL;
-    symmetry = NULL;
+    cell = nullptr;
+    symmetry = nullptr;
 
     const int size = 1;
     double lattice[3][3] = {
@@ -25,19 +25,19 @@ TEST(Symmetry, test_get_lattice_symmetry_layer) {
     const double angle_tolerance = -1;
 
     cell = cel_alloc_cell(size, NOSPIN);
+    EXPECT_EQ(spg_get_error_code(), SPGLIB_SUCCESS);
     ASSERT_NE(cell, nullptr);
-    ASSERT_EQ(spg_get_error_code(), SPGLIB_SUCCESS);
     for (int aperiodic_axis = 0; aperiodic_axis < 3; aperiodic_axis++) {
         cel_set_layer_cell(cell, lattice, positions, types, aperiodic_axis);
 
         // Bravais group of the two-dimensional lattice is 4/mmm
         symmetry = sym_get_operation(cell, symprec, angle_tolerance);
-        ASSERT_EQ(symmetry->size, 16);
+        EXPECT_EQ(symmetry->size, 16);
 
         sym_free_symmetry(symmetry);
-        symmetry = NULL;
+        symmetry = nullptr;
     }
 
     cel_free_cell(cell);
-    cell = NULL;
+    cell = nullptr;
 }
