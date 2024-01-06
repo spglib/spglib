@@ -959,14 +959,39 @@ static PointSymmetry get_lattice_symmetry(const Cell *cell,
         for (i = 0; i < 26; i++) {
             for (j = 0; j < 26; j++) {
                 for (k = 0; k < 26; k++) {
-                    /* For layer group, some rotations are not permitted. */
-                    if (aperiodic_axis != -1 &&
-                        ((aperiodic_axis == 2 && k != 2 && k != 5) ||
-                         (aperiodic_axis == 0 && i != 0 && i != 3) ||
-                         (aperiodic_axis == 1 && j != 1 && j != 4))) {
-                        continue;
-                    }
                     set_axes(axes, i, j, k);
+                    /* For layer groups, the off-diagonal elements for the
+                     * aperiodic axis are set to be zero.
+                     * Please note that for inclined aperiodic axis, some
+                     * operations will not be found */
+                    switch (aperiodic_axis) {
+                        case 2:
+                            /*    {{W_11, W_12,      0}, *
+                             * W = {W_21, W_22,      0}, *
+                             *     {   0,    0, (+/-)1}} */
+                            if (axes[0][2] || axes[1][2] || axes[2][0] ||
+                                axes[2][1])
+                                continue;
+                            break;
+                        case 0:
+                            /*    {{(+/-)1,    0,    0}, *
+                             * W = {     0, W_22, W_23}, *
+                             *     {     0, W_32, W_33}} */
+                            if (axes[0][1] || axes[0][2] || axes[1][0] ||
+                                axes[2][0])
+                                continue;
+                            break;
+                        case 1:
+                            /*    {{W_11,      0, W_13}, *
+                             * W = {   0, (+/-)1,    0}, *
+                             *     {W_31,      0, W_33}} */
+                            if (axes[0][1] || axes[1][0] || axes[1][2] ||
+                                axes[2][1])
+                                continue;
+                            break;
+                        default:
+                            break;
+                    }
                     if (!((mat_get_determinant_i3(axes) == 1) ||
                           (mat_get_determinant_i3(axes) == -1))) {
                         continue;
