@@ -56,6 +56,8 @@ html_theme = "sphinx_book_theme"
 html_title = f"Spglib v{release}"
 html_theme_options = {
     # https://sphinx-book-theme.readthedocs.io/en/latest/reference.html
+    "repository_url": "https://github.com/spglib/spglib",
+    "use_repository_button": True,
     "navigation_with_keys": True,
     "globaltoc_includehidden": "true",
     "show_toc_level": 3,
