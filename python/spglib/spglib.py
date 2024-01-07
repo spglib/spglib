@@ -33,6 +33,8 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import warnings
 
 import numpy as np
@@ -69,52 +71,72 @@ spglib_error = SpglibError()
 
 
 def get_version():
-    """Version number of spglib."""
+    """Return version number of spglib with tuple of three numbers.
+
+    Notes
+    -----
+    .. versionadded:: 1.8.3
+    """
     _set_no_error()
     return tuple(spg.version())
 
 
 def get_symmetry(
     cell, symprec=1e-5, angle_tolerance=-1.0, mag_symprec=-1.0, is_magnetic=True
-):
-    """Find symmetry operations from a crystal structure and site tensors.
+) -> dict | None:
+    r"""Find symmetry operations from a crystal structure and site tensors.
+
+    .. warning::
+        :func:`get_symmetry` with ``is_magnetic=True`` is deprecated at version 2.0.
+
+    Use :func:`get_magnetic_symmetry` for magnetic symmetry search.
 
     Parameters
     ----------
     cell : tuple
-        Crystal structure given either in tuple or Atoms object (deprecated).
-        In the case given by a tuple, it has to follow the form below,
-
+        Crystal structure given in tuple.
+        It has to follow the following form,
         (basis vectors, atomic points, types in integer numbers, ...)
 
-        basis vectors : array_like
-            [[a_x, a_y, a_z],
-             [b_x, b_y, b_z],
-             [c_x, c_y, c_z]]
+        - basis vectors : array_like
             shape=(3, 3), order='C', dtype='double'
-        atomic points : array_like
+
+            .. code-block:: python
+
+                [[a_x, a_y, a_z],
+                [b_x, b_y, b_z],
+                [c_x, c_y, c_z]]
+
+        - atomic points : array_like
+            shape=(num_atom, 3), order='C', dtype='double'
+
             Atomic position vectors with respect to basis vectors, i.e.,
             given in  fractional coordinates.
-            shape=(num_atom, 3), order='C', dtype='double'
-        types : array_like
-            Integer numbers to distinguish species.
+        - types : array_like
             shape=(num_atom, ), dtype='intc'
-        optional data :
+
+            Integer numbers to distinguish species.
+        - optional data :
             case-I: Scalar
+                shape=(num_atom, ), dtype='double'
+
                 Each atomic site has a scalar value. With is_magnetic=True,
                 values are included in the symmetry search in a way of
                 collinear magnetic moments.
-                shape=(num_atom, ), dtype='double'
             case-II: Vectors
+                shape=(num_atom, 3), order='C', dtype='double'
+
                 Each atomic site has a vector. With is_magnetic=True,
                 vectors are included in the symmetry search in a way of
                 non-collinear magnetic moments.
-                shape=(num_atom, 3), order='C', dtype='double'
     symprec : float
         Symmetry search tolerance in the unit of length.
     angle_tolerance : float
-        Symmetry search tolerance in the unit of angle deg. If the value is
-        negative, an internally optimized routine is used to judge symmetry.
+        Symmetry search tolerance in the unit of angle deg.
+        Normally it is not recommended to use this argument.
+        See a bit more detail at :ref:`variables_angle_tolerance`.
+        If the value is negative, an internally optimized routine is used to
+        judge symmetry.
     mag_symprec : float
         Tolerance for magnetic symmetry search in the unit of magnetic moments.
         If not specified, use the same value as symprec.
@@ -126,23 +148,60 @@ def get_symmetry(
 
     Returns
     -------
-    dictionary
-        Rotation parts and translation parts of symmetry operations represented
-        with respect to basis vectors and atom index mapping by symmetry
-        operations.
-        'rotations' : ndarray
-            Rotation (matrix) parts of symmetry operations
+    symmetry: dict
+        Rotation parts and translation parts of symmetry operations are represented
+        with respect to basis vectors.
+        When the search failed, :code:`None` is returned.
+
+        - 'rotations' : ndarray
             shape=(num_operations, 3, 3), order='C', dtype='intc'
-        'translations' : ndarray
-            Translation (vector) parts of symmetry operations
+
+            Rotation (matrix) parts of symmetry operations
+        - 'translations' : ndarray
             shape=(num_operations, 3), dtype='double'
-        'time_reversals': ndarray (exists when the optional data is given)
+
+            Translation (vector) parts of symmetry operations
+        - 'time_reversals': ndarray (exists when the optional data is given)
+            shape=(num_operations, ), dtype='bool\_'
+
             Time reversal part of magnetic symmetry operations.
             True indicates time reversal operation, and False indicates
             an ordinary operation.
-            shape=(num_operations, ), dtype='bool_'
-        'equivalent_atoms' : ndarray
+        - 'equivalent_atoms' : ndarray
             shape=(num_atoms, ), dtype='intc'
+
+            A mapping table of atoms to symmetrically independent atoms.
+            This is used to find symmetrically equivalent atoms.
+            The numbers contained are the indices of atoms starting from 0,
+            i.e., the first atom is numbered as 0, and
+            then 1, 2, 3, ... :code:`np.unique(equivalent_atoms)` gives representative
+            symmetrically independent atoms. A list of atoms that are
+            symmetrically equivalent to some independent atom (here for example 1
+            is in :code:`equivalent_atom`) is found by
+            :code:`np.where(equivalent_atom=1)[0]`.
+
+    Notes
+    -----
+    The orders of the rotation matrices and the translation
+    vectors correspond with each other, e.g. , the second symmetry
+    operation is organized by the set of the second rotation matrix and second
+    translation vector in the respective arrays. Therefore a set of
+    symmetry operations may obtained by
+
+    .. code-block:: python
+
+        [(r, t) for r, t in zip(dataset['rotations'], dataset['translations'])]
+
+    The operations are given with respect to the fractional coordinates
+    (not for Cartesian coordinates). The rotation matrix and translation
+    vector are used as follows:
+
+    .. code-block::
+
+        new_vector[3x1] = rotation[3x3] * vector[3x1] + translation[3x1]
+
+    The three values in the vector are given for the a, b, and c axes,
+    respectively.
 
     """
     _set_no_error()
@@ -186,8 +245,8 @@ def get_magnetic_symmetry(
     mag_symprec=-1.0,
     is_axial=None,
     with_time_reversal=True,
-):
-    """Find magnetic symmetry operations from a crystal structure and site tensors.
+) -> dict | None:
+    r"""Find magnetic symmetry operations from a crystal structure and site tensors.
 
     Parameters
     ----------
@@ -197,34 +256,45 @@ def get_magnetic_symmetry(
 
         (basis vectors, atomic points, types in integer numbers, ...)
 
-        basis vectors : array_like
-            [[a_x, a_y, a_z],
-             [b_x, b_y, b_z],
-             [c_x, c_y, c_z]]
+        - basis vectors : array_like
             shape=(3, 3), order='C', dtype='double'
-        atomic points : array_like
+
+            .. code-block::
+
+                [[a_x, a_y, a_z],
+                [b_x, b_y, b_z],
+                [c_x, c_y, c_z]]
+
+        - atomic points : array_like
+            shape=(num_atom, 3), order='C', dtype='double'
+
             Atomic position vectors with respect to basis vectors, i.e.,
             given in  fractional coordinates.
-            shape=(num_atom, 3), order='C', dtype='double'
-        types : array_like
-            Integer numbers to distinguish species.
+        - types : array_like
             shape=(num_atom, ), dtype='intc'
-        magmoms:
+
+            Integer numbers to distinguish species.
+        - magmoms:
             case-I: Scalar
+                shape=(num_atom, ), dtype='double'
+
                 Each atomic site has a scalar value. With is_magnetic=True,
                 values are included in the symmetry search in a way of
                 collinear magnetic moments.
-                shape=(num_atom, ), dtype='double'
             case-II: Vectors
+                shape=(num_atom, 3), order='C', dtype='double'
+
                 Each atomic site has a vector. With is_magnetic=True,
                 vectors are included in the symmetry search in a way of
                 non-collinear magnetic moments.
-                shape=(num_atom, 3), order='C', dtype='double'
     symprec : float
         Symmetry search tolerance in the unit of length.
     angle_tolerance : float
-        Symmetry search tolerance in the unit of angle deg. If the value is
-        negative, an internally optimized routine is used to judge symmetry.
+        Symmetry search tolerance in the unit of angle deg.
+        Normally it is not recommended to use this argument.
+        See a bit more detail at :ref:`variables_angle_tolerance`.
+        If the value is negative, an internally optimized routine is used to judge
+        symmetry.
     mag_symprec : float
         Tolerance for magnetic symmetry search in the unit of magnetic moments.
         If not specified, use the same value as symprec.
@@ -240,23 +310,31 @@ def get_magnetic_symmetry(
 
     Returns
     -------
-    dictionary
+    symmetry: dict or None
         Rotation parts and translation parts of symmetry operations represented
         with respect to basis vectors and atom index mapping by symmetry
         operations.
-        'rotations' : ndarray
-            Rotation (matrix) parts of symmetry operations
+
+        - 'rotations' : ndarray
             shape=(num_operations, 3, 3), order='C', dtype='intc'
-        'translations' : ndarray
-            Translation (vector) parts of symmetry operations
+
+            Rotation (matrix) parts of symmetry operations
+        - 'translations' : ndarray
             shape=(num_operations, 3), dtype='double'
-        'time_reversals': ndarray (exists when the optional data is given)
+
+            Translation (vector) parts of symmetry operations
+        - 'time_reversals': ndarray
+            shape=(num_operations, ), dtype='bool\_'
+
             Time reversal part of magnetic symmetry operations.
             True indicates time reversal operation, and False indicates
             an ordinary operation.
-            shape=(num_operations, ), dtype='bool_'
-        'equivalent_atoms' : ndarray
+        - 'equivalent_atoms' : ndarray
             shape=(num_atoms, ), dtype='intc'
+
+    Notes
+    -----
+    .. versionadded:: 2.0
     """
     _set_no_error()
 
@@ -393,100 +471,164 @@ def _build_dataset_dict(spg_ds):
     return dataset
 
 
-def get_symmetry_dataset(cell, symprec=1e-5, angle_tolerance=-1.0, hall_number=0):
+def get_symmetry_dataset(
+    cell, symprec=1e-5, angle_tolerance=-1.0, hall_number=0
+) -> dict | None:
     """Search symmetry dataset from an input cell.
 
     Parameters
     ----------
     cell, symprec, angle_tolerance:
-        See the docstring of get_symmetry.
+        See :func:`get_symmetry`.
     hall_number : int
         If a serial number of Hall symbol (>0) is given, the database
         corresponding to the Hall symbol is made.
 
+        The mapping from Hall symbols to a space-group-type is the many-to-one mapping.
+        Without specifying this
+        option (i.e., in the case of ``hall_number=0``), always the first one
+        (the smallest serial number corresponding to the space-group-type in
+        [list of space groups (Seto's web site)](https://yseto.net/?page_id=29%3E))
+        among possible choices and settings is chosen as default. This
+        argument is useful when the other choice (or setting) is expected to
+        be hooked.
+
+        This affects to the obtained values of `international`,
+        `hall`, `choice`, `transformation_matrix`,
+        `origin shift`, `wyckoffs`, `std_lattice`, `std_positions`,
+        `std_types` and `std_rotation_matrix`, but not to `rotations`
+        and `translations` since the later set is defined with respect to
+        the basis vectors of user's input (the `cell` argument).
+
+        See also :ref:`dataset_spg_get_dataset_spacegroup_type`.
+
     Returns
     -------
-    dict or None
+    dataset: dict
         If it fails, None is returned. Otherwise a dictionary is returned.
-        Dictionary keys are as follows:
+        More details are found at :ref:`spglib_dataset`.
 
-        number : int
+        - number : int
             International space group number.
-        international : str
+        - international : str
             International symbol.
-        hall : str
+        - hall : str
             Hall symbol.
-        choice : str
+        - choice : str
             Centring, origin, basis vector setting.
-        transformation_matrix : ndarray
-            Transformation matrix from input lattice to standardized lattice:
-                L^original = L^standardized * Tmat.
+        - hall_number: int
+            Hall number. This number is used in
+            :func:`get_symmetry_from_database` and
+            :func:`get_spacegroup_type`.
+        - transformation_matrix : ndarray
             shape=(3, 3), order='C', dtype='double'
-        origin shift : ndarray
-            Origin shift from standardized to input origin.
+
+            Transformation matrix from input lattice to standardized lattice:
+
+                .. code-block::
+
+                    L^original = L^standardized * Tmat.
+
+            See the detail at :ref:`dataset_origin_shift_and_transformation`.
+
+        - origin shift : ndarray
             shape=(3,), dtype='double'
-        rotations : ndarray
-            Matrix (rotation) parts of space group operations. Space group
-            operations are obtained by [(r,t) for r, t in zip(rotations,
-            translations)].
+
+            Origin shift from standardized to input origin.
+            See the detail at :ref:`dataset_origin_shift_and_transformation`.
+        - rotations : ndarray
             shape=(n_operations, 3, 3), order='C', dtype='intc'
-        translations : ndarray
-            Vector (translation) parts of space group operations. Space group
-            operations are obtained by [(r,t) for r, t in zip(rotations,
-            translations)].
+
+            Matrix (rotation) parts of space group operations. Space group
+            operations are obtained by
+
+            .. code-block:: python
+
+                [(r,t) for r, t in zip(rotations, translations)]
+
+            See also :func:`get_symmetry`.
+        - translations : ndarray
             shape=(n_operations, 3), order='C', dtype='double'
-        wyckoffs : list of str
+
+            Vector (translation) parts of space group operations. Space group
+            operations are obtained by
+
+            .. code-block:: python
+
+                [(r,t) for r, t in zip(rotations, translations)]
+
+            See also :func:`get_symmetry`.
+        - wyckoffs : list[str]
             Wyckoff letters corresponding to the space group type.
-        site_symmetry_symbols : list of str
+        - site_symmetry_symbols : list[str]
             Site symmetry symbols corresponding to the space group type.
-        equivalent_atoms : ndarray
+        - equivalent_atoms : ndarray
+            shape=(n_atoms,), dtype='intc'
+
             Symmetrically equivalent atoms, where 'symmetrically' means found
             symmetry operations. In spglib, symmetry operations are given for
             the input cell. When a non-primitive cell is inputted and the
             lattice made by the non-primitive basis vectors breaks its point
             group, the found symmetry operations may not correspond to the
             crystallographic space group type.
+        - crystallographic_orbits : ndarray
             shape=(n_atoms,), dtype='intc'
-        crystallographic_orbits : ndarray
+
             Symmetrically equivalent atoms, where 'symmetrically' means the
             space group operations corresponding to the space group type. This
             is very similar to ``equivalent_atoms``. See the difference
             explained in ``equivalent_atoms``
-            shape=(n_atoms,), dtype='intc'
-        Primitive cell :
-            primitive_lattice : ndarray
+
+        - Primitive cell :
+            - primitive_lattice : ndarray
+                shape=(3, 3), order='C', dtype='double'
+
                 Basis vectors a, b, c of a primitive cell in row vectors. This
                 is the primitive cell found inside spglib before applying
                 standardization. Therefore, the values are distorted with
                 respect to found space group type.
-                shape=(3, 3), order='C', dtype='double'
-            mapping_to_primitive : ndarray
+            - mapping_to_primitive : ndarray
+                shape=(n_atoms), dtype='intc'
+
                 Atom index mapping from original cell to the primitive cell of
                 ``primitive_lattice``.
-                shape=(n_atoms), dtype='intc'
-        Idealized standardized unit cell :
-            std_lattice : ndarray
-                Basis vectors a, b, c of a standardized cell in row vectors.
+        - Idealized standardized unit cell :
+            - std_lattice : ndarray
                 shape=(3, 3), order='C', dtype='double'
-            std_positions : ndarray
+
+                Basis vectors a, b, c of a standardized cell in row vectors.
+            - std_positions : ndarray
+                shape=(n_atoms, 3), order='C', dtype='double'
+
                 Positions of atoms in the standardized cell in fractional
                 coordinates.
-                shape=(n_atoms, 3), order='C', dtype='double'
-            std_types : ndarray
-                Identity numbers of atoms in the standarzied cell.
+            - std_types : ndarray
                 shape=(n_atoms,), dtype='intc'
-        std_rotation_matrix : ndarray
+
+                Identity numbers of atoms in the standarzied cell.
+        - std_rotation_matrix : ndarray
+            shape=(3, 3), order='C', dtype='double'
+
             Rigid rotation matrix to rotate from standardized basis vectors to
             idealized standardized basis vectors. Orthonormalized.
+
+            .. code-block::
+
                 L^idealized = R * L^standardized.
-            shape=(3, 3), order='C', dtype='double'
-        std_mapping_to_primitive :
+
+            See the detail at :ref:`dataset_idealized_cell`.
+        - std_mapping_to_primitive :
+            dtype='intc'
+
             ``std_positions`` index mapping to those of atoms of the primitive
             cell in the standardized cell.
-            dtype='intc'
-        pointgroup : str
-            Pointgroup symbol.
+        - pointgroup : str
+            Pointgroup symbol in Hermann-Mauguin notation.
 
+    Notes
+    -----
+    .. versionadded:: 1.9.4
+        The member 'choice' is added.
     """
     _set_no_error()
 
@@ -537,77 +679,88 @@ def get_magnetic_symmetry_dataset(
     symprec=1e-5,
     angle_tolerance=-1.0,
     mag_symprec=-1.0,
-):
-    """Search magnetic symmetry dataset from an input cell.
+) -> dict | None:
+    """Search magnetic symmetry dataset from an input cell. If it fails, return None.
+
+    The description of its keys is given at :ref:`magnetic_spglib_dataset`.
 
     Parameters
     ----------
     cell, is_axial, symprec, angle_tolerance, mag_symprec:
-        See the docstring of get_magnetic_symmetry.
+        See :func:`get_magnetic_symmetry`.
 
     Returns
     -------
-    dict or None
-        If it fails, None is returned. Otherwise a dictionary is returned.
+    dataset : dict or None
         Dictionary keys are as follows:
 
         Magnetic space-group type
-            uni_number: int
+            - uni_number: int
                 UNI number between 1 to 1651
-            msg_type: int
+            - msg_type: int
                 Magnetic space groups (MSG) is classified by its family space
                 group (FSG) and maximal space subgroup (XSG). FSG is a non-magnetic
                 space group obtained by ignoring time-reversal term in MSG. XSG is
                 a space group obtained by picking out non time-reversal operations
                 in MSG.
 
-                msg_type==1 (type-I): MSG, XSG, FSG are all isomorphic.
-                msg_type==2 (type-II): XSG and FSG are isomorphic, and MSG is
-                                        generated from XSG and pure time reversal
-                                        operations.
-                msg_type==3 (type-III): XSG is a proper subgroup of MSG with
-                                        isomorphic translational subgroups.
-                msg_type==4 (type-IV): XSG is a proper subgroup of MSG with
-                                        isomorphic point group.
-            hall_number: int
+                - msg_type==1 (type-I):
+                    MSG, XSG, FSG are all isomorphic.
+                - msg_type==2 (type-II):
+                    XSG and FSG are isomorphic, and MSG is generated from XSG and pure time reversal operations.
+                - msg_type==3 (type-III):
+                    XSG is a proper subgroup of MSG with isomorphic translational subgroups.
+                - msg_type==4 (type-IV):
+                    XSG is a proper subgroup of MSG with isomorphic point group.
+
+            - hall_number: int
                 For type-I, II, III, Hall number of FSG; for type-IV, that of XSG
-            tensor_rank: int
+            - tensor_rank: int
+
         Magnetic symmetry operations
-            n_operations: int
-            rotations: array, (n_operations, 3, 3)
+            - n_operations: int
+            - rotations: array, (n_operations, 3, 3)
                 Rotation (matrix) parts of symmetry operations
-            translations: array, (n_operations, 3)
+            - translations: array, (n_operations, 3)
                 Translation (vector) parts of symmetry operations
-            time_reversals: array, (n_operations, )
+            - time_reversals: array, (n_operations, )
                 Time reversal part of magnetic symmetry operations.
                 True indicates time reversal operation, and False indicates
                 an ordinary operation.
+
         Equivalent atoms
-            n_atoms: int
-            equivalent_atoms: array
+            - n_atoms: int
+            - equivalent_atoms: array
                 See the docstring of get_symmetry_dataset
+
         Transformation to standardized setting
-            transformation_matrix: array, (3, 3)
+            - transformation_matrix: array, (3, 3)
                 Transformation matrix from input lattice to standardized
-            origin_shift: array, (3, )
+            - origin_shift: array, (3, )
                 Origin shift from standardized to input origin
+
         Standardized crystal structure
-            n_std_atoms: int
+            - n_std_atoms: int
                 Number of atoms in standardized unit cell
-            std_lattice: array, (3, 3)
+            - std_lattice: array, (3, 3)
                 Row-wise lattice vectors
-            std_types: array, (n_std_atoms, )
-            std_positions: array, (n_std_atoms, 3)
-            std_tensors: array
+            - std_types: array, (n_std_atoms, )
+            - std_positions: array, (n_std_atoms, 3)
+            - std_tensors: array
                 (n_std_atoms, ) for collinear magnetic moments.
                 (n_std_atoms, 3) for vector non-collinear magnetic moments.
-            std_rotation_matrix
+            - std_rotation_matrix
                 Rigid rotation matrix to rotate from standardized basis
                 vectors to idealized standardized basis vectors
-        Intermediate data in symmetry search
-            primitive_lattice: array, (3, 3)
 
-    """
+        Intermediate data in symmetry search
+            - primitive_lattice: array, (3, 3)
+
+    Notes
+    -----
+    .. versionadded:: 2.0
+
+    """  # noqa: E501
     _set_no_error()
 
     lattice, positions, numbers, magmoms = _expand_cell(cell)
@@ -716,11 +869,14 @@ def get_layergroup(cell, aperiodic_dir=2, symprec=1e-5):
     return dataset
 
 
-def get_spacegroup(cell, symprec=1e-5, angle_tolerance=-1.0, symbol_type=0):
+def get_spacegroup(
+    cell, symprec=1e-5, angle_tolerance=-1.0, symbol_type=0
+) -> str | None:
     """Return space group in international table symbol and number as a string.
 
-    If it fails, None is returned.
+    With ``symbol_type=1``, Schoenflies symbol is given instead of international symbol.
 
+    If it fails, None is returned.
     """
     _set_no_error()
 
@@ -738,8 +894,14 @@ def get_spacegroup(cell, symprec=1e-5, angle_tolerance=-1.0, symbol_type=0):
         return "%s (%d)" % (spg_type["international_short"], dataset["number"])
 
 
-def get_spacegroup_type(hall_number):
-    """Translate Hall number to space group type information.
+def get_spacegroup_type(hall_number) -> dict | None:
+    """Translate Hall number to space group type information. If it fails, return None.
+
+    This function allows to directly access to the space-group-type database
+    in spglib (spg_database.c).
+    To specify the space group type with a specific choice, ``hall_number`` is used.
+    The definition of ``hall_number`` is found at
+    :ref:`dataset_spg_get_dataset_spacegroup_type`.
 
     Parameters
     ----------
@@ -748,34 +910,44 @@ def get_spacegroup_type(hall_number):
 
     Returns
     -------
-    dict or None
-        If it fails, None is returned. Otherwise a dictionary is returned.
+    spacegroup_type: dict or None
         Dictionary keys are as follows:
 
-        number : int
+        - number : int
             International space group number
-        international_short : str
+        - international_short : str
             International short symbol.
-        international_full : str
+            Equivalent to ``dataset['international']`` of :func:`get_symmetry_dataset`.
+        - international_full : str
             International full symbol.
-        international : str
+        - international : str
             International symbol.
-        schoenflies : str
+        - schoenflies : str
             Schoenflies symbol.
-        hall_number : int
+        - hall_number : int
             Hall symbol ID number.
-        hall_symbol : str
+        - hall_symbol : str
             Hall symbol.
-        choice : str
+            Equivalent to ``dataset['hall']`` of `get_symmetry_dataset`,
+        - choice : str
             Centring, origin, basis vector setting.
-        pointgroup_international :
+        - pointgroup_international :
             International symbol of crystallographic point group.
-        pointgroup_schoenflies :
+            Equivalent to ``dataset['pointgroup_symbol']`` of
+            :func:`get_symmetry_dataset`.
+        - pointgroup_schoenflies :
             Schoenflies symbol of crystallographic point group.
-        arithmetic_crystal_class_number : int
+        - arithmetic_crystal_class_number : int
             Arithmetic crystal class number
-        arithmetic_crystal_class_symbol : str
+        - arithmetic_crystal_class_symbol : str
             Arithmetic crystal class symbol.
+
+    Notes
+    -----
+    .. versionadded:: 1.9.4
+
+    .. versionchanged:: 2.0
+        ``hall_number`` member is added.
 
     """
     _set_no_error()
@@ -809,8 +981,16 @@ def get_spacegroup_type(hall_number):
 
 def get_spacegroup_type_from_symmetry(
     rotations, translations, lattice=None, symprec=1e-5
-):
-    """Space group type information is obtained from a set of symmetry operations.
+) -> dict | None:
+    """Return space-group type information from symmetry operations.
+
+    See also :func:`get_spacegroup_type` for space-group type information.
+
+    This is expected to work well for the set of symmetry operations whose
+    distortion is small. The aim of making this feature is to find space-group-type
+    for the set of symmetry operations given by the other source than spglib. The
+    parameter ``lattice`` is used as the distance measure for ``symprec``. If this
+    is not given, the cubic basis vector whose lengths are one is used.
 
     Parameters
     ----------
@@ -827,34 +1007,40 @@ def get_spacegroup_type_from_symmetry(
 
     Returns
     -------
-    dict or None
+    spacegroup_type : dict or None
         If it fails, None is returned. Otherwise a dictionary is returned.
         Dictionary keys are as follows:
 
-        number : int
+        - number : int
             International space group number
-        international_short : str
+        - international_short : str
             International short symbol.
-        international_full : str
+        - international_full : str
             International full symbol.
-        international : str
+        - international : str
             International symbol.
-        schoenflies : str
+        - schoenflies : str
             Schoenflies symbol.
-        hall_number : int
+        - hall_number : int
             Hall symbol ID number.
-        hall_symbol : str
+        - hall_symbol : str
             Hall symbol.
-        choice : str
+        - choice : str
             Centring, origin, basis vector setting.
-        pointgroup_international :
+        - pointgroup_international :
             International symbol of crystallographic point group.
-        pointgroup_schoenflies :
+        - pointgroup_schoenflies :
             Schoenflies symbol of crystallographic point group.
-        arithmetic_crystal_class_number : int
+        - arithmetic_crystal_class_number : int
             Arithmetic crystal class number
-        arithmetic_crystal_class_symbol : str
+        - arithmetic_crystal_class_symbol : str
             Arithmetic crystal class symbol.
+
+    Notes
+    -----
+    .. versionadded:: 2.0
+
+    This is the replacement of :func:`get_hall_number_from_symmetry`.
 
     """
     r = np.array(rotations, dtype="intc", order="C")
@@ -894,10 +1080,31 @@ def get_spacegroup_type_from_symmetry(
         return None
 
 
-def get_magnetic_spacegroup_type(uni_number):
+def get_magnetic_spacegroup_type(uni_number) -> dict | None:
     """Translate UNI number to magnetic space group type information.
 
-    If it fails, return None
+    If fails, return None.
+
+    Parameters
+    ----------
+    uni_number : int
+        UNI number between 1 to 1651
+
+    Returns
+    -------
+    magnetic_spacegroup_type: dict
+        See :ref:`api_get_magnetic_spacegroup_type` for these descriptions.
+
+        - uni_number
+        - litvin_number
+        - bns_number
+        - og_number
+        - number
+        - type
+
+    Notes
+    -----
+    .. versionadded:: 2.0
 
     """
     _set_no_error()
@@ -972,7 +1179,7 @@ def get_pointgroup(rotations):
 def standardize_cell(
     cell, to_primitive=False, no_idealize=False, symprec=1e-5, angle_tolerance=-1.0
 ):
-    """Return standardized cell.
+    """Return standardized cell. When the search failed, ``None`` is returned.
 
     Parameters
     ----------
@@ -989,6 +1196,15 @@ def standardize_cell(
     The standardized unit cell or primitive cell is returned by a tuple of
     (lattice, positions, numbers). If it fails, None is returned.
 
+    Notes
+    -----
+    .. versionadded:: 1.8
+
+    Now :func:`refine_cell` and :func:`find_primitive` are shorthands of
+    this method with combinations of these options.
+    About the default choice of the setting, see the documentation of ``hall_number``
+    argument of :func:`get_symmetry_dataset`. More detailed explanation is
+    shown in the spglib (C-API) document.
     """
     _set_no_error()
 
@@ -1025,11 +1241,17 @@ def standardize_cell(
 
 
 def refine_cell(cell, symprec=1e-5, angle_tolerance=-1.0):
-    """Return refined cell.
+    """Return refined cell. When the search failed, ``None`` is returned.
 
     The standardized unit cell is returned by a tuple of
     (lattice, positions, numbers).
-    If it fails, None is returned.
+
+    Notes
+    -----
+    .. versionchanged:: 1.8
+
+    The detailed control of standardization of unit cell can be done using
+    :func:`standardize_cell`.
     """
     _set_no_error()
 
@@ -1059,10 +1281,16 @@ def refine_cell(cell, symprec=1e-5, angle_tolerance=-1.0):
 
 
 def find_primitive(cell, symprec=1e-5, angle_tolerance=-1.0):
-    """Primitive cell is searched in the input cell.
+    """Primitive cell is searched in the input cell. If it fails, ``None`` is returned.
 
     The primitive cell is returned by a tuple of (lattice, positions, numbers).
-    If it fails, None is returned.
+
+    Notes
+    -----
+    .. versionchanged:: 1.8
+
+    The detailed control of standardization of unit cell can be done using
+    :func:`standardize_cell`.
     """
     _set_no_error()
 
@@ -1083,13 +1311,23 @@ def find_primitive(cell, symprec=1e-5, angle_tolerance=-1.0):
         return None
 
 
-def get_symmetry_from_database(hall_number):
-    """Return symmetry operations corresponding to a Hall symbol.
+def get_symmetry_from_database(hall_number) -> dict | None:
+    """Return symmetry operations corresponding to a Hall symbol. If fails, return None.
 
-    The Hall symbol is given by the serial number in between 1 and 530.
-    The symmetry operations are given by a dictionary whose keys are
-    'rotations' and 'translations'.
-    If it fails, None is returned.
+    Parameters
+    ----------
+    hall_number : int
+        The Hall symbol is given by the serial number in between 1 and 530.
+        The definition of ``hall_number`` is found at
+        :ref:`dataset_spg_get_dataset_spacegroup_type`.
+
+    Returns
+    -------
+    symmetry : dict
+        - rotations
+            Rotation parts of symmetry operations corresponding to ``hall_number``.
+        - translations
+            Translation parts of symmetry operations corresponding to ``hall_number``.
     """
     _set_no_error()
 
@@ -1107,16 +1345,31 @@ def get_symmetry_from_database(hall_number):
         }
 
 
-def get_magnetic_symmetry_from_database(uni_number, hall_number=0):
+def get_magnetic_symmetry_from_database(uni_number, hall_number=0) -> dict | None:
     """Return magnetic symmetry operations from UNI number between 1 and 1651.
+
+    If fails, return None.
 
     Optionally alternative settings can be specified with Hall number.
 
-    The magnetic symmetry operations are given by a dictionary whose keys are
-    'rotations', 'translations', and 'time_reversals'.
-    For `time_reversals`, 0 and 1 indicate ordinary and anti-time-reversal
-    operations, respectively.
-    If it fails, None is returned.
+    Parameters
+    ----------
+    uni_number : int
+        UNI number between 1 and 1651.
+    hall_number : int, optional
+        The Hall symbol is given by the serial number in between 1 and 530.
+
+    Returns
+    -------
+    symmetry : dict
+        - 'rotations'
+        - 'translations'
+        - 'time_reversals'
+            0 and 1 indicate ordinary and anti-time-reversal operations, respectively.
+
+    Notes
+    -----
+    .. versionadded:: 2.0
     """
     _set_no_error()
 
@@ -1468,26 +1721,50 @@ def relocate_BZ_grid_address(
 
 
 def delaunay_reduce(lattice, eps=1e-5):
-    """Run Delaunay reduction.
+    r"""Run Delaunay reduction. When the search failed, `None` is returned.
 
-    Args:
-        lattice: Lattice parameters in the form of
+    The transformation from original basis vectors
+    :math:`( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )`
+    to final basis vectors :math:`( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )` is achieved by linear
+    combination of basis vectors with integer coefficients without
+    rotating coordinates. Therefore the transformation matrix is obtained
+    by :math:`\mathbf{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} ) ( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}` and the matrix
+    elements have to be almost integers.
+
+    The algorithm is found in the international tables for crystallography volume A.
+
+    Parameters
+    ----------
+    lattice: ndarray, (3, 3)
+        Lattice parameters in the form of
+
+        .. code-block::
+
+            [[a_x, a_y, a_z],
+                [b_x, b_y, b_z],
+                [c_x, c_y, c_z]]
+
+    eps: float
+        Tolerance parameter, but unlike `symprec` the unit is not a length.
+        Tolerance to check if volume is close to zero or not and
+        if two basis vectors are orthogonal by the value of dot
+        product being close to zero or not.
+
+    Returns
+    -------
+    delaunay_lattice: ndarray, (3, 3)
+        Reduced lattice parameters are given as a numpy 'double' array:
+
+        .. code-block::
+
             [[a_x, a_y, a_z],
              [b_x, b_y, b_z],
              [c_x, c_y, c_z]]
-        symprec:
-            float: Tolerance to check if volume is close to zero or not and
-                   if two basis vectors are orthogonal by the value of dot
-                   product being close to zero or not.
 
-    Returns:
-        if the Delaunay reduction succeeded:
-            Reduced lattice parameters are given as a numpy 'double' array:
-            [[a_x, a_y, a_z],
-             [b_x, b_y, b_z],
-             [c_x, c_y, c_z]]
-        otherwise None is returned.
-    """
+    Notes
+    -----
+    .. versionadded:: 1.9.4
+    """  # noqa: E501
     _set_no_error()
 
     delaunay_lattice = np.array(np.transpose(lattice), dtype="double", order="C")
@@ -1501,28 +1778,54 @@ def delaunay_reduce(lattice, eps=1e-5):
 
 
 def niggli_reduce(lattice, eps=1e-5):
-    """Run Niggli reduction.
+    r"""Run Niggli reduction. When the search failed, ``None`` is returned.
 
-    Args:
-        lattice: Lattice parameters in the form of
+    The transformation from original basis vectors :math:`( \mathbf{a} \; \mathbf{b} \; \mathbf{c} )` to final basis vectors :math:`( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )` is achieved by linear
+    combination of basis vectors with integer coefficients without
+    rotating coordinates. Therefore the transformation matrix is obtained
+    by :math:`\mathbf{P} = ( \mathbf{a} \; \mathbf{b} \; \mathbf{c} ) ( \mathbf{a}' \; \mathbf{b}' \; \mathbf{c}' )^{-1}` and the matrix
+    elements have to be almost integers.
+
+    The algorithm detail is found at https://atztogo.github.io/niggli/ and
+    the references are there in.
+
+    Parameters
+    ----------
+    lattice: ndarray
+        Lattice parameters in the form of
+
+        .. code-block::
+
             [[a_x, a_y, a_z],
-             [b_x, b_y, b_z],
-             [c_x, c_y, c_z]]
-        eps:
-            float: Tolerance to check if difference of norms of two basis
-                   vectors is close to zero or not and if two basis vectors are
-                   orthogonal by the value of dot product being close to zero or
-                   not. The detail is shown at
-                   https://atztogo.github.io/niggli/.
+            [b_x, b_y, b_z],
+            [c_x, c_y, c_z]]
 
-    Returns:
+    eps: float
+        Tolerance parameter, but unlike `symprec` the unit is not a length.
+        This is used to check if difference of norms of two basis
+        vectors is close to zero or not and if two basis vectors are
+        orthogonal by the value of dot product being close to zero or
+        not.
+        The detail is shown at https://atztogo.github.io/niggli/.
+
+    Returns
+    -------
+    niggli_lattice: ndarray, (3, 3)
         if the Niggli reduction succeeded:
             Reduced lattice parameters are given as a numpy 'double' array:
-            [[a_x, a_y, a_z],
-             [b_x, b_y, b_z],
-             [c_x, c_y, c_z]]
+
+            .. code-block::
+
+                [[a_x, a_y, a_z],
+                [b_x, b_y, b_z],
+                [c_x, c_y, c_z]]
+
         otherwise None is returned.
-    """
+
+    Notes
+    -----
+    .. versionadded:: 1.9.4
+    """  # noqa: E501
     _set_no_error()
 
     niggli_lattice = np.array(np.transpose(lattice), dtype="double", order="C")
@@ -1536,7 +1839,16 @@ def niggli_reduce(lattice, eps=1e-5):
 
 
 def get_error_message():
-    """Return error message why spglib failed."""
+    """Return error message why spglib failed.
+
+    .. warning::
+        This method is not thread safe, i.e., only safely usable
+        when calling one spglib method per process.
+
+    Notes
+    -----
+    .. versionadded:: 1.9.5
+    """
     return spglib_error.message
 
 
@@ -1580,13 +1892,28 @@ def _set_no_error():
     spglib_error.message = "no error"
 
 
-def get_hall_number_from_symmetry(rotations, translations, symprec=1e-5):
-    """Hall number is obtained from a set of symmetry operations.
+def get_hall_number_from_symmetry(rotations, translations, symprec=1e-5) -> int | None:
+    """Hall number is obtained from a set of symmetry operations. If fails, return None.
 
-    Deprecated at v2.0.
+    .. deprecated:: 2.0
+        Replaced by {func}`get_spacegroup_type_from_symmetry`.
 
-    If it fails, None is returned.
+    Return one of ``hall_number`` corresponding to a space-group type of the given
+    set of symmetry operations. When multiple ``hall_number`` exist for the
+    space-group type, the smallest one (the first description of the space-group
+    type in International Tables for Crystallography) is chosen. The definition of
+    ``hall_number`` is found at :ref:`dataset_spg_get_dataset_spacegroup_type` and
+    the corresponding space-group-type information is obtained through
+    {func}`get_spacegroup_type`.
 
+    This is expected to work well for the set of symmetry operations whose
+    distortion is small. The aim of making this feature is to find
+    space-group-type for the set of symmetry operations given by the other
+    source than spglib.
+
+    Note that the definition of ``symprec`` is
+    different from usual one, but is given in the fractional
+    coordinates and so it should be small like ``1e-5``.
     """
     warnings.warn(
         "get_hall_number_from_symmetry() is deprecated. "
