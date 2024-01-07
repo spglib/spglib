@@ -20,6 +20,7 @@ understanding the crystallography ashamedly.
 ---
 cited:
 keyprefix: gen-
+labelprefix: gen-
 ---
 ```
 
@@ -32,6 +33,7 @@ keyprefix: gen-
 ---
 cited:
 keyprefix: algo-
+labelprefix: algo-
 ---
 ```
 
@@ -46,6 +48,7 @@ keyprefix: algo-
 ---
 cited:
 keyprefix: std-
+labelprefix: std-
 ---
 ```
 
@@ -60,6 +63,7 @@ keyprefix: std-
 ---
 cited:
 keyprefix: msg-
+labelprefix: msg-
 ---
 ```
 
@@ -75,5 +79,6 @@ keyprefix: msg-
 ---
 cited:
 keyprefix: math-
+labelprefix: math-
 ---
 ```
