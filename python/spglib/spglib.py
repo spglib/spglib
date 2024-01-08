@@ -506,7 +506,7 @@ def get_symmetry_dataset(
     -------
     dataset: dict
         If it fails, None is returned. Otherwise a dictionary is returned.
-        More details are found at :ref:`spglib_dataset`.
+        More details are found at :ref:`spglib-dataset`.
 
         - number : int
             International space group number.

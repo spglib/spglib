@@ -20,6 +20,7 @@ exclude_patterns = [
 ]
 source_suffix = {
     ".md": "markdown",
+    ".rst": "restructuredtext",
 }
 
 # -----------------------------------------------------------------------------
@@ -68,15 +69,11 @@ html_static_path = ["_static"]
 # Autodoc2
 # -----------------------------------------------------------------------------
 autodoc2_output_dir = "api/python-api"
-autodoc2_render_plugin = "myst"
 autodoc2_packages = [
     {
         "path": "../python/spglib/spglib.py",
         "module": "spglib",
     }
-]
-autodoc2_docstring_parser_regexes = [
-    (r".*", 'rst'),
 ]
 autodoc2_hidden_objects = ['undoc', 'dunder', 'private', 'inherited']
 autodoc2_hidden_regexes = [
