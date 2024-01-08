@@ -1,3 +1,5 @@
+(python-interface)=
+
 # Spglib for Python
 
 ## Usage note

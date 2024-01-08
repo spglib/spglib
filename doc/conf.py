@@ -67,7 +67,7 @@ html_static_path = ["_static"]
 # -----------------------------------------------------------------------------
 # Autodoc2
 # -----------------------------------------------------------------------------
-autodoc2_output_dir = "python-interface/python-apidocs"
+autodoc2_output_dir = "api/python-api"
 autodoc2_render_plugin = "myst"
 autodoc2_packages = [
     {

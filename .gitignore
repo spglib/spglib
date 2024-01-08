@@ -83,4 +83,4 @@ test-suite.log
 docs_build/
 CMakeUserPresets.json
 
-doc/python-interface/python-apidocs/
+doc/api/python-api/
