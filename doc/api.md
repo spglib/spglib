@@ -101,7 +101,7 @@ are searched. Then they are compared with the crystallographic
 database and the space group type is determined.  The result is
 returned as the `SpglibDataset` structure as a dataset.
 
-The detail of the dataset is given at {ref}`spglib_dataset`.
+The detail of the dataset is given at [](dataset.md).
 
 Dataset corresponding to the space group type in the standard setting
 is obtained by `spg_get_dataset`. Here the standard setting means
@@ -419,7 +419,7 @@ from crystal structure with `lattice`, `position`, `types`, and `tensors`.
 When you need magnetic symmetry operations of non-collinear spins, set `tensor_rank=1`, `is_axial=1`,
 and `tensors` with length `num_atom * 3` (ordered by $[ m_{1x}, m_{1y}, m_{1z}, \dots ]$)
 in cartesian coordinates.
-For other combinations of `tensor_rank` and `is_axial`, see {ref}`magnetic_action_flags`.
+For other combinations of `tensor_rank` and `is_axial`, see [](development/magnetic_symmetry_flags.md).
 Returned `spin_flips` represents sign of site tensors after applying time-reversal operations:
 1 for non time reversal, and -1 for time reversal.
 
