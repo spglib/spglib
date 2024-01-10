@@ -69,6 +69,10 @@ html_static_path = ["_static"]
 # Autodoc2
 # -----------------------------------------------------------------------------
 autodoc2_output_dir = "api/python-api"
+autodoc2_render_plugin = "myst"
+autodoc2_docstring_parser_regexes = [
+    (r".*", "rst"),
+]
 autodoc2_packages = [
     {
         "path": "../python/spglib/spglib.py",
