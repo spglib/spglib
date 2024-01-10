@@ -1,5 +1,3 @@
-# Unreleased API
-
 # Developer's API
 
 These APIs are for the internal usage and development of Spglib itself.
