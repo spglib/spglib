@@ -1,8 +1,8 @@
 # Unreleased API
 
-```{caution} The following APIs are under development.
-    They are subject to change without notice.
-```
+# Developer's API
+
+These APIs are for the internal usage and development of Spglib itself.
 
 ## Python interface
 
