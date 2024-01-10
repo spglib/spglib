@@ -1,5 +1,3 @@
-(definitions_and_conventions)=
-
 # Definitions and conventions
 
 Information in this page is valid for spglib 1.8.1 or later. The

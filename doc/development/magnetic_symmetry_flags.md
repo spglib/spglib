@@ -1,5 +1,3 @@
-(magnetic_action_flags)=
-
 # Flags to control action of magnetic symmetry operations
 
 - Narrow functionality of `is_magnetic` and rename to `with_time_reversal`

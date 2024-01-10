@@ -1,4 +1,4 @@
-(spglib_dataset)=
+(spglib-dataset)=
 
 # Spglib dataset
 
@@ -155,8 +155,7 @@ $$
 by which the basis vectors are transformed to those of a
 standardized unit cell. Atomic point coordinates are shifted so that
 symmetry operations have one of possible standard origins. The
-detailed definition is presented at
-{ref}`definitions_and_conventions`.
+detailed definition is presented at [](definition.md).
 
 At **versions 1.7.x and 1.8 or before**, the set of
 `transformation_matrix` ($\boldsymbol{P}_\text{old}$) and

@@ -11,7 +11,22 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinxcontrib.bibtex",
     "myst_parser",
+    "autodoc2",
 ]
+
+exclude_patterns = [
+    "README.md",
+    "_build",
+]
+source_suffix = {
+    ".md": "markdown",
+    ".rst": "restructuredtext",
+}
+
+# -----------------------------------------------------------------------------
+# MyST
+# -----------------------------------------------------------------------------
+
 myst_enable_extensions = [
     "amsmath",
     "dollarmath",
@@ -21,28 +36,55 @@ myst_enable_extensions = [
     "replacements",
     "smartquotes",
     "tasklist",
+    "colon_fence",
 ]
-
-exclude_patterns = [
-    "README.md",
-    "_build",
-]
-source_suffix = {
-    ".md": "markdown",
-}
-
-# https://pypi.org/project/sphinxcontrib-bibtex/
-bibtex_bibfiles = ["references.bib"]
-bibtex_default_style = "unsrt"
 
 myst_dmath_double_inline = True
 myst_heading_anchors = 3
+
+# -----------------------------------------------------------------------------
+# BibTeX
+# -----------------------------------------------------------------------------
+
+bibtex_bibfiles = ["references.bib"]
+bibtex_default_style = "unsrt"
+
+# -----------------------------------------------------------------------------
+# Sphinx-book-theme
+# -----------------------------------------------------------------------------
 
 html_theme = "sphinx_book_theme"
 html_title = f"Spglib v{release}"
 html_theme_options = {
     # https://sphinx-book-theme.readthedocs.io/en/latest/reference.html
+    "repository_url": "https://github.com/spglib/spglib",
+    "use_repository_button": True,
     "navigation_with_keys": True,
     "globaltoc_includehidden": "true",
+    "show_toc_level": 3,
 }
 html_static_path = ["_static"]
+
+# -----------------------------------------------------------------------------
+# Autodoc2
+# -----------------------------------------------------------------------------
+autodoc2_output_dir = "api/python-api"
+autodoc2_packages = [
+    {
+        "path": "../python/spglib/spglib.py",
+        "module": "spglib",
+    }
+]
+autodoc2_hidden_objects = ['undoc', 'dunder', 'private', 'inherited']
+autodoc2_hidden_regexes = [
+    "spglib.get_pointgroup",
+    # Layer group
+    "spglib.get_layergroup",
+    "spglib.get_symmetry_layerdataset",
+    # Kpoints
+    "spglib.get_grid_point_from_address",
+    "spglib.get_stabilized_reciprocal_mesh",
+    "spglib.get_grid_points_by_rotations",
+    "spglib.get_BZ_grid_points_by_rotations",
+    "spglib.relocate_BZ_grid_address",
+]

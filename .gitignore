@@ -72,6 +72,7 @@ example/spglib_f08.mod
 
 test/getspg.bundle
 test/mkmf.log
+test/Testing
 
 findsym.log
 
@@ -81,3 +82,5 @@ test-suite.log
 .vscode/
 docs_build/
 CMakeUserPresets.json
+
+doc/api/python-api/
