@@ -1,3 +1,10 @@
+%if 0%{?epel} && 0%{?epel} <= 9
+# scikit-build-core is not available on epel9 and below
+%bcond_with python
+%else
+%bcond_without python
+%endif
+
 Name:           spglib
 Summary:        C library for finding and handling crystal symmetries
 Version:        0.0.0
@@ -15,7 +22,9 @@ BuildRequires:  gcc
 BuildRequires:  gcc-c++
 BuildRequires:  gcc-fortran
 BuildRequires:  cmake(GTest)
+%if %{with python}
 BuildRequires:  python3-devel
+%endif
 
 %description
 C library for finding and handling crystal symmetries.
@@ -46,6 +55,7 @@ Requires:       spglib-devel = %{version}-%{release}
 This package contains Fortran module and header files for developing
 Fortran applications that use spglib.
 
+%if %{with python}
 %package -n     python3-spglib
 Summary:        Python3 library of spglib
 Requires:       spglib = %{version}
@@ -53,6 +63,7 @@ Requires:       spglib = %{version}
 %description -n python3-spglib
 This package contains the libraries to
 develop applications with spglib Python3 bindings.
+%endif
 
 
 %prep
@@ -60,7 +71,9 @@ develop applications with spglib Python3 bindings.
 
 
 %generate_buildrequires
+%if %{with python}
 %pyproject_buildrequires -x test
+%endif
 
 
 %build
@@ -72,26 +85,34 @@ develop applications with spglib Python3 bindings.
     -DCMAKE_INSTALL_MODULEDIR=%{_fmoddir}
 
 %cmake_build
+%if %{with python}
 %pyproject_wheel
+%endif
 
 
 %install
 %cmake_install
 
+%if %{with python}
 %pyproject_install
 %pyproject_save_files spglib
+%endif
 
+%if %{with python}
 rm %{buildroot}%{python3_sitearch}/spglib/lib/libsymspg.so*
 rm %{buildroot}%{python3_sitearch}/spglib/include/spglib.h
 # Delete from pyproject_files as well
 sed -i "/libsymspg.so/d" %{pyproject_files}
 sed -i "/spglib.h/d" %{pyproject_files}
+%endif
 
 
 %check
 %ctest
+%if %{with python}
 # Need to set LD_LIBRARY_PATH manually for this test
 LD_LIBRARY_PATH=%{buildroot}%{_libdir} %pytest -v
+%endif
 
 
 %files
@@ -116,7 +137,9 @@ LD_LIBRARY_PATH=%{buildroot}%{_libdir} %pytest -v
 %{_libdir}/pkgconfig/spglib_f08.pc
 %{_libdir}/cmake/Spglib/SpglibTargets_fortran*
 
+%if %{with python}
 %files -n python3-%{name} -f %{pyproject_files}
+%endif
 
 
 %changelog

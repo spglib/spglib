@@ -5,5 +5,12 @@ tier: 0
 path: /
 
 # Define tests
-/version:
+/python-version:
   test: python3 -c "import spglib; print(spglib.__version__)"
+  adjust:
+    enabled: false
+    when: distro <= rhel-9 or distro <= centos-stream-9
+/C-library:
+  test: ldconfig -p | grep libsymspg
+/Fortran-library:
+  test: ldconfig -p | grep libspglib_f08
