@@ -186,3 +186,14 @@ extend-ignore = [
 exclude = [
     "database",
 ]
+
+[tool.mypy]
+mypy_path = ["python"]
+files = ["python", "test/functional/python", "example/python_api"]
+python_version = "3.12"
+warn_unused_configs = true
+show_error_codes = true
+# TODO: Enable strict mode once we clean up type annotations
+# strict = true
+enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
+no_strict_optional = true
