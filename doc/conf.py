@@ -1,10 +1,7 @@
-from importlib.metadata import version
+from spglib import __version__ as version
 
 project = "Spglib"
 copyright = "2009, Atsushi Togo"
-release = version("spglib")  # e.g. "v.1.16.5"
-# The short X.Y version.
-version = ".".join(release.split(".")[:3])  # e.g. "v.1.16"
 
 extensions = [
     'sphinx.ext.mathjax',
@@ -54,7 +51,7 @@ bibtex_default_style = "unsrt"
 # -----------------------------------------------------------------------------
 
 html_theme = "sphinx_book_theme"
-html_title = f"Spglib v{release}"
+html_title = f"Spglib v{version}"
 html_theme_options = {
     # https://sphinx-book-theme.readthedocs.io/en/latest/reference.html
     "repository_url": "https://github.com/spglib/spglib",
