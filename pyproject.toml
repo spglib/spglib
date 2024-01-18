@@ -122,3 +122,78 @@ command_line = '-m pytest'
 # TODO: Cannot report relative to project path because we cannot do editable installs yet
 #source = ['python/spglib']
 source = ['spglib']
+
+[tool.ruff]
+line-length = 88
+extend-select = [
+    "F",           # pyflakes
+    # "W",           # pycodestyle-warnings
+    "E",           # pycodestyle-errors
+    # "C90",         # mccabe
+    "I",           # isort
+    # "N",           # pep8-naming
+    "D",           # pydocstyle
+    # "UP",          # pyupgrade
+    # "YTT",         # flake8-2020
+    # "ANN",         # flake8-annotations
+    # "S",           # flake8-bandit
+    # "BLE",         # flake8-blind-except
+    # "FBT",         # flake8-boolean-trap
+    # "B",           # flake8-bugbear
+    # "A",           # flake8-builtins
+    # "COM",         # flake8-comma
+    # "C4",          # flake8-comprehensions
+    # "T10",         # flake8-debugger
+    # "EM",          # flake8-errmsg
+    # "FA",          # flake8-future-annotations
+    # "ISC",         # flake8-implicit-str-concat
+    # "ICN",         # flake8-import-conventions
+    # "G",           # flake8-logging-format
+    # "PIE",         # flake8-pie
+    # "T20",         # flake8-print
+    # "PYI",         # flake8-pyi
+    # "PT",          # flake8-pytest-style
+    # "Q",           # flake8-quotes
+    # "RSE",         # flake8-raise
+    # "RET",         # flake8-return
+    # "SLF",         # flake8-self
+    # "SIM",         # flake8-simplify
+    # "TID",         # flake8-tidy-imports
+    # "TCH",         # flake8-type-checking
+    # "ARG",         # flake8-unused-arguments
+    # "PTH",         # flake8-use-pathlib
+    # "TD",          # flake8-todos
+    # "ERA",         # eradicate
+    # "PD",          # pandas-vet
+    # "PGH",         # pygrep-hooks
+    # "PL",          # pylint
+    # "TRY",         # tryceratops
+    # "FLY",         # flynt
+    # "NPY",         # NumPy
+    # "PERF",        # perflint
+    # "FURB",        # refurb
+    # "RUF",         # Ruff-specific
+]
+extend-ignore = [
+    "D100",
+    "D101",
+    "D102",
+    "D103",
+    "D203",  # Confilct with D211
+    "D205",
+    "D213",  # Conflict with D212
+]
+exclude = [
+    "database",
+]
+
+[tool.mypy]
+mypy_path = ["python"]
+files = ["python", "test/functional/python", "example/python_api"]
+python_version = "3.12"
+warn_unused_configs = true
+show_error_codes = true
+# TODO: Enable strict mode once we clean up type annotations
+# strict = true
+enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
+no_strict_optional = true

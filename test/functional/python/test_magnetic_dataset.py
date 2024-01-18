@@ -1,7 +1,6 @@
 import unittest
 
 import numpy as np
-
 from spglib import (
     get_magnetic_symmetry,
     get_magnetic_symmetry_dataset,
@@ -24,7 +23,7 @@ class TestMagneticDataset(unittest.TestCase):
                 [0.12336, 0.64705, 0.63499],
                 [0.35295, 0.87664, 0.86501],
                 [0.64705, 0.12336, 0.36501],
-            ]
+            ],
         )
         numbers = [0, 0, 0, 0, 0, 0, 0, 0]
         magmoms = np.array(
@@ -37,7 +36,7 @@ class TestMagneticDataset(unittest.TestCase):
                 [-1.67, 8.9, 0.0],
                 [-8.9, 1.67, 0.0],
                 [8.9, -1.67, 0.0],
-            ]
+            ],
         )
 
         dataset = get_magnetic_symmetry_dataset((lattice, positions, numbers, magmoms))
@@ -57,7 +56,7 @@ class TestMagneticDataset(unittest.TestCase):
                 [1.06949000e01, 0.00000000e00, 0.00000000e00],
                 [3.84998337e-16, 6.28750000e00, 0.00000000e00],
                 [3.09590711e-16, 3.09590711e-16, 5.05600000e00],
-            ]
+            ],
         )
         positions = np.array(
             [
@@ -69,7 +68,7 @@ class TestMagneticDataset(unittest.TestCase):
                 [0.2206, 0.75, 0.4906],
                 [0.7206, 0.75, 0.0094],
                 [0.7794, 0.25, 0.5094],
-            ]
+            ],
         )
         numbers = [0, 0, 0, 0, 0, 0, 0, 0]
         magmoms = np.array(
@@ -82,7 +81,7 @@ class TestMagneticDataset(unittest.TestCase):
                 [-4.5, 0.0, 0.0],
                 [4.5, 0.0, 0.0],
                 [-4.5, 0.0, 0.0],
-            ]
+            ],
         )
 
         dataset = get_magnetic_symmetry_dataset((lattice, positions, numbers, magmoms))
@@ -108,7 +107,7 @@ class TestMagneticDataset(unittest.TestCase):
                 [0.22060000, 0.75000000, 0.49030000],
                 [0.72060000, 0.75000000, 0.00970000],
                 [0.77940000, 0.25000000, 0.50970000],
-            ]
+            ],
         )
         numbers = np.array([0, 0, 0, 0, 0, 0, 0, 0])
         magmoms = np.array(
@@ -121,7 +120,7 @@ class TestMagneticDataset(unittest.TestCase):
                 [-2.90000000, -3.40000000, 0.00000000],
                 [2.90000000, 3.40000000, 0.00000000],
                 [-2.90000000, -3.40000000, 0.00000000],
-            ]
+            ],
         )
 
         dataset = get_magnetic_symmetry_dataset((lattice, positions, numbers, magmoms))
@@ -144,7 +143,7 @@ class TestMagneticDataset(unittest.TestCase):
                 [0.75000000, 0.49030000, 0.22060000],
                 [0.75000000, 0.00970000, 0.72060000],
                 [0.25000000, 0.50970000, 0.77940000],
-            ]
+            ],
         )
         assert np.allclose(dataset["std_positions"], std_positions_expect)
         assert np.allclose(dataset["std_tensors"], magmoms)
@@ -156,7 +155,7 @@ class TestMagneticDataset(unittest.TestCase):
                 [8.62700000, 0.00000000, 0.00000000],
                 [0.00000000, 8.62700000, 0.00000000],
                 [0.00000000, 0.00000000, 13.82200000],
-            ]
+            ],
         )
         positions = np.array(
             [
@@ -176,7 +175,7 @@ class TestMagneticDataset(unittest.TestCase):
                 [0.69644000, 0.40750000, 0.74573000],
                 [0.19644000, 0.90750000, 0.75427000],
                 [0.69644000, 0.40750000, 0.25427000],
-            ]
+            ],
         )
         numbers = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
         magmoms = np.array(
@@ -197,7 +196,7 @@ class TestMagneticDataset(unittest.TestCase):
                 [2.67400000, -1.33700000, 0.00000000],
                 [-2.67400000, 1.33700000, 0.00000000],
                 [-2.67400000, 1.33700000, 0.00000000],
-            ]
+            ],
         )
 
         dataset = get_magnetic_symmetry_dataset((lattice, positions, numbers, magmoms))
@@ -212,7 +211,7 @@ class TestMagneticDataset(unittest.TestCase):
                 [3.77000000, 0.00000000, 0.00000000],
                 [0.00000000, 3.77000000, 0.00000000],
                 [0.00000000, 0.00000000, 3.77000000],
-            ]
+            ],
         )
         positions = np.array(
             [
@@ -220,7 +219,7 @@ class TestMagneticDataset(unittest.TestCase):
                 [0.00000000, 0.50000000, 0.50000000],
                 [0.50000000, 0.00000000, 0.50000000],
                 [0.50000000, 0.50000000, 0.00000000],
-            ]
+            ],
         )
         numbers = np.array([0, 1, 1, 1])
         magmoms = np.array(
@@ -229,7 +228,7 @@ class TestMagneticDataset(unittest.TestCase):
                 [2.00000000, -1.00000000, -1.00000000],
                 [-1.00000000, 2.00000000, -1.00000000],
                 [-1.00000000, -1.00000000, 2.00000000],
-            ]
+            ],
         )
 
         dataset = get_magnetic_symmetry_dataset((lattice, positions, numbers, magmoms))
@@ -255,7 +254,8 @@ class TestMagneticDataset(unittest.TestCase):
         assert dataset2["hall_number"] == 458
         assert dataset2["n_operations"] == 12 * 3
         assert np.isclose(
-            np.linalg.det(dataset2["primitive_lattice"]), np.linalg.det(lattice)
+            np.linalg.det(dataset2["primitive_lattice"]),
+            np.linalg.det(lattice),
         )
 
     def test_conventional(self):
@@ -266,7 +266,7 @@ class TestMagneticDataset(unittest.TestCase):
                 [4.95700000, 0.00000000, 0.00000000],
                 [-2.47850000, 4.29288793, 0.00000000],
                 [0.00000000, 0.00000000, 13.59230000],
-            ]
+            ],
         )
         positions = np.array(
             [
@@ -288,7 +288,7 @@ class TestMagneticDataset(unittest.TestCase):
                 [0.02763333, 0.66666667, 0.41666667],
                 [0.36096667, 0.33333333, 0.08333333],
                 [0.69430000, 0.00000000, 0.75000000],
-            ]
+            ],
         )
         numbers = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1])
         magmoms = np.array(
@@ -311,7 +311,7 @@ class TestMagneticDataset(unittest.TestCase):
                 [0.00000000, 0.00000000, 0.00000000],
                 [0.00000000, 0.00000000, 0.00000000],
                 [0.00000000, 0.00000000, 0.00000000],
-            ]
+            ],
         )
 
         dataset = get_magnetic_symmetry_dataset((lattice, positions, numbers, magmoms))
@@ -330,7 +330,7 @@ class TestMagneticDataset(unittest.TestCase):
                 [16.08310000, 0.00000000, 0.00000000],
                 [0.00000000, 4.38870000, 0.00000000],
                 [-5.97205829, 0.00000000, 12.38135828],
-            ]
+            ],
         )
         positions = np.array(
             [
@@ -346,7 +346,7 @@ class TestMagneticDataset(unittest.TestCase):
                 [0.37100000, 0.50000000, 0.44150000],
                 [0.87100000, 0.00000000, 0.94150000],
                 [0.37100000, 0.50000000, 0.94150000],
-            ]
+            ],
         )
         numbers = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
         magmoms = np.array(
@@ -363,7 +363,7 @@ class TestMagneticDataset(unittest.TestCase):
                 [0.00000000, 0.00000000, 0.00000000],
                 [0.00000000, 0.00000000, 0.00000000],
                 [0.00000000, 0.00000000, 0.00000000],
-            ]
+            ],
         )
         dataset = get_magnetic_symmetry_dataset((lattice, positions, numbers, magmoms))
 
@@ -379,7 +379,7 @@ class TestMagneticDataset(unittest.TestCase):
                 [6.10960000, 0.00000000, 0.00000000],
                 [0.00000000, 7.25550000, 0.00000000],
                 [0.00000000, 0.00000000, 7.57080000],
-            ]
+            ],
         )
         positions = np.array(
             [
@@ -393,7 +393,7 @@ class TestMagneticDataset(unittest.TestCase):
                 [0.72680000, 0.14210000, 0.35200000],
                 [0.22680000, 0.35790000, 0.85200000],
                 [0.27320000, 0.85790000, 0.64800000],
-            ]
+            ],
         )
         numbers = np.array([0, 0, 1, 1, 1, 1, 1, 1, 1, 1])
         magmoms = np.array(
@@ -408,7 +408,7 @@ class TestMagneticDataset(unittest.TestCase):
                 [0.00000000, 0.00000000, 0.00000000],
                 [0.00000000, 0.00000000, 0.00000000],
                 [0.00000000, 0.00000000, 0.00000000],
-            ]
+            ],
         )
 
         dataset = get_magnetic_symmetry_dataset((lattice, positions, numbers, magmoms))
@@ -423,7 +423,7 @@ class TestMagneticDataset(unittest.TestCase):
                 [7.64760000, 0.00000000, 0.00000000],
                 [0.00000000, 6.88550000, 0.00000000],
                 [0.00000000, 0.00000000, 14.60580000],
-            ]
+            ],
         )
         positions = np.array(
             [
@@ -439,7 +439,7 @@ class TestMagneticDataset(unittest.TestCase):
                 [0.79450000, 0.75000000, 0.56280000],
                 [0.70550000, 0.25000000, 0.06280000],
                 [0.29450000, 0.75000000, 0.93720000],
-            ]
+            ],
         )
         numbers = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
         magmoms = np.array(
@@ -456,7 +456,7 @@ class TestMagneticDataset(unittest.TestCase):
                 [-0.70000000, -0.00000000, -0.70000000],
                 [-0.70000000, 0.00000000, 0.70000000],
                 [0.70000000, -0.00000000, -0.70000000],
-            ]
+            ],
         )
 
         dataset = get_magnetic_symmetry_dataset((lattice, positions, numbers, magmoms))
@@ -468,7 +468,7 @@ class TestMagneticDataset(unittest.TestCase):
                 [19.27760000, 0.00000000, 0.00000000],
                 [0.00000000, 9.24090000, 0.00000000],
                 [0.00000000, 0.00000000, 5.46760000],
-            ]
+            ],
         )
         positions = np.array(
             [
@@ -488,7 +488,7 @@ class TestMagneticDataset(unittest.TestCase):
                 [0.62230000, 0.98180000, 0.15130000],
                 [0.62230000, 0.51820000, 0.65130000],
                 [0.87770000, 0.48180000, 0.15130000],
-            ]
+            ],
         )
         numbers = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
         magmoms = np.array(
@@ -509,7 +509,7 @@ class TestMagneticDataset(unittest.TestCase):
                 [4.05000000, 0.00000000, 0.10000000],
                 [-4.05000000, -0.00000000, -0.10000000],
                 [4.05000000, -0.00000000, -0.10000000],
-            ]
+            ],
         )
 
         dataset = get_magnetic_symmetry_dataset((lattice, positions, numbers, magmoms))
@@ -523,7 +523,7 @@ class TestMagneticDataset(unittest.TestCase):
                 [7.50910000, 0.00000000, 0.00000000],
                 [0.00000000, 5.73190000, 0.00000000],
                 [0.00000000, 0.00000000, 22.54300000],
-            ]
+            ],
         )
         positions = np.array(
             [
@@ -551,10 +551,10 @@ class TestMagneticDataset(unittest.TestCase):
                 [0.75000000, 0.50000000, 0.75000000],
                 [0.25000000, 0.50000000, 0.25000000],
                 [0.00000000, 0.00000000, 0.50000000],
-            ]
+            ],
         )
         numbers = np.array(
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1]
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1],
         )
         magmoms = np.array(
             [
@@ -582,7 +582,7 @@ class TestMagneticDataset(unittest.TestCase):
                 [-0.58000000, 0.00000000, 1.26000000],
                 [-0.58000000, 0.00000000, 1.26000000],
                 [-0.58000000, 0.00000000, 1.26000000],
-            ]
+            ],
         )
 
         dataset = get_magnetic_symmetry_dataset((lattice, positions, numbers, magmoms))
@@ -595,7 +595,7 @@ class TestMagneticDataset(unittest.TestCase):
                 [1 / np.sqrt(2), -1 / np.sqrt(2), 0],
                 [1 / np.sqrt(2), 1 / np.sqrt(2), 0],
                 [0, 0, 1],
-            ]
+            ],
         )
         a = 7.17851431
         b = 3.99943947
@@ -632,7 +632,7 @@ class TestMagneticDataset(unittest.TestCase):
                 [10.6949, 0, 0],
                 [0, 6.2875, 0],
                 [0, 0, 5.056],
-            ]
+            ],
         )
         positions = np.array(
             [
@@ -640,7 +640,7 @@ class TestMagneticDataset(unittest.TestCase):
                 [0.5, 0.0, 0.5],
                 [0.5, 0.5, 0.5],
                 [0.0, 0.5, 0.0],
-            ]
+            ],
         )
         numbers = [0, 0, 0, 0]
         magmoms = np.array(
@@ -649,13 +649,13 @@ class TestMagneticDataset(unittest.TestCase):
                 [-3.0, -0.4, 0.0],
                 [-3.0, 0.4, 0.0],
                 [3.0, -0.4, 0.0],
-            ]
+            ],
         )
         primitive_lattice1 = get_magnetic_symmetry_dataset(
-            (lattice, positions, numbers, magmoms)
+            (lattice, positions, numbers, magmoms),
         )["primitive_lattice"]
         primitive_lattice2 = get_magnetic_symmetry(
-            (lattice, positions, numbers, magmoms)
+            (lattice, positions, numbers, magmoms),
         )["primitive_lattice"]
         assert np.allclose(primitive_lattice1, primitive_lattice2)
 

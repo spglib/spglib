@@ -1,7 +1,6 @@
 import unittest
 
 import numpy as np
-
 from spglib import get_magnetic_symmetry, get_symmetry
 
 

@@ -1,9 +1,8 @@
 import unittest
 
 import numpy as np
-from vasp import read_vasp_from_strings
-
 from spglib import get_symmetry
+from vasp import read_vasp_from_strings
 
 Al222 = """Al
    1.0
@@ -1584,12 +1583,11 @@ sym_ops_str = """ 1  0  0  0  1  0  0  0  1    0.0000000    0.0000000    0.00000
 
 
 class TestPureTrans(unittest.TestCase):
-    """This is a test for new implementation of search_pure_translations in
+    """Test for new implementation of search_pure_translations in
     symmetry.c (ee97ad17) against a previous version. The order of
     symmetry operations found by this new implementation may be
     different from that obtained by the older version but the set must
     be the same in rotations and very close in translations.
-
     """
 
     def setUp(self):
@@ -1610,7 +1608,7 @@ class TestPureTrans(unittest.TestCase):
     def test_pure_trans(self):
         nums = []
         for i, (r, t) in enumerate(
-            zip(self._sym_ops["rotations"], self._sym_ops["translations"])
+            zip(self._sym_ops["rotations"], self._sym_ops["translations"]),
         ):
             for j, (rr, tr) in enumerate(zip(self._rot_ref, self._trans_ref)):
                 if (r == rr).all() and (np.abs(t - tr) < 1e-5).all():

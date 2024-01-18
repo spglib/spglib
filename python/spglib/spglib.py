@@ -40,7 +40,7 @@ import warnings
 import numpy as np
 
 try:
-    from spglib import _spglib as spg
+    from spglib import _spglib as spg  # type: ignore[attr-defined]
 except ImportError:
     import os.path
     import re
@@ -55,13 +55,13 @@ except ImportError:
     )
     if not bundled_lib:
         raise FileNotFoundError(
-            "Spglib C++ library is not installed and no bundled version was detected"
+            "Spglib C library is not installed and no bundled version was detected"
         )
     cdll.LoadLibrary(os.path.join(os.path.dirname(__file__), bundled_lib))
-    from spglib import _spglib as spg
+    from spglib import _spglib as spg  # type: ignore[attr-defined]
 
 
-class SpglibError(object):
+class SpglibError:
     """Error message why spglib failed."""
 
     message = "no error"
@@ -82,7 +82,11 @@ def get_version():
 
 
 def get_symmetry(
-    cell, symprec=1e-5, angle_tolerance=-1.0, mag_symprec=-1.0, is_magnetic=True
+    cell,
+    symprec=1e-5,
+    angle_tolerance=-1.0,
+    mag_symprec=-1.0,
+    is_magnetic=True,
 ) -> dict | None:
     r"""Find symmetry operations from a crystal structure and site tensors.
 
@@ -213,7 +217,9 @@ def get_symmetry(
     if magmoms is None:
         # Get symmetry operations without on-site tensors (i.e. normal crystal)
         dataset = get_symmetry_dataset(
-            cell, symprec=symprec, angle_tolerance=angle_tolerance
+            cell,
+            symprec=symprec,
+            angle_tolerance=angle_tolerance,
         )
         if dataset is None:
             return None
@@ -394,7 +400,9 @@ def get_magnetic_symmetry(
             "time_reversals": time_reversals,
             "equivalent_atoms": equivalent_atoms,
             "primitive_lattice": np.array(
-                np.transpose(primitive_lattice), dtype="double", order="C"
+                np.transpose(primitive_lattice),
+                dtype="double",
+                order="C",
             ),
         }
 
@@ -432,12 +440,16 @@ def _build_dataset_dict(spg_ds):
     dataset["hall"] = dataset["hall"].strip()
     dataset["choice"] = dataset["choice"].strip()
     dataset["transformation_matrix"] = np.array(
-        dataset["transformation_matrix"], dtype="double", order="C"
+        dataset["transformation_matrix"],
+        dtype="double",
+        order="C",
     )
     dataset["origin_shift"] = np.array(dataset["origin_shift"], dtype="double")
     dataset["rotations"] = np.array(dataset["rotations"], dtype="intc", order="C")
     dataset["translations"] = np.array(
-        dataset["translations"], dtype="double", order="C"
+        dataset["translations"],
+        dtype="double",
+        order="C",
     )
     letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
     dataset["wyckoffs"] = [letters[x] for x in dataset["wyckoffs"]]
@@ -445,34 +457,48 @@ def _build_dataset_dict(spg_ds):
         s.strip() for s in dataset["site_symmetry_symbols"]
     ]
     dataset["crystallographic_orbits"] = np.array(
-        dataset["crystallographic_orbits"], dtype="intc"
+        dataset["crystallographic_orbits"],
+        dtype="intc",
     )
     dataset["equivalent_atoms"] = np.array(dataset["equivalent_atoms"], dtype="intc")
     dataset["primitive_lattice"] = np.array(
-        np.transpose(dataset["primitive_lattice"]), dtype="double", order="C"
+        np.transpose(dataset["primitive_lattice"]),
+        dtype="double",
+        order="C",
     )
     dataset["mapping_to_primitive"] = np.array(
-        dataset["mapping_to_primitive"], dtype="intc"
+        dataset["mapping_to_primitive"],
+        dtype="intc",
     )
     dataset["std_lattice"] = np.array(
-        np.transpose(dataset["std_lattice"]), dtype="double", order="C"
+        np.transpose(dataset["std_lattice"]),
+        dtype="double",
+        order="C",
     )
     dataset["std_types"] = np.array(dataset["std_types"], dtype="intc")
     dataset["std_positions"] = np.array(
-        dataset["std_positions"], dtype="double", order="C"
+        dataset["std_positions"],
+        dtype="double",
+        order="C",
     )
     dataset["std_rotation_matrix"] = np.array(
-        dataset["std_rotation_matrix"], dtype="double", order="C"
+        dataset["std_rotation_matrix"],
+        dtype="double",
+        order="C",
     )
     dataset["std_mapping_to_primitive"] = np.array(
-        dataset["std_mapping_to_primitive"], dtype="intc"
+        dataset["std_mapping_to_primitive"],
+        dtype="intc",
     )
     dataset["pointgroup"] = dataset["pointgroup"].strip()
     return dataset
 
 
 def get_symmetry_dataset(
-    cell, symprec=1e-5, angle_tolerance=-1.0, hall_number=0
+    cell,
+    symprec=1e-5,
+    angle_tolerance=-1.0,
+    hall_number=0,
 ) -> dict | None:
     """Search symmetry dataset from an input cell.
 
@@ -637,7 +663,12 @@ def get_symmetry_dataset(
         return None
 
     spg_ds = spg.dataset(
-        lattice, positions, numbers, hall_number, symprec, angle_tolerance
+        lattice,
+        positions,
+        numbers,
+        hall_number,
+        symprec,
+        angle_tolerance,
     )
     if spg_ds is None:
         _set_error_message()
@@ -823,28 +854,40 @@ def get_magnetic_symmetry_dataset(
         dataset[key] = data
     dataset["rotations"] = np.array(dataset["rotations"], dtype="intc", order="C")
     dataset["translations"] = np.array(
-        dataset["translations"], dtype="double", order="C"
+        dataset["translations"],
+        dtype="double",
+        order="C",
     )
     dataset["time_reversals"] = (
         np.array(dataset["time_reversals"], dtype="intc", order="C") == 1
     )
     dataset["equivalent_atoms"] = np.array(dataset["equivalent_atoms"], dtype="intc")
     dataset["transformation_matrix"] = np.array(
-        dataset["transformation_matrix"], dtype="double", order="C"
+        dataset["transformation_matrix"],
+        dtype="double",
+        order="C",
     )
     dataset["origin_shift"] = np.array(dataset["origin_shift"], dtype="double")
     dataset["std_lattice"] = np.array(
-        np.transpose(dataset["std_lattice"]), dtype="double", order="C"
+        np.transpose(dataset["std_lattice"]),
+        dtype="double",
+        order="C",
     )
     dataset["std_types"] = np.array(dataset["std_types"], dtype="intc")
     dataset["std_positions"] = np.array(
-        dataset["std_positions"], dtype="double", order="C"
+        dataset["std_positions"],
+        dtype="double",
+        order="C",
     )
     dataset["std_rotation_matrix"] = np.array(
-        dataset["std_rotation_matrix"], dtype="double", order="C"
+        dataset["std_rotation_matrix"],
+        dtype="double",
+        order="C",
     )
     dataset["primitive_lattice"] = np.array(
-        np.transpose(dataset["primitive_lattice"]), dtype="double", order="C"
+        np.transpose(dataset["primitive_lattice"]),
+        dtype="double",
+        order="C",
     )
 
     dataset["std_tensors"] = np.array(dataset["std_tensors"], dtype="double", order="C")
@@ -864,13 +907,18 @@ def get_layergroup(cell, aperiodic_dir=2, symprec=1e-5):
     _set_no_error()
 
     dataset = get_symmetry_layerdataset(
-        cell, aperiodic_dir=aperiodic_dir, symprec=symprec
+        cell,
+        aperiodic_dir=aperiodic_dir,
+        symprec=symprec,
     )
     return dataset
 
 
 def get_spacegroup(
-    cell, symprec=1e-5, angle_tolerance=-1.0, symbol_type=0
+    cell,
+    symprec=1e-5,
+    angle_tolerance=-1.0,
+    symbol_type=0,
 ) -> str | None:
     """Return space group in international table symbol and number as a string.
 
@@ -881,7 +929,9 @@ def get_spacegroup(
     _set_no_error()
 
     dataset = get_symmetry_dataset(
-        cell, symprec=symprec, angle_tolerance=angle_tolerance
+        cell,
+        symprec=symprec,
+        angle_tolerance=angle_tolerance,
     )
 
     if dataset is None:
@@ -980,7 +1030,10 @@ def get_spacegroup_type(hall_number) -> dict | None:
 
 
 def get_spacegroup_type_from_symmetry(
-    rotations, translations, lattice=None, symprec=1e-5
+    rotations,
+    translations,
+    lattice=None,
+    symprec=1e-5,
 ) -> dict | None:
     """Return space-group type information from symmetry operations.
 
@@ -1004,6 +1057,8 @@ def get_spacegroup_type_from_symmetry(
         Basis vectors a, b, c given in row vectors. This is used as the measure of
         distance. Default is None, which gives unit matrix.
         shape=(3, 3), order='C', dtype='double'
+    symprec: float
+        See :func:`get_symmetry`.
 
     Returns
     -------
@@ -1177,7 +1232,11 @@ def get_pointgroup(rotations):
 
 
 def standardize_cell(
-    cell, to_primitive=False, no_idealize=False, symprec=1e-5, angle_tolerance=-1.0
+    cell,
+    to_primitive=False,
+    no_idealize=False,
+    symprec=1e-5,
+    angle_tolerance=-1.0,
 ):
     """Return standardized cell. When the search failed, ``None`` is returned.
 
@@ -1266,7 +1325,12 @@ def refine_cell(cell, symprec=1e-5, angle_tolerance=-1.0):
     numbers = np.zeros(num_atom * 4, dtype="intc")
     numbers[:num_atom] = _numbers
     num_atom_std = spg.refine_cell(
-        lattice, positions, numbers, num_atom, symprec, angle_tolerance
+        lattice,
+        positions,
+        numbers,
+        num_atom,
+        symprec,
+        angle_tolerance,
     )
     _set_error_message()
 
@@ -1377,7 +1441,11 @@ def get_magnetic_symmetry_from_database(uni_number, hall_number=0) -> dict | Non
     translations = np.zeros((384, 3), dtype="double")
     time_reversals = np.zeros(384, dtype="intc")
     num_sym = spg.magnetic_symmetry_from_database(
-        rotations, translations, time_reversals, uni_number, hall_number
+        rotations,
+        translations,
+        time_reversals,
+        uni_number,
+        hall_number,
     )
     _set_error_message()
 
@@ -1388,7 +1456,9 @@ def get_magnetic_symmetry_from_database(uni_number, hall_number=0) -> dict | Non
             "rotations": np.array(rotations[:num_sym], dtype="intc", order="C"),
             "translations": np.array(translations[:num_sym], dtype="double", order="C"),
             "time_reversals": np.array(
-                time_reversals[:num_sym], dtype="intc", order="C"
+                time_reversals[:num_sym],
+                dtype="intc",
+                order="C",
             ),
         }
 
@@ -1401,12 +1471,18 @@ def get_grid_point_from_address(grid_address, mesh):
     _set_no_error()
 
     return spg.grid_point_from_address(
-        np.array(grid_address, dtype="intc"), np.array(mesh, dtype="intc")
+        np.array(grid_address, dtype="intc"),
+        np.array(mesh, dtype="intc"),
     )
 
 
 def get_ir_reciprocal_mesh(
-    mesh, cell, is_shift=None, is_time_reversal=True, symprec=1e-5, is_dense=False
+    mesh,
+    cell,
+    is_shift=None,
+    is_time_reversal=True,
+    symprec=1e-5,
+    is_dense=False,
 ):
     """Return k-points mesh and k-point map to the irreducible k-points.
 
@@ -1475,7 +1551,12 @@ def get_ir_reciprocal_mesh(
 
 
 def get_stabilized_reciprocal_mesh(
-    mesh, rotations, is_shift=None, is_time_reversal=True, qpoints=None, is_dense=False
+    mesh,
+    rotations,
+    is_shift=None,
+    is_time_reversal=True,
+    qpoints=None,
+    is_dense=False,
 ):
     """Return k-point map to the irreducible k-points and k-point grid points.
 
@@ -1548,7 +1629,11 @@ def get_stabilized_reciprocal_mesh(
 
 
 def get_grid_points_by_rotations(
-    address_orig, reciprocal_rotations, mesh, is_shift=None, is_dense=False
+    address_orig,
+    reciprocal_rotations,
+    mesh,
+    is_shift=None,
+    is_dense=False,
 ):
     """Return grid points obtained after rotating input grid address.
 
@@ -1601,7 +1686,12 @@ def get_grid_points_by_rotations(
 
 
 def get_BZ_grid_points_by_rotations(
-    address_orig, reciprocal_rotations, mesh, bz_map, is_shift=None, is_dense=False
+    address_orig,
+    reciprocal_rotations,
+    mesh,
+    bz_map,
+    is_shift=None,
+    is_dense=False,
 ):
     """Return grid points obtained after rotating input grid address.
 
@@ -1616,6 +1706,8 @@ def get_BZ_grid_points_by_rotations(
         dtype='intc', shape=(rotations, 3, 3)
     mesh : array_like
         dtype='intc', shape=(3,)
+    bz_map : array_like
+        TODO
     is_shift : array_like, optional
         With (1) or without (0) half grid shifts with respect to grid intervals
         sampled along reciprocal basis vectors. Default is None, which

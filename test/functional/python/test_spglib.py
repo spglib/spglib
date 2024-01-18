@@ -3,8 +3,6 @@ import unittest
 
 import numpy as np
 import yaml
-from vasp import read_vasp
-
 from spglib import (
     find_primitive,
     get_magnetic_spacegroup_type,
@@ -14,6 +12,7 @@ from spglib import (
     get_symmetry_dataset,
     standardize_cell,
 )
+from vasp import read_vasp
 
 data_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -80,7 +79,9 @@ class TestSpglib(unittest.TestCase):
 
     def test_get_symmetry_dataset(self):
         for fname, spgnum, reffname in zip(
-            self._filenames, self._spgnum_ref, self._ref_filenames
+            self._filenames,
+            self._spgnum_ref,
+            self._ref_filenames,
         ):
             cell = read_vasp(fname)
 
@@ -102,10 +103,14 @@ class TestSpglib(unittest.TestCase):
                     msg=("%s" % fname),
                 )
                 self.assertEqual(
-                    dataset["hall"], spg_type["hall_symbol"], msg=("%s" % fname)
+                    dataset["hall"],
+                    spg_type["hall_symbol"],
+                    msg=("%s" % fname),
                 )
                 self.assertEqual(
-                    dataset["choice"], spg_type["choice"], msg=("%s" % fname)
+                    dataset["choice"],
+                    spg_type["choice"],
+                    msg=("%s" % fname),
                 )
                 self.assertEqual(
                     dataset["pointgroup"],
@@ -135,7 +140,10 @@ class TestSpglib(unittest.TestCase):
                 symprec = 1e-5
 
             std_cell = standardize_cell(
-                cell, to_primitive=False, no_idealize=True, symprec=symprec
+                cell,
+                to_primitive=False,
+                no_idealize=True,
+                symprec=symprec,
             )
             dataset = get_symmetry_dataset(std_cell, symprec=symprec)
             self.assertEqual(dataset["number"], spgnum, msg=("%s" % fname))
@@ -153,10 +161,16 @@ class TestSpglib(unittest.TestCase):
                 symprec = 1e-5
 
             prim_cell = standardize_cell(
-                cell, to_primitive=True, no_idealize=True, symprec=symprec
+                cell,
+                to_primitive=True,
+                no_idealize=True,
+                symprec=symprec,
             )
             std_cell = standardize_cell(
-                prim_cell, to_primitive=False, no_idealize=True, symprec=symprec
+                prim_cell,
+                to_primitive=False,
+                no_idealize=True,
+                symprec=symprec,
             )
             dataset = get_symmetry_dataset(std_cell, symprec=symprec)
             self.assertEqual(dataset["number"], spgnum, msg=("%s" % fname))
@@ -170,7 +184,10 @@ class TestSpglib(unittest.TestCase):
                 symprec = 1e-5
 
             prim_cell = standardize_cell(
-                cell, to_primitive=True, no_idealize=True, symprec=symprec
+                cell,
+                to_primitive=True,
+                no_idealize=True,
+                symprec=symprec,
             )
             dataset = get_symmetry_dataset(prim_cell, symprec=symprec)
             self.assertEqual(dataset["number"], spgnum, msg=("%s" % fname))
@@ -211,7 +228,9 @@ class TestSpglib(unittest.TestCase):
                 )
                 dataset_2 = get_symmetry_dataset(ref_cell_1, symprec=1e-5)
                 np.testing.assert_equal(
-                    dataset_1["std_types"], dataset_2["std_types"], err_msg="%s" % fname
+                    dataset_1["std_types"],
+                    dataset_2["std_types"],
+                    err_msg="%s" % fname,
                 )
                 np.testing.assert_allclose(
                     dataset_1["std_lattice"],
@@ -351,12 +370,12 @@ class TestSpglib(unittest.TestCase):
                     [0, 0, 0],
                     [0.5, 0.5, 0.5],
                     [0.5, 0.5, 0.5],
-                ]
+                ],
             ),
             "time_reversals": np.array(
                 [
                     [0, 0, 1, 0, 1, 1],
-                ]
+                ],
             ),
         }
         for key in ["rotations", "translations", "time_reversals"]:

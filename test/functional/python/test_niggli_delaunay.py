@@ -2,7 +2,6 @@
 from pathlib import Path
 
 import numpy as np
-
 from spglib import delaunay_reduce, niggli_reduce
 
 cwd = Path(__file__).parent
@@ -22,12 +21,13 @@ def _get_angles(lattice):
 
 def _reduce(input_lattices, func, ref_data):
     for i, (input_lattice, reference_lattice) in enumerate(
-        zip(input_lattices, ref_data)
+        zip(input_lattices, ref_data),
     ):
         reduced_lattice = func(input_lattice)
         # self._show_lattice(i, reduced_lattice)
         assert np.allclose(
-            [np.linalg.det(input_lattice)], [np.linalg.det(reduced_lattice)]
+            [np.linalg.det(input_lattice)],
+            [np.linalg.det(reduced_lattice)],
         )
         T = np.dot(np.linalg.inv(reference_lattice.T), input_lattice.T)
         assert np.allclose(T, np.rint(T))
@@ -47,7 +47,7 @@ def _reduce(input_lattices, func, ref_data):
                 "%s" % reduced_lattice,
                 " angles: %s" % np.array(_get_angles(reduced_lattice)),
                 _str_lattice(reduced_lattice),
-            ]
+            ],
         )
 
 
