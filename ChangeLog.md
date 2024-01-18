@@ -11,10 +11,35 @@ GitHub release pages and in the git history.
 
 ## \[Unreleased\]
 
+### Features
+
+- Version is now calculated dynamically from commit information
+  - `version` is the `X.Y.Z` version format of Spglib
+  - `version_full` is the full version formatted like `guess-next-dev` from [setuptools-scm]
+  - `commit` is the commit used when building the Spglib library
+
+### CMake interface
+
+- Exporting `Spglib_VERSION_FULL` and `Spglib_COMMIT` CMake variables
+
+### C interface
+
+- Added `spg_get_verison`, `spg_get_verison_full`, `spg_get_commit`
+
 ### Python interface
 
 - Dropped Python 3.7 support
 - Dropped ASE Atoms-like input
+- Deprecating `get_version` in favor of `__version__` and `get_spg_version`
+- Added `spg_get_version`, `spg_get_version_full`, `spg_get_commit` to get the version/commit of the spglib C library
+  that is being used by the binding
+- `__version__` now reports the version of the python interface
+
+### Fortran interface
+
+- Added `spg_get_version`, `spg_get_version_full`, `spg_get_commit` to get the version/commit of the spglib C library
+  that is being used by the binding
+- Added `version`, `version_full`, `commit` variables containing the version/commit of the Fortran bindings
 
 ## v2.2.0 (6 Dec. 2023)
 
@@ -2058,3 +2083,5 @@ spg_check_symmetry are corrected.
 For fixing many warning in many codes and gcc-4.3 related problem
 in bravais.c.
 ```
+
+[setuptools-scm]: https://setuptools-scm.readthedocs.io/en/latest/extending/#available-implementations
