@@ -55,7 +55,7 @@ except ImportError:
     )
     if not bundled_lib:
         raise FileNotFoundError(
-            "Spglib C++ library is not installed and no bundled version was detected"
+            "Spglib C library is not installed and no bundled version was detected"
         )
     cdll.LoadLibrary(os.path.join(os.path.dirname(__file__), bundled_lib))
     from spglib import _spglib as spg
