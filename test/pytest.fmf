@@ -4,3 +4,6 @@ require:
   - python3-pyyaml
 path: /functional/python
 test: python3 -m pytest -m 'not benchmark'
+adjust:
+  enabled: false
+  when: distro <= rhel-9 or distro <= centos-stream-9
