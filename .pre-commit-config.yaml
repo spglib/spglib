@@ -29,32 +29,12 @@ repos:
       - id: end-of-file-fixer
       - id: check-yaml
       - id: check-added-large-files
-  - repo: https://github.com/pycqa/flake8
-    rev: 5.0.4
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.1.12
     hooks:
-      - id: flake8
-        files: python\/.*
-        args:
-          - "--max-line-length=88"
-          - "--ignore=E203,W503"
-  - repo: https://github.com/psf/black
-    rev: 22.6.0
-    hooks:
-      - id: black
-        files: python\/.*
-        args: [ "--line-length=88" ]
-  - repo: https://github.com/pycqa/pydocstyle
-    rev: 6.1.1
-    hooks:
-      - id: pydocstyle
-        files: python/spglib
-        additional_dependencies: [ "toml" ]
-  - repo: https://github.com/pycqa/isort
-    rev: 5.12.0
-    hooks:
-      - id: isort
-        files: python\/.*
-        args: [ "--profile", "black" ]
+      - id: ruff
+        args: [ "--fix", "--show-fixes" ]
+      - id: ruff-format
   - repo: https://github.com/executablebooks/mdformat
     rev: 0.7.16
     hooks:
