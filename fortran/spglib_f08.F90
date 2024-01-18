@@ -5,6 +5,24 @@ module spglib_f08
     implicit none
 
     private
+    public :: spg_get_dataset, spg_get_magnetic_dataset, &
+            & spg_get_symmetry, spgat_get_symmetry, &
+            & spg_get_symmetry_with_collinear_spin, &
+            & spgat_get_symmetry_with_collinear_spin, &
+            & spg_get_symmetry_with_site_tensors, &
+            & spgat_get_symmetry_with_site_tensors, &
+            & spg_get_multiplicity, spgat_get_multiplicity, &
+            & spg_delaunay_reduce, spg_niggli_reduce, &
+            & spg_find_primitive, spgat_find_primitive, &
+            & spg_get_international, spgat_get_international, &
+            & spg_get_schoenflies, spgat_get_schoenflies, &
+            & spg_get_pointgroup, spg_refine_cell, spgat_refine_cell, &
+            & spg_standardize_cell, spgat_standardize_cell, &
+            & spg_get_ir_reciprocal_mesh, &
+            & spg_get_stabilized_reciprocal_mesh, &
+            & spg_get_error_code, spg_get_error_message, &
+            & spg_get_spacegroup_type, &
+            & spg_get_magnetic_spacegroup_type
 
     enum, bind(C)
         enumerator ::  SPGLIB_SUCCESS = 0
@@ -19,7 +37,7 @@ module spglib_f08
         enumerator ::  SPGERR_NONE
     end enum
 
-    type :: SpglibSpacegroupType
+    type, public :: SpglibSpacegroupType
         integer(c_int) :: number
         character(len=11) :: international_short
         character(len=20) :: international_full
@@ -34,7 +52,7 @@ module spglib_f08
         character(len=7) :: arithmetic_crystal_class_symbol
     end type SpglibSpacegroupType
 
-    type :: SpglibDataset
+    type, public :: SpglibDataset
         integer(c_int) :: spacegroup_number
         integer(c_int) :: hall_number
         character(len=11) :: international_symbol
@@ -62,7 +80,7 @@ module spglib_f08
         integer(kind(SPGLIB_SUCCESS)) :: spglib_error
     end type SpglibDataset
 
-    type :: SpglibMagneticSpacegroupType
+    type, public :: SpglibMagneticSpacegroupType
         integer(c_int) :: uni_number
         integer(c_int) :: litvin_number
         character(len=8) :: bns_number
@@ -71,7 +89,7 @@ module spglib_f08
         integer(c_int) :: type
     end type SpglibMagneticSpacegroupType
 
-    type :: SpglibMagneticDataset
+    type, public :: SpglibMagneticDataset
         integer(c_int) :: uni_number
         integer(c_int) :: msg_type
         integer(c_int) :: hall_number
@@ -93,8 +111,67 @@ module spglib_f08
         real(c_double) :: primitive_lattice(3, 3)
     end type SpglibMagneticDataset
 
-    interface
+    ! Constructors
+    interface SpglibDataset
+        procedure spg_get_dataset
+    end interface SpglibDataset
 
+    interface SpglibMagneticDataset
+        procedure spg_get_magnetic_dataset
+    end interface SpglibMagneticDataset
+
+    interface SpglibSpacegroupType
+        procedure spg_get_spacegroup_type
+    end interface SpglibSpacegroupType
+
+    interface SpglibMagneticSpacegroupType
+        procedure spg_get_magnetic_spacegroup_type
+    end interface SpglibMagneticSpacegroupType
+
+    ! Main fortran interface
+    interface
+        module function spg_get_dataset(lattice, position, types, num_atom, &
+                                        symprec) result(dset)
+            real(c_double), intent(in) :: lattice(3, 3)
+            real(c_double), intent(in) :: position(3, *)
+            integer(c_int), intent(in) :: types(*)
+            integer(c_int), intent(in), value :: num_atom
+            real(c_double), intent(in), value :: symprec
+            type(SpglibDataset) :: dset
+        end function spg_get_dataset
+
+        module function spg_get_error_message(spglib_error) result(error_message)
+            integer(kind(SPGLIB_SUCCESS)) :: spglib_error
+            character(len=32) :: error_message
+        end function spg_get_error_message
+
+        module function spg_get_magnetic_dataset(lattice, position, types, &
+                                                 tensors, tensor_rank, num_atom, is_axial, symprec) result(dset)
+            real(c_double), intent(in) :: lattice(3, 3)
+            real(c_double), intent(in) :: position(3, *)
+            integer(c_int), intent(in) :: types(*)
+            real(c_double), intent(in) :: tensors(*)
+            integer(c_int), intent(in), value :: tensor_rank
+            integer(c_int), intent(in), value :: num_atom
+            integer(c_int), intent(in), value :: is_axial
+            real(c_double), intent(in), value :: symprec
+            type(SpglibMagneticDataset) :: dset
+        end function spg_get_magnetic_dataset
+
+        module function spg_get_spacegroup_type(hall_number) result(spgtype)
+            integer(c_int), intent(in) :: hall_number
+            type(SpglibSpacegroupType) :: spgtype
+        end function spg_get_spacegroup_type
+
+        module function spg_get_magnetic_spacegroup_type(uni_number) &
+            result(magspgtype)
+            integer(c_int), intent(in) :: uni_number
+            type(SpglibMagneticSpacegroupType) :: magspgtype
+        end function spg_get_magnetic_spacegroup_type
+    end interface
+
+    ! Exposed C interface
+    interface
         function spg_get_symmetry(rotation, translation, max_size, lattice, &
              & position, types, num_atom, symprec) bind(c) result(retval)
             import c_int, c_double
@@ -109,7 +186,8 @@ module spglib_f08
         end function spg_get_symmetry
 
         function spgat_get_symmetry(rotation, translation, max_size, lattice, &
-             & position, types, num_atom, symprec, angle_tolerance) bind(c) result(retval)
+             & position, types, num_atom, symprec, angle_tolerance) bind(c) &
+                result(retval)
             import c_int, c_double
             integer(c_int), intent(out) :: rotation(3, 3, *)
             real(c_double), intent(out) :: translation(3, *)
@@ -383,29 +461,144 @@ module spglib_f08
 
     end interface
 
-    public :: SpglibDataset, SpglibMagneticDataset, &
-         & spg_get_dataset, spg_get_magnetic_dataset, &
-         & spg_get_symmetry, spgat_get_symmetry, &
-         & spg_get_symmetry_with_collinear_spin, &
-         & spgat_get_symmetry_with_collinear_spin, &
-         & spg_get_symmetry_with_site_tensors, &
-         & spgat_get_symmetry_with_site_tensors, &
-         & spg_get_multiplicity, spgat_get_multiplicity, &
-         & spg_delaunay_reduce, spg_niggli_reduce, &
-         & spg_find_primitive, spgat_find_primitive, &
-         & spg_get_international, spgat_get_international, &
-         & spg_get_schoenflies, spgat_get_schoenflies, &
-         & spg_get_pointgroup, spg_refine_cell, spgat_refine_cell, &
-         & spg_standardize_cell, spgat_standardize_cell, &
-         & spg_get_ir_reciprocal_mesh, &
-         & spg_get_stabilized_reciprocal_mesh, &
-         & spg_get_error_code, spg_get_error_message, &
-         & SpglibSpacegroupType, spg_get_spacegroup_type, &
-         & SpglibMagneticSpacegroupType, spg_get_magnetic_spacegroup_type
+end module spglib_f08
 
+submodule(spglib_f08) impl
+    type, bind(c) :: SpglibDataset_c
+        integer(c_int) :: spacegroup_number
+        integer(c_int) :: hall_number
+        character(kind=c_char) :: international_symbol(11)
+        character(kind=c_char) :: hall_symbol(17)
+        character(kind=c_char) :: choice(6)
+        real(c_double) :: transformation_matrix(3, 3)
+        real(c_double) :: origin_shift(3)
+        integer(c_int) :: n_operations
+        type(c_ptr) :: rotations
+        type(c_ptr) :: translations
+        integer(c_int) :: n_atoms
+        type(c_ptr) :: wyckoffs
+        type(c_ptr) :: site_symmetry_symbols
+        type(c_ptr) :: equivalent_atoms
+        type(c_ptr) :: crystallographic_orbits
+        real(c_double) :: primitive_lattice(3, 3)
+        type(c_ptr) :: mapping_to_primitive
+        integer(c_int) :: n_std_atoms
+        real(c_double) :: std_lattice(3, 3)
+        type(c_ptr) :: std_types
+        type(c_ptr) :: std_positions
+        real(c_double)  :: std_rotation_matrix(3, 3)
+        type(c_ptr) :: std_mapping_to_primitive
+        character(kind=c_char) :: pointgroup_symbol(6)
+    end type SpglibDataset_c
+
+    type, bind(c) :: SpglibSpacegroupType_c
+        integer(c_int) :: number
+        character(kind=c_char) :: international_short(11)
+        character(kind=c_char) :: international_full(20)
+        character(kind=c_char) :: international(32)
+        character(kind=c_char) :: schoenflies(7)
+        integer(c_int) :: hall_number
+        character(kind=c_char) :: hall_symbol(17)
+        character(kind=c_char) :: choice(6)
+        character(kind=c_char) :: pointgroup_international(6)
+        character(kind=c_char) :: pointgroup_schoenflies(4)
+        integer(c_int) :: arithmetic_crystal_class_number
+        character(kind=c_char) :: arithmetic_crystal_class_symbol(7)
+    end type SpglibSpacegroupType_c
+
+    type, bind(c) :: SpglibMagneticDataset_c
+        integer(c_int) :: uni_number
+        integer(c_int) :: msg_type
+        integer(c_int) :: hall_number
+        integer(c_int) :: tensor_rank
+        integer(c_int) :: n_operations
+        type(c_ptr) :: rotations
+        type(c_ptr) :: translations
+        type(c_ptr) :: time_reversals
+        integer(c_int) :: n_atoms
+        type(c_ptr) :: equivalent_atoms
+        real(c_double) :: transformation_matrix(3, 3)
+        real(c_double) :: origin_shift(3)
+        integer(c_int) :: n_std_atoms
+        real(c_double) :: std_lattice(3, 3)
+        type(c_ptr) :: std_types
+        type(c_ptr) :: std_positions
+        type(c_ptr) :: std_tensors
+        real(c_double) :: std_rotation_matrix(3, 3)
+        real(c_double) :: primitive_lattice(3, 3)
+    end type SpglibMagneticDataset_c
+
+    type, bind(c) :: SpglibMagneticSpacegroupType_c
+        integer(c_int) :: uni_number
+        integer(c_int) :: litvin_number
+        character(kind=c_char) :: bns_number(8)
+        character(kind=c_char) :: og_number(12)
+        integer(c_int) :: number
+        integer(c_int) :: type
+    end type SpglibMagneticSpacegroupType_c
+
+    interface
+        function spg_get_error_message_c(spglib_error_c) &
+                & bind(c, name='spg_get_error_message') result(error_message_c)
+            import c_ptr, SPGLIB_SUCCESS
+
+            integer(kind(SPGLIB_SUCCESS)), value :: spglib_error_c
+            type(c_ptr) :: error_message_c
+
+        end function spg_get_error_message_c
+
+        function spg_get_spacegroup_type_c(hall_number_c) &
+                & bind(c, name='spg_get_spacegroup_type') result(spgtype_c)
+            import c_int, SpglibSpacegroupType_c
+            integer(c_int), intent(in), value :: hall_number_c
+            type(SpglibSpacegroupType_c) :: spgtype_c
+        end function spg_get_spacegroup_type_c
+
+        function spg_get_dataset_c(lattice_c, position_c, types_c, num_atom_c, symprec_c) &
+                & bind(c, name='spg_get_dataset') result(retval)
+            import c_int, c_double, c_ptr
+            real(c_double), intent(in) :: lattice_c(3, 3)
+            real(c_double), intent(in) :: position_c(3, *)
+            integer(c_int), intent(in) :: types_c(*)
+            integer(c_int), intent(in), value :: num_atom_c
+            real(c_double), intent(in), value :: symprec_c
+            type(c_ptr) :: retval
+        end function spg_get_dataset_c
+
+        subroutine spg_free_dataset_c(dataset) bind(c, name='spg_free_dataset')
+            import SpglibDataset_c
+            type(SpglibDataset_c), intent(inout) :: dataset
+        end subroutine spg_free_dataset_c
+
+        function spg_get_magnetic_spacegroup_type_c(uni_number_c) &
+                & bind(c, name='spg_get_magnetic_spacegroup_type') result(magspgtype_c)
+            import c_int, SpglibMagneticSpacegroupType_c
+            integer(c_int), intent(in), value :: uni_number_c
+            type(SpglibMagneticSpacegroupType_c) :: magspgtype_c
+        end function spg_get_magnetic_spacegroup_type_c
+
+        function spg_get_magnetic_dataset_c &
+                & (lattice_c, position_c, types_c, tensors_c, tensor_rank_c, num_atom_c, is_axial_c, symprec_c) &
+                & bind(c, name='spg_get_magnetic_dataset') result(mag_dset_c)
+            import c_int, c_double, c_ptr
+            real(c_double), intent(in) :: lattice_c(3, 3)
+            real(c_double), intent(in) :: position_c(3, *)
+            integer(c_int), intent(in) :: types_c(*)
+            real(c_double), intent(in) :: tensors_c(*)
+            integer(c_int), intent(in), value :: tensor_rank_c
+            integer(c_int), intent(in), value :: num_atom_c
+            integer(c_int), intent(in), value :: is_axial_c
+            real(c_double), intent(in), value :: symprec_c
+            type(c_ptr) :: mag_dset_c
+        end function spg_get_magnetic_dataset_c
+
+        subroutine spg_free_magnetic_dataset_c(dataset) bind(c, name='spg_free_magnetic_dataset')
+            import SpglibMagneticDataset_c
+            type(SpglibMagneticDataset_c), intent(inout) :: dataset
+        end subroutine spg_free_magnetic_dataset_c
+    end interface
 contains
-
-    function spg_get_error_message(spglib_error) result(error_message)
+    module function spg_get_error_message(spglib_error) result(error_message)
         integer(kind(SPGLIB_SUCCESS)) :: spglib_error
         character(len=32) :: error_message
 
@@ -413,19 +606,6 @@ contains
         type(c_ptr) :: message_ptr
 
         integer :: i
-
-        interface
-
-            function spg_get_error_message_c(spglib_error_c) &
-                 & bind(c, name='spg_get_error_message') result(error_message_c)
-                import c_ptr, SPGLIB_SUCCESS
-
-                integer(kind(SPGLIB_SUCCESS)), value :: spglib_error_c
-                type(c_ptr) :: error_message_c
-
-            end function spg_get_error_message_c
-
-        end interface
 
         message_ptr = spg_get_error_message_c(spglib_error)
         call c_f_pointer(message_ptr, message, [len(error_message)])
@@ -438,35 +618,9 @@ contains
 
     end function spg_get_error_message
 
-    function spg_get_spacegroup_type(hall_number) result(spgtype)
+    module function spg_get_spacegroup_type(hall_number) result(spgtype)
         integer(c_int), intent(in) :: hall_number
         type(SpglibSpacegroupType) :: spgtype
-
-        type, bind(c) :: SpglibSpacegroupType_c
-            integer(c_int) :: number
-            character(kind=c_char) :: international_short(11)
-            character(kind=c_char) :: international_full(20)
-            character(kind=c_char) :: international(32)
-            character(kind=c_char) :: schoenflies(7)
-            integer(c_int) :: hall_number
-            character(kind=c_char) :: hall_symbol(17)
-            character(kind=c_char) :: choice(6)
-            character(kind=c_char) :: pointgroup_international(6)
-            character(kind=c_char) :: pointgroup_schoenflies(4)
-            integer(c_int) :: arithmetic_crystal_class_number
-            character(kind=c_char) :: arithmetic_crystal_class_symbol(7)
-        end type SpglibSpacegroupType_c
-
-        interface
-
-            function spg_get_spacegroup_type_c(hall_number_c) &
-                 & bind(c, name='spg_get_spacegroup_type') result(spgtype_c)
-                import c_int, SpglibSpacegroupType_c
-                integer(c_int), intent(in), value :: hall_number_c
-                type(SpglibSpacegroupType_c) :: spgtype_c
-            end function spg_get_spacegroup_type_c
-
-        end interface
 
         type(SpglibSpacegroupType_c), allocatable:: spgtype_c
         integer :: i
@@ -555,7 +709,7 @@ contains
 
     end function spg_get_spacegroup_type
 
-    function spg_get_dataset(lattice, position, types, num_atom, symprec) result(dset)
+    module function spg_get_dataset(lattice, position, types, num_atom, symprec) result(dset)
 
         real(c_double), intent(in) :: lattice(3, 3)
         real(c_double), intent(in) :: position(3, *)
@@ -563,52 +717,6 @@ contains
         integer(c_int), intent(in), value :: num_atom
         real(c_double), intent(in), value :: symprec
         type(SpglibDataset) :: dset
-
-        type, bind(c) :: SpglibDataset_c
-            integer(c_int) :: spacegroup_number
-            integer(c_int) :: hall_number
-            character(kind=c_char) :: international_symbol(11)
-            character(kind=c_char) :: hall_symbol(17)
-            character(kind=c_char) :: choice(6)
-            real(c_double) :: transformation_matrix(3, 3)
-            real(c_double) :: origin_shift(3)
-            integer(c_int) :: n_operations
-            type(c_ptr) :: rotations
-            type(c_ptr) :: translations
-            integer(c_int) :: n_atoms
-            type(c_ptr) :: wyckoffs
-            type(c_ptr) :: site_symmetry_symbols
-            type(c_ptr) :: equivalent_atoms
-            type(c_ptr) :: crystallographic_orbits
-            real(c_double) :: primitive_lattice(3, 3)
-            type(c_ptr) :: mapping_to_primitive
-            integer(c_int) :: n_std_atoms
-            real(c_double) :: std_lattice(3, 3)
-            type(c_ptr) :: std_types
-            type(c_ptr) :: std_positions
-            real(c_double)  :: std_rotation_matrix(3, 3)
-            type(c_ptr) :: std_mapping_to_primitive
-            character(kind=c_char) :: pointgroup_symbol(6)
-        end type SpglibDataset_c
-
-        interface
-            function spg_get_dataset_c(lattice_c, position_c, types_c, num_atom_c, symprec_c) &
-                 & bind(c, name='spg_get_dataset') result(retval)
-                import c_int, c_double, c_ptr
-                real(c_double), intent(in) :: lattice_c(3, 3)
-                real(c_double), intent(in) :: position_c(3, *)
-                integer(c_int), intent(in) :: types_c(*)
-                integer(c_int), intent(in), value :: num_atom_c
-                real(c_double), intent(in), value :: symprec_c
-                type(c_ptr) :: retval
-            end function spg_get_dataset_c
-
-            subroutine spg_free_dataset_c(dataset) bind(c, name='spg_free_dataset')
-                import SpglibDataset_c
-                type(SpglibDataset_c), intent(inout) :: dataset
-            end subroutine spg_free_dataset_c
-
-        end interface
 
         type(SpglibDataset_c), pointer :: dset_c
         type(c_ptr) :: dataset_ptr_c
@@ -734,29 +842,9 @@ contains
 
     end function spg_get_dataset
 
-    function spg_get_magnetic_spacegroup_type(uni_number) result(magspgtype)
+    module function spg_get_magnetic_spacegroup_type(uni_number) result(magspgtype)
         integer(c_int), intent(in) :: uni_number
         type(SpglibMagneticSpacegroupType) :: magspgtype
-
-        type, bind(c) :: SpglibMagneticSpacegroupType_c
-            integer(c_int) :: uni_number
-            integer(c_int) :: litvin_number
-            character(kind=c_char) :: bns_number(8)
-            character(kind=c_char) :: og_number(12)
-            integer(c_int) :: number
-            integer(c_int) :: type
-        end type SpglibMagneticSpacegroupType_c
-
-        interface
-
-            function spg_get_magnetic_spacegroup_type_c(uni_number_c) &
-                 & bind(c, name='spg_get_magnetic_spacegroup_type') result(magspgtype_c)
-                import c_int, SpglibMagneticSpacegroupType_c
-                integer(c_int), intent(in), value :: uni_number_c
-                type(SpglibMagneticSpacegroupType_c) :: magspgtype_c
-            end function spg_get_magnetic_spacegroup_type_c
-
-        end interface
 
         type(SpglibMagneticSpacegroupType_c), allocatable:: magspgtype_c
         integer :: i
@@ -787,7 +875,8 @@ contains
 
     end function spg_get_magnetic_spacegroup_type
 
-    function spg_get_magnetic_dataset(lattice, position, types, tensors, tensor_rank, num_atom, is_axial, symprec) result(dset)
+    module function spg_get_magnetic_dataset(lattice, position, types, &
+                                             tensors, tensor_rank, num_atom, is_axial, symprec) result(dset)
 
         real(c_double), intent(in) :: lattice(3, 3)
         real(c_double), intent(in) :: position(3, *)
@@ -798,51 +887,6 @@ contains
         integer(c_int), intent(in), value :: is_axial
         real(c_double), intent(in), value :: symprec
         type(SpglibMagneticDataset) :: dset
-
-        type, bind(c) :: SpglibMagneticDataset_c
-            integer(c_int) :: uni_number
-            integer(c_int) :: msg_type
-            integer(c_int) :: hall_number
-            integer(c_int) :: tensor_rank
-            integer(c_int) :: n_operations
-            type(c_ptr) :: rotations
-            type(c_ptr) :: translations
-            type(c_ptr) :: time_reversals
-            integer(c_int) :: n_atoms
-            type(c_ptr) :: equivalent_atoms
-            real(c_double) :: transformation_matrix(3, 3)
-            real(c_double) :: origin_shift(3)
-            integer(c_int) :: n_std_atoms
-            real(c_double) :: std_lattice(3, 3)
-            type(c_ptr) :: std_types
-            type(c_ptr) :: std_positions
-            type(c_ptr) :: std_tensors
-            real(c_double) :: std_rotation_matrix(3, 3)
-            real(c_double) :: primitive_lattice(3, 3)
-        end type SpglibMagneticDataset_c
-
-        interface
-            function spg_get_magnetic_dataset_c &
-              & (lattice_c, position_c, types_c, tensors_c, tensor_rank_c, num_atom_c, is_axial_c, symprec_c) &
-                                      & bind(c, name='spg_get_magnetic_dataset') result(mag_dset_c)
-                import c_int, c_double, c_ptr
-                real(c_double), intent(in) :: lattice_c(3, 3)
-                real(c_double), intent(in) :: position_c(3, *)
-                integer(c_int), intent(in) :: types_c(*)
-                real(c_double), intent(in) :: tensors_c(*)
-                integer(c_int), intent(in), value :: tensor_rank_c
-                integer(c_int), intent(in), value :: num_atom_c
-                integer(c_int), intent(in), value :: is_axial_c
-                real(c_double), intent(in), value :: symprec_c
-                type(c_ptr) :: mag_dset_c
-            end function spg_get_magnetic_dataset_c
-
-            subroutine spg_free_magnetic_dataset_c(dataset) bind(c, name='spg_free_magnetic_dataset')
-                import SpglibMagneticDataset_c
-                type(SpglibMagneticDataset_c), intent(inout) :: dataset
-            end subroutine spg_free_magnetic_dataset_c
-
-        end interface
 
         type(SpglibMagneticDataset_c), pointer :: dset_c
         type(c_ptr) :: dataset_ptr_c
@@ -926,4 +970,4 @@ contains
 
     end function spg_get_magnetic_dataset
 
-end module spglib_f08
+end submodule impl
