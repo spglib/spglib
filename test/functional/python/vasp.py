@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2011 Atsushi Togo
 # All rights reserved.
 #
@@ -125,7 +124,7 @@ def _expand_symbols(num_atoms, symbols=None):
 
 def _is_exist_symbols(symbols):
     for s in symbols:
-        if not (s in symbol_map):
+        if s not in symbol_map:
             return False
     return True
 

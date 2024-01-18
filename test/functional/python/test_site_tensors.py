@@ -1,7 +1,6 @@
 import unittest
 
 import numpy as np
-
 from spglib import get_magnetic_symmetry, get_symmetry
 
 
@@ -83,7 +82,8 @@ class TestGetOperationsWithSiteTensors(unittest.TestCase):
         self.assertEqual(np.sum(sym2["time_reversals"]), 8)
 
         sym2_gray = get_magnetic_symmetry(
-            self._cell_CrCl2 + (magmoms2,), with_time_reversal=False
+            self._cell_CrCl2 + (magmoms2,),
+            with_time_reversal=False,
         )
         self.assertTrue(np.allclose(sym2_gray["rotations"], sym["rotations"]))
         self.assertTrue(np.allclose(sym2_gray["translations"], sym["translations"]))
@@ -135,7 +135,7 @@ class TestGetOperationsWithSiteTensors(unittest.TestCase):
 
 if __name__ == "__main__":
     suite = unittest.TestLoader().loadTestsFromTestCase(
-        TestGetOperationsWithSiteTensors
+        TestGetOperationsWithSiteTensors,
     )
     unittest.TextTestRunner(verbosity=2).run(suite)
     # unittest.main()

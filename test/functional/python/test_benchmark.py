@@ -4,13 +4,14 @@ from pathlib import Path
 from typing import Callable
 
 import pytest
-
 from spglib import get_symmetry_dataset
 
 
 @pytest.mark.benchmark(group="space-group")
 def test_get_symmetry_dataset(
-    benchmark, all_filenames: list[Path], read_vasp: Callable
+    benchmark,
+    all_filenames: list[Path],
+    read_vasp: Callable,
 ):
     """Benchmarking get_symmetry_dataset on all structures under test/data."""
     # Load all cells beforehands

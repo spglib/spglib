@@ -2,9 +2,8 @@ import os
 import unittest
 
 import numpy as np
-from vasp import read_vasp
-
 from spglib import get_symmetry, get_symmetry_dataset, get_symmetry_from_database
+from vasp import read_vasp
 
 data_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -47,7 +46,10 @@ class TestChangeOfBasis(unittest.TestCase):
 
     def test_change_of_basis(self):
         for fname, dataset, cell, symprec in zip(
-            self._filenames, self._datasets, self._cells, self._symprecs
+            self._filenames,
+            self._datasets,
+            self._cells,
+            self._symprecs,
         ):
             # std_lat = dataset["std_lattice"]
             std_pos = dataset["std_positions"]
@@ -65,7 +67,10 @@ class TestChangeOfBasis(unittest.TestCase):
 
     def test_std_symmetry(self):
         for fname, dataset, cell, symprec in zip(
-            self._filenames, self._datasets, self._cells, self._symprecs
+            self._filenames,
+            self._datasets,
+            self._cells,
+            self._symprecs,
         ):
             symmetry = get_symmetry_from_database(dataset["hall_number"])
             std_pos = dataset["std_positions"]
@@ -91,25 +96,29 @@ class TestChangeOfBasis(unittest.TestCase):
 
     def test_std_rotation(self):
         for fname, dataset, cell, symprec in zip(
-            self._filenames, self._datasets, self._cells, self._symprecs
+            self._filenames,
+            self._datasets,
+            self._cells,
+            self._symprecs,
         ):
             std_lat = dataset["std_lattice"]
             tmat = dataset["transformation_matrix"]
             lat = np.dot(cell[0].T, np.linalg.inv(tmat))
             lat_rot = np.dot(dataset["std_rotation_matrix"], lat)
             np.testing.assert_allclose(
-                std_lat, lat_rot.T, atol=symprec, err_msg="%s" % fname
+                std_lat,
+                lat_rot.T,
+                atol=symprec,
+                err_msg="%s" % fname,
             )
 
     def _test_get_symmetry(self):
-        """
-        ***************************************************************
-        This test must be executed with spglib compiled with -DSPGTEST.
-        ***************************************************************
-        """
-
+        """Caution!: This test must be executed with spglib compiled with -DSPGTEST."""
         for fname, dataset, cell, symprec in zip(
-            self._filenames, self._datasets, self._cells, self._symprecs
+            self._filenames,
+            self._datasets,
+            self._cells,
+            self._symprecs,
         ):
             cell_spin = cell + (
                 [

@@ -130,7 +130,7 @@ def _expand_symbols(num_atoms, symbols=None):
 
 def _is_exist_symbols(symbols):
     for s in symbols:
-        if not (s in symbol_map):
+        if s not in symbol_map:
             return False
     return True
 

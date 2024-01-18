@@ -4,7 +4,7 @@ project = "Spglib"
 copyright = "2009, Atsushi Togo"
 
 extensions = [
-    'sphinx.ext.mathjax',
+    "sphinx.ext.mathjax",
     "sphinx.ext.viewcode",
     "sphinxcontrib.bibtex",
     "myst_parser",
@@ -74,9 +74,9 @@ autodoc2_packages = [
     {
         "path": "../python/spglib/spglib.py",
         "module": "spglib",
-    }
+    },
 ]
-autodoc2_hidden_objects = ['undoc', 'dunder', 'private', 'inherited']
+autodoc2_hidden_objects = ["undoc", "dunder", "private", "inherited"]
 autodoc2_hidden_regexes = [
     "spglib.get_pointgroup",
     # Layer group

@@ -2,9 +2,8 @@ import os
 import unittest
 
 import numpy as np
-from vasp import read_vasp
-
 from spglib import find_primitive, get_symmetry_dataset
+from vasp import read_vasp
 
 data_dir = os.path.dirname(os.path.abspath(__file__))
 dirnames = ("trigonal",)
@@ -18,7 +17,7 @@ tmat = [
 
 class TestRhombSettingHR(unittest.TestCase):
     def setUp(self):
-        """Extract filename of rhombohedral cell"""
+        """Extract filename of rhombohedral cell."""
         self._filenames = []
         for d in dirnames:
             dirname = os.path.join(data_dir, "data", d)
@@ -40,7 +39,9 @@ class TestRhombSettingHR(unittest.TestCase):
             dataset_H = get_symmetry_dataset(cell, symprec=symprec)
             hall_number_R = dataset_H["hall_number"] + 1
             dataset_R = get_symmetry_dataset(
-                cell, hall_number=hall_number_R, symprec=symprec
+                cell,
+                hall_number=hall_number_R,
+                symprec=symprec,
             )
             plat, _, _ = find_primitive(cell)
             plat_H = np.dot(dataset_H["std_lattice"].T, tmat).T

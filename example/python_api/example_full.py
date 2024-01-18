@@ -27,7 +27,7 @@ def _show_lattice(lattice):
                     axis,
                 )
                 + tuple(vec)
-            )
+            ),
         )
 
 
@@ -144,8 +144,7 @@ def main():
     print("")
     print("[get_pointgroup]")
     print(
-        "  Pointgroup of MgB2 is %s."
-        % spglib.get_pointgroup(symmetry["rotations"])[0]
+        "  Pointgroup of MgB2 is %s." % spglib.get_pointgroup(symmetry["rotations"])[0],
     )
     print("")
 
@@ -153,7 +152,7 @@ def main():
     print("[get_symmetry_dataset] ['international']")
     print(
         "  Spacegroup of Rutile is %s (%d)."
-        % (dataset["international"], dataset["number"])
+        % (dataset["international"], dataset["number"]),
     )
     print("")
     print("[get_symmetry_dataset] ['pointgroup']")
@@ -162,7 +161,7 @@ def main():
     print("[get_symmetry_dataset] ['hall']")
     print(
         "  Hall symbol of Rutile is %s (%d)."
-        % (dataset["hall"], dataset["hall_number"])
+        % (dataset["hall"], dataset["hall_number"]),
     )
     print("")
     print("[get_symmetry_dataset] ['wyckoffs']")
@@ -176,7 +175,7 @@ def main():
     print("[get_symmetry_dataset] ['rotations'], ['translations']")
     print("  Symmetry operations of Rutile unitcell are:")
     for i, (rot, trans) in enumerate(
-        zip(dataset["rotations"], dataset["translations"])
+        zip(dataset["rotations"], dataset["translations"]),
     ):
         print("  --------------- %4d ---------------" % (i + 1))
         print("  rotation:")
@@ -202,7 +201,10 @@ def main():
     print(" Standardize distorted rutile structure:")
     print(" (to_primitive=0 and no_idealize=0)")
     lattice, positions, numbers = spglib.standardize_cell(
-        rutile_dist, to_primitive=0, no_idealize=0, symprec=1e-1
+        rutile_dist,
+        to_primitive=0,
+        no_idealize=0,
+        symprec=1e-1,
     )
     _show_cell(lattice, positions, numbers)
     print("")
@@ -211,7 +213,10 @@ def main():
     print(" Standardize distorted rutile structure:")
     print(" (to_primitive=0 and no_idealize=1)")
     lattice, positions, numbers = spglib.standardize_cell(
-        rutile_dist, to_primitive=0, no_idealize=1, symprec=1e-1
+        rutile_dist,
+        to_primitive=0,
+        no_idealize=1,
+        symprec=1e-1,
     )
     _show_cell(lattice, positions, numbers)
     print("")
@@ -220,7 +225,10 @@ def main():
     print(" Standardize distorted silicon structure:")
     print(" (to_primitive=1 and no_idealize=0)")
     lattice, positions, numbers = spglib.standardize_cell(
-        silicon_dist, to_primitive=1, no_idealize=0, symprec=1e-1
+        silicon_dist,
+        to_primitive=1,
+        no_idealize=0,
+        symprec=1e-1,
     )
     _show_cell(lattice, positions, numbers)
     print("")
@@ -229,7 +237,10 @@ def main():
     print(" Standardize distorted silicon structure:")
     print(" (to_primitive=1 and no_idealize=1)")
     lattice, positions, numbers = spglib.standardize_cell(
-        silicon_dist, to_primitive=1, no_idealize=1, symprec=1e-1
+        silicon_dist,
+        to_primitive=1,
+        no_idealize=1,
+        symprec=1e-1,
     )
     _show_cell(lattice, positions, numbers)
     print("")
@@ -257,7 +268,9 @@ def main():
     print("")
 
     mapping, grid = spglib.get_ir_reciprocal_mesh(
-        [11, 11, 11], silicon_prim, is_shift=[0, 0, 0]
+        [11, 11, 11],
+        silicon_prim,
+        is_shift=[0, 0, 0],
     )
     num_ir_kpt = len(np.unique(mapping))
     print("[get_ir_reciprocal_mesh]")

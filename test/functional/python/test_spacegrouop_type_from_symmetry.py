@@ -6,7 +6,6 @@ from pathlib import Path
 from typing import Callable
 
 import pytest
-
 from spglib import (
     get_spacegroup_type,
     get_spacegroup_type_from_symmetry,
@@ -18,7 +17,9 @@ data_dir = os.path.dirname(os.path.abspath(__file__))
 
 @pytest.mark.parametrize("lattice_None", [True, False])
 def test_spacegroup_type_from_symmetry(
-    all_filenames: list[Path], read_vasp: Callable, lattice_None: bool
+    all_filenames: list[Path],
+    read_vasp: Callable,
+    lattice_None: bool,
 ):
     """Test spacegroup_type_from_symmetry."""
     for fname in all_filenames:
@@ -51,7 +52,7 @@ def test_spacegroup_type_from_symmetry(
                 )
                 print(
                     "Using refined cell: %d, %d in %s"
-                    % (spgtype["number"], dataset["number"], fname)
+                    % (spgtype["number"], dataset["number"], fname),
                 )
         else:
             dataset = get_symmetry_dataset(cell, symprec=1e-5)
