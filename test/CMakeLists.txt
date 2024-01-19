@@ -195,7 +195,9 @@ function(Spglib_add_test test)
 	```cmake
 	Spglib_add_test(<name>
 			[TEST_NAME <test_name>]
-			[LABELS <label1> <label2>])
+			[LABELS <label1> <label2>]
+			[TEST_COMMAND <arg1> <arg2>]
+			)
 	```
 
 	## Options
@@ -209,6 +211,9 @@ function(Spglib_add_test test)
 	`LABELS`
 	  Additional labels to be added
 
+	`TEST_COMMAND`
+	  Test command to use instead of ctest
+
 	]===]
 
 	list(APPEND CMAKE_MESSAGE_CONTEXT "Spglib_add_test")
@@ -219,6 +224,7 @@ function(Spglib_add_test test)
 	)
 	set(ARGS_MultiValue
 			LABELS
+			TEST_COMMAND
 	)
 	cmake_parse_arguments(PARSE_ARGV 1 ARGS "${ARGS_Options}" "${ARGS_OneValue}" "${ARGS_MultiValue}")
 	# Check required/optional arguments
@@ -228,6 +234,12 @@ function(Spglib_add_test test)
 	if (NOT DEFINED ARGS_TEST_NAME)
 		set(ARGS_TEST_NAME ${test})
 	endif ()
+	if (NOT DEFINED ARGS_TEST_COMMAND)
+		set(ARGS_TEST_COMMAND
+				${CMAKE_CTEST_COMMAND} --test-dir ${CMAKE_CURRENT_BINARY_DIR}/${test} --output-on-failure
+		)
+	endif ()
+
 	set(extra_args)
 	if (Spglib_IS_TOP_LEVEL)
 		list(APPEND extra_args
@@ -254,7 +266,7 @@ function(Spglib_add_test test)
 			--build-generator "${CMAKE_GENERATOR}"
 			--build-options
 			${compiler_args} ${extra_args}
-			--test-command ${CMAKE_CTEST_COMMAND} --test-dir ${CMAKE_CURRENT_BINARY_DIR}/${test} --output-on-failure
+			--test-command ${ARGS_TEST_COMMAND}
 	)
 	set_tests_properties(${ARGS_TEST_NAME} PROPERTIES
 			LABELS "${ARGS_LABELS}"
@@ -266,3 +278,4 @@ add_subdirectory(unit)
 add_subdirectory(integration)
 add_subdirectory(functional)
 add_subdirectory(package)
+add_subdirectory(example)
