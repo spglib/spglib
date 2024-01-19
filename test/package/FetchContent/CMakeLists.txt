@@ -22,5 +22,23 @@ FetchContent_Declare(Spglib
 )
 FetchContent_MakeAvailable(Spglib)
 
-add_executable(main main.c)
-target_link_libraries(main PRIVATE Spglib::symspg)
+add_executable(main_c src/main.c)
+target_link_libraries(main_c PRIVATE Spglib::symspg)
+
+enable_testing()
+
+add_test(NAME smoke_test_c
+		COMMAND $<TARGET_FILE:main_c>
+)
+set_tests_properties(smoke_test_c PROPERTIES
+		PASS_REGULAR_EXPRESSION "^Spglib version: ${Spglib_VERSION}\n*$"
+)
+
+if (SPGLIB_WITH_Fortran)
+	enable_language(Fortran)
+	add_executable(main_Fortran src/main.F90)
+	target_link_libraries(main_Fortran PRIVATE Spglib::fortran)
+	add_test(NAME smoke_test_Fortran
+			COMMAND $<TARGET_FILE:main_Fortran>
+	)
+endif ()

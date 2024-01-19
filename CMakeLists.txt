@@ -22,8 +22,10 @@ set(Spglib_COMMIT ${GIT_COMMIT})
 if (NOT DEFINED Spglib_IS_TOP_LEVEL)
 	if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 		set(PROJECT_IS_TOP_LEVEL ON)
+		set(Spglib_IS_TOP_LEVEL ON)
 	else ()
 		set(PROJECT_IS_TOP_LEVEL OFF)
+		set(Spglib_IS_TOP_LEVEL OFF)
 	endif ()
 endif ()
 
@@ -53,10 +55,6 @@ option(SPGLIB_USE_OMP "Spglib: Build with OpenMP support" OFF)
 option(SPGLIB_WITH_TESTS "Spglib: Build unit tests" ${PROJECT_IS_TOP_LEVEL})
 option(SPGLIB_SHARED_LIBS "Spglib: Build as a shared library" ${PROJECT_IS_TOP_LEVEL})
 option(SPGLIB_INSTALL "Spglib: Install project" ${PROJECT_IS_TOP_LEVEL})
-option(SPGLIB_TEST_COVERAGE "Spglib: Test with coverage" OFF)
-mark_as_advanced(SPGLIB_TEST_COVERAGE)
-set(SPGLIB_USE_SANITIZER "" CACHE STRING "Spglib: Sanitizer used in compilation")
-mark_as_advanced(SPGLIB_USE_SANITIZER)
 option(SPGLIB_WARNINGS "Spglib: Enable warning messages" ON)
 mark_as_advanced(SPGLIB_WITH_WARNINGS)
 option(SPGLIB_DEBUG "Spglib: Build in debug mode" ${_Spglib_default_debug})
@@ -100,11 +98,6 @@ endif ()
 if (SPGLIB_WITH_Fortran)
 	enable_language(Fortran)
 endif ()
-if (SPGLIB_TEST_COVERAGE)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage")
-	set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} --coverage -ftest-forall-temp")
-endif ()
 
 # Report configuration
 message(STATUS "Spglib:: Build type: ${CMAKE_BUILD_TYPE}")
@@ -119,22 +112,9 @@ set(spglib_dependencies "")
 if (SPGLIB_USE_OMP)
 	find_package(OpenMP REQUIRED COMPONENTS C)
 endif ()
-if (SPGLIB_WITH_TESTS)
-	set(BUILD_GMOCK OFF)
-	set(INSTALL_GTEST OFF)
-	set(gtest_disable_pthreads ON)
-	FetchContent_Declare(GTest
-			GIT_REPOSITORY https://github.com/google/googletest
-			GIT_TAG v1.13.0
-			FIND_PACKAGE_ARGS
-	)
-	list(APPEND spglib_dependencies GTest)
-	find_package(Threads REQUIRED)
-endif ()
 if (SPGLIB_WITH_Python)
 	find_package(Python3 COMPONENTS REQUIRED Interpreter Development.Module NumPy)
 endif ()
-FetchContent_MakeAvailable(${spglib_dependencies})
 
 #[=============================================================================[
 #                               Main definition                               #
@@ -170,6 +150,10 @@ endif ()
 ]=============================================================================]
 
 # Installation
+
+# Copy PackageCompsHelper to make it available for build import
+configure_file(cmake/PackageCompsHelper.cmake PackageCompsHelper.cmake COPYONLY)
+
 # TODO: Temporarily disable installing cmake files when using scikit-build-core
 #  Check how bundled cmake searches CMAKE_MODULE_DIR and add accordingly
 #  (use SKBUILD_PLATLIB_DIR for install root)

@@ -1,5 +1,8 @@
-list(APPEND ctest_labels c_api)
-set(test_sources
+set_property(DIRECTORY APPEND
+		PROPERTY LABELS c_api
+)
+
+Spglib_add_gtest(TARGET Spglib_tests SOURCES
 		test_delaunay.cpp
 		test_niggli.cpp
 		test_error.cpp
@@ -13,10 +16,4 @@ set(test_sources
 		test_magnetic_symmetry.cpp
 		test_magnetic_dataset.cpp
 		test_kpoints.cpp
-		)
-if (test_sources)
-	configure_spglib_tests(TARGET Spglib_tests
-			SOURCES ${test_sources}
-			LABELS ${ctest_labels}
-			)
-endif ()
+)

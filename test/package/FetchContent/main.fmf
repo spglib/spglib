@@ -1,3 +1,0 @@
-require+:
-  - git
-tag+: [ FetchContent ]
