@@ -1,0 +1,7 @@
+summary:
+  Test the bundled ctests
+discover+:
+  how: fmf
+  path: test
+execute:
+  how: tmt
