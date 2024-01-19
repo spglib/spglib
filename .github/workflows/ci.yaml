@@ -47,6 +47,11 @@ jobs:
     needs: [ pre-commit ]
     uses: ./.github/workflows/step_test.yaml
 
+  coverage:
+    name: 👀 coverage
+    needs: [ tests ]
+    uses: ./.github/workflows/step_coverage.yaml
+
   build-wheel:
     name: build-wheel
     uses: ./.github/workflows/step_build-wheel.yaml
@@ -64,7 +69,7 @@ jobs:
 
   pass:
     name: ✅ Pass
-    needs: [ pre-commit, tests, test-docs, build-wheel ]
+    needs: [ pre-commit, tests, test-docs, build-wheel, coverage ]
     runs-on: ubuntu-latest
     steps:
       - name: Check all CI jobs
