@@ -10,6 +10,7 @@ dynamic_version(
 		PROJECT_PREFIX Spglib_
 		FALLBACK_VERSION 0.0.0
 )
+list(APPEND CMAKE_MESSAGE_CONTEXT Spglib)
 project(Spglib
 		VERSION ${PROJECT_VERSION}
 		LANGUAGES C)
