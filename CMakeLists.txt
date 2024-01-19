@@ -106,9 +106,6 @@ set(spglib_dependencies "")
 if (SPGLIB_USE_OMP)
 	find_package(OpenMP REQUIRED COMPONENTS C)
 endif ()
-if (SPGLIB_WITH_Python)
-	find_package(Python3 COMPONENTS REQUIRED Interpreter Development.Module NumPy)
-endif ()
 
 #[=============================================================================[
 #                               Main definition                               #
