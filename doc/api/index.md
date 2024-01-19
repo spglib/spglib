@@ -4,6 +4,6 @@
 ---
 maxdepth: 1
 ---
-Python API <python-api/spglib/spglib>
+Python API <python-api/index>
 Unreleased API <develop>
 ```
