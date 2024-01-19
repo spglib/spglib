@@ -846,7 +846,7 @@ def get_magnetic_symmetry_dataset(
         "std_positions",
         "std_tensors",
         "std_rotation_matrix",
-        # Intermidiate datum in symmetry search
+        # Intermediate datum in symmetry search
         "primitive_lattice",
     )
     dataset = {}

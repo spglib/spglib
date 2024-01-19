@@ -107,8 +107,8 @@ static double M_rc_inv[3][3] = {
 /* See: R. W. Grosse-Kunstleve, Acta Cryst. (1999). A55, 383-395 */
 /* */
 /* S is the Smith normal form, S = U*M*V */
-/* M = R - I, where R is virtical stack of generator rotation matrices */
-/* and I is virtical stack of identity matrices. */
+/* M = R - I, where R is vertical stack of generator rotation matrices */
+/* and I is vertical stack of identity matrices. */
 /* */
 /* Origin shift is given by (V*S+*U)*dw where dw is translations */
 /* corresponding to those obtained by symmetry finder and from */

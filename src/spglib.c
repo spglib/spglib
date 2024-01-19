@@ -1656,7 +1656,7 @@ static int set_magnetic_dataset(SpglibMagneticDataset *dataset,
     mat_copy_matrix_d3(dataset->std_rotation_matrix,
                        msgdata->std_rotation_matrix);
 
-    /* Intermidiate datum in symmetry search */
+    /* Intermediate datum in symmetry search */
     mat_copy_matrix_d3(dataset->primitive_lattice, primitive_lattice);
 
     return 1;

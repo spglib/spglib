@@ -28,7 +28,7 @@ MAX_DENOMINATOR = 4
 
 
 def enumerate_linears(max_element=1):
-    # Enumerate interger matrix with determinant=1
+    # Enumerate integer matrix with determinant=1
     linears = []
     for nums in product(range(-max_element, max_element + 1), repeat=9):
         arr = np.array(nums).reshape(3, 3)

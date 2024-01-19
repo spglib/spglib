@@ -10,7 +10,7 @@ def read_spg_csv(filename="spg.csv"):
     return spg_db
 
 def extract_essense(spg_db):
-    essense = []
+    essence = []
     for x in spg_db:
         vals = []
         # IT number
@@ -29,8 +29,8 @@ def extract_essense(spg_db):
         vals.append(x[2])
         # Centering
         vals.append(get_centering(x[8][0], ("%-9s" % x[2])[0]))
-        essense.append(vals)
-    return essense
+        essence.append(vals)
+    return essence
 
 def get_bravais(n, s):
     if 1 <= n and n <= 2:

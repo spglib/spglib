@@ -14,7 +14,7 @@ def test_get_symmetry_dataset(
     read_vasp: Callable,
 ):
     """Benchmarking get_symmetry_dataset on all structures under test/data."""
-    # Load all cells beforehands
+    # Load all cells beforehand
     cells = [read_vasp(fname) for fname in all_filenames]
     print(f"Benchmark get_symmetry_dataset on {len(cells)} structures")
 
