@@ -2,6 +2,11 @@ name: test
 
 on:
   workflow_call:
+    inputs:
+      mask-experimental:
+        type: boolean
+        default: true
+        description: Always report experimental test as successful
 
 permissions:
   contents: read
@@ -73,3 +78,4 @@ jobs:
         uses: lukka/run-cmake@v10.3
         with:
           workflowPreset: "${{ matrix.toolchain }}-ci"
+        continue-on-error: ${{ matrix.experimental && inputs.mask-experimental}}

@@ -46,6 +46,8 @@ jobs:
     name: test
     needs: [ pre-commit ]
     uses: ./.github/workflows/step_test.yaml
+    with:
+      mask-experimental: ${{ github.event_name == 'push' }}
 
   coverage:
     name: 👀 coverage
