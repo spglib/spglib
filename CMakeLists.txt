@@ -27,8 +27,6 @@ if (NOT DEFINED Spglib_IS_TOP_LEVEL)
 	endif ()
 endif ()
 
-# Specify C standard. This can be overwritten using `-DCMAKE_C_STANDARD`
-# https://discourse.cmake.org/t/cmake-lang-standard-and-fetchcontent-cache-variable-interaction/8348
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS OFF)
