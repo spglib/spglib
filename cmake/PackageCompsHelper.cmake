@@ -3,6 +3,8 @@
 # Implementation inspired by Alex Reinking blog post
 # https://alexreinking.com/blog/building-a-dual-shared-and-static-library-with-cmake.html
 
+include_guard()
+
 # Define a helper macro for the next macro
 macro(try_get_package_comp _comp)
 	# Macro variables::

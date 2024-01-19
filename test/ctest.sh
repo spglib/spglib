@@ -12,7 +12,7 @@ rlJournalStart
   rlPhaseEnd
 
   rlPhaseStartTest
-   	rlRun "cmake -B ./build" 0 "CMake configure"
+   	rlRun "cmake -B ./build -DSPGLIB_WITH_Fortran=ON" 0 "CMake configure"
    	rlRun "cmake --build ./build" 0 "CMake build"
    	rlRun "ctest --test-dir ./build --output-on-failure" 0 "Run CTest"
   rlPhaseEnd

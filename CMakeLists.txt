@@ -83,9 +83,6 @@ if (BUILD_SHARED_LIBS)
 else ()
 	set(Spglib_LIB_TYPE "static")
 endif ()
-if (NOT CMAKE_Fortran_MODULE_DIRECTORY)
-	set(CMAKE_Fortran_MODULE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/fortran_mods)
-endif ()
 
 set(CMAKE_MACOSX_RPATH 1)
 # Windows setup
@@ -94,9 +91,6 @@ if (WIN32)
 	set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 	# Add appropriate debug flags
 	set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>")
-endif ()
-if (SPGLIB_WITH_Fortran)
-	enable_language(Fortran)
 endif ()
 
 # Report configuration
