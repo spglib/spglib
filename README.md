@@ -1,8 +1,20 @@
-[![Version Badge](https://anaconda.org/conda-forge/spglib/badges/version.svg)](https://anaconda.org/conda-forge/spglib)
-[![Downloads Badge](https://anaconda.org/conda-forge/spglib/badges/downloads.svg)](https://anaconda.org/conda-forge/spglib)
-[![PyPI](https://img.shields.io/pypi/dm/spglib.svg?maxAge=2592000)](https://pypi.python.org/pypi/spglib)
-
 # Spglib
+
+[![CI Status][ci-badge]][ci-link]
+[![Documentation Status][rtd-badge]][rtd-link]
+[![Codecov Status][codecov-badge]][codecov-link]
+
+![License Status][license-badge]
+![CMake Status][cmake-badge]
+[![Python Versions][python-version]][pypi-link]
+
+[![Release Status][release-badge]][release-link]
+[![Conda Status][conda-badge]][conda-link]
+[![PyPI Status][pypi-badge]][pypi-link]
+[![Fedora Status][fedora-badge]][fedora-link]
+
+[![PyPI Downloads][pypi-downloads]][pypi-link]
+[![Conda Downloads][conda-downloads]][conda-link]
 
 C library for finding and handling crystal symmetries
 
@@ -177,3 +189,23 @@ improvements. See [Contributing.md](Contributing.md) for more details.
 See [https://spglib.readthedocs.io/](https://spglib.readthedocs.io/) for further
 documentation. See the [doc documentation](doc/README.md) for more information on
 how to contribute to the documentation.
+
+[ci-badge]: https://github.com/spglib/spglib/actions/workflows/ci.yaml/badge.svg?branch=develop&event=push
+[ci-link]: https://github.com/spglib/spglib/actions/workflows/ci.yaml?query=branch%3Adevelop+event%3Apush
+[cmake-badge]: https://img.shields.io/badge/CMake-3.15-blue?logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGRhdGEtbmFtZT0iTGF5ZXIgMiIgdmlld0JveD0iMCAwIDU0NS41IDU0NS45Ij48cGF0aCBkPSJNNTQ2IDUzNCAyODIgOWwzOSA0MzQgMjI1IDkxeiIgZGF0YS1uYW1lPSJyZWQgcmlnaHQiIHN0eWxlPSJmaWxsOiNmMzI3MzU7c3Ryb2tlLXdpZHRoOjAiLz48cGF0aCBkPSJNNTI1IDU0NiAxNzAgNDAzIDEgNTQ2aDUyNHoiIGRhdGEtbmFtZT0iZ3JlZW4gYm90dG9tIiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjA7ZmlsbDojM2VhZTJiIi8+PHBhdGggZD0iTTI2MyAwIDAgNTIybDI4OC0yNDRMMjYzIDB6IiBkYXRhLW5hbWU9ImJsdWUgbGVmdCIgc3R5bGU9ImZpbGw6IzAwNjhjNztzdHJva2Utd2lkdGg6MCIvPjxwYXRoIGQ9Im0yOTEgMjk5LTEwNSA4OSAxMTcgNDgtMTItMTM3eiIgZGF0YS1uYW1lPSJncmF5IGNlbnRlciIgc3R5bGU9ImZpbGw6I2RjZTNlYztzdHJva2Utd2lkdGg6MCIvPjwvc3ZnPg==
+[codecov-badge]: https://codecov.io/gh/spglib/spglib/graph/badge.svg?token=G91xAWu1JT
+[codecov-link]: https://codecov.io/gh/spglib/spglib
+[conda-badge]: https://img.shields.io/conda/vn/conda-forge/spglib
+[conda-downloads]: https://img.shields.io/conda/d/conda-forge/spglib?label=conda
+[conda-link]: https://anaconda.org/conda-forge/spglib
+[fedora-badge]: https://img.shields.io/fedora/v/spglib
+[fedora-link]: https://src.fedoraproject.org/rpms/spglib
+[license-badge]: https://img.shields.io/github/license/spglib/spglib
+[pypi-badge]: https://img.shields.io/pypi/v/spglib
+[pypi-downloads]: https://img.shields.io/pypi/dm/spglib?label=pypi
+[pypi-link]: https://pypi.python.org/pypi/spglib
+[python-version]: https://img.shields.io/pypi/pyversions/spglib
+[release-badge]: https://img.shields.io/github/v/release/spglib/spglib
+[release-link]: https://github.com/spglib/spglib/releases
+[rtd-badge]: https://img.shields.io/readthedocs/spglib
+[rtd-link]: https://spglib.readthedocs.io/en/latest/?badge=latest
