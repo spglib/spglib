@@ -25,22 +25,26 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        toolchain: [ gcc, llvm, intel, windows, macos ]
-        python-version: [ "3.8", "3.9", "3.10", "3.11", "3.12" ]
+        toolchain: [ gcc, llvm, intel ]
+        python-version: [ "3.8", "3.x", "3.13" ]
         include:
           - os: windows-2019
             toolchain: windows
+            python-version: "3.x"
           - os: macos-11
             toolchain: macos
+            python-version: "3.x"
           - os: windows-latest
             toolchain: windows
+            python-version: "3.x"
             experimental: true
           - os: macos-latest
             toolchain: macos
+            python-version: "3.x"
             experimental: true
-          - python-version: "3.12"
+          - python-version: "3.13"
             experimental: true
-            pip-extra-flags: --pre
+            pre: true
     steps:
       - name: Enable msvc toolchain on windows
         uses: ilammy/msvc-dev-cmd@v1
@@ -64,15 +68,18 @@ jobs:
         # Mimic Ubuntu in order to be able to download experimental python
         run: |
           echo -en 'DISTRIB_ID=Ubuntu\nDISTRIB_RELEASE=22.04\nDISTRIB_CODENAME=jammy\nDISTRIB_DESCRIPTION="Ubuntu 22.04.3 LTS"' >> /etc/lsb-release
-        if: ${{ !matrix.os && matrix.experimental }}
+        if: ${{ !matrix.os && matrix.pre }}
       - name: Setup python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-          allow-prereleases: true
+          allow-prereleases: ${{ matrix.pre || false }}
         # TODO: Replace with editable install once configure presets are available
       - name: Install python bindings
-        run: python3 -m pip install  ${{ matrix.pip-extra-flags }} .[test]
+        run: >
+          python3 -m pip install
+          ${{ matrix.pre && '--pre' }}
+          .[test]
       - uses: lukka/get-cmake@latest
       - name: Run CMake configuration for ${{ matrix.toolchain }} toolchain
         uses: lukka/run-cmake@v10.3
