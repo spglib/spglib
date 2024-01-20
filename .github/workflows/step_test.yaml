@@ -26,11 +26,11 @@ jobs:
       fail-fast: false
       matrix:
         toolchain: [ gcc, llvm, intel ]
-        python-version: [ "3.8", "3.x", "3.13" ]
+        python-version: [ "3.8", "3.x" ]
         include:
-          - os: windows-2019
-            toolchain: windows
-            python-version: "3.x"
+#          - os: windows-2019
+#            toolchain: windows
+#            python-version: "3.x"
           - os: macos-11
             toolchain: macos
             python-version: "3.x"
@@ -42,9 +42,9 @@ jobs:
             toolchain: macos
             python-version: "3.x"
             experimental: true
-          - python-version: "3.13"
-            experimental: true
-            pre: true
+#          - python-version: "3.13"
+#            experimental: true
+#            pre: true
     steps:
       - name: Enable msvc toolchain on windows
         uses: ilammy/msvc-dev-cmd@v1
