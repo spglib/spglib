@@ -439,6 +439,13 @@ Cartesian coordinates of the given input unit cell.
 
 ## Examples
 
+Throughout this section we are assuming that we are using a setup like:
+
+```{testsetup}
+import spglib
+import numpy as np
+```
+
 ### Crystallographic choice and rigid rotation
 
 The following example of a python script gives a crystal structure of
@@ -450,9 +457,7 @@ b-axes should be with respect to each other axis. This is the first
 one choice appearing in the list of Hall symbols among 6 different
 choices for this space group type.
 
-```python
-import spglib
-
+```{testcode}
 # Mind that the a, b, c axes are given in row vectors here,
 # but the formulation above is given for the column vectors.
 lattice = [[7.17851431, 0, 0],  # a
@@ -479,8 +484,7 @@ print("Origin shift: %f %f %f" % tuple(dataset['origin_shift']))
 
 This python script is saved in the file `example.py`. Then we get
 
-```
-% python example.py
+```{testoutput}
 Space group type: Cmce (64)
 Transformation matrix:
    1  0  0
@@ -491,9 +495,7 @@ Origin shift: 0.000000 0.000000 0.000000
 
 No rotation was introduced in the idealization. Next, we swap a- and c-axes.
 
-```python
-import spglib
-
+```{testcode}
 # Mind that the a, b, c axes are given in row vectors here,
 # but the formulation above is given for the column vectors.
 lattice = [[8.57154746, 0, 0],  # a
@@ -520,8 +522,7 @@ print("Origin shift: %f %f %f" % tuple(dataset['origin_shift']))
 
 By this,
 
-```
-% python spglib-example2.py
+```{testoutput}
 Space group type: Cmce (64)
 Transformation matrix:
    0  0  1
@@ -537,9 +538,7 @@ Eq. {eq}`transformation_matrix`. Next, we try to rotate rigidly the
 crystal structure by $45^\circ$ around c-axis in Cartesian
 coordinates from the first one:
 
-```python
-import spglib
-
+```{testcode}
 # Mind that the a, b, c axes are given in row vectors here,
 # but the formulation above is given for the column vectors.
 lattice = [[5.0759761474456697, 5.0759761474456697, 0],  # a
@@ -566,8 +565,7 @@ print("Origin shift: %f %f %f" % tuple(dataset['origin_shift']))
 
 and
 
-```
-% python spglib-example3.py
+```{testoutput}
 Space group type: Cmce (64)
 Transformation matrix:
    1  0  0
@@ -603,8 +601,7 @@ cell. A possible transformation is shown at
 [](#def_standardized_primitive_cell), which is
 $\boldsymbol{P}_\mathrm{C}$. With the following script:
 
-```python
-import numpy as np
+```{testcode}
 lattice = [[7.17851431, 0, 0],  # a
            [0, 3.99943947, 0],  # b
            [0, 0, 8.57154746]]  # c
@@ -616,7 +613,7 @@ print(np.dot(np.transpose(lattice), Pc).T)  # given in row vectors
 
 we get the primitive cell basis vectors (shown in row vectors):
 
-```
+```{testoutput}
 [[ 3.58925715 -1.99971973  0.        ]
  [ 3.58925715  1.99971973  0.        ]
  [ 0.          0.          8.57154746]]
@@ -627,9 +624,7 @@ transforming standardized and idealized crystal structure to the
 primitive cell using the transformation matrix. Therefore by this
 script:
 
-```python
-import spglib
-
+```{testcode}
 lattice = [[7.17851431, 0, 0],
             [0, 3.99943947, 0],
             [0, 0, 8.57154746]]
@@ -650,7 +645,7 @@ print(primitive_cell[0])
 
 we get:
 
-```
+```{testoutput}
 [[ 3.58925715 -1.99971973  0.        ]
  [ 3.58925715  1.99971973  0.        ]
  [ 0.          0.          8.57154746]]
@@ -677,9 +672,7 @@ transformation matrix to the primitive cell can be used. Then we get:
 However applying `find_primitive` rigidly rotates automatically and
 so the following script doesn't give this basis vectors:
 
-```python
-import spglib
-
+```{testcode}
 lattice = [[5.0759761474456697, 5.0759761474456697, 0],
             [-2.8280307701821314, 2.8280307701821314, 0],
             [0, 0, 8.57154746]]
@@ -700,7 +693,7 @@ print(primitive_cell[0])
 
 but gives those with respect to the idealized ones:
 
-```
+```{testoutput}
 [[ 3.58925715 -1.99971973  0.        ]
  [ 3.58925715  1.99971973  0.        ]
  [ 0.          0.          8.57154746]]
@@ -709,9 +702,7 @@ but gives those with respect to the idealized ones:
 To obtain the rotated primitive cell basis vectors, we can use
 `standardize_cell` as shown below::
 
-```python
-import spglib
-
+```{testcode}
 lattice = [[5.0759761474456697, 5.0759761474456697, 0],
            [-2.8280307701821314, 2.8280307701821314, 0],
            [0, 0, 8.57154746]]
@@ -731,7 +722,7 @@ print(primitive_cell[0])
 
 then we get:
 
-```
+```{testoutput}
 [[3.95200346 1.12397269 0.        ]
  [1.12397269 3.95200346 0.        ]
  [0.         0.         8.57154746]]
@@ -749,9 +740,7 @@ step though this is unlikely as a crystallographic operation.
 The crystal structure in the following script is the same as shown
 above, which is the one $45^\circ$ rotated around c-axis:
 
-```python
-import spglib
-
+```{testcode}
 # Mind that the a, b, c axes are given in row vectors here,
 # but the formulation above is given for the column vectors.
 lattice = [[5.0759761474456697, 5.0759761474456697, 0],  # a
@@ -779,7 +768,7 @@ print(dataset['std_lattice'])
 
 we get
 
-```
+```{testoutput}
 Space group type: Cmce (64)
 Transformation matrix:
    1  0  0
@@ -795,7 +784,7 @@ From Eq. {eq}`transformation_matrix`, the standardized basis vectors
 **before** idealization $( \mathbf{a}_\mathrm{s} \; \mathbf{b}_\mathrm{s}
 \; \mathbf{c}_\mathrm{s} )$ is obtained by (after `import numpy as np`)
 
-```python
+```{testcode}
 std_lattice_before_idealization = np.dot(
     np.transpose(lattice),
     np.linalg.inv(dataset['transformation_matrix'])).T
@@ -804,7 +793,7 @@ print(std_lattice_before_idealization)
 
 which is (in row vectors)
 
-```
+```{testoutput}
 [[ 5.07597615  5.07597615  0.        ]
  [-2.82803077  2.82803077  0.        ]
  [ 0.          0.          8.57154746]]
@@ -828,7 +817,7 @@ $$
 where $\boldsymbol{R}$ is the rotation
 matrix. This is computed by
 
-```python
+```{testcode}
 R = np.dot(dataset['std_lattice'].T,
             np.linalg.inv(std_lattice_before_idealization.T))
 print(R)
@@ -836,7 +825,7 @@ print(R)
 
 and we get
 
-```
+```{testoutput}
 [[ 0.70710678  0.70710678  0.        ]
  [-0.70710678  0.70710678  0.        ]
  [ 0.          0.          1.        ]]

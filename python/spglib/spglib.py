@@ -846,7 +846,7 @@ def get_magnetic_symmetry_dataset(
         "std_positions",
         "std_tensors",
         "std_rotation_matrix",
-        # Intermidiate datum in symmetry search
+        # Intermediate datum in symmetry search
         "primitive_lattice",
     )
     dataset = {}
@@ -1779,9 +1779,11 @@ def relocate_BZ_grid_address(
     points except for one of them are appended to the tail of this array,
     for which bz_grid_address has the following data storing:
 
-    |------------------array size of bz_grid_address-------------------------|
-    |--those equivalent to grid_address--|--those on surface except for one--|
-    |-----array size of grid_address-----|
+    .. code-block::
+
+      |------------------array size of bz_grid_address-------------------------|
+      |--those equivalent to grid_address--|--those on surface except for one--|
+      |-----array size of grid_address-----|
 
     Number of grid points stored in bz_grid_address is returned.
     bz_map is used to recover grid point index expanded to include BZ

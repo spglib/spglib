@@ -47,7 +47,7 @@ TEST(Delaunay, Delaunay_reduce) {
     const double symprec = 1e-5;
     int succeeded = del_delaunay_reduce(min_lattice, lattice, symprec);
     // Default get_num_attempts() == 1000 --> succeeded == 1.
-    // With get_num_attempts() == 100 --> succeded == 0.
+    // With get_num_attempts() == 100 --> succeeded == 0.
     EXPECT_EQ(succeeded, 0);
 
     setenv_result = setenv("SPGLIB_NUM_ATTEMPTS", "1000", 1);
@@ -64,7 +64,7 @@ TEST(Delaunay, Delaunay_reduce) {
         show_matrix_3d(min_lattice);
         printf("tmat\n");
         show_matrix_3d(tmat);
-        printf("matric tensor\n");
+        printf("metric tensor\n");
         show_matrix_3d(metric);
         return;
     }

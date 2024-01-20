@@ -46,4 +46,4 @@ Some more options are shown with `--help` option:
 ```
 
 The way to compile the ruby module is explained in
-[ruby/README](https://github.com/spglib/spglib/blob/master/ruby/README).
+[ruby/README](https://github.com/spglib/spglib/blob/develop/ruby/README.md).

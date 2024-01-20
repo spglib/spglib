@@ -9,6 +9,7 @@ extensions = [
     "sphinxcontrib.bibtex",
     "myst_parser",
     "autodoc2",
+    "sphinx.ext.doctest",
 ]
 
 exclude_patterns = [
@@ -29,7 +30,6 @@ myst_enable_extensions = [
     "dollarmath",
     "html_admonition",
     "html_image",
-    "linkify",
     "replacements",
     "smartquotes",
     "tasklist",
@@ -88,4 +88,26 @@ autodoc2_hidden_regexes = [
     "spglib.get_grid_points_by_rotations",
     "spglib.get_BZ_grid_points_by_rotations",
     "spglib.relocate_BZ_grid_address",
+]
+
+# -----------------------------------------------------------------------------
+# linkcheck
+# -----------------------------------------------------------------------------
+
+linkcheck_ignore = [
+    # Ignore closed-access links
+    r"https://www.sciencedirect.com/.*",
+    r"https://www.jstor.org/.*",
+    # Cannot check for 403 error only
+    r"https://doi.org/10.1002/qua.20747",
+]
+linkcheck_allowed_redirects = {
+    r"https://doi.org/.*": r".*",
+    r"https://github.com/spglib/spglib/archive/.*": r".*",
+    r"https://spglib.readthedocs.io/.*": r"https://spglib.readthedocs.io/.*",
+    r"https://docs.rs/crate/spglib/": r"https://docs.rs/crate/spglib/.*",
+    r"https://github.com/chrisjsewell/sphinx-autodoc2": r"https://github.com/sphinx-extensions2/sphinx-autodoc2",
+}
+linkcheck_anchors_ignore_for_url = [
+    r"https://github.com",
 ]

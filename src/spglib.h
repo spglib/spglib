@@ -171,7 +171,7 @@ typedef struct {
     double (*std_positions)[3];
     double *std_tensors;
     double std_rotation_matrix[3][3];
-    /* Intermidiate datum in symmetry search */
+    /* Intermediate datum in symmetry search */
     double primitive_lattice[3][3];
 } SpglibMagneticDataset;
 

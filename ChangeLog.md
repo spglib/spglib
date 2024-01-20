@@ -207,7 +207,7 @@ This minor release includes a lot of improvements in build system and CI.
 - [\[#260\]](https://github.com/spglib/spglib/pull/260) - Fix #191 again
 - [\[#266\]](https://github.com/spglib/spglib/pull/266) - Add rpm spec file
 - [\[#270\]](https://github.com/spglib/spglib/pull/270) - Fix codecov package dependency
-- [\[#272\]](https://github.com/spglib/spglib/pull/272) - Fedora packaging maintainence
+- [\[#272\]](https://github.com/spglib/spglib/pull/272) - Fedora packaging maintenance
 - [\[#274\]](https://github.com/spglib/spglib/pull/274) - \[Temp\] Disable intel toolchain
 - [\[#279\]](https://github.com/spglib/spglib/pull/279) - Various cmake cleanups
 - [\[#300\]](https://github.com/spglib/spglib/pull/300) - tests: Refactor testing framework
@@ -1002,7 +1002,7 @@ be specified.
 * src/spglib.h (SpglibDataset)
 
 Crystallographic setting information is stored in
-'setting'. Symmetrized and standardized crsytal structure is stored
+'setting'. Symmetrized and standardized crystal structure is stored
 in 'n_brv_atoms', 'brv_lattice', 'brv_types', and 'brv_positions',
 which are the same information obtained using 'spg_refine_cell',
 except that non-standard setting can be specified in
@@ -1482,7 +1482,7 @@ to primitive cell as the first argument.
 * symmetry.c:
 
 OpenMP is included to search translations with each rotation.
-Compilation with gcc is achived by '-lgomp' and '-fopenmp'.
+Compilation with gcc is achieved by '-lgomp' and '-fopenmp'.
 
 * refinement.c:
 
@@ -1506,7 +1506,7 @@ database. This is fixed by modifying translations in
 * spglib-1.0.4:
 
 The new version of spglib is released. To the next version,
-implementation of Wyckoff positions is planed.
+implementation of Wyckoff positions is planned.
 ```
 
 2011-06-15 Atsushi Togo <atz.togo@gmail.com>
@@ -1524,7 +1524,7 @@ pyspglib didn't work correctly. It was fixed.
 
 A new function 'spg_get_dataset is implemented. This returns a
 'SpglibDataset' type structure that is defined in 'spglib.h'. This
-includes refined informations of crystal symmetry. For example,
+includes refined information of crystal symmetry. For example,
 the symmetry operations are derived based on the operations in
 database and so they are different from those obtained from
 'spg_get_symmetry'. Wyckoff positions are to be implemented.

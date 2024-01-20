@@ -254,7 +254,7 @@ err:
 
 /* Return transformed cell. Note that site tensors do not need to be transformed
  */
-/* since they are in cartesian coordiantes. Return NULL if failed. */
+/* since they are in cartesian coordinates. Return NULL if failed. */
 /* To transform cell and site tensors with cell-size changing cases, */
 /*   1. transform `cell` to primitive */
 /*   2. compute pure translations after given transformation */

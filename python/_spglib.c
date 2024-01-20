@@ -647,7 +647,7 @@ static PyObject *py_get_magnetic_dataset(PyObject *self, PyObject *args) {
     }
     PyList_SetItem(array, n++, std_rotation);
 
-    /* Intermidiate datum in symmetry search */
+    /* Intermediate datum in symmetry search */
     primitive_lattice = PyList_New(3);
     for (i = 0; i < 3; i++) {
         vec = PyList_New(3);

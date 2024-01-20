@@ -203,8 +203,8 @@ macro(find_package_with_comps)
 	# Options
 	#   PRINT: Print results when loading each component
 	#   LOAD_ALL_DEFAULT: Load all supported components if no components are passed
-	#   HAVE_GLOBAL: Whether global targets file is defined (see bellow)
-	#   HAVE_GLOBAL_SHARED_STATIC: Whether global static/shared targets file is defined (see bellow)
+	#   HAVE_GLOBAL: Whether global targets file is defined (see below)
+	#   HAVE_GLOBAL_SHARED_STATIC: Whether global static/shared targets file is defined (see below)
 	# Assumptions ::
 	#   Defined variables in ${PACKAGE}Config.cmake file::
 	#     ${PACKAGE}_<comp>_Replacement (string): Replacement components for component <comp>. If not defined will ignore.
