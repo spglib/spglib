@@ -12,7 +12,6 @@ permissions:
   contents: read
 
 jobs:
-
   tests:
     name: >
       🖥️ ${{ matrix.os || 'Fedora' }} +
@@ -86,3 +85,24 @@ jobs:
         with:
           workflowPreset: "${{ matrix.toolchain }}-ci"
         continue-on-error: ${{ matrix.experimental && inputs.mask-experimental}}
+  sanitizer:
+    name: >
+      🧹 ${{ matrix.sanitizer }} +
+      🛠️ ${{ matrix.toolchain }}
+    runs-on: ubuntu-latest
+    container: ghcr.io/lecrisut/dev-env:main
+    continue-on-error: ${{ matrix.experimental || false }}
+    strategy:
+      fail-fast: false
+      matrix:
+        toolchain: [ gcc, llvm ]
+        sanitizer: [ address ]
+    env:
+      SPGLIB_SANITIZER: ${{ matrix.sanitizer }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: lukka/get-cmake@latest
+      - name: Run CMake configuration for ${{ matrix.toolchain }} toolchain
+        uses: lukka/run-cmake@v10.3
+        with:
+          workflowPreset: "${{ matrix.toolchain }}-ci-sanitizer"

@@ -53,9 +53,8 @@ if (SPGLIB_TEST_COVERAGE)
 	endif ()
 endif ()
 if (SPGLIB_USE_SANITIZER)
-	if (CMAKE_C_COMPILER_ID MATCHES "Intel.*")
-		# TODO: Address sanitizer cannot run on intel
-		message(WARNING "Sanitizer are not bundled well with intel compiler")
+	if (CMAKE_CXX_COMPILER_ID MATCHES "(Intel|MSVC)")
+		message(WARNING "Sanitizers not supported on: ${CMAKE_CXX_COMPILER_ID}")
 	else ()
 		string(TOLOWER ${SPGLIB_USE_SANITIZER} SPGLIB_USE_SANITIZER)
 		target_compile_options(Spglib_symspg PRIVATE
