@@ -3,10 +3,7 @@ set_property(DIRECTORY APPEND
 )
 
 Spglib_add_gtest(TARGET Spglib_tests SOURCES
-		test_delaunay.cpp
-		test_niggli.cpp
 		test_error.cpp
-		test_symmetry.cpp
 		test_symmetry_search.cpp
 		test_spacegroup_type_search.cpp
 		test_find_primitive_cell.cpp

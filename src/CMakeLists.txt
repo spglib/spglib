@@ -47,11 +47,13 @@ if (SPGLIB_DEBUG)
 endif ()
 set_target_properties(Spglib_symspg PROPERTIES
 		PUBLIC_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/spglib.h)
-# TODO: Should move spglib.h to a separate folder so other headers are not included in ExternalProject setups
-target_include_directories(Spglib_symspg PUBLIC
-		"$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
+configure_file(spglib.h spglib.h COPYONLY)
+target_include_directories(Spglib_symspg
+		PRIVATE "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
+		PUBLIC
 		"$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
-		"$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
+		"$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+)
 
 # Link to third-party libraries
 if (SPGLIB_USE_OMP)

@@ -12,3 +12,15 @@ target_compile_definitions(Spglib_tests PRIVATE
 		Spglib_VERSION_FULL=${Spglib_VERSION_FULL}
 		Spglib_COMMIT=${Spglib_COMMIT}
 )
+
+if (TARGET Spglib_symspg)
+	# Add non-public tests only if test-suite is run by main project
+	target_include_directories(Spglib_tests PRIVATE
+			${Spglib_SOURCE_DIR}/src
+	)
+	Spglib_add_gtest(TARGET Spglib_tests SOURCES
+			test_delaunay.cpp
+			test_niggli.cpp
+			test_symmetry.cpp
+	)
+endif ()
