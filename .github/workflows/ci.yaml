@@ -1,4 +1,7 @@
 name: CI
+run-name: >
+  CI (${{ github.event_name }})
+  ${{ github.event_name == 'pull_request' && format('PR#{0}', github.event.number) || '' }}
 
 on:
   workflow_dispatch:
@@ -35,10 +38,24 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  pre-commit:
+    name: pre-commit
+    uses: ./.github/workflows/step_pre-commit.yaml
+
   tests:
+    name: test
+    needs: [ pre-commit ]
     uses: ./.github/workflows/step_test.yaml
+    with:
+      mask-experimental: ${{ github.event_name == 'push' }}
+
+  coverage:
+    name: 👀 coverage
+    needs: [ tests ]
+    uses: ./.github/workflows/step_coverage.yaml
 
   build-wheel:
+    name: build-wheel
     uses: ./.github/workflows/step_build-wheel.yaml
     needs: [ tests ]
     with:
@@ -48,10 +65,13 @@ jobs:
       cibw_build: ${{ inputs.cibw_build || 'cp311-*' }}
 
   test-docs:
+    name: 📘 test-docs
+    needs: [ pre-commit ]
     uses: ./.github/workflows/step_test-docs.yaml
 
   pass:
-    needs: [tests, test-docs, build-wheel]
+    name: ✅ Pass
+    needs: [ pre-commit, tests, test-docs, build-wheel, coverage ]
     runs-on: ubuntu-latest
     steps:
       - name: Check all CI jobs

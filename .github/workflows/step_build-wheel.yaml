@@ -1,9 +1,4 @@
-name: pypi-wheel
-run-name: Spglib PyPI Wheel builds for linux
-
-concurrency:
-  group: ${{ github.ref }}
-  cancel-in-progress: true
+name: build-wheel
 
 permissions:
   contents: read
@@ -34,7 +29,7 @@ on:
 
 jobs:
   build_wheels:
-    name: Build wheels on ${{ matrix.os }}
+    name: 🖥️ ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -64,7 +59,7 @@ jobs:
         if: ${{ inputs.upload }}
 
   build_sdist:
-    name: Build source distribution
+    name: 🐍 sdist
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

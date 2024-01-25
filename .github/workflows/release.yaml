@@ -1,5 +1,5 @@
-name: release
-run-name: Release
+name: 🚀 release
+run-name: Release ${{ github.ref_name }}
 
 on:
   push:
@@ -9,13 +9,15 @@ on:
 
 jobs:
   tests:
+    name: tests
     uses: ./.github/workflows/step_test.yaml
-  pypi-wheel:
+  build-wheel:
+    name: build-wheel
     needs: [ tests ]
     uses: ./.github/workflows/step_build-wheel.yaml
   upload_pypi:
     name: Upload to PyPI repository
-    needs: [ tests, pypi-wheel ]
+    needs: [ tests, build-wheel ]
     runs-on: ubuntu-latest
     environment:
       name: pypi
