@@ -69,6 +69,11 @@ set_target_properties(Spglib_python PROPERTIES
 target_link_libraries(Spglib_python PRIVATE
 		Spglib::symspg Python::NumPy
 )
+# _version.py may not have been populated in source yet, use a dummy file for the build environment
+# TODO: Use a scikit-build-cli or other CLI to populate the metadata files
+if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/spglib/_version.py)
+	configure_file(_version.py.in spglib/_version.py)
+endif ()
 
 #[=============================================================================[
 #                              Install or Export                              #
@@ -80,7 +85,7 @@ if (NOT Python_INSTALL_DIR)
 		set(Python_INSTALL_DIR ".")
 	else ()
 		# Otherwise try to install in current python executable's setup
-		set(Python_INSTALL_DIR ${Python_SITEARCH}/spglib)
+		set(Python_INSTALL_DIR ${Python_SITEARCH})
 	endif ()
 endif ()
 if (SPGLIB_INSTALL)
@@ -89,19 +94,19 @@ if (SPGLIB_INSTALL)
 		# TODO: Cmake forces to install PUBLIC_HEADER when defined
 		# https://gitlab.kitware.com/cmake/cmake/-/issues/24326
 		install(TARGETS Spglib_symspg
-				LIBRARY DESTINATION ${Python_INSTALL_DIR} COMPONENT Spglib_Runtime
+				LIBRARY DESTINATION ${Python_INSTALL_DIR}/spglib COMPONENT Spglib_Runtime
 				NAMELINK_COMPONENT Spglib_Development
-				ARCHIVE DESTINATION ${Python_INSTALL_DIR} COMPONENT Spglib_Development
-				PUBLIC_HEADER DESTINATION ${Python_INSTALL_DIR} COMPONENT Spglib_Development
-				RUNTIME DESTINATION ${Python_INSTALL_DIR} COMPONENT Spglib_Runtime
+				ARCHIVE DESTINATION ${Python_INSTALL_DIR}/spglib COMPONENT Spglib_Development
+				PUBLIC_HEADER DESTINATION ${Python_INSTALL_DIR}/spglib COMPONENT Spglib_Development
+				RUNTIME DESTINATION ${Python_INSTALL_DIR}/spglib COMPONENT Spglib_Runtime
 		)
 	endif ()
 	install(TARGETS Spglib_python
-			LIBRARY DESTINATION ${Python_INSTALL_DIR} COMPONENT Spglib_Runtime
+			LIBRARY DESTINATION ${Python_INSTALL_DIR}/spglib COMPONENT Spglib_Runtime
 	)
 
 	# Install spglib module to local python path
 	if (NOT SKBUILD)
-		install(DIRECTORY spglib/ DESTINATION ${Python_INSTALL_DIR} COMPONENT Spglib_Runtime)
+		install(DIRECTORY spglib/ DESTINATION ${Python_INSTALL_DIR}/spglib COMPONENT Spglib_Runtime)
 	endif ()
 endif ()

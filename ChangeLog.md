@@ -19,6 +19,10 @@ GitHub release pages and in the git history.
   (Note: previously the project was not tested for the minimum CMake version)
 - Migrated the example and package test to the ctest test-suite
 
+### Python API
+
+- Fixed the Python module build and installation in the pure CMake environment (without scikit-build-core)
+
 ### CI
 
 - [\[#425\]](https://github.com/spglib/spglib/pull/425) - Update to codecov v4
