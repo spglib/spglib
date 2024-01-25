@@ -205,3 +205,6 @@ no_strict_optional = true
 [tool.codespell]
 ignore-words = "doc/codespell.txt"
 skip = "doc/references.bib"
+
+[tool.check-wheel-contents]
+ignore = "W002"
