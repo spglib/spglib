@@ -27,8 +27,7 @@ jobs:
         with:
           python-version: 3.x
       - name: Install the project and docs dependencies
-        # TODO: Switch to editable install
-        run: pip install .[docs]
+        run: pip install -e .[docs]
         # https://bitbucket.org/pybtex-devs/pybtex/issues/169/replace-pkg_resources-with
       - name: Temporary workaround for pybtex
         run: pip install setuptools
