@@ -73,12 +73,11 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           allow-prereleases: ${{ matrix.pre || false }}
-        # TODO: Replace with editable install once configure presets are available
-      - name: Install python bindings
-        run: >
-          python3 -m pip install
-          ${{ matrix.pre && '--pre' }}
-          .[test]
+      - name: Install dependencies
+        run: |
+          python3 -m pip install pip-tools
+          pip-compile --extra=test --strip-extras pyproject.toml ${{ matrix.pre && '--pre' }}
+          python3 -m pip install -r requirements.txt
       - uses: lukka/get-cmake@latest
       - name: Run CMake configuration for ${{ matrix.toolchain }} toolchain
         uses: lukka/run-cmake@v10.3

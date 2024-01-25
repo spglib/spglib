@@ -25,4 +25,8 @@ if (SPGLIB_WITH_Python)
 	add_test (NAME example-python-full
 			COMMAND ${Python_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/python_api/example_full.py
 	)
+	set_property(TEST example-python example-python-full
+			APPEND PROPERTY
+			ENVIRONMENT PYTHONPATH=${Spglib_Python_BINARY_DIR}
+	)
 endif ()

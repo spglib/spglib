@@ -75,6 +75,16 @@ if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/spglib/_version.py)
 	configure_file(_version.py.in spglib/_version.py)
 endif ()
 
+# Copy all python packages to the build directory
+file(COPY spglib
+		DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
+# Link the built library to the package in the binary directory
+add_custom_command(TARGET Spglib_python POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E create_symlink
+		$<TARGET_FILE:Spglib_python>
+		${CMAKE_CURRENT_BINARY_DIR}/spglib/$<TARGET_FILE_NAME:Spglib_python>
+)
+
 #[=============================================================================[
 #                              Install or Export                              #
 ]=============================================================================]
