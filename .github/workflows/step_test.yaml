@@ -17,6 +17,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v4
         with:
           python-version: 3.x
@@ -61,6 +63,11 @@ jobs:
           echo $PATH >> $GITHUB_PATH
         if: matrix.toolchain == 'intel'
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      # workaround for https://github.com/actions/runner/issues/2033
+      - name: ownership workaround
+        run: git config --system --add safe.directory '*'
       - name: Patch /etc/lsb-release for experimental python
         # Mimic Ubuntu in order to be able to download experimental python
         run : |
@@ -89,6 +96,8 @@ jobs:
         coverage: [ unit_tests, c_api, fortran_api ]
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: lukka/get-cmake@latest
       - name: Get test coverage for ${{ matrix.coverage }}
         uses: lukka/run-cmake@v10.3
@@ -114,6 +123,8 @@ jobs:
     needs: [ tests ]
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Set up Python
         uses: actions/setup-python@v4
         with:

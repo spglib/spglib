@@ -40,7 +40,10 @@
 #include <spglib.h>
 #include <stdio.h>
 
-static PyObject *py_get_version(PyObject *self, PyObject *args);
+static PyObject *py_get_version_tuple(PyObject *self, PyObject *args);
+static PyObject *py_get_version_string(PyObject *self, PyObject *args);
+static PyObject *py_get_version_full(PyObject *self, PyObject *args);
+static PyObject *py_get_commit(PyObject *self, PyObject *args);
 static PyObject *py_get_dataset(PyObject *self, PyObject *args);
 static PyObject *py_get_layerdataset(PyObject *self, PyObject *args);
 static PyObject *py_get_magnetic_dataset(PyObject *self, PyObject *args);
@@ -88,7 +91,10 @@ static PyObject *error_out(PyObject *m) {
 
 static PyMethodDef _spglib_methods[] = {
     {"error_out", (PyCFunction)error_out, METH_NOARGS, NULL},
-    {"version", py_get_version, METH_VARARGS, "Spglib version"},
+    {"version_tuple", py_get_version_tuple, METH_NOARGS, "Spglib version"},
+    {"version_string", py_get_version_string, METH_NOARGS, "Spglib version"},
+    {"version_full", py_get_version_full, METH_NOARGS, "Spglib version"},
+    {"commit", py_get_commit, METH_NOARGS, "Spglib version"},
     {"dataset", py_get_dataset, METH_VARARGS, "Dataset for crystal symmetry"},
     {"layerdataset", py_get_layerdataset, METH_VARARGS,
      "Dataset for layer symmetry"},
@@ -184,25 +190,25 @@ EXPORT PyObject *PyInit__spglib(void) {
     return module;
 }
 
-static PyObject *py_get_version(PyObject *self, PyObject *args) {
-    PyObject *array;
-    int i;
-    int version[3];
+static PyObject *py_get_version_tuple(PyObject *self, PyObject *args) {
+    PyObject *tuple = PyTuple_New(3);
+    PyTuple_SetItem(tuple, 0, PyLong_FromLong((long)spg_get_major_version()));
+    PyTuple_SetItem(tuple, 1, PyLong_FromLong((long)spg_get_minor_version()));
+    PyTuple_SetItem(tuple, 2, PyLong_FromLong((long)spg_get_micro_version()));
 
-    if (!PyArg_ParseTuple(args, "")) {
-        return NULL;
-    }
+    return tuple;
+}
 
-    version[0] = spg_get_major_version();
-    version[1] = spg_get_minor_version();
-    version[2] = spg_get_micro_version();
+static PyObject *py_get_version_string(PyObject *self, PyObject *args) {
+    return PyUnicode_FromString(spg_get_version());
+}
 
-    array = PyList_New(3);
-    for (i = 0; i < 3; i++) {
-        PyList_SetItem(array, i, PyLong_FromLong((long)version[i]));
-    }
+static PyObject *py_get_version_full(PyObject *self, PyObject *args) {
+    return PyUnicode_FromString(spg_get_version_full());
+}
 
-    return array;
+static PyObject *py_get_commit(PyObject *self, PyObject *args) {
+    return PyUnicode_FromString(spg_get_commit());
 }
 
 PyObject *build_python_list_from_dataset(SpglibDataset *dataset) {

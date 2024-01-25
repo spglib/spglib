@@ -33,6 +33,9 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+
+from ._version import __version__, __version_tuple__  # noqa: F401
+
 # fmt: off
 from .spglib import (  # noqa: F401
     delaunay_reduce,
@@ -60,9 +63,10 @@ from .spglib import (  # noqa: F401
     niggli_reduce,
     refine_cell,
     relocate_BZ_grid_address,
+    spg_get_commit,
+    spg_get_version,
+    spg_get_version_full,
     standardize_cell,
 )
 
 # fmt: on
-
-__version__ = "%d.%d.%d" % get_version()

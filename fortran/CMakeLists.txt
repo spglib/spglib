@@ -1,6 +1,12 @@
 # Main fortran wrapper
-add_library(Spglib_fortran spglib_f08.F90)
+add_library(Spglib_fortran)
 add_library(Spglib::fortran ALIAS Spglib_fortran)
+configure_file(spglib_version.f90.in spglib_version.f90)
+
+target_sources(Spglib_fortran PRIVATE
+		spglib_f08.F90
+		${CMAKE_CURRENT_BINARY_DIR}/spglib_version.f90
+)
 
 # Configure Fortran wrapper
 set_target_properties(Spglib_fortran PROPERTIES
