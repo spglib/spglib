@@ -10,7 +10,7 @@ build:
   tools:
     python: "3"
   jobs:
-    post_create_environment:
-      - pip install --pre --upgrade sphinx-book-theme
+    post_checkout:
+      - git fetch --unshallow || true
 sphinx:
   configuration: doc/conf.py
