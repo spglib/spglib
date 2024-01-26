@@ -117,6 +117,7 @@ set_target_properties(Spglib_symspg PROPERTIES
         OUTPUT_NAME symspg)
 add_library(Spglib::symspg ALIAS Spglib_symspg)
 # Main definitions inside src
+add_subdirectory(include)
 add_subdirectory(src)
 
 # Bindings
