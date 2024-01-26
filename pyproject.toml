@@ -204,8 +204,8 @@ enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
 no_strict_optional = true
 
 [tool.codespell]
-ignore-words = "doc/codespell.txt"
-skip = "doc/references.bib"
+ignore-words = "docs/codespell.txt"
+skip = "docs/references.bib"
 
 [tool.check-wheel-contents]
 ignore = "W002"
