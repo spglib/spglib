@@ -28,4 +28,8 @@ if (SPGLIB_WITH_Fortran)
 	add_test(NAME smoke_test_Fortran
 			COMMAND $<TARGET_FILE:main_Fortran>
 	)
+	set_tests_properties(smoke_test_Fortran PROPERTIES
+			PASS_REGULAR_EXPRESSION
+			"^[ \n]*Spglib version: ${Spglib_VERSION}[ \n]*Spglib_Fortran version: ${Spglib_VERSION}[ \n]*$"
+	)
 endif ()
