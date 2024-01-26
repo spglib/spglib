@@ -448,6 +448,6 @@ function(export_components)
 			DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${ARGS_PROJECT}
 			COMPONENT ${ARGS_PROJECT}_Development)
 	export(EXPORT ${CmakeTarget}
-			FILE ${CmakeTargetFile}
+			FILE ${${ARGS_PROJECT}_BINARY_DIR}/${CmakeTargetFile}
 			NAMESPACE ${ARGS_PROJECT}::)
 endfunction()
