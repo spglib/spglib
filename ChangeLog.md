@@ -11,12 +11,23 @@ GitHub release pages and in the git history.
 
 ## \[Unreleased\]
 
+## v2.3.0 (27 Jan. 2024)
+
 ### Features
 
 - Version is now calculated dynamically from commit information
   - `version` is the `X.Y.Z` version format of Spglib
   - `version_full` is the full version formatted like `guess-next-dev` from [setuptools-scm]
   - `commit` is the commit used when building the Spglib library
+
+### Fixes (layer group)
+
+- [\[#378\]](https://github.com/spglib/spglib/pull/378) - fix(database): add missing unique axis choices
+- [\[#379\]](https://github.com/spglib/spglib/pull/379) - fix #377 (symmetry): fix matrix pattern for layer groups
+
+### Fixes (magnetic space group)
+
+- [\[#382\]](https://github.com/spglib/spglib/pull/382) - Fix comparison of translation parts in MSG type identification
 
 ### CMake interface
 
@@ -28,8 +39,8 @@ GitHub release pages and in the git history.
 
 ### Python interface
 
-- Dropped Python 3.7 support
-- Dropped ASE Atoms-like input
+- [\[#376\]](https://github.com/spglib/spglib/pull/376) Dropped Python 3.7 support
+- [\[#386\]](https://github.com/spglib/spglib/pull/386) - Drop ASE Atoms-style input
 - Deprecating `get_version` in favor of `__version__` and `get_spg_version`
 - Added `spg_get_version`, `spg_get_version_full`, `spg_get_commit` to get the version/commit of the spglib C library
   that is being used by the binding
@@ -37,9 +48,28 @@ GitHub release pages and in the git history.
 
 ### Fortran interface
 
-- Added `spg_get_version`, `spg_get_version_full`, `spg_get_commit` to get the version/commit of the spglib C library
-  that is being used by the binding
-- Added `version`, `version_full`, `commit` variables containing the version/commit of the Fortran bindings
+- [\[#396\]](https://github.com/spglib/spglib/pull/396) - feat: Reorganize Fortran interface
+  - Added `spg_get_version`, `spg_get_version_full`, `spg_get_commit` to get the version/commit of the spglib C library
+    that is being used by the binding
+  - Added `version`, `version_full`, `commit` variables containing the version/commit of the Fortran bindings
+
+### Documentation
+
+- [\[#361\]](https://github.com/spglib/spglib/pull/361) - ci: Add doc-test
+- [\[#387\]](https://github.com/spglib/spglib/pull/387) - Merge and migrate Python API documents into docstring
+- [\[#391\]](https://github.com/spglib/spglib/pull/391) - Fix quick for autodoc2 render plugin
+- [\[#401\]](https://github.com/spglib/spglib/pull/401) - fix: RTD build
+
+### Refactoring
+
+- [\[#271\]](https://github.com/spglib/spglib/pull/271) - Fully dynamic version from git-tag
+- [\[#392\]](https://github.com/spglib/spglib/pull/392) - Replace linter and formatter with ruff and mypy
+
+### CI
+
+- [\[#356\]](https://github.com/spglib/spglib/pull/356) - Use downstream tmt tests
+- [\[#362\]](https://github.com/spglib/spglib/pull/362) - ci: Reorganize CI
+- [\[#393\]](https://github.com/spglib/spglib/pull/393) - ci: Enable testing for Fedora 38
 
 ## v2.2.0 (6 Dec. 2023)
 
