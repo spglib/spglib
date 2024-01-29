@@ -12,6 +12,8 @@
 [![Conda Status][conda-badge]][conda-link]
 [![PyPI Status][pypi-badge]][pypi-link]
 [![Fedora Status][fedora-badge]][fedora-link]
+[![Homebrew Status][homebrew-badge]][homebrew-link]
+[![Spack Status][spack-badge]][spack-link]
 
 [![PyPI Downloads][pypi-downloads]][pypi-link]
 [![Conda Downloads][conda-downloads]][conda-link]
@@ -200,6 +202,8 @@ how to contribute to the documentation.
 [conda-link]: https://anaconda.org/conda-forge/spglib
 [fedora-badge]: https://img.shields.io/fedora/v/spglib
 [fedora-link]: https://src.fedoraproject.org/rpms/spglib
+[homebrew-badge]: https://img.shields.io/homebrew/v/spglib
+[homebrew-link]: https://formulae.brew.sh/formula/spglib
 [license-badge]: https://img.shields.io/github/license/spglib/spglib
 [pypi-badge]: https://img.shields.io/pypi/v/spglib
 [pypi-downloads]: https://img.shields.io/pypi/dm/spglib?label=pypi
@@ -209,3 +213,5 @@ how to contribute to the documentation.
 [release-link]: https://github.com/spglib/spglib/releases
 [rtd-badge]: https://img.shields.io/readthedocs/spglib
 [rtd-link]: https://spglib.readthedocs.io/en/latest/?badge=latest
+[spack-badge]: https://img.shields.io/spack/v/spglib
+[spack-link]: https://packages.spack.io/package.html?name=spglib
