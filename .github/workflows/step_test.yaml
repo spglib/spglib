@@ -85,4 +85,4 @@ jobs:
         uses: lukka/run-cmake@v10.3
         with:
           workflowPreset: "${{ matrix.toolchain }}-ci"
-        continue-on-error: ${{ matrix.experimental && inputs.mask-experimental}}
+        continue-on-error: "${{ matrix.experimental && inputs.mask-experimental}}"

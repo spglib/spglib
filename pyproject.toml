@@ -11,7 +11,7 @@ license-files = { paths = ["COPYING"] }
 readme = "python/README.rst"
 dynamic = ["version"]
 dependencies = [
-    "numpy"
+    "numpy",
 ]
 authors = [
     {name="Atsushi Togo", email="atz.togo@gmail.com"},
