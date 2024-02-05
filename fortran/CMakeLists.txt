@@ -3,6 +3,15 @@ add_library(Spglib_fortran)
 add_library(Spglib::fortran ALIAS Spglib_fortran)
 configure_file(spglib_version.f90.in spglib_version.f90)
 
+# This target is only used in the SpglibConfig.cmake
+add_library(Spglib_fortran_include INTERFACE)
+target_sources(Spglib_fortran_include INTERFACE
+		"$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/spglib_f08.F90>"
+)
+set_target_properties(Spglib_fortran_include PROPERTIES
+		EXPORT_NAME fortran_include
+)
+
 # Concatenate the contents of the fortran file so it can be compiled from source
 execute_process(COMMAND ${CMAKE_COMMAND} -E cat
 		${CMAKE_CURRENT_BINARY_DIR}/spglib_version.f90
@@ -22,15 +31,16 @@ target_sources(Spglib_fortran PRIVATE
 set_target_properties(Spglib_fortran PROPERTIES
 		VERSION ${PROJECT_VERSION}
 		SOVERSION ${PROJECT_VERSION_MAJOR}
-		EXPORT_NAME fortran
+		EXPORT_NAME fortran_mod
 		OUTPUT_NAME spglib_f08
 )
-set_target_properties(Spglib_fortran PROPERTIES
+set_target_properties(Spglib_fortran_include PROPERTIES
 		PUBLIC_HEADER ${CMAKE_CURRENT_BINARY_DIR}/spglib_f08.F90
 )
 target_include_directories(Spglib_fortran PUBLIC
 		"$<BUILD_INTERFACE:${CMAKE_Fortran_MODULE_DIRECTORY}>")
 target_link_libraries(Spglib_fortran PUBLIC Spglib_symspg)
+target_link_libraries(Spglib_fortran_include INTERFACE Spglib_symspg)
 # Note: Fortran wrapper is not linked to OpenMP library because it should not be defining any such setup
 
 # Install
@@ -54,7 +64,7 @@ if (SPGLIB_INSTALL)
 	endif ()
 	target_include_directories(Spglib_fortran PUBLIC
 			"$<INSTALL_INTERFACE:${CMAKE_INSTALL_MODULEDIR}>")
-	install(TARGETS Spglib_fortran
+	install(TARGETS Spglib_fortran Spglib_fortran_include
 			EXPORT SpglibTargets-fortran
 			LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Spglib_Runtime
 			NAMELINK_COMPONENT Spglib_Development
@@ -63,6 +73,10 @@ if (SPGLIB_INSTALL)
 			RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Spglib_Runtime
 	)
 	export_components(COMPONENT fortran LIB_TYPE ${SPGLIB_LIB_TYPE})
+	install(FILES try_compile.f90
+			DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Spglib
+			COMPONENT Spglib_Development
+	)
 
 	# Maybe it is handled automatically
 	install(FILES ${CMAKE_Fortran_MODULE_DIRECTORY}/spglib_f08.mod
