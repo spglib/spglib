@@ -3,6 +3,16 @@ add_library(Spglib_fortran)
 add_library(Spglib::fortran ALIAS Spglib_fortran)
 configure_file(spglib_version.f90.in spglib_version.f90)
 
+# Concatenate the contents of the fortran file so it can be compiled from source
+execute_process(COMMAND ${CMAKE_COMMAND} -E cat
+		${CMAKE_CURRENT_BINARY_DIR}/spglib_version.f90
+		${CMAKE_CURRENT_SOURCE_DIR}/spglib_f08.F90
+		OUTPUT_VARIABLE spglib_f08_concat
+		WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+)
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/spglib_f08.F90 ${spglib_f08_concat})
+
+# Use the separate files for the project itself so that they are properly re-built
 target_sources(Spglib_fortran PRIVATE
 		spglib_f08.F90
 		${CMAKE_CURRENT_BINARY_DIR}/spglib_version.f90
@@ -14,9 +24,10 @@ set_target_properties(Spglib_fortran PROPERTIES
 		SOVERSION ${PROJECT_VERSION_MAJOR}
 		EXPORT_NAME fortran
 		OUTPUT_NAME spglib_f08
-		PUBLIC_HEADER spglib_f08.F90)
+)
 set_target_properties(Spglib_fortran PROPERTIES
-		PUBLIC_HEADER spglib_f08.F90)
+		PUBLIC_HEADER ${CMAKE_CURRENT_BINARY_DIR}/spglib_f08.F90
+)
 target_include_directories(Spglib_fortran PUBLIC
 		"$<BUILD_INTERFACE:${CMAKE_Fortran_MODULE_DIRECTORY}>")
 target_link_libraries(Spglib_fortran PUBLIC Spglib_symspg)
