@@ -11,6 +11,10 @@ GitHub release pages and in the git history.
 
 ## \[Unreleased\]
 
+### CI
+
+- [\[#425\]](https://github.com/spglib/spglib/pull/425) - Update to codecov v4
+
 ## v2.3.1 (10 Feb. 2024)
 
 ### Fortran API
