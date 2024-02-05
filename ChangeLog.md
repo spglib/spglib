@@ -18,6 +18,7 @@ GitHub release pages and in the git history.
 
 ### Fixes
 
+- [\[#423\]] - Update DynamicVersion to v0.4.1. Fixes CMake build when git repository does not have a tag
 - [\[#426\]] - Fix Windows installation path
 
 ### CI
@@ -2130,4 +2131,5 @@ in bravais.c.
 [setuptools-scm]: https://setuptools-scm.readthedocs.io/en/latest/extending/#available-implementations
 [\[#421\]]: https://github.com/spglib/spglib/pull/421
 [\[#422\]]: https://github.com/spglib/spglib/pull/422
+[\[#423\]]: https://github.com/spglib/spglib/pull/423
 [\[#426\]]: https://github.com/spglib/spglib/pull/426
