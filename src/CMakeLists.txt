@@ -92,20 +92,13 @@ endif ()
 
 # Install
 if (NOT SKBUILD AND SPGLIB_INSTALL)
-	# Normal installation target to system. When using scikit-build check python subdirectory
-	if (WIN32)
-		# TODO: Probably wrong, please fix
+	# Normal installation target to system. When using scikit-build this is installed again in python path
 		install(TARGETS Spglib_symspg
 				EXPORT SpglibTargets
-				LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Spglib_Runtime NAMELINK_COMPONENT Spglib_Development
+				LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Spglib_Runtime
+				NAMELINK_COMPONENT Spglib_Development
 				ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Spglib_Development
 				PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT Spglib_Development
-				RUNTIME DESTINATION ${CMAKE_INSTALL_RUNTIMEDIR} COMPONENT Spglib_Runtime)
-	else ()
-		install(TARGETS Spglib_symspg
-				EXPORT SpglibTargets
-				LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Spglib_Runtime NAMELINK_COMPONENT Spglib_Development
-				ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Spglib_Development
-				PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT Spglib_Development)
-	endif ()
+				RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Spglib_Runtime
+		)
 endif ()

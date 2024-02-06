@@ -11,6 +11,10 @@ GitHub release pages and in the git history.
 
 ## \[Unreleased\]
 
+### Fixes
+
+- [\[#426\]] - Fix Windows installation path
+
 ### CI
 
 - [\[#422\]] - Update to ci-build-wheel v2.16
@@ -2120,3 +2124,4 @@ in bravais.c.
 
 [setuptools-scm]: https://setuptools-scm.readthedocs.io/en/latest/extending/#available-implementations
 [\[#422\]]: https://github.com/spglib/spglib/pull/422
+[\[#426\]]: https://github.com/spglib/spglib/pull/426

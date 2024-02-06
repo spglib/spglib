@@ -13,21 +13,18 @@ if (NOT Python_INSTALL_DIR)
 	endif ()
 endif ()
 if (SPGLIB_INSTALL)
-	if (WIN32)
-		# Windows needs RUNTIME as well to install the .dll file to
-		install(TARGETS Spglib_symspg
-				LIBRARY DESTINATION ${Python_INSTALL_DIR} COMPONENT Spglib_Runtime
-				PUBLIC_HEADER DESTINATION ${Python_INSTALL_DIR} COMPONENT Spglib_Runtime
-				RUNTIME DESTINATION ${Python_INSTALL_DIR} COMPONENT Spglib_Runtime)
-	else ()
-		# TODO: Cmake forces to install PUBLIC_HEADER when defined
-		# https://gitlab.kitware.com/cmake/cmake/-/issues/24326
-		install(TARGETS Spglib_symspg
-				LIBRARY DESTINATION ${Python_INSTALL_DIR} COMPONENT Spglib_Runtime
-				PUBLIC_HEADER DESTINATION ${Python_INSTALL_DIR} COMPONENT Spglib_Runtime)
-	endif ()
+	# TODO: Cmake forces to install PUBLIC_HEADER when defined
+	# https://gitlab.kitware.com/cmake/cmake/-/issues/24326
+	install(TARGETS Spglib_symspg
+			LIBRARY DESTINATION ${Python_INSTALL_DIR} COMPONENT Spglib_Runtime
+			NAMELINK_COMPONENT Spglib_Development
+			ARCHIVE DESTINATION ${Python_INSTALL_DIR} COMPONENT Spglib_Development
+			PUBLIC_HEADER DESTINATION ${Python_INSTALL_DIR} COMPONENT Spglib_Development
+			RUNTIME DESTINATION ${Python_INSTALL_DIR} COMPONENT Spglib_Runtime
+	)
 	install(TARGETS Spglib_python
-			LIBRARY DESTINATION ${Python_INSTALL_DIR} COMPONENT Spglib_Runtime)
+			LIBRARY DESTINATION ${Python_INSTALL_DIR} COMPONENT Spglib_Runtime
+	)
 
 	if (NOT SKBUILD)
 		install(DIRECTORY spglib/ DESTINATION ${Python_INSTALL_DIR} COMPONENT Spglib_Runtime)
