@@ -11,6 +11,11 @@ GitHub release pages and in the git history.
 
 ## \[Unreleased\]
 
+### Fortran API
+
+- [\[#421\]] - Allow importing Fortran API when library/consumer compilers differ
+- [\[#421\]] - Fix building Fortran API from exported `spglib_f08.F90`
+
 ### Fixes
 
 - [\[#426\]] - Fix Windows installation path
@@ -2123,5 +2128,6 @@ in bravais.c.
 ```
 
 [setuptools-scm]: https://setuptools-scm.readthedocs.io/en/latest/extending/#available-implementations
+[\[#421\]]: https://github.com/spglib/spglib/pull/421
 [\[#422\]]: https://github.com/spglib/spglib/pull/422
 [\[#426\]]: https://github.com/spglib/spglib/pull/426
