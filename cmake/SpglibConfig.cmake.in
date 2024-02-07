@@ -26,8 +26,9 @@ find_package_with_comps(PACKAGE Spglib PRINT LOAD_ALL_DEFAULT HAVE_GLOBAL_SHARED
 
 check_required_components(Spglib)
 
+get_property(languages GLOBAL PROPERTY ENABLED_LANGUAGES)
 # For Fortran targets, check that the modules are usable with the current compiler
-if (CMAKE_Fortran_COMPILER AND TARGET Spglib::fortran_mod)
+if (Fortran IN_LIST languages AND TARGET Spglib::fortran_mod)
 	# TODO: CMake 3.25 use the modern try_compile signature. Remove the explicit CMakeScratch
 	try_compile(spglib_fortran_try_compile ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeScratch/spglib_fortran
 			SOURCES ${CMAKE_CURRENT_LIST_DIR}/try_compile.f90
