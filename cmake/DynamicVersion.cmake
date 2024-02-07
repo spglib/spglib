@@ -1,4 +1,4 @@
-# Retrieved from https://github.com/LecrisUT/CMakeExtraUtils/blob/v0.4.0/cmake/DynamicVersion.cmake
+# Retrieved from https://github.com/LecrisUT/CMakeExtraUtils/blob/v0.4.1/cmake/DynamicVersion.cmake
 
 #[===[.md:
 # DynamicVersion
@@ -526,7 +526,15 @@ function(get_dynamic_version)
 				WORKING_DIRECTORY ${ARGS_PROJECT_SOURCE}
 				OUTPUT_VARIABLE describe-name
 				OUTPUT_STRIP_TRAILING_WHITESPACE
-				COMMAND_ERROR_IS_FATAL ANY)
+				RESULT_VARIABLE git_describe_result
+		)
+		if (NOT git_status_result EQUAL 0)
+			message(${error_message_type}
+					"Git describe failed:\n"
+					"  Source: ${ARGS_PROJECT_SOURCE}"
+			)
+			return()
+		endif ()
 		# Match any part containing digits and periods (strips out rc and so on)
 		if (NOT describe-name MATCHES "^(v?([0-9\\.]+)(-?[a-zA-z0-9]*)?(-([0-9]+)-g([a-f0-9]+))?)$")
 			message(${error_message_type}
@@ -556,7 +564,15 @@ function(get_dynamic_version)
 				WORKING_DIRECTORY ${ARGS_PROJECT_SOURCE}
 				OUTPUT_VARIABLE commit
 				OUTPUT_STRIP_TRAILING_WHITESPACE
-				COMMAND_ERROR_IS_FATAL ANY)
+				RESULT_VARIABLE git_rev_parser_result
+		)
+		if (NOT git_rev_parser_result EQUAL 0)
+			message(${error_message_type}
+					"Could not get current git commit:\n"
+					"  Source: ${ARGS_PROJECT_SOURCE}"
+			)
+			return()
+		endif ()
 		message(DEBUG "Found version git repo")
 	endif ()
 
