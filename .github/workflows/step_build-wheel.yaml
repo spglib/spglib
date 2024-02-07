@@ -48,7 +48,7 @@ jobs:
         with:
           platforms: all
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.15.0
+        uses: pypa/cibuildwheel@v2.16
         env:
           CIBW_BUILD: ${{ inputs.cibw_build }}
           CIBW_ARCHS_LINUX: ${{ inputs.cibw_archs_linux }}

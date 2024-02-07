@@ -11,6 +11,10 @@ GitHub release pages and in the git history.
 
 ## \[Unreleased\]
 
+### CI
+
+- [\[#422\]] - Update to ci-build-wheel v2.16
+
 ## v2.3.0 (27 Jan. 2024)
 
 ### Features
@@ -2115,3 +2119,4 @@ in bravais.c.
 ```
 
 [setuptools-scm]: https://setuptools-scm.readthedocs.io/en/latest/extending/#available-implementations
+[\[#422\]]: https://github.com/spglib/spglib/pull/422
