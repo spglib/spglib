@@ -30,7 +30,7 @@ endif ()
 # https://discourse.cmake.org/t/cmake-lang-standard-and-fetchcontent-cache-variable-interaction/8348
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
-set(CMAKE_C_EXTENSIONS ON)
+set(CMAKE_C_EXTENSIONS OFF)
 
 if (NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE Release)
