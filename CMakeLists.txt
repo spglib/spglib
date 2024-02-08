@@ -1,9 +1,4 @@
-cmake_minimum_required(VERSION 3.15)
-# CMake version compatibility
-# TODO: Remove when cmake 3.25 is commonly distributed
-if (POLICY CMP0140)
-	cmake_policy(SET CMP0140 NEW)
-endif ()
+cmake_minimum_required(VERSION 3.20...3.29)
 
 #[==============================================================================================[
 #                                    Basic project definition                                   #
@@ -73,14 +68,6 @@ mark_as_advanced(SPGLIB_COMPILATION_WARNING)
 #[==============================================================================================[
 #                                     Project configuration                                     #
 ]==============================================================================================]
-
-# Compatibilities
-# TODO: Remove when requiring cmake >= 3.20
-if (NOT COMMAND cmake_path)
-	# Note: This is not an actual replacement of cmake_path, just a minimal implementation for
-	# this project
-	include(cmake/compat/cmake_path.cmake)
-endif ()
 
 # Include basic tools
 include(cmake/PackageCompsHelper.cmake)
