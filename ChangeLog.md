@@ -11,19 +11,25 @@ GitHub release pages and in the git history.
 
 ## \[Unreleased\]
 
+## v2.3.1 (10 Feb. 2024)
+
 ### Fortran API
 
-- [\[#421\]] - Allow importing Fortran API when library/consumer compilers differ
-- [\[#421\]] - Fix building Fortran API from exported `spglib_f08.F90`
+- [\[#421\]](https://github.com/spglib/spglib/pull/421) - Allow importing Fortran API when library/consumer compilers differ
+- [\[#421\]](https://github.com/spglib/spglib/pull/421) - Fix building Fortran API from exported `spglib_f08.F90`
 
 ### Fixes
 
-- [\[#423\]] - Update DynamicVersion to v0.4.1. Fixes CMake build when git repository does not have a tag
-- [\[#426\]] - Fix Windows installation path
+- [\[#423\]](https://github.com/spglib/spglib/pull/423) - Update DynamicVersion to v0.4.1. Fixes CMake build when git repository does not have a tag
+- [\[#426\]](https://github.com/spglib/spglib/pull/426) - Fix Windows installation path
 
 ### CI
 
-- [\[#422\]] - Update to ci-build-wheel v2.16
+- [\[#422\]](https://github.com/spglib/spglib/pull/422) - Update to ci-build-wheel v2.16
+
+### Documentation
+
+- [\[#408\]](https://github.com/spglib/spglib/pull/408) doc: Add homebrew and spack badges
 
 ## v2.3.0 (27 Jan. 2024)
 
@@ -2129,7 +2135,3 @@ in bravais.c.
 ```
 
 [setuptools-scm]: https://setuptools-scm.readthedocs.io/en/latest/extending/#available-implementations
-[\[#421\]]: https://github.com/spglib/spglib/pull/421
-[\[#422\]]: https://github.com/spglib/spglib/pull/422
-[\[#423\]]: https://github.com/spglib/spglib/pull/423
-[\[#426\]]: https://github.com/spglib/spglib/pull/426
