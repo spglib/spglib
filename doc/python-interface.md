@@ -188,7 +188,7 @@ numbers = [1, 2, 2, 2]        # Al, Ni, Ni, Ni
 
 ```{note}
 When a crystal structure is not properly given, `TypeError` will be raised.
-For previous versions between 1.9.5 and 2.3.0, `None` will be returned for the invalid input.
+For previous versions between 1.9.5 and 2.3.1, `None` will be returned for the invalid input.
 ```
 
 ### Symmetry tolerance (`symprec`, `angle_tolerance`, `mag_symprec`)
