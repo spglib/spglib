@@ -70,13 +70,14 @@ autodoc2_render_plugin = "myst"
 autodoc2_docstring_parser_regexes = [
     (r".*", "rst"),
 ]
+autodoc2_annotations = False
 autodoc2_packages = [
     {
         "path": "../python/spglib/spglib.py",
         "module": "spglib",
     },
 ]
-autodoc2_hidden_objects = ["undoc", "dunder", "private", "inherited"]
+autodoc2_hidden_objects = ["dunder", "private", "inherited"]
 autodoc2_hidden_regexes = [
     "spglib.get_pointgroup",
     # Layer group

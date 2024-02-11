@@ -36,6 +36,7 @@
 from __future__ import annotations
 
 import warnings
+from typing import TYPE_CHECKING
 
 import numpy as np
 
@@ -59,6 +60,20 @@ except ImportError:
         )
     cdll.LoadLibrary(os.path.join(os.path.dirname(__file__), bundled_lib))
     from spglib import _spglib as spg  # type: ignore[attr-defined]
+
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+    from typing_extensions import TypeAlias
+
+    Lattice: TypeAlias = Sequence[Sequence[float]]
+    Positions: TypeAlias = Sequence[Sequence[float]]
+    Numbers: TypeAlias = Sequence[int]
+    Magmoms: TypeAlias = Sequence[float] | Sequence[Sequence[float]]
+    Cell: TypeAlias = (
+        tuple[Lattice, Positions, Numbers] | tuple[Lattice, Positions, Numbers, Magmoms]
+    )
 
 
 class SpglibError:
@@ -117,7 +132,7 @@ def spg_get_commit():
 
 
 def get_symmetry(
-    cell,
+    cell: Cell,
     symprec=1e-5,
     angle_tolerance=-1.0,
     mag_symprec=-1.0,
@@ -278,7 +293,7 @@ def get_symmetry(
 
 
 def get_magnetic_symmetry(
-    cell,
+    cell: Cell,
     symprec=1e-5,
     angle_tolerance=-1.0,
     mag_symprec=-1.0,
@@ -290,7 +305,7 @@ def get_magnetic_symmetry(
     Parameters
     ----------
     cell : tuple
-        Crystal structure given either in tuple or Atoms object (deprecated).
+        Crystal structure given either in tuple.
         In the case given by a tuple, it has to follow the form below,
 
         (basis vectors, atomic points, types in integer numbers, ...)
@@ -525,7 +540,7 @@ def _build_dataset_dict(spg_ds):
 
 
 def get_symmetry_dataset(
-    cell,
+    cell: Cell,
     symprec=1e-5,
     angle_tolerance=-1.0,
     hall_number=0,
@@ -707,7 +722,7 @@ def get_symmetry_dataset(
     return dataset
 
 
-def get_symmetry_layerdataset(cell, aperiodic_dir=2, symprec=1e-5):
+def get_symmetry_layerdataset(cell: Cell, aperiodic_dir=2, symprec=1e-5):
     """TODO: Add comments."""
     _set_no_error()
 
@@ -731,7 +746,7 @@ def get_symmetry_layerdataset(cell, aperiodic_dir=2, symprec=1e-5):
 
 
 def get_magnetic_symmetry_dataset(
-    cell,
+    cell: Cell,
     is_axial=None,
     symprec=1e-5,
     angle_tolerance=-1.0,
@@ -922,7 +937,7 @@ def get_magnetic_symmetry_dataset(
     return dataset
 
 
-def get_layergroup(cell, aperiodic_dir=2, symprec=1e-5):
+def get_layergroup(cell: Cell, aperiodic_dir=2, symprec=1e-5):
     """Return layer group in ....
 
     If it fails, None is returned.
@@ -939,7 +954,7 @@ def get_layergroup(cell, aperiodic_dir=2, symprec=1e-5):
 
 
 def get_spacegroup(
-    cell,
+    cell: Cell,
     symprec=1e-5,
     angle_tolerance=-1.0,
     symbol_type=0,
@@ -1256,7 +1271,7 @@ def get_pointgroup(rotations):
 
 
 def standardize_cell(
-    cell,
+    cell: Cell,
     to_primitive=False,
     no_idealize=False,
     symprec=1e-5,
@@ -1321,7 +1336,7 @@ def standardize_cell(
         return None
 
 
-def refine_cell(cell, symprec=1e-5, angle_tolerance=-1.0):
+def refine_cell(cell: Cell, symprec=1e-5, angle_tolerance=-1.0):
     """Return refined cell. When the search failed, ``None`` is returned.
 
     The standardized unit cell is returned by a tuple of
@@ -1364,7 +1379,7 @@ def refine_cell(cell, symprec=1e-5, angle_tolerance=-1.0):
         return None
 
 
-def find_primitive(cell, symprec=1e-5, angle_tolerance=-1.0):
+def find_primitive(cell: Cell, symprec=1e-5, angle_tolerance=-1.0):
     """Primitive cell is searched in the input cell. If it fails, ``None`` is returned.
 
     The primitive cell is returned by a tuple of (lattice, positions, numbers).
@@ -1965,7 +1980,7 @@ def get_error_message():
 
 
 def _expand_cell(
-    cell,
+    cell: Cell,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray | None]:
     lattice = np.array(np.transpose(cell[0]), dtype="double", order="C")
     positions = np.array(cell[1], dtype="double", order="C")
