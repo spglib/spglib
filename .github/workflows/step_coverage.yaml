@@ -2,6 +2,11 @@ name: 👀 coverage
 
 on:
   workflow_call:
+    secrets:
+      CODECOV_TOKEN:
+        description: Codecov token of the main repository
+        required: false
+
 
 permissions:
   contents: read
@@ -29,8 +34,9 @@ jobs:
           # https://github.com/danielealbano/lcov-action/issues/11
           remove_patterns: /test/,/cmake-build*/
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
+          token: ${{ secrets.CODECOV_TOKEN }}
           name: ${{ matrix.coverage }} coverage
           files: coverage.info
           flags: ${{ matrix.coverage }}
@@ -62,8 +68,9 @@ jobs:
           # https://github.com/danielealbano/lcov-action/issues/11
           remove_patterns: /test/,/cmake-build*/,/tmp/
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
+          token: ${{ secrets.CODECOV_TOKEN }}
           name: python_api coverage
           files: coverage.info,.coverage
           flags: python_api
