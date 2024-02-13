@@ -3,6 +3,8 @@
 # Implementation inspired by Alex Reinking blog post
 # https://alexreinking.com/blog/building-a-dual-shared-and-static-library-with-cmake.html
 
+include_guard()
+
 # Define a helper macro for the next macro
 macro(try_get_package_comp _comp)
 	# Macro variables::
@@ -448,6 +450,6 @@ function(export_components)
 			DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${ARGS_PROJECT}
 			COMPONENT ${ARGS_PROJECT}_Development)
 	export(EXPORT ${CmakeTarget}
-			FILE ${CmakeTargetFile}
+			FILE ${${ARGS_PROJECT}_BINARY_DIR}/${CmakeTargetFile}
 			NAMESPACE ${ARGS_PROJECT}::)
 endfunction()

@@ -1,5 +1,0 @@
-summary:
-  Test pkg-config for C library
-require+:
-  - gcc
-tag+: [ c_api ]

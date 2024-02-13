@@ -38,6 +38,23 @@
       }
     },
     {
+      "name": "ci-sanitizer",
+      "hidden": true,
+      "inherits": [
+        "ci-base"
+      ],
+      "cacheVariables": {
+        "SPGLIB_WITH_Python": {
+          "type": "BOOL",
+          "value": false
+        },
+        "SPGLIB_USE_SANITIZER": {
+          "type": "STRING",
+          "value": "$penv{SPGLIB_SANITIZER}"
+        }
+      }
+    },
+    {
       "name": "ci-coverage",
       "displayName": "Configure preset for test coverage",
       "inherits": [
@@ -97,10 +114,6 @@
         "CMAKE_LINKER": {
           "type": "FILEPATH",
           "value": "ld"
-        },
-        "SPGLIB_USE_SANITIZER": {
-          "type": "STRING",
-          "value": "address"
         }
       }
     },
@@ -123,10 +136,6 @@
         "CMAKE_Fortran_COMPILER": {
           "type": "FILEPATH",
           "value": "ifx"
-        },
-        "SPGLIB_USE_SANITIZER": {
-          "type": "STRING",
-          "value": "address"
         }
       }
     },
@@ -153,10 +162,6 @@
         "CMAKE_LINKER": {
           "type": "FILEPATH",
           "value": "lld"
-        },
-        "SPGLIB_USE_SANITIZER": {
-          "type": "STRING",
-          "value": "address"
         }
       }
     },
@@ -179,10 +184,6 @@
         "SPGLIB_WITH_Fortran": {
           "type": "BOOL",
           "value": false
-        },
-        "SPGLIB_USE_SANITIZER": {
-          "type": "STRING",
-          "value": "address"
         },
         "SPGLIB_SHARED_LIBS": {
           "type": "BOOL",
@@ -209,12 +210,24 @@
         "SPGLIB_WITH_Fortran": {
           "type": "BOOL",
           "value": false
-        },
-        "SPGLIB_USE_SANITIZER": {
-          "type": "STRING",
-          "value": "address"
         }
       }
+    },
+    {
+      "name": "gcc-ci-sanitizer",
+      "displayName": "GCC toolchain + sanitizer",
+      "inherits": [
+        "ci-sanitizer",
+        "gcc-ci"
+      ]
+    },
+    {
+      "name": "llvm-ci-sanitizer",
+      "displayName": "LLVM toolchain + sanitizer",
+      "inherits": [
+        "ci-sanitizer",
+        "llvm-ci"
+      ]
     }
   ],
   "buildPresets": [
@@ -273,6 +286,22 @@
         "ci-base"
       ],
       "configurePreset": "macos-ci"
+    },
+    {
+      "name": "gcc-ci-sanitizer",
+      "displayName": "GCC toolchain + sanitizer",
+      "inherits": [
+        "ci-base"
+      ],
+      "configurePreset": "gcc-ci-sanitizer"
+    },
+    {
+      "name": "llvm-ci-sanitizer",
+      "displayName": "LLVM toolchain + sanitizer",
+      "inherits": [
+        "ci-base"
+      ],
+      "configurePreset": "llvm-ci-sanitizer"
     }
   ],
   "testPresets": [
@@ -333,6 +362,22 @@
         "ci-base"
       ],
       "configurePreset": "macos-ci"
+    },
+    {
+      "name": "gcc-ci-sanitizer",
+      "displayName": "GCC toolchain + sanitizer",
+      "inherits": [
+        "ci-base"
+      ],
+      "configurePreset": "gcc-ci-sanitizer"
+    },
+    {
+      "name": "llvm-ci-sanitizer",
+      "displayName": "LLVM toolchain + sanitizer",
+      "inherits": [
+        "ci-base"
+      ],
+      "configurePreset": "llvm-ci-sanitizer"
     },
     {
       "name": "ci-coverage-unit_tests",
@@ -459,6 +504,42 @@
         {
           "type": "test",
           "name": "macos-ci"
+        }
+      ]
+    },
+    {
+      "name": "gcc-ci-sanitizer",
+      "displayName": "CI test for GCC toolchain + sanitizer",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "gcc-ci-sanitizer"
+        },
+        {
+          "type": "build",
+          "name": "gcc-ci-sanitizer"
+        },
+        {
+          "type": "test",
+          "name": "gcc-ci-sanitizer"
+        }
+      ]
+    },
+    {
+      "name": "llvm-ci-sanitizer",
+      "displayName": "CI test for LLVM toolchain + sanitizer",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "llvm-ci-sanitizer"
+        },
+        {
+          "type": "build",
+          "name": "llvm-ci-sanitizer"
+        },
+        {
+          "type": "test",
+          "name": "llvm-ci-sanitizer"
         }
       ]
     },

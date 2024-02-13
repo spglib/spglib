@@ -11,6 +11,14 @@ GitHub release pages and in the git history.
 
 ## \[Unreleased\]
 
+### Main Changes
+
+- Separated the CMake sub-projects to be buildable as standalone projects with pre-installed Spglib C library: test,
+  python, fortran
+- Bumped minimum CMake version to 3.20
+  (Note: previously the project was not tested for the minimum CMake version)
+- Migrated the example and package test to the ctest test-suite
+
 ### CI
 
 - [\[#425\]](https://github.com/spglib/spglib/pull/425) - Update to codecov v4

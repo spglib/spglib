@@ -1,5 +1,0 @@
-summary:
-  Test FetchContent for Fortran library
-require+:
-  - gcc-gfortran
-tag+: [ fortran_api ]

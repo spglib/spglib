@@ -1,3 +1,0 @@
-require+:
-  - pkgconf
-tag+: [ pkg-config ]

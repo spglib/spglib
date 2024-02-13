@@ -1,0 +1,7 @@
+summary:
+  Test the bundled ctests and pytest
+discover+:
+  how: fmf
+  path: test
+execute:
+  how: tmt
