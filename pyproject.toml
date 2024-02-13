@@ -12,7 +12,7 @@ readme = "python/README.rst"
 dynamic = ["version"]
 dependencies = [
     "numpy>=1.20",
-    "typing_extensions",
+    "typing-extensions; python_version<'3.9'",
 ]
 authors = [
     {name="Atsushi Togo", email="atz.togo@gmail.com"},

@@ -63,9 +63,13 @@ except ImportError:
 
 
 if TYPE_CHECKING:
+    import sys
     from collections.abc import Sequence
 
-    from typing_extensions import TypeAlias
+    if sys.version_info < (3, 10):
+        from typing_extensions import TypeAlias
+    else:
+        from typing import TypeAlias
 
     Lattice: TypeAlias = Sequence[Sequence[float]]
     Positions: TypeAlias = Sequence[Sequence[float]]
