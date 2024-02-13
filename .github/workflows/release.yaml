@@ -25,10 +25,17 @@ jobs:
     permissions:
       id-token: write
     steps:
-      - uses: actions/download-artifact@v3
+      - name: Get sdist
+        uses: actions/download-artifact@v4
         with:
-          name: artifact
+          name: Packages
           path: dist
+      - name: Get wheels
+        uses: actions/download-artifact@v4
+        with:
+          pattern: cibw-wheels-*
+          path: dist
+          merge-multiple: true
       - name: Publish package to TestPyPI
         if: ${{ contains(github.ref, 'rc') }}
         # TODO: Maybe we can move this to main PyPI since it is marked rc
