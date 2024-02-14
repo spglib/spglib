@@ -1,8 +1,0 @@
-tag: [ cmake, package ]
-require:
-  - cmake
-  - rsync
-  - tree
-framework: beakerlib
-path: /
-test: ./package/test.sh

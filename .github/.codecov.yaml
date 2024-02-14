@@ -1,0 +1,34 @@
+flags:
+  c_api:
+    paths:
+      - src/*
+  fortran_api:
+    paths:
+      - src/*
+      - fortran/*
+  python_api:
+    paths:
+      - src/*
+      - python/*
+
+coverage:
+  status:
+    project:
+      default:
+        flags:
+          - unit_tests
+          - c_api
+          - fortran_api
+          - python_api
+      c_api:
+        flags:
+          - c_api
+      fortran_api:
+        flags:
+          - fortran_api
+      python_api:
+        flags:
+          - python_api
+codecov:
+  notify:
+    wait_for_ci: true

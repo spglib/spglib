@@ -1,0 +1,12 @@
+tag: [ cmake ]
+require:
+  - cmake
+  - rsync
+  - gcc
+  - gcc-c++
+  - gcc-fortran
+  - pkgconf
+  - git
+framework: beakerlib
+path: /
+test: ./ctest.sh

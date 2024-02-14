@@ -15,6 +15,19 @@ GitHub release pages and in the git history.
 
 - [\[#420\]](https://github.com/spglib/spglib/pull/420) Raise `TypeError` when a given `cell` is invalid
 - [\[#420\]](https://github.com/spglib/spglib/pull/420) Add type annotation for `cell`
+### Main Changes
+
+- Separated the CMake sub-projects to be buildable as standalone projects with pre-installed Spglib C library: test,
+  python, fortran
+- Bumped minimum CMake version to 3.20
+  (Note: previously the project was not tested for the minimum CMake version)
+- Migrated the example and package test to the ctest test-suite
+
+### CI
+
+- [\[#425\]](https://github.com/spglib/spglib/pull/425) - Update to codecov v4
+- [\[#402\]](https://github.com/spglib/spglib/pull/402) - Bump artifact actions to v4
+- [\[#402\]](https://github.com/spglib/spglib/pull/402) - Build and inspect python sdist
 
 ## v2.3.1 (10 Feb. 2024)
 

@@ -1,31 +1,106 @@
-Python3_add_library(Spglib_python MODULE WITH_SOABI _spglib.c)
+cmake_minimum_required(VERSION 3.20...3.29)
+
+#[=============================================================================[
+#                           Basic project definition                           #
+]=============================================================================]
+
+list(APPEND CMAKE_MESSAGE_CONTEXT Python)
+project(Spglib_Python
+		LANGUAGES C
+)
+# Back-porting to PROJECT_IS_TOP_LEVEL to older cmake
+# TODO: Remove when requiring cmake >= 3.21
+if (NOT DEFINED Spglib_Python_IS_TOP_LEVEL)
+	if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+		set(PROJECT_IS_TOP_LEVEL ON)
+	else ()
+		set(PROJECT_IS_TOP_LEVEL OFF)
+	endif ()
+endif ()
+
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_C_EXTENSIONS OFF)
+
+if (NOT CMAKE_BUILD_TYPE)
+	set(CMAKE_BUILD_TYPE Release)
+endif ()
+
+#[=============================================================================[
+#                                   Options                                   #
+]=============================================================================]
+
+option(SPGLIB_INSTALL "Spglib: Install project" ${PROJECT_IS_TOP_LEVEL})
+option(SPGLIB_SHARED_LIBS "Spglib: Build as a shared library" ${PROJECT_IS_TOP_LEVEL})
+
+#[=============================================================================[
+#                            Project configuration                            #
+]=============================================================================]
+
+set(BUILD_SHARED_LIBS ${SPGLIB_SHARED_LIBS})
+
+#[=============================================================================[
+#                              External packages                              #
+]=============================================================================]
+
+set(external_libs)
+include(FetchContent)
+
+# Get Spglib if it's run as stand-alone project
+if (NOT Spglib_IS_TOP_LEVEL)
+	FetchContent_Declare(Spglib
+			GIT_REPOSITORY https://github.com/spglib/spglib
+			GIT_TAG develop
+			FIND_PACKAGE_ARGS CONFIG
+	)
+	list(APPEND external_libs Spglib)
+endif ()
+find_package(Python 3.8 COMPONENTS REQUIRED Interpreter Development.Module NumPy)
+FetchContent_MakeAvailable(${external_libs})
+
+#[=============================================================================[
+#                               Main definition                               #
+]=============================================================================]
+
+Python_add_library(Spglib_python MODULE WITH_SOABI _spglib.c)
 set_target_properties(Spglib_python PROPERTIES
-		OUTPUT_NAME _spglib)
+		OUTPUT_NAME _spglib
+)
 target_link_libraries(Spglib_python PRIVATE
-		Spglib_symspg Python3::NumPy)
+		Spglib::symspg Python::NumPy
+)
+
+#[=============================================================================[
+#                              Install or Export                              #
+]=============================================================================]
+
 if (NOT Python_INSTALL_DIR)
 	if (SKBUILD)
 		# If built with scikit-build-core, let it handle the installation
 		set(Python_INSTALL_DIR ".")
 	else ()
 		# Otherwise try to install in current python executable's setup
-		set(Python_INSTALL_DIR ${Python3_SITEARCH}/spglib)
+		set(Python_INSTALL_DIR ${Python_SITEARCH}/spglib)
 	endif ()
 endif ()
 if (SPGLIB_INSTALL)
-	# TODO: Cmake forces to install PUBLIC_HEADER when defined
-	# https://gitlab.kitware.com/cmake/cmake/-/issues/24326
-	install(TARGETS Spglib_symspg
-			LIBRARY DESTINATION ${Python_INSTALL_DIR} COMPONENT Spglib_Runtime
-			NAMELINK_COMPONENT Spglib_Development
-			ARCHIVE DESTINATION ${Python_INSTALL_DIR} COMPONENT Spglib_Development
-			PUBLIC_HEADER DESTINATION ${Python_INSTALL_DIR} COMPONENT Spglib_Development
-			RUNTIME DESTINATION ${Python_INSTALL_DIR} COMPONENT Spglib_Runtime
-	)
+	if (TARGET Spglib_symspg)
+		# If Spglib is not already installed on the system, install it in ${Python_INSTALL_DIR}
+		# TODO: Cmake forces to install PUBLIC_HEADER when defined
+		# https://gitlab.kitware.com/cmake/cmake/-/issues/24326
+		install(TARGETS Spglib_symspg
+				LIBRARY DESTINATION ${Python_INSTALL_DIR} COMPONENT Spglib_Runtime
+				NAMELINK_COMPONENT Spglib_Development
+				ARCHIVE DESTINATION ${Python_INSTALL_DIR} COMPONENT Spglib_Development
+				PUBLIC_HEADER DESTINATION ${Python_INSTALL_DIR} COMPONENT Spglib_Development
+				RUNTIME DESTINATION ${Python_INSTALL_DIR} COMPONENT Spglib_Runtime
+		)
+	endif ()
 	install(TARGETS Spglib_python
 			LIBRARY DESTINATION ${Python_INSTALL_DIR} COMPONENT Spglib_Runtime
 	)
 
+	# Install spglib module to local python path
 	if (NOT SKBUILD)
 		install(DIRECTORY spglib/ DESTINATION ${Python_INSTALL_DIR} COMPONENT Spglib_Runtime)
 	endif ()

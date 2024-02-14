@@ -1,8 +1,0 @@
-tag: [ examples ]
-require:
-  - cmake
-  - rsync
-  - tree
-framework: beakerlib
-path: /
-test: ./test.sh

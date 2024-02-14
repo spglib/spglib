@@ -1,13 +1,8 @@
-cmake_minimum_required(VERSION 3.15)
-# CMake version compatibility
-# TODO: Remove when cmake 3.25 is commonly distributed
-if (POLICY CMP0140)
-	cmake_policy(SET CMP0140 NEW)
-endif ()
+cmake_minimum_required(VERSION 3.20...3.29)
 
-#[==============================================================================================[
-#                                    Basic project definition                                   #
-]==============================================================================================]
+#[=============================================================================[
+#                           Basic project definition                           #
+]=============================================================================]
 
 include(cmake/DynamicVersion.cmake)
 # Get dynamic version and save it to PROJECT_VERSION
@@ -15,6 +10,7 @@ dynamic_version(
 		PROJECT_PREFIX Spglib_
 		FALLBACK_VERSION 0.0.0
 )
+list(APPEND CMAKE_MESSAGE_CONTEXT Spglib)
 project(Spglib
 		VERSION ${PROJECT_VERSION}
 		LANGUAGES C)
@@ -26,24 +22,24 @@ set(Spglib_COMMIT ${GIT_COMMIT})
 if (NOT DEFINED Spglib_IS_TOP_LEVEL)
 	if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 		set(PROJECT_IS_TOP_LEVEL ON)
+		set(Spglib_IS_TOP_LEVEL ON)
 	else ()
 		set(PROJECT_IS_TOP_LEVEL OFF)
+		set(Spglib_IS_TOP_LEVEL OFF)
 	endif ()
 endif ()
 
-# Specify C standard. This can be overwritten using `-DCMAKE_C_STANDARD`
-# https://discourse.cmake.org/t/cmake-lang-standard-and-fetchcontent-cache-variable-interaction/8348
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
-set(CMAKE_C_EXTENSIONS ON)
+set(CMAKE_C_EXTENSIONS OFF)
 
 if (NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE Release)
 endif ()
 
-#[==============================================================================================[
-#                                            Options                                            #
-]==============================================================================================]
+#[=============================================================================[
+#                                   Options                                   #
+]=============================================================================]
 
 # Boilerplate default values
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -59,10 +55,6 @@ option(SPGLIB_USE_OMP "Spglib: Build with OpenMP support" OFF)
 option(SPGLIB_WITH_TESTS "Spglib: Build unit tests" ${PROJECT_IS_TOP_LEVEL})
 option(SPGLIB_SHARED_LIBS "Spglib: Build as a shared library" ${PROJECT_IS_TOP_LEVEL})
 option(SPGLIB_INSTALL "Spglib: Install project" ${PROJECT_IS_TOP_LEVEL})
-option(SPGLIB_TEST_COVERAGE "Spglib: Test with coverage" OFF)
-mark_as_advanced(SPGLIB_TEST_COVERAGE)
-set(SPGLIB_USE_SANITIZER "" CACHE STRING "Spglib: Sanitizer used in compilation")
-mark_as_advanced(SPGLIB_USE_SANITIZER)
 option(SPGLIB_WARNINGS "Spglib: Enable warning messages" ON)
 mark_as_advanced(SPGLIB_WITH_WARNINGS)
 option(SPGLIB_DEBUG "Spglib: Build in debug mode" ${_Spglib_default_debug})
@@ -70,17 +62,9 @@ mark_as_advanced(SPGLIB_DEBUG)
 option(SPGLIB_COMPILATION_WARNING "Spglib: Enable compilation warnings" OFF)
 mark_as_advanced(SPGLIB_COMPILATION_WARNING)
 
-#[==============================================================================================[
-#                                     Project configuration                                     #
-]==============================================================================================]
-
-# Compatibilities
-# TODO: Remove when requiring cmake >= 3.20
-if (NOT COMMAND cmake_path)
-	# Note: This is not an actual replacement of cmake_path, just a minimal implementation for
-	# this project
-	include(cmake/compat/cmake_path.cmake)
-endif ()
+#[=============================================================================[
+#                            Project configuration                            #
+]=============================================================================]
 
 # Include basic tools
 include(cmake/PackageCompsHelper.cmake)
@@ -99,9 +83,6 @@ if (BUILD_SHARED_LIBS)
 else ()
 	set(Spglib_LIB_TYPE "static")
 endif ()
-if (NOT CMAKE_Fortran_MODULE_DIRECTORY)
-	set(CMAKE_Fortran_MODULE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/fortran_mods)
-endif ()
 
 set(CMAKE_MACOSX_RPATH 1)
 # Windows setup
@@ -111,48 +92,24 @@ if (WIN32)
 	# Add appropriate debug flags
 	set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>")
 endif ()
-if (SPGLIB_WITH_Fortran)
-	enable_language(Fortran)
-endif ()
-if (SPGLIB_TEST_COVERAGE)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage")
-	set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} --coverage -ftest-forall-temp")
-endif ()
 
 # Report configuration
 message(STATUS "Spglib:: Build type: ${CMAKE_BUILD_TYPE}")
 message(STATUS "Spglib:: Version ${PROJECT_VERSION_FULL}")
 
-#[==============================================================================================[
-#                                       External packages                                       #
-]==============================================================================================]
+#[=============================================================================[
+#                              External packages                              #
+]=============================================================================]
 
 # Include third-party libraries
 set(spglib_dependencies "")
 if (SPGLIB_USE_OMP)
 	find_package(OpenMP REQUIRED COMPONENTS C)
 endif ()
-if (SPGLIB_WITH_TESTS)
-	set(BUILD_GMOCK OFF)
-	set(INSTALL_GTEST OFF)
-	set(gtest_disable_pthreads ON)
-	FetchContent_Declare(GTest
-			GIT_REPOSITORY https://github.com/google/googletest
-			GIT_TAG v1.13.0
-			FIND_PACKAGE_ARGS
-	)
-	list(APPEND spglib_dependencies GTest)
-	find_package(Threads REQUIRED)
-endif ()
-if (SPGLIB_WITH_Python)
-	find_package(Python3 COMPONENTS REQUIRED Interpreter Development.Module NumPy)
-endif ()
-FetchContent_MakeAvailable(${spglib_dependencies})
 
-#[==============================================================================================[
-#                                        Main definition                                        #
-]==============================================================================================]
+#[=============================================================================[
+#                               Main definition                               #
+]=============================================================================]
 
 # Main project
 add_library(Spglib_symspg)
@@ -179,10 +136,15 @@ if (SPGLIB_WITH_TESTS)
 	add_subdirectory(test)
 endif ()
 
-#[==============================================================================================[
-#                                       Install or Export                                       #
-]==============================================================================================]
+#[=============================================================================[
+#                              Install or Export                              #
+]=============================================================================]
+
 # Installation
+
+# Copy PackageCompsHelper to make it available for build import
+configure_file(cmake/PackageCompsHelper.cmake PackageCompsHelper.cmake COPYONLY)
+
 # TODO: Temporarily disable installing cmake files when using scikit-build-core
 #  Check how bundled cmake searches CMAKE_MODULE_DIR and add accordingly
 #  (use SKBUILD_PLATLIB_DIR for install root)
