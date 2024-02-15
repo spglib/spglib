@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20...3.29)
+cmake_minimum_required(VERSION 3.25...3.29)
 
 #[=============================================================================[
 #                           Basic project definition                           #
@@ -22,15 +22,6 @@ project(Spglib_Fortran
         VERSION ${PROJECT_VERSION}
         LANGUAGES Fortran
 )
-# Back-porting to PROJECT_IS_TOP_LEVEL to older cmake
-# TODO: Remove when requiring cmake >= 3.21
-if (NOT DEFINED Spglib_Fortran_IS_TOP_LEVEL)
-    if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
-        set(PROJECT_IS_TOP_LEVEL ON)
-    else ()
-        set(PROJECT_IS_TOP_LEVEL OFF)
-    endif ()
-endif ()
 
 #[=============================================================================[
 #                                   Options                                   #
@@ -81,24 +72,12 @@ include(FetchContent)
 
 # Get Spglib if it's run as stand-alone project
 if (NOT Spglib_SOURCE_DIR)
-    if (CMAKE_VERSION VERSION_LESS 3.24)
-        # TODO: Use by default when minimum is CMake 3.24
-        find_package(Spglib CONFIG QUIET)
-        if (NOT Spglib_FOUND)
-            FetchContent_Declare(Spglib
-                    GIT_REPOSITORY https://github.com/spglib/spglib
-                    GIT_TAG develop
-            )
-            list(APPEND external_libs Spglib)
-        endif ()
-    else ()
-        FetchContent_Declare(Spglib
-                GIT_REPOSITORY https://github.com/spglib/spglib
-                GIT_TAG develop
-                FIND_PACKAGE_ARGS CONFIG
-        )
-        list(APPEND external_libs Spglib)
-    endif ()
+    FetchContent_Declare(Spglib
+            GIT_REPOSITORY https://github.com/spglib/spglib
+            GIT_TAG develop
+            FIND_PACKAGE_ARGS CONFIG
+    )
+    list(APPEND external_libs Spglib)
 endif ()
 FetchContent_MakeAvailable(${external_libs})
 
@@ -203,26 +182,14 @@ endif ()
 # Make project available for FetchContent
 if (NOT PROJECT_IS_TOP_LEVEL)
     # Propagate variables
-    if (CMAKE_VERSION VERSION_LESS 3.25)
-        # TODO: Remove when cmake 3.25 is commonly distributed
-        set(Spglib_Fortran_VERSION ${Spglib_Fortran_VERSION} PARENT_SCOPE)
-        set(Spglib_Fortran_VERSION_MAJOR ${Spglib_Fortran_VERSION_MAJOR} PARENT_SCOPE)
-        set(Spglib_Fortran_VERSION_MINOR ${Spglib_Fortran_VERSION_MINOR} PARENT_SCOPE)
-        set(Spglib_Fortran_VERSION_PATCH ${Spglib_Fortran_VERSION_PATCH} PARENT_SCOPE)
-        set(Spglib_Fortran_VERSION_TWEAK ${Spglib_Fortran_VERSION_TWEAK} PARENT_SCOPE)
-        set(Spglib_Fortran_VERSION_FULL ${Spglib_Fortran_VERSION_FULL} PARENT_SCOPE)
-        set(Spglib_Fortran_COMMIT ${Spglib_Fortran_COMMIT} PARENT_SCOPE)
-        set(Spglib_LIB_TYPE ${Spglib_LIB_TYPE} PARENT_SCOPE)
-    else ()
-        return(PROPAGATE
-                Spglib_Fortran_VERSION
-                Spglib_Fortran_VERSION_MAJOR
-                Spglib_Fortran_VERSION_MINOR
-                Spglib_Fortran_VERSION_PATCH
-                Spglib_Fortran_VERSION_TWEAK
-                Spglib_Fortran_VERSION_FULL
-                Spglib_Fortran_COMMIT
-                Spglib_LIB_TYPE
-        )
-    endif ()
+    return(PROPAGATE
+            Spglib_Fortran_VERSION
+            Spglib_Fortran_VERSION_MAJOR
+            Spglib_Fortran_VERSION_MINOR
+            Spglib_Fortran_VERSION_PATCH
+            Spglib_Fortran_VERSION_TWEAK
+            Spglib_Fortran_VERSION_FULL
+            Spglib_Fortran_COMMIT
+            Spglib_LIB_TYPE
+    )
 endif ()
