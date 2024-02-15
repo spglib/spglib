@@ -63,13 +63,15 @@ typedef struct {
     double *tensors;
 } Cell;
 
-Cell *cel_alloc_cell(const int size, const SiteTensorType tensor_rank);
-void cel_free_cell(Cell *cell);
+SPG_API_TEST Cell *cel_alloc_cell(const int size,
+                                  const SiteTensorType tensor_rank);
+SPG_API_TEST void cel_free_cell(Cell *cell);
 void cel_set_cell(Cell *cell, const double lattice[3][3],
                   const double position[][3], const int types[]);
-void cel_set_layer_cell(Cell *cell, const double lattice[3][3],
-                        const double position[][3], const int types[],
-                        const int aperiodic_axis);
+SPG_API_TEST void cel_set_layer_cell(Cell *cell, const double lattice[3][3],
+                                     const double position[][3],
+                                     const int types[],
+                                     const int aperiodic_axis);
 void cel_set_cell_with_tensors(Cell *cell, const double lattice[3][3],
                                const double position[][3], const int types[],
                                const double *tensors);
