@@ -56,6 +56,28 @@ extern "C" {
     #define SPG_API
 #endif
 
+// TODO: Remove when enforcing C23
+// Cannot use shortcircuit #if defined(foo) && foo(...)
+#if defined(__has_c_attribute)
+    #define SPG_HAS_C_ATTRIBUTE(x) __has_c_attribute(x)
+#else
+    #define SPG_HAS_C_ATTRIBUTE(x) 0
+#endif
+
+#if SPG_HAS_C_ATTRIBUTE(deprecated)
+    // Use the C23 standard
+    #define SPG_DEPRECATED(msg) [[deprecated(msg)]]
+#elif defined(__GNUC__) || defined(__clang__)
+    // Otherwise try the compiler specific
+    // https://en.cppreference.com/w/c/compiler_support/23
+    #define SPG_DEPRECATED(msg) __attribute__((deprecated(msg)))
+#elif defined(_MSC_VER)
+    #define SPG_DEPRECATED(msg) __declspec(deprecated(msg))
+#else
+    // Can't do anything else
+    #define SPG_DEPRECATED(msg)
+#endif
+
 #include <stddef.h>
 
 /*
