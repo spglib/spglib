@@ -11,6 +11,11 @@ GitHub release pages and in the git history.
 
 ## \[Unreleased\]
 
+### Python interface
+
+- [\[#420\]](https://github.com/spglib/spglib/pull/420) Raise `TypeError` when a given `cell` is invalid
+- [\[#420\]](https://github.com/spglib/spglib/pull/420) Add type annotation for `cell`
+
 ### Main Changes
 
 - Separated the CMake sub-projects to be buildable as standalone projects with pre-installed Spglib C library: test,

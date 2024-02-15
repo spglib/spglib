@@ -36,6 +36,7 @@
 from __future__ import annotations
 
 import warnings
+from typing import TYPE_CHECKING
 
 import numpy as np
 
@@ -59,6 +60,24 @@ except ImportError:
         )
     cdll.LoadLibrary(os.path.join(os.path.dirname(__file__), bundled_lib))
     from spglib import _spglib as spg  # type: ignore[attr-defined]
+
+
+if TYPE_CHECKING:
+    import sys
+    from collections.abc import Sequence
+
+    if sys.version_info < (3, 10):
+        from typing_extensions import TypeAlias
+    else:
+        from typing import TypeAlias
+
+    Lattice: TypeAlias = Sequence[Sequence[float]]
+    Positions: TypeAlias = Sequence[Sequence[float]]
+    Numbers: TypeAlias = Sequence[int]
+    Magmoms: TypeAlias = Sequence[float] | Sequence[Sequence[float]]
+    Cell: TypeAlias = (
+        tuple[Lattice, Positions, Numbers] | tuple[Lattice, Positions, Numbers, Magmoms]
+    )
 
 
 class SpglibError:
@@ -117,7 +136,7 @@ def spg_get_commit():
 
 
 def get_symmetry(
-    cell,
+    cell: Cell,
     symprec=1e-5,
     angle_tolerance=-1.0,
     mag_symprec=-1.0,
@@ -245,9 +264,7 @@ def get_symmetry(
     """
     _set_no_error()
 
-    lattice, _, _, magmoms = _expand_cell(cell)
-    if lattice is None:
-        return None
+    _, _, _, magmoms = _expand_cell(cell)
 
     if magmoms is None:
         # Get symmetry operations without on-site tensors (i.e. normal crystal)
@@ -280,7 +297,7 @@ def get_symmetry(
 
 
 def get_magnetic_symmetry(
-    cell,
+    cell: Cell,
     symprec=1e-5,
     angle_tolerance=-1.0,
     mag_symprec=-1.0,
@@ -292,7 +309,7 @@ def get_magnetic_symmetry(
     Parameters
     ----------
     cell : tuple
-        Crystal structure given either in tuple or Atoms object (deprecated).
+        Crystal structure given either in tuple.
         In the case given by a tuple, it has to follow the form below,
 
         (basis vectors, atomic points, types in integer numbers, ...)
@@ -380,11 +397,8 @@ def get_magnetic_symmetry(
     _set_no_error()
 
     lattice, positions, numbers, magmoms = _expand_cell(cell)
-    if lattice is None:
-        return None
     if magmoms is None:
-        warnings.warn("Specify magnetic moments in cell.")
-        return None
+        raise TypeError("Specify magnetic moments in cell.")
 
     max_size = len(positions) * 96
     rotations = np.zeros((max_size, 3, 3), dtype="intc", order="C")
@@ -530,7 +544,7 @@ def _build_dataset_dict(spg_ds):
 
 
 def get_symmetry_dataset(
-    cell,
+    cell: Cell,
     symprec=1e-5,
     angle_tolerance=-1.0,
     hall_number=0,
@@ -694,8 +708,6 @@ def get_symmetry_dataset(
     _set_no_error()
 
     lattice, positions, numbers, _ = _expand_cell(cell)
-    if lattice is None:
-        return None
 
     spg_ds = spg.dataset(
         lattice,
@@ -714,13 +726,11 @@ def get_symmetry_dataset(
     return dataset
 
 
-def get_symmetry_layerdataset(cell, aperiodic_dir=2, symprec=1e-5):
+def get_symmetry_layerdataset(cell: Cell, aperiodic_dir=2, symprec=1e-5):
     """TODO: Add comments."""
     _set_no_error()
 
     lattice, positions, numbers, _ = _expand_cell(cell)
-    if lattice is None:
-        return None
 
     spg_ds = spg.layerdataset(
         lattice,
@@ -740,7 +750,7 @@ def get_symmetry_layerdataset(cell, aperiodic_dir=2, symprec=1e-5):
 
 
 def get_magnetic_symmetry_dataset(
-    cell,
+    cell: Cell,
     is_axial=None,
     symprec=1e-5,
     angle_tolerance=-1.0,
@@ -830,8 +840,6 @@ def get_magnetic_symmetry_dataset(
     _set_no_error()
 
     lattice, positions, numbers, magmoms = _expand_cell(cell)
-    if lattice is None:
-        return None
 
     tensor_rank = magmoms.ndim - 1
 
@@ -933,7 +941,7 @@ def get_magnetic_symmetry_dataset(
     return dataset
 
 
-def get_layergroup(cell, aperiodic_dir=2, symprec=1e-5):
+def get_layergroup(cell: Cell, aperiodic_dir=2, symprec=1e-5):
     """Return layer group in ....
 
     If it fails, None is returned.
@@ -950,7 +958,7 @@ def get_layergroup(cell, aperiodic_dir=2, symprec=1e-5):
 
 
 def get_spacegroup(
-    cell,
+    cell: Cell,
     symprec=1e-5,
     angle_tolerance=-1.0,
     symbol_type=0,
@@ -1267,7 +1275,7 @@ def get_pointgroup(rotations):
 
 
 def standardize_cell(
-    cell,
+    cell: Cell,
     to_primitive=False,
     no_idealize=False,
     symprec=1e-5,
@@ -1303,8 +1311,6 @@ def standardize_cell(
     _set_no_error()
 
     lattice, _positions, _numbers, _ = _expand_cell(cell)
-    if lattice is None:
-        return None
 
     # Atomic positions have to be specified by scaled positions for spglib.
     num_atom = len(_positions)
@@ -1334,7 +1340,7 @@ def standardize_cell(
         return None
 
 
-def refine_cell(cell, symprec=1e-5, angle_tolerance=-1.0):
+def refine_cell(cell: Cell, symprec=1e-5, angle_tolerance=-1.0):
     """Return refined cell. When the search failed, ``None`` is returned.
 
     The standardized unit cell is returned by a tuple of
@@ -1350,8 +1356,6 @@ def refine_cell(cell, symprec=1e-5, angle_tolerance=-1.0):
     _set_no_error()
 
     lattice, _positions, _numbers, _ = _expand_cell(cell)
-    if lattice is None:
-        return None
 
     # Atomic positions have to be specified by scaled positions for spglib.
     num_atom = len(_positions)
@@ -1379,7 +1383,7 @@ def refine_cell(cell, symprec=1e-5, angle_tolerance=-1.0):
         return None
 
 
-def find_primitive(cell, symprec=1e-5, angle_tolerance=-1.0):
+def find_primitive(cell: Cell, symprec=1e-5, angle_tolerance=-1.0):
     """Primitive cell is searched in the input cell. If it fails, ``None`` is returned.
 
     The primitive cell is returned by a tuple of (lattice, positions, numbers).
@@ -1394,8 +1398,6 @@ def find_primitive(cell, symprec=1e-5, angle_tolerance=-1.0):
     _set_no_error()
 
     lattice, positions, numbers, _ = _expand_cell(cell)
-    if lattice is None:
-        return None
 
     num_atom_prim = spg.primitive(lattice, positions, numbers, symprec, angle_tolerance)
     _set_error_message()
@@ -1981,36 +1983,47 @@ def get_error_message():
     return spglib_error.message
 
 
-def _expand_cell(cell):
+def _expand_cell(
+    cell: Cell,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray | None]:
     lattice = np.array(np.transpose(cell[0]), dtype="double", order="C")
     positions = np.array(cell[1], dtype="double", order="C")
     numbers = np.array(cell[2], dtype="intc")
-    if len(cell) > 3:
+    if len(cell) == 4:
         magmoms = np.array(cell[3], order="C", dtype="double")
-    else:
+    elif len(cell) == 3:
         magmoms = None
-
-    if _check(lattice, positions, numbers, magmoms):
-        return (lattice, positions, numbers, magmoms)
     else:
-        return (None, None, None, None)
+        raise TypeError("cell has to be a tuple of 3 or 4 elements.")
 
-
-def _check(lattice, positions, numbers, magmoms):
+    # Sanity check
     if lattice.shape != (3, 3):
-        return False
-    if positions.ndim != 2:
-        return False
-    if positions.shape[1] != 3:
-        return False
+        raise TypeError("lattice has to be a (3, 3) array.")
+    if not (positions.ndim == 2 and positions.shape[1] == 3):
+        raise TypeError("positions has to be a (num_atoms, 3) array.")
+    num_atoms = positions.shape[0]
     if numbers.ndim != 1:
-        return False
-    if len(numbers) != positions.shape[0]:
-        return False
+        raise TypeError("numbers has to be a (num_atoms,) array.")
+    if len(numbers) != num_atoms:
+        raise TypeError("numbers has to have the same number of atoms as positions.")
     if magmoms is not None:
-        if len(magmoms) != len(numbers):
-            return False
-    return True
+        if len(magmoms) != num_atoms:
+            raise TypeError(
+                "magmoms has to have the same number of atoms as positions."
+            )
+        if magmoms.ndim == 1:
+            # collinear
+            pass
+        elif magmoms.ndim == 2:
+            # non-collinear
+            if magmoms.shape[1] != 3:
+                raise TypeError(
+                    "non-collinear magmoms has to be a (num_atoms, 3) array."
+                )
+        else:
+            raise TypeError("magmoms has to be a 1D or 2D array.")
+
+    return (lattice, positions, numbers, magmoms)
 
 
 def _set_error_message():
