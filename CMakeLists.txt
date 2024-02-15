@@ -72,9 +72,7 @@ include(cmake/PackageCompsHelper.cmake)
 include(FetchContent)
 if (SPGLIB_INSTALL)
 	include(CMakePackageConfigHelpers)
-	if (UNIX)
-		include(GNUInstallDirs)
-	endif ()
+	include(GNUInstallDirs)
 endif ()
 
 # Define basic parameters

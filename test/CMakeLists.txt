@@ -173,15 +173,17 @@ function(Spglib_add_gtest)
 	target_sources(${ARGS_TARGET} PRIVATE ${ARGS_SOURCES})
 	gtest_add_tests(TARGET ${ARGS_TARGET}
 			SOURCES ${ARGS_SOURCES}
-			TEST_LIST google_tests)
+			TEST_LIST google_tests
+	)
 
 	# Set test labels
 	get_directory_property(test_labels LABELS)
 	list(APPEND test_labels ${ARGS_LABELS})
-	foreach (g_test IN LISTS google_tests)
-		set_tests_properties(${g_test} PROPERTIES
-				LABELS "${test_labels}")
-	endforeach ()
+	set_tests_properties(${google_tests} PROPERTIES
+			LABELS "${test_labels}"
+			# https://stackoverflow.com/a/77990416
+			ENVIRONMENT_MODIFICATION "PATH=path_list_prepend:$<JOIN:$<TARGET_RUNTIME_DLL_DIRS:Spglib_tests>,\;>"
+	)
 endfunction()
 
 function(Spglib_add_test test)
