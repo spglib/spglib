@@ -184,10 +184,6 @@
         "SPGLIB_WITH_Fortran": {
           "type": "BOOL",
           "value": false
-        },
-        "SPGLIB_SHARED_LIBS": {
-          "type": "BOOL",
-          "value": false
         }
       }
     },

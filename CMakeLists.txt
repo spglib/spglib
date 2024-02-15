@@ -29,6 +29,7 @@ if (NOT DEFINED Spglib_IS_TOP_LEVEL)
 	endif ()
 endif ()
 
+set(CMAKE_C_VISIBILITY_PRESET hidden)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS OFF)
@@ -87,8 +88,6 @@ endif ()
 set(CMAKE_MACOSX_RPATH 1)
 # Windows setup
 if (WIN32)
-	# Make sure there is a .lib file to link to
-	set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 	# Add appropriate debug flags
 	set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>")
 endif ()
