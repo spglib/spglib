@@ -560,7 +560,7 @@ static int *get_symmetry_permutations(const MagneticSymmetry *magnetic_symmetry,
                                       const double mag_symprec) {
     int p, i, j;
     int *permutations;
-    double scalar;
+    double scalar = 0.0;
     double pos[3], vector[3], diff[3];
     double(*rotations_cart)[3][3];
 

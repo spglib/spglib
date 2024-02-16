@@ -39,6 +39,19 @@ if (NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE Release)
 endif ()
 
+set(stageDir ${CMAKE_CURRENT_BINARY_DIR})
+include(GNUInstallDirs)
+
+if(NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
+	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${stageDir}/${CMAKE_INSTALL_BINDIR})
+endif()
+if(NOT CMAKE_LIBRARY_OUTPUT_DIRECTORY)
+	set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${stageDir}/${CMAKE_INSTALL_LIBDIR})
+endif()
+if(NOT CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
+	set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${stageDir}/${CMAKE_INSTALL_LIBDIR})
+endif()
+
 #[=============================================================================[
 #                                   Options                                   #
 ]=============================================================================]
@@ -73,7 +86,6 @@ include(cmake/PackageCompsHelper.cmake)
 include(FetchContent)
 if (SPGLIB_INSTALL)
 	include(CMakePackageConfigHelpers)
-	include(GNUInstallDirs)
 endif ()
 
 # Define basic parameters

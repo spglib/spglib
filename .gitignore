@@ -86,3 +86,4 @@ venv
 env
 .venv
 .env
+.vs/

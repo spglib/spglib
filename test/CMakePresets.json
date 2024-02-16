@@ -1,0 +1,69 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+      "major": 3,
+      "minor": 25,
+      "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "default",
+      "displayName": "Default configuration preset",
+      "generator": "Visual Studio 17 2022",
+      "binaryDir": "build",
+      "installDir": "${sourceParentDir}/out/install",
+      "cacheVariables": {
+        "CMAKE_C_STANDARD": "17",
+        "CMAKE_C_EXTENSIONS": false,
+        "CMAKE_C_STANDARD_REQUIRED": true,
+        "CMAKE_EXPORT_COMPILE_COMMANDS": true,
+        "CMAKE_UNITY_BUILD": false,
+        "BUILD_SHARED_LIBS": false,
+        "TEST_INSTALLED_VERSION": true,
+        "CMAKE_PREFIX_PATH": {
+          "type": "path",
+          "value": "${sourceParentDir}/out/install/x64-debug"
+        },
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_MESSAGE_CONTEXT_SHOW": true
+      },
+      "environment": {
+        "PATH": "${sourceParentDir}/out/install/x64-debug/bin:$penv{PATH}"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "default",
+      "displayName": "Default build preset",
+      "configurePreset": "default"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "default",
+      "displayName": "Default test preset",
+      "configurePreset": "default"
+    }
+  ],
+  "workflowPresets": [
+    {
+      "name": "default",
+      "displayName": "Default workflow",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "default"
+        },
+        {
+          "type": "build",
+          "name": "default"
+        },
+        {
+          "type": "test",
+          "name": "default"
+        }
+      ]
+    }
+  ]
+}

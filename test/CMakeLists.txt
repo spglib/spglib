@@ -79,7 +79,7 @@ set(external_libs)
 include(FetchContent)
 
 # Get Spglib if it's run as stand-alone project
-if (NOT Spglib_IS_TOP_LEVEL)
+if (NOT TEST_INSTALLED_VERSION AND NOT Spglib_IS_TOP_LEVEL)
 	FetchContent_Declare(Spglib
 			GIT_REPOSITORY https://github.com/spglib/spglib
 			GIT_TAG develop
@@ -247,6 +247,7 @@ function(Spglib_add_test test)
 	set(extra_args)
 	if (Spglib_IS_TOP_LEVEL)
 		list(APPEND extra_args
+				# New in version 3.24
 				-DFETCHCONTENT_TRY_FIND_PACKAGE_MODE=ALWAYS
 				# Generated Config file point to binary targets until it is installed
 				-DSpglib_ROOT=${Spglib_BINARY_DIR}
@@ -281,7 +282,7 @@ endfunction()
 add_subdirectory(unit)
 add_subdirectory(integration)
 add_subdirectory(functional)
-if (Spglib_IS_TOP_LEVEL)
+if (Spglib_IS_TOP_LEVEL AND UNIX)
 	add_subdirectory(package)
 	add_subdirectory(example)
 endif ()
