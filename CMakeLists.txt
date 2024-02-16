@@ -124,7 +124,8 @@ endif ()
 ]=============================================================================]
 
 # Hide things by default
-set(CMAKE_CXX_VISIBILITY_PRESET     hidden)
+set(CMAKE_C_VISIBILITY_PRESET hidden)
+set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_VISIBILITY_INLINES_HIDDEN YES)
 
 # Main project
@@ -135,18 +136,6 @@ set_target_properties(Spglib_symspg PROPERTIES
 		EXPORT_NAME symspg
 		OUTPUT_NAME symspg)
 add_library(Spglib::symspg ALIAS Spglib_symspg)
-
-# Write spglib_export.h to the current binary directory
-include(GenerateExportHeader)
-generate_export_header(Spglib_symspg
-	EXPORT_FILE_NAME spglib_export.h
-	EXPORT_MACRO_NAME API_SPGLIB
-)
-
-# NOTE: symspg.cpp must #include spglib_export.h
-target_include_directories(Spglib_symspg PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
-)
 
 # Main definitions inside src
 add_subdirectory(src)

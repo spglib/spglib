@@ -18,36 +18,70 @@ endif ()
 # Configure main target
 target_sources(Spglib_symspg PRIVATE
 		arithmetic.c
+		arithmetic.h
 		cell.c
+		cell.h
+		debug.h
 		delaunay.c
+		delaunay.h
 		determination.c
+		determination.h
 		hall_symbol.c
+		hall_symbol.h
 		kgrid.c
+		kgrid.h
 		kpoint.c
+		kpoint.h
 		magnetic_spacegroup.c
+		magnetic_spacegroup.h
 		mathfunc.c
+		mathfunc.h
 		msg_database.c
+		msg_database.h
 		niggli.c
+		niggli.h
 		overlap.c
+		overlap.h
 		pointgroup.c
+		pointgroup.h
 		primitive.c
+		primitive.h
 		refinement.c
+		refinement.h
 		site_symmetry.c
+		site_symmetry.h
 		sitesym_database.c
+		sitesym_database.h
 		spacegroup.c
+		spacegroup.h
 		spg_database.c
+		spg_database.h
 		spglib.c
 		spin.c
+		spin.h
 		symmetry.c
-		)
+		symmetry.h
+)
 if (SPGLIB_DEBUG)
-	target_sources(Spglib_symspg PRIVATE
-			debug.c
-			)
+	target_sources(Spglib_symspg PRIVATE debug.c)
 endif ()
-set_target_properties(Spglib_symspg PROPERTIES
-		PUBLIC_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/spglib.h)
+
+# Write spglib_export.h to the current binary directory
+include(GenerateExportHeader)
+generate_export_header(Spglib_symspg
+	EXPORT_FILE_NAME spglib_export.h
+	EXPORT_MACRO_NAME API_SPGLIB
+)
 configure_file(spglib.h spglib.h COPYONLY)
+
+target_sources(Spglib_symspg
+	PUBLIC
+		FILE_SET HEADERS
+		BASE_DIRS ${CMAKE_CURRENT_BINARY_DIR}
+		FILES
+			${CMAKE_CURRENT_BINARY_DIR}/spglib_export.h
+			${CMAKE_CURRENT_BINARY_DIR}/spglib.h
+)
 target_include_directories(Spglib_symspg
 		PRIVATE "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
 		PUBLIC
@@ -84,15 +118,13 @@ endif ()
 
 # Install
 if (NOT SKBUILD AND SPGLIB_INSTALL)
-	install(FILES ${CMAKE_BINARY_DIR}/spglib_export.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT Spglib_Development)
-
 	# Normal installation target to system. When using scikit-build this is installed again in python path
-		install(TARGETS Spglib_symspg
-				EXPORT SpglibTargets
-				LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Spglib_Runtime
-				NAMELINK_COMPONENT Spglib_Development
-				ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Spglib_Development
-				PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT Spglib_Development
-				RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Spglib_Runtime
-		)
+	install(TARGETS Spglib_symspg
+			EXPORT SpglibTargets
+			LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Spglib_Runtime
+			NAMELINK_COMPONENT Spglib_Development
+			ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Spglib_Development
+			FILE_SET HEADERS INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} # COMPONENT Spglib_Development
+			RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Spglib_Runtime
+	)
 endif ()

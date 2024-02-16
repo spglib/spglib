@@ -37,6 +37,7 @@
 
 #include "cell.h"
 #include "mathfunc.h"
+#include "spglib_export.h"
 
 typedef struct {
     int size;
@@ -57,11 +58,12 @@ typedef struct {
 } PointSymmetry;
 
 Symmetry *sym_alloc_symmetry(const int size);
-void sym_free_symmetry(Symmetry *symmetry);
+API_SPGLIB void sym_free_symmetry(Symmetry *symmetry);
 MagneticSymmetry *sym_alloc_magnetic_symmetry(const int size);
 void sym_free_magnetic_symmetry(MagneticSymmetry *symmetry);
-Symmetry *sym_get_operation(const Cell *primitive, const double symprec,
-                            const double angle_tolerance);
+API_SPGLIB Symmetry *sym_get_operation(const Cell *primitive,
+                                       const double symprec,
+                                       const double angle_tolerance);
 Symmetry *sym_reduce_operation(const Cell *primitive, const Symmetry *symmetry,
                                const double symprec,
                                const double angle_tolerance);

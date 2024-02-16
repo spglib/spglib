@@ -1,77 +1,67 @@
 {
   "version": 6,
+  "cmakeMinimumRequired": {
+      "major": 3,
+      "minor": 25,
+      "patch": 0
+  },
   "configurePresets": [
     {
-      "name": "default",
+      "name": "Release",
       "displayName": "Default configuration preset",
       "generator": "Ninja",
-      "binaryDir": "cmake-build-release",
-      "installDir": "${sourceDir}/stagedir",
+      "binaryDir": "build",
+      "installDir": "${sourceParentDir}/stagedir",
       "cacheVariables": {
         "CMAKE_C_STANDARD": "17",
         "CMAKE_C_EXTENSIONS": false,
         "CMAKE_C_STANDARD_REQUIRED": true,
         "CMAKE_EXPORT_COMPILE_COMMANDS": true,
         "CMAKE_UNITY_BUILD": false,
-        "BUILD_SHARED_LIBS": true,
+        "BUILD_SHARED_LIBS": false,
+        "TEST_INSTALLED_VERSION": true,
         "CMAKE_PREFIX_PATH": {
           "type": "path",
-          "value": "${sourceDir}/stagedir"
+          "value": "${sourceParentDir}/stagedir"
         },
-        "CMAKE_BUILD_TYPE": {
-          "type": "STRING",
-          "value": "Release"
-        },
-        "CMAKE_MESSAGE_CONTEXT_SHOW": {
-          "type": "BOOL",
-          "value": true
-        }
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_MESSAGE_CONTEXT_SHOW": true
+      },
+      "environment": {
+        "PATH": "${sourceParentDir}/stagedir/bin:$penv{PATH}"
       }
     }
   ],
   "buildPresets": [
     {
-      "name": "default",
+      "name": "Release",
       "displayName": "Default build preset",
-      "configurePreset": "default"
+      "configurePreset": "Release"
     }
   ],
   "testPresets": [
     {
-      "name": "default",
+      "name": "Release",
       "displayName": "Default test preset",
-      "configurePreset": "default"
-    }
-  ],
-  "packagePresets": [
-    {
-      "name": "default",
-      "configurePreset": "default",
-      "generators": [
-        "TGZ"
-      ]
+      "configurePreset": "Release"
     }
   ],
   "workflowPresets": [
     {
-      "name": "default",
+      "name": "Release",
       "displayName": "Default workflow",
       "steps": [
         {
           "type": "configure",
-          "name": "default"
+          "name": "Release"
         },
         {
           "type": "build",
-          "name": "default"
+          "name": "Release"
         },
         {
           "type": "test",
-          "name": "default"
-        },
-        {
-          "type": "package",
-          "name": "default"
+          "name": "Release"
         }
       ]
     }

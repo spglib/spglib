@@ -5,10 +5,19 @@
       "minor": 25,
       "patch": 0
   },
+  "include": [
+    "CMakePresets-Release.json"
+  ],
   "configurePresets": [
     {
       "name": "default",
       "displayName": "Default configuration preset",
+      "description": "This preset is only available on Windows",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
       "generator": "Visual Studio 17 2022",
       "binaryDir": "build",
       "installDir": "${sourceParentDir}/out/install",

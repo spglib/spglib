@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20...3.29)
+cmake_minimum_required(VERSION 3.25...3.29)
 
 #[=============================================================================[
 #                           Basic project definition                           #
@@ -79,7 +79,7 @@ set(external_libs)
 include(FetchContent)
 
 # Get Spglib if it's run as stand-alone project
-if (NOT TEST_INSTALLED_VERSION AND NOT Spglib_IS_TOP_LEVEL)
+if (NOT TARGET Spglib::symspg)
 	FetchContent_Declare(Spglib
 			GIT_REPOSITORY https://github.com/spglib/spglib
 			GIT_TAG develop
@@ -282,7 +282,12 @@ endfunction()
 add_subdirectory(unit)
 add_subdirectory(integration)
 add_subdirectory(functional)
-if (Spglib_IS_TOP_LEVEL AND UNIX)
+
+# TODO: symlinks used! CK
+# package/pkg-config/src -> ../src/
+# package/FetchContent/src -> ../src/
+# package/find_package/src -> ../src/
+if (UNIX AND NOT PROJECT_IS_TOP_LEVEL)
 	add_subdirectory(package)
 	add_subdirectory(example)
 endif ()

@@ -36,12 +36,15 @@
 #define __delaunay_H__
 
 #include "mathfunc.h"
+#include "spglib_export.h"
 
-int del_delaunay_reduce(double lattice_new[3][3], const double lattice[3][3],
-                        const double symprec);
-int del_layer_delaunay_reduce(double min_lattice[3][3],
-                              const double lattice[3][3],
-                              const int aperiodic_axis, const double symprec);
+API_SPGLIB int del_delaunay_reduce(double lattice_new[3][3],
+                                   const double lattice[3][3],
+                                   const double symprec);
+API_SPGLIB int del_layer_delaunay_reduce(double min_lattice[3][3],
+                                         const double lattice[3][3],
+                                         const int aperiodic_axis,
+                                         const double symprec);
 
 // @brief Delaunay reduction for monoclinic/oblique or monoclinic/rectangular
 // @param[out] red_lattice

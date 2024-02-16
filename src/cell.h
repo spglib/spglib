@@ -36,6 +36,7 @@
 #define __cell_H__
 
 #include "mathfunc.h"
+#include "spglib_export.h"
 
 typedef enum {
     NOSPIN = -1,
@@ -63,13 +64,14 @@ typedef struct {
     double *tensors;
 } Cell;
 
-Cell *cel_alloc_cell(const int size, const SiteTensorType tensor_rank);
-void cel_free_cell(Cell *cell);
+API_SPGLIB Cell *cel_alloc_cell(const int size,
+                                const SiteTensorType tensor_rank);
+API_SPGLIB void cel_free_cell(Cell *cell);
 void cel_set_cell(Cell *cell, const double lattice[3][3],
                   const double position[][3], const int types[]);
-void cel_set_layer_cell(Cell *cell, const double lattice[3][3],
-                        const double position[][3], const int types[],
-                        const int aperiodic_axis);
+API_SPGLIB void cel_set_layer_cell(Cell *cell, const double lattice[3][3],
+                                   const double position[][3],
+                                   const int types[], const int aperiodic_axis);
 void cel_set_cell_with_tensors(Cell *cell, const double lattice[3][3],
                                const double position[][3], const int types[],
                                const double *tensors);
