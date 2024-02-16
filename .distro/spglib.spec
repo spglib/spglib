@@ -79,8 +79,8 @@ develop applications with spglib Python3 bindings.
 %pyproject_install
 %pyproject_save_files spglib
 
-rm %{buildroot}%{python3_sitearch}/spglib/libsymspg.so*
-rm %{buildroot}%{python3_sitearch}/spglib/spglib.h
+rm %{buildroot}%{python3_sitearch}/spglib/lib/libsymspg.so*
+rm %{buildroot}%{python3_sitearch}/spglib/include/spglib.h
 # Delete from pyproject_files as well
 sed -i "/libsymspg.so/d" %{pyproject_files}
 sed -i "/spglib.h/d" %{pyproject_files}

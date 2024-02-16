@@ -55,7 +55,7 @@ jobs:
       - name: Setup spglib
         run: |
           python -m pip install --upgrade pip
-          pip install .[test-cov] \
+          pip install -e .[test-cov] \
              --config-settings=cmake.define.CMAKE_C_COMPILER=gcc \
              --config-settings=cmake.define.SPGLIB_WITH_TESTS=ON \
              --config-settings=cmake.define.SPGLIB_TEST_COVERAGE=ON \
