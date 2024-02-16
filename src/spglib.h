@@ -40,20 +40,20 @@ extern "C" {
 #endif
 
 #ifdef SPG_BUILD
-// When compiling define API for export
-#if defined(_MSC_VER)
-// On windows the API must be explicitly marked for export/import
-#define SPG_API __declspec(dllexport)
-#else
-// On Unix this is not necessary
-#define SPG_API __attribute__((visibility("default")))
-#endif
+    // When compiling define API for export
+    #if defined(_MSC_VER)
+        // On windows the API must be explicitly marked for export/import
+        #define SPG_API __declspec(dllexport)
+    #else
+        // On Unix this is not necessary
+        #define SPG_API __attribute__((visibility("default")))
+    #endif
 #elif defined(_MSC_VER)
-// Otherwise mark it for import (Only needed for windows)
-#define SPG_API __declspec(dllimport)
+    // Otherwise mark it for import (Only needed for windows)
+    #define SPG_API __declspec(dllimport)
 #else
-// Not building and not on windows, no need to do anything
-#define SPG_API
+    // Not building and not on windows, no need to do anything
+    #define SPG_API
 #endif
 
 #include <stddef.h>

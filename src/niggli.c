@@ -96,7 +96,7 @@ static void debug_show(int const j, NiggliParams const *p) {
     /* } */
 }
 #else
-#define debug_show(...)
+    #define debug_show(...)
 #endif
 
 int get_num_attempts() {

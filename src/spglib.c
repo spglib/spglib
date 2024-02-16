@@ -63,15 +63,15 @@
 // Windows does not support _Thread_local. Use appropriate aliases
 // Reference: https://stackoverflow.com/a/18298965
 #ifndef thread_local
-#if __STDC_VERSION__ >= 201112 && !defined __STDC_NO_THREADS__
-#define thread_local _Thread_local
-#elif defined _MSC_VER
-#define thread_local __declspec(thread)
-#elif defined __GNUC__
-#define thread_local __thread
-#else
-#error "Cannot define thread_local"
-#endif
+    #if __STDC_VERSION__ >= 201112 && !defined __STDC_NO_THREADS__
+        #define thread_local _Thread_local
+    #elif defined _MSC_VER
+        #define thread_local __declspec(thread)
+    #elif defined __GNUC__
+        #define thread_local __thread
+    #else
+        #error "Cannot define thread_local"
+    #endif
 #endif
 
 /*-------*/

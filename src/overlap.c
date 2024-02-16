@@ -45,21 +45,21 @@
 /* 'a++' generalized to an arbitrary increment. */
 /* Performs 'a += b' and returns the old value of a. */
 #ifndef SPG_POST_INCREMENT
-#define SPG_POST_INCREMENT(a, b) ((a) += (b), (a) - (b))
+    #define SPG_POST_INCREMENT(a, b) ((a) += (b), (a) - (b))
 #endif
 
 /* deal with inline */
 #if defined(_MSC_VER)
-#define OVL_INLINE __forceinline
+    #define OVL_INLINE __forceinline
 #elif defined(__clang__)
-#define OVL_INLINE __inline__ __attribute__((__always_inline__))
+    #define OVL_INLINE __inline__ __attribute__((__always_inline__))
 #elif defined(__GNUC__) &&                                   \
     (defined(__GNUC_STDC_INLINE__) ||                        \
      (defined(__STDC__) && (__STDC_VERSION__ >= 199901L)) || \
      (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 2)))
-#define OVL_INLINE __inline__ __attribute__((__always_inline__))
+    #define OVL_INLINE __inline__ __attribute__((__always_inline__))
 #else
-#define OVL_INLINE /* empty */
+    #define OVL_INLINE /* empty */
 #endif
 
 /* Note: data_out and data_in MUST NOT ALIAS. */

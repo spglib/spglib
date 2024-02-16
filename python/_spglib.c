@@ -164,11 +164,11 @@ static struct PyModuleDef moduledef = {PyModuleDef_HEAD_INIT,
 // Define macro to make sure symbol is exported
 // When compiling define API for export
 #if defined(_MSC_VER)
-// On windows the API must be explicitly marked for export/import
-#define EXPORT __declspec(dllexport)
+    // On windows the API must be explicitly marked for export/import
+    #define EXPORT __declspec(dllexport)
 #else
-// On Unix this is not necessary
-#define EXPORT __attribute__((visibility("default")))
+    // On Unix this is not necessary
+    #define EXPORT __attribute__((visibility("default")))
 #endif
 
 EXPORT PyObject *PyInit__spglib(void) {

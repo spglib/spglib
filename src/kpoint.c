@@ -42,10 +42,10 @@
 #include "mathfunc.h"
 
 #ifdef KPTWARNING
-#include <stdio.h>
-#define warning_print(...) fprintf(stderr, __VA_ARGS__)
+    #include <stdio.h>
+    #define warning_print(...) fprintf(stderr, __VA_ARGS__)
 #else
-#define warning_print(...)
+    #define warning_print(...)
 #endif
 
 #define KPT_NUM_BZ_SEARCH_SPACE 125
