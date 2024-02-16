@@ -191,7 +191,7 @@
           "type": "BOOL",
           "value": false
         },
-        "SPGLIB_SHARED_LIBS": false
+        "SPGLIB_SHARED_LIBS": true
       }
     },
     {
