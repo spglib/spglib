@@ -30,7 +30,7 @@ jobs:
 #          - os: windows-2019
 #            toolchain: windows
 #            python-version: "3.x"
-          - os: macos-11
+          - os: macos-14
             toolchain: macos
             python-version: "3.x"
           - os: windows-latest

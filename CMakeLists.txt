@@ -73,9 +73,7 @@ include(cmake/PackageCompsHelper.cmake)
 include(FetchContent)
 if (SPGLIB_INSTALL)
 	include(CMakePackageConfigHelpers)
-	if (UNIX)
-		include(GNUInstallDirs)
-	endif ()
+	include(GNUInstallDirs)
 endif ()
 
 # Define basic parameters
@@ -168,7 +166,7 @@ configure_file(cmake/PackageCompsHelper.cmake PackageCompsHelper.cmake COPYONLY)
 #  Check how bundled cmake searches CMAKE_MODULE_DIR and add accordingly
 #  (use SKBUILD_PLATLIB_DIR for install root)
 if (NOT SKBUILD AND SPGLIB_INSTALL)
-	include(CPACK)
+	include(CPack)
 
 	# pkg-config files
 	configure_file(cmake/spglib.pc.in spglib.pc @ONLY)
