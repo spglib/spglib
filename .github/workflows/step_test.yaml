@@ -30,17 +30,17 @@ jobs:
 #          - os: windows-2019
 #            toolchain: windows
 #            python-version: "3.x"
-          - os: macos-14
+          - os: macos-13
             toolchain: macos
             python-version: "3.x"
           - os: windows-latest
             toolchain: windows
             python-version: "3.x"
             experimental: true
-          - os: macos-latest
+          - os: macos-14
             toolchain: macos
             python-version: "3.x"
-            experimental: true
+#            experimental: true
 #          - python-version: "3.13"
 #            experimental: true
 #            pre: true
