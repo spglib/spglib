@@ -58,7 +58,7 @@ typedef struct {
 } NiggliParams;
 
 static int get_num_attempts();
-static NiggliParams *initialize(const double *lattice_, const double eps_);
+static NiggliParams *initialize(double const *lattice_, double const eps_);
 static void finalize(double *lattice_, NiggliParams *p);
 static int reset(NiggliParams *p);
 static int step1(NiggliParams *p);
@@ -71,14 +71,14 @@ static int step7(NiggliParams *p);
 static int step8(NiggliParams *p);
 static int set_parameters(NiggliParams *p);
 static void set_angle_types(NiggliParams *p);
-static double *get_transpose(const double *M);
-static double *get_metric(const double *M);
-static double *multiply_matrices(const double *A, const double *B);
-static int layer_swap_axis(NiggliParams *p, const int aperiodic_axis);
+static double *get_transpose(double const *M);
+static double *get_metric(double const *M);
+static double *multiply_matrices(double const *A, double const *B);
+static int layer_swap_axis(NiggliParams *p, int const aperiodic_axis);
 static int step2_for_layer(NiggliParams *p);
 
 #ifdef SPGDEBUG
-static void debug_show(const int j, const NiggliParams *p) {
+static void debug_show(int const j, NiggliParams const *p) {
     /* int i; */
 
     if (j < 0) {
@@ -100,7 +100,7 @@ static void debug_show(const int j, const NiggliParams *p) {
 #endif
 
 int get_num_attempts() {
-    const char *num_attempts_str = getenv("SPGLIB_NUM_ATTEMPTS");
+    char const *num_attempts_str = getenv("SPGLIB_NUM_ATTEMPTS");
     if (num_attempts_str != NULL) {
         // Try to parse the string as an integer
         char *end;
@@ -133,8 +133,8 @@ int niggli_get_micro_version(void) { return NIGGLI_MICRO_VERSION; }
 //       - Step 2 is skipped
 //       - (Steps 5 and 6 are not modified because axis c is perpendicular to
 //       the plane)
-int niggli_reduce(double *lattice_, const double eps_,
-                  const int aperiodic_axis) {
+int niggli_reduce(double *lattice_, double const eps_,
+                  int const aperiodic_axis) {
     int succeeded;
     NiggliParams *p;
     int (*steps[8])(NiggliParams *p) = {step1, step2, step3, step4,
@@ -186,7 +186,7 @@ ret:
     return succeeded;
 }
 
-static NiggliParams *initialize(const double *lattice_, const double eps_) {
+static NiggliParams *initialize(double const *lattice_, double const eps_) {
     NiggliParams *p;
 
     p = NULL;
@@ -232,7 +232,7 @@ static NiggliParams *initialize(const double *lattice_, const double eps_) {
 }
 
 /* move aperiodic axis to c. */
-static int layer_swap_axis(NiggliParams *p, const int aperiodic_axis) {
+static int layer_swap_axis(NiggliParams *p, int const aperiodic_axis) {
     if (aperiodic_axis == 0) {
         p->tmat[0] = 0, p->tmat[1] = 0, p->tmat[2] = -1;
         p->tmat[3] = 0, p->tmat[4] = -1, p->tmat[5] = 0;
@@ -504,7 +504,7 @@ static int step8(NiggliParams *p) {
     }
 }
 
-static double *get_transpose(const double *M) {
+static double *get_transpose(double const *M) {
     int i, j;
     double *M_T;
 
@@ -524,7 +524,7 @@ static double *get_transpose(const double *M) {
     return M_T;
 }
 
-static double *get_metric(const double *M) {
+static double *get_metric(double const *M) {
     double *G, *M_T;
 
     G = NULL;
@@ -543,7 +543,7 @@ static double *get_metric(const double *M) {
     return G;
 }
 
-static double *multiply_matrices(const double *L, const double *R) {
+static double *multiply_matrices(double const *L, double const *R) {
     int i, j, k;
     double *M;
 

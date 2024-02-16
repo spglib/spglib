@@ -5,7 +5,7 @@
 int main(int argc, char* argv[]) {
     SpglibDataset* dataset;
     int i, j;
-    const char wl[26] = "abcdefghijklmnopqrstuvwxyz";
+    char const wl[26] = "abcdefghijklmnopqrstuvwxyz";
 
     // Wurtzite structure (P6_3mc)
     double lattice[3][3] = {

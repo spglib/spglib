@@ -49,48 +49,48 @@
 /* set_exact_location, set_equivalent_atom and get_Wyckoff_notation */
 /* are duplicated to get the if statement outside the nested loops */
 /* I have not tested if it is better in efficiency. */
-static VecDBL *get_exact_positions(int *equiv_atoms, const Cell *conv_prim,
-                                   const Symmetry *conv_sym,
-                                   const double symprec);
-static void set_exact_location(double position[3], const Symmetry *conv_sym,
-                               const double bravais_lattice[3][3],
-                               const double symprec);
-static int set_equivalent_atom(VecDBL *positions, int *equiv_atoms, const int i,
-                               const int num_indep_atoms,
-                               const int *indep_atoms, const Cell *conv_prim,
-                               const Symmetry *conv_sym, const double symprec);
+static VecDBL *get_exact_positions(int *equiv_atoms, Cell const *conv_prim,
+                                   Symmetry const *conv_sym,
+                                   double const symprec);
+static void set_exact_location(double position[3], Symmetry const *conv_sym,
+                               double const bravais_lattice[3][3],
+                               double const symprec);
+static int set_equivalent_atom(VecDBL *positions, int *equiv_atoms, int const i,
+                               int const num_indep_atoms,
+                               int const *indep_atoms, Cell const *conv_prim,
+                               Symmetry const *conv_sym, double const symprec);
 static void set_layer_exact_location(double position[3],
-                                     const Symmetry *conv_sym,
-                                     const double bravais_lattice[3][3],
-                                     const double symprec);
+                                     Symmetry const *conv_sym,
+                                     double const bravais_lattice[3][3],
+                                     double const symprec);
 static int set_layer_equivalent_atom(VecDBL *positions, int *equiv_atoms,
-                                     const int i, const int num_indep_atoms,
-                                     const int *indep_atoms,
-                                     const Cell *conv_prim,
-                                     const Symmetry *conv_sym,
-                                     const double symprec);
+                                     int const i, int const num_indep_atoms,
+                                     int const *indep_atoms,
+                                     Cell const *conv_prim,
+                                     Symmetry const *conv_sym,
+                                     double const symprec);
 static int set_Wyckoffs_labels(int *wyckoffs, char (*site_symmetry_symbols)[7],
-                               const VecDBL *positions, const int *equiv_atoms,
-                               const Cell *conv_prim, const Symmetry *conv_sym,
-                               const int num_pure_trans, const int hall_number,
-                               const double symprec);
+                               VecDBL const *positions, int const *equiv_atoms,
+                               Cell const *conv_prim, Symmetry const *conv_sym,
+                               int const num_pure_trans, int const hall_number,
+                               double const symprec);
 static int get_Wyckoff_notation(char site_sym_symbol[7],
-                                const double position[3],
-                                const Symmetry *conv_sym,
-                                const int ref_multiplicity,
-                                const double bravais_lattice[3][3],
-                                const int hall_number, const double symprec);
+                                double const position[3],
+                                Symmetry const *conv_sym,
+                                int const ref_multiplicity,
+                                double const bravais_lattice[3][3],
+                                int const hall_number, double const symprec);
 static int get_layer_Wyckoff_notation(
-    char site_sym_symbol[7], const double position[3], const Symmetry *conv_sym,
-    const int ref_multiplicity, const double bravais_lattice[3][3],
-    const int hall_number, const double symprec);
+    char site_sym_symbol[7], double const position[3], Symmetry const *conv_sym,
+    int const ref_multiplicity, double const bravais_lattice[3][3],
+    int const hall_number, double const symprec);
 
 /* Return NULL if failed */
 VecDBL *ssm_get_exact_positions(int *wyckoffs, int *equiv_atoms,
                                 char (*site_symmetry_symbols)[7],
-                                const Cell *conv_prim, const Symmetry *conv_sym,
-                                const int num_pure_trans, const int hall_number,
-                                const double symprec) {
+                                Cell const *conv_prim, Symmetry const *conv_sym,
+                                int const num_pure_trans, int const hall_number,
+                                double const symprec) {
     int i;
     double tolerance;
     VecDBL *positions;
@@ -123,9 +123,9 @@ VecDBL *ssm_get_exact_positions(int *wyckoffs, int *equiv_atoms,
 }
 
 /* Return 0: succeeded, 1: tolerance too large, -1: tolerance too short */
-static VecDBL *get_exact_positions(int *equiv_atoms, const Cell *conv_prim,
-                                   const Symmetry *conv_sym,
-                                   const double symprec) {
+static VecDBL *get_exact_positions(int *equiv_atoms, Cell const *conv_prim,
+                                   Symmetry const *conv_sym,
+                                   double const symprec) {
     int i, num_indep_atoms;
     int *indep_atoms;
     VecDBL *positions;
@@ -186,10 +186,10 @@ static VecDBL *get_exact_positions(int *equiv_atoms, const Cell *conv_prim,
     return positions;
 }
 
-static int set_equivalent_atom(VecDBL *positions, int *equiv_atoms, const int i,
-                               const int num_indep_atoms,
-                               const int *indep_atoms, const Cell *conv_prim,
-                               const Symmetry *conv_sym, const double symprec) {
+static int set_equivalent_atom(VecDBL *positions, int *equiv_atoms, int const i,
+                               int const num_indep_atoms,
+                               int const *indep_atoms, Cell const *conv_prim,
+                               Symmetry const *conv_sym, double const symprec) {
     int j, k, l;
     double pos[3];
 
@@ -219,9 +219,9 @@ static int set_equivalent_atom(VecDBL *positions, int *equiv_atoms, const int i,
 /* Site-symmetry is used to determine exact location of an atom */
 /* R. W. Grosse-Kunstleve and P. D. Adams */
 /* Acta Cryst. (2002). A58, 60-65 */
-static void set_exact_location(double position[3], const Symmetry *conv_sym,
-                               const double bravais_lattice[3][3],
-                               const double symprec) {
+static void set_exact_location(double position[3], Symmetry const *conv_sym,
+                               double const bravais_lattice[3][3],
+                               double const symprec) {
     int i, j, k, num_site_sym;
     double sum_rot[3][3];
     double pos[3], sum_trans[3];
@@ -271,11 +271,11 @@ static void set_exact_location(double position[3], const Symmetry *conv_sym,
 }
 
 static int set_layer_equivalent_atom(VecDBL *positions, int *equiv_atoms,
-                                     const int i, const int num_indep_atoms,
-                                     const int *indep_atoms,
-                                     const Cell *conv_prim,
-                                     const Symmetry *conv_sym,
-                                     const double symprec) {
+                                     int const i, int const num_indep_atoms,
+                                     int const *indep_atoms,
+                                     Cell const *conv_prim,
+                                     Symmetry const *conv_sym,
+                                     double const symprec) {
     int j, k, l;
     double pos[3];
     int periodic_axes[2] = {0, 1};
@@ -307,9 +307,9 @@ static int set_layer_equivalent_atom(VecDBL *positions, int *equiv_atoms,
 /* R. W. Grosse-Kunstleve and P. D. Adams */
 /* Acta Cryst. (2002). A58, 60-65 */
 static void set_layer_exact_location(double position[3],
-                                     const Symmetry *conv_sym,
-                                     const double bravais_lattice[3][3],
-                                     const double symprec) {
+                                     Symmetry const *conv_sym,
+                                     double const bravais_lattice[3][3],
+                                     double const symprec) {
     int i, j, k, num_site_sym;
     double sum_rot[3][3];
     double pos[3], sum_trans[3];
@@ -361,10 +361,10 @@ static void set_layer_exact_location(double position[3],
 }
 
 static int set_Wyckoffs_labels(int *wyckoffs, char (*site_symmetry_symbols)[7],
-                               const VecDBL *positions, const int *equiv_atoms,
-                               const Cell *conv_prim, const Symmetry *conv_sym,
-                               const int num_pure_trans, const int hall_number,
-                               const double symprec) {
+                               VecDBL const *positions, int const *equiv_atoms,
+                               Cell const *conv_prim, Symmetry const *conv_sym,
+                               int const num_pure_trans, int const hall_number,
+                               double const symprec) {
     int i, j, w;
     int *nums_equiv_atoms;
 
@@ -435,11 +435,11 @@ err:
 
 /* Return -1 if failed */
 static int get_Wyckoff_notation(char site_sym_symbol[7],
-                                const double position[3],
-                                const Symmetry *conv_sym,
-                                const int ref_multiplicity,
-                                const double bravais_lattice[3][3],
-                                const int hall_number, const double symprec) {
+                                double const position[3],
+                                Symmetry const *conv_sym,
+                                int const ref_multiplicity,
+                                double const bravais_lattice[3][3],
+                                int const hall_number, double const symprec) {
     int i, j, k, l, num_sitesym, multiplicity, wyckoff_letter;
     int indices_wyc[2];
     int rot[3][3];
@@ -516,9 +516,9 @@ end:
 
 /* Return -1 if failed */
 static int get_layer_Wyckoff_notation(
-    char site_sym_symbol[7], const double position[3], const Symmetry *conv_sym,
-    const int ref_multiplicity, const double bravais_lattice[3][3],
-    const int hall_number, const double symprec) {
+    char site_sym_symbol[7], double const position[3], Symmetry const *conv_sym,
+    int const ref_multiplicity, double const bravais_lattice[3][3],
+    int const hall_number, double const symprec) {
     int i, j, k, l, num_sitesym, multiplicity, wyckoff_letter;
     int indices_wyc[2];
     int rot[3][3];

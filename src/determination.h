@@ -46,9 +46,9 @@ typedef struct {
     ExactStructure *exact_structure;
 } DataContainer;
 
-DataContainer *det_determine_all(const Cell *cell, const int hall_number,
-                                 const double symprec,
-                                 const double angle_symprec);
+DataContainer *det_determine_all(Cell const *cell, int const hall_number,
+                                 double const symprec,
+                                 double const angle_symprec);
 void det_free_container(DataContainer *container);
 
 #endif

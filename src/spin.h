@@ -58,14 +58,14 @@
  */
 MagneticSymmetry *spn_get_operations_with_site_tensors(
     int **equivalent_atoms, int **permutations, double prim_lattice[3][3],
-    const Symmetry *sym_nonspin, const Cell *cell, const int with_time_reversal,
-    const int is_axial, const double symprec, const double angle_tolerance,
-    const double mag_symprec);
+    Symmetry const *sym_nonspin, Cell const *cell, int const with_time_reversal,
+    int const is_axial, double const symprec, double const angle_tolerance,
+    double const mag_symprec);
 VecDBL *spn_collect_pure_translations_from_magnetic_symmetry(
-    const MagneticSymmetry *sym_msg);
-Cell *spn_get_idealized_cell(const int *permutations, const Cell *cell,
-                             const MagneticSymmetry *magnetic_symmetry,
-                             const int with_time_reversal, const int is_axial);
-double *spn_alloc_site_tensors(const int num_atoms, const int tensor_rank);
+    MagneticSymmetry const *sym_msg);
+Cell *spn_get_idealized_cell(int const *permutations, Cell const *cell,
+                             MagneticSymmetry const *magnetic_symmetry,
+                             int const with_time_reversal, int const is_axial);
+double *spn_alloc_site_tensors(int const num_atoms, int const tensor_rank);
 
 #endif

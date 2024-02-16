@@ -62,15 +62,15 @@ typedef struct {
     int *periodic_axes;
 } OverlapChecker;
 
-OverlapChecker *ovl_overlap_checker_init(const Cell *cell);
+OverlapChecker *ovl_overlap_checker_init(Cell const *cell);
 
-int ovl_check_total_overlap(OverlapChecker *checker, const double test_trans[3],
-                            const int rot[3][3], const double symprec,
-                            const int is_identity);
+int ovl_check_total_overlap(OverlapChecker *checker, double const test_trans[3],
+                            int const rot[3][3], double const symprec,
+                            int const is_identity);
 
 int ovl_check_layer_total_overlap(OverlapChecker *checker,
-                                  const double test_trans[3],
-                                  const int rot[3][3], const double symprec,
-                                  const int is_identity);
+                                  double const test_trans[3],
+                                  int const rot[3][3], double const symprec,
+                                  int const is_identity);
 
 void ovl_overlap_checker_free(OverlapChecker *checker);

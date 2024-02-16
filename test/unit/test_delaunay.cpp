@@ -18,8 +18,8 @@ TEST(Delaunay, Delaunay_reduce_layer) {
         {0, 37, 10},
         {0, 11, 3},
     };
-    const int aperiodic_axis = 0;
-    const double symprec = 1e-5;
+    int const aperiodic_axis = 0;
+    double const symprec = 1e-5;
 
     del_layer_delaunay_reduce(min_lattice, lattice, aperiodic_axis, symprec);
 
@@ -44,7 +44,7 @@ TEST(Delaunay, Delaunay_reduce) {
     auto setenv_result = setenv("SPGLIB_NUM_ATTEMPTS", "100", 1);
     ASSERT_EQ(setenv_result, 0);
 
-    const double symprec = 1e-5;
+    double const symprec = 1e-5;
     int succeeded = del_delaunay_reduce(min_lattice, lattice, symprec);
     // Default get_num_attempts() == 1000 --> succeeded == 1.
     // With get_num_attempts() == 100 --> succeeded == 0.

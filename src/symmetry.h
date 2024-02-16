@@ -56,19 +56,19 @@ typedef struct {
     int size;
 } PointSymmetry;
 
-Symmetry *sym_alloc_symmetry(const int size);
+Symmetry *sym_alloc_symmetry(int const size);
 SPG_API_TEST void sym_free_symmetry(Symmetry *symmetry);
-MagneticSymmetry *sym_alloc_magnetic_symmetry(const int size);
+MagneticSymmetry *sym_alloc_magnetic_symmetry(int const size);
 void sym_free_magnetic_symmetry(MagneticSymmetry *symmetry);
-SPG_API_TEST Symmetry *sym_get_operation(const Cell *primitive,
-                                         const double symprec,
-                                         const double angle_tolerance);
-Symmetry *sym_reduce_operation(const Cell *primitive, const Symmetry *symmetry,
-                               const double symprec,
-                               const double angle_tolerance);
-VecDBL *sym_get_pure_translation(const Cell *cell, const double symprec);
-VecDBL *sym_reduce_pure_translation(const Cell *cell, const VecDBL *pure_trans,
-                                    const double symprec,
-                                    const double angle_tolerance);
+SPG_API_TEST Symmetry *sym_get_operation(Cell const *primitive,
+                                         double const symprec,
+                                         double const angle_tolerance);
+Symmetry *sym_reduce_operation(Cell const *primitive, Symmetry const *symmetry,
+                               double const symprec,
+                               double const angle_tolerance);
+VecDBL *sym_get_pure_translation(Cell const *cell, double const symprec);
+VecDBL *sym_reduce_pure_translation(Cell const *cell, VecDBL const *pure_trans,
+                                    double const symprec,
+                                    double const angle_tolerance);
 
 #endif

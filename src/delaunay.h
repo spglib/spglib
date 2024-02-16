@@ -39,12 +39,12 @@
 #include "mathfunc.h"
 
 SPG_API_TEST int del_delaunay_reduce(double lattice_new[3][3],
-                                     const double lattice[3][3],
-                                     const double symprec);
+                                     double const lattice[3][3],
+                                     double const symprec);
 SPG_API_TEST int del_layer_delaunay_reduce(double min_lattice[3][3],
-                                           const double lattice[3][3],
-                                           const int aperiodic_axis,
-                                           const double symprec);
+                                           double const lattice[3][3],
+                                           int const aperiodic_axis,
+                                           double const symprec);
 
 // @brief Delaunay reduction for monoclinic/oblique or monoclinic/rectangular
 // @param[out] red_lattice
@@ -59,9 +59,9 @@ SPG_API_TEST int del_layer_delaunay_reduce(double min_lattice[3][3],
 //       k(=aperiodic_axis)}. j and k are delaunay reduced, which can be
 //       incomplete for Monoclinic/Rectangular
 int del_layer_delaunay_reduce_2D(double min_lattice[3][3],
-                                 const double lattice[3][3],
-                                 const int unique_axis,
-                                 const int aperiodic_axis,
-                                 const double symprec);
+                                 double const lattice[3][3],
+                                 int const unique_axis,
+                                 int const aperiodic_axis,
+                                 double const symprec);
 
 #endif

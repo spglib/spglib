@@ -51,14 +51,14 @@ typedef struct {
 } ExactStructure;
 
 ExactStructure *ref_get_exact_structure_and_symmetry(Spacegroup *spacegroup,
-                                                     const Cell *primitive,
-                                                     const Cell *cell,
-                                                     const int *mapping_table,
-                                                     const double symprec);
+                                                     Cell const *primitive,
+                                                     Cell const *cell,
+                                                     int const *mapping_table,
+                                                     double const symprec);
 void ref_free_exact_structure(ExactStructure *exstr);
 int ref_find_similar_bravais_lattice(Spacegroup *spacegroup,
-                                     const double symprec);
+                                     double const symprec);
 void ref_get_conventional_lattice(double lattice[3][3],
-                                  const Spacegroup *spacegroup);
+                                  Spacegroup const *spacegroup);
 
 #endif

@@ -19,7 +19,7 @@ TEST(Niggli, Niggli_reduce) {
     double inv_lat[3][3], tmat[3][3], metric[3][3];
     int int_tmat[3][3];
 
-    const double symprec = 1e-5;
+    double const symprec = 1e-5;
     mat_copy_matrix_d3(min_lattice, lattice);
 
     auto setenv_result = setenv("SPGLIB_NUM_ATTEMPTS", "100", 1);

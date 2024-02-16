@@ -13,16 +13,16 @@ TEST(Symmetry, test_get_lattice_symmetry_layer) {
     cell = nullptr;
     symmetry = nullptr;
 
-    const int size = 1;
+    int const size = 1;
     double lattice[3][3] = {
         {1, 0, 0},
         {0, 1, 0},
         {0, 0, 1},
     };
     double positions[1][3] = {{0, 0, 0}};
-    const int types[1] = {0};
-    const double symprec = 1e-5;
-    const double angle_tolerance = -1;
+    int const types[1] = {0};
+    double const symprec = 1e-5;
+    double const angle_tolerance = -1;
 
     cell = cel_alloc_cell(size, NOSPIN);
     EXPECT_EQ(spg_get_error_code(), SPGLIB_SUCCESS);

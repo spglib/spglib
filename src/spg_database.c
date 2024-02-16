@@ -37,7 +37,7 @@
 #include <stdlib.h>
 
 /* In Hall symbols (3rd column), '=' is used instead of '"'. */
-static const SpacegroupType spacegroup_types[] = {
+static SpacegroupType const spacegroup_types[] = {
     {0, "      ", "                ", "                               ",
      "                   ", "          ", "     ", CENTERING_ERROR,
      0}, /*   0 */
@@ -1103,7 +1103,7 @@ static const SpacegroupType spacegroup_types[] = {
      "I 4_1/a -3 2/d     ", "Ia-3d     ", "     ", BODY, 32}, /* 530 */
 };
 
-static const int symmetry_operations[] = {
+static int const symmetry_operations[] = {
     0,        /* dummy */
     16484,    /*    1 (  1) [ 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0] */
     16484,    /*    2 (  2) [ 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0] */
@@ -9254,7 +9254,7 @@ static const int symmetry_operations[] = {
     5549,     /* 8146 (116) [-1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0] */
 };
 
-static const int symmetry_operation_index[][2] = {
+static int const symmetry_operation_index[][2] = {
     {0, 0},      /*   0 */
     {1, 1},      /*   1 */
     {2, 2},      /*   2 */
@@ -9788,7 +9788,7 @@ static const int symmetry_operation_index[][2] = {
     {96, 7293},  /* 530 */
 };
 
-static const SpacegroupType layer_group_types[] = {
+static SpacegroupType const layer_group_types[] = {
     {0, "      ", "                ", "                               ",
      "                   ", "          ", "     ", CENTERING_ERROR,
      0}, /*   0 */
@@ -10026,7 +10026,7 @@ static const SpacegroupType layer_group_types[] = {
      "p 6/m m m          ", "p6/mmm    ", "     ", PRIMITIVE, 27}, /* 116 */
 };
 
-static const int layer_symmetry_operation_index[][2] = {
+static int const layer_symmetry_operation_index[][2] = {
     {0, 0},     /*   0 */
     {1, 7389},  /*   1 */
     {2, 7390},  /*   2 */
@@ -10146,9 +10146,9 @@ static const int layer_symmetry_operation_index[][2] = {
     {24, 8123}, /* 116 */
 };
 
-static void replace_equal_char(char symbol[], const int position);
+static void replace_equal_char(char symbol[], int const position);
 
-void spgdb_decode_symmetry(int rot[3][3], double trans[3], const int encoded) {
+void spgdb_decode_symmetry(int rot[3][3], double trans[3], int const encoded) {
     int i, j, r, t, degit;
 
     /* A space group operation is compressed using ternary numerical system for
@@ -10178,7 +10178,7 @@ void spgdb_decode_symmetry(int rot[3][3], double trans[3], const int encoded) {
     }
 }
 
-int spgdb_get_operation(int rot[3][3], double trans[3], const int hall_number) {
+int spgdb_get_operation(int rot[3][3], double trans[3], int const hall_number) {
     spgdb_decode_symmetry(rot, trans, symmetry_operations[hall_number]);
     return 1;
 }
@@ -10186,7 +10186,7 @@ int spgdb_get_operation(int rot[3][3], double trans[3], const int hall_number) {
 /* Use negative hall number to represent layer group. */
 /* databases for layer group is directly added behind its spacegroup
  * counterparts */
-void spgdb_get_operation_index(int indices[2], const int hall_number) {
+void spgdb_get_operation_index(int indices[2], int const hall_number) {
     if (hall_number > 0) {
         indices[0] = symmetry_operation_index[hall_number][0];
         indices[1] = symmetry_operation_index[hall_number][1];
@@ -10197,7 +10197,7 @@ void spgdb_get_operation_index(int indices[2], const int hall_number) {
 }
 
 /* Return NULL if failed */
-Symmetry *spgdb_get_spacegroup_operations(const int hall_number) {
+Symmetry *spgdb_get_spacegroup_operations(int const hall_number) {
     int i;
     int operation_index[2];
     int rot[3][3];
@@ -10227,7 +10227,7 @@ Symmetry *spgdb_get_spacegroup_operations(const int hall_number) {
 }
 
 /* Return spgtype.number = 0 if hall_number is out of range. */
-SpacegroupType spgdb_get_spacegroup_type(const int hall_number) {
+SpacegroupType spgdb_get_spacegroup_type(int const hall_number) {
     int position;
     SpacegroupType spgtype;
 
@@ -10252,7 +10252,7 @@ SpacegroupType spgdb_get_spacegroup_type(const int hall_number) {
     return spgtype;
 }
 
-int spgdb_remove_space(char symbol[], const int num_char) {
+int spgdb_remove_space(char symbol[], int const num_char) {
     int i;
 
     for (i = num_char - 2; i > -1; i--) {
@@ -10265,7 +10265,7 @@ int spgdb_remove_space(char symbol[], const int num_char) {
     return i;
 }
 
-static void replace_equal_char(char symbol[], const int position) {
+static void replace_equal_char(char symbol[], int const position) {
     int i;
 
     for (i = position; i > -1; i--) {
