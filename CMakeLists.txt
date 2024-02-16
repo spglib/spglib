@@ -29,9 +29,11 @@ if (NOT DEFINED Spglib_IS_TOP_LEVEL)
 	endif ()
 endif ()
 
-set(CMAKE_C_STANDARD 11)
-set(CMAKE_C_STANDARD_REQUIRED ON)
-set(CMAKE_C_EXTENSIONS OFF)
+if (NOT DEFINED CMAKE_C_STANDARD)
+	set(CMAKE_C_STANDARD 11)
+	set(CMAKE_C_STANDARD_REQUIRED ON)
+	set(CMAKE_C_EXTENSIONS OFF)
+endif ()
 
 if (NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE Release)
@@ -111,6 +113,10 @@ endif ()
 #                               Main definition                               #
 ]=============================================================================]
 
+# Hide things by default
+set(CMAKE_CXX_VISIBILITY_PRESET     hidden)
+set(CMAKE_VISIBILITY_INLINES_HIDDEN YES)
+
 # Main project
 add_library(Spglib_symspg)
 set_target_properties(Spglib_symspg PROPERTIES
@@ -119,6 +125,19 @@ set_target_properties(Spglib_symspg PROPERTIES
 		EXPORT_NAME symspg
 		OUTPUT_NAME symspg)
 add_library(Spglib::symspg ALIAS Spglib_symspg)
+
+# Write spglib_export.h to the current binary directory
+include(GenerateExportHeader)
+generate_export_header(Spglib_symspg
+	EXPORT_FILE_NAME spglib_export.h
+	EXPORT_MACRO_NAME API_SPGLIB
+)
+
+# NOTE: symspg.cpp must #include spglib_export.h
+target_include_directories(Spglib_symspg PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+)
+
 # Main definitions inside src
 add_subdirectory(src)
 
@@ -149,6 +168,8 @@ configure_file(cmake/PackageCompsHelper.cmake PackageCompsHelper.cmake COPYONLY)
 #  Check how bundled cmake searches CMAKE_MODULE_DIR and add accordingly
 #  (use SKBUILD_PLATLIB_DIR for install root)
 if (NOT SKBUILD AND SPGLIB_INSTALL)
+	include(CPACK)
+
 	# pkg-config files
 	configure_file(cmake/spglib.pc.in spglib.pc @ONLY)
 	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/spglib.pc

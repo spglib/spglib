@@ -5,7 +5,18 @@
       "name": "default",
       "displayName": "Default configuration preset",
       "binaryDir": "cmake-build-release",
+      "installDir": "${sourceDir}/stagedir",
       "cacheVariables": {
+        "CMAKE_C_STANDARD": "17",
+        "CMAKE_C_EXTENSIONS": false,
+        "CMAKE_C_STANDARD_REQUIRED": true,
+        "CMAKE_EXPORT_COMPILE_COMMANDS": true,
+        "CMAKE_UNITY_BUILD": false,
+        "BUILD_SHARED_LIBS": true,
+        "CMAKE_PREFIX_PATH": {
+          "type": "path",
+          "value": "${sourceDir}/stagedir"
+        },
         "CMAKE_BUILD_TYPE": {
           "type": "STRING",
           "value": "Release"

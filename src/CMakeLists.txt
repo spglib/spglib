@@ -76,7 +76,7 @@ endif ()
 # Avoid One Definition Rule problems. Please fix these
 if (CMAKE_UNITY_BUILD)
 	set_source_files_properties(
-			symmetry.c site_symmetry.c spacegroup.c spglib.c refinement.c pointgroup.c determination.c delaunay.c
+			spin.c symmetry.c site_symmetry.c spacegroup.c spglib.c refinement.c pointgroup.c determination.c delaunay.c
 			PROPERTIES SKIP_UNITY_BUILD_INCLUSION ON
 	)
 endif ()
@@ -84,6 +84,8 @@ endif ()
 
 # Install
 if (NOT SKBUILD AND SPGLIB_INSTALL)
+	install(FILES ${CMAKE_BINARY_DIR}/spglib_export.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT Spglib_Development)
+
 	# Normal installation target to system. When using scikit-build this is installed again in python path
 		install(TARGETS Spglib_symspg
 				EXPORT SpglibTargets

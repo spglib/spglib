@@ -20,6 +20,11 @@ set(CMAKE_C_EXTENSIONS OFF)
 #                                   Options                                   #
 ]=============================================================================]
 
+option(TEST_INSTALLED_VERSION "Test the version found by find_package" PROJECT_IS_TOP_LEVEL)
+if (TEST_INSTALLED_VERSION)
+	find_package(Spglib REQUIRED)
+endif ()
+
 include(CMakeDependentOption)
 include(FeatureSummary)
 
@@ -276,5 +281,7 @@ endfunction()
 add_subdirectory(unit)
 add_subdirectory(integration)
 add_subdirectory(functional)
-add_subdirectory(package)
-add_subdirectory(example)
+if (Spglib_IS_TOP_LEVEL)
+	add_subdirectory(package)
+    add_subdirectory(example)
+endif ()
