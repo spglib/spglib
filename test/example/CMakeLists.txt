@@ -28,5 +28,6 @@ if (SPGLIB_WITH_Python)
 	set_property(TEST example-python example-python-full
 			APPEND PROPERTY
 			ENVIRONMENT PYTHONPATH=${Spglib_Python_BINARY_DIR}
+			            PATH=${CMAKE_INSTALL_PREFIX}/lib:$ENV{PATH}
 	)
 endif ()

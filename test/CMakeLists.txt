@@ -272,7 +272,10 @@ function(Spglib_add_test test)
 	endforeach ()
 
 	add_test(NAME ${ARGS_TEST_NAME}
-			COMMAND ${CMAKE_CTEST_COMMAND} --build-and-test ${CMAKE_CURRENT_SOURCE_DIR}/${test}
+			COMMAND ${CMAKE_COMMAND} -E env --modify PATH=path_list_prepend:${CMAKE_INSTALL_PREFIX}/lib
+			--
+			${CMAKE_CTEST_COMMAND}
+			--build-and-test ${CMAKE_CURRENT_SOURCE_DIR}/${test}
 			${CMAKE_CURRENT_BINARY_DIR}/${test}
 			# Use the same build environment as the current runner
 			--build-generator "${CMAKE_GENERATOR}"
