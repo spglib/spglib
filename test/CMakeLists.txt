@@ -9,12 +9,18 @@ project(Spglib_Test
 		LANGUAGES CXX C
 )
 
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_C_STANDARD 11)
-set(CMAKE_C_STANDARD_REQUIRED ON)
-set(CMAKE_C_EXTENSIONS OFF)
+if (NOT DEFINED CMAKE_C_STANDARD)
+	set(CMAKE_CXX_STANDARD 17)
+	set(CMAKE_CXX_STANDARD_REQUIRED ON)
+	set(CMAKE_CXX_EXTENSIONS OFF)
+	set(CMAKE_C_STANDARD 17)
+	set(CMAKE_C_STANDARD_REQUIRED ON)
+	set(CMAKE_C_EXTENSIONS OFF)
+endif ()
+
+if (NOT CMAKE_BUILD_TYPE)
+	set(CMAKE_BUILD_TYPE Release)
+endif ()
 
 #[=============================================================================[
 #                                   Options                                   #
@@ -256,6 +262,7 @@ function(Spglib_add_test test)
 	endif ()
 	list(APPEND extra_args
 			-DSPGLIB_WITH_Fortran=${SPGLIB_WITH_Fortran}
+			-DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}
 	)
 	set(compiler_args)
 	foreach (lang IN ITEMS C CXX Fortran)
@@ -282,12 +289,11 @@ endfunction()
 add_subdirectory(unit)
 add_subdirectory(integration)
 add_subdirectory(functional)
-
-# TODO: symlinks used! CK
-# package/pkg-config/src -> ../src/
-# package/FetchContent/src -> ../src/
-# package/find_package/src -> ../src/
-if (UNIX AND NOT PROJECT_IS_TOP_LEVEL)
+if (UNIX)
+	# TODO: symlinks used! CK
 	add_subdirectory(package)
-	add_subdirectory(example)
+	# package/pkg-config/src -> ../src/
+	# package/FetchContent/src -> ../src/
+	# package/find_package/src -> ../src/
 endif ()
+add_subdirectory(example)

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20...3.29)
+cmake_minimum_required(VERSION 3.25...3.29)
 
 #[=============================================================================[
 #                           Basic project definition                           #
@@ -13,24 +13,19 @@ dynamic_version(
 list(APPEND CMAKE_MESSAGE_CONTEXT Spglib)
 project(Spglib
 		VERSION ${PROJECT_VERSION}
-		LANGUAGES C)
+		LANGUAGES C CXX
+)
 set(Spglib_VERSION_FULL ${PROJECT_VERSION_FULL})
 set(Spglib_COMMIT ${GIT_COMMIT})
 
-# Back-porting to PROJECT_IS_TOP_LEVEL to older cmake
-# TODO: Remove when requiring cmake >= 3.21
-if (NOT DEFINED Spglib_IS_TOP_LEVEL)
-	if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
-		set(PROJECT_IS_TOP_LEVEL ON)
-		set(Spglib_IS_TOP_LEVEL ON)
-	else ()
-		set(PROJECT_IS_TOP_LEVEL OFF)
-		set(Spglib_IS_TOP_LEVEL OFF)
-	endif ()
+if (PROJECT_IS_TOP_LEVEL)
+	set(Spglib_IS_TOP_LEVEL ON)
+else ()
+	set(Spglib_IS_TOP_LEVEL OFF)
 endif ()
 
 if (NOT DEFINED CMAKE_C_STANDARD)
-	set(CMAKE_C_STANDARD 11)
+	set(CMAKE_C_STANDARD 17)
 	set(CMAKE_C_STANDARD_REQUIRED ON)
 	set(CMAKE_C_EXTENSIONS OFF)
 endif ()

@@ -84,9 +84,10 @@ target_sources(Spglib_symspg
 )
 target_include_directories(Spglib_symspg
 		PRIVATE "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
-		PUBLIC
-		"$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
-		"$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+		# This is what FILE_SET TYPE HEADERS should do automatically
+		# PUBLIC
+		# "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
+		# "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
 )
 
 # Link to third-party libraries
@@ -110,7 +111,8 @@ endif ()
 # Avoid One Definition Rule problems. Please fix these
 if (CMAKE_UNITY_BUILD)
 	set_source_files_properties(
-			spin.c symmetry.c site_symmetry.c spacegroup.c spglib.c refinement.c pointgroup.c determination.c delaunay.c
+			spin.c symmetry.c site_symmetry.c spacegroup.c spglib.c
+			refinement.c pointgroup.c determination.c delaunay.c
 			PROPERTIES SKIP_UNITY_BUILD_INCLUSION ON
 	)
 endif ()
@@ -124,7 +126,7 @@ if (NOT SKBUILD AND SPGLIB_INSTALL)
 			LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Spglib_Runtime
 			NAMELINK_COMPONENT Spglib_Development
 			ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Spglib_Development
-			FILE_SET HEADERS INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} # COMPONENT Spglib_Development
+			FILE_SET HEADERS INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 			RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Spglib_Runtime
 	)
 endif ()
