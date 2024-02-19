@@ -21,15 +21,14 @@ endforeach ()
 if (SPGLIB_WITH_Python)
 	add_test (NAME example-python
 			COMMAND ${Python_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/python_api/example.py
-			WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin
+			WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 	)
 	add_test (NAME example-python-full
 			COMMAND ${Python_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/python_api/example_full.py
-			WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin
+			WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 	)
 	set_property(TEST example-python example-python-full
 			APPEND PROPERTY
-			WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin
 			ENVIRONMENT PYTHONPATH=${Spglib_Python_BINARY_DIR}
 	)
 endif ()

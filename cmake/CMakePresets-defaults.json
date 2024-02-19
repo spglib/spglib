@@ -34,7 +34,13 @@
       "name": "default",
       "displayName": "Default build preset",
       "configurePreset": "default"
+    },
+    {
+      "name": "install",
+      "configurePreset": "default",
+      "targets": ["install"]
     }
+
   ],
   "testPresets": [
     {
@@ -64,6 +70,10 @@
         {
           "type": "build",
           "name": "default"
+        },
+        {
+          "type": "build",
+          "name": "install"
         },
         {
           "type": "test",

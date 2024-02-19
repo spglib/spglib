@@ -7,5 +7,4 @@ add_test(NAME pytests
 )
 set_property(TEST pytests APPEND PROPERTY
 		ENVIRONMENT PYTHONPATH=${Spglib_Python_BINARY_DIR}
-		            PATH=${CMAKE_INSTALL_PREFIX}/lib:$ENV{PATH}
 )

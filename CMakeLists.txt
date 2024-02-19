@@ -37,15 +37,22 @@ endif ()
 set(stageDir ${CMAKE_CURRENT_BINARY_DIR})
 include(GNUInstallDirs)
 
-if(NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
+add_library(Spglib_symspg)
+
+if (NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
 	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${stageDir}/${CMAKE_INSTALL_BINDIR})
-endif()
-if(NOT CMAKE_LIBRARY_OUTPUT_DIRECTORY)
+	add_custom_command(
+		TARGET Spglib_symspg POST_BUILD
+		COMMAND
+			${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+	)
+endif ()
+if (NOT CMAKE_LIBRARY_OUTPUT_DIRECTORY)
 	set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${stageDir}/${CMAKE_INSTALL_LIBDIR})
-endif()
-if(NOT CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
+endif ()
+if (NOT CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
 	set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${stageDir}/${CMAKE_INSTALL_LIBDIR})
-endif()
+endif ()
 
 #[=============================================================================[
 #                                   Options                                   #
@@ -123,7 +130,6 @@ set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_VISIBILITY_INLINES_HIDDEN YES)
 
 # Main project
-add_library(Spglib_symspg)
 set_target_properties(Spglib_symspg PROPERTIES
 		VERSION ${PROJECT_VERSION}
 		SOVERSION ${PROJECT_VERSION_MAJOR}
@@ -187,7 +193,7 @@ if (NOT SKBUILD AND SPGLIB_INSTALL)
 endif ()
 
 # Make project available for FetchContent
-if(NOT PROJECT_IS_TOP_LEVEL)
+if (NOT PROJECT_IS_TOP_LEVEL)
 	# Set variables for FetchContent
 	# All variables have to be consistent with SpglibConfig.cmake
 	set(Spglib_Fortran ${SPGLIB_WITH_Fortran})

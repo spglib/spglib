@@ -273,7 +273,7 @@ function(Spglib_add_test test)
 	endforeach ()
 
 	add_test(NAME ${ARGS_TEST_NAME}
-			WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/lib
+			WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 			COMMAND ${CMAKE_COMMAND} -E env --modify PATH=path_list_prepend:${CMAKE_INSTALL_PREFIX}/bin
 			--
 			${CMAKE_CTEST_COMMAND}
