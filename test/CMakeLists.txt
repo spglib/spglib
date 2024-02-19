@@ -253,6 +253,7 @@ function(Spglib_add_test test)
 	set(extra_args)
 	if (Spglib_IS_TOP_LEVEL)
 		list(APPEND extra_args
+				--debug-find-pkg=Spglib
 				# New in version 3.24
 				-DFETCHCONTENT_TRY_FIND_PACKAGE_MODE=ALWAYS
 				# Generated Config file point to binary targets until it is installed
@@ -272,9 +273,11 @@ function(Spglib_add_test test)
 	endforeach ()
 
 	add_test(NAME ${ARGS_TEST_NAME}
-			COMMAND ${CMAKE_COMMAND} -E env --modify PATH=path_list_prepend:${CMAKE_INSTALL_PREFIX}/lib
+			WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/lib
+			COMMAND ${CMAKE_COMMAND} -E env --modify PATH=path_list_prepend:${CMAKE_INSTALL_PREFIX}/bin
 			--
 			${CMAKE_CTEST_COMMAND}
+			--rerun-failed --output-on-failure
 			--build-and-test ${CMAKE_CURRENT_SOURCE_DIR}/${test}
 			${CMAKE_CURRENT_BINARY_DIR}/${test}
 			# Use the same build environment as the current runner

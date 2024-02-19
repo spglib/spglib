@@ -357,7 +357,7 @@ static void example_spg_get_symmetry(void) {
         {0.3, 0.3, 0.5},  {0.7, 0.7, 0.5},  {0.2, 0.8, 0.75}, {0.8, 0.2, 0.75}};
     int types[] = {1, 1, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2};
     int num_atom = 12;
-    int max_size = 50;
+    const int max_size = 50;
     int rotation[max_size][3][3];
     double translation[max_size][3];
 
@@ -388,7 +388,7 @@ static void example_spg_get_symmetry_with_collinear_spin(void) {
     int equivalent_atoms[2];
     double spins[2];
     int num_atom = 2;
-    int max_size = 300;
+    const int max_size = 300;
     int rotation[max_size][3][3];
     double translation[max_size][3];
 
@@ -526,7 +526,7 @@ static void example_spg_get_ir_reciprocal_mesh(void) {
     };
     int types[] = {1, 1, 2, 2, 2, 2};
     int num_atom = 6;
-    int m = 40;
+    const int m = 40;
     int mesh[] = {m, m, m};
     int is_shift[] = {1, 1, 1};
     int grid_address[m * m * m][3];
