@@ -15,6 +15,8 @@ add_test(NAME smoke_test_c
 )
 set_tests_properties(smoke_test_c PROPERTIES
 		PASS_REGULAR_EXPRESSION "^Spglib version: ${spglib_VERSION}\n*$"
+		# https://stackoverflow.com/a/77990416
+		ENVIRONMENT_MODIFICATION "PATH=path_list_prepend:$<JOIN:$<TARGET_RUNTIME_DLL_DIRS:main_c>,\;>"
 )
 
 if (SPGLIB_WITH_Fortran)
@@ -28,5 +30,7 @@ if (SPGLIB_WITH_Fortran)
 	set_tests_properties(smoke_test_Fortran PROPERTIES
 			PASS_REGULAR_EXPRESSION
 			"^[ \n]*Spglib version: ${spglib_VERSION}[ \n]*Spglib_Fortran version: ${spglib_fortran_VERSION}[ \n]*$"
+			# https://stackoverflow.com/a/77990416
+			ENVIRONMENT_MODIFICATION "PATH=path_list_prepend:$<JOIN:$<TARGET_RUNTIME_DLL_DIRS:main_Fortran>,\;>"
 	)
 endif ()

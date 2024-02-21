@@ -84,6 +84,14 @@ add_custom_command(TARGET Spglib_python POST_BUILD
 		$<TARGET_FILE:Spglib_python>
 		${CMAKE_CURRENT_BINARY_DIR}/spglib/$<TARGET_FILE_NAME:Spglib_python>
 )
+# On Windows make sure the dll files are in the build directory
+# https://stackoverflow.com/a/73550650
+if (CMAKE_IMPORT_LIBRARY_SUFFIX)
+	add_custom_command(TARGET Spglib_python POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:Spglib_python> ${CMAKE_CURRENT_BINARY_DIR}/spglib/
+			COMMAND_EXPAND_LISTS
+	)
+endif ()
 
 #[=============================================================================[
 #                              Install or Export                              #

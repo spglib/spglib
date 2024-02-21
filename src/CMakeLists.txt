@@ -3,6 +3,7 @@ set_property(DIRECTORY APPEND PROPERTY
 		CMAKE_CONFIGURE_DEPENDS ${PROJECT_BINARY_DIR}/.git_commit
 )
 add_dependencies(Spglib_symspg Spglib_GitHash)
+target_compile_definitions(Spglib_symspg PRIVATE SPG_BUILD)
 
 # Add compiler warnings
 if (SPGLIB_COMPILATION_WARNING)

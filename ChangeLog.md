@@ -24,6 +24,10 @@ GitHub release pages and in the git history.
   (Note: previously the project was not tested for the minimum CMake version)
 - Migrated the example and package test to the ctest test-suite
 
+### C interface
+
+- Explicitly mark public API for export
+
 ### Python API
 
 - Fixed the Python module build and installation in the pure CMake environment (without scikit-build-core)

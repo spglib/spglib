@@ -18,6 +18,7 @@ if (TARGET Spglib_symspg)
 	target_include_directories(Spglib_tests PRIVATE
 			${Spglib_SOURCE_DIR}/src
 	)
+	target_compile_definitions(Spglib_symspg PRIVATE SPG_TESTING)
 	Spglib_add_gtest(TARGET Spglib_tests SOURCES
 			test_delaunay.cpp
 			test_niggli.cpp

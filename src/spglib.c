@@ -33,6 +33,7 @@
 /* POSSIBILITY OF SUCH DAMAGE. */
 
 #include "spglib.h"
+#include "base.h"
 
 #include <stddef.h>
 #include <stdio.h>
@@ -236,7 +237,9 @@ int spg_get_micro_version() {
 /* error */
 /*-------*/
 SpglibError spg_get_error_code(void) { return spglib_error_code; }
-void spg_set_error_code(SpglibError err) { spglib_error_code = err; }
+SPG_API_TEST void spg_set_error_code(SpglibError err) {
+    spglib_error_code = err;
+}
 
 char *spg_get_error_message(SpglibError error) {
     int i;

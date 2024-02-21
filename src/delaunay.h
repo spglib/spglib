@@ -35,13 +35,16 @@
 #ifndef __delaunay_H__
 #define __delaunay_H__
 
+#include "base.h"
 #include "mathfunc.h"
 
-int del_delaunay_reduce(double lattice_new[3][3], const double lattice[3][3],
-                        const double symprec);
-int del_layer_delaunay_reduce(double min_lattice[3][3],
-                              const double lattice[3][3],
-                              const int aperiodic_axis, const double symprec);
+SPG_API_TEST int del_delaunay_reduce(double lattice_new[3][3],
+                                     const double lattice[3][3],
+                                     const double symprec);
+SPG_API_TEST int del_layer_delaunay_reduce(double min_lattice[3][3],
+                                           const double lattice[3][3],
+                                           const int aperiodic_axis,
+                                           const double symprec);
 
 // @brief Delaunay reduction for monoclinic/oblique or monoclinic/rectangular
 // @param[out] red_lattice

@@ -223,6 +223,17 @@ def print_cpp_cell(cell):
     print("\n".join(contents))
 ```
 
+#### Exposing API for unit tests
+
+Normally all functions outside of the exported `spglib.h` are not exposed, but for the purposes of unit testing, we need
+access to these. Currently, we don't know a clear way of resolving this issue, but we know two ways of addressing this:
+
+- Building Spglib as a static library for linking to the test-suite
+- Use a macro `SPG_API_TEST` that expands to `SPG_API` when building unit tests
+
+We have opted for the latter approach for now, so keep in mind when writing unit tests to include `SPG_API_TEST`
+directive.
+
 ## Tmt test-suite
 
 The [`tmt`] test layer is primarily for orchestrating and running all the tests in arbitrary environments, e.g. in the
