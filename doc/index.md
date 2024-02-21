@@ -46,9 +46,9 @@ The detailed algorithm of spglib is described the following text:
 ## For more information
 
 - Repository: https://github.com/spglib/spglib
-- License: BSD-3-Clause
+- License: BSD-3-Clause ([COPYING](https://github.com/spglib/spglib/blob/develop/COPYING))
 - Contact: atz.togo@gmail.com
-- Author: Atsushi Togo
+- Author: Atsushi Togo, National Institute for Materials Science
 
 ## Links
 
