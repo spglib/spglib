@@ -107,6 +107,10 @@ include(GoogleTest)
 
 enable_testing()
 
+if (WIN32 AND CMAKE_VERSION VERSION_LESS 3.27)
+	message(FATAL_ERROR "Cannot reliably test for windows with CMake < 3.27")
+endif ()
+
 # Define the test framework
 add_executable(Spglib_tests)
 set_target_properties(Spglib_tests PROPERTIES
@@ -181,9 +185,13 @@ function(Spglib_add_gtest)
 	list(APPEND test_labels ${ARGS_LABELS})
 	set_tests_properties(${google_tests} PROPERTIES
 			LABELS "${test_labels}"
-			# https://stackoverflow.com/a/77990416
-			ENVIRONMENT_MODIFICATION "PATH=path_list_prepend:$<JOIN:$<TARGET_RUNTIME_DLL_DIRS:Spglib_tests>,\;>"
 	)
+	if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.27)
+		# https://stackoverflow.com/a/77990416
+		set_property(TEST ${google_tests} APPEND PROPERTY
+				ENVIRONMENT_MODIFICATION "PATH=path_list_prepend:$<JOIN:$<TARGET_RUNTIME_DLL_DIRS:Spglib_tests>,\;>"
+		)
+	endif ()
 endfunction()
 
 function(Spglib_add_test test)
