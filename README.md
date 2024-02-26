@@ -18,6 +18,8 @@
 [![PyPI Downloads][pypi-downloads]][pypi-link]
 [![Conda Downloads][conda-downloads]][conda-link]
 
+<!-- SPHINX-START -->
+
 C library for finding and handling crystal symmetries
 
 ## What does Spglib do?
@@ -170,6 +172,8 @@ If you use functions to search for magnetic symmetry operations in spglib, pleas
 
 We welcome any contribution from the core development of the library to documentation
 improvements. See [Contributing.md](Contributing.md) for more details.
+
+<!-- SPHINX-END -->
 
 ## Documentation
 
