@@ -20,21 +20,6 @@
 
 C library for finding and handling crystal symmetries
 
-<!-- TOC -->
-
-- [Spglib](#spglib)
-  - [What does Spglib do?](#what-does-spglib-do)
-  - [Requirements](#requirements)
-  - [How to use Spglib](#how-to-use-spglib)
-    - [How install the python library](#how-install-the-python-library)
-    - [How to manually compile](#how-to-manually-compile)
-  - [How to run test](#how-to-run-test)
-  - [How to cite Spglib](#how-to-cite-spglib)
-  - [Contributing](#contributing)
-  - [Documentation](#documentation)
-
-<!-- TOC -->
-
 ## What does Spglib do?
 
 A crystal structure is given to a spglib function to obtain symmetry
