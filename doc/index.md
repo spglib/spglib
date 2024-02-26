@@ -45,10 +45,8 @@ The detailed algorithm of spglib is described the following text:
 
 ## For more information
 
-- Repository: https://github.com/spglib/spglib
+- Repository: <https://github.com/spglib/spglib>
 - License: BSD-3-Clause
-- Contact: atz.togo@gmail.com
-- Author: Atsushi Togo
 
 ## Links
 
@@ -57,7 +55,18 @@ The detailed algorithm of spglib is described the following text:
 - Conda: <https://anaconda.org/conda-forge/spglib>
 - PyPI: <https://pypi.org/project/spglib/>
 
+## Contributors
+
+- Atsushi Togo (National Institute for Materials Science)
+- @lan496
+- @LecrisUT
+- [Even more people](https://github.com/spglib/spglib/graphs/contributors)
+
 ## Acknowledgments
+
+Spglib development is supported by
+
+- National Institute for Materials Science
 
 Spglib project acknowledges Paweł T. Jochym for deployment and packaging, Yusuke
 Seto for the Crystallographic database, Jingheng Fu for layer group
