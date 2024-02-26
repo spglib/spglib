@@ -57,10 +57,19 @@ The detailed algorithm of spglib is described the following text:
 
 ## Contributors
 
-- Atsushi Togo (National Institute for Materials Science)
-- @lan496
-- @LecrisUT
-- [Even more people](https://github.com/spglib/spglib/graphs/contributors)
+Spglib thrives from the contributions of the community, and we would like to thank each and every one of [the contributors][contributors] as well as everyone participating in the [issue] and [discussion] forums.
+
+The current main developers of Spglib are:
+- [Atsushi Togo] (National Institute for Materials Science)
+- [Kohei Shinohara]
+- [Cristian Le]
+
+[contributors]: https://github.com/spglib/spglib/graphs/contributors
+[issue]: https://github.com/spglib/spglib/issues
+[discussion]: https://github.com/spglib/spglib/discussions
+[Atsushi Togo]: https://github.com/atztogo
+[Kohei Shinohara]: https://github.com/lan496
+[Cristian Le]: https://github.com/LecrisUT
 
 ## Acknowledgments
 
