@@ -60,16 +60,10 @@ The detailed algorithm of spglib is described the following text:
 Spglib thrives from the contributions of the community, and we would like to thank each and every one of [the contributors][contributors] as well as everyone participating in the [issue] and [discussion] forums.
 
 The current main developers of Spglib are:
+
 - [Atsushi Togo] (National Institute for Materials Science)
 - [Kohei Shinohara]
 - [Cristian Le]
-
-[contributors]: https://github.com/spglib/spglib/graphs/contributors
-[issue]: https://github.com/spglib/spglib/issues
-[discussion]: https://github.com/spglib/spglib/discussions
-[Atsushi Togo]: https://github.com/atztogo
-[Kohei Shinohara]: https://github.com/lan496
-[Cristian Le]: https://github.com/LecrisUT
 
 ## Acknowledgments
 
@@ -81,3 +75,10 @@ Spglib project acknowledges Paweł T. Jochym for deployment and packaging, Yusuk
 Seto for the Crystallographic database, Jingheng Fu for layer group
 implementation, Juan Rodriguez-Carvajal for the Magnetic space-group database,
 Dimitar Pashov for the Fortran interface, and many other contributors.
+
+[atsushi togo]: https://github.com/atztogo
+[contributors]: https://github.com/spglib/spglib/graphs/contributors
+[cristian le]: https://github.com/LecrisUT
+[discussion]: https://github.com/spglib/spglib/discussions
+[issue]: https://github.com/spglib/spglib/issues
+[kohei shinohara]: https://github.com/lan496
