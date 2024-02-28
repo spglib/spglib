@@ -1,0 +1,13 @@
+#include "spglib.hpp"
+
+using namespace Spglib;
+
+const std::string version() {
+	return "@Spglib_CXX_VERSION@";
+}
+const std::string version_full() {
+	return "@Spglib_CXX_VERSION_FULL@";
+}
+const std::string commit() {
+	return "@Spglib_CXX_COMMIT@";
+}

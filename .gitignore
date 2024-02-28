@@ -20,7 +20,6 @@ sdist
 develop-eggs
 .installed.cfg
 lib
-include
 lib64
 
 
@@ -79,7 +78,7 @@ test-suite.log
 docs_build/
 CMakeUserPresets.json
 
-doc/api/python-api/
+docs/api/python-api/
 
 /python/spglib/_version.py
 venv

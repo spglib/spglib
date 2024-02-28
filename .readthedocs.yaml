@@ -12,5 +12,3 @@ build:
   jobs:
     post_checkout:
       - git fetch --unshallow || true
-sphinx:
-  configuration: doc/conf.py

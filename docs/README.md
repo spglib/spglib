@@ -8,9 +8,7 @@ Python>=3.8 required for `importlib.metadata`.
 
 ```shell
 $ pip install -e ".[docs]"
-$ cd doc
-$ make html
-$ sphinx-autobuild . _build
+$ sphinx-autobuild docs docs/_build
 ```
 
 ## Source files
