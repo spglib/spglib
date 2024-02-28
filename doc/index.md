@@ -19,6 +19,13 @@ hidden:
    Developer Documentation <development/develop>
 ```
 
+```{include} ../README.md
+---
+start-after: <!-- SPHINX-START -->
+end-before: <!-- SPHINX-END -->
+---
+```
+
 Spglib is a library for finding and handling crystal symmetries
 written in C. There are the [python](python-interface.md),
 {ref}`fortran, rust, and ruby <interfaces>` interfaces.
