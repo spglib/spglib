@@ -121,6 +121,9 @@ static Symmetry *get_symmetry_in_original_cell(const int t_mat[3][3],
 static Symmetry *copy_symmetry_upon_lattice_points(const VecDBL *pure_trans,
                                                    const Symmetry *t_sym,
                                                    const int aperiodic_axis);
+static void measure_rigid_rotation(double rotation[3][3],
+                                   const double bravais_lattice[3][3],
+                                   const double std_lattice[3][3]);
 static void get_orthonormal_basis(double basis[3][3],
                                   const double lattice[3][3]);
 static const int identity[3][3] = {
@@ -210,8 +213,8 @@ ExactStructure *ref_get_exact_structure_and_symmetry(Spacegroup *spacegroup,
         goto err;
     }
 
-    ref_measure_rigid_rotation(rotation, spacegroup->bravais_lattice,
-                               bravais->lattice);
+    measure_rigid_rotation(rotation, spacegroup->bravais_lattice,
+                           bravais->lattice);
 
     exact_structure->bravais = bravais;
     exact_structure->symmetry = symmetry;
@@ -1519,9 +1522,9 @@ int ref_find_similar_bravais_lattice(Spacegroup *spacegroup,
 }
 
 /* Calculate `rotation` s.t. std_lattice = rotation @ bravais_lattice */
-void ref_measure_rigid_rotation(double rotation[3][3],
-                                const double bravais_lattice[3][3],
-                                const double std_lattice[3][3]) {
+static void measure_rigid_rotation(double rotation[3][3],
+                                   const double bravais_lattice[3][3],
+                                   const double std_lattice[3][3]) {
     /* (a_s^ideal, b_s^ideal, c_s^ideal) = R(a_s, b_s, c_s) */
     double brv_basis[3][3], std_basis[3][3], inv_brv_basis[3][3];
 

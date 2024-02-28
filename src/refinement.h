@@ -60,8 +60,5 @@ int ref_find_similar_bravais_lattice(Spacegroup *spacegroup,
                                      const double symprec);
 void ref_get_conventional_lattice(double lattice[3][3],
                                   const Spacegroup *spacegroup);
-void ref_measure_rigid_rotation(double rotation[3][3],
-                                const double bravais_lattice[3][3],
-                                const double std_lattice[3][3]);
 
 #endif
