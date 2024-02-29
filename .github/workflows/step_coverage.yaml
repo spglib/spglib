@@ -27,11 +27,17 @@ jobs:
         uses: lukka/run-cmake@v10.3
         with:
           workflowPreset: "ci-coverage-${{ matrix.coverage }}"
+      - name: Get coverage data
+        # TODO: Switch to tagged release
+        uses: threeal/gcovr-action@xml-out
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           name: ${{ matrix.coverage }} coverage
+          disable_search: true
+          plugin: noop
+          files: coverage-gcovr.xml
           flags: ${{ matrix.coverage }}
           verbose: true
 
@@ -53,11 +59,17 @@ jobs:
              --config-settings=cmake.define.SPGLIB_TEST_COVERAGE=ON \
              --config-settings=build-dir=cmake-build-coverage
       - name: Test pytest with coverage
-        run: pytest --cov
+        run: pytest --cov --cov-report=xml:coverage-pytest.xml
+      - name: Get coverage data
+        # TODO: Switch to tagged release
+        uses: threeal/gcovr-action@xml-out
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           name: python_api coverage
+          disable_search: true
+          plugin: noop
+          files: coverage-gcovr.xml,coverage-pytest.xml
           flags: python_api
           verbose: true
