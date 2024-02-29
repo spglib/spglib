@@ -1,3 +1,16 @@
+flags:
+  c_api:
+    paths:
+      - src/*
+  fortran_api:
+    paths:
+      - src/*
+      - fortran/*
+  python_api:
+    paths:
+      - src/*
+      - python/*
+
 coverage:
   status:
     project:
