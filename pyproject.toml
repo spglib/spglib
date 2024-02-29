@@ -124,9 +124,9 @@ markers = [
 
 [tool.coverage.run]
 command_line = '-m pytest'
-# TODO: Cannot report relative to project path because we cannot do editable installs yet
-#source = ['python/spglib']
-source = ['spglib']
+source = [
+    "python/spglib",
+]
 
 [tool.ruff]
 line-length = 88
@@ -211,8 +211,11 @@ skip = "doc/references.bib"
 ignore = "W002"
 
 [tool.gcovr]
-cobertura = "coverage.xml"
+cobertura = "coverage-gcovr.xml"
 exclude = [
     "src/msg_database.c",
     "src/spg_database.c",
+]
+gcov-ignore-errors = [
+    "source_not_found",
 ]
