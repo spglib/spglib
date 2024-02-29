@@ -46,26 +46,26 @@
 
 static int get_num_attempts();
 
-static int delaunay_reduce(double red_lattice[3][3], const double lattice[3][3],
-                           const int aperiodic_axis, const double symprec);
-static int delaunay_reduce_basis(double basis[4][3], const int lattice_rank,
-                                 const double symprec);
+static int delaunay_reduce(double red_lattice[3][3], double const lattice[3][3],
+                           int const aperiodic_axis, double const symprec);
+static int delaunay_reduce_basis(double basis[4][3], int const lattice_rank,
+                                 double const symprec);
 static void get_delaunay_shortest_vectors(double basis[4][3],
-                                          const int lattice_rank,
-                                          const double symprec);
-static int get_extended_basis(double basis[4][3], const double lattice[3][3],
-                              const int aperiodic_axis);
-static int delaunay_reduce_basis_2D(double basis[3][3], const int lattice_rank,
-                                    const double symprec);
+                                          int const lattice_rank,
+                                          double const symprec);
+static int get_extended_basis(double basis[4][3], double const lattice[3][3],
+                              int const aperiodic_axis);
+static int delaunay_reduce_basis_2D(double basis[3][3], int const lattice_rank,
+                                    double const symprec);
 static void get_delaunay_shortest_vectors_2D(double basis[3][3],
-                                             const double unique_vec[3],
-                                             const int lattice_rank,
-                                             const double symprec);
+                                             double const unique_vec[3],
+                                             int const lattice_rank,
+                                             double const symprec);
 static void get_extended_basis_2D(double basis[3][3],
-                                  const double lattice[3][2]);
+                                  double const lattice[3][2]);
 
 int get_num_attempts() {
-    const char *num_attempts_str = getenv("SPGLIB_NUM_ATTEMPTS");
+    char const *num_attempts_str = getenv("SPGLIB_NUM_ATTEMPTS");
     if (num_attempts_str != NULL) {
         // Try to parse the string as an integer
         char *end;
@@ -82,8 +82,8 @@ int get_num_attempts() {
 }
 
 /* Return 0 if failed */
-int del_delaunay_reduce(double min_lattice[3][3], const double lattice[3][3],
-                        const double symprec) {
+int del_delaunay_reduce(double min_lattice[3][3], double const lattice[3][3],
+                        double const symprec) {
     debug_print("del_delaunay_reduce (tolerance = %f):\n", symprec);
 
     return delaunay_reduce(min_lattice, lattice, -1, symprec);
@@ -91,8 +91,8 @@ int del_delaunay_reduce(double min_lattice[3][3], const double lattice[3][3],
 
 /* Return 0 if failed */
 int del_layer_delaunay_reduce(double min_lattice[3][3],
-                              const double lattice[3][3],
-                              const int aperiodic_axis, const double symprec) {
+                              double const lattice[3][3],
+                              int const aperiodic_axis, double const symprec) {
     debug_print("del_layer_delaunay_reduce (tolerance = %f):\n", symprec);
 
     return delaunay_reduce(min_lattice, lattice, aperiodic_axis, symprec);
@@ -101,8 +101,8 @@ int del_layer_delaunay_reduce(double min_lattice[3][3],
 /* Delaunay reduction */
 /* Reference can be found in International table A. */
 /* Return 0 if failed */
-static int delaunay_reduce(double red_lattice[3][3], const double lattice[3][3],
-                           const int aperiodic_axis, const double symprec) {
+static int delaunay_reduce(double red_lattice[3][3], double const lattice[3][3],
+                           int const aperiodic_axis, double const symprec) {
     int succeeded, lattice_rank;
     int tmp_mat_int[3][3];
     double volume;
@@ -182,8 +182,8 @@ err:
 //        exists, find the shortest two vectors inside period plane and the
 //        shortest one outside.
 static void get_delaunay_shortest_vectors(double basis[4][3],
-                                          const int lattice_rank,
-                                          const double symprec) {
+                                          int const lattice_rank,
+                                          double const symprec) {
     int i, j;
     double tmpmat[3][3], b[7][3], tmpvec[3];
 
@@ -279,8 +279,8 @@ static void get_delaunay_shortest_vectors(double basis[4][3],
 
 // If `lattice_rank==2`, assume `basis[2]` (b3) is along aperiodic axis.
 // TODO: Change `lattice_rank` to a more informative variable
-static int delaunay_reduce_basis(double basis[4][3], const int lattice_rank,
-                                 const double symprec) {
+static int delaunay_reduce_basis(double basis[4][3], int const lattice_rank,
+                                 double const symprec) {
     int i, j, k, l;
     double dot_product;
 
@@ -327,8 +327,8 @@ static int delaunay_reduce_basis(double basis[4][3], const int lattice_rank,
 // @brief Get extended basis for three-dimensional Delaunay reduction.
 //        If exists, `aperiodic_axis` is temporarily moved to b3 (`basis[2]`).
 // @return lattice_rank Rank of `lattice`
-static int get_extended_basis(double basis[4][3], const double lattice[3][3],
-                              const int aperiodic_axis) {
+static int get_extended_basis(double basis[4][3], double const lattice[3][3],
+                              int const aperiodic_axis) {
     int i, j, lattice_rank;
 
     if (aperiodic_axis == -1) {
@@ -362,10 +362,10 @@ static int get_extended_basis(double basis[4][3], const double lattice[3][3],
 }
 
 int del_layer_delaunay_reduce_2D(double red_lattice[3][3],
-                                 const double lattice[3][3],
-                                 const int unique_axis,
-                                 const int aperiodic_axis,
-                                 const double symprec) {
+                                 double const lattice[3][3],
+                                 int const unique_axis,
+                                 int const aperiodic_axis,
+                                 double const symprec) {
     int succeeded, lattice_rank;
     double volume;
     double basis[3][3], lattice_2D[3][2], unique_vec[3];
@@ -448,8 +448,8 @@ err:
     return 0;
 }
 
-static int delaunay_reduce_basis_2D(double basis[3][3], const int lattice_rank,
-                                    const double symprec) {
+static int delaunay_reduce_basis_2D(double basis[3][3], int const lattice_rank,
+                                    double const symprec) {
     int i, j, k, l;
     double dot_product;
 
@@ -488,9 +488,9 @@ static int delaunay_reduce_basis_2D(double basis[3][3], const int lattice_rank,
 }
 
 static void get_delaunay_shortest_vectors_2D(double basis[3][3],
-                                             const double unique_vec[3],
-                                             const int lattice_rank,
-                                             const double symprec) {
+                                             double const unique_vec[3],
+                                             int const lattice_rank,
+                                             double const symprec) {
     int i, j;
     double b[4][3], tmpmat[3][3];
     double tmpvec[3];
@@ -538,7 +538,7 @@ static void get_delaunay_shortest_vectors_2D(double basis[3][3],
 }
 
 static void get_extended_basis_2D(double basis[3][3],
-                                  const double lattice[3][2]) {
+                                  double const lattice[3][2]) {
     int i, j;
 
     for (i = 0; i < 2; i++) {

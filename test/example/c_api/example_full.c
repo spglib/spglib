@@ -20,21 +20,21 @@ static void example_spg_get_dataset(void);
 static void example_layer_spg_get_dataset(void);
 static void example_spg_get_ir_reciprocal_mesh(void);
 static void example_spg_get_error_message(void);
-static void show_spg_dataset(double lattice[3][3], const double origin_shift[3],
-                             double position[][3], const int num_atom,
-                             const int types[]);
+static void show_spg_dataset(double lattice[3][3], double const origin_shift[3],
+                             double position[][3], int const num_atom,
+                             int const types[]);
 static void show_layer_spg_dataset(double lattice[3][3],
-                                   const double origin_shift[3],
-                                   double position[][3], const int num_atom,
-                                   const int types[], const int aperiodic_axis,
-                                   const double symprec);
+                                   double const origin_shift[3],
+                                   double position[][3], int const num_atom,
+                                   int const types[], int const aperiodic_axis,
+                                   double const symprec);
 static void show_cell(double lattice[3][3], double position[][3],
-                      const int types[], const int num_atom);
+                      int const types[], int const num_atom);
 static void sub_spg_standardize_cell(double lattice[3][3], double position[][3],
-                                     int types[], const int num_atom,
-                                     const double symprec,
-                                     const int to_primitive,
-                                     const int no_idealize);
+                                     int types[], int const num_atom,
+                                     double const symprec,
+                                     int const to_primitive,
+                                     int const no_idealize);
 
 int main(int argc, char *argv[]) {
     example_spg_find_primitive_BCC();
@@ -562,14 +562,14 @@ static void example_spg_get_error_message(void) {
     }
 }
 
-static void show_spg_dataset(double lattice[3][3], const double origin_shift[3],
-                             double position[][3], const int num_atom,
-                             const int types[]) {
+static void show_spg_dataset(double lattice[3][3], double const origin_shift[3],
+                             double position[][3], int const num_atom,
+                             int const types[]) {
     SpglibDataset *dataset;
     char ptsymbol[6];
     int pt_trans_mat[3][3];
 
-    const char *wl = "abcdefghijklmnopqrstuvwxyz";
+    char const *wl = "abcdefghijklmnopqrstuvwxyz";
 
     for (int i = 0; i < num_atom; i++) {
         for (int j = 0; j < 3; j++) {
@@ -616,15 +616,15 @@ static void show_spg_dataset(double lattice[3][3], const double origin_shift[3],
 }
 
 static void show_layer_spg_dataset(double lattice[3][3],
-                                   const double origin_shift[3],
-                                   double position[][3], const int num_atom,
-                                   const int types[], const int aperiodic_axis,
-                                   const double symprec) {
+                                   double const origin_shift[3],
+                                   double position[][3], int const num_atom,
+                                   int const types[], int const aperiodic_axis,
+                                   double const symprec) {
     SpglibDataset *dataset;
     char ptsymbol[6];
     int pt_trans_mat[3][3];
 
-    const char *wl = "abcdefghijklmnopqrstuvwxyz";
+    char const *wl = "abcdefghijklmnopqrstuvwxyz";
 
     for (int i = 0; i < num_atom; i++) {
         for (int j = 0; j < 3; j++) {
@@ -672,10 +672,10 @@ static void show_layer_spg_dataset(double lattice[3][3],
 }
 
 static void sub_spg_standardize_cell(double lattice[3][3], double position[][3],
-                                     int types[], const int num_atom,
-                                     const double symprec,
-                                     const int to_primitive,
-                                     const int no_idealize) {
+                                     int types[], int const num_atom,
+                                     double const symprec,
+                                     int const to_primitive,
+                                     int const no_idealize) {
     double lat[3][3], pos[4 * num_atom][3];
     int typ[4 * num_atom];
 
@@ -719,7 +719,7 @@ static void sub_spg_standardize_cell(double lattice[3][3], double position[][3],
 }
 
 static void show_cell(double lattice[3][3], double position[][3],
-                      const int types[], const int num_atom) {
+                      int const types[], int const num_atom) {
     printf("Lattice parameter:\n");
     for (int i = 0; i < 3; i++) {
         printf("%f %f %f\n", lattice[0][i], lattice[1][i], lattice[2][i]);

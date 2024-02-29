@@ -384,103 +384,103 @@ static double F_mat[3][3] = {
     {0, 1. / 2, 1. / 2}, {1. / 2, 0, 1. / 2}, {1. / 2, 1. / 2, 0}};
 
 static Spacegroup *search_spacegroup_with_symmetry(
-    const Primitive *primitive, const int candidates[],
-    const int num_candidates, const Symmetry *symmetry, const double symprec,
-    const double angle_tolerance);
-static Spacegroup *get_spacegroup(const int hall_number,
-                                  const double origin_shift[3],
-                                  const double conv_lattice[3][3]);
+    Primitive const *primitive, int const candidates[],
+    int const num_candidates, Symmetry const *symmetry, double const symprec,
+    double const angle_tolerance);
+static Spacegroup *get_spacegroup(int const hall_number,
+                                  double const origin_shift[3],
+                                  double const conv_lattice[3][3]);
 static int iterative_search_hall_number(
-    double origin_shift[3], double conv_lattice[3][3], const int candidates[],
-    const int num_candidates, const Primitive *primitive,
-    const Symmetry *symmetry, const double symprec,
-    const double angle_tolerance);
+    double origin_shift[3], double conv_lattice[3][3], int const candidates[],
+    int const num_candidates, Primitive const *primitive,
+    Symmetry const *symmetry, double const symprec,
+    double const angle_tolerance);
 static int change_basis_tricli(int tmat_int[3][3],
-                               const double conv_lattice[3][3],
-                               const double primitive_lattice[3][3],
-                               const double symprec, const int aperiodic_axis);
+                               double const conv_lattice[3][3],
+                               double const primitive_lattice[3][3],
+                               double const symprec, int const aperiodic_axis);
 static int change_basis_monocli(int tmat_int[3][3],
-                                const double conv_lattice[3][3],
-                                const double primitive_lattice[3][3],
-                                const double symprec,
-                                const int aperiodic_axis_prim);
-static Symmetry *get_initial_conventional_symmetry(const Centering centering,
-                                                   const double tmat[3][3],
-                                                   const Symmetry *symmetry);
+                                double const conv_lattice[3][3],
+                                double const primitive_lattice[3][3],
+                                double const symprec,
+                                int const aperiodic_axis_prim);
+static Symmetry *get_initial_conventional_symmetry(Centering const centering,
+                                                   double const tmat[3][3],
+                                                   Symmetry const *symmetry);
 static int search_hall_number(double origin_shift[3], double conv_lattice[3][3],
-                              const int candidates[], const int num_candidates,
-                              const Primitive *primitive,
-                              const Symmetry *symmetry, const double symprec);
+                              int const candidates[], int const num_candidates,
+                              Primitive const *primitive,
+                              Symmetry const *symmetry, double const symprec);
 static int match_hall_symbol_db(
     double origin_shift[3], double conv_lattice[3][3],
-    const double (*orig_lattice)[3], const int hall_number,
-    const int pointgroup_number, const Holohedry holohedry,
-    const Centering centering, const Symmetry *symmetry, const double symprec);
+    double const (*orig_lattice)[3], int const hall_number,
+    int const pointgroup_number, Holohedry const holohedry,
+    Centering const centering, Symmetry const *symmetry, double const symprec);
 static int match_hall_symbol_db_monocli(
     double origin_shift[3], double conv_lattice[3][3],
-    const double (*orig_lattice)[3], const int hall_number,
-    const int group_number, const Centering centering,
-    const Symmetry *conv_symmetry, const double symprec);
+    double const (*orig_lattice)[3], int const hall_number,
+    int const group_number, Centering const centering,
+    Symmetry const *conv_symmetry, double const symprec);
 static int match_hall_symbol_db_monocli_in_loop(
     double origin_shift[3], double conv_lattice[3][3], double norms_squared[2],
-    const int change_of_basis_index, const double (*orig_lattice)[3],
-    const int check_norms, const int hall_number, const Centering centering,
-    const Symmetry *conv_symmetry, const double symprec);
+    int const change_of_basis_index, double const (*orig_lattice)[3],
+    int const check_norms, int const hall_number, Centering const centering,
+    Symmetry const *conv_symmetry, double const symprec);
 static int match_hall_symbol_db_ortho(
     double origin_shift[3], double conv_lattice[3][3],
-    const double (*orig_lattice)[3], const int hall_number,
-    const Centering centering, const Symmetry *symmetry,
-    const int num_free_axes, const double symprec);
+    double const (*orig_lattice)[3], int const hall_number,
+    Centering const centering, Symmetry const *symmetry,
+    int const num_free_axes, double const symprec);
 static int match_hall_symbol_db_ortho_in_loop(
     double origin_shift[3], double lattice[3][3],
-    const double (*orig_lattice)[3], const int axis_choice_index,
-    const int hall_number, const Centering centering, const Symmetry *symmetry,
-    const int num_free_axes, const double symprec);
+    double const (*orig_lattice)[3], int const axis_choice_index,
+    int const hall_number, Centering const centering, Symmetry const *symmetry,
+    int const num_free_axes, double const symprec);
 static int match_hall_symbol_db_cubic(double origin_shift[3],
                                       double conv_lattice[3][3],
-                                      const double (*orig_lattice)[3],
-                                      const int hall_number,
-                                      const Centering centering,
-                                      const Symmetry *conv_symmetry,
-                                      const double symprec);
+                                      double const (*orig_lattice)[3],
+                                      int const hall_number,
+                                      Centering const centering,
+                                      Symmetry const *conv_symmetry,
+                                      double const symprec);
 static int match_hall_symbol_db_cubic_in_loop(
     double origin_shift[3], double conv_lattice[3][3],
-    const double (*orig_lattice)[3], const int i, const int hall_number,
-    const Centering centering, const Symmetry *conv_symmetry,
-    const double symprec);
+    double const (*orig_lattice)[3], int const i, int const hall_number,
+    Centering const centering, Symmetry const *conv_symmetry,
+    double const symprec);
 static int match_hall_symbol_db_rhombo(double origin_shift[3],
                                        double conv_lattice[3][3],
-                                       const double (*orig_lattice)[3],
-                                       const int hall_number,
-                                       const Symmetry *conv_symmetry,
-                                       const double symprec);
+                                       double const (*orig_lattice)[3],
+                                       int const hall_number,
+                                       Symmetry const *conv_symmetry,
+                                       double const symprec);
 static int match_hall_symbol_db_others(
     double origin_shift[3], double conv_lattice[3][3],
-    const double (*orig_lattice)[3], const int hall_number,
-    const Centering centering, const Holohedry holohedry,
-    const Symmetry *conv_symmetry, const double symprec);
+    double const (*orig_lattice)[3], int const hall_number,
+    Centering const centering, Holohedry const holohedry,
+    Symmetry const *conv_symmetry, double const symprec);
 static int match_hall_symbol_db_change_of_basis_loop(
     double origin_shift[3], double conv_lattice[3][3],
-    const double (*orig_lattice)[3], const double (*change_of_basis)[3][3],
-    const int num_change_of_basis, const int hall_number,
-    const Centering centering, const Symmetry *conv_symmetry,
-    const double symprec);
-static Symmetry *get_conventional_symmetry(const double tmat[3][3],
-                                           const Centering centering,
-                                           const Symmetry *primitive_sym);
+    double const (*orig_lattice)[3], double const (*change_of_basis)[3][3],
+    int const num_change_of_basis, int const hall_number,
+    Centering const centering, Symmetry const *conv_symmetry,
+    double const symprec);
+static Symmetry *get_conventional_symmetry(double const tmat[3][3],
+                                           Centering const centering,
+                                           Symmetry const *primitive_sym);
 static Centering get_centering(double correction_mat[3][3],
-                               const int tmat[3][3], const Laue laue);
-static Centering get_base_center(const int tmat[3][3]);
-static int get_centering_shifts(double shift[3][3], const Centering centering);
-static int is_equivalent_lattice(double tmat[3][3], const int allow_flip,
-                                 const double lattice[3][3],
-                                 const double orig_lattice[3][3],
-                                 const double symprec);
+                               int const tmat[3][3], Laue const laue);
+static Centering get_base_center(int const tmat[3][3]);
+static int get_centering_shifts(double shift[3][3], Centering const centering);
+static int is_equivalent_lattice(double tmat[3][3], int const allow_flip,
+                                 double const lattice[3][3],
+                                 double const orig_lattice[3][3],
+                                 double const symprec);
 
 /* Return NULL if failed */
-Spacegroup *spa_search_spacegroup(const Primitive *primitive,
-                                  const int hall_number, const double symprec,
-                                  const double angle_tolerance) {
+Spacegroup *spa_search_spacegroup(Primitive const *primitive,
+                                  int const hall_number, double const symprec,
+                                  double const angle_tolerance) {
     Spacegroup *spacegroup;
     Symmetry *symmetry;
     int candidate[1];
@@ -520,9 +520,9 @@ Spacegroup *spa_search_spacegroup(const Primitive *primitive,
 
 /* Return NULL if failed */
 /* Assume symmetry is transformed in primitive cell. */
-Spacegroup *spa_search_spacegroup_with_symmetry(const Symmetry *symmetry,
-                                                const double prim_lat[3][3],
-                                                const double symprec) {
+Spacegroup *spa_search_spacegroup_with_symmetry(Symmetry const *symmetry,
+                                                double const prim_lat[3][3],
+                                                double const symprec) {
     int i;
     Spacegroup *spacegroup;
     Primitive *primitive;
@@ -548,10 +548,10 @@ Spacegroup *spa_search_spacegroup_with_symmetry(const Symmetry *symmetry,
 }
 
 /* Return NULL if failed */
-Cell *spa_transform_to_primitive(int *mapping_table, const Cell *cell,
-                                 const double trans_mat[3][3],
-                                 const Centering centering,
-                                 const double symprec) {
+Cell *spa_transform_to_primitive(int *mapping_table, Cell const *cell,
+                                 double const trans_mat[3][3],
+                                 Centering const centering,
+                                 double const symprec) {
     double tmat[3][3], tmat_inv[3][3], prim_lat[3][3];
     Cell *primitive;
 
@@ -598,9 +598,9 @@ err:
 }
 
 /* Return NULL if failed */
-Cell *spa_transform_from_primitive(const Cell *primitive,
-                                   const Centering centering,
-                                   const double symprec) {
+Cell *spa_transform_from_primitive(Cell const *primitive,
+                                   Centering const centering,
+                                   double const symprec) {
     int multi, i, j, k, num_atom;
     int *mapping_table;
     double tmat[3][3], inv_tmat[3][3], shift[3][3];
@@ -685,7 +685,7 @@ ret:
     return trimmed_cell;
 }
 
-void spa_copy_spacegroup(Spacegroup *dst, const Spacegroup *src) {
+void spa_copy_spacegroup(Spacegroup *dst, Spacegroup const *src) {
     dst->number = src->number;
     dst->hall_number = src->hall_number;
     dst->pointgroup_number = src->pointgroup_number;
@@ -701,9 +701,9 @@ void spa_copy_spacegroup(Spacegroup *dst, const Spacegroup *src) {
 
 /* Return NULL if failed */
 static Spacegroup *search_spacegroup_with_symmetry(
-    const Primitive *primitive, const int candidates[],
-    const int num_candidates, const Symmetry *symmetry, const double symprec,
-    const double angle_tolerance) {
+    Primitive const *primitive, int const candidates[],
+    int const num_candidates, Symmetry const *symmetry, double const symprec,
+    double const angle_tolerance) {
     int hall_number;
     double conv_lattice[3][3];
     double origin_shift[3];
@@ -737,9 +737,9 @@ static Spacegroup *search_spacegroup_with_symmetry(
 }
 
 /* Return spacegroup.number = 0 if failed */
-static Spacegroup *get_spacegroup(const int hall_number,
-                                  const double origin_shift[3],
-                                  const double conv_lattice[3][3]) {
+static Spacegroup *get_spacegroup(int const hall_number,
+                                  double const origin_shift[3],
+                                  double const conv_lattice[3][3]) {
     Spacegroup *spacegroup;
     SpacegroupType spacegroup_type;
 
@@ -772,10 +772,10 @@ static Spacegroup *get_spacegroup(const int hall_number,
 
 /* Return 0 if failed */
 static int iterative_search_hall_number(
-    double origin_shift[3], double conv_lattice[3][3], const int candidates[],
-    const int num_candidates, const Primitive *primitive,
-    const Symmetry *symmetry, const double symprec,
-    const double angle_tolerance) {
+    double origin_shift[3], double conv_lattice[3][3], int const candidates[],
+    int const num_candidates, Primitive const *primitive,
+    Symmetry const *symmetry, double const symprec,
+    double const angle_tolerance) {
     int attempt, hall_number;
     double tolerance;
     Symmetry *sym_reduced;
@@ -818,9 +818,9 @@ ret:
 
 /* Return 0 if failed */
 static int search_hall_number(double origin_shift[3], double conv_lattice[3][3],
-                              const int candidates[], const int num_candidates,
-                              const Primitive *primitive,
-                              const Symmetry *symmetry, const double symprec) {
+                              int const candidates[], int const num_candidates,
+                              Primitive const *primitive,
+                              Symmetry const *symmetry, double const symprec) {
     int i, hall_number, aperiodic_axis;
     Centering centering;
     Pointgroup pointgroup;
@@ -923,9 +923,9 @@ err:
 
 // Perform Niggli cell reduction for Triclinic. Return 0 if failed.
 static int change_basis_tricli(int tmat_int[3][3],
-                               const double conv_lattice[3][3],
-                               const double primitive_lattice[3][3],
-                               const double symprec, const int aperiodic_axis) {
+                               double const conv_lattice[3][3],
+                               double const primitive_lattice[3][3],
+                               double const symprec, int const aperiodic_axis) {
     int i, j;
     double niggli_cell[9];
     double smallest_lattice[3][3], inv_lattice[3][3], tmat[3][3];
@@ -962,10 +962,10 @@ static int change_basis_tricli(int tmat_int[3][3],
 /* Monoclinic: choose shortest a, c lattice vectors (|a| < |c|) */
 /* Return 0 if failed */
 static int change_basis_monocli(int tmat_int[3][3],
-                                const double conv_lattice[3][3],
-                                const double primitive_lattice[3][3],
-                                const double symprec,
-                                const int aperiodic_axis_prim) {
+                                double const conv_lattice[3][3],
+                                double const primitive_lattice[3][3],
+                                double const symprec,
+                                int const aperiodic_axis_prim) {
     double smallest_lattice[3][3], inv_lattice[3][3], tmat[3][3];
     int i, aperiodic_axis_conv, unique_axis;
 
@@ -1002,9 +1002,9 @@ static int change_basis_monocli(int tmat_int[3][3],
 }
 
 /* Return NULL if failed */
-static Symmetry *get_initial_conventional_symmetry(const Centering centering,
-                                                   const double tmat[3][3],
-                                                   const Symmetry *symmetry) {
+static Symmetry *get_initial_conventional_symmetry(Centering const centering,
+                                                   double const tmat[3][3],
+                                                   Symmetry const *symmetry) {
     Symmetry *conv_symmetry;
 
     debug_print("get_initial_conventional_symmetry\n");
@@ -1024,9 +1024,9 @@ static Symmetry *get_initial_conventional_symmetry(const Centering centering,
 /* Return 0 if failed */
 static int match_hall_symbol_db(
     double origin_shift[3], double conv_lattice[3][3],
-    const double (*orig_lattice)[3], const int hall_number,
-    const int pointgroup_number, const Holohedry holohedry,
-    const Centering centering, const Symmetry *symmetry, const double symprec) {
+    double const (*orig_lattice)[3], int const hall_number,
+    int const pointgroup_number, Holohedry const holohedry,
+    Centering const centering, Symmetry const *symmetry, double const symprec) {
     int is_found, num_free_axes;
     SpacegroupType spacegroup_type;
     Symmetry *changed_symmetry;
@@ -1144,9 +1144,9 @@ err:
 /* Return 0 if failed */
 static int match_hall_symbol_db_monocli(
     double origin_shift[3], double conv_lattice[3][3],
-    const double (*orig_lattice)[3], const int hall_number,
-    const int group_number, const Centering centering,
-    const Symmetry *conv_symmetry, const double symprec) {
+    double const (*orig_lattice)[3], int const hall_number,
+    int const group_number, Centering const centering,
+    Symmetry const *conv_symmetry, double const symprec) {
     int i, check_norms, i_shortest, is_found_any, j, num_change_of_basis;
     int is_found[36];
     double shortest_norm_sum, norm_sum;
@@ -1260,9 +1260,9 @@ err:
 
 static int match_hall_symbol_db_monocli_in_loop(
     double origin_shift[3], double conv_lattice[3][3], double norms_squared[2],
-    const int change_of_basis_index, const double (*orig_lattice)[3],
-    const int check_norms, const int hall_number, const Centering centering,
-    const Symmetry *conv_symmetry, const double symprec) {
+    int const change_of_basis_index, double const (*orig_lattice)[3],
+    int const check_norms, int const hall_number, Centering const centering,
+    Symmetry const *conv_symmetry, double const symprec) {
     int j, k, l, is_found, retval, unique_axis;
     double vec[2][3];
     double tmat[3][3], change_of_basis[3][3];
@@ -1356,9 +1356,9 @@ cont:
 /* Return 0 if failed */
 static int match_hall_symbol_db_ortho(
     double origin_shift[3], double conv_lattice[3][3],
-    const double (*orig_lattice)[3], const int hall_number,
-    const Centering centering, const Symmetry *conv_symmetry,
-    const int num_free_axes, const double symprec) {
+    double const (*orig_lattice)[3], int const hall_number,
+    Centering const centering, Symmetry const *conv_symmetry,
+    int const num_free_axes, double const symprec) {
     int i, j;
 
     // For layer, try axis choices abc and ba-c, which preserve the aperiodic
@@ -1403,9 +1403,9 @@ static int match_hall_symbol_db_ortho(
 // @param[in] symprec
 static int match_hall_symbol_db_ortho_in_loop(
     double origin_shift[3], double conv_lattice[3][3],
-    const double (*orig_lattice)[3], const int axis_choice_index,
-    const int hall_number, const Centering centering, const Symmetry *symmetry,
-    const int num_free_axes, const double symprec) {
+    double const (*orig_lattice)[3], int const axis_choice_index,
+    int const hall_number, Centering const centering, Symmetry const *symmetry,
+    int const num_free_axes, double const symprec) {
     int j, k, l, is_found;
     double vec[3], norms[3];
     Centering changed_centering;
@@ -1508,11 +1508,11 @@ cont:
 
 static int match_hall_symbol_db_cubic(double origin_shift[3],
                                       double conv_lattice[3][3],
-                                      const double (*orig_lattice)[3],
-                                      const int hall_number,
-                                      const Centering centering,
-                                      const Symmetry *conv_symmetry,
-                                      const double symprec) {
+                                      double const (*orig_lattice)[3],
+                                      int const hall_number,
+                                      Centering const centering,
+                                      Symmetry const *conv_symmetry,
+                                      double const symprec) {
     int i;
 
     /* Special treatment for No. 205 (501) is included in this change of */
@@ -1541,9 +1541,9 @@ static int match_hall_symbol_db_cubic(double origin_shift[3],
 
 static int match_hall_symbol_db_cubic_in_loop(
     double origin_shift[3], double conv_lattice[3][3],
-    const double (*orig_lattice)[3], const int i, const int hall_number,
-    const Centering centering, const Symmetry *conv_symmetry,
-    const double symprec) {
+    double const (*orig_lattice)[3], int const i, int const hall_number,
+    Centering const centering, Symmetry const *conv_symmetry,
+    double const symprec) {
     int is_found;
     double changed_lattice[3][3], tmat[3][3], change_of_basis[3][3];
     Symmetry *changed_symmetry;
@@ -1587,10 +1587,10 @@ cont:
 
 static int match_hall_symbol_db_rhombo(double origin_shift[3],
                                        double conv_lattice[3][3],
-                                       const double (*orig_lattice)[3],
-                                       const int hall_number,
-                                       const Symmetry *conv_symmetry,
-                                       const double symprec) {
+                                       double const (*orig_lattice)[3],
+                                       int const hall_number,
+                                       Symmetry const *conv_symmetry,
+                                       double const symprec) {
     int is_found;
 
     if (hall_number == 433 || hall_number == 436 || hall_number == 444 ||
@@ -1618,9 +1618,9 @@ static int match_hall_symbol_db_rhombo(double origin_shift[3],
 /* HEXA, TETRA, TRICLI and TRIGO but not Rhombohedral a=b=c */
 static int match_hall_symbol_db_others(
     double origin_shift[3], double conv_lattice[3][3],
-    const double (*orig_lattice)[3], const int hall_number,
-    const Centering centering, const Holohedry holohedry,
-    const Symmetry *conv_symmetry, const double symprec) {
+    double const (*orig_lattice)[3], int const hall_number,
+    Centering const centering, Holohedry const holohedry,
+    Symmetry const *conv_symmetry, double const symprec) {
     /* TRICLI: No check. */
     if (holohedry == TRICLI) {
         return hal_match_hall_symbol_db(origin_shift, conv_lattice, hall_number,
@@ -1643,10 +1643,10 @@ static int match_hall_symbol_db_others(
 
 static int match_hall_symbol_db_change_of_basis_loop(
     double origin_shift[3], double conv_lattice[3][3],
-    const double (*orig_lattice)[3], const double (*change_of_basis)[3][3],
-    const int num_change_of_basis, const int hall_number,
-    const Centering centering, const Symmetry *conv_symmetry,
-    const double symprec) {
+    double const (*orig_lattice)[3], double const (*change_of_basis)[3][3],
+    int const num_change_of_basis, int const hall_number,
+    Centering const centering, Symmetry const *conv_symmetry,
+    double const symprec) {
     int i, is_found;
     double changed_lattice[3][3], tmat[3][3];
     Symmetry *changed_symmetry;
@@ -1714,9 +1714,9 @@ static int match_hall_symbol_db_change_of_basis_loop(
 }
 
 /* Return NULL if failed */
-static Symmetry *get_conventional_symmetry(const double tmat[3][3],
-                                           const Centering centering,
-                                           const Symmetry *primitive_sym) {
+static Symmetry *get_conventional_symmetry(double const tmat[3][3],
+                                           Centering const centering,
+                                           Symmetry const *primitive_sym) {
     int i, j, k, multi, size;
     double inv_tmat[3][3], shift[3][3];
     double symmetry_rot_d3[3][3], primitive_sym_rot_d3[3][3];
@@ -1798,7 +1798,7 @@ static Symmetry *get_conventional_symmetry(const double tmat[3][3],
 
 /* Return CENTERING_ERROR if failed */
 static Centering get_centering(double correction_mat[3][3],
-                               const int tmat[3][3], const Laue laue) {
+                               int const tmat[3][3], Laue const laue) {
     int det;
     double trans_corr_mat[3][3];
     Centering centering;
@@ -1864,7 +1864,7 @@ static Centering get_centering(double correction_mat[3][3],
     return centering;
 }
 
-static Centering get_base_center(const int tmat[3][3]) {
+static Centering get_base_center(int const tmat[3][3]) {
     int i;
     Centering centering = PRIMITIVE;
 
@@ -1911,7 +1911,7 @@ end:
     return centering;
 }
 
-static int get_centering_shifts(double shift[3][3], const Centering centering) {
+static int get_centering_shifts(double shift[3][3], Centering const centering) {
     int i, j, multi;
 
     multi = 1;
@@ -1976,10 +1976,10 @@ static int get_centering_shifts(double shift[3][3], const Centering centering) {
 // @param[in] lattice
 // @param[in] orig_lattice
 // @param[in] symprec
-static int is_equivalent_lattice(double tmat[3][3], const int mode,
-                                 const double lattice[3][3],
-                                 const double orig_lattice[3][3],
-                                 const double symprec) {
+static int is_equivalent_lattice(double tmat[3][3], int const mode,
+                                 double const lattice[3][3],
+                                 double const orig_lattice[3][3],
+                                 double const symprec) {
     int i, j;
     double inv_lat[3][3], tmat_abs[3][3], metric[3][3], orig_metric[3][3];
     int tmat_int[3][3];

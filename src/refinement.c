@@ -53,80 +53,80 @@
 static Cell *get_Wyckoff_positions(
     int *wyckoffs, char (*site_symmetry_symbols)[7], int *equiv_atoms,
     int *crystallographic_orbits, int *std_mapping_to_primitive,
-    const Cell *primitive, const Cell *cell, const Spacegroup *spacegroup,
-    const Symmetry *symmetry, const int *mapping_table, const double symprec);
+    Cell const *primitive, Cell const *cell, Spacegroup const *spacegroup,
+    Symmetry const *symmetry, int const *mapping_table, double const symprec);
 static Cell *get_bravais_exact_positions_and_lattice(
     int *wyckoffs, char (*site_symmetry_symbols)[7], int *equiv_atoms,
-    int *std_mapping_to_primitive, const Spacegroup *spacegroup,
-    const Cell *primitive, const double symprec);
+    int *std_mapping_to_primitive, Spacegroup const *spacegroup,
+    Cell const *primitive, double const symprec);
 static Cell *expand_positions_in_bravais(
     int *wyckoffs, char (*site_symmetry_symbols)[7], int *equiv_atoms,
-    int *std_mapping_to_primitive, const Cell *conv_prim,
-    const Symmetry *conv_sym, const int num_pure_trans,
-    const int *wyckoffs_prim, const char (*site_symmetry_symbols_prim)[7],
-    const int *equiv_atoms_prim);
-static Cell *get_conventional_primitive(const Spacegroup *spacegroup,
-                                        const Cell *primitive);
-static int get_number_of_pure_translation(const Symmetry *conv_sym);
-static void set_tricli(double lattice[3][3], const double metric[3][3]);
-static void set_monocli(double lattice[3][3], const double metric[3][3],
-                        const char choice[6]);
-static void set_layer_monocli(double lattice[3][3], const double metric[3][3],
-                              const char choice[6]);
-static void set_ortho(double lattice[3][3], const double metric[3][3]);
-static void set_tetra(double lattice[3][3], const double metric[3][3]);
-static void set_trigo(double lattice[3][3], const double metric[3][3]);
-static void set_rhomb(double lattice[3][3], const double metric[3][3]);
-static void set_cubic(double lattice[3][3], const double metric[3][3]);
+    int *std_mapping_to_primitive, Cell const *conv_prim,
+    Symmetry const *conv_sym, int const num_pure_trans,
+    int const *wyckoffs_prim, char const (*site_symmetry_symbols_prim)[7],
+    int const *equiv_atoms_prim);
+static Cell *get_conventional_primitive(Spacegroup const *spacegroup,
+                                        Cell const *primitive);
+static int get_number_of_pure_translation(Symmetry const *conv_sym);
+static void set_tricli(double lattice[3][3], double const metric[3][3]);
+static void set_monocli(double lattice[3][3], double const metric[3][3],
+                        char const choice[6]);
+static void set_layer_monocli(double lattice[3][3], double const metric[3][3],
+                              char const choice[6]);
+static void set_ortho(double lattice[3][3], double const metric[3][3]);
+static void set_tetra(double lattice[3][3], double const metric[3][3]);
+static void set_trigo(double lattice[3][3], double const metric[3][3]);
+static void set_rhomb(double lattice[3][3], double const metric[3][3]);
+static void set_cubic(double lattice[3][3], double const metric[3][3]);
 
-static Symmetry *get_refined_symmetry_operations(const Cell *cell,
-                                                 const Cell *primitive,
-                                                 const Spacegroup *spacegroup,
-                                                 const double symprec);
+static Symmetry *get_refined_symmetry_operations(Cell const *cell,
+                                                 Cell const *primitive,
+                                                 Spacegroup const *spacegroup,
+                                                 double const symprec);
 static void set_translation_with_origin_shift(Symmetry *conv_sym,
-                                              const double origin_shift[3]);
-static Symmetry *get_primitive_db_symmetry(const double t_mat[3][3],
-                                           const Symmetry *conv_sym);
-static void get_corners(int corners[3][8], const int t_mat[3][3]);
-static void get_surrounding_frame(int frame[3], const int t_mat[3][3]);
+                                              double const origin_shift[3]);
+static Symmetry *get_primitive_db_symmetry(double const t_mat[3][3],
+                                           Symmetry const *conv_sym);
+static void get_corners(int corners[3][8], int const t_mat[3][3]);
+static void get_surrounding_frame(int frame[3], int const t_mat[3][3]);
 static int set_crystallographic_orbits(int *equiv_atoms_cell,
-                                       const Cell *primitive, const Cell *cell,
-                                       const int *equiv_atoms_prim,
-                                       const int *mapping_table);
+                                       Cell const *primitive, Cell const *cell,
+                                       int const *equiv_atoms_prim,
+                                       int const *mapping_table);
 static void set_equivalent_atoms_broken_symmetry(int *equiv_atoms_cell,
-                                                 const Cell *cell,
-                                                 const Symmetry *symmetry,
-                                                 const int *mapping_table,
-                                                 const double symprec);
-static int search_equivalent_atom(const int atom_index, const Cell *cell,
-                                  const Symmetry *symmetry,
-                                  const double symprec);
-static int search_layer_equivalent_atom(const int atom_index, const Cell *cell,
-                                        const Symmetry *symmetry,
-                                        const int periodic_axes[2],
-                                        const double symprec);
+                                                 Cell const *cell,
+                                                 Symmetry const *symmetry,
+                                                 int const *mapping_table,
+                                                 double const symprec);
+static int search_equivalent_atom(int const atom_index, Cell const *cell,
+                                  Symmetry const *symmetry,
+                                  double const symprec);
+static int search_layer_equivalent_atom(int const atom_index, Cell const *cell,
+                                        Symmetry const *symmetry,
+                                        int const periodic_axes[2],
+                                        double const symprec);
 static Symmetry *recover_symmetry_in_original_cell(
-    const Symmetry *prim_sym, const int t_mat[3][3], const double lattice[3][3],
-    const int multiplicity, const int aperiodic_axis, const double symprec);
-static VecDBL *get_lattice_translations(const int frame[3],
-                                        const double inv_tmat[3][3]);
-static VecDBL *remove_overlapping_lattice_points(const double lattice[3][3],
-                                                 const VecDBL *lattice_trans,
-                                                 const double symprec);
-static Symmetry *get_symmetry_in_original_cell(const int t_mat[3][3],
-                                               const double inv_tmat[3][3],
-                                               const double lattice[3][3],
-                                               const Symmetry *prim_sym,
-                                               const double symprec);
-static Symmetry *copy_symmetry_upon_lattice_points(const VecDBL *pure_trans,
-                                                   const Symmetry *t_sym,
-                                                   const int aperiodic_axis);
+    Symmetry const *prim_sym, int const t_mat[3][3], double const lattice[3][3],
+    int const multiplicity, int const aperiodic_axis, double const symprec);
+static VecDBL *get_lattice_translations(int const frame[3],
+                                        double const inv_tmat[3][3]);
+static VecDBL *remove_overlapping_lattice_points(double const lattice[3][3],
+                                                 VecDBL const *lattice_trans,
+                                                 double const symprec);
+static Symmetry *get_symmetry_in_original_cell(int const t_mat[3][3],
+                                               double const inv_tmat[3][3],
+                                               double const lattice[3][3],
+                                               Symmetry const *prim_sym,
+                                               double const symprec);
+static Symmetry *copy_symmetry_upon_lattice_points(VecDBL const *pure_trans,
+                                                   Symmetry const *t_sym,
+                                                   int const aperiodic_axis);
 static void measure_rigid_rotation(double rotation[3][3],
-                                   const double bravais_lattice[3][3],
-                                   const double std_lattice[3][3]);
+                                   double const bravais_lattice[3][3],
+                                   double const std_lattice[3][3]);
 static void get_orthonormal_basis(double basis[3][3],
-                                  const double lattice[3][3]);
-static const int identity[3][3] = {
+                                  double const lattice[3][3]);
+static int const identity[3][3] = {
     {1, 0, 0},
     {0, 1, 0},
     {0, 0, 1},
@@ -136,10 +136,10 @@ static const int identity[3][3] = {
 /* spacegroup->bravais_lattice and spacegroup->origin_shift are overwritten */
 /* by refined ones. */
 ExactStructure *ref_get_exact_structure_and_symmetry(Spacegroup *spacegroup,
-                                                     const Cell *primitive,
-                                                     const Cell *cell,
-                                                     const int *mapping_table,
-                                                     const double symprec) {
+                                                     Cell const *primitive,
+                                                     Cell const *cell,
+                                                     int const *mapping_table,
+                                                     double const symprec) {
     int *std_mapping_to_primitive, *wyckoffs, *equivalent_atoms;
     int *crystallographic_orbits;
     double rotation[3][3];
@@ -291,8 +291,8 @@ void ref_free_exact_structure(ExactStructure *exstr) {
 static Cell *get_Wyckoff_positions(
     int *wyckoffs, char (*site_symmetry_symbols)[7], int *equiv_atoms,
     int *crystallographic_orbits, int *std_mapping_to_primitive,
-    const Cell *primitive, const Cell *cell, const Spacegroup *spacegroup,
-    const Symmetry *symmetry, const int *mapping_table, const double symprec) {
+    Cell const *primitive, Cell const *cell, Spacegroup const *spacegroup,
+    Symmetry const *symmetry, int const *mapping_table, double const symprec) {
     Cell *bravais;
     int i, j, num_prim_sym;
     int *wyckoffs_bravais, *equiv_atoms_bravais;
@@ -395,8 +395,8 @@ ret:
 /* Return NULL if failed */
 static Cell *get_bravais_exact_positions_and_lattice(
     int *wyckoffs, char (*site_symmetry_symbols)[7], int *equiv_atoms,
-    int *std_mapping_to_primitive, const Spacegroup *spacegroup,
-    const Cell *primitive, const double symprec) {
+    int *std_mapping_to_primitive, Spacegroup const *spacegroup,
+    Cell const *primitive, double const symprec) {
     int i, j, num_pure_trans;
     int *wyckoffs_prim, *equiv_atoms_prim;
     char(*site_symmetry_symbols_prim)[7];
@@ -514,10 +514,10 @@ err:
 /* Return NULL if failed */
 static Cell *expand_positions_in_bravais(
     int *wyckoffs, char (*site_symmetry_symbols)[7], int *equiv_atoms,
-    int *std_mapping_to_primitive, const Cell *conv_prim,
-    const Symmetry *conv_sym, const int num_pure_trans,
-    const int *wyckoffs_prim, const char (*site_symmetry_symbols_prim)[7],
-    const int *equiv_atoms_prim) {
+    int *std_mapping_to_primitive, Cell const *conv_prim,
+    Symmetry const *conv_sym, int const num_pure_trans,
+    int const *wyckoffs_prim, char const (*site_symmetry_symbols_prim)[7],
+    int const *equiv_atoms_prim) {
     int i, j, k, lattice_rank;
     int num_atom;
     Cell *bravais;
@@ -570,7 +570,7 @@ static Cell *expand_positions_in_bravais(
     return bravais;
 }
 
-static int get_number_of_pure_translation(const Symmetry *conv_sym) {
+static int get_number_of_pure_translation(Symmetry const *conv_sym) {
     int i, num_pure_trans = 0;
 
     for (i = 0; i < conv_sym->size; i++) {
@@ -582,8 +582,8 @@ static int get_number_of_pure_translation(const Symmetry *conv_sym) {
     return num_pure_trans;
 }
 
-static Cell *get_conventional_primitive(const Spacegroup *spacegroup,
-                                        const Cell *primitive) {
+static Cell *get_conventional_primitive(Spacegroup const *spacegroup,
+                                        Cell const *primitive) {
     int i, j;
     double inv_brv[3][3], trans_mat[3][3];
     Cell *conv_prim;
@@ -617,7 +617,7 @@ static Cell *get_conventional_primitive(const Spacegroup *spacegroup,
 /* Return standardized transformation matrix for given space-group type and
  * settings. */
 void ref_get_conventional_lattice(double lattice[3][3],
-                                  const Spacegroup *spacegroup) {
+                                  Spacegroup const *spacegroup) {
     int i, j;
     double metric[3][3];
     Pointgroup pointgroup;
@@ -674,7 +674,7 @@ void ref_get_conventional_lattice(double lattice[3][3],
 
 /* The conversion refers the wikipedia, */
 /* http://en.wikipedia.org/wiki/Fractional_coordinates */
-static void set_tricli(double lattice[3][3], const double metric[3][3]) {
+static void set_tricli(double lattice[3][3], double const metric[3][3]) {
     double a, b, c, alpha, beta, gamma, cg, cb, ca, sg;
 
     a = sqrt(metric[0][0]);
@@ -698,8 +698,8 @@ static void set_tricli(double lattice[3][3], const double metric[3][3]) {
         c * sqrt(1 - ca * ca - cb * cb - cg * cg + 2 * ca * cb * cg) / sg;
 }
 
-static void set_monocli(double lattice[3][3], const double metric[3][3],
-                        const char choice[6]) {
+static void set_monocli(double lattice[3][3], double const metric[3][3],
+                        char const choice[6]) {
     double a, b, c, angle;
     int pos_char;
 
@@ -745,8 +745,8 @@ static void set_monocli(double lattice[3][3], const double metric[3][3],
 
 /* Monoclinic/Rectangular: a-axis is the unique axis */
 /* Monoclinic/Oblique: c-axis is the unique axis */
-static void set_layer_monocli(double lattice[3][3], const double metric[3][3],
-                              const char choice[6]) {
+static void set_layer_monocli(double lattice[3][3], double const metric[3][3],
+                              char const choice[6]) {
     double a, b, c, angle;
 
     debug_print("set_layer_monocli:\n");
@@ -783,7 +783,7 @@ static void set_layer_monocli(double lattice[3][3], const double metric[3][3],
     }
 }
 
-static void set_ortho(double lattice[3][3], const double metric[3][3]) {
+static void set_ortho(double lattice[3][3], double const metric[3][3]) {
     double a, b, c;
     a = sqrt(metric[0][0]);
     b = sqrt(metric[1][1]);
@@ -793,7 +793,7 @@ static void set_ortho(double lattice[3][3], const double metric[3][3]) {
     lattice[2][2] = c;
 }
 
-static void set_tetra(double lattice[3][3], const double metric[3][3]) {
+static void set_tetra(double lattice[3][3], double const metric[3][3]) {
     double a, b, c;
     a = sqrt(metric[0][0]);
     b = sqrt(metric[1][1]);
@@ -803,7 +803,7 @@ static void set_tetra(double lattice[3][3], const double metric[3][3]) {
     lattice[2][2] = c;
 }
 
-static void set_rhomb(double lattice[3][3], const double metric[3][3]) {
+static void set_rhomb(double lattice[3][3], double const metric[3][3]) {
     double a, b, c, angle, ahex, chex;
 
     a = sqrt(metric[0][0]);
@@ -843,7 +843,7 @@ static void set_rhomb(double lattice[3][3], const double metric[3][3]) {
 #endif
 }
 
-static void set_trigo(double lattice[3][3], const double metric[3][3]) {
+static void set_trigo(double lattice[3][3], double const metric[3][3]) {
     double a, b, c;
 
     a = sqrt(metric[0][0]);
@@ -855,7 +855,7 @@ static void set_trigo(double lattice[3][3], const double metric[3][3]) {
     lattice[2][2] = c;
 }
 
-static void set_cubic(double lattice[3][3], const double metric[3][3]) {
+static void set_cubic(double lattice[3][3], double const metric[3][3]) {
     double a, b, c;
 
     a = sqrt(metric[0][0]);
@@ -867,10 +867,10 @@ static void set_cubic(double lattice[3][3], const double metric[3][3]) {
 }
 
 /* Return NULL if failed */
-static Symmetry *get_refined_symmetry_operations(const Cell *cell,
-                                                 const Cell *primitive,
-                                                 const Spacegroup *spacegroup,
-                                                 const double symprec) {
+static Symmetry *get_refined_symmetry_operations(Cell const *cell,
+                                                 Cell const *primitive,
+                                                 Spacegroup const *spacegroup,
+                                                 double const symprec) {
     int t_mat_int[3][3];
     double inv_prim_lat[3][3], t_mat[3][3];
     Symmetry *conv_sym, *prim_sym, *symmetry;
@@ -914,9 +914,9 @@ static Symmetry *get_refined_symmetry_operations(const Cell *cell,
 }
 
 static int set_crystallographic_orbits(int *equiv_atoms_cell,
-                                       const Cell *primitive, const Cell *cell,
-                                       const int *equiv_atoms_prim,
-                                       const int *mapping_table) {
+                                       Cell const *primitive, Cell const *cell,
+                                       int const *equiv_atoms_prim,
+                                       int const *mapping_table) {
     int i, j;
     int *equiv_atoms;
 
@@ -946,10 +946,10 @@ static int set_crystallographic_orbits(int *equiv_atoms_cell,
 }
 
 static void set_equivalent_atoms_broken_symmetry(int *equiv_atoms_cell,
-                                                 const Cell *cell,
-                                                 const Symmetry *symmetry,
-                                                 const int *mapping_table,
-                                                 const double symprec) {
+                                                 Cell const *cell,
+                                                 Symmetry const *symmetry,
+                                                 int const *mapping_table,
+                                                 double const symprec) {
     int i, j;
     int periodic_axes[2];
 
@@ -995,9 +995,9 @@ static void set_equivalent_atoms_broken_symmetry(int *equiv_atoms_cell,
     }
 }
 
-static int search_equivalent_atom(const int atom_index, const Cell *cell,
-                                  const Symmetry *symmetry,
-                                  const double symprec) {
+static int search_equivalent_atom(int const atom_index, Cell const *cell,
+                                  Symmetry const *symmetry,
+                                  double const symprec) {
     int i, j;
     double pos_rot[3];
 
@@ -1018,10 +1018,10 @@ static int search_equivalent_atom(const int atom_index, const Cell *cell,
     return atom_index;
 }
 
-static int search_layer_equivalent_atom(const int atom_index, const Cell *cell,
-                                        const Symmetry *symmetry,
-                                        const int periodic_axes[2],
-                                        const double symprec) {
+static int search_layer_equivalent_atom(int const atom_index, Cell const *cell,
+                                        Symmetry const *symmetry,
+                                        int const periodic_axes[2],
+                                        double const symprec) {
     int i, j;
     double pos_rot[3];
 
@@ -1044,7 +1044,7 @@ static int search_layer_equivalent_atom(const int atom_index, const Cell *cell,
 }
 
 static void set_translation_with_origin_shift(Symmetry *conv_sym,
-                                              const double origin_shift[3]) {
+                                              double const origin_shift[3]) {
     int i, j;
     double tmp_vec[3];
     int tmp_mat[3][3];
@@ -1062,8 +1062,8 @@ static void set_translation_with_origin_shift(Symmetry *conv_sym,
     }
 }
 
-static Symmetry *get_primitive_db_symmetry(const double t_mat[3][3],
-                                           const Symmetry *conv_sym) {
+static Symmetry *get_primitive_db_symmetry(double const t_mat[3][3],
+                                           Symmetry const *conv_sym) {
     int i, j, num_op;
     double inv_mat[3][3], tmp_mat[3][3];
     MatINT *r_prim;
@@ -1129,7 +1129,7 @@ ret:
     return prim_sym;
 }
 
-static void get_surrounding_frame(int frame[3], const int t_mat[3][3]) {
+static void get_surrounding_frame(int frame[3], int const t_mat[3][3]) {
     int i, j, max, min;
     int corners[3][8];
 
@@ -1150,7 +1150,7 @@ static void get_surrounding_frame(int frame[3], const int t_mat[3][3]) {
     }
 }
 
-static void get_corners(int corners[3][8], const int t_mat[3][3]) {
+static void get_corners(int corners[3][8], int const t_mat[3][3]) {
     int i, j;
 
     /* O */
@@ -1179,8 +1179,8 @@ static void get_corners(int corners[3][8], const int t_mat[3][3]) {
 }
 
 static Symmetry *recover_symmetry_in_original_cell(
-    const Symmetry *prim_sym, const int t_mat[3][3], const double lattice[3][3],
-    const int multiplicity, const int aperiodic_axis, const double symprec) {
+    Symmetry const *prim_sym, int const t_mat[3][3], double const lattice[3][3],
+    int const multiplicity, int const aperiodic_axis, double const symprec) {
     Symmetry *symmetry, *t_sym;
     int frame[3];
     double inv_tmat[3][3], tmp_mat[3][3];
@@ -1231,8 +1231,8 @@ static Symmetry *recover_symmetry_in_original_cell(
 }
 
 /* Return NULL if failed */
-static VecDBL *get_lattice_translations(const int frame[3],
-                                        const double inv_tmat[3][3]) {
+static VecDBL *get_lattice_translations(int const frame[3],
+                                        double const inv_tmat[3][3]) {
     int i, j, k, l, num_trans;
     VecDBL *lattice_trans;
 
@@ -1267,9 +1267,9 @@ static VecDBL *get_lattice_translations(const int frame[3],
     return lattice_trans;
 }
 
-static VecDBL *remove_overlapping_lattice_points(const double lattice[3][3],
-                                                 const VecDBL *lattice_trans,
-                                                 const double symprec) {
+static VecDBL *remove_overlapping_lattice_points(double const lattice[3][3],
+                                                 VecDBL const *lattice_trans,
+                                                 double const symprec) {
     int i, j, is_found, num_pure_trans;
     VecDBL *pure_trans, *t;
 
@@ -1313,11 +1313,11 @@ static VecDBL *remove_overlapping_lattice_points(const double lattice[3][3],
 }
 
 /* Return NULL if failed */
-static Symmetry *get_symmetry_in_original_cell(const int t_mat[3][3],
-                                               const double inv_tmat[3][3],
-                                               const double lattice[3][3],
-                                               const Symmetry *prim_sym,
-                                               const double symprec) {
+static Symmetry *get_symmetry_in_original_cell(int const t_mat[3][3],
+                                               double const inv_tmat[3][3],
+                                               double const lattice[3][3],
+                                               Symmetry const *prim_sym,
+                                               double const symprec) {
     int i, size_sym_orig;
     double tmp_rot_d[3][3], tmp_lat_d[3][3], tmp_lat_i[3][3], tmp_mat[3][3];
     int tmp_rot_i[3][3];
@@ -1378,9 +1378,9 @@ static Symmetry *get_symmetry_in_original_cell(const int t_mat[3][3],
 }
 
 /* Return NULL if failed */
-static Symmetry *copy_symmetry_upon_lattice_points(const VecDBL *pure_trans,
-                                                   const Symmetry *t_sym,
-                                                   const int aperiodic_axis) {
+static Symmetry *copy_symmetry_upon_lattice_points(VecDBL const *pure_trans,
+                                                   Symmetry const *t_sym,
+                                                   int const aperiodic_axis) {
     int i, j, k, size_sym_orig;
     Symmetry *symmetry;
 
@@ -1416,7 +1416,7 @@ static Symmetry *copy_symmetry_upon_lattice_points(const VecDBL *pure_trans,
 /* spacegroup->bravais_lattice and spacegroup->origin_shift are overwritten */
 /* by refined ones. Return 0 if failed. */
 int ref_find_similar_bravais_lattice(Spacegroup *spacegroup,
-                                     const double symprec) {
+                                     double const symprec) {
     int i, j, k, rot_i, lattice_rank;
     Symmetry *conv_sym;
     double min_length2, length2, diff, min_length, length;
@@ -1523,8 +1523,8 @@ int ref_find_similar_bravais_lattice(Spacegroup *spacegroup,
 
 /* Calculate `rotation` s.t. std_lattice = rotation @ bravais_lattice */
 static void measure_rigid_rotation(double rotation[3][3],
-                                   const double bravais_lattice[3][3],
-                                   const double std_lattice[3][3]) {
+                                   double const bravais_lattice[3][3],
+                                   double const std_lattice[3][3]) {
     /* (a_s^ideal, b_s^ideal, c_s^ideal) = R(a_s, b_s, c_s) */
     double brv_basis[3][3], std_basis[3][3], inv_brv_basis[3][3];
 
@@ -1535,7 +1535,7 @@ static void measure_rigid_rotation(double rotation[3][3],
 }
 
 static void get_orthonormal_basis(double basis[3][3],
-                                  const double lattice[3][3]) {
+                                  double const lattice[3][3]) {
     int i, j;
     double length;
     double basis_T[3][3], lattice_T[3][3];

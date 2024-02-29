@@ -40,7 +40,7 @@
 /* Space group No. 1: 1 = 2-1 */
 /* Space group No. 2: 9 = 11-2 */
 /* Space group No. 3: 5 = 16-11 */
-static const int position_wyckoff[] = {
+static int const position_wyckoff[] = {
     0,    1,    2,    11,   16,   21,   26,   27,   28,   29,   32,   35,
     38,   41,   44,   47,   50,   53,   56,   59,   62,   65,   66,   67,
     68,   69,   70,   71,   72,   73,   74,   76,   78,   80,   82,   84,
@@ -88,7 +88,7 @@ static const int position_wyckoff[] = {
     3440, 3448, 3460, 3468,
 };
 
-static const int position_layer_wyckoff[] = {
+static int const position_layer_wyckoff[] = {
     0,    3468, 3469, 3474, 3479, 3481, 3482, 3483, 3484, 3494, 3499, 3504,
     3509, 3512, 3515, 3516, 3517, 3519, 3521, 3524, 3527, 3528, 3529, 3531,
     3533, 3542, 3551, 3555, 3559, 3563, 3567, 3570, 3573, 3579, 3585, 3598,
@@ -109,7 +109,7 @@ static const int position_layer_wyckoff[] = {
 /* If x is at the 'Coordinates', x'=x (mod Z). */
 /* 63923 is decoded to identity and (0, 0, 0) matrices, respectively. */
 /* See ssmdb_get_coordinate. */
-static const int coordinates_first[] = {
+static int const coordinates_first[] = {
     0,          63923,     63923,     657239062,  27383062,   630995062,
     656145562,  629901562, 26289562,  1139062,    45562,      63923,
     630995197,  629901697, 1139197,   45697,      63923,      656145563,
@@ -795,7 +795,7 @@ static const int coordinates_first[] = {
     629901562,  45563,     454941562, 45562,
 };
 
-static const int multiplicities[] = {
+static int const multiplicities[] = {
     0,  1,  2,   1,   1,  1,  1,  1,  1,   1,  1,  2,  1,   1,  1,  1,  2,  1,
     1,  1,  1,   2,   1,  1,  1,  1,  2,   2,  2,  4,  2,   2,  4,  2,  2,  4,
     2,  2,  4,   2,   2,  4,  2,  2,  4,   2,  2,  4,  2,   2,  4,  2,  2,  4,
@@ -1026,7 +1026,7 @@ static const int multiplicities[] = {
     12, 12, 6,   6,   6,  4,  3,  2,  2,   1,
 };
 
-static const char site_symmetry_symbols[][7] = {
+static char const site_symmetry_symbols[][7] = {
     "      ", "1     ", "1     ", "-1    ", "-1    ", "-1    ", "-1    ",
     "-1    ", "-1    ", "-1    ", "-1    ", "1     ", "2     ", "2     ",
     "2     ", "2     ", "1     ", "2     ", "2     ", "2     ", "2     ",
@@ -1615,7 +1615,7 @@ static const char site_symmetry_symbols[][7] = {
     "6/mmm ",
 };
 
-int ssmdb_get_coordinate(int rot[3][3], double trans[3], const int index) {
+int ssmdb_get_coordinate(int rot[3][3], double trans[3], int const index) {
     int i, rot_enc, trans_enc;
     int rows[3], trans_int[3];
 
@@ -1653,7 +1653,7 @@ int ssmdb_get_coordinate(int rot[3][3], double trans[3], const int index) {
 
 /* databases for layer group is directly added behind its spacegroup
  * counterparts */
-void ssmdb_get_wyckoff_indices(int indices[2], const int index) {
+void ssmdb_get_wyckoff_indices(int indices[2], int const index) {
     if (index > 0) {
         indices[0] = position_wyckoff[index];
         indices[1] = position_wyckoff[index + 1] - position_wyckoff[index];
@@ -1664,7 +1664,7 @@ void ssmdb_get_wyckoff_indices(int indices[2], const int index) {
     }
 }
 
-void ssmdb_get_site_symmetry_symbol(char symbol[7], const int index) {
+void ssmdb_get_site_symmetry_symbol(char symbol[7], int const index) {
     int i;
 
     for (i = 0; i < 6; i++) {

@@ -1,3 +1,5 @@
 BasedOnStyle: Google
 IndentWidth: 4
 IncludeBlocks: Preserve
+QualifierAlignment: Right
+IndentPPDirectives: BeforeHash

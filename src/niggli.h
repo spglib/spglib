@@ -44,7 +44,7 @@
 int niggli_get_major_version(void);
 int niggli_get_minor_version(void);
 int niggli_get_micro_version(void);
-SPG_API_TEST int niggli_reduce(double* lattice_, const double eps_,
-                               const int aperiodic_axis);
+SPG_API_TEST int niggli_reduce(double* lattice_, double const eps_,
+                               int const aperiodic_axis);
 
 #endif

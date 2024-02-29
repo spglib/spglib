@@ -41,21 +41,21 @@
 
 #define ZERO_PREC 1e-10
 
-double mat_get_determinant_d3(const double a[3][3]) {
+double mat_get_determinant_d3(double const a[3][3]) {
     return a[0][0] * (a[1][1] * a[2][2] - a[1][2] * a[2][1]) +
            a[0][1] * (a[1][2] * a[2][0] - a[1][0] * a[2][2]) +
            a[0][2] * (a[1][0] * a[2][1] - a[1][1] * a[2][0]);
 }
 
-int mat_get_determinant_i3(const int a[3][3]) {
+int mat_get_determinant_i3(int const a[3][3]) {
     return a[0][0] * (a[1][1] * a[2][2] - a[1][2] * a[2][1]) +
            a[0][1] * (a[1][2] * a[2][0] - a[1][0] * a[2][2]) +
            a[0][2] * (a[1][0] * a[2][1] - a[1][1] * a[2][0]);
 }
 
-int mat_get_trace_i3(const int a[3][3]) { return a[0][0] + a[1][1] + a[2][2]; }
+int mat_get_trace_i3(int const a[3][3]) { return a[0][0] + a[1][1] + a[2][2]; }
 
-void mat_copy_matrix_d3(double a[3][3], const double b[3][3]) {
+void mat_copy_matrix_d3(double a[3][3], double const b[3][3]) {
     a[0][0] = b[0][0];
     a[0][1] = b[0][1];
     a[0][2] = b[0][2];
@@ -67,7 +67,7 @@ void mat_copy_matrix_d3(double a[3][3], const double b[3][3]) {
     a[2][2] = b[2][2];
 }
 
-void mat_copy_matrix_i3(int a[3][3], const int b[3][3]) {
+void mat_copy_matrix_i3(int a[3][3], int const b[3][3]) {
     a[0][0] = b[0][0];
     a[0][1] = b[0][1];
     a[0][2] = b[0][2];
@@ -79,19 +79,19 @@ void mat_copy_matrix_i3(int a[3][3], const int b[3][3]) {
     a[2][2] = b[2][2];
 }
 
-void mat_copy_vector_d3(double a[3], const double b[3]) {
+void mat_copy_vector_d3(double a[3], double const b[3]) {
     a[0] = b[0];
     a[1] = b[1];
     a[2] = b[2];
 }
 
-void mat_copy_vector_i3(int a[3], const int b[3]) {
+void mat_copy_vector_i3(int a[3], int const b[3]) {
     a[0] = b[0];
     a[1] = b[1];
     a[2] = b[2];
 }
 
-int mat_check_identity_matrix_i3(const int a[3][3], const int b[3][3]) {
+int mat_check_identity_matrix_i3(int const a[3][3], int const b[3][3]) {
     if (a[0][0] - b[0][0] || a[0][1] - b[0][1] || a[0][2] - b[0][2] ||
         a[1][0] - b[1][0] || a[1][1] - b[1][1] || a[1][2] - b[1][2] ||
         a[2][0] - b[2][0] || a[2][1] - b[2][1] || a[2][2] - b[2][2]) {
@@ -101,8 +101,8 @@ int mat_check_identity_matrix_i3(const int a[3][3], const int b[3][3]) {
     }
 }
 
-int mat_check_identity_matrix_d3(const double a[3][3], const double b[3][3],
-                                 const double symprec) {
+int mat_check_identity_matrix_d3(double const a[3][3], double const b[3][3],
+                                 double const symprec) {
     if (mat_Dabs(a[0][0] - b[0][0]) > symprec ||
         mat_Dabs(a[0][1] - b[0][1]) > symprec ||
         mat_Dabs(a[0][2] - b[0][2]) > symprec ||
@@ -118,8 +118,8 @@ int mat_check_identity_matrix_d3(const double a[3][3], const double b[3][3],
     }
 }
 
-int mat_check_identity_matrix_id3(const int a[3][3], const double b[3][3],
-                                  const double symprec) {
+int mat_check_identity_matrix_id3(int const a[3][3], double const b[3][3],
+                                  double const symprec) {
     if (mat_Dabs(a[0][0] - b[0][0]) > symprec ||
         mat_Dabs(a[0][1] - b[0][1]) > symprec ||
         mat_Dabs(a[0][2] - b[0][2]) > symprec ||
@@ -136,8 +136,8 @@ int mat_check_identity_matrix_id3(const int a[3][3], const double b[3][3],
 }
 
 /* m=axb */
-void mat_multiply_matrix_d3(double m[3][3], const double a[3][3],
-                            const double b[3][3]) {
+void mat_multiply_matrix_d3(double m[3][3], double const a[3][3],
+                            double const b[3][3]) {
     int i, j; /* a_ij */
     double c[3][3];
     for (i = 0; i < 3; i++) {
@@ -148,7 +148,7 @@ void mat_multiply_matrix_d3(double m[3][3], const double a[3][3],
     mat_copy_matrix_d3(m, c);
 }
 
-void mat_multiply_matrix_i3(int m[3][3], const int a[3][3], const int b[3][3]) {
+void mat_multiply_matrix_i3(int m[3][3], int const a[3][3], int const b[3][3]) {
     int i, j; /* a_ij */
     int c[3][3];
     for (i = 0; i < 3; i++) {
@@ -159,8 +159,8 @@ void mat_multiply_matrix_i3(int m[3][3], const int a[3][3], const int b[3][3]) {
     mat_copy_matrix_i3(m, c);
 }
 
-void mat_multiply_matrix_di3(double m[3][3], const double a[3][3],
-                             const int b[3][3]) {
+void mat_multiply_matrix_di3(double m[3][3], double const a[3][3],
+                             int const b[3][3]) {
     int i, j; /* a_ij */
     double c[3][3];
     for (i = 0; i < 3; i++) {
@@ -171,8 +171,8 @@ void mat_multiply_matrix_di3(double m[3][3], const double a[3][3],
     mat_copy_matrix_d3(m, c);
 }
 
-void mat_multiply_matrix_id3(double m[3][3], const int a[3][3],
-                             const double b[3][3]) {
+void mat_multiply_matrix_id3(double m[3][3], int const a[3][3],
+                             double const b[3][3]) {
     int i, j; /* a_ij */
     double c[3][3];
     for (i = 0; i < 3; i++) {
@@ -183,8 +183,8 @@ void mat_multiply_matrix_id3(double m[3][3], const int a[3][3],
     mat_copy_matrix_d3(m, c);
 }
 
-void mat_multiply_matrix_vector_i3(int v[3], const int a[3][3],
-                                   const int b[3]) {
+void mat_multiply_matrix_vector_i3(int v[3], int const a[3][3],
+                                   int const b[3]) {
     int i;
     int c[3];
     for (i = 0; i < 3; i++)
@@ -193,8 +193,8 @@ void mat_multiply_matrix_vector_i3(int v[3], const int a[3][3],
 }
 
 /* v[3] <- a[3][3] * b[3] */
-void mat_multiply_matrix_vector_d3(double v[3], const double a[3][3],
-                                   const double b[3]) {
+void mat_multiply_matrix_vector_d3(double v[3], double const a[3][3],
+                                   double const b[3]) {
     int i;
     double c[3];
     for (i = 0; i < 3; i++)
@@ -202,8 +202,8 @@ void mat_multiply_matrix_vector_d3(double v[3], const double a[3][3],
     for (i = 0; i < 3; i++) v[i] = c[i];
 }
 
-void mat_multiply_matrix_vector_id3(double v[3], const int a[3][3],
-                                    const double b[3]) {
+void mat_multiply_matrix_vector_id3(double v[3], int const a[3][3],
+                                    double const b[3]) {
     int i;
     double c[3];
     for (i = 0; i < 3; i++)
@@ -211,8 +211,8 @@ void mat_multiply_matrix_vector_id3(double v[3], const int a[3][3],
     for (i = 0; i < 3; i++) v[i] = c[i];
 }
 
-void mat_multiply_matrix_vector_di3(double v[3], const double a[3][3],
-                                    const int b[3]) {
+void mat_multiply_matrix_vector_di3(double v[3], double const a[3][3],
+                                    int const b[3]) {
     int i;
     double c[3];
     for (i = 0; i < 3; i++)
@@ -220,7 +220,7 @@ void mat_multiply_matrix_vector_di3(double v[3], const double a[3][3],
     for (i = 0; i < 3; i++) v[i] = c[i];
 }
 
-void mat_add_matrix_i3(int m[3][3], const int a[3][3], const int b[3][3]) {
+void mat_add_matrix_i3(int m[3][3], int const a[3][3], int const b[3][3]) {
     int i, j;
     for (i = 0; i < 3; i++) {
         for (j = 0; j < 3; j++) {
@@ -229,7 +229,7 @@ void mat_add_matrix_i3(int m[3][3], const int a[3][3], const int b[3][3]) {
     }
 }
 
-void mat_cast_matrix_3i_to_3d(double m[3][3], const int a[3][3]) {
+void mat_cast_matrix_3i_to_3d(double m[3][3], int const a[3][3]) {
     m[0][0] = a[0][0];
     m[0][1] = a[0][1];
     m[0][2] = a[0][2];
@@ -241,7 +241,7 @@ void mat_cast_matrix_3i_to_3d(double m[3][3], const int a[3][3]) {
     m[2][2] = a[2][2];
 }
 
-void mat_cast_matrix_3d_to_3i(int m[3][3], const double a[3][3]) {
+void mat_cast_matrix_3d_to_3i(int m[3][3], double const a[3][3]) {
     m[0][0] = mat_Nint(a[0][0]);
     m[0][1] = mat_Nint(a[0][1]);
     m[0][2] = mat_Nint(a[0][2]);
@@ -260,8 +260,8 @@ void mat_cast_matrix_3d_to_3i(int m[3][3], const double a[3][3]) {
  * "m[#{j}][#{i}]=(a[#{(i+1)%3}][#{(j+1)%3}]*a[#{(i+2)%3}][#{(j+2)%3}] */
 /*       -a[#{(i+1)%3}][#{(j+2)%3}]*a[#{(i+2)%3}][#{(j+1)%3}])/det;" */
 /* }} */
-int mat_inverse_matrix_d3(double m[3][3], const double a[3][3],
-                          const double precision) {
+int mat_inverse_matrix_d3(double m[3][3], double const a[3][3],
+                          double const precision) {
     double det;
     double c[3][3];
     det = mat_get_determinant_d3(a);
@@ -284,8 +284,8 @@ int mat_inverse_matrix_d3(double m[3][3], const double a[3][3],
 }
 
 /* m = b^-1 a b */
-int mat_get_similar_matrix_d3(double m[3][3], const double a[3][3],
-                              const double b[3][3], const double precision) {
+int mat_get_similar_matrix_d3(double m[3][3], double const a[3][3],
+                              double const b[3][3], double const precision) {
     double c[3][3];
     if (!mat_inverse_matrix_d3(c, b, precision)) {
         warning_print("spglib: No similar matrix due to 0 determinant.\n");
@@ -296,7 +296,7 @@ int mat_get_similar_matrix_d3(double m[3][3], const double a[3][3],
     return 1;
 }
 
-void mat_transpose_matrix_d3(double a[3][3], const double b[3][3]) {
+void mat_transpose_matrix_d3(double a[3][3], double const b[3][3]) {
     double c[3][3];
     c[0][0] = b[0][0];
     c[0][1] = b[1][0];
@@ -310,7 +310,7 @@ void mat_transpose_matrix_d3(double a[3][3], const double b[3][3]) {
     mat_copy_matrix_d3(a, c);
 }
 
-void mat_transpose_matrix_i3(int a[3][3], const int b[3][3]) {
+void mat_transpose_matrix_i3(int a[3][3], int const b[3][3]) {
     int c[3][3];
     c[0][0] = b[0][0];
     c[0][1] = b[1][0];
@@ -324,27 +324,27 @@ void mat_transpose_matrix_i3(int a[3][3], const int b[3][3]) {
     mat_copy_matrix_i3(a, c);
 }
 
-void mat_get_metric(double metric[3][3], const double lattice[3][3]) {
+void mat_get_metric(double metric[3][3], double const lattice[3][3]) {
     double lattice_t[3][3];
     mat_transpose_matrix_d3(lattice_t, lattice);
     mat_multiply_matrix_d3(metric, lattice_t, lattice);
 }
 
-double mat_norm_squared_d3(const double a[3]) {
+double mat_norm_squared_d3(double const a[3]) {
     return a[0] * a[0] + a[1] * a[1] + a[2] * a[2];
 }
 
-int mat_norm_squared_i3(const int a[3]) {
+int mat_norm_squared_i3(int const a[3]) {
     return a[0] * a[0] + a[1] * a[1] + a[2] * a[2];
 }
 
-void mat_cross_product_d3(double v[3], const double a[3], const double b[3]) {
+void mat_cross_product_d3(double v[3], double const a[3], double const b[3]) {
     v[0] = a[1] * b[2] - a[2] * b[1];
     v[1] = a[2] * b[0] - a[0] * b[2];
     v[2] = a[0] * b[1] - a[1] * b[0];
 }
 
-double mat_Dabs(const double a) {
+double mat_Dabs(double const a) {
     if (a < 0.0)
         return -a;
     else
@@ -352,14 +352,14 @@ double mat_Dabs(const double a) {
 }
 
 /* Round to a nearest integer */
-int mat_Nint(const double a) {
+int mat_Nint(double const a) {
     if (a < 0.0)
         return (int)(a - 0.5);
     else
         return (int)(a + 0.5);
 }
 
-double mat_Dmod1(const double a) {
+double mat_Dmod1(double const a) {
     double b;
     b = a - mat_Nint(a);
 
@@ -372,9 +372,9 @@ double mat_Dmod1(const double a) {
 /// @brief Return the remainder of a divided by 1.
 /// @param a
 /// @return Remainder between -0.5 and 0.5
-double mat_rem1(const double a) { return a - mat_Nint(a); }
+double mat_rem1(double const a) { return a - mat_Nint(a); }
 
-MatINT *mat_alloc_MatINT(const int size) {
+MatINT *mat_alloc_MatINT(int const size) {
     MatINT *matint;
 
     matint = NULL;
@@ -406,7 +406,7 @@ void mat_free_MatINT(MatINT *matint) {
     free(matint);
 }
 
-VecDBL *mat_alloc_VecDBL(const int size) {
+VecDBL *mat_alloc_VecDBL(int const size) {
     VecDBL *vecdbl;
 
     vecdbl = NULL;
@@ -438,7 +438,7 @@ void mat_free_VecDBL(VecDBL *vecdbl) {
     free(vecdbl);
 }
 
-int mat_is_int_matrix(const double mat[3][3], const double symprec) {
+int mat_is_int_matrix(double const mat[3][3], double const symprec) {
     int i, j;
     for (i = 0; i < 3; i++) {
         for (j = 0; j < 3; j++) {

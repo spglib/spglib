@@ -44,53 +44,53 @@
 #include "symmetry.h"
 
 static MagneticSymmetry *get_operations(
-    const Symmetry *sym_nonspin, const Cell *cell, const int with_time_reversal,
-    const int is_axial, const double symprec, const double mag_symprec);
-static int *get_symmetry_permutations(const MagneticSymmetry *magnetic_symmetry,
-                                      const Cell *cell,
-                                      const int with_time_reversal,
-                                      const int is_axial, const double symprec,
-                                      const double mag_symprec);
-static int *get_orbits(const int *permutations, const int num_sym,
-                       const int num_atoms);
+    Symmetry const *sym_nonspin, Cell const *cell, int const with_time_reversal,
+    int const is_axial, double const symprec, double const mag_symprec);
+static int *get_symmetry_permutations(MagneticSymmetry const *magnetic_symmetry,
+                                      Cell const *cell,
+                                      int const with_time_reversal,
+                                      int const is_axial, double const symprec,
+                                      double const mag_symprec);
+static int *get_orbits(int const *permutations, int const num_sym,
+                       int const num_atoms);
 static int get_operation_sign_on_scalar(
-    const double spin_j, const double spin_k, const double rot_cart[3][3],
-    const int with_time_reversal, const int is_axial, const double mag_symprec);
-static int get_operation_sign_on_vector(const int j, const int k,
-                                        const double *vectors,
-                                        const double rot_cart[3][3],
-                                        const int with_time_reversal,
-                                        const int is_axial,
-                                        const double mag_symprec);
+    double const spin_j, double const spin_k, double const rot_cart[3][3],
+    int const with_time_reversal, int const is_axial, double const mag_symprec);
+static int get_operation_sign_on_vector(int const j, int const k,
+                                        double const *vectors,
+                                        double const rot_cart[3][3],
+                                        int const with_time_reversal,
+                                        int const is_axial,
+                                        double const mag_symprec);
 static void apply_symmetry_to_position(double pos_dst[3],
-                                       const double pos_src[3],
-                                       const int rot[3][3],
-                                       const double trans[3]);
-static double apply_symmetry_to_site_scalar(const double src,
-                                            const double rot_cart[3][3],
-                                            const int timerev,
-                                            const int with_time_reversal,
-                                            const int is_axial);
-static void apply_symmetry_to_site_vector(double dst[3], const int idx,
-                                          const double *tensors,
-                                          const double rot_cart[3][3],
-                                          const int timerev,
-                                          const int with_time_reversal,
-                                          const int is_axial);
+                                       double const pos_src[3],
+                                       int const rot[3][3],
+                                       double const trans[3]);
+static double apply_symmetry_to_site_scalar(double const src,
+                                            double const rot_cart[3][3],
+                                            int const timerev,
+                                            int const with_time_reversal,
+                                            int const is_axial);
+static void apply_symmetry_to_site_vector(double dst[3], int const idx,
+                                          double const *tensors,
+                                          double const rot_cart[3][3],
+                                          int const timerev,
+                                          int const with_time_reversal,
+                                          int const is_axial);
 void set_rotations_in_cartesian(double (*rotations_cart)[3][3],
-                                const double lattice[3][3],
-                                const MagneticSymmetry *magnetic_symmetry);
-static int is_zero(const double a, const double mag_symprec);
-static int is_zero_d3(const double a[3], const double mag_symprec);
+                                double const lattice[3][3],
+                                MagneticSymmetry const *magnetic_symmetry);
+static int is_zero(double const a, double const mag_symprec);
+static int is_zero_d3(double const a[3], double const mag_symprec);
 
 /******************************************************************************/
 
 /* doc was moved to spin.h. */
 MagneticSymmetry *spn_get_operations_with_site_tensors(
     int **equivalent_atoms, int **permutations, double prim_lattice[3][3],
-    const Symmetry *sym_nonspin, const Cell *cell, const int with_time_reversal,
-    const int is_axial, const double symprec, const double angle_tolerance,
-    const double mag_symprec_) {
+    Symmetry const *sym_nonspin, Cell const *cell, int const with_time_reversal,
+    int const is_axial, double const symprec, double const angle_tolerance,
+    double const mag_symprec_) {
     int multi;
     double mag_symprec;
     MagneticSymmetry *magnetic_symmetry;
@@ -148,7 +148,7 @@ err:
 }
 
 VecDBL *spn_collect_pure_translations_from_magnetic_symmetry(
-    const MagneticSymmetry *sym_msg) {
+    MagneticSymmetry const *sym_msg) {
     int i, num_pure_trans;
     VecDBL *pure_trans;
     VecDBL *ret_pure_trans;
@@ -189,9 +189,9 @@ VecDBL *spn_collect_pure_translations_from_magnetic_symmetry(
 }
 
 /* Apply special position operator to `cell`. */
-Cell *spn_get_idealized_cell(const int *permutations, const Cell *cell,
-                             const MagneticSymmetry *magnetic_symmetry,
-                             const int with_time_reversal, const int is_axial) {
+Cell *spn_get_idealized_cell(int const *permutations, Cell const *cell,
+                             MagneticSymmetry const *magnetic_symmetry,
+                             int const with_time_reversal, int const is_axial) {
     int i, j, s, p;
     Cell *exact_cell;
     double scalar_tmp, scalar_res;
@@ -306,7 +306,7 @@ Cell *spn_get_idealized_cell(const int *permutations, const Cell *cell,
 }
 
 /* If failed, return NULL. */
-double *spn_alloc_site_tensors(const int num_atoms, const int tensor_rank) {
+double *spn_alloc_site_tensors(int const num_atoms, int const tensor_rank) {
     double *ret;
     if (tensor_rank == 0) {
         if ((ret = (double *)malloc(sizeof(double) * num_atoms)) == NULL) {
@@ -332,8 +332,8 @@ double *spn_alloc_site_tensors(const int num_atoms, const int tensor_rank) {
 /* is_axial: If true, tensors with tensor_rank==1 do not change by */
 /*           spatial inversion */
 static MagneticSymmetry *get_operations(
-    const Symmetry *sym_nonspin, const Cell *cell, const int with_time_reversal,
-    const int is_axial, const double symprec, const double mag_symprec) {
+    Symmetry const *sym_nonspin, Cell const *cell, int const with_time_reversal,
+    int const is_axial, double const symprec, double const mag_symprec) {
     MagneticSymmetry *magnetic_symmetry;
     int i, j, k, sign, num_sym, found, determined, max_size;
     double pos[3];
@@ -553,11 +553,11 @@ err:
 // Return permutation tables `permutations` such that the p-th operation
 // in `magnetic_symmetry` maps site-`i` to site-`permutations[p * cell->size +
 // * i]`. If failed, return NULL.
-static int *get_symmetry_permutations(const MagneticSymmetry *magnetic_symmetry,
-                                      const Cell *cell,
-                                      const int with_time_reversal,
-                                      const int is_axial, const double symprec,
-                                      const double mag_symprec) {
+static int *get_symmetry_permutations(MagneticSymmetry const *magnetic_symmetry,
+                                      Cell const *cell,
+                                      int const with_time_reversal,
+                                      int const is_axial, double const symprec,
+                                      double const mag_symprec) {
     int p, i, j;
     int *permutations;
     double scalar;
@@ -648,8 +648,8 @@ static int *get_symmetry_permutations(const MagneticSymmetry *magnetic_symmetry,
 }
 
 // Return equivalent_atoms. If failed, return NULL.
-static int *get_orbits(const int *permutations, const int num_sym,
-                       const int num_atoms) {
+static int *get_orbits(int const *permutations, int const num_sym,
+                       int const num_atoms) {
     int s, i;
     int *equivalent_atoms;
 
@@ -677,12 +677,12 @@ static int *get_orbits(const int *permutations, const int num_sym,
 
 /* Return sign in {-1, 1} such that `sign * spin'_j == spin_k` */
 /* If spin_j and spin_k are not the same dimension, return 0 */
-static int get_operation_sign_on_scalar(const double spin_j,
-                                        const double spin_k,
-                                        const double rot_cart[3][3],
-                                        const int with_time_reversal,
-                                        const int is_axial,
-                                        const double mag_symprec) {
+static int get_operation_sign_on_scalar(double const spin_j,
+                                        double const spin_k,
+                                        double const rot_cart[3][3],
+                                        int const with_time_reversal,
+                                        int const is_axial,
+                                        double const mag_symprec) {
     int timerev;
     double spin_j_ops;
 
@@ -702,12 +702,12 @@ static int get_operation_sign_on_scalar(const double spin_j,
 /* If v_j and v_k are not transformed each other, return 0 */
 /* is_axial: Non-collinear magnetic moment v'_j = |detR|R v_j */
 /* !is_axial: Usual vector: v'_j = R v_j */
-static int get_operation_sign_on_vector(const int j, const int k,
-                                        const double *vectors,
-                                        const double rot_cart[3][3],
-                                        const int with_time_reversal,
-                                        const int is_axial,
-                                        const double mag_symprec) {
+static int get_operation_sign_on_vector(int const j, int const k,
+                                        double const *vectors,
+                                        double const rot_cart[3][3],
+                                        int const with_time_reversal,
+                                        int const is_axial,
+                                        double const mag_symprec) {
     int s, timerev;
     double vec_j_ops[3], diff[3];
 
@@ -727,9 +727,9 @@ static int get_operation_sign_on_vector(const int j, const int k,
 
 /* Apply `idx`th operation in `magnetic_symmetry` to position. */
 static void apply_symmetry_to_position(double pos_dst[3],
-                                       const double pos_src[3],
-                                       const int rot[3][3],
-                                       const double trans[3]) {
+                                       double const pos_src[3],
+                                       int const rot[3][3],
+                                       double const trans[3]) {
     int k;
     mat_multiply_matrix_vector_id3(pos_dst, rot, pos_src);
     for (k = 0; k < 3; k++) {
@@ -738,11 +738,11 @@ static void apply_symmetry_to_position(double pos_dst[3],
 }
 
 /* tensor_rank=0 case */
-static double apply_symmetry_to_site_scalar(const double src,
-                                            const double rot_cart[3][3],
-                                            const int timerev,
-                                            const int with_time_reversal,
-                                            const int is_axial) {
+static double apply_symmetry_to_site_scalar(double const src,
+                                            double const rot_cart[3][3],
+                                            int const timerev,
+                                            int const with_time_reversal,
+                                            int const is_axial) {
     double det, dst;
 
     dst = (with_time_reversal && timerev) ? -src : src;
@@ -755,12 +755,12 @@ static double apply_symmetry_to_site_scalar(const double src,
 }
 
 /* tensor_rank=1 case */
-static void apply_symmetry_to_site_vector(double dst[3], const int idx,
-                                          const double *tensors,
-                                          const double rot_cart[3][3],
-                                          const int timerev,
-                                          const int with_time_reversal,
-                                          const int is_axial) {
+static void apply_symmetry_to_site_vector(double dst[3], int const idx,
+                                          double const *tensors,
+                                          double const rot_cart[3][3],
+                                          int const timerev,
+                                          int const with_time_reversal,
+                                          int const is_axial) {
     int s;
     double det;
     double vec[3];
@@ -782,8 +782,8 @@ static void apply_symmetry_to_site_vector(double dst[3], const int idx,
 }
 
 void set_rotations_in_cartesian(double (*rotations_cart)[3][3],
-                                const double lattice[3][3],
-                                const MagneticSymmetry *magnetic_symmetry) {
+                                double const lattice[3][3],
+                                MagneticSymmetry const *magnetic_symmetry) {
     int i;
     double inv_lat[3][3];
 
@@ -796,11 +796,11 @@ void set_rotations_in_cartesian(double (*rotations_cart)[3][3],
     }
 }
 
-static int is_zero(const double a, const double mag_symprec) {
+static int is_zero(double const a, double const mag_symprec) {
     return mat_Dabs(a) < mag_symprec;
 }
 
-static int is_zero_d3(const double a[3], const double mag_symprec) {
+static int is_zero_d3(double const a[3], double const mag_symprec) {
     int i;
     for (i = 0; i < 3; i++) {
         if (!is_zero(a[i], mag_symprec)) {

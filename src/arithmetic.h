@@ -35,6 +35,6 @@
 #ifndef __arithmetic_H__
 #define __arithmetic_H__
 
-int arth_get_symbol(char symbol[7], const int spgroup_number);
+int arth_get_symbol(char symbol[7], int const spgroup_number);
 
 #endif

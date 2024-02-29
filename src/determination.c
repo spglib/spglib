@@ -48,14 +48,14 @@
 #define ANGLE_REDUCE_RATE 0.95
 #define NUM_ATTEMPT 20
 
-static DataContainer *get_spacegroup_and_primitive(const Cell *cell,
-                                                   const int hall_number,
-                                                   const double symprec,
-                                                   const double angle_symprec);
+static DataContainer *get_spacegroup_and_primitive(Cell const *cell,
+                                                   int const hall_number,
+                                                   double const symprec,
+                                                   double const angle_symprec);
 
-DataContainer *det_determine_all(const Cell *cell, const int hall_number,
-                                 const double symprec,
-                                 const double angle_symprec) {
+DataContainer *det_determine_all(Cell const *cell, int const hall_number,
+                                 double const symprec,
+                                 double const angle_symprec) {
     int attempt;
     double tolerance;
     DataContainer *container;
@@ -109,10 +109,10 @@ void det_free_container(DataContainer *container) {
 }
 
 /* NULL is returned if failed */
-static DataContainer *get_spacegroup_and_primitive(const Cell *cell,
-                                                   const int hall_number,
-                                                   const double symprec,
-                                                   const double angle_symprec) {
+static DataContainer *get_spacegroup_and_primitive(Cell const *cell,
+                                                   int const hall_number,
+                                                   double const symprec,
+                                                   double const angle_symprec) {
     int attempt;
     double tolerance, angle_tolerance;
     DataContainer *container;

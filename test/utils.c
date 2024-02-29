@@ -3,8 +3,8 @@
 
 #include "spglib.h"
 
-void show_symmetry_operations(const int (*rotations)[3][3],
-                              const double (*translations)[3], const int size) {
+void show_symmetry_operations(int const (*rotations)[3][3],
+                              double const (*translations)[3], int const size) {
     int i, j;
     for (i = 0; i < size; i++) {
         printf("--- %d ---\n", i + 1);
@@ -17,14 +17,14 @@ void show_symmetry_operations(const int (*rotations)[3][3],
     }
 }
 
-void show_matrix_3d(const double lattice[3][3]) {
+void show_matrix_3d(double const lattice[3][3]) {
     for (int i = 0; i < 3; i++) {
         printf("%f %f %f\n", lattice[0][i], lattice[1][i], lattice[2][i]);
     }
 }
 
-void show_cell(const double lattice[3][3], const double positions[][3],
-               const int types[], const int num_atoms) {
+void show_cell(double const lattice[3][3], double const positions[][3],
+               int const types[], int const num_atoms) {
     printf("Lattice parameter:\n");
     show_matrix_3d(lattice);
     printf("Atomic positions:\n");
@@ -34,7 +34,7 @@ void show_cell(const double lattice[3][3], const double positions[][3],
     }
 }
 
-void show_spacegroup_type(const SpglibSpacegroupType spgtype) {
+void show_spacegroup_type(SpglibSpacegroupType const spgtype) {
     printf("Number:            %d\n", spgtype.number);
     printf("International:     %s\n", spgtype.international_short);
     printf("International:     %s\n", spgtype.international_full);
@@ -47,10 +47,10 @@ void show_spacegroup_type(const SpglibSpacegroupType spgtype) {
     printf("Arithmetic cc sym. %s\n", spgtype.arithmetic_crystal_class_symbol);
 }
 
-void show_magnetic_symmetry_operations(const int (*rotations)[3][3],
-                                       const double (*translations)[3],
-                                       const int *time_reversals,
-                                       const int size) {
+void show_magnetic_symmetry_operations(int const (*rotations)[3][3],
+                                       double const (*translations)[3],
+                                       int const *time_reversals,
+                                       int const size) {
     int i, j;
     for (i = 0; i < size; i++) {
         printf("--- %d ---\n", i + 1);
@@ -64,7 +64,7 @@ void show_magnetic_symmetry_operations(const int (*rotations)[3][3],
     }
 }
 
-void show_magnetic_spacegroup_type(const SpglibMagneticSpacegroupType msgtype) {
+void show_magnetic_spacegroup_type(SpglibMagneticSpacegroupType const msgtype) {
     printf("UNI Number:    %d\n", msgtype.uni_number);
     printf("Litvin Number: %d\n", msgtype.litvin_number);
     printf("BNS Number:    %s\n", msgtype.bns_number);
@@ -73,7 +73,7 @@ void show_magnetic_spacegroup_type(const SpglibMagneticSpacegroupType msgtype) {
     printf("Type:          %d\n", msgtype.type);
 }
 
-void show_spg_magnetic_dataset(const SpglibMagneticDataset *dataset) {
+void show_spg_magnetic_dataset(SpglibMagneticDataset const *dataset) {
     int i, p, s;
     printf("UNI number: %d\n", dataset->uni_number);
     printf("Type: %d\n", dataset->msg_type);
@@ -135,9 +135,9 @@ void show_spg_magnetic_dataset(const SpglibMagneticDataset *dataset) {
 }
 
 int sub_spg_standardize_cell(double lattice[3][3], double position[][3],
-                             int types[], const int num_atom,
-                             const double symprec, const int to_primitive,
-                             const int no_idealize) {
+                             int types[], int const num_atom,
+                             double const symprec, int const to_primitive,
+                             int const no_idealize) {
     int i, num_primitive_atom, retval;
     double lat[3][3];
     double(*pos)[3];
@@ -199,15 +199,15 @@ int sub_spg_standardize_cell(double lattice[3][3], double position[][3],
     return retval;
 }
 
-int show_spg_dataset(double lattice[3][3], const double origin_shift[3],
-                     double position[][3], const int num_atom,
-                     const int types[]) {
+int show_spg_dataset(double lattice[3][3], double const origin_shift[3],
+                     double position[][3], int const num_atom,
+                     int const types[]) {
     SpglibDataset *dataset;
     char ptsymbol[6];
     int pt_trans_mat[3][3];
     int i, j;
     int retval = 0;
-    const char *wl = "abcdefghijklmnopqrstuvwxyz";
+    char const *wl = "abcdefghijklmnopqrstuvwxyz";
 
     for (i = 0; i < num_atom; i++) {
         for (j = 0; j < 3; j++) {
@@ -269,7 +269,7 @@ end:
 
 #ifdef _MSC_VER
 // https://stackoverflow.com/a/23616164
-int setenv(const char *name, const char *value, int overwrite) {
+int setenv(char const *name, char const *value, int overwrite) {
     int errcode = 0;
     if (!overwrite) {
         size_t envsize = 0;

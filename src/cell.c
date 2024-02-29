@@ -45,25 +45,25 @@
 #define REDUCE_RATE 0.95
 #define NUM_ATTEMPT 100
 
-static Cell *trim_cell(int *mapping_table, const double trimmed_lattice[3][3],
-                       const Cell *cell, const double symprec);
+static Cell *trim_cell(int *mapping_table, double const trimmed_lattice[3][3],
+                       Cell const *cell, double const symprec);
 static void set_positions_and_tensors(Cell *trimmed_cell,
-                                      const VecDBL *position,
-                                      const SiteTensorType tensor_rank,
-                                      const double *tensors,
-                                      const int *mapping_table,
-                                      const int *overlap_table);
-static VecDBL *translate_atoms_in_trimmed_lattice(const Cell *cell,
-                                                  const int tmat_p_i[3][3]);
-static int *get_overlap_table(const VecDBL *position, const int cell_size,
-                              const int *cell_types, const Cell *trimmed_cell,
-                              const double symprec);
+                                      VecDBL const *position,
+                                      SiteTensorType const tensor_rank,
+                                      double const *tensors,
+                                      int const *mapping_table,
+                                      int const *overlap_table);
+static VecDBL *translate_atoms_in_trimmed_lattice(Cell const *cell,
+                                                  int const tmat_p_i[3][3]);
+static int *get_overlap_table(VecDBL const *position, int const cell_size,
+                              int const *cell_types, Cell const *trimmed_cell,
+                              double const symprec);
 
 // @brief Allocate Cell. NULL is returned if failed
 // @param size number of atoms
 // @param tensor_rank rank of site tensors for magnetic symmetry. Set -1 if
 // not used.
-Cell *cel_alloc_cell(const int size, const SiteTensorType tensor_rank) {
+Cell *cel_alloc_cell(int const size, SiteTensorType const tensor_rank) {
     Cell *cell;
 
     cell = NULL;
@@ -140,8 +140,8 @@ void cel_free_cell(Cell *cell) {
     }
 }
 
-void cel_set_cell(Cell *cell, const double lattice[3][3],
-                  const double position[][3], const int types[]) {
+void cel_set_cell(Cell *cell, double const lattice[3][3],
+                  double const position[][3], int const types[]) {
     int i, j;
     mat_copy_matrix_d3(cell->lattice, lattice);
     for (i = 0; i < cell->size; i++) {
@@ -153,9 +153,9 @@ void cel_set_cell(Cell *cell, const double lattice[3][3],
 }
 
 /* aperiodic_axis = -1 for none; = 0 1 2 for a b c */
-void cel_set_layer_cell(Cell *cell, const double lattice[3][3],
-                        const double position[][3], const int types[],
-                        const int aperiodic_axis) {
+void cel_set_layer_cell(Cell *cell, double const lattice[3][3],
+                        double const position[][3], int const types[],
+                        int const aperiodic_axis) {
     int i, j;
     mat_copy_matrix_d3(cell->lattice, lattice);
     for (i = 0; i < cell->size; i++) {
@@ -172,9 +172,9 @@ void cel_set_layer_cell(Cell *cell, const double lattice[3][3],
     cell->aperiodic_axis = aperiodic_axis;
 }
 
-void cel_set_cell_with_tensors(Cell *cell, const double lattice[3][3],
-                               const double position[][3], const int types[],
-                               const double *tensors) {
+void cel_set_cell_with_tensors(Cell *cell, double const lattice[3][3],
+                               double const position[][3], int const types[],
+                               double const *tensors) {
     int i, j;
 
     cel_set_cell(cell, lattice, position, types);
@@ -189,7 +189,7 @@ void cel_set_cell_with_tensors(Cell *cell, const double lattice[3][3],
     }
 }
 
-Cell *cel_copy_cell(const Cell *cell) {
+Cell *cel_copy_cell(Cell const *cell) {
     Cell *cell_new;
 
     cell_new = NULL;
@@ -211,8 +211,8 @@ Cell *cel_copy_cell(const Cell *cell) {
     return cell_new;
 }
 
-int cel_is_overlap(const double a[3], const double b[3],
-                   const double lattice[3][3], const double symprec) {
+int cel_is_overlap(double const a[3], double const b[3],
+                   double const lattice[3][3], double const symprec) {
     int i;
     double v_diff[3];
 
@@ -229,10 +229,10 @@ int cel_is_overlap(const double a[3], const double b[3],
     }
 }
 
-int cel_is_overlap_with_same_type(const double a[3], const double b[3],
-                                  const int type_a, const int type_b,
-                                  const double lattice[3][3],
-                                  const double symprec) {
+int cel_is_overlap_with_same_type(double const a[3], double const b[3],
+                                  int const type_a, int const type_b,
+                                  double const lattice[3][3],
+                                  double const symprec) {
     if (type_a == type_b) {
         return cel_is_overlap(a, b, lattice, symprec);
     } else {
@@ -242,7 +242,7 @@ int cel_is_overlap_with_same_type(const double a[3], const double b[3],
 
 /* 1: At least one overlap of a pair of atoms was found. */
 /* 0: No overlap of atoms was found. */
-int cel_any_overlap(const Cell *cell, const double symprec) {
+int cel_any_overlap(Cell const *cell, double const symprec) {
     int i, j;
 
     for (i = 0; i < cell->size; i++) {
@@ -258,7 +258,7 @@ int cel_any_overlap(const Cell *cell, const double symprec) {
 
 /* 1: At least one overlap of a pair of atoms with same type was found. */
 /* 0: No overlap of atoms was found. */
-int cel_any_overlap_with_same_type(const Cell *cell, const double symprec) {
+int cel_any_overlap_with_same_type(Cell const *cell, double const symprec) {
     int i, j;
 
     for (i = 0; i < cell->size; i++) {
@@ -275,9 +275,9 @@ int cel_any_overlap_with_same_type(const Cell *cell, const double symprec) {
 
 /* Modified from cel_is_overlap */
 /* Periodic boundary condition only applied on 2 directions */
-int cel_layer_is_overlap(const double a[3], const double b[3],
-                         const double lattice[3][3], const int periodic_axes[2],
-                         const double symprec) {
+int cel_layer_is_overlap(double const a[3], double const b[3],
+                         double const lattice[3][3], int const periodic_axes[2],
+                         double const symprec) {
     double v_diff[3];
 
     v_diff[0] = a[0] - b[0];
@@ -295,11 +295,11 @@ int cel_layer_is_overlap(const double a[3], const double b[3],
     }
 }
 
-int cel_layer_is_overlap_with_same_type(const double a[3], const double b[3],
-                                        const int type_a, const int type_b,
-                                        const double lattice[3][3],
-                                        const int periodic_axes[2],
-                                        const double symprec) {
+int cel_layer_is_overlap_with_same_type(double const a[3], double const b[3],
+                                        int const type_a, int const type_b,
+                                        double const lattice[3][3],
+                                        int const periodic_axes[2],
+                                        double const symprec) {
     if (type_a == type_b) {
         return cel_layer_is_overlap(a, b, lattice, periodic_axes, symprec);
     } else {
@@ -309,9 +309,9 @@ int cel_layer_is_overlap_with_same_type(const double a[3], const double b[3],
 
 /* 1: At least one overlap of a pair of atoms with same type was found. */
 /* 0: No overlap of atoms was found. */
-int cel_layer_any_overlap_with_same_type(const Cell *cell,
-                                         const int periodic_axes[2],
-                                         const double symprec) {
+int cel_layer_any_overlap_with_same_type(Cell const *cell,
+                                         int const periodic_axes[2],
+                                         double const symprec) {
     int i, j;
 
     for (i = 0; i < cell->size; i++) {
@@ -334,14 +334,14 @@ int cel_layer_any_overlap_with_same_type(const Cell *cell,
 /// `trimmed_lattice` is created.
 /// @param[in] symprec tolerance parameter.
 /// @return smaller cell having basis vectors of `trimmed_lattice`.
-Cell *cel_trim_cell(int *mapping_table, const double trimmed_lattice[3][3],
-                    const Cell *cell, const double symprec) {
+Cell *cel_trim_cell(int *mapping_table, double const trimmed_lattice[3][3],
+                    Cell const *cell, double const symprec) {
     return trim_cell(mapping_table, trimmed_lattice, cell, symprec);
 }
 
 /* Return NULL if failed */
-static Cell *trim_cell(int *mapping_table, const double trimmed_lattice[3][3],
-                       const Cell *cell, const double symprec) {
+static Cell *trim_cell(int *mapping_table, double const trimmed_lattice[3][3],
+                       Cell const *cell, double const symprec) {
     int i, index_atom, ratio;
     Cell *trimmed_cell;
     VecDBL *position;
@@ -432,11 +432,11 @@ err:
 /// @brief Set trimmed_cell->position and trimmed_cell->tensors by averaging
 /// over overlapped atoms
 static void set_positions_and_tensors(Cell *trimmed_cell,
-                                      const VecDBL *position,
-                                      const SiteTensorType tensor_rank,
-                                      const double *tensors,
-                                      const int *mapping_table,
-                                      const int *overlap_table) {
+                                      VecDBL const *position,
+                                      SiteTensorType const tensor_rank,
+                                      double const *tensors,
+                                      int const *mapping_table,
+                                      int const *overlap_table) {
     int i, j, k, l, multi, atom_idx;
 
     for (i = 0; i < trimmed_cell->size; i++) {
@@ -505,8 +505,8 @@ static void set_positions_and_tensors(Cell *trimmed_cell,
 }
 
 /* Return NULL if failed */
-static VecDBL *translate_atoms_in_trimmed_lattice(const Cell *cell,
-                                                  const int tmat_p_i[3][3]) {
+static VecDBL *translate_atoms_in_trimmed_lattice(Cell const *cell,
+                                                  int const tmat_p_i[3][3]) {
     int i, j;
     VecDBL *position;
 
@@ -541,9 +541,9 @@ static VecDBL *translate_atoms_in_trimmed_lattice(const Cell *cell,
 /// @return array (cell_size, ) If `position[i]` and `position[j]` with `i` <=
 /// `j` are equivalent, `overlap_table[i]` = `overlap_table[j]` = `i`. Return
 /// NULL if failed.
-static int *get_overlap_table(const VecDBL *position, const int cell_size,
-                              const int *cell_types, const Cell *trimmed_cell,
-                              const double symprec) {
+static int *get_overlap_table(VecDBL const *position, int const cell_size,
+                              int const *cell_types, Cell const *trimmed_cell,
+                              double const symprec) {
     int i, j, attempt, num_overlap, ratio, lattice_rank;
     double trim_tolerance;
     int *overlap_table;

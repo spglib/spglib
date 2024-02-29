@@ -78,10 +78,10 @@ typedef struct {
 // @param[in] num_rotations
 // @param[in] aperiodic_axis Use `aperiodic_axis=-1` for space group.
 Pointgroup ptg_get_transformation_matrix(int transform_mat[3][3],
-                                         const int rotations[][3][3],
-                                         const int num_rotations,
-                                         const int aperiodic_axis);
-Pointgroup ptg_get_pointgroup(const int pointgroup_number);
-PointSymmetry ptg_get_pointsymmetry(const int rotations[][3][3],
-                                    const int num_rotations);
+                                         int const rotations[][3][3],
+                                         int const num_rotations,
+                                         int const aperiodic_axis);
+Pointgroup ptg_get_pointgroup(int const pointgroup_number);
+PointSymmetry ptg_get_pointsymmetry(int const rotations[][3][3],
+                                    int const num_rotations);
 #endif

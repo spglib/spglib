@@ -8522,80 +8522,80 @@ static int cubic_generators[][3][9] = {
 };
 
 static int find_hall_symbol(double origin_shift[3],
-                            const double bravais_lattice[3][3],
-                            const int hall_number, const Centering centering,
-                            const Symmetry *symmetry, const double symprec);
-static int is_hall_symbol(double shift[3], const int hall_number,
-                          const double primitive_lattice[3][3],
-                          const Symmetry *symmetry, const Centering centering,
-                          const int generators[3][9], const double VSpU[3][9],
-                          const double symprec);
-static int is_hall_symbol_cubic(double shift[3], const int hall_number,
-                                const double primitive_lattice[3][3],
-                                const Symmetry *symmetry,
-                                const Centering centering,
-                                const double symprec);
-static int is_hall_symbol_hexa(double shift[3], const int hall_number,
-                               const double primitive_lattice[3][3],
-                               const Symmetry *symmetry, const double symprec);
-static int is_hall_symbol_rhombo(double shift[3], const int hall_number,
-                                 const double primitive_lattice[3][3],
-                                 const Symmetry *symmetry,
-                                 const double symprec);
-static int is_hall_symbol_trigonal(double shift[3], const int hall_number,
-                                   const double primitive_lattice[3][3],
-                                   const Symmetry *symmetry,
-                                   const double symprec);
-static int is_hall_symbol_tetra(double shift[3], const int hall_number,
-                                const double primitive_lattice[3][3],
-                                const Symmetry *symmetry,
-                                const Centering centering,
-                                const double symprec);
-static int is_hall_symbol_ortho(double shift[3], const int hall_number,
-                                const double primitive_lattice[3][3],
-                                const Symmetry *symmetry,
-                                const Centering centering,
-                                const double symprec);
-static int is_hall_symbol_monocli(double shift[3], const int hall_number,
-                                  const double primitive_lattice[3][3],
-                                  const Symmetry *symmetry,
-                                  const Centering centering,
-                                  const double symprec);
-static int is_hall_symbol_tricli(double shift[3], const int hall_number,
-                                 const double primitive_lattice[3][3],
-                                 const Symmetry *symmetry,
-                                 const double symprec);
-static int get_translations(double trans[3][3], const Symmetry *symmetry,
-                            const int rot[3][3][3]);
+                            double const bravais_lattice[3][3],
+                            int const hall_number, Centering const centering,
+                            Symmetry const *symmetry, double const symprec);
+static int is_hall_symbol(double shift[3], int const hall_number,
+                          double const primitive_lattice[3][3],
+                          Symmetry const *symmetry, Centering const centering,
+                          int const generators[3][9], double const VSpU[3][9],
+                          double const symprec);
+static int is_hall_symbol_cubic(double shift[3], int const hall_number,
+                                double const primitive_lattice[3][3],
+                                Symmetry const *symmetry,
+                                Centering const centering,
+                                double const symprec);
+static int is_hall_symbol_hexa(double shift[3], int const hall_number,
+                               double const primitive_lattice[3][3],
+                               Symmetry const *symmetry, double const symprec);
+static int is_hall_symbol_rhombo(double shift[3], int const hall_number,
+                                 double const primitive_lattice[3][3],
+                                 Symmetry const *symmetry,
+                                 double const symprec);
+static int is_hall_symbol_trigonal(double shift[3], int const hall_number,
+                                   double const primitive_lattice[3][3],
+                                   Symmetry const *symmetry,
+                                   double const symprec);
+static int is_hall_symbol_tetra(double shift[3], int const hall_number,
+                                double const primitive_lattice[3][3],
+                                Symmetry const *symmetry,
+                                Centering const centering,
+                                double const symprec);
+static int is_hall_symbol_ortho(double shift[3], int const hall_number,
+                                double const primitive_lattice[3][3],
+                                Symmetry const *symmetry,
+                                Centering const centering,
+                                double const symprec);
+static int is_hall_symbol_monocli(double shift[3], int const hall_number,
+                                  double const primitive_lattice[3][3],
+                                  Symmetry const *symmetry,
+                                  Centering const centering,
+                                  double const symprec);
+static int is_hall_symbol_tricli(double shift[3], int const hall_number,
+                                 double const primitive_lattice[3][3],
+                                 Symmetry const *symmetry,
+                                 double const symprec);
+static int get_translations(double trans[3][3], Symmetry const *symmetry,
+                            int const rot[3][3][3]);
 static void transform_translation(double trans_reduced[3],
-                                  const Centering centering,
-                                  const double trans[3]);
+                                  Centering const centering,
+                                  double const trans[3]);
 static void transform_rotation(double rot_reduced[3][3],
-                               const Centering centering, const int rot[3][3]);
-static int get_origin_shift(double shift[3], const int hall_number,
-                            const int rot[3][3][3], const double trans[3][3],
-                            const Centering centering, const double VSpU[3][9]);
-static void unpack_generators(int rot[3][3][3], const int generators[3][9]);
-static int set_dw(double dw[3], const int operation_index[2],
-                  const int rot[3][3], const double trans[3],
-                  const Centering centering);
-static int is_match_database(const int hall_number, const double shift[3],
-                             const double primitive_lattice[3][3],
-                             const Centering centering,
-                             const Symmetry *symmetry, const double symprec);
+                               Centering const centering, int const rot[3][3]);
+static int get_origin_shift(double shift[3], int const hall_number,
+                            int const rot[3][3][3], double const trans[3][3],
+                            Centering const centering, double const VSpU[3][9]);
+static void unpack_generators(int rot[3][3][3], int const generators[3][9]);
+static int set_dw(double dw[3], int const operation_index[2],
+                  int const rot[3][3], double const trans[3],
+                  Centering const centering);
+static int is_match_database(int const hall_number, double const shift[3],
+                             double const primitive_lattice[3][3],
+                             Centering const centering,
+                             Symmetry const *symmetry, double const symprec);
 
 int hal_match_hall_symbol_db(double origin_shift[3],
-                             const double bravais_lattice[3][3],
-                             const int hall_number, const Centering centering,
-                             const Symmetry *symmetry, const double symprec) {
+                             double const bravais_lattice[3][3],
+                             int const hall_number, Centering const centering,
+                             Symmetry const *symmetry, double const symprec) {
     return find_hall_symbol(origin_shift, bravais_lattice, hall_number,
                             centering, symmetry, symprec);
 }
 
 static int find_hall_symbol(double origin_shift[3],
-                            const double bravais_lattice[3][3],
-                            const int hall_number, const Centering centering,
-                            const Symmetry *symmetry, const double symprec) {
+                            double const bravais_lattice[3][3],
+                            int const hall_number, Centering const centering,
+                            Symmetry const *symmetry, double const symprec) {
     double primitive_lattice[3][3];
 
     switch (centering) {
@@ -8741,11 +8741,11 @@ found:
     return 1;
 }
 
-static int is_hall_symbol_cubic(double shift[3], const int hall_number,
-                                const double primitive_lattice[3][3],
-                                const Symmetry *symmetry,
-                                const Centering centering,
-                                const double symprec) {
+static int is_hall_symbol_cubic(double shift[3], int const hall_number,
+                                double const primitive_lattice[3][3],
+                                Symmetry const *symmetry,
+                                Centering const centering,
+                                double const symprec) {
     int i;
 
     for (i = 0; i < 10; i++) {
@@ -8780,9 +8780,9 @@ found:
     return 1;
 }
 
-static int is_hall_symbol_hexa(double shift[3], const int hall_number,
-                               const double primitive_lattice[3][3],
-                               const Symmetry *symmetry, const double symprec) {
+static int is_hall_symbol_hexa(double shift[3], int const hall_number,
+                               double const primitive_lattice[3][3],
+                               Symmetry const *symmetry, double const symprec) {
     int i;
 
     for (i = 0; i < 8; i++) {
@@ -8796,10 +8796,10 @@ static int is_hall_symbol_hexa(double shift[3], const int hall_number,
     return 0;
 }
 
-static int is_hall_symbol_trigonal(double shift[3], const int hall_number,
-                                   const double primitive_lattice[3][3],
-                                   const Symmetry *symmetry,
-                                   const double symprec) {
+static int is_hall_symbol_trigonal(double shift[3], int const hall_number,
+                                   double const primitive_lattice[3][3],
+                                   Symmetry const *symmetry,
+                                   double const symprec) {
     int i;
 
     for (i = 0; i < 13; i++) {
@@ -8813,10 +8813,10 @@ static int is_hall_symbol_trigonal(double shift[3], const int hall_number,
     return 0;
 }
 
-static int is_hall_symbol_rhombo(double shift[3], const int hall_number,
-                                 const double primitive_lattice[3][3],
-                                 const Symmetry *symmetry,
-                                 const double symprec) {
+static int is_hall_symbol_rhombo(double shift[3], int const hall_number,
+                                 double const primitive_lattice[3][3],
+                                 Symmetry const *symmetry,
+                                 double const symprec) {
     int i;
 
     if (hall_number == 433 || hall_number == 436 || hall_number == 444 ||
@@ -8844,11 +8844,11 @@ static int is_hall_symbol_rhombo(double shift[3], const int hall_number,
     return 0;
 }
 
-static int is_hall_symbol_tetra(double shift[3], const int hall_number,
-                                const double primitive_lattice[3][3],
-                                const Symmetry *symmetry,
-                                const Centering centering,
-                                const double symprec) {
+static int is_hall_symbol_tetra(double shift[3], int const hall_number,
+                                double const primitive_lattice[3][3],
+                                Symmetry const *symmetry,
+                                Centering const centering,
+                                double const symprec) {
     int i;
 
     for (i = 0; i < 8; i++) {
@@ -8872,11 +8872,11 @@ static int is_hall_symbol_tetra(double shift[3], const int hall_number,
     return 0;
 }
 
-static int is_hall_symbol_ortho(double shift[3], const int hall_number,
-                                const double primitive_lattice[3][3],
-                                const Symmetry *symmetry,
-                                const Centering centering,
-                                const double symprec) {
+static int is_hall_symbol_ortho(double shift[3], int const hall_number,
+                                double const primitive_lattice[3][3],
+                                Symmetry const *symmetry,
+                                Centering const centering,
+                                double const symprec) {
     int i;
 
     for (i = 0; i < 5; i++) {
@@ -8932,11 +8932,11 @@ static int is_hall_symbol_ortho(double shift[3], const int hall_number,
     return 0;
 }
 
-static int is_hall_symbol_monocli(double shift[3], const int hall_number,
-                                  const double primitive_lattice[3][3],
-                                  const Symmetry *symmetry,
-                                  const Centering centering,
-                                  const double symprec) {
+static int is_hall_symbol_monocli(double shift[3], int const hall_number,
+                                  double const primitive_lattice[3][3],
+                                  Symmetry const *symmetry,
+                                  Centering const centering,
+                                  double const symprec) {
     int i;
 
     for (i = 0; i < 9; i++) {
@@ -8984,10 +8984,10 @@ static int is_hall_symbol_monocli(double shift[3], const int hall_number,
     return 0;
 }
 
-static int is_hall_symbol_tricli(double shift[3], const int hall_number,
-                                 const double primitive_lattice[3][3],
-                                 const Symmetry *symmetry,
-                                 const double symprec) {
+static int is_hall_symbol_tricli(double shift[3], int const hall_number,
+                                 double const primitive_lattice[3][3],
+                                 Symmetry const *symmetry,
+                                 double const symprec) {
     int i;
 
     for (i = 0; i < 2; i++) {
@@ -9001,7 +9001,7 @@ static int is_hall_symbol_tricli(double shift[3], const int hall_number,
     return 0;
 }
 
-static void unpack_generators(int rot[3][3][3], const int generators[3][9]) {
+static void unpack_generators(int rot[3][3][3], int const generators[3][9]) {
     int i, j, k;
     for (i = 0; i < 3; i++) {
         for (j = 0; j < 3; j++) {
@@ -9012,11 +9012,11 @@ static void unpack_generators(int rot[3][3][3], const int generators[3][9]) {
     }
 }
 
-static int is_hall_symbol(double shift[3], const int hall_number,
-                          const double primitive_lattice[3][3],
-                          const Symmetry *symmetry, const Centering centering,
-                          const int generators[3][9], const double VSpU[3][9],
-                          const double symprec) {
+static int is_hall_symbol(double shift[3], int const hall_number,
+                          double const primitive_lattice[3][3],
+                          Symmetry const *symmetry, Centering const centering,
+                          int const generators[3][9], double const VSpU[3][9],
+                          double const symprec) {
     int is_origin_shift;
     int operation_index[2];
     int rot[3][3][3];
@@ -9058,11 +9058,11 @@ found:
     return 1;
 }
 
-static int get_translations(double trans[3][3], const Symmetry *symmetry,
-                            const int rot[3][3][3]) {
+static int get_translations(double trans[3][3], Symmetry const *symmetry,
+                            int const rot[3][3][3]) {
     int i, j;
     int is_found;
-    static const int zero[3][3] = {
+    static int const zero[3][3] = {
         {0, 0, 0},
         {0, 0, 0},
         {0, 0, 0},
@@ -9099,8 +9099,8 @@ not_found:
 }
 
 static void transform_translation(double trans_reduced[3],
-                                  const Centering centering,
-                                  const double trans[3]) {
+                                  Centering const centering,
+                                  double const trans[3]) {
     /* This is done in get_origin_shift
     int i;
     */
@@ -9139,7 +9139,7 @@ static void transform_translation(double trans_reduced[3],
 }
 
 static void transform_rotation(double rot_reduced[3][3],
-                               const Centering centering, const int rot[3][3]) {
+                               Centering const centering, int const rot[3][3]) {
     mat_cast_matrix_3i_to_3d(rot_reduced, rot);
     if (centering != PRIMITIVE) {
         switch (centering) {
@@ -9173,10 +9173,10 @@ static void transform_rotation(double rot_reduced[3][3],
     }
 }
 
-static int get_origin_shift(double shift[3], const int hall_number,
-                            const int rot[3][3][3], const double trans[3][3],
-                            const Centering centering,
-                            const double VSpU[3][9]) {
+static int get_origin_shift(double shift[3], int const hall_number,
+                            int const rot[3][3][3], double const trans[3][3],
+                            Centering const centering,
+                            double const VSpU[3][9]) {
     int i, j;
     int operation_index[2];
     double dw[9], tmp_dw[3];
@@ -9220,9 +9220,9 @@ not_found:
     return 0;
 }
 
-static int set_dw(double dw[3], const int operation_index[2],
-                  const int rot[3][3], const double trans[3],
-                  const Centering centering) {
+static int set_dw(double dw[3], int const operation_index[2],
+                  int const rot[3][3], double const trans[3],
+                  Centering const centering) {
     int i, j;
     int rot_db[3][3];
     double trans_db[3], trans_prim[3], trans_db_prim[3];
@@ -9247,11 +9247,11 @@ found:
     return 1;
 }
 
-static int is_match_database(const int hall_number,
-                             const double origin_shift[3],
-                             const double primitive_lattice[3][3],
-                             const Centering centering,
-                             const Symmetry *symmetry, const double symprec) {
+static int is_match_database(int const hall_number,
+                             double const origin_shift[3],
+                             double const primitive_lattice[3][3],
+                             Centering const centering,
+                             Symmetry const *symmetry, double const symprec) {
     int i, j, k, is_found;
     int operation_index[2];
     int rot_db[3][3];
