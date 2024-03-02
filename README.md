@@ -189,7 +189,7 @@ improvements. See [Contributing.md](Contributing.md) for more details.
 ## Documentation
 
 See [https://spglib.readthedocs.io/](https://spglib.readthedocs.io/) for further
-documentation. See the [doc documentation](doc/README.md) for more information on
+documentation. See the [documentation](docs/README.md) for more information on
 how to contribute to the documentation.
 
 [ci-badge]: https://github.com/spglib/spglib/actions/workflows/ci.yaml/badge.svg?branch=develop&event=push

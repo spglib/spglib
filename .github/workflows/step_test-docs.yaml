@@ -32,5 +32,4 @@ jobs:
       - name: Temporary workaround for pybtex
         run: pip install setuptools
       - name: Run sphinx builder ${{ matrix.builder }}
-        # TODO: Sphinx convention is to use `docs` instead of `doc`
-        run: sphinx-build -b ${{ matrix.builder }} ${{ matrix.args }} ./doc ./doc/_build
+        run: sphinx-build -b ${{ matrix.builder }} ${{ matrix.args }} ./docs ./docs/_build
