@@ -23,6 +23,11 @@ GitHub release pages and in the git history.
 - Bumped minimum CMake version to 3.20
   (Note: previously the project was not tested for the minimum CMake version)
 - Migrated the example and package test to the ctest test-suite
+- Properly mark all deprecated functions where possible
+
+### C Interface
+
+- Mark deprecated api with `[[deprecated]]` and pre-C23 equivalents
 
 ### C interface
 

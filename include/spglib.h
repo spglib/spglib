@@ -56,6 +56,28 @@ extern "C" {
     #define SPG_API
 #endif
 
+// TODO: Remove when enforcing C23
+// Cannot use shortcircuit #if defined(foo) && foo(...)
+#if defined(__has_c_attribute)
+    #define SPG_HAS_C_ATTRIBUTE(x) __has_c_attribute(x)
+#else
+    #define SPG_HAS_C_ATTRIBUTE(x) 0
+#endif
+
+#if SPG_HAS_C_ATTRIBUTE(deprecated)
+    // Use the C23 standard
+    #define SPG_DEPRECATED(msg) [[deprecated(msg)]]
+#elif defined(__GNUC__) || defined(__clang__)
+    // Otherwise try the compiler specific
+    // https://en.cppreference.com/w/c/compiler_support/23
+    #define SPG_DEPRECATED(msg) __attribute__((deprecated(msg)))
+#elif defined(_MSC_VER)
+    #define SPG_DEPRECATED(msg) __declspec(deprecated(msg))
+#else
+    // Can't do anything else
+    #define SPG_DEPRECATED(msg)
+#endif
+
 #include <stddef.h>
 
 /*
@@ -216,7 +238,7 @@ SPG_API SpglibDataset *spg_get_dataset(double const lattice[3][3],
                                        int const types[], int const num_atom,
                                        double const symprec);
 
-/* This is for test using */
+SPG_DEPRECATED("Experimental interface. May be removed in next major release.")
 SPG_API SpglibDataset *spg_get_layer_dataset(
     double const lattice[3][3], double const position[][3], int const types[],
     int const num_atom, int const aperiodic_axis, double const symprec);
@@ -252,17 +274,13 @@ SPG_API SpglibDataset *spgat_get_dataset_with_hall_number(
 SPG_API void spg_free_dataset(SpglibDataset *dataset);
 SPG_API void spg_free_magnetic_dataset(SpglibMagneticDataset *dataset);
 
-/* Find symmetry operations. The operations are stored in */
-/* ``rotation`` and ``translation``. The number of operations is */
-/* return as the return value. Rotations and translations are */
-/* given in fractional coordinates, and ``rotation[i]`` and */
-/* ``translation[i]`` with same index give a symmetry operations, */
-/* i.e., these have to be used together. */
+SPG_DEPRECATED("Use the variables from SpglibDataset (rotations, translations)")
 SPG_API int spg_get_symmetry(int rotation[][3][3], double translation[][3],
                              int const max_size, double const lattice[3][3],
                              double const position[][3], int const types[],
                              int const num_atom, double const symprec);
 
+SPG_DEPRECATED("Use the variables from SpglibDataset (rotations, translations)")
 SPG_API int spgat_get_symmetry(int rotation[][3][3], double translation[][3],
                                int const max_size, double const lattice[3][3],
                                double const position[][3], int const types[],
@@ -333,8 +351,9 @@ SPG_API int spgms_get_symmetry_with_site_tensors(
     int const with_time_reversal, int const is_axial, double const symprec,
     double const angle_tolerance, double const mag_symprec);
 
-/* Deprecated at v2.0 */
-/* Space group type (hall_number) is searched from symmetry operations. */
+// spg_get_spacegroup_type_from_symmetry is a direct replacement
+SPG_DEPRECATED(
+    "Use the variable from SpglibSpacegroupType instead (hall_number)")
 SPG_API int spg_get_hall_number_from_symmetry(int const rotation[][3][3],
                                               double const translation[][3],
                                               int const num_operations,
@@ -361,37 +380,44 @@ spg_get_magnetic_spacegroup_type_from_symmetry(int const rotations[][3][3],
                                                double const lattice[3][3],
                                                double const symprec);
 
-/* Return exact number of symmetry operations. This function may */
-/* be used in advance to allocate memory space for symmetry */
-/* operations. */
+SPG_DEPRECATED("Use the variables from SpglibDataset (n_operations)")
 SPG_API int spg_get_multiplicity(double const lattice[3][3],
                                  double const position[][3], int const types[],
                                  int const num_atom, double const symprec);
 
+SPG_DEPRECATED("Use the variables from SpglibDataset (n_operations)")
 SPG_API int spgat_get_multiplicity(double const lattice[3][3],
                                    double const position[][3],
                                    int const types[], int const num_atom,
                                    double const symprec,
                                    double const angle_tolerance);
 
-/* Space group is found in international table symbol (``symbol``) and */
-/* number (return value). 0 is returned when it fails. */
+SPG_DEPRECATED(
+    "Use the variables from SpglibDataset (spacegroup_number, "
+    "international_symbol)")
 SPG_API int spg_get_international(char symbol[11], double const lattice[3][3],
                                   double const position[][3], int const types[],
                                   int const num_atom, double const symprec);
 
+SPG_DEPRECATED(
+    "Use the variables from SpglibDataset (spacegroup_number, "
+    "international_symbol)")
 SPG_API int spgat_get_international(char symbol[11], double const lattice[3][3],
                                     double const position[][3],
                                     int const types[], int const num_atom,
                                     double const symprec,
                                     double const angle_tolerance);
 
-/* Space group is found in schoenflies (``symbol``) and as number (return */
-/* value).  0 is returned when it fails. */
+SPG_DEPRECATED(
+    "Use the variables from SpglibDataset (spacegroup_number, "
+    "international_symbol)")
 SPG_API int spg_get_schoenflies(char symbol[7], double const lattice[3][3],
                                 double const position[][3], int const types[],
                                 int const num_atom, double const symprec);
 
+SPG_DEPRECATED(
+    "Use the variables from SpglibDataset and SpglibSpacegroupType "
+    "(spacegroup_number, schoenflies)")
 SPG_API int spgat_get_schoenflies(char symbol[7], double const lattice[3][3],
                                   double const position[][3], int const types[],
                                   int const num_atom, double const symprec,
