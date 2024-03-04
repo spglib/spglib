@@ -23,22 +23,21 @@ jobs:
         with:
           fetch-depth: 0
       - uses: lukka/get-cmake@latest
-      - name: Get test coverage for ${{ matrix.coverage }}
+      - name: Run CMake workflow
         uses: lukka/run-cmake@v10.3
         with:
           workflowPreset: "ci-coverage-${{ matrix.coverage }}"
-      - name: Get lcov data
-        uses: danielealbano/lcov-action@v3
-        with:
-          # Note lcov-action prepends and appends wild-cards *. Account for those
-          # https://github.com/danielealbano/lcov-action/issues/11
-          remove_patterns: /test/,/cmake-build*/
+      - name: Get coverage data
+        # TODO: Switch to tagged release
+        uses: threeal/gcovr-action@xml-out
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           name: ${{ matrix.coverage }} coverage
-          files: coverage.info
+          disable_search: true
+          plugin: noop
+          files: coverage-gcovr.xml
           flags: ${{ matrix.coverage }}
           verbose: true
 
@@ -52,27 +51,25 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: 3.x
-      - name: Setup spglib
+      - name: Build spglib
         run: |
-          python -m pip install --upgrade pip
           pip install -e .[test-cov] \
              --config-settings=cmake.define.CMAKE_C_COMPILER=gcc \
              --config-settings=cmake.define.SPGLIB_WITH_TESTS=ON \
              --config-settings=cmake.define.SPGLIB_TEST_COVERAGE=ON \
-             --config-settings=build-dir=build
+             --config-settings=build-dir=cmake-build-coverage
       - name: Test pytest with coverage
-        run: pytest --cov=spglib
-      - name: Get lcov data
-        uses: danielealbano/lcov-action@v3
-        with:
-          # Note lcov-action prepends and appends wild-cards *. Account for those
-          # https://github.com/danielealbano/lcov-action/issues/11
-          remove_patterns: /test/,/cmake-build*/,/tmp/
+        run: pytest --cov --cov-report=xml:coverage-pytest.xml
+      - name: Get coverage data
+        # TODO: Switch to tagged release
+        uses: threeal/gcovr-action@xml-out
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           name: python_api coverage
-          files: coverage.info,.coverage
+          disable_search: true
+          plugin: noop
+          files: coverage-gcovr.xml,coverage-pytest.xml
           flags: python_api
           verbose: true
