@@ -29,6 +29,7 @@ GitHub release pages and in the git history.
   - Environment variable `SPGLIB_DEBUG`: Define any value to enable printing of debug messages
   - Environment variable `SPGLIB_WARNING`: Set to `OFF` to disable warning printing
   - CMake option `SPGLIB_DEBUG`, `SPGLIB_WARNINGS`: Disable the compilation of these messages all-together
+- Expanded Python distribution to more MacOS variants, including MacOS-14 (M1)
 
 ### C Interface
 
@@ -50,6 +51,8 @@ GitHub release pages and in the git history.
 - [\[#402\]](https://github.com/spglib/spglib/pull/402) - Bump artifact actions to v4
 - [\[#402\]](https://github.com/spglib/spglib/pull/402) - Build and inspect python sdist
 - [\[#431\]](https://github.com/spglib/spglib/pull/431) - Test CMake versions
+- [\[#459\]](https://github.com/spglib/spglib/pull/459) - Fix various CI issues
+- [\[#459\]](https://github.com/spglib/spglib/pull/459) - Building for MacOS 14 (M1)
 
 ## v2.3.1 (10 Feb. 2024)
 
