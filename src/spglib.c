@@ -1898,11 +1898,10 @@ static int standardize_primitive(double lattice[3][3], double position[][3],
     for (i = 0; i < primitive->size; i++) {
         /* This is an assertion. */
         if (mapping_table[i] != i) {
-            warning_print("spglib: spa_transform_to_primitive failed.");
+            warning_print("spglib: spa_transform_to_primitive failed.\n");
             warning_print(
                 "Unexpected atom index mapping to primitive (%d != %d).\n",
                 mapping_table[i], i);
-            warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
             free(mapping_table);
             mapping_table = NULL;
             cel_free_cell(bravais);
@@ -2022,18 +2021,16 @@ static int get_standardized_cell(double lattice[3][3], double position[][3],
     if ((primitive = spa_transform_to_primitive(mapping_table, cell,
                                                 dataset->transformation_matrix,
                                                 centering, symprec)) == NULL) {
-        warning_print("spglib: spa_transform_to_primitive failed.");
-        warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
+        warning_print("spglib: spa_transform_to_primitive failed.\n");
     }
 
     for (i = 0; i < cell->size; i++) {
         /* This is an assertion. */
         if (mapping_table[i] != dataset->mapping_to_primitive[i]) {
-            warning_print("spglib: spa_transform_to_primitive failed.");
+            warning_print("spglib: spa_transform_to_primitive failed.\n");
             warning_print(
                 "Unexpected atom index mapping to primitive (%d != %d).\n",
                 mapping_table[i], dataset->mapping_to_primitive[i]);
-            warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
             free(mapping_table);
             mapping_table = NULL;
             cel_free_cell(cell);
@@ -2065,8 +2062,7 @@ static int get_standardized_cell(double lattice[3][3], double position[][3],
 
     if ((std_cell = spa_transform_from_primitive(primitive, centering,
                                                  symprec)) == NULL) {
-        warning_print("spglib: spa_transform_from_primitive failed.");
-        warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
+        warning_print("spglib: spa_transform_from_primitive failed.\n");
     }
     cel_free_cell(primitive);
     primitive = NULL;
