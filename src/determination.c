@@ -78,8 +78,7 @@ DataContainer *det_determine_all(Cell const *cell, int const hall_number,
                 goto found;
             }
             warning_print(
-                "spglib: ref_get_exact_structure_and_symmetry failed.");
-            warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
+                "spglib: ref_get_exact_structure_and_symmetry failed.\n");
             det_free_container(container);
             container = NULL;
         }
@@ -151,9 +150,8 @@ static DataContainer *get_spacegroup_and_primitive(Cell const *cell,
             container->primitive = NULL;
         }
 
-        warning_print("spglib: Attempt %d tolerance = %f failed.", attempt,
-                      tolerance);
-        warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
+        debug_print("spglib: Attempt %d tolerance = %f failed.", attempt,
+                    tolerance);
 
         tolerance *= REDUCE_RATE;
         if (angle_tolerance > 0) {

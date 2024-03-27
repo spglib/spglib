@@ -104,7 +104,7 @@ int get_num_attempts() {
         if (end != num_attempts_str && num_attempts > 0 &&
             num_attempts < INT_MAX)
             return (int)num_attempts;
-        warning_print("Could not parse SPGLIB_NUM_ATTEMPTS=%s\n",
+        warning_print("spglib: Could not parse SPGLIB_NUM_ATTEMPTS=%s\n",
                       num_attempts_str);
     }
     // Otherwise return default number of attempts

@@ -587,8 +587,7 @@ Cell *spa_transform_to_primitive(int *mapping_table, Cell const *cell,
     mat_multiply_matrix_d3(prim_lat, cell->lattice, tmat);
     if ((primitive = cel_trim_cell(mapping_table, prim_lat, cell, symprec)) ==
         NULL) {
-        warning_print("spglib: cel_trim_cell failed.");
-        warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
+        warning_print("spglib: cel_trim_cell failed.\n");
     }
 
     return primitive;
@@ -719,8 +718,7 @@ static Spacegroup *search_spacegroup_with_symmetry(
 
     pointsym = ptg_get_pointsymmetry(symmetry->rot, symmetry->size);
     if (pointsym.size < symmetry->size) {
-        warning_print("spglib: Point symmetry of primitive cell is broken. ");
-        warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+        warning_print("spglib: Point symmetry of primitive cell is broken.\n");
         return NULL;
     }
 
@@ -795,9 +793,8 @@ static int iterative_search_hall_number(
 
     tolerance = symprec;
     for (attempt = 0; attempt < NUM_ATTEMPT; attempt++) {
-        warning_print("spglib: Attempt %d tolerance = %e failed", attempt,
-                      tolerance);
-        warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+        debug_print("spglib: Attempt %d tolerance = %e failed", attempt,
+                    tolerance);
 
         tolerance *= REDUCE_RATE;
         sym_reduced = sym_reduce_operation(primitive->cell, symmetry, tolerance,
@@ -1903,8 +1900,7 @@ static Centering get_base_center(int const tmat[3][3]) {
     }
 
     /* This should not happen. */
-    warning_print("spglib: No centring was found (line %d, %s).\n", __LINE__,
-                  __FILE__);
+    warning_print("spglib: No centring was found.\n");
     return PRIMITIVE;
 
 end:

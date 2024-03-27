@@ -256,8 +256,7 @@ VecDBL *sym_get_pure_translation(Cell const *cell, double const symprec) {
         pure_trans = get_layer_translation(identity, cell, symprec, 1);
     }
     if (pure_trans == NULL) {
-        warning_print("spglib: get_translation failed (line %d, %s).\n",
-                      __LINE__, __FILE__);
+        warning_print("spglib: get_translation failed.\n");
         return NULL;
     }
 
@@ -267,9 +266,7 @@ VecDBL *sym_get_pure_translation(Cell const *cell, double const symprec) {
                     multi);
     } else {
         ;
-        warning_print(
-            "spglib: Finding pure translation failed (line %d, %s).\n",
-            __LINE__, __FILE__);
+        warning_print("spglib: Finding pure translation failed.\n");
         warning_print("        cell->size %d, multi %d\n", cell->size, multi);
     }
 
@@ -998,17 +995,15 @@ static PointSymmetry get_lattice_symmetry(Cell const *cell,
                                            angle_tol)) {
                         if ((aperiodic_axis == -1 && num_sym >= 48) ||
                             (aperiodic_axis != -1 && num_sym >= 24)) {
-                            warning_print(
-                                "spglib: Too many lattice symmetries was "
+                            debug_print(
+                                "spglib: Too many lattice symmetries were "
                                 "found.\n");
                             if (angle_tol > 0) {
                                 angle_tol *= ANGLE_REDUCE_RATE;
-                                warning_print(
-                                    "        Reduce angle tolerance to %f\n",
+                                debug_print(
+                                    "        Reducing angle tolerance to %f\n",
                                     angle_tol);
                             }
-                            warning_print("        (line %d, %s).\n", __LINE__,
-                                          __FILE__);
                             goto next_attempt;
                         }
 
@@ -1118,8 +1113,7 @@ static PointSymmetry transform_pointsymmetry(
             mat_cast_matrix_3d_to_3i(lat_sym_new.rot[size], drot);
             if (abs(mat_get_determinant_i3(lat_sym_new.rot[size])) != 1) {
                 warning_print(
-                    "spglib: A point symmetry operation is not unimodular.");
-                warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+                    "spglib: A point symmetry operation is not unimodular.\n");
                 goto err;
             }
             size++;
@@ -1128,8 +1122,7 @@ static PointSymmetry transform_pointsymmetry(
 
     if (!(lat_sym_orig->size == size)) {
         warning_print(
-            "spglib: Some of point symmetry operations were dropped.");
-        warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+            "spglib: Some of point symmetry operations were dropped.\n");
     }
 
     lat_sym_new.size = size;

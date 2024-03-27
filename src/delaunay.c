@@ -74,7 +74,7 @@ int get_num_attempts() {
         if (end != num_attempts_str && num_attempts > 0 &&
             num_attempts < INT_MAX)
             return (int)num_attempts;
-        warning_print("Could not parse SPGLIB_NUM_ATTEMPTS=%s\n",
+        warning_print("spglib: Could not parse SPGLIB_NUM_ATTEMPTS=%s\n",
                       num_attempts_str);
     }
     // Otherwise return default number of attempts
@@ -147,8 +147,7 @@ static int delaunay_reduce(double red_lattice[3][3], double const lattice[3][3],
 
     volume = mat_get_determinant_d3(red_lattice);
     if (mat_Dabs(volume) < symprec) {
-        warning_print("spglib: Minimum lattice has no volume (line %d, %s).\n",
-                      __LINE__, __FILE__);
+        warning_print("spglib: Minimum lattice has no volume.\n");
         goto err;
     }
 
@@ -167,8 +166,7 @@ static int delaunay_reduce(double red_lattice[3][3], double const lattice[3][3],
     if (abs(mat_get_determinant_i3(tmp_mat_int)) != 1) {
         warning_print(
             "spglib: Determinant of Delaunay change of basis matrix "
-            "has to be 1 or -1 (line %d, %s).\n",
-            __LINE__, __FILE__);
+            "has to be 1 or -1.\n");
         goto err;
     }
 
@@ -313,8 +311,8 @@ static int delaunay_reduce_basis(double basis[4][3], int const lattice_rank,
                      * cell, so just a warning. */
                     warning_print(
                         "spglib: Dot product between basis %d, %d larger than "
-                        "0 (line %d, %s).\n",
-                        i + 1, j + 1, __LINE__, __FILE__);
+                        "0.\n",
+                        i + 1, j + 1);
                     debug_print_vectors_d3(basis, 4);
                 }
             }
@@ -431,8 +429,7 @@ int del_layer_delaunay_reduce_2D(double red_lattice[3][3],
 
     volume = mat_get_determinant_d3(red_lattice);
     if (mat_Dabs(volume) < symprec) {
-        warning_print("spglib: Minimum lattice has no volume (line %d, %s).\n",
-                      __LINE__, __FILE__);
+        warning_print("spglib: Minimum lattice has no volume.\n");
         goto err;
     }
 
@@ -476,8 +473,8 @@ static int delaunay_reduce_basis_2D(double basis[3][3], int const lattice_rank,
                 } else {
                     warning_print(
                         "spglib: Dot product between basis %d, %d larger than "
-                        "0 (line %d, %s).\n",
-                        i + 1, j + 1, __LINE__, __FILE__);
+                        "0.\n",
+                        i + 1, j + 1);
                     debug_print_vectors_d3(basis, 3);
                 }
             }
