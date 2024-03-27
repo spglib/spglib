@@ -1497,7 +1497,6 @@ static int set_dataset(SpglibDataset *dataset, Cell const *cell,
         goto err;
     }
 
-    debug_print("[line %d, %s]\n", __LINE__, __FILE__);
     debug_print("refined cell after ref_get_Wyckoff_positions\n");
     debug_print_matrix_d3(exstr->bravais->lattice);
     for (i = 0; i < exstr->bravais->size; i++) {
