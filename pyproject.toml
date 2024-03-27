@@ -95,8 +95,6 @@ SPGLIB_USE_OMP = "OFF"
 write_to = "python/spglib/_version.py"
 
 [tool.cibuildwheel]
-# pp, win32, i686, muslinux: Remove 32bit variants, PyPY interpreter and unnecessary musl variant
-skip = ["pp*", "*-win32", "*-manylinux_i686", "*-musllinux*"]
 test-extras = "test"
 test-command = "pytest {package}/test/functional/python"
 
