@@ -32,39 +32,67 @@
 /* ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE */
 /* POSSIBILITY OF SUCH DAMAGE. */
 
+#include <stdarg.h>
 #include <stdio.h>
 
 #include "debug.h"
 
-void dbg_print_matrix_d3(double const a[3][3]) {
-    int i;
-    for (i = 0; i < 3; i++) {
+#ifdef SPGDEBUG
+void debug_print_matrix_d3(double const a[3][3]) {
+    for (int i = 0; i < 3; i++) {
         printf("%f %f %f\n", a[i][0], a[i][1], a[i][2]);
     }
 }
 
-void dbg_print_matrix_i3(int const a[3][3]) {
-    int i;
-    for (i = 0; i < 3; i++) {
+void debug_print_matrix_i3(int const a[3][3]) {
+    for (int i = 0; i < 3; i++) {
         printf("%d %d %d\n", a[i][0], a[i][1], a[i][2]);
     }
 }
 
-void dbg_print_vectors_d3(double const a[][3], int size) {
-    int i;
-    for (i = 0; i < size; i++) {
+void debug_print_vectors_d3(double const a[][3], int size) {
+    for (int i = 0; i < size; i++) {
         printf("%d: %f %f %f\n", i + 1, a[i][0], a[i][1], a[i][2]);
     }
 }
 
-void dbg_print_vector_d3(double const a[3]) {
+void debug_print_vector_d3(double const a[3]) {
     printf("%f %f %f\n", a[0], a[1], a[2]);
 }
 
-void dbg_print_vectors_with_label(double const a[][3], int const b[],
-                                  int size) {
-    int i;
-    for (i = 0; i < size; i++) {
+void debug_print_vectors_with_label(double const a[][3], int const b[],
+                                    int size) {
+    for (int i = 0; i < size; i++) {
         printf("%d: %f %f %f\n", b[i], a[i][0], a[i][1], a[i][2]);
     }
 }
+void debug_print(char const* format, ...) {
+    va_list argptr;
+    va_start(argptr, format);
+    vprintf(format, argptr);
+    va_end(argptr);
+}
+#else
+void debug_print_matrix_d3(double const a[3][3]) {}
+
+void debug_print_matrix_i3(int const a[3][3]) {}
+
+void debug_print_vectors_d3(double const a[][3], int size) {}
+
+void debug_print_vector_d3(double const a[3]) {}
+
+void debug_print_vectors_with_label(double const a[][3], int const b[],
+                                    int size) {}
+void debug_print(char const* format, ...) {}
+#endif
+
+#ifdef SPGWARNING
+void warning_print(char const* format, ...) {
+    va_list argptr;
+    va_start(argptr, format);
+    vprintf(format, argptr);
+    va_end(argptr);
+}
+#else
+void warning_print(char const* format, ...) {}
+#endif
