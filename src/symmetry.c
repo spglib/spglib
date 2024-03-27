@@ -126,7 +126,7 @@ Symmetry *sym_alloc_symmetry(int const size) {
     }
 
     if ((symmetry = (Symmetry *)malloc(sizeof(Symmetry))) == NULL) {
-        warning_print("spglib: Memory could not be allocated ");
+        warning_memory("symmetry");
         return NULL;
     }
 
@@ -136,16 +136,14 @@ Symmetry *sym_alloc_symmetry(int const size) {
 
     if ((symmetry->rot = (int(*)[3][3])malloc(sizeof(int[3][3]) * size)) ==
         NULL) {
-        warning_print("spglib: Memory could not be allocated ");
-        warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+        warning_memory("symmetry->rot");
         free(symmetry);
         symmetry = NULL;
         return NULL;
     }
     if ((symmetry->trans = (double(*)[3])malloc(sizeof(double[3]) * size)) ==
         NULL) {
-        warning_print("spglib: Memory could not be allocated ");
-        warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+        warning_memory("symmetry->trans");
         free(symmetry->rot);
         symmetry->rot = NULL;
         free(symmetry);
@@ -178,7 +176,7 @@ MagneticSymmetry *sym_alloc_magnetic_symmetry(int const size) {
 
     if ((symmetry = (MagneticSymmetry *)malloc(sizeof(MagneticSymmetry))) ==
         NULL) {
-        warning_print("spglib: Memory could not be allocated ");
+        warning_memory("symmetry");
         return NULL;
     }
 
@@ -189,16 +187,14 @@ MagneticSymmetry *sym_alloc_magnetic_symmetry(int const size) {
 
     if ((symmetry->rot = (int(*)[3][3])malloc(sizeof(int[3][3]) * size)) ==
         NULL) {
-        warning_print("spglib: Memory could not be allocated ");
-        warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+        warning_memory("symmetry->rot");
         free(symmetry);
         symmetry = NULL;
         return NULL;
     }
     if ((symmetry->trans = (double(*)[3])malloc(sizeof(double[3]) * size)) ==
         NULL) {
-        warning_print("spglib: Memory could not be allocated ");
-        warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+        warning_memory("symmetry->trans");
         free(symmetry->rot);
         symmetry->rot = NULL;
         free(symmetry);
@@ -206,8 +202,7 @@ MagneticSymmetry *sym_alloc_magnetic_symmetry(int const size) {
         return NULL;
     }
     if ((symmetry->timerev = (int *)malloc(sizeof(int *) * size)) == NULL) {
-        warning_print("spglib: Memory could not be allocated ");
-        warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+        warning_memory("symmetry->timerev");
         free(symmetry->rot);
         symmetry->rot = NULL;
         free(symmetry->trans);
@@ -450,7 +445,7 @@ static VecDBL *get_translation(int const rot[3][3], Cell const *cell,
     trans = NULL;
 
     if ((is_found = (int *)malloc(sizeof(int) * cell->size)) == NULL) {
-        warning_print("spglib: Memory could not be allocated ");
+        warning_memory("is_found");
         return NULL;
     }
 
@@ -639,7 +634,7 @@ static int get_index_with_least_atoms(Cell const *cell) {
     mapping = NULL;
 
     if ((mapping = (int *)malloc(sizeof(int) * cell->size)) == NULL) {
-        warning_print("spglib: Memory could not be allocated ");
+        warning_memory("mapping");
         return -1;
     }
 
@@ -689,7 +684,7 @@ static VecDBL *get_layer_translation(int const rot[3][3], Cell const *cell,
     trans = NULL;
 
     if ((is_found = (int *)malloc(sizeof(int) * cell->size)) == NULL) {
-        warning_print("spglib: Memory could not be allocated ");
+        warning_memory("is_found");
         return NULL;
     }
 
@@ -862,7 +857,7 @@ static Symmetry *get_space_group_operations(PointSymmetry const *lattice_sym,
 
     if ((trans = (VecDBL **)malloc(sizeof(VecDBL *) * lattice_sym->size)) ==
         NULL) {
-        warning_print("spglib: Memory could not be allocated ");
+        warning_memory("trans");
         return NULL;
     }
 

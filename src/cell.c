@@ -110,7 +110,7 @@ Cell *cel_alloc_cell(int const size, SiteTensorType const tensor_rank) {
     return cell;
 
 fail:
-    warning_print("spglib: Memory could not be allocated.");
+    warning_memory("cell");
     cel_free_cell(cell);
     cell = NULL;
     return NULL;

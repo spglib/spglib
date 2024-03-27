@@ -122,7 +122,7 @@ static DataContainer *get_spacegroup_and_primitive(Cell const *cell,
     container = NULL;
 
     if ((container = (DataContainer *)malloc(sizeof(DataContainer))) == NULL) {
-        warning_print("spglib: Memory could not be allocated.");
+        warning_memory("container");
         return NULL;
     }
 

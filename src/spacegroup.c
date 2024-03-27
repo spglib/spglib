@@ -641,7 +641,7 @@ Cell *spa_transform_from_primitive(Cell const *primitive,
 
     if ((mapping_table =
              (int *)malloc(sizeof(int) * primitive->size * multi)) == NULL) {
-        warning_print("spglib: Memory could not be allocated ");
+        warning_memory("mapping_table");
         goto ret;
     }
 
@@ -746,7 +746,7 @@ static Spacegroup *get_spacegroup(int const hall_number,
     spacegroup = NULL;
 
     if ((spacegroup = (Spacegroup *)malloc(sizeof(Spacegroup))) == NULL) {
-        warning_print("spglib: Memory could not be allocated.");
+        warning_memory("spacegroup");
         return NULL;
     }
 

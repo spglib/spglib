@@ -125,3 +125,7 @@ void warning_print(char const* format, ...) {
 #else
 void warning_print(char const* format, ...) {}
 #endif
+
+void warning_memory(char const* what) {
+    warning_print("Spglib: Memory could not be allocated: %s\n", what);
+}
