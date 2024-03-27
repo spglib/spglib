@@ -24,6 +24,7 @@ GitHub release pages and in the git history.
   (Note: previously the project was not tested for the minimum CMake version)
 - Migrated the example and package test to the ctest test-suite
 - Properly mark all deprecated functions where possible
+- Expanded Python distribution to more MacOS variants, including MacOS-14 (M1)
 
 ### C Interface
 
@@ -44,6 +45,9 @@ GitHub release pages and in the git history.
 - [\[#425\]](https://github.com/spglib/spglib/pull/425) - Update to codecov v4
 - [\[#402\]](https://github.com/spglib/spglib/pull/402) - Bump artifact actions to v4
 - [\[#402\]](https://github.com/spglib/spglib/pull/402) - Build and inspect python sdist
+- [\[#431\]](https://github.com/spglib/spglib/pull/431) - Test CMake versions
+- [\[#459\]](https://github.com/spglib/spglib/pull/459) - Fix various CI issues
+- [\[#459\]](https://github.com/spglib/spglib/pull/459) - Building for MacOS 14 (M1)
 
 ## v2.3.1 (10 Feb. 2024)
 

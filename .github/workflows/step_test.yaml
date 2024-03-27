@@ -27,20 +27,21 @@ jobs:
         toolchain: [ gcc, llvm, intel ]
         python-version: [ "3.8", "3.x" ]
         include:
-#          - os: windows-2019
-#            toolchain: windows
-#            python-version: "3.x"
           - os: macos-11
             toolchain: macos
+            python-version: "3.x"
+          - os: macos-13
+            toolchain: macos
+            python-version: "3.x"
+          - os: macos-14
+            toolchain: macos
+            python-version: "3.x"
+          - os: windows-2019
+            toolchain: windows
             python-version: "3.x"
           - os: windows-latest
             toolchain: windows
             python-version: "3.x"
-            experimental: true
-          - os: macos-latest
-            toolchain: macos
-            python-version: "3.x"
-            experimental: true
 #          - python-version: "3.13"
 #            experimental: true
 #            pre: true
@@ -84,6 +85,52 @@ jobs:
         with:
           workflowPreset: "${{ matrix.toolchain }}-ci"
         continue-on-error: ${{ matrix.experimental && inputs.mask-experimental}}
+  cmake-version:
+    name: >
+      🔨 CMake ${{ matrix.cmake }}
+      ${{ matrix.experimental && '[🧪 Experimental]' || '' }}
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.experimental || false }}
+    strategy:
+      fail-fast: false
+      matrix:
+        cmake: [ "3.20", "latest", "latestrc" ]
+        include:
+          - cmake: latestrc
+            experimental: true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install dependencies
+        run: |
+          python3 -m pip install pip-tools
+          pip-compile --extra=test --strip-extras pyproject.toml ${{ matrix.pre && '--pre' }}
+          python3 -m pip install -r requirements.txt
+      - uses: lukka/get-cmake@latest
+        with:
+          cmakeVersion: ${{ matrix.cmake }}
+      - name: Run CMake workflow
+        uses: lukka/run-cmake@v10.3
+        with:
+          workflowPreset: gcc-ci
+        continue-on-error: ${{ matrix.experimental && inputs.mask-experimental}}
+        if: matrix.cmake != '3.20'
+      - name: Run CMake manually
+        # Need CMake 3.25 to properly use the presets
+        run: |
+          cmake -B ./build -G Ninja \
+            -DSPGLIB_WITH_Fortran=ON \
+            -DSPGLIB_WITH_TESTS=ON \
+            -DSPGLIB_WITH_Python=ON \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_C_COMPILER=gcc \
+            -DCMAKE_C_COMPILER=g++ \
+            -DCMAKE_C_COMPILER=gfortran
+          cmake --build ./build
+          ctest --test-dir ./build -j $(nproc) --output-on-failure
+        continue-on-error: ${{ matrix.experimental && inputs.mask-experimental}}
+        if: matrix.cmake == '3.20'
   sanitizer:
     name: >
       🧹 ${{ matrix.sanitizer }} +

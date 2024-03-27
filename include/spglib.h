@@ -48,7 +48,7 @@ extern "C" {
         // On Unix this is not necessary
         #define SPG_API __attribute__((visibility("default")))
     #endif
-#elif defined(_MSC_VER)
+#elif defined(_MSC_VER) && !defined(SPG_STATIC_LIBRARY)
     // Otherwise mark it for import (Only needed for windows)
     #define SPG_API __declspec(dllimport)
 #else
