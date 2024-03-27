@@ -99,8 +99,6 @@ write_to = "python/spglib/_version.py"
 skip = ["pp*", "*-win32", "*-manylinux_i686", "*-musllinux*"]
 test-extras = "test"
 test-command = "pytest {package}/test/functional/python"
-# Do not run test on emulated environments
-test-skip = "*-*linux_{aarch64,ppc64le,s390x} *-macosx_arm64 *-macosx_universal2:arm64"
 
 [tool.cibuildwheel.linux]
 # TODO: auditwheel fails if LD_LIBRARY_PATH is not set correctly. Not sure about apprropriate value to set to
