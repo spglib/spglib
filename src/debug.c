@@ -63,41 +63,41 @@ bool warning_enabled() {
 void debug_print_matrix_d3(double const a[3][3]) {
     if (!debug_enabled()) return;
     for (int i = 0; i < 3; i++) {
-        printf("%f %f %f\n", a[i][0], a[i][1], a[i][2]);
+        fprintf(stdout, "%f %f %f\n", a[i][0], a[i][1], a[i][2]);
     }
 }
 
 void debug_print_matrix_i3(int const a[3][3]) {
     if (!debug_enabled()) return;
     for (int i = 0; i < 3; i++) {
-        printf("%d %d %d\n", a[i][0], a[i][1], a[i][2]);
+        fprintf(stdout, "%d %d %d\n", a[i][0], a[i][1], a[i][2]);
     }
 }
 
 void debug_print_vectors_d3(double const a[][3], int size) {
     if (!debug_enabled()) return;
     for (int i = 0; i < size; i++) {
-        printf("%d: %f %f %f\n", i + 1, a[i][0], a[i][1], a[i][2]);
+        fprintf(stdout, "%d: %f %f %f\n", i + 1, a[i][0], a[i][1], a[i][2]);
     }
 }
 
 void debug_print_vector_d3(double const a[3]) {
     if (!debug_enabled()) return;
-    printf("%f %f %f\n", a[0], a[1], a[2]);
+    fprintf(stdout, "%f %f %f\n", a[0], a[1], a[2]);
 }
 
 void debug_print_vectors_with_label(double const a[][3], int const b[],
                                     int size) {
     if (!debug_enabled()) return;
     for (int i = 0; i < size; i++) {
-        printf("%d: %f %f %f\n", b[i], a[i][0], a[i][1], a[i][2]);
+        fprintf(stdout, "%d: %f %f %f\n", b[i], a[i][0], a[i][1], a[i][2]);
     }
 }
 void debug_print(char const* format, ...) {
     if (!debug_enabled()) return;
     va_list argptr;
     va_start(argptr, format);
-    vprintf(format, argptr);
+    vfprintf(stdout, format, argptr);
     va_end(argptr);
 }
 #else
@@ -119,7 +119,7 @@ void warning_print(char const* format, ...) {
     if (!warning_enabled()) return;
     va_list argptr;
     va_start(argptr, format);
-    vprintf(format, argptr);
+    vfprintf(stderr, format, argptr);
     va_end(argptr);
 }
 #else
