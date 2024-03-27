@@ -46,7 +46,7 @@ jobs:
     uses: ./.github/workflows/step_build-wheel.yaml
     needs: [ tests ]
     with:
-      cibw_build: ${{ inputs.cibw_build || 'cp311-*' }}
+      cibw_build: ${{ inputs.cibw_build || '*' }}
 
   test-docs:
     name: 📘 test-docs
