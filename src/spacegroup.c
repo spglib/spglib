@@ -841,7 +841,6 @@ static int search_hall_number(double origin_shift[3], double conv_lattice[3][3],
     pointgroup = ptg_get_transformation_matrix(tmat_int, symmetry->rot,
                                                symmetry->size, aperiodic_axis);
 
-    debug_print("[line %d, %s]\n", __LINE__, __FILE__);
     debug_print("initial transformation matrix\n");
     debug_print_matrix_i3(tmat_int);
 
@@ -883,7 +882,6 @@ static int search_hall_number(double origin_shift[3], double conv_lattice[3][3],
     mat_multiply_matrix_id3(tmat, tmat_int, correction_mat);
     mat_multiply_matrix_d3(conv_lattice, primitive->cell->lattice, tmat);
 
-    debug_print("[line %d, %s]\n", __LINE__, __FILE__);
     debug_print("transformation matrix\n");
     debug_print_matrix_d3(tmat);
 
@@ -900,7 +898,6 @@ static int search_hall_number(double origin_shift[3], double conv_lattice[3][3],
                 origin_shift, conv_lattice, /* <-- modified only matched */
                 primitive->orig_lattice, candidates[i], pointgroup.number,
                 pointgroup.holohedry, centering, conv_symmetry, symprec)) {
-            debug_print("[line %d, %s]\n", __LINE__, __FILE__);
             debug_print("origin shift\n");
             debug_print_vector_d3(origin_shift);
 

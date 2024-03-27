@@ -146,7 +146,7 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
                      tmat_cor, shift_cor, changed_symmetry)) == NULL)
                 goto err;
 
-            debug_print("\e[33mCorrection\e[0m\n");
+            debug_print("\x1B[33mCorrection\x1B[0m\n");
             debug_print_matrix_d3(tmat_cor);
             debug_print_vector_d3(shift_cor);
             for (j = 0; j < symmetry_cor->size; j++) {
