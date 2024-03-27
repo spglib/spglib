@@ -167,30 +167,30 @@ ExactStructure *ref_get_exact_structure_and_symmetry(Spacegroup *spacegroup,
     }
 
     if ((wyckoffs = (int *)malloc(sizeof(int) * cell->size)) == NULL) {
-        warning_print("spglib: Memory could not be allocated.");
+        warning_memory("wyckoffs");
         goto err;
     }
 
     if ((site_symmetry_symbols =
              (char(*)[7])malloc(sizeof(char[7]) * cell->size)) == NULL) {
-        warning_print("spglib: Memory could not be allocated.");
+        warning_memory("site_symmetry_symbols");
         goto err;
     }
 
     if ((equivalent_atoms = (int *)malloc(sizeof(int) * cell->size)) == NULL) {
-        warning_print("spglib: Memory could not be allocated.");
+        warning_memory("equivalent_atoms");
         goto err;
     }
 
     if ((crystallographic_orbits = (int *)malloc(sizeof(int) * cell->size)) ==
         NULL) {
-        warning_print("spglib: Memory could not be allocated.");
+        warning_memory("crystallographic_orbits");
         goto err;
     }
 
     if ((std_mapping_to_primitive =
              (int *)malloc(sizeof(int) * primitive->size * 4)) == NULL) {
-        warning_print("spglib: Memory could not be allocated.");
+        warning_memory("std_mapping_to_primitive");
         goto err;
     }
 
@@ -205,7 +205,7 @@ ExactStructure *ref_get_exact_structure_and_symmetry(Spacegroup *spacegroup,
 
     if ((exact_structure = (ExactStructure *)malloc(sizeof(ExactStructure))) ==
         NULL) {
-        warning_print("spglib: Memory could not be allocated.");
+        warning_memory("exact_structure");
         sym_free_symmetry(symmetry);
         symmetry = NULL;
         cel_free_cell(bravais);
@@ -308,13 +308,13 @@ static Cell *get_Wyckoff_positions(
 
     if ((wyckoffs_bravais = (int *)malloc(sizeof(int) * primitive->size * 4)) ==
         NULL) {
-        warning_print("spglib: Memory could not be allocated ");
+        warning_memory("wyckoffs_bravais");
         return NULL;
     }
 
     if ((site_symmetry_symbols_bravais = (char(*)[7])malloc(
              sizeof(char[7]) * primitive->size * 4)) == NULL) {
-        warning_print("spglib: Memory could not be allocated.");
+        warning_memory("site_symmetry_symbols_bravais");
         free(wyckoffs_bravais);
         wyckoffs_bravais = NULL;
         return NULL;
@@ -322,7 +322,7 @@ static Cell *get_Wyckoff_positions(
 
     if ((equiv_atoms_bravais =
              (int *)malloc(sizeof(int) * primitive->size * 4)) == NULL) {
-        warning_print("spglib: Memory could not be allocated ");
+        warning_memory("equiv_atoms_bravais");
         free(wyckoffs_bravais);
         wyckoffs_bravais = NULL;
         free(site_symmetry_symbols_bravais);
@@ -417,13 +417,13 @@ static Cell *get_bravais_exact_positions_and_lattice(
     /* Symmetrize atomic positions of conventional unit cell */
     if ((wyckoffs_prim = (int *)malloc(sizeof(int) * primitive->size)) ==
         NULL) {
-        warning_print("spglib: Memory could not be allocated ");
+        warning_memory("wyckoffs_prim");
         return NULL;
     }
 
     if ((site_symmetry_symbols_prim =
              (char(*)[7])malloc(sizeof(char[7]) * primitive->size)) == NULL) {
-        warning_print("spglib: Memory could not be allocated ");
+        warning_memory("site_symmetry_symbols_prim");
         free(wyckoffs_prim);
         wyckoffs_prim = NULL;
         return NULL;
@@ -431,7 +431,7 @@ static Cell *get_bravais_exact_positions_and_lattice(
 
     if ((equiv_atoms_prim = (int *)malloc(sizeof(int) * primitive->size)) ==
         NULL) {
-        warning_print("spglib: Memory could not be allocated ");
+        warning_memory("equiv_atoms_prim");
         free(site_symmetry_symbols_prim);
         site_symmetry_symbols_prim = NULL;
         free(wyckoffs_prim);
@@ -923,7 +923,7 @@ static int set_crystallographic_orbits(int *equiv_atoms_cell,
     equiv_atoms = NULL;
 
     if ((equiv_atoms = (int *)malloc(sizeof(int) * primitive->size)) == NULL) {
-        warning_print("spglib: Memory could not be allocated ");
+        warning_memory("equiv_atoms");
         return 0;
     }
 

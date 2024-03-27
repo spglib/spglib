@@ -34,6 +34,7 @@
 
 #pragma once
 
+// Main print interface
 extern inline void warning_print(char const* format, ...);
 extern inline void debug_print(char const* format, ...);
 extern inline void debug_print_matrix_d3(double const a[3][3]);
@@ -42,3 +43,6 @@ extern inline void debug_print_vector_d3(double const a[3]);
 extern inline void debug_print_vectors_d3(double const a[][3], int size);
 extern inline void debug_print_vectors_with_label(double const a[][3],
                                                   int const b[], int size);
+
+// Common messages
+extern inline void warning_memory(char const* what);

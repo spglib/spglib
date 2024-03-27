@@ -399,8 +399,7 @@ static void *perm_argsort_work_malloc(int n) {
 
     if ((work = (ValueWithIndex *)(malloc(sizeof(ValueWithIndex) * n))) ==
         NULL) {
-        warning_print(
-            "spglib: Memory could not be allocated for argsort workspace.");
+        warning_memory("work");
         return NULL;
     }
     return work;
@@ -503,12 +502,12 @@ static OverlapChecker *overlap_checker_alloc(int size) {
     blob_size = offset;
 
     if ((checker = (OverlapChecker *)malloc(sizeof(OverlapChecker))) == NULL) {
-        warning_print("spglib: Memory could not be allocated for checker.");
+        warning_memory("checker");
         return NULL;
     }
 
     if ((checker->blob = malloc(blob_size)) == NULL) {
-        warning_print("spglib: Memory could not be allocated for checker.");
+        warning_memory("checker->blob");
         free(checker);
         checker = NULL;
         return NULL;
@@ -627,7 +626,7 @@ static int check_total_overlap_for_sorted(
     found = NULL;
 
     if ((found = (int *)malloc(num_pos * sizeof(int))) == NULL) {
-        warning_print("spglib: Memory could not be allocated");
+        warning_memory("found");
         return -1;
     }
 
@@ -690,7 +689,7 @@ static int check_layer_total_overlap_for_sorted(
     found = NULL;
 
     if ((found = (int *)malloc(num_pos * sizeof(int))) == NULL) {
-        warning_print("spglib: Memory could not be allocated");
+        warning_memory("found");
         return -1;
     }
 

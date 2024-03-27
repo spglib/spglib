@@ -140,7 +140,7 @@ static VecDBL *get_exact_positions(int *equiv_atoms, Cell const *conv_prim,
     }
 
     if ((indep_atoms = (int *)malloc(sizeof(int) * conv_prim->size)) == NULL) {
-        warning_print("spglib: Memory could not be allocated ");
+        warning_memory("indep_atoms");
         mat_free_VecDBL(positions);
         return NULL;
     }
