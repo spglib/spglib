@@ -4,6 +4,10 @@ set_property(DIRECTORY APPEND PROPERTY
 )
 add_dependencies(Spglib_symspg Spglib_GitHash)
 target_compile_definitions(Spglib_symspg PRIVATE SPG_BUILD)
+# For windows consumers we need to disable __declspec(dllimport) if it's built as a static library
+if (WIN32 AND NOT SPGLIB_SHARED_LIBS)
+    target_compile_definitions(Spglib_symspg PUBLIC SPG_STATIC_LIBRARY)
+endif ()
 
 # Add compiler warnings
 if (SPGLIB_COMPILATION_WARNING)
