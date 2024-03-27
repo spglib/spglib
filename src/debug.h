@@ -32,8 +32,7 @@
 /* ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE */
 /* POSSIBILITY OF SUCH DAMAGE. */
 
-#ifndef __debug_H__
-#define __debug_H__
+#pragma once
 
 #include <stdio.h>
 
@@ -67,5 +66,4 @@ void dbg_print_vectors_with_label(double const a[][3], int const b[], int size);
     #define warning_print(...) fprintf(stderr, __VA_ARGS__)
 #else
     #define warning_print(...)
-#endif
 #endif
