@@ -24,6 +24,11 @@ GitHub release pages and in the git history.
   (Note: previously the project was not tested for the minimum CMake version)
 - Migrated the example and package test to the ctest test-suite
 - Properly mark all deprecated functions where possible
+- Fix excessive debug/warning message prints
+- Debug and warning messages are controlled by:
+  - Environment variable `SPGLIB_DEBUG`: Define any value to enable printing of debug messages
+  - Environment variable `SPGLIB_WARNING`: Set to `OFF` to disable warning printing
+  - CMake option `SPGLIB_DEBUG`, `SPGLIB_WARNINGS`: Disable the compilation of these messages all-together
 
 ### C Interface
 
@@ -44,6 +49,7 @@ GitHub release pages and in the git history.
 - [\[#425\]](https://github.com/spglib/spglib/pull/425) - Update to codecov v4
 - [\[#402\]](https://github.com/spglib/spglib/pull/402) - Bump artifact actions to v4
 - [\[#402\]](https://github.com/spglib/spglib/pull/402) - Build and inspect python sdist
+- [\[#431\]](https://github.com/spglib/spglib/pull/431) - Test CMake versions
 
 ## v2.3.1 (10 Feb. 2024)
 

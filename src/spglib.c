@@ -447,7 +447,7 @@ int spgms_get_symmetry_with_collinear_spin(
     int *spin_flips;
 
     if ((spin_flips = (int *)malloc(sizeof(int) * max_size)) == NULL) {
-        warning_print("spglib: Memory could not be allocated.");
+        warning_memory("spin_flips");
         return 0;
     }
 
@@ -1340,7 +1340,7 @@ static SpglibDataset *init_dataset(void) {
     dataset = NULL;
 
     if ((dataset = (SpglibDataset *)malloc(sizeof(SpglibDataset))) == NULL) {
-        warning_print("spglib: Memory could not be allocated.");
+        warning_memory("dataset");
         return NULL;
     }
 
@@ -1384,7 +1384,7 @@ static SpglibMagneticDataset *init_magnetic_dataset(void) {
 
     if ((dataset = (SpglibMagneticDataset *)malloc(
              sizeof(SpglibMagneticDataset))) == NULL) {
-        warning_print("spglib: Memory could not be allocated.");
+        warning_memory("dataset");
         return NULL;
     }
 
@@ -1441,13 +1441,13 @@ static int set_dataset(SpglibDataset *dataset, Cell const *cell,
 
     if ((dataset->rotations = (int(*)[3][3])malloc(
              sizeof(int[3][3]) * dataset->n_operations)) == NULL) {
-        warning_print("spglib: Memory could not be allocated.");
+        warning_memory("dataset->rotations");
         goto err;
     }
 
     if ((dataset->translations = (double(*)[3])malloc(
              sizeof(double[3]) * dataset->n_operations)) == NULL) {
-        warning_print("spglib: Memory could not be allocated.");
+        warning_memory("dataset->translations");
         goto err;
     }
 
@@ -1459,25 +1459,25 @@ static int set_dataset(SpglibDataset *dataset, Cell const *cell,
     /* Wyckoff positions */
     if ((dataset->wyckoffs = (int *)malloc(sizeof(int) * dataset->n_atoms)) ==
         NULL) {
-        warning_print("spglib: Memory could not be allocated.");
+        warning_memory("dataset->wyckoffs");
         goto err;
     }
 
     if ((dataset->site_symmetry_symbols =
              (char(*)[7])malloc(sizeof(char[7]) * dataset->n_atoms)) == NULL) {
-        warning_print("spglib: Memory could not be allocated.");
+        warning_memory("dataset->site_symmetry_symbols");
         goto err;
     }
 
     if ((dataset->equivalent_atoms =
              (int *)malloc(sizeof(int) * dataset->n_atoms)) == NULL) {
-        warning_print("spglib: Memory could not be allocated.");
+        warning_memory("dataset->equivalent_atoms");
         goto err;
     }
 
     if ((dataset->crystallographic_orbits =
              (int *)malloc(sizeof(int) * dataset->n_atoms)) == NULL) {
-        warning_print("spglib: Memory could not be allocated.");
+        warning_memory("dataset->crystallographic_orbits");
         goto err;
     }
 
@@ -1493,11 +1493,10 @@ static int set_dataset(SpglibDataset *dataset, Cell const *cell,
 
     if ((dataset->mapping_to_primitive =
              (int *)malloc(sizeof(int) * dataset->n_atoms)) == NULL) {
-        warning_print("spglib: Memory could not be allocated.");
+        warning_memory("dataset->mapping_to_primitive");
         goto err;
     }
 
-    debug_print("[line %d, %s]\n", __LINE__, __FILE__);
     debug_print("refined cell after ref_get_Wyckoff_positions\n");
     debug_print_matrix_d3(exstr->bravais->lattice);
     for (i = 0; i < exstr->bravais->size; i++) {
@@ -1517,19 +1516,19 @@ static int set_dataset(SpglibDataset *dataset, Cell const *cell,
 
     if ((dataset->std_positions = (double(*)[3])malloc(
              sizeof(double[3]) * dataset->n_std_atoms)) == NULL) {
-        warning_print("spglib: Memory could not be allocated.");
+        warning_memory("dataset->std_positions");
         goto err;
     }
 
     if ((dataset->std_types =
              (int *)malloc(sizeof(int) * dataset->n_std_atoms)) == NULL) {
-        warning_print("spglib: Memory could not be allocated.");
+        warning_memory("dataset->std_types");
         goto err;
     }
 
     if ((dataset->std_mapping_to_primitive =
              (int *)malloc(sizeof(int) * dataset->n_std_atoms)) == NULL) {
-        warning_print("spglib: Memory could not be allocated.");
+        warning_memory("dataset->std_mapping_to_primitive");
         goto err;
     }
 
@@ -1608,17 +1607,17 @@ static int set_magnetic_dataset(SpglibMagneticDataset *dataset,
     dataset->n_operations = magnetic_symmetry->size;
     if ((dataset->rotations = (int(*)[3][3])malloc(
              sizeof(int[3][3]) * dataset->n_operations)) == NULL) {
-        warning_print("spglib: Memory could not be allocated.");
+        warning_memory("dataset->rotations");
         goto err;
     }
     if ((dataset->translations = (double(*)[3])malloc(
              sizeof(double[3]) * dataset->n_operations)) == NULL) {
-        warning_print("spglib: Memory could not be allocated.");
+        warning_memory("dataset->translations");
         goto err;
     }
     if ((dataset->time_reversals =
              (int *)malloc(sizeof(int *) * dataset->n_operations)) == NULL) {
-        warning_print("spglib: Memory could not be allocated.");
+        warning_memory("dataset->time_reversals");
         goto err;
     }
     for (i = 0; i < dataset->n_operations; i++) {
@@ -1632,7 +1631,7 @@ static int set_magnetic_dataset(SpglibMagneticDataset *dataset,
     dataset->n_atoms = num_atoms;
     if ((dataset->equivalent_atoms =
              (int *)malloc(sizeof(int) * dataset->n_atoms)) == NULL) {
-        warning_print("spglib: Memory could not be allocated.");
+        warning_memory("dataset->equivalent_atoms");
         goto err;
     }
     for (i = 0; i < dataset->n_atoms; i++) {
@@ -1886,7 +1885,7 @@ static int standardize_primitive(double lattice[3][3], double position[][3],
     dataset = NULL;
 
     if ((mapping_table = (int *)malloc(sizeof(int) * bravais->size)) == NULL) {
-        warning_print("spglib: Memory could not be allocated ");
+        warning_memory("mapping_table");
         cel_free_cell(bravais);
         bravais = NULL;
         goto err;
@@ -1898,11 +1897,10 @@ static int standardize_primitive(double lattice[3][3], double position[][3],
     for (i = 0; i < primitive->size; i++) {
         /* This is an assertion. */
         if (mapping_table[i] != i) {
-            warning_print("spglib: spa_transform_to_primitive failed.");
+            warning_print("spglib: spa_transform_to_primitive failed.\n");
             warning_print(
                 "Unexpected atom index mapping to primitive (%d != %d).\n",
                 mapping_table[i], i);
-            warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
             free(mapping_table);
             mapping_table = NULL;
             cel_free_cell(bravais);
@@ -2011,7 +2009,7 @@ static int get_standardized_cell(double lattice[3][3], double position[][3],
     cel_set_cell(cell, lattice, position, types);
 
     if ((mapping_table = (int *)malloc(sizeof(int) * cell->size)) == NULL) {
-        warning_print("spglib: Memory could not be allocated ");
+        warning_memory("mapping_table");
         cel_free_cell(cell);
         cell = NULL;
         spg_free_dataset(dataset);
@@ -2022,18 +2020,16 @@ static int get_standardized_cell(double lattice[3][3], double position[][3],
     if ((primitive = spa_transform_to_primitive(mapping_table, cell,
                                                 dataset->transformation_matrix,
                                                 centering, symprec)) == NULL) {
-        warning_print("spglib: spa_transform_to_primitive failed.");
-        warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
+        warning_print("spglib: spa_transform_to_primitive failed.\n");
     }
 
     for (i = 0; i < cell->size; i++) {
         /* This is an assertion. */
         if (mapping_table[i] != dataset->mapping_to_primitive[i]) {
-            warning_print("spglib: spa_transform_to_primitive failed.");
+            warning_print("spglib: spa_transform_to_primitive failed.\n");
             warning_print(
                 "Unexpected atom index mapping to primitive (%d != %d).\n",
                 mapping_table[i], dataset->mapping_to_primitive[i]);
-            warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
             free(mapping_table);
             mapping_table = NULL;
             cel_free_cell(cell);
@@ -2065,8 +2061,7 @@ static int get_standardized_cell(double lattice[3][3], double position[][3],
 
     if ((std_cell = spa_transform_from_primitive(primitive, centering,
                                                  symprec)) == NULL) {
-        warning_print("spglib: spa_transform_from_primitive failed.");
-        warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
+        warning_print("spglib: spa_transform_from_primitive failed.\n");
     }
     cel_free_cell(primitive);
     primitive = NULL;
