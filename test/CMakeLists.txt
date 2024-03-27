@@ -82,7 +82,7 @@ if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.24)
 endif ()
 
 # Get Spglib if it's run as stand-alone project
-if (NOT Spglib_IS_TOP_LEVEL)
+if (NOT Spglib_SOURCE_DIR)
     if (CMAKE_VERSION VERSION_LESS 3.24)
         # TODO: Use by default when minimum is CMake 3.24
         find_package(Spglib CONFIG QUIET)
