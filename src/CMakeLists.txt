@@ -20,6 +20,7 @@ endif ()
 target_sources(Spglib_symspg PRIVATE
         arithmetic.c
         cell.c
+        debug.c
         delaunay.c
         determination.c
         hall_symbol.c
@@ -41,11 +42,6 @@ target_sources(Spglib_symspg PRIVATE
         spin.c
         symmetry.c
 )
-if (SPGLIB_DEBUG)
-    target_sources(Spglib_symspg PRIVATE
-            debug.c
-    )
-endif ()
 target_include_directories(Spglib_symspg PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${CMAKE_CURRENT_BINARY_DIR}
