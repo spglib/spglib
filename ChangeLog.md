@@ -24,6 +24,11 @@ GitHub release pages and in the git history.
   (Note: previously the project was not tested for the minimum CMake version)
 - Migrated the example and package test to the ctest test-suite
 - Properly mark all deprecated functions where possible
+- Fix excessive debug/warning message prints
+- Debug and warning messages are controlled by:
+  - Environment variable `SPGLIB_DEBUG`: Define any value to enable printing of debug messages
+  - Environment variable `SPGLIB_WARNING`: Set to `OFF` to disable warning printing
+  - CMake option `SPGLIB_DEBUG`, `SPGLIB_WARNINGS`: Disable the compilation of these messages all-together
 
 ### C Interface
 
