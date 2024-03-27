@@ -49,6 +49,7 @@ create_test_sourcelist(FortranTests_Files
         test_fortran_version.F90
 )
 
+# CMake < 3.29 includes the driver source in the source list
 list(REMOVE_ITEM FortranTests_Files fortran_test.c)
 target_sources(Spglib_Fortran_tests PRIVATE
         ${CMAKE_CURRENT_BINARY_DIR}/fortran_test.c
@@ -65,8 +66,11 @@ target_compile_definitions(Spglib_Fortran_tests PRIVATE
 
 # Loop over all main tests files
 foreach (test IN LISTS FortranTests_Files)
-    # TODO: CMake 3.20 Switch to cmake_path
-    get_filename_component(test_name ${test} NAME_WE)
+    if (test MATCHES ".*fortran_test.*")
+        # Skip the test driver
+        continue()
+    endif ()
+    cmake_path(REMOVE_EXTENSION test OUTPUT_VARIABLE test_name)
     # Check if we have subtests defined
     if (DEFINED SubTests_${test_name})
         # Loop over all subtests

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "spglib.h"
 
@@ -35,6 +36,9 @@ static void sub_spg_standardize_cell(double lattice[3][3], double position[][3],
                                      double const symprec,
                                      int const to_primitive,
                                      int const no_idealize);
+
+// Windows C compilers do not accept variable length array. Need to use a macro
+#define max_size -1
 
 int main(int argc, char *argv[]) {
     example_spg_find_primitive_BCC();
@@ -357,7 +361,8 @@ static void example_spg_get_symmetry(void) {
         {0.3, 0.3, 0.5},  {0.7, 0.7, 0.5},  {0.2, 0.8, 0.75}, {0.8, 0.2, 0.75}};
     int types[] = {1, 1, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2};
     int num_atom = 12;
-    int max_size = 50;
+#undef max_size
+#define max_size 50
     int rotation[max_size][3][3];
     double translation[max_size][3];
 
@@ -388,7 +393,8 @@ static void example_spg_get_symmetry_with_collinear_spin(void) {
     int equivalent_atoms[2];
     double spins[2];
     int num_atom = 2;
-    int max_size = 300;
+#undef max_size
+#define max_size 300
     int rotation[max_size][3][3];
     double translation[max_size][3];
 
@@ -526,11 +532,12 @@ static void example_spg_get_ir_reciprocal_mesh(void) {
     };
     int types[] = {1, 1, 2, 2, 2, 2};
     int num_atom = 6;
-    int m = 40;
-    int mesh[] = {m, m, m};
+#undef max_size
+#define max_size 40
+    int mesh[] = {max_size, max_size, max_size};
     int is_shift[] = {1, 1, 1};
-    int grid_address[m * m * m][3];
-    int grid_mapping_table[m * m * m];
+    int grid_address[max_size * max_size * max_size][3];
+    int grid_mapping_table[max_size * max_size * max_size];
 
     printf(
         "*** Example of spg_get_ir_reciprocal_mesh of Rutile structure ***:\n");
@@ -676,8 +683,11 @@ static void sub_spg_standardize_cell(double lattice[3][3], double position[][3],
                                      double const symprec,
                                      int const to_primitive,
                                      int const no_idealize) {
-    double lat[3][3], pos[4 * num_atom][3];
-    int typ[4 * num_atom];
+    double lat[3][3], (*pos)[3];
+    int *typ;
+
+    pos = (double(*)[3])malloc(sizeof(double[3]) * 4 * num_atom);
+    typ = (int *)malloc(sizeof(int) * 4 * num_atom);
 
     for (int i = 0; i < 3; i++) {
         lat[i][0] = lattice[i][0];
@@ -716,6 +726,11 @@ static void sub_spg_standardize_cell(double lattice[3][3], double position[][3],
     for (int i = 0; i < num_primitive_atom; i++) {
         printf("%f %f %f\n", pos[i][0], pos[i][1], pos[i][2]);
     }
+
+    free(typ);
+    typ = NULL;
+    free(pos);
+    pos = NULL;
 }
 
 static void show_cell(double lattice[3][3], double position[][3],
