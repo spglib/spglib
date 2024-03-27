@@ -7,16 +7,6 @@ on:
   # Make it able to be used in other workflows
   workflow_call:
     inputs:
-      cibw_archs_linux:
-        required: false
-        type: string
-        default: auto aarch64
-        description: Linux architectures
-      cibw_archs_macos:
-        required: false
-        type: string
-        default: x86_64 arm64
-        description: Macos architectures
       cibw_build:
         required: false
         type: string
@@ -29,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-latest, windows-latest, macOS-11 ]
+        os: [ ubuntu-latest, windows-latest, macOS-11, macOS-13, macOS-14 ]
 
     steps:
       - uses: actions/checkout@v4
@@ -43,11 +33,10 @@ jobs:
         with:
           platforms: all
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.16
+        uses: pypa/cibuildwheel@v2.17
         env:
           CIBW_BUILD: ${{ inputs.cibw_build }}
-          CIBW_ARCHS_LINUX: ${{ inputs.cibw_archs_linux }}
-          CIBW_ARCHS_MACOS: ${{ inputs.cibw_archs_macos }}
+          CIBW_ARCHS_LINUX: auto aarch64
       - uses: actions/upload-artifact@v4
         with:
           name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
