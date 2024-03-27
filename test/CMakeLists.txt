@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20...3.29)
+cmake_minimum_required(VERSION 3.25...3.29)
 
 #[=============================================================================[
 #                           Basic project definition                           #
@@ -74,7 +74,7 @@ set(external_libs)
 include(FetchContent)
 
 # Get Spglib if it's run as stand-alone project
-if (NOT Spglib_IS_TOP_LEVEL)
+if (NOT Spglib_SOURCE_DIR)
     FetchContent_Declare(Spglib
             GIT_REPOSITORY https://github.com/spglib/spglib
             GIT_TAG develop
@@ -89,7 +89,8 @@ set(gtest_disable_pthreads ON)
 FetchContent_Declare(GTest
         GIT_REPOSITORY https://github.com/google/googletest
         GIT_TAG v1.13.0
-        FIND_PACKAGE_ARGS CONFIG
+        # For CMake < 3.24, always download GTest. Packaging for CMake  <3.24 is unsupported
+        ${fetchcontent_extra_args}
 )
 list(APPEND external_libs GTest)
 
