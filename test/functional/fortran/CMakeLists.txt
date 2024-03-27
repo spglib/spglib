@@ -65,8 +65,7 @@ target_compile_definitions(Spglib_Fortran_tests PRIVATE
 
 # Loop over all main tests files
 foreach (test IN LISTS FortranTests_Files)
-    # TODO: CMake 3.20 Switch to cmake_path
-    get_filename_component(test_name ${test} NAME_WE)
+    cmake_path(REMOVE_EXTENSION test OUTPUT_VARIABLE test_name)
     # Check if we have subtests defined
     if (DEFINED SubTests_${test_name})
         # Loop over all subtests
