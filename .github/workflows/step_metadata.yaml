@@ -1,0 +1,24 @@
+name: metadata
+
+on:
+  workflow_call:
+    outputs:
+      cmake-minimum-version:
+        description: Minimum CMake version in CMakeLists.txt
+        value: ${{ jobs.get-metadata.outputs.cmake-version }}
+
+permissions:
+  contents: read
+
+jobs:
+  get-metadata:
+    name: Get metadata
+    runs-on: ubuntu-latest
+    outputs:
+      cmake-version: ${{ steps.metadata.outputs.cmake-version }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: metadata
+        run: |
+          cmake_version=$(grep "cmake_minimum_required" CMakeLists.txt | sed -re 's/.*VERSION\s*([0-9\.]*)\.\.\..*/\1/')
+          echo "cmake-version=${cmake_version}" >> "$GITHUB_OUTPUT"

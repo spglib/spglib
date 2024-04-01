@@ -20,6 +20,10 @@ on:
         required: false
         type: string
         description: Overwrite build targets
+      cmake-version:
+        required: false
+        type: string
+        description: Additional cmake version to test (besides latest and latestrc)
   pull_request:
     branches: [ develop ]
   push:
@@ -37,12 +41,17 @@ jobs:
     name: pre-commit
     uses: ./.github/workflows/step_pre-commit.yaml
 
+  metadata:
+    name: metadata
+    uses: ./.github/workflows/step_metadata.yaml
+
   tests:
     name: test
-    needs: [ pre-commit ]
+    needs: [ metadata, pre-commit ]
     uses: ./.github/workflows/step_test.yaml
     with:
       mask-experimental: ${{ github.event_name == 'push' }}
+      cmake-version: ${{ inputs.cmake-version || needs.metadata.outputs.cmake-minimum-version }}
 
   coverage:
     name: 👀 coverage

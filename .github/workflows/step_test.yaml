@@ -7,6 +7,10 @@ on:
         type: boolean
         default: true
         description: Always report experimental test as successful
+      cmake-version:
+        type: string
+        required: true
+        description: CMake version to test in the cmake-version test matrix
 
 permissions:
   contents: read
@@ -93,7 +97,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        cmake: [ "3.20", "latest", "latestrc" ]
+        cmake: [ "${{ inputs.cmake-version }}" , "latest", "latestrc" ]
         include:
           - cmake: latestrc
             experimental: true
