@@ -68,6 +68,9 @@ endif ()
 if (SPGLIB_WARNINGS)
     target_compile_definitions(Spglib_symspg PRIVATE SPGWARNING)
 endif ()
+if (SPGLIB_INFO)
+    target_compile_definitions(Spglib_symspg PRIVATE SPGINFO)
+endif ()
 
 # Avoid One Definition Rule problems. Please fix these
 if (CMAKE_UNITY_BUILD)

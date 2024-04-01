@@ -68,4 +68,9 @@ void dbg_print_vectors_with_label(double const a[][3], int const b[], int size);
 #else
     #define warning_print(...)
 #endif
+#ifdef SPGINFO
+    #define info_print(...) fprintf(stderr, __VA_ARGS__)
+#else
+    #define info_print(...)
+#endif
 #endif

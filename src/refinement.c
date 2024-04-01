@@ -334,9 +334,8 @@ static Cell *get_Wyckoff_positions(
              wyckoffs_bravais, site_symmetry_symbols_bravais,
              equiv_atoms_bravais, std_mapping_to_primitive, spacegroup,
              primitive, symprec)) == NULL) {
-        warning_print(
-            "spglib: get_bravais_exact_positions_and_lattice failed.");
-        warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
+        info_print("spglib: get_bravais_exact_positions_and_lattice failed.");
+        info_print(" (line %d, %s).\n", __LINE__, __FILE__);
 
         goto ret;
     }
@@ -362,8 +361,8 @@ static Cell *get_Wyckoff_positions(
         cel_free_cell(bravais);
         bravais = NULL;
 
-        warning_print("spglib: set_crystallographic_orbits failed.");
-        warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
+        info_print("spglib: set_crystallographic_orbits failed.");
+        info_print(" (line %d, %s).\n", __LINE__, __FILE__);
 
         goto ret;
     }
@@ -478,8 +477,8 @@ static Cell *get_bravais_exact_positions_and_lattice(
              symprec)) == NULL) {
         sym_free_symmetry(conv_sym);
         conv_sym = NULL;
-        warning_print("spglib: ssm_get_exact_positions failed.");
-        warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
+        info_print("spglib: ssm_get_exact_positions failed.");
+        info_print(" (line %d, %s).\n", __LINE__, __FILE__);
         goto err;
     }
 
@@ -739,7 +738,7 @@ static void set_monocli(double lattice[3][3], double const metric[3][3],
             lattice[2][0] = a * sin(angle);
             break;
         default:
-            warning_print("spglib: Monoclinic unique axis could not be found.");
+            info_print("spglib: Monoclinic unique axis could not be found.");
     }
 }
 
@@ -779,7 +778,7 @@ static void set_layer_monocli(double lattice[3][3], double const metric[3][3],
             lattice[2][2] = c;
             break;
         default:
-            warning_print("spglib: Monoclinic unique axis could not be found.");
+            info_print("spglib: Monoclinic unique axis could not be found.");
     }
 }
 

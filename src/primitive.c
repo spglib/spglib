@@ -277,8 +277,8 @@ static Primitive *get_primitive(Cell const *cell, double const symprec,
         pure_trans = NULL;
 
         tolerance *= REDUCE_RATE;
-        warning_print("spglib: Reduce tolerance to %f ", tolerance);
-        warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+        info_print("spglib: Reduce tolerance to %f ", tolerance);
+        info_print("(line %d, %s).\n", __LINE__, __FILE__);
     }
 
     prm_free_primitive(primitive);
@@ -370,8 +370,8 @@ static Cell *get_primitive_cell(int *mapping_table, Cell const *cell,
     return primitive_cell;
 
 not_found:
-    warning_print("spglib: Primitive cell could not be found ");
-    warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+    info_print("spglib: Primitive cell could not be found ");
+    info_print("(line %d, %s).\n", __LINE__, __FILE__);
     return NULL;
 }
 
@@ -454,9 +454,9 @@ static int get_primitive_lattice_vectors(double prim_lattice[3][3],
                 goto fail;
             }
 
-            warning_print("spglib: Tolerance is reduced to %f (%d), ",
-                          tolerance, attempt);
-            warning_print("num_pure_trans = %d\n", pure_trans_reduced->size);
+            info_print("spglib: Tolerance is reduced to %f (%d), ", tolerance,
+                       attempt);
+            info_print("num_pure_trans = %d\n", pure_trans_reduced->size);
 
             tolerance *= REDUCE_RATE;
         }
@@ -549,8 +549,8 @@ static int find_primitive_lattice_vectors(double prim_lattice[3][3],
     }
 
     /* Not found */
-    warning_print("spglib: Primitive lattice vectors could not be found ");
-    warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+    info_print("spglib: Primitive lattice vectors could not be found ");
+    info_print("(line %d, %s).\n", __LINE__, __FILE__);
     return 0;
 
     /* Found */
@@ -567,8 +567,8 @@ ret:
         mat_cast_matrix_3i_to_3d(inv_mat_dbl, inv_mat_int);
         mat_inverse_matrix_d3(relative_lattice, inv_mat_dbl, 0);
     } else {
-        warning_print("spglib: Primitive lattice cleaning is incomplete ");
-        warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+        info_print("spglib: Primitive lattice cleaning is incomplete ");
+        info_print("(line %d, %s).\n", __LINE__, __FILE__);
     }
     mat_multiply_matrix_d3(prim_lattice, cell->lattice, relative_lattice);
 

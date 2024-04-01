@@ -362,7 +362,7 @@ static Cell *trim_cell(int *mapping_table, double const trimmed_lattice[3][3],
     mat_multiply_matrix_d3(tmp_mat, tmp_mat, cell->lattice);
     mat_cast_matrix_3d_to_3i(tmp_mat_int, tmp_mat);
     if (abs(mat_get_determinant_i3(tmp_mat_int)) != ratio) {
-        warning_print(
+        info_print(
             "spglib: Determinant of change of basis matrix "
             "has to be same as volume ratio (line %d, %s).\n",
             __LINE__, __FILE__);
@@ -371,8 +371,8 @@ static Cell *trim_cell(int *mapping_table, double const trimmed_lattice[3][3],
 
     /* Check if cell->size is dividable by ratio */
     if ((cell->size / ratio) * ratio != cell->size) {
-        warning_print("spglib: atom number ratio is inconsistent.\n");
-        warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
+        info_print("spglib: atom number ratio is inconsistent.\n");
+        info_print(" (line %d, %s).\n", __LINE__, __FILE__);
         goto err;
     }
 
@@ -383,8 +383,8 @@ static Cell *trim_cell(int *mapping_table, double const trimmed_lattice[3][3],
 
     if ((position = translate_atoms_in_trimmed_lattice(cell, tmp_mat_int)) ==
         NULL) {
-        warning_print("spglib: translate_atoms_in_trimmed_lattice failed.\n");
-        warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
+        info_print("spglib: translate_atoms_in_trimmed_lattice failed.\n");
+        info_print(" (line %d, %s).\n", __LINE__, __FILE__);
         cel_free_cell(trimmed_cell);
         trimmed_cell = NULL;
         goto err;
@@ -396,8 +396,8 @@ static Cell *trim_cell(int *mapping_table, double const trimmed_lattice[3][3],
 
     if ((overlap_table = get_overlap_table(position, cell->size, cell->types,
                                            trimmed_cell, symprec)) == NULL) {
-        warning_print("spglib: get_overlap_table failed.\n");
-        warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
+        info_print("spglib: get_overlap_table failed.\n");
+        info_print(" (line %d, %s).\n", __LINE__, __FILE__);
         mat_free_VecDBL(position);
         position = NULL;
         cel_free_cell(trimmed_cell);
@@ -606,17 +606,15 @@ static int *get_overlap_table(VecDBL const *position, int const cell_size,
 
             if (num_overlap < ratio) {
                 trim_tolerance *= INCREASE_RATE;
-                warning_print("spglib: Increase tolerance to %f ",
-                              trim_tolerance);
-                warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+                info_print("spglib: Increase tolerance to %f ", trim_tolerance);
+                info_print("(line %d, %s).\n", __LINE__, __FILE__);
                 goto cont;
             }
             if (num_overlap > ratio) {
                 trim_tolerance *= REDUCE_RATE;
-                warning_print("spglib: Reduce tolerance to %f ",
-                              trim_tolerance);
-                warning_print("(%d) ", attempt);
-                warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+                info_print("spglib: Reduce tolerance to %f ", trim_tolerance);
+                info_print("(%d) ", attempt);
+                info_print("(line %d, %s).\n", __LINE__, __FILE__);
                 goto cont;
             }
         }
@@ -626,8 +624,8 @@ static int *get_overlap_table(VecDBL const *position, int const cell_size,
     cont:;
     }
 
-    warning_print("spglib: Could not trim cell well ");
-    warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+    info_print("spglib: Could not trim cell well ");
+    info_print("(line %d, %s).\n", __LINE__, __FILE__);
     free(overlap_table);
     overlap_table = NULL;
 

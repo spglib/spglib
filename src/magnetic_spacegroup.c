@@ -169,7 +169,7 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
         if (same) break;
     }
     if (uni_number > uni_number_range[1]) {
-        warning_print("Failed to match with UNI number!\n");
+        info_print("Failed to match with UNI number!\n");
         for (int i = 0; i < magnetic_symmetry->size; i++) {
             debug_print("--- %d ---\n", i + 1);
             debug_print_matrix_i3(magnetic_symmetry->rot[i]);
@@ -182,9 +182,9 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
 
     msgtype = msgdb_get_magnetic_spacegroup_type(uni_number);
     if (msgtype.type != type) {
-        warning_print("Inconsistent MSG type:\n");
-        warning_print("  From FSG and XSG: %d\n", type);
-        warning_print("  From DB matching: %d\n", msgtype.type);
+        info_print("Inconsistent MSG type:\n");
+        info_print("  From FSG and XSG: %d\n", type);
+        info_print("  From DB matching: %d\n", msgtype.type);
         goto err;
     }
 
@@ -908,9 +908,9 @@ static VecDBL *get_changed_pure_translations(double const tmat[3][3],
 
     /* Sanity check */
     if (count != size) {
-        warning_print(
+        info_print(
             "spglib: Failed to find pure translations after transformation.\n");
-        warning_print("Expect=%d, Actual=%d\n", size, count);
+        info_print("Expect=%d, Actual=%d\n", size, count);
         goto err;
     }
 

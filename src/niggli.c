@@ -348,7 +348,7 @@ static int step2(NiggliParams *p) {
 static int step2_for_layer(NiggliParams *p) {
     if (p->B > p->C + p->eps || (!(fabs(p->B - p->C) > p->eps) &&
                                  fabs(p->eta) > fabs(p->zeta) + p->eps)) {
-        warning_print(
+        info_print(
             "niggli: B > C or B = C and |eta| > |zeta|. Please elongate the "
             "aperiodic axis.");
     }
