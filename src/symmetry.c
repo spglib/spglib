@@ -256,16 +256,15 @@ VecDBL *sym_get_pure_translation(Cell const *cell, double const symprec) {
         pure_trans = get_layer_translation(identity, cell, symprec, 1);
     }
     if (pure_trans == NULL) {
-        warning_print("spglib: get_translation failed.\n");
+        debug_print("spglib: get_translation failed.\n");
         return NULL;
     }
 
     multi = pure_trans->size;
     if ((cell->size / multi) * multi == cell->size) {
-        debug_print("  sym_get_pure_translation: pure_trans->size = %d\n",
+        debug_print("spglib: sym_get_pure_translation: pure_trans->size = %d\n",
                     multi);
     } else {
-        ;
         warning_print("spglib: Finding pure translation failed.\n");
         warning_print("        cell->size %d, multi %d\n", cell->size, multi);
     }

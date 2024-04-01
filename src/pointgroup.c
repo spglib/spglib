@@ -401,7 +401,7 @@ Pointgroup ptg_get_transformation_matrix(int transform_mat[3][3],
         get_axes(axes, pointgroup.laue, &pointsym, aperiodic_axis);
         set_transformation_matrix(transform_mat, axes);
     } else {
-        warning_print("spglib: No point group was found\n");
+        info_print("spglib: No point group was found\n");
         pointgroup.number = 0;
     }
 

@@ -77,7 +77,7 @@ DataContainer *det_determine_all(Cell const *cell, int const hall_number,
                          container->primitive->tolerance)) != NULL) {
                 goto found;
             }
-            warning_print(
+            debug_print(
                 "spglib: ref_get_exact_structure_and_symmetry failed.\n");
             det_free_container(container);
             container = NULL;

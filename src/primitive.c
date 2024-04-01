@@ -368,7 +368,7 @@ static Cell *get_primitive_cell(int *mapping_table, Cell const *cell,
     return primitive_cell;
 
 not_found:
-    warning_print("spglib: Primitive cell could not be found\n");
+    debug_print("spglib: Primitive cell could not be found\n");
     return NULL;
 }
 
@@ -546,7 +546,7 @@ static int find_primitive_lattice_vectors(double prim_lattice[3][3],
     }
 
     /* Not found */
-    warning_print("spglib: Primitive lattice vectors could not be found\n");
+    debug_print("spglib: Primitive lattice vectors could not be found\n");
     return 0;
 
     /* Found */

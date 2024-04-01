@@ -718,7 +718,7 @@ static Spacegroup *search_spacegroup_with_symmetry(
 
     pointsym = ptg_get_pointsymmetry(symmetry->rot, symmetry->size);
     if (pointsym.size < symmetry->size) {
-        warning_print("spglib: Point symmetry of primitive cell is broken.\n");
+        info_print("spglib: Point symmetry of primitive cell is broken.\n");
         return NULL;
     }
 
