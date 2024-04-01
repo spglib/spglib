@@ -47,13 +47,25 @@ set(external_libs)
 include(FetchContent)
 
 # Get Spglib if it's run as stand-alone project
-if (NOT Spglib_IS_TOP_LEVEL)
-    FetchContent_Declare(Spglib
-            GIT_REPOSITORY https://github.com/spglib/spglib
-            GIT_TAG develop
-            FIND_PACKAGE_ARGS CONFIG
-    )
-    list(APPEND external_libs Spglib)
+if (NOT Spglib_SOURCE_DIR)
+    if (CMAKE_VERSION VERSION_LESS 3.24)
+        # TODO: Use by default when minimum is CMake 3.24
+        find_package(Spglib CONFIG QUIET)
+        if (NOT Spglib_FOUND)
+            FetchContent_Declare(Spglib
+                    GIT_REPOSITORY https://github.com/spglib/spglib
+                    GIT_TAG develop
+            )
+            list(APPEND external_libs Spglib)
+        endif ()
+    else ()
+        FetchContent_Declare(Spglib
+                GIT_REPOSITORY https://github.com/spglib/spglib
+                GIT_TAG develop
+                FIND_PACKAGE_ARGS CONFIG
+        )
+        list(APPEND external_libs Spglib)
+    endif ()
 endif ()
 find_package(Python 3.8 COMPONENTS REQUIRED Interpreter Development.Module NumPy)
 FetchContent_MakeAvailable(${external_libs})

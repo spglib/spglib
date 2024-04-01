@@ -44,6 +44,7 @@ GitHub release pages and in the git history.
 - [\[#425\]](https://github.com/spglib/spglib/pull/425) - Update to codecov v4
 - [\[#402\]](https://github.com/spglib/spglib/pull/402) - Bump artifact actions to v4
 - [\[#402\]](https://github.com/spglib/spglib/pull/402) - Build and inspect python sdist
+- [\[#431\]](https://github.com/spglib/spglib/pull/431) - Test CMake versions
 
 ## v2.3.1 (10 Feb. 2024)
 
