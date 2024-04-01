@@ -58,6 +58,14 @@ bool warning_enabled() {
     // Otherwise assume it's an ill-defined value and ignore it
     return true;
 }
+bool info_enabled() {
+    char const* info_env = getenv("SPGLIB_INFO");
+    // If SPGLIB_INFO is not defined, do not output any info messages
+    if (info_env == NULL) return false;
+    // Here we are not checking if SPGLIB_INFO is true/1/etc. we only check if
+    // it is defined, including SPGLIB_INFO=""
+    return true;
+}
 
 #ifdef SPGDEBUG
 void debug_print_matrix_d3(double const a[3][3]) {
@@ -124,6 +132,18 @@ void warning_print(char const* format, ...) {
 }
 #else
 void warning_print(char const* format, ...) {}
+#endif
+
+#ifdef SPGINFO
+void info_print(char const* format, ...) {
+    if (!info_enabled()) return;
+    va_list argptr;
+    va_start(argptr, format);
+    vfprintf(stderr, format, argptr);
+    va_end(argptr);
+}
+#else
+void info_print(char const* format, ...) {}
 #endif
 
 void warning_memory(char const* what) {

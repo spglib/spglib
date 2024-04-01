@@ -37,6 +37,7 @@
 // Main print interface
 extern inline void warning_print(char const* format, ...);
 extern inline void debug_print(char const* format, ...);
+extern inline void info_print(char const* format, ...);
 extern inline void debug_print_matrix_d3(double const a[3][3]);
 extern inline void debug_print_matrix_i3(int const a[3][3]);
 extern inline void debug_print_vector_d3(double const a[3]);
