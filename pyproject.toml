@@ -95,14 +95,10 @@ SPGLIB_USE_OMP = "OFF"
 write_to = "python/spglib/_version.py"
 
 [tool.cibuildwheel]
-# cp312: Cannot build numpy yet
-# macosx_arm64: Cannot test on Github. Could add Cirrus CI/Circle CI
 # pp, win32, i686, muslinux: Remove 32bit variants, PyPY interpreter and unnecessary musl variant
-skip = ["pp*", "*-win32", "*-manylinux_i686", "*-musllinux*", "*-macosx_arm64", "cp312-*"]
+skip = ["pp*", "*-win32", "*-manylinux_i686", "*-musllinux*"]
 test-extras = "test"
 test-command = "pytest {package}/test/functional/python"
-# Do not run test on emulated environments
-test-skip = "*-*linux_{aarch64,ppc64le,s390x} *-macosx_arm64 *-macosx_universal2:arm64"
 
 [tool.cibuildwheel.linux]
 # TODO: auditwheel fails if LD_LIBRARY_PATH is not set correctly. Not sure about apprropriate value to set to
