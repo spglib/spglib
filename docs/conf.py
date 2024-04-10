@@ -7,6 +7,7 @@ extensions = [
     "sphinx.ext.mathjax",
     "sphinx.ext.viewcode",
     "sphinx.ext.autodoc",
+    "sphinx_autodoc_typehints",
     "sphinxcontrib.bibtex",
     "myst_parser",
     "sphinx.ext.doctest",
