@@ -92,6 +92,7 @@ Magmoms: TypeAlias = Union[Sequence[float], Sequence[Sequence[float]]]
 Cell: TypeAlias = Union[
     tuple[Lattice, Positions, Numbers], tuple[Lattice, Positions, Numbers, Magmoms]
 ]
+"""test"""
 
 
 class SpglibError:
@@ -1408,7 +1409,9 @@ def standardize_cell(
         return None
 
 
-def refine_cell(cell: Cell, symprec=1e-5, angle_tolerance=-1.0) -> Cell | None:
+def refine_cell(
+    cell: Cell, symprec: float = 1e-5, angle_tolerance: float = -1.0
+) -> Cell | None:
     """Return refined cell. When the search failed, ``None`` is returned.
 
     The standardized unit cell is returned by a tuple of
@@ -1420,6 +1423,10 @@ def refine_cell(cell: Cell, symprec=1e-5, angle_tolerance=-1.0) -> Cell | None:
 
     The detailed control of standardization of unit cell can be done using
     :func:`standardize_cell`.
+
+    :param cell: Cell to be refined
+    :param symprec: Symmetrization tolerance
+    :param angle_tolerance: Angle tolerance
 
     """
     _set_no_error()
