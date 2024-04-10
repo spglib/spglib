@@ -266,7 +266,7 @@ int mat_inverse_matrix_d3(double m[3][3], double const a[3][3],
     double c[3][3];
     det = mat_get_determinant_d3(a);
     if (mat_Dabs(det) < precision) {
-        warning_print("spglib: No inverse matrix (det=%f)\n", det);
+        debug_print("spglib: No inverse matrix (det=%f)\n", det);
         return 0;
     }
 
@@ -288,7 +288,7 @@ int mat_get_similar_matrix_d3(double m[3][3], double const a[3][3],
                               double const b[3][3], double const precision) {
     double c[3][3];
     if (!mat_inverse_matrix_d3(c, b, precision)) {
-        warning_print("spglib: No similar matrix due to 0 determinant.\n");
+        debug_print("spglib: No similar matrix due to 0 determinant.\n");
         return 0;
     }
     mat_multiply_matrix_d3(m, a, b);
@@ -380,7 +380,7 @@ MatINT *mat_alloc_MatINT(int const size) {
     matint = NULL;
 
     if ((matint = (MatINT *)malloc(sizeof(MatINT))) == NULL) {
-        warning_print("spglib: Memory could not be allocated.");
+        warning_memory("matint");
         return NULL;
     }
 
@@ -388,8 +388,7 @@ MatINT *mat_alloc_MatINT(int const size) {
     if (size > 0) {
         if ((matint->mat = (int(*)[3][3])malloc(sizeof(int[3][3]) * size)) ==
             NULL) {
-            warning_print("spglib: Memory could not be allocated ");
-            warning_print("(MatINT, line %d, %s).\n", __LINE__, __FILE__);
+            warning_memory("matint->mat");
             free(matint);
             matint = NULL;
             return NULL;
@@ -412,7 +411,7 @@ VecDBL *mat_alloc_VecDBL(int const size) {
     vecdbl = NULL;
 
     if ((vecdbl = (VecDBL *)malloc(sizeof(VecDBL))) == NULL) {
-        warning_print("spglib: Memory could not be allocated.");
+        warning_memory("vecdbl");
         return NULL;
     }
 
@@ -420,8 +419,7 @@ VecDBL *mat_alloc_VecDBL(int const size) {
     if (size > 0) {
         if ((vecdbl->vec = (double(*)[3])malloc(sizeof(double[3]) * size)) ==
             NULL) {
-            warning_print("spglib: Memory could not be allocated ");
-            warning_print("(VecDBL, line %d, %s).\n", __LINE__, __FILE__);
+            warning_memory("vecdbl->vec");
             free(vecdbl);
             vecdbl = NULL;
             return NULL;

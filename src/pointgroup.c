@@ -401,8 +401,7 @@ Pointgroup ptg_get_transformation_matrix(int transform_mat[3][3],
         get_axes(axes, pointgroup.laue, &pointsym, aperiodic_axis);
         set_transformation_matrix(transform_mat, axes);
     } else {
-        warning_print("spglib: No point group was found ");
-        warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+        info_print("spglib: No point group was found\n");
         pointgroup.number = 0;
     }
 
@@ -537,8 +536,7 @@ static int get_pointgroup_class_table(int table[10],
     return 1;
 
 err:
-    warning_print("spglib: No point group symbol found ");
-    warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+    warning_print("spglib: No point group symbol found\n");
     return 0;
 }
 
@@ -902,8 +900,7 @@ static int laue_one_axis(int axes[3], PointSymmetry const* pointsym,
     }
 
 err: /* axes are not correctly found. */
-    warning_print("spglib: Secondary axis is not found.");
-    warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+    warning_print("spglib: Secondary axis is not found.\n");
     return 0;
 
 end:
@@ -1121,8 +1118,7 @@ static void layer_check_and_sort_axes(int axes[3], int const aperiodic_axis) {
     } else {
         // Warning when rot_axes[axes[i]][aperiodic_axis] == -2, -3, 2, 3
         // I am not sure if this would ever happen.
-        warning_print("spglib: Invalid axes were found ");
-        warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+        warning_print("spglib: Invalid axes were found\n");
         for (i = 0; i < 3; i++) {
             axes[i] = 0;
         }

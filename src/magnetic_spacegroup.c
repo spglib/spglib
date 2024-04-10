@@ -146,7 +146,7 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
                      tmat_cor, shift_cor, changed_symmetry)) == NULL)
                 goto err;
 
-            debug_print("\e[33mCorrection\e[0m\n");
+            debug_print("\x1B[33mCorrection\x1B[0m\n");
             debug_print_matrix_d3(tmat_cor);
             debug_print_vector_d3(shift_cor);
             for (j = 0; j < symmetry_cor->size; j++) {
@@ -169,7 +169,7 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
         if (same) break;
     }
     if (uni_number > uni_number_range[1]) {
-        warning_print("Failed to match with UNI number!\n");
+        warning_print("spglib: Failed to match with UNI number!\n");
         for (int i = 0; i < magnetic_symmetry->size; i++) {
             debug_print("--- %d ---\n", i + 1);
             debug_print_matrix_i3(magnetic_symmetry->rot[i]);
@@ -182,7 +182,7 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
 
     msgtype = msgdb_get_magnetic_spacegroup_type(uni_number);
     if (msgtype.type != type) {
-        warning_print("Inconsistent MSG type:\n");
+        warning_print("spglib: Inconsistent MSG type:\n");
         warning_print("  From FSG and XSG: %d\n", type);
         warning_print("  From DB matching: %d\n", msgtype.type);
         goto err;

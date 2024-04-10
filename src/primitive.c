@@ -79,7 +79,7 @@ Primitive *prm_alloc_primitive(int const size) {
     primitive = NULL;
 
     if ((primitive = (Primitive *)malloc(sizeof(Primitive))) == NULL) {
-        warning_print("spglib: Memory could not be allocated ");
+        warning_memory("primitive");
         return NULL;
     }
 
@@ -93,8 +93,7 @@ Primitive *prm_alloc_primitive(int const size) {
     if (size > 0) {
         if ((primitive->mapping_table = (int *)malloc(sizeof(int) * size)) ==
             NULL) {
-            warning_print("spglib: Memory could not be allocated ");
-            warning_print("(Primitive, line %d, %s).\n", __LINE__, __FILE__);
+            warning_memory("primitive->mapping_table");
             free(primitive);
             primitive = NULL;
             return NULL;
@@ -163,7 +162,7 @@ int prm_get_primitive_with_pure_trans(Primitive *primitive, Cell const *cell,
     primitive->angle_tolerance = angle_tolerance;
     if ((primitive->orig_lattice =
              (double(*)[3])malloc(sizeof(double[3]) * 3)) == NULL) {
-        warning_print("spglib: Memory could not be allocated.");
+        warning_memory("primitive->orig_lattice");
         return 0;
     }
     mat_copy_matrix_d3(primitive->orig_lattice, cell->lattice);
@@ -277,8 +276,7 @@ static Primitive *get_primitive(Cell const *cell, double const symprec,
         pure_trans = NULL;
 
         tolerance *= REDUCE_RATE;
-        warning_print("spglib: Reduce tolerance to %f ", tolerance);
-        warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+        debug_print("spglib: Reduce tolerance to %f ", tolerance);
     }
 
     prm_free_primitive(primitive);
@@ -370,8 +368,7 @@ static Cell *get_primitive_cell(int *mapping_table, Cell const *cell,
     return primitive_cell;
 
 not_found:
-    warning_print("spglib: Primitive cell could not be found ");
-    warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+    debug_print("spglib: Primitive cell could not be found\n");
     return NULL;
 }
 
@@ -454,9 +451,9 @@ static int get_primitive_lattice_vectors(double prim_lattice[3][3],
                 goto fail;
             }
 
-            warning_print("spglib: Tolerance is reduced to %f (%d), ",
-                          tolerance, attempt);
-            warning_print("num_pure_trans = %d\n", pure_trans_reduced->size);
+            debug_print("spglib: Tolerance is reduced to %f (%d), ", tolerance,
+                        attempt);
+            debug_print("num_pure_trans = %d\n", pure_trans_reduced->size);
 
             tolerance *= REDUCE_RATE;
         }
@@ -549,8 +546,7 @@ static int find_primitive_lattice_vectors(double prim_lattice[3][3],
     }
 
     /* Not found */
-    warning_print("spglib: Primitive lattice vectors could not be found ");
-    warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+    debug_print("spglib: Primitive lattice vectors could not be found\n");
     return 0;
 
     /* Found */
@@ -567,8 +563,7 @@ ret:
         mat_cast_matrix_3i_to_3d(inv_mat_dbl, inv_mat_int);
         mat_inverse_matrix_d3(relative_lattice, inv_mat_dbl, 0);
     } else {
-        warning_print("spglib: Primitive lattice cleaning is incomplete ");
-        warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+        warning_print("spglib: Primitive lattice cleaning is incomplete\n");
     }
     mat_multiply_matrix_d3(prim_lattice, cell->lattice, relative_lattice);
 

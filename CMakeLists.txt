@@ -57,11 +57,14 @@ option(SPGLIB_WITH_TESTS "Spglib: Build unit tests" ${PROJECT_IS_TOP_LEVEL})
 option(SPGLIB_SHARED_LIBS "Spglib: Build as a shared library" ${PROJECT_IS_TOP_LEVEL})
 option(SPGLIB_INSTALL "Spglib: Install project" ${PROJECT_IS_TOP_LEVEL})
 option(SPGLIB_WARNINGS "Spglib: Enable warning messages" ON)
-mark_as_advanced(SPGLIB_WITH_WARNINGS)
+option(SPGLIB_INFO "Spglib: Enable info messages" ON)
 option(SPGLIB_DEBUG "Spglib: Build in debug mode" ${_Spglib_default_debug})
-mark_as_advanced(SPGLIB_DEBUG)
 option(SPGLIB_COMPILATION_WARNING "Spglib: Enable compilation warnings" OFF)
-mark_as_advanced(SPGLIB_COMPILATION_WARNING)
+mark_as_advanced(
+        SPGLIB_DEBUG
+        SPGLIB_WARNINGS
+        SPGLIB_COMPILATION_WARNING
+)
 
 #[=============================================================================[
 #                            Project configuration                            #

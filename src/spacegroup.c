@@ -587,8 +587,7 @@ Cell *spa_transform_to_primitive(int *mapping_table, Cell const *cell,
     mat_multiply_matrix_d3(prim_lat, cell->lattice, tmat);
     if ((primitive = cel_trim_cell(mapping_table, prim_lat, cell, symprec)) ==
         NULL) {
-        warning_print("spglib: cel_trim_cell failed.");
-        warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
+        warning_print("spglib: cel_trim_cell failed.\n");
     }
 
     return primitive;
@@ -641,7 +640,7 @@ Cell *spa_transform_from_primitive(Cell const *primitive,
 
     if ((mapping_table =
              (int *)malloc(sizeof(int) * primitive->size * multi)) == NULL) {
-        warning_print("spglib: Memory could not be allocated ");
+        warning_memory("mapping_table");
         goto ret;
     }
 
@@ -719,8 +718,7 @@ static Spacegroup *search_spacegroup_with_symmetry(
 
     pointsym = ptg_get_pointsymmetry(symmetry->rot, symmetry->size);
     if (pointsym.size < symmetry->size) {
-        warning_print("spglib: Point symmetry of primitive cell is broken. ");
-        warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+        info_print("spglib: Point symmetry of primitive cell is broken.\n");
         return NULL;
     }
 
@@ -746,7 +744,7 @@ static Spacegroup *get_spacegroup(int const hall_number,
     spacegroup = NULL;
 
     if ((spacegroup = (Spacegroup *)malloc(sizeof(Spacegroup))) == NULL) {
-        warning_print("spglib: Memory could not be allocated.");
+        warning_memory("spacegroup");
         return NULL;
     }
 
@@ -795,9 +793,8 @@ static int iterative_search_hall_number(
 
     tolerance = symprec;
     for (attempt = 0; attempt < NUM_ATTEMPT; attempt++) {
-        warning_print("spglib: Attempt %d tolerance = %e failed", attempt,
-                      tolerance);
-        warning_print("(line %d, %s).\n", __LINE__, __FILE__);
+        debug_print("spglib: Attempt %d tolerance = %e failed", attempt,
+                    tolerance);
 
         tolerance *= REDUCE_RATE;
         sym_reduced = sym_reduce_operation(primitive->cell, symmetry, tolerance,
@@ -844,7 +841,6 @@ static int search_hall_number(double origin_shift[3], double conv_lattice[3][3],
     pointgroup = ptg_get_transformation_matrix(tmat_int, symmetry->rot,
                                                symmetry->size, aperiodic_axis);
 
-    debug_print("[line %d, %s]\n", __LINE__, __FILE__);
     debug_print("initial transformation matrix\n");
     debug_print_matrix_i3(tmat_int);
 
@@ -886,7 +882,6 @@ static int search_hall_number(double origin_shift[3], double conv_lattice[3][3],
     mat_multiply_matrix_id3(tmat, tmat_int, correction_mat);
     mat_multiply_matrix_d3(conv_lattice, primitive->cell->lattice, tmat);
 
-    debug_print("[line %d, %s]\n", __LINE__, __FILE__);
     debug_print("transformation matrix\n");
     debug_print_matrix_d3(tmat);
 
@@ -903,7 +898,6 @@ static int search_hall_number(double origin_shift[3], double conv_lattice[3][3],
                 origin_shift, conv_lattice, /* <-- modified only matched */
                 primitive->orig_lattice, candidates[i], pointgroup.number,
                 pointgroup.holohedry, centering, conv_symmetry, symprec)) {
-            debug_print("[line %d, %s]\n", __LINE__, __FILE__);
             debug_print("origin shift\n");
             debug_print_vector_d3(origin_shift);
 
@@ -1903,8 +1897,7 @@ static Centering get_base_center(int const tmat[3][3]) {
     }
 
     /* This should not happen. */
-    warning_print("spglib: No centring was found (line %d, %s).\n", __LINE__,
-                  __FILE__);
+    warning_print("spglib: No centring was found.\n");
     return PRIMITIVE;
 
 end:

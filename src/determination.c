@@ -77,9 +77,8 @@ DataContainer *det_determine_all(Cell const *cell, int const hall_number,
                          container->primitive->tolerance)) != NULL) {
                 goto found;
             }
-            warning_print(
-                "spglib: ref_get_exact_structure_and_symmetry failed.");
-            warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
+            debug_print(
+                "spglib: ref_get_exact_structure_and_symmetry failed.\n");
             det_free_container(container);
             container = NULL;
         }
@@ -122,7 +121,7 @@ static DataContainer *get_spacegroup_and_primitive(Cell const *cell,
     container = NULL;
 
     if ((container = (DataContainer *)malloc(sizeof(DataContainer))) == NULL) {
-        warning_print("spglib: Memory could not be allocated.");
+        warning_memory("container");
         return NULL;
     }
 
@@ -136,7 +135,6 @@ static DataContainer *get_spacegroup_and_primitive(Cell const *cell,
     for (attempt = 0; attempt < NUM_ATTEMPT; attempt++) {
         if ((container->primitive =
                  prm_get_primitive(cell, tolerance, angle_tolerance)) != NULL) {
-            debug_print("[line %d, %s]\n", __LINE__, __FILE__);
             debug_print("primitive lattice\n");
             debug_print_matrix_d3(container->primitive->cell->lattice);
 
@@ -151,9 +149,8 @@ static DataContainer *get_spacegroup_and_primitive(Cell const *cell,
             container->primitive = NULL;
         }
 
-        warning_print("spglib: Attempt %d tolerance = %f failed.", attempt,
-                      tolerance);
-        warning_print(" (line %d, %s).\n", __LINE__, __FILE__);
+        debug_print("spglib: Attempt %d tolerance = %f failed.\n", attempt,
+                    tolerance);
 
         tolerance *= REDUCE_RATE;
         if (angle_tolerance > 0) {

@@ -32,40 +32,18 @@
 /* ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE */
 /* POSSIBILITY OF SUCH DAMAGE. */
 
-#ifndef __debug_H__
-#define __debug_H__
+#pragma once
 
-#include <stdio.h>
+// Main print interface
+extern inline void warning_print(char const* format, ...);
+extern inline void debug_print(char const* format, ...);
+extern inline void info_print(char const* format, ...);
+extern inline void debug_print_matrix_d3(double const a[3][3]);
+extern inline void debug_print_matrix_i3(int const a[3][3]);
+extern inline void debug_print_vector_d3(double const a[3]);
+extern inline void debug_print_vectors_d3(double const a[][3], int size);
+extern inline void debug_print_vectors_with_label(double const a[][3],
+                                                  int const b[], int size);
 
-// Macros to either print or do nothing if in debug mode or not
-#ifdef SPGDEBUG
-    #define debug_print(...) printf(__VA_ARGS__)
-    #define debug_print_matrix_d3(a) dbg_print_matrix_d3(a)
-    #define debug_print_matrix_i3(a) dbg_print_matrix_i3(a)
-    #define debug_print_vector_d3(a) dbg_print_vector_d3(a)
-    #define debug_print_vectors_d3(...) dbg_print_vectors_d3(__VA_ARGS__)
-    #define debug_print_vectors_with_label(...) \
-        dbg_print_vectors_with_label(__VA_ARGS__)
-
-// Just to make sure these are never used, these definitions are #ifdef guarded
-void dbg_print_matrix_d3(double const a[3][3]);
-void dbg_print_matrix_i3(int const a[3][3]);
-void dbg_print_vector_d3(double const a[3]);
-void dbg_print_vectors_d3(double const a[][3], int size);
-void dbg_print_vectors_with_label(double const a[][3], int const b[], int size);
-
-#else
-    #define debug_print(...)
-    #define debug_print_matrix_d3(a)
-    #define debug_print_matrix_i3(a)
-    #define debug_print_vector_d3(a)
-    #define debug_print_vectors_d3(...)
-    #define debug_print_vectors_with_label(...)
-#endif
-
-#ifdef SPGWARNING
-    #define warning_print(...) fprintf(stderr, __VA_ARGS__)
-#else
-    #define warning_print(...)
-#endif
-#endif
+// Common messages
+extern inline void warning_memory(char const* what);

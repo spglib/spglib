@@ -9022,7 +9022,6 @@ static int is_hall_symbol(double shift[3], int const hall_number,
     int rot[3][3][3];
     double trans[3][3];
 
-    debug_print("[line %d, %s]\n", __LINE__, __FILE__);
     debug_print("primitive lattice\n");
     debug_print_matrix_d3(primitive_lattice);
 
@@ -9051,7 +9050,6 @@ not_found:
     return 0;
 
 found:
-    debug_print("[line %d, %s]\n", __LINE__, __FILE__);
     debug_print("origin shift\n");
     debug_print_vector_d3(shift);
 

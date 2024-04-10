@@ -77,27 +77,22 @@ static double *multiply_matrices(double const *A, double const *B);
 static int layer_swap_axis(NiggliParams *p, int const aperiodic_axis);
 static int step2_for_layer(NiggliParams *p);
 
-#ifdef SPGDEBUG
-static void debug_show(int const j, NiggliParams const *p) {
-    /* int i; */
-
+static inline void debug_show(int j, NiggliParams const *p) {
     if (j < 0) {
-        printf("Finish: ");
+        debug_print("Finish: ");
     } else {
-        printf("Step %d: ", j);
+        debug_print("Step %d: ", j);
     }
-    printf("%f %f %f %f %f %f\n", p->A, p->B, p->C, p->xi, p->eta, p->zeta);
+    debug_print("%f %f %f %f %f %f\n", p->A, p->B, p->C, p->xi, p->eta,
+                p->zeta);
 
-    /* printf("%d %d %d\n", p->l, p->m, p->n); */
-    /* for (i = 0; i < 3; i++) { */
-    /*   printf("%f %f %f\n", */
-    /*       p->lattice[i * 3], p->lattice[i * 3 + 1], p->lattice[i * 3 + 2]);
-     */
-    /* } */
+    // TODO: Remove or uncomment this debug script
+    // debug_print("%d %d %d\n", p->l, p->m, p->n);
+    // for (int i = 0; i < 3; i++) {
+    //     debug_print("%f %f %f\n", p->lattice[i * 3], p->lattice[i * 3 + 1],
+    //                 p->lattice[i * 3 + 2]);
+    // }
 }
-#else
-    #define debug_show(...)
-#endif
 
 int get_num_attempts() {
     char const *num_attempts_str = getenv("SPGLIB_NUM_ATTEMPTS");
@@ -109,7 +104,7 @@ int get_num_attempts() {
         if (end != num_attempts_str && num_attempts > 0 &&
             num_attempts < INT_MAX)
             return (int)num_attempts;
-        warning_print("Could not parse SPGLIB_NUM_ATTEMPTS=%s\n",
+        warning_print("spglib: Could not parse SPGLIB_NUM_ATTEMPTS=%s\n",
                       num_attempts_str);
     }
     // Otherwise return default number of attempts
@@ -348,7 +343,7 @@ static int step2(NiggliParams *p) {
 static int step2_for_layer(NiggliParams *p) {
     if (p->B > p->C + p->eps || (!(fabs(p->B - p->C) > p->eps) &&
                                  fabs(p->eta) > fabs(p->zeta) + p->eps)) {
-        warning_print(
+        debug_print(
             "niggli: B > C or B = C and |eta| > |zeta|. Please elongate the "
             "aperiodic axis.");
     }

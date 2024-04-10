@@ -20,6 +20,7 @@ endif ()
 target_sources(Spglib_symspg PRIVATE
         arithmetic.c
         cell.c
+        debug.c
         delaunay.c
         determination.c
         hall_symbol.c
@@ -41,11 +42,6 @@ target_sources(Spglib_symspg PRIVATE
         spin.c
         symmetry.c
 )
-if (SPGLIB_DEBUG)
-    target_sources(Spglib_symspg PRIVATE
-            debug.c
-    )
-endif ()
 target_include_directories(Spglib_symspg PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${CMAKE_CURRENT_BINARY_DIR}
@@ -67,6 +63,9 @@ if (SPGLIB_DEBUG)
 endif ()
 if (SPGLIB_WARNINGS)
     target_compile_definitions(Spglib_symspg PRIVATE SPGWARNING)
+endif ()
+if (SPGLIB_INFO)
+    target_compile_definitions(Spglib_symspg PRIVATE SPGINFO)
 endif ()
 
 # Avoid One Definition Rule problems. Please fix these
