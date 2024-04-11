@@ -11,10 +11,7 @@ GitHub release pages and in the git history.
 
 ## \[Unreleased\]
 
-### Python interface
-
-- [\[#420\]](https://github.com/spglib/spglib/pull/420) Raise `TypeError` when a given `cell` is invalid
-- [\[#420\]](https://github.com/spglib/spglib/pull/420) Add type annotation for `cell`
+## v2.4.0 (11 Apr. 2024)
 
 ### Main Changes
 
@@ -34,9 +31,6 @@ GitHub release pages and in the git history.
 ### C Interface
 
 - Mark deprecated api with `[[deprecated]]` and pre-C23 equivalents
-
-### C interface
-
 - Explicitly mark public API for export
 
 ### Python API
@@ -44,6 +38,8 @@ GitHub release pages and in the git history.
 - Fixed the Python module build and installation in the pure CMake environment (without scikit-build-core)
 - Use importlib to search and load the bundled spglib C library
 - Support editable installs
+- [\[#420\]](https://github.com/spglib/spglib/pull/420) Raise `TypeError` when a given `cell` is invalid
+- [\[#420\]](https://github.com/spglib/spglib/pull/420) Add type annotation for `cell`
 
 ### CI
 
