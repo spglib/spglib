@@ -52,3 +52,23 @@ jobs:
       - uses: hynek/build-and-inspect-python-package@v2
         with:
           skip-wheel: true
+
+  check:
+    name: 🔍 check
+    needs: [ build_wheels, build_sdist ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get sdist
+        # Technically sdist check is already done in `build_sdist`,
+        # but doing it here again for redundancy
+        uses: actions/download-artifact@v4
+        with:
+          name: Packages
+          path: dist
+      - name: Get wheels
+        uses: actions/download-artifact@v4
+        with:
+          pattern: cibw-wheels-*
+          path: dist
+          merge-multiple: true
+      - run: pipx run twine check --strict dist/*
