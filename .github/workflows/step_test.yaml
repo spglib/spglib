@@ -30,10 +30,16 @@ jobs:
           - os: macos-11
             toolchain: macos
             python-version: "3.x"
+          - os: macos-12
+            toolchain: macos
+            python-version: "3.x"
           - os: macos-13
             toolchain: macos
             python-version: "3.x"
           - os: macos-14
+            toolchain: macos
+            python-version: "3.x"
+          - os: macos-latest
             toolchain: macos
             python-version: "3.x"
           - os: windows-2019
