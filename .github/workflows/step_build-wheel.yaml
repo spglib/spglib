@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-latest, windows-latest, macOS-11, macOS-13, macOS-14 ]
+        os: [ ubuntu-latest, windows-latest, macOS-13, macOS-14 ]
 
     steps:
       - uses: actions/checkout@v4
@@ -50,3 +50,25 @@ jobs:
         with:
           fetch-depth: 0
       - uses: hynek/build-and-inspect-python-package@v2
+        with:
+          skip-wheel: true
+
+  check:
+    name: 🔍 check
+    needs: [ build_wheels, build_sdist ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get sdist
+        # Technically sdist check is already done in `build_sdist`,
+        # but doing it here again for redundancy
+        uses: actions/download-artifact@v4
+        with:
+          name: Packages
+          path: dist
+      - name: Get wheels
+        uses: actions/download-artifact@v4
+        with:
+          pattern: cibw-wheels-*
+          path: dist
+          merge-multiple: true
+      - run: pipx run twine check --strict dist/*
