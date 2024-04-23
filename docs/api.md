@@ -347,11 +347,11 @@ typedef struct {
     char international_full[20];
     char international[32];
     char schoenflies[7];
-    char hall_symbol[17];
     int hall_number;
+    char hall_symbol[17];
     char choice[6];
-    char pointgroup_schoenflies[4];
     char pointgroup_international[6];
+    char pointgroup_schoenflies[4];
     int arithmetic_crystal_class_number;
     char arithmetic_crystal_class_symbol[7];
 } SpglibSpacegroupType;
