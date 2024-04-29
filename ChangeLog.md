@@ -11,6 +11,10 @@ GitHub release pages and in the git history.
 
 ## \[Unreleased\]
 
+## Fixes (magnetic space group)
+
+- Fix to check internal primitive symmetry search to avoid SEGV
+
 ## v2.4.0 (11 Apr. 2024)
 
 ### Main Changes
