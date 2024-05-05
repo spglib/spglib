@@ -36,7 +36,7 @@
 from __future__ import annotations
 
 import warnings
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypedDict
 
 import numpy as np
 
@@ -95,6 +95,20 @@ class SpglibError:
 
 
 spglib_error = SpglibError()
+
+
+class MagneticSpaceGroupType(TypedDict):
+    """Magnetic space group type information.
+
+    See :ref:`api_get_magnetic_spacegroup_type` for attributes.
+    """
+
+    uni_number: int
+    litvin_number: int
+    bns_number: str
+    og_number: str
+    number: int
+    type: int
 
 
 def get_version():
@@ -1186,7 +1200,7 @@ def get_spacegroup_type_from_symmetry(
         return None
 
 
-def get_magnetic_spacegroup_type(uni_number) -> dict | None:
+def get_magnetic_spacegroup_type(uni_number: int) -> MagneticSpaceGroupType | None:
     """Translate UNI number to magnetic space group type information.
 
     If fails, return None.
@@ -1198,15 +1212,8 @@ def get_magnetic_spacegroup_type(uni_number) -> dict | None:
 
     Returns
     -------
-    magnetic_spacegroup_type: dict
-        See :ref:`api_get_magnetic_spacegroup_type` for these descriptions.
-
-        - uni_number
-        - litvin_number
-        - bns_number
-        - og_number
-        - number
-        - type
+    magnetic_spacegroup_type: MagneticSpaceGroupType
+        See :class:`MagneticSpaceGroupType` for the description of the keys.
 
     Notes
     -----
@@ -1215,22 +1222,18 @@ def get_magnetic_spacegroup_type(uni_number) -> dict | None:
     """
     _set_no_error()
 
-    keys = (
-        "uni_number",
-        "litvin_number",
-        "bns_number",
-        "og_number",
-        "number",
-        "type",
-    )
     msg_type_list = _spglib.magnetic_spacegroup_type(uni_number)
     _set_error_message()
 
     if msg_type_list is not None:
-        msg_type = dict(zip(keys, msg_type_list))
-        for key in msg_type:
-            if key not in ["uni_number", "litvin_number", "number", "type"]:
-                msg_type[key] = msg_type[key].strip()
+        msg_type = MagneticSpaceGroupType(
+            uni_number=msg_type_list[0],
+            litvin_number=msg_type_list[1],
+            bns_number=msg_type_list[2].strip(),
+            og_number=msg_type_list[3].strip(),
+            number=msg_type_list[4],
+            type=msg_type_list[5],
+        )
         return msg_type
     else:
         return None
