@@ -330,7 +330,7 @@ TEST(MagneticDataset, test_with_slightly_distorted_positions) {
     spg_free_magnetic_dataset(dataset);
 }
 
-TEST(MagneticDataset, test_with_slightly_distorted_positions2) {
+TEST(MagneticDataset, test_failure_with_slightly_distorted_positions) {
     double lattice[3][3] = {
         {4.79573126, 4.79573126, -1.60862362},
         {-1.38874873, 1.38874873, 0.},
