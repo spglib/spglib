@@ -347,7 +347,9 @@ TEST(MagneticDataset, test_failure_with_slightly_distorted_positions) {
     int types[] = {0, 0, 1, 1, 1, 1};
     double tensors[] = {0, 0, 0, 0, 0, 0};
     int num_atoms = 6;
-    double symprec = 1e-4;  // too large symprec for this input
+    // prm_get_primitive_symmetry seems to change behavior with symprec=1e-4 and
+    // 1e-5 for this distorted structure
+    double symprec = 1e-4;
 
     SpglibMagneticDataset *dataset;
     dataset = spg_get_magnetic_dataset(lattice, positions, types, tensors,
