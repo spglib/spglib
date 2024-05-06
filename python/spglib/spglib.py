@@ -97,6 +97,51 @@ class SpglibError:
 spglib_error = SpglibError()
 
 
+class SpaceGroupType(TypedDict):
+    """Space group type information.
+
+    Dictionary keys are as follows:
+
+    - number : int
+        International space group number
+    - international_short : str
+        International short symbol.
+    - international_full : str
+        International full symbol.
+    - international : str
+        International symbol.
+    - schoenflies : str
+        Schoenflies symbol.
+    - hall_number : int
+        Hall symbol ID number.
+    - hall_symbol : str
+        Hall symbol.
+    - choice : str
+        Centring, origin, basis vector setting.
+    - pointgroup_international : str
+        International symbol of crystallographic point group.
+    - pointgroup_schoenflies : str
+        Schoenflies symbol of crystallographic point group.
+    - arithmetic_crystal_class_number : int
+        Arithmetic crystal class number
+    - arithmetic_crystal_class_symbol : str
+        Arithmetic crystal class symbol.
+    """
+
+    number: int
+    international_short: str
+    international_full: str
+    international: str
+    schoenflies: str
+    hall_number: int
+    hall_symbol: str
+    choice: str
+    pointgroup_international: str
+    pointgroup_schoenflies: str
+    arithmetic_crystal_class_number: int
+    arithmetic_crystal_class_symbol: str
+
+
 class MagneticSpaceGroupType(TypedDict):
     """Magnetic space group type information.
 
@@ -1009,7 +1054,7 @@ def get_spacegroup(
         return "%s (%d)" % (spg_type["international_short"], dataset["number"])
 
 
-def get_spacegroup_type(hall_number) -> dict | None:
+def get_spacegroup_type(hall_number: int) -> SpaceGroupType | None:
     """Translate Hall number to space group type information. If it fails, return None.
 
     This function allows to directly access to the space-group-type database
@@ -1025,37 +1070,8 @@ def get_spacegroup_type(hall_number) -> dict | None:
 
     Returns
     -------
-    spacegroup_type: dict or None
-        Dictionary keys are as follows:
-
-        - number : int
-            International space group number
-        - international_short : str
-            International short symbol.
-            Equivalent to ``dataset['international']`` of :func:`get_symmetry_dataset`.
-        - international_full : str
-            International full symbol.
-        - international : str
-            International symbol.
-        - schoenflies : str
-            Schoenflies symbol.
-        - hall_number : int
-            Hall symbol ID number.
-        - hall_symbol : str
-            Hall symbol.
-            Equivalent to ``dataset['hall']`` of `get_symmetry_dataset`,
-        - choice : str
-            Centring, origin, basis vector setting.
-        - pointgroup_international :
-            International symbol of crystallographic point group.
-            Equivalent to ``dataset['pointgroup_symbol']`` of
-            :func:`get_symmetry_dataset`.
-        - pointgroup_schoenflies :
-            Schoenflies symbol of crystallographic point group.
-        - arithmetic_crystal_class_number : int
-            Arithmetic crystal class number
-        - arithmetic_crystal_class_symbol : str
-            Arithmetic crystal class symbol.
+    spacegroup_type: SpaceGroupType or None
+        See :class:`SpaceGroupType` for the description of the keys.
 
     Notes
     -----
@@ -1067,28 +1083,24 @@ def get_spacegroup_type(hall_number) -> dict | None:
     """
     _set_no_error()
 
-    keys = (
-        "number",
-        "international_short",
-        "international_full",
-        "international",
-        "schoenflies",
-        "hall_number",
-        "hall_symbol",
-        "choice",
-        "pointgroup_international",
-        "pointgroup_schoenflies",
-        "arithmetic_crystal_class_number",
-        "arithmetic_crystal_class_symbol",
-    )
     spg_type_list = _spglib.spacegroup_type(hall_number)
     _set_error_message()
 
     if spg_type_list is not None:
-        spg_type = dict(zip(keys, spg_type_list))
-        for key in spg_type:
-            if key not in ("number", "hall_number", "arithmetic_crystal_class_number"):
-                spg_type[key] = spg_type[key].strip()
+        spg_type = SpaceGroupType(
+            number=spg_type_list[0],
+            international_short=spg_type_list[1].strip(),
+            international_full=spg_type_list[2].strip(),
+            international=spg_type_list[3].strip(),
+            schoenflies=spg_type_list[4].strip(),
+            hall_number=spg_type_list[5],
+            hall_symbol=spg_type_list[6].strip(),
+            choice=spg_type_list[7].strip(),
+            pointgroup_international=spg_type_list[8].strip(),
+            pointgroup_schoenflies=spg_type_list[9].strip(),
+            arithmetic_crystal_class_number=spg_type_list[10],
+            arithmetic_crystal_class_symbol=spg_type_list[11].strip(),
+        )
         return spg_type
     else:
         return None
@@ -1099,10 +1111,8 @@ def get_spacegroup_type_from_symmetry(
     translations,
     lattice=None,
     symprec=1e-5,
-) -> dict | None:
+) -> SpaceGroupType | None:
     """Return space-group type information from symmetry operations.
-
-    See also :func:`get_spacegroup_type` for space-group type information.
 
     This is expected to work well for the set of symmetry operations whose
     distortion is small. The aim of making this feature is to find space-group-type
@@ -1127,34 +1137,8 @@ def get_spacegroup_type_from_symmetry(
 
     Returns
     -------
-    spacegroup_type : dict or None
-        If it fails, None is returned. Otherwise a dictionary is returned.
-        Dictionary keys are as follows:
-
-        - number : int
-            International space group number
-        - international_short : str
-            International short symbol.
-        - international_full : str
-            International full symbol.
-        - international : str
-            International symbol.
-        - schoenflies : str
-            Schoenflies symbol.
-        - hall_number : int
-            Hall symbol ID number.
-        - hall_symbol : str
-            Hall symbol.
-        - choice : str
-            Centring, origin, basis vector setting.
-        - pointgroup_international :
-            International symbol of crystallographic point group.
-        - pointgroup_schoenflies :
-            Schoenflies symbol of crystallographic point group.
-        - arithmetic_crystal_class_number : int
-            Arithmetic crystal class number
-        - arithmetic_crystal_class_symbol : str
-            Arithmetic crystal class symbol.
+    spacegroup_type : SpaceGroupType or None
+        See :class:`SpaceGroupType` for the description of the keys.
 
     Notes
     -----
@@ -1172,29 +1156,24 @@ def get_spacegroup_type_from_symmetry(
 
     _set_no_error()
 
-    keys = (
-        "number",
-        "international_short",
-        "international_full",
-        "international",
-        "schoenflies",
-        "hall_number",
-        "hall_symbol",
-        "choice",
-        "pointgroup_international",
-        "pointgroup_schoenflies",
-        "arithmetic_crystal_class_number",
-        "arithmetic_crystal_class_symbol",
-    )
-
     spg_type_list = _spglib.spacegroup_type_from_symmetry(r, t, _lattice, symprec)
     _set_error_message()
 
     if spg_type_list is not None:
-        spg_type = dict(zip(keys, spg_type_list))
-        for key in spg_type:
-            if key not in ("number", "hall_number", "arithmetic_crystal_class_number"):
-                spg_type[key] = spg_type[key].strip()
+        spg_type = SpaceGroupType(
+            number=spg_type_list[0],
+            international_short=spg_type_list[1].strip(),
+            international_full=spg_type_list[2].strip(),
+            international=spg_type_list[3].strip(),
+            schoenflies=spg_type_list[4].strip(),
+            hall_number=spg_type_list[5],
+            hall_symbol=spg_type_list[6].strip(),
+            choice=spg_type_list[7].strip(),
+            pointgroup_international=spg_type_list[8].strip(),
+            pointgroup_schoenflies=spg_type_list[9].strip(),
+            arithmetic_crystal_class_number=spg_type_list[10],
+            arithmetic_crystal_class_symbol=spg_type_list[11].strip(),
+        )
         return spg_type
     else:
         return None

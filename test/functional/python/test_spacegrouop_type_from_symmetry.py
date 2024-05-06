@@ -69,5 +69,5 @@ def test_spacegroup_type_from_symmetry(
             fname,
         )
         spgtype_ref = get_spacegroup_type(dataset["hall_number"])
-        for key in spgtype:
-            assert spgtype[key] == spgtype_ref[key]
+        for key, val in spgtype.items():
+            assert spgtype_ref.get(key) == val

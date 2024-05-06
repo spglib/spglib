@@ -39,6 +39,7 @@ from ._version import __version__, __version_tuple__  # noqa: F401
 # fmt: off
 from .spglib import (  # noqa: F401
     MagneticSpaceGroupType,
+    SpaceGroupType,
     delaunay_reduce,
     find_primitive,
     get_BZ_grid_points_by_rotations,
