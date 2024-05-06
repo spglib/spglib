@@ -331,6 +331,7 @@ TEST(MagneticDataset, test_with_slightly_distorted_positions) {
 }
 
 TEST(MagneticDataset, test_failure_with_slightly_distorted_positions) {
+    // This structure was randomly generated
     double lattice[3][3] = {
         {4.79573126, 4.79573126, -1.60862362},
         {-1.38874873, 1.38874873, 0.},
