@@ -11,6 +11,10 @@ GitHub release pages and in the git history.
 
 ## \[Unreleased\]
 
+### C Interface
+
+- Fix a potential segmentation fault in `spacegroup.c:iterative_search_hall_number`
+
 ## v2.4.0 (11 Apr. 2024)
 
 ### Main Changes
