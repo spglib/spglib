@@ -19,6 +19,10 @@ GitHub release pages and in the git history.
 
 - Fix a potential segmentation fault in `spacegroup.c:iterative_search_hall_number`
 
+### Python API
+
+- Add `spglib.get_magnetic_spacegroup_type_from_symmetry` for getting a magnetic space-group type information from magnetic symmetry operations
+
 ## v2.4.0 (11 Apr. 2024)
 
 ### Main Changes

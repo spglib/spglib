@@ -1239,6 +1239,58 @@ def get_magnetic_spacegroup_type(uni_number: int) -> MagneticSpaceGroupType | No
         return None
 
 
+def get_magnetic_spacegroup_type_from_symmetry(
+    rotations: np.ndarray,
+    translations: np.ndarray,
+    time_reversals: np.ndarray,
+    lattice: np.ndarray | None = None,
+    symprec: float = 1e-5,
+) -> MagneticSpaceGroupType | None:
+    """Return magnetic space-group type information from symmetry operations.
+
+    Parameters
+    ----------
+    rotations, translations, time_reversals:
+        See returns of :func:`get_magnetic_symmetry`.
+    lattice : (Optional) array_like (3, 3)
+        Basis vectors a, b, c given in row vectors. This is used as the measure of
+        distance. Default is None, which gives unit matrix.
+    symprec: float
+        See :func:`get_symmetry`.
+
+    Returns
+    -------
+    magnetic_spacegroup_type: MagneticSpaceGroupType
+        See :class:`MagneticSpaceGroupType` for the description of the keys.
+    """
+    rots = np.array(rotations, dtype="intc", order="C")
+    trans = np.array(translations, dtype="double", order="C")
+    timerev = np.array(time_reversals, dtype="intc", order="C")
+    if lattice is None:
+        latt = np.eye(3, dtype="double", order="C")
+    else:
+        latt = np.array(lattice, dtype="double", order="C")
+
+    _set_no_error()
+    msg_type_list = _spglib.magnetic_spacegroup_type_from_symmetry(
+        rots, trans, timerev, latt, symprec
+    )
+    _set_error_message()
+
+    if msg_type_list is not None:
+        msg_type = MagneticSpaceGroupType(
+            uni_number=msg_type_list[0],
+            litvin_number=msg_type_list[1],
+            bns_number=msg_type_list[2].strip(),
+            og_number=msg_type_list[3].strip(),
+            number=msg_type_list[4],
+            type=msg_type_list[5],
+        )
+        return msg_type
+    else:
+        return None
+
+
 def get_pointgroup(rotations):
     """Return point group in international table symbol and number.
 

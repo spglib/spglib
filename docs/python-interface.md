@@ -246,6 +246,7 @@ details, see {ref}`variables_symprec`, {ref}`variables_angle_tolerance`, and
   spglib.get_magnetic_symmetry
   spglib.get_magnetic_symmetry_dataset
   spglib.get_magnetic_spacegroup_type
+  spglib.get_magnetic_spacegroup_type_from_symmetry
   spglib.get_magnetic_symmetry_from_database
 ```
 
