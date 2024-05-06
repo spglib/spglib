@@ -799,11 +799,13 @@ static int iterative_search_hall_number(
         tolerance *= REDUCE_RATE;
         sym_reduced = sym_reduce_operation(primitive->cell, symmetry, tolerance,
                                            angle_tolerance);
-        hall_number =
-            search_hall_number(origin_shift, conv_lattice, candidates,
-                               num_candidates, primitive, sym_reduced, symprec);
-        sym_free_symmetry(sym_reduced);
-        sym_reduced = NULL;
+        if (sym_reduced) {
+            hall_number = search_hall_number(origin_shift, conv_lattice,
+                                             candidates, num_candidates,
+                                             primitive, sym_reduced, symprec);
+            sym_free_symmetry(sym_reduced);
+            sym_reduced = NULL;
+        }
         if (hall_number != 0) {
             break;
         }
