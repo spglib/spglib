@@ -585,6 +585,11 @@ static Symmetry *get_space_group_with_magnetic_symmetry(
 
     /* (a, b, c) = (a_prim, b_prim, c_prim) @ tmat */
     prim_sym = prm_get_primitive_symmetry(tmat, sym, symprec);
+    if (prim_sym == NULL) {
+        sym_free_symmetry(sym);
+        return NULL;
+    }
+
     *spacegroup =
         spa_search_spacegroup_with_symmetry(prim_sym, unit_lat, symprec);
     /* refine bravais_lattice and origin_shift */

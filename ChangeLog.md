@@ -11,6 +11,10 @@ GitHub release pages and in the git history.
 
 ## \[Unreleased\]
 
+### Fixes (magnetic space group)
+
+- Fix to check internal primitive symmetry search to avoid SEGV
+
 ### C Interface
 
 - Fix a potential segmentation fault in `spacegroup.c:iterative_search_hall_number`

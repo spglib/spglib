@@ -170,8 +170,9 @@ int prm_get_primitive_with_pure_trans(Primitive *primitive, Cell const *cell,
     return 1;
 }
 
-/* t_mat transforms primitive cell to conventional: */
-/* (a_p, b_p, c_p) t_mat = (a_c, b_c, c_c) */
+// t_mat transforms primitive cell to conventional:
+// (a_p, b_p, c_p) t_mat = (a_c, b_c, c_c)
+// If failed, return NULL
 Symmetry *prm_get_primitive_symmetry(double t_mat[3][3],
                                      Symmetry const *symmetry,
                                      double const symprec) {

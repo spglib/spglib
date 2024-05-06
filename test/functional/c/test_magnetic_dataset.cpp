@@ -330,4 +330,36 @@ TEST(MagneticDataset, test_with_slightly_distorted_positions) {
     spg_free_magnetic_dataset(dataset);
 }
 
+TEST(MagneticDataset, test_failure_with_slightly_distorted_positions) {
+    // This structure was randomly generated
+    double lattice[3][3] = {
+        {4.79573126, 4.79573126, -1.60862362},
+        {-1.38874873, 1.38874873, 0.},
+        {0., 0., 5.31736928},
+    };
+    double positions[][3] = {
+        {0.51669908, 0.51669908, 0.22675739},
+        {0.5166947, 0.5166947, 0.72675256},
+        {0.19685353, 0.19685353, 0.56683556},
+        {0.83653907, 0.83653907, 0.88667445},
+        {0.83653365, 0.83653365, 0.38666685},
+        {0.19685074, 0.19685074, 0.0668282},
+    };
+    int types[] = {0, 0, 1, 1, 1, 1};
+    double tensors[] = {0, 0, 0, 0, 0, 0};
+    int num_atoms = 6;
+    // prm_get_primitive_symmetry seems to change behavior with symprec=1e-4 and
+    // 1e-5 for this distorted structure
+    double symprec = 1e-4;
+
+    SpglibMagneticDataset *dataset;
+    dataset = spg_get_magnetic_dataset(lattice, positions, types, tensors,
+                                       0 /* tensor_rank */, num_atoms,
+                                       0 /* is_axial */, symprec);
+    EXPECT_EQ(spg_get_error_code(),
+              SpglibError::SPGERR_SPACEGROUP_SEARCH_FAILED);
+
+    if (dataset) spg_free_magnetic_dataset(dataset);
+}
+
 // TODO: test get_magnetic_dataset with distorted positions
