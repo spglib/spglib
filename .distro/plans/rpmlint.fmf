@@ -8,3 +8,8 @@ discover:
   ref: main
 execute:
   how: tmt
+
+adjust:
+  when: distro < fedora-40
+  because: Rpmlint fails with empty entry_points.txt
+  enabled: false
