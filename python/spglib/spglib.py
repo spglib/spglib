@@ -341,6 +341,7 @@ def get_symmetry(
             angle_tolerance=angle_tolerance,
         )
         if dataset is None:
+            _set_error_message()
             return None
 
         return {
@@ -503,8 +504,8 @@ def get_magnetic_symmetry(
         mag_symprec,
     )
 
-    _set_error_message()
     if num_sym == 0:
+        _set_error_message()
         return None
     else:
         spin_flips = np.array(spin_flips[:num_sym], dtype="intc", order="C")
@@ -789,7 +790,6 @@ def get_symmetry_dataset(
         return None
 
     dataset = _build_dataset_dict(spg_ds)
-    _set_error_message()
     return dataset
 
 
@@ -812,7 +812,6 @@ def get_symmetry_layerdataset(cell: Cell, aperiodic_dir=2, symprec=1e-5):
 
     dataset = _build_dataset_dict(spg_ds)
 
-    _set_error_message()
     return dataset
 
 
@@ -1004,7 +1003,6 @@ def get_magnetic_symmetry_dataset(
     if tensor_rank == 1:
         dataset["std_tensors"] = dataset["std_tensors"].reshape(-1, 3)
 
-    _set_error_message()
     return dataset
 
 
@@ -1045,6 +1043,7 @@ def get_spacegroup(
     )
 
     if dataset is None:
+        _set_error_message()
         return None
 
     spg_type = get_spacegroup_type(dataset["hall_number"])
@@ -1084,7 +1083,6 @@ def get_spacegroup_type(hall_number: int) -> SpaceGroupType | None:
     _set_no_error()
 
     spg_type_list = _spglib.spacegroup_type(hall_number)
-    _set_error_message()
 
     if spg_type_list is not None:
         spg_type = SpaceGroupType(
@@ -1103,6 +1101,7 @@ def get_spacegroup_type(hall_number: int) -> SpaceGroupType | None:
         )
         return spg_type
     else:
+        _set_error_message()
         return None
 
 
@@ -1157,8 +1156,6 @@ def get_spacegroup_type_from_symmetry(
     _set_no_error()
 
     spg_type_list = _spglib.spacegroup_type_from_symmetry(r, t, _lattice, symprec)
-    _set_error_message()
-
     if spg_type_list is not None:
         spg_type = SpaceGroupType(
             number=spg_type_list[0],
@@ -1176,6 +1173,7 @@ def get_spacegroup_type_from_symmetry(
         )
         return spg_type
     else:
+        _set_error_message()
         return None
 
 
@@ -1202,7 +1200,6 @@ def get_magnetic_spacegroup_type(uni_number: int) -> MagneticSpaceGroupType | No
     _set_no_error()
 
     msg_type_list = _spglib.magnetic_spacegroup_type(uni_number)
-    _set_error_message()
 
     if msg_type_list is not None:
         msg_type = MagneticSpaceGroupType(
@@ -1215,6 +1212,7 @@ def get_magnetic_spacegroup_type(uni_number: int) -> MagneticSpaceGroupType | No
         )
         return msg_type
     else:
+        _set_error_message()
         return None
 
 
@@ -1254,7 +1252,6 @@ def get_magnetic_spacegroup_type_from_symmetry(
     msg_type_list = _spglib.magnetic_spacegroup_type_from_symmetry(
         rots, trans, timerev, latt, symprec
     )
-    _set_error_message()
 
     if msg_type_list is not None:
         msg_type = MagneticSpaceGroupType(
@@ -1267,10 +1264,11 @@ def get_magnetic_spacegroup_type_from_symmetry(
         )
         return msg_type
     else:
+        _set_error_message()
         return None
 
 
-def get_pointgroup(rotations):
+def get_pointgroup(rotations) -> tuple[str, int, np.ndarray]:
     """Return point group in international table symbol and number.
 
     The symbols are mapped to the numbers as follows:
@@ -1370,7 +1368,6 @@ def standardize_cell(
         symprec,
         angle_tolerance,
     )
-    _set_error_message()
 
     if num_atom_std > 0:
         return (
@@ -1379,6 +1376,7 @@ def standardize_cell(
             np.array(numbers[:num_atom_std], dtype="intc"),
         )
     else:
+        _set_error_message()
         return None
 
 
@@ -1413,7 +1411,6 @@ def refine_cell(cell: Cell, symprec=1e-5, angle_tolerance=-1.0):
         symprec,
         angle_tolerance,
     )
-    _set_error_message()
 
     if num_atom_std > 0:
         return (
@@ -1422,6 +1419,7 @@ def refine_cell(cell: Cell, symprec=1e-5, angle_tolerance=-1.0):
             np.array(numbers[:num_atom_std], dtype="intc"),
         )
     else:
+        _set_error_message()
         return None
 
 
@@ -1444,7 +1442,6 @@ def find_primitive(cell: Cell, symprec=1e-5, angle_tolerance=-1.0):
     num_atom_prim = _spglib.primitive(
         lattice, positions, numbers, symprec, angle_tolerance
     )
-    _set_error_message()
 
     if num_atom_prim > 0:
         return (
@@ -1453,6 +1450,7 @@ def find_primitive(cell: Cell, symprec=1e-5, angle_tolerance=-1.0):
             np.array(numbers[:num_atom_prim], dtype="intc"),
         )
     else:
+        _set_error_message()
         return None
 
 
@@ -1479,9 +1477,9 @@ def get_symmetry_from_database(hall_number) -> dict | None:
     rotations = np.zeros((192, 3, 3), dtype="intc")
     translations = np.zeros((192, 3), dtype="double")
     num_sym = _spglib.symmetry_from_database(rotations, translations, hall_number)
-    _set_error_message()
 
     if num_sym is None:
+        _set_error_message()
         return None
     else:
         return {
@@ -1528,9 +1526,9 @@ def get_magnetic_symmetry_from_database(uni_number, hall_number=0) -> dict | Non
         uni_number,
         hall_number,
     )
-    _set_error_message()
 
     if num_sym is None:
+        _set_error_message()
         return None
     else:
         return {
@@ -1628,6 +1626,7 @@ def get_ir_reciprocal_mesh(
     ):
         return grid_mapping_table, grid_address
     else:
+        _set_error_message()
         return None
 
 
@@ -1706,6 +1705,7 @@ def get_stabilized_reciprocal_mesh(
     ):
         return mapping_table, grid_address
     else:
+        _set_error_message()
         return None
 
 
@@ -1944,9 +1944,9 @@ def delaunay_reduce(lattice, eps=1e-5):
 
     delaunay_lattice = np.array(np.transpose(lattice), dtype="double", order="C")
     result = _spglib.delaunay_reduce(delaunay_lattice, float(eps))
-    _set_error_message()
 
     if result == 0:
+        _set_error_message()
         return None
     else:
         return np.array(np.transpose(delaunay_lattice), dtype="double", order="C")
@@ -2005,9 +2005,9 @@ def niggli_reduce(lattice, eps=1e-5):
 
     niggli_lattice = np.array(np.transpose(lattice), dtype="double", order="C")
     result = _spglib.niggli_reduce(niggli_lattice, float(eps))
-    _set_error_message()
 
     if result == 0:
+        _set_error_message()
         return None
     else:
         return np.array(np.transpose(niggli_lattice), dtype="double", order="C")
