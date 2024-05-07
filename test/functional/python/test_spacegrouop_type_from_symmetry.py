@@ -36,8 +36,8 @@ def test_spacegroup_type_from_symmetry(
                 lattice=lattice,
                 symprec=1e-1,
             )
-            if spgtype["number"] != dataset["number"]:
-                print("%d != %d in %s" % (spgtype["number"], dataset["number"], fname))
+            if spgtype.number != dataset["number"]:
+                print("%d != %d in %s" % (spgtype.number, dataset["number"], fname))
                 ref_cell = (
                     dataset["std_lattice"],
                     dataset["std_positions"],
@@ -52,7 +52,7 @@ def test_spacegroup_type_from_symmetry(
                 )
                 print(
                     "Using refined cell: %d, %d in %s"
-                    % (spgtype["number"], dataset["number"], fname),
+                    % (spgtype.number, dataset["number"], fname),
                 )
         else:
             dataset = get_symmetry_dataset(cell, symprec=1e-5)
@@ -63,11 +63,10 @@ def test_spacegroup_type_from_symmetry(
                 symprec=1e-5,
             )
 
-        assert spgtype["number"] == dataset["number"], "%d != %d in %s" % (
-            spgtype["number"],
+        assert spgtype.number == dataset["number"], "%d != %d in %s" % (
+            spgtype.number,
             dataset["number"],
             fname,
         )
         spgtype_ref = get_spacegroup_type(dataset["hall_number"])
-        for key, val in spgtype.items():
-            assert spgtype_ref.get(key) == val
+        assert spgtype == spgtype_ref

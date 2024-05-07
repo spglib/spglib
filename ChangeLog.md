@@ -22,6 +22,29 @@ GitHub release pages and in the git history.
 ### Python API
 
 - Add `spglib.get_magnetic_spacegroup_type_from_symmetry` for getting a magnetic space-group type information from magnetic symmetry operations
+- `spglib.get_spacegroup_type` and `spglib.get_spacegroup_type_from_symmetry` now return a `spglib.SpaceGroupType` object, inheriting `dataclasses.dataclass`, instead of a plain `dict`. This object also has the `dict`-like interface, for example
+
+```python
+spgtype: SpaceGroupType | None = get_spacegroup_type(cell)
+assert spgtype is not None
+print(spgtype['number'])
+print(list(spgtype.items()))
+```
+
+However, we recommend using the `dataclass` interface:
+
+```python
+spgtype: SpaceGroupType | None = get_spacegroup_type(cell)
+assert spgtype is not None
+print(spgtype.number)
+
+# If you really need dictionary, ...
+from dataclasses import asdict
+print(asdict(spgtype))
+```
+
+We consider migrating plain `dict` into `dataclasses.dataclass` for the returned objects of Python APIs.
+The `dict`-like interface is deprecated and will be removed in the future.
 
 ## v2.4.0 (11 Apr. 2024)
 

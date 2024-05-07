@@ -35,8 +35,10 @@
 
 from __future__ import annotations
 
+import dataclasses
 import warnings
-from typing import TYPE_CHECKING, TypedDict
+from collections.abc import Iterator, Mapping
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
@@ -87,6 +89,10 @@ if TYPE_CHECKING:
         tuple[Lattice, Positions, Numbers] | tuple[Lattice, Positions, Numbers, Magmoms]
     )
 
+warnings.filterwarnings(
+    "once", category=DeprecationWarning, message=r"dict interface.*"
+)
+
 
 class SpglibError:
     """Error message why spglib failed."""
@@ -97,7 +103,8 @@ class SpglibError:
 spglib_error = SpglibError()
 
 
-class SpaceGroupType(TypedDict):
+@dataclasses.dataclass(eq=True, frozen=True)
+class SpaceGroupType(Mapping[str, Any]):
     """Space group type information.
 
     Dictionary keys are as follows:
@@ -141,8 +148,26 @@ class SpaceGroupType(TypedDict):
     arithmetic_crystal_class_number: int
     arithmetic_crystal_class_symbol: str
 
+    def __getitem__(self, key: str) -> Any:
+        """Return the value of the key."""
+        warnings.warn(
+            f"dict interface ({self.__class__.__name__}['{key}']) is deprecated."
+            "Use attribute interface ({self.__class__.__name__}.{key}) instead",
+            DeprecationWarning,
+        )
+        return dataclasses.asdict(self)[key]
 
-class MagneticSpaceGroupType(TypedDict):
+    def __len__(self) -> int:
+        """Return the number of fields."""
+        return len(dataclasses.fields(self))
+
+    def __iter__(self) -> Iterator[str]:
+        """Return an iterator over the keys."""
+        return iter(dataclasses.asdict(self))
+
+
+@dataclasses.dataclass(eq=True, frozen=True)
+class MagneticSpaceGroupType(Mapping[str, Any]):
     """Magnetic space group type information.
 
     See :ref:`api_get_magnetic_spacegroup_type` for attributes.
@@ -154,6 +179,23 @@ class MagneticSpaceGroupType(TypedDict):
     og_number: str
     number: int
     type: int
+
+    def __getitem__(self, key: str) -> Any:
+        """Return the value of the key."""
+        warnings.warn(
+            f"dict interface ({self.__class__.__name__}['{key}']) is deprecated."
+            "Use attribute interface ({self.__class__.__name__}.{key}) instead",
+            DeprecationWarning,
+        )
+        return dataclasses.asdict(self)[key]
+
+    def __len__(self) -> int:
+        """Return the number of fields."""
+        return len(dataclasses.fields(self))
+
+    def __iter__(self) -> Iterator[str]:
+        """Return an iterator over the keys."""
+        return iter(dataclasses.asdict(self))
 
 
 def get_version():

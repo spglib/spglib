@@ -18,7 +18,7 @@ def _check_magnetic_spacegroup_type(
         time_reversals=dataset["time_reversals"],
         lattice=lattice,
     )
-    assert msg_type["uni_number"] == uni_number
+    assert msg_type.uni_number == uni_number
 
 
 def test_type1():

@@ -100,22 +100,22 @@ class TestSpglib(unittest.TestCase):
                 spg_type = get_spacegroup_type(dataset["hall_number"])
                 self.assertEqual(
                     dataset["international"],
-                    spg_type["international_short"],
+                    spg_type.international_short,
                     msg=("%s" % fname),
                 )
                 self.assertEqual(
                     dataset["hall"],
-                    spg_type["hall_symbol"],
+                    spg_type.hall_symbol,
                     msg=("%s" % fname),
                 )
                 self.assertEqual(
                     dataset["choice"],
-                    spg_type["choice"],
+                    spg_type.choice,
                     msg=("%s" % fname),
                 )
                 self.assertEqual(
                     dataset["pointgroup"],
-                    spg_type["pointgroup_international"],
+                    spg_type.pointgroup_international,
                     msg=("%s" % fname),
                 )
 
@@ -255,14 +255,14 @@ class TestSpglib(unittest.TestCase):
             primitive = find_primitive(cell, symprec=symprec)
 
             spg_type = get_spacegroup_type(dataset["hall_number"])
-            c = spg_type["international_short"][0]
+            c = spg_type.international_short[0]
             if c in ["A", "B", "C", "I"]:
                 multiplicity = 2
             elif c == "F":
                 multiplicity = 4
             elif c == "R":
-                self.assertEqual(spg_type["choice"], "H")
-                if spg_type["choice"] == "H":
+                self.assertEqual(spg_type.choice, "H")
+                if spg_type.choice == "H":
                     multiplicity = 3
                 else:  # spg_type['choice'] == 'R'
                     multiplicity = 1
