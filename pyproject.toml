@@ -7,7 +7,6 @@ name = "spglib"
 requires-python = ">=3.8"
 description = "This is the spglib module."
 license = { text = "BSD-3-Clause" }
-license-files = { paths = ["COPYING"] }
 readme = "python/README.rst"
 dynamic = ["version"]
 dependencies = [
