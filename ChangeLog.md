@@ -37,8 +37,6 @@ from dataclasses import asdict
 print(asdict(spgtype))
 ```
 
-We consider migrating plain `dict` into `dataclasses.dataclass` for the returned objects of other Python APIs.
-
 ### Fixes (magnetic space group)
 
 - Fix to check internal primitive symmetry search to avoid SEGV
