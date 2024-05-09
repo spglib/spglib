@@ -1258,7 +1258,6 @@ def get_magnetic_spacegroup_type_from_symmetry(
     Returns
     -------
     magnetic_spacegroup_type: MagneticSpaceGroupType
-        See :class:`MagneticSpaceGroupType` for the description of the keys.
     """
     rots = np.array(rotations, dtype="intc", order="C")
     trans = np.array(translations, dtype="double", order="C")
