@@ -11,18 +11,12 @@ GitHub release pages and in the git history.
 
 ## \[Unreleased\]
 
-### Fixes (magnetic space group)
+### Main changes
 
-- Fix to check internal primitive symmetry search to avoid SEGV
+In Python API, `spglib.get_spacegroup_type` and `spglib.get_spacegroup_type_from_symmetry` now return a `spglib.SpaceGroupType` object, inheriting `dataclasses.dataclass`, instead of a plain `dict`.
+The `dict`-like interface is deprecated and will be removed in the future.
 
-### C Interface
-
-- Fix a potential segmentation fault in `spacegroup.c:iterative_search_hall_number`
-
-### Python API
-
-- Add `spglib.get_magnetic_spacegroup_type_from_symmetry` for getting a magnetic space-group type information from magnetic symmetry operations
-- `spglib.get_spacegroup_type` and `spglib.get_spacegroup_type_from_symmetry` now return a `spglib.SpaceGroupType` object, inheriting `dataclasses.dataclass`, instead of a plain `dict`. This object also has the `dict`-like interface, for example
+For backward compatibility, the `dict`-like interface is still available:
 
 ```python
 spgtype: SpaceGroupType | None = get_spacegroup_type(cell)
@@ -43,8 +37,20 @@ from dataclasses import asdict
 print(asdict(spgtype))
 ```
 
-We consider migrating plain `dict` into `dataclasses.dataclass` for the returned objects of Python APIs.
-The `dict`-like interface is deprecated and will be removed in the future.
+We consider migrating plain `dict` into `dataclasses.dataclass` for the returned objects of other Python APIs.
+
+### Fixes (magnetic space group)
+
+- Fix to check internal primitive symmetry search to avoid SEGV
+
+### Python API
+
+- Add `spglib.get_magnetic_spacegroup_type_from_symmetry` for getting a magnetic space-group type information from magnetic symmetry operations
+- `spglib.get_spacegroup_type` and `spglib.get_spacegroup_type_from_symmetry` now return a `spglib.SpaceGroupType` object.
+
+### C Interface
+
+- Fix a potential segmentation fault in `spacegroup.c:iterative_search_hall_number`
 
 ## v2.4.0 (11 Apr. 2024)
 

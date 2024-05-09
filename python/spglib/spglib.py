@@ -37,10 +37,12 @@ from __future__ import annotations
 
 import dataclasses
 import warnings
-from collections.abc import Iterator, Mapping
-from typing import TYPE_CHECKING, Any
+from abc import ABC
+from collections.abc import Mapping
+from typing import TYPE_CHECKING
 
 import numpy as np
+from numpy.typing import NDArray
 
 try:
     from . import _spglib  # type: ignore[attr-defined]
@@ -74,7 +76,8 @@ except ImportError:
 
 if TYPE_CHECKING:
     import sys
-    from collections.abc import Sequence
+    from collections.abc import Iterator, Sequence
+    from typing import Any
 
     if sys.version_info < (3, 10):
         from typing_extensions import TypeAlias
@@ -90,7 +93,7 @@ if TYPE_CHECKING:
     )
 
 warnings.filterwarnings(
-    "once", category=DeprecationWarning, message=r"dict interface.*"
+    "module", category=DeprecationWarning, message=r"dict interface.*"
 )
 
 
@@ -104,49 +107,8 @@ spglib_error = SpglibError()
 
 
 @dataclasses.dataclass(eq=True, frozen=True)
-class SpaceGroupType(Mapping[str, Any]):
-    """Space group type information.
-
-    Dictionary keys are as follows:
-
-    - number : int
-        International space group number
-    - international_short : str
-        International short symbol.
-    - international_full : str
-        International full symbol.
-    - international : str
-        International symbol.
-    - schoenflies : str
-        Schoenflies symbol.
-    - hall_number : int
-        Hall symbol ID number.
-    - hall_symbol : str
-        Hall symbol.
-    - choice : str
-        Centring, origin, basis vector setting.
-    - pointgroup_international : str
-        International symbol of crystallographic point group.
-    - pointgroup_schoenflies : str
-        Schoenflies symbol of crystallographic point group.
-    - arithmetic_crystal_class_number : int
-        Arithmetic crystal class number
-    - arithmetic_crystal_class_symbol : str
-        Arithmetic crystal class symbol.
-    """
-
-    number: int
-    international_short: str
-    international_full: str
-    international: str
-    schoenflies: str
-    hall_number: int
-    hall_symbol: str
-    choice: str
-    pointgroup_international: str
-    pointgroup_schoenflies: str
-    arithmetic_crystal_class_number: int
-    arithmetic_crystal_class_symbol: str
+class DictInterface(Mapping[str, "Any"], ABC):
+    """Base class for dataclass with dict interface."""
 
     def __getitem__(self, key: str) -> Any:
         """Return the value of the key."""
@@ -167,35 +129,51 @@ class SpaceGroupType(Mapping[str, Any]):
 
 
 @dataclasses.dataclass(eq=True, frozen=True)
-class MagneticSpaceGroupType(Mapping[str, Any]):
-    """Magnetic space group type information.
+class SpaceGroupType(DictInterface):
+    """Space group type information."""
 
-    See :ref:`api_get_magnetic_spacegroup_type` for attributes.
-    """
+    number: int
+    """International space group number"""
+    international_short: str
+    """International short symbol"""
+    international_full: str
+    """International full symbol"""
+    international: str
+    """International symbol"""
+    schoenflies: str
+    """Schoenflies symbol"""
+    hall_number: int
+    """Hall symbol serial number"""
+    hall_symbol: str
+    """Hall symbol"""
+    choice: str
+    """Centring, origin, basis vector setting"""
+    pointgroup_international: str
+    """International symbol of crystallographic point group"""
+    pointgroup_schoenflies: str
+    """Schoenflies symbol of crystallographic point group"""
+    arithmetic_crystal_class_number: int
+    """Arithmetic crystal class number"""
+    arithmetic_crystal_class_symbol: str
+    """Arithmetic crystal class symbol"""
+
+
+@dataclasses.dataclass(eq=True, frozen=True)
+class MagneticSpaceGroupType(DictInterface):
+    """Magnetic space group type information."""
 
     uni_number: int
+    """Serial number of UNI (or BNS) symbols"""
     litvin_number: int
+    """serial number in Litvin's [Magnetic group tables](https://www.iucr.org/publ/978-0-9553602-2-0)"""
     bns_number: str
+    """BNS number e.g. '151.32'"""
     og_number: str
+    """OG number e.g. '153.4.1270'"""
     number: int
+    """ITA's serial number of space group for reference setting"""
     type: int
-
-    def __getitem__(self, key: str) -> Any:
-        """Return the value of the key."""
-        warnings.warn(
-            f"dict interface ({self.__class__.__name__}['{key}']) is deprecated."
-            "Use attribute interface ({self.__class__.__name__}.{key}) instead",
-            DeprecationWarning,
-        )
-        return dataclasses.asdict(self)[key]
-
-    def __len__(self) -> int:
-        """Return the number of fields."""
-        return len(dataclasses.fields(self))
-
-    def __iter__(self) -> Iterator[str]:
-        """Return an iterator over the keys."""
-        return iter(dataclasses.asdict(self))
+    """Type of MSG from 1 to 4"""
 
 
 def get_version():
@@ -1259,10 +1237,10 @@ def get_magnetic_spacegroup_type(uni_number: int) -> MagneticSpaceGroupType | No
 
 
 def get_magnetic_spacegroup_type_from_symmetry(
-    rotations: np.ndarray,
-    translations: np.ndarray,
-    time_reversals: np.ndarray,
-    lattice: np.ndarray | None = None,
+    rotations: NDArray[np.intc],
+    translations: NDArray[np.double],
+    time_reversals: NDArray[np.intc],
+    lattice: NDArray[np.double] | None = None,
     symprec: float = 1e-5,
 ) -> MagneticSpaceGroupType | None:
     """Return magnetic space-group type information from symmetry operations.
