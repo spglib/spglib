@@ -13,8 +13,8 @@ GitHub release pages and in the git history.
 
 ### Main changes
 
-In Python API, `spglib.get_spacegroup_type` and `spglib.get_spacegroup_type_from_symmetry` now return a `spglib.SpaceGroupType` object, inheriting `dataclasses.dataclass`, instead of a plain `dict`.
-The `dict`-like interface is deprecated and will be removed in the future.
+We now provide proper class types with type-hints (using `dataclasses.dataclass`) for the output data structure.
+See the Python API section for details for the list of new classes and affected functions. 
 
 For backward compatibility, the `dict`-like interface is still available, but it is planned to be removed:
 
