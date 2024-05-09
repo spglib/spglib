@@ -108,7 +108,13 @@ spglib_error = SpglibError()
 
 @dataclasses.dataclass(eq=True, frozen=True)
 class DictInterface(Mapping[str, "Any"], ABC):
-    """Base class for dataclass with dict interface."""
+    """
+    Base class for dataclass with dict interface.
+    
+    .. versionadded:: 2.5.0
+    .. deprecated:: 2.5.0
+        Dict-like interface (``obj['field']``) are deprecated. Please use attribute interface instead (``obj.field``)
+    """
 
     def __getitem__(self, key: str) -> Any:
         """Return the value of the key."""
