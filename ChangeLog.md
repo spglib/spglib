@@ -14,7 +14,7 @@ GitHub release pages and in the git history.
 ### Main changes
 
 We now provide proper class types with type-hints (using `dataclasses.dataclass`) for the output data structure.
-See the Python API section for details for the list of new classes and affected functions. 
+See the Python API section for details for the list of new classes and affected functions.
 
 For backward compatibility, the `dict`-like interface is still available, but it is planned to be removed:
 

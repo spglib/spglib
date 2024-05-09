@@ -42,7 +42,6 @@ from collections.abc import Mapping
 from typing import TYPE_CHECKING
 
 import numpy as np
-from numpy.typing import NDArray
 
 try:
     from . import _spglib  # type: ignore[attr-defined]
@@ -79,6 +78,8 @@ if TYPE_CHECKING:
     from collections.abc import Iterator, Sequence
     from typing import Any
 
+    from numpy.typing import ArrayLike
+
     if sys.version_info < (3, 10):
         from typing_extensions import TypeAlias
     else:
@@ -108,12 +109,12 @@ spglib_error = SpglibError()
 
 @dataclasses.dataclass(eq=True, frozen=True)
 class DictInterface(Mapping[str, "Any"], ABC):
-    """
-    Base class for dataclass with dict interface.
-    
+    """Base class for dataclass with dict interface.
+
     .. versionadded:: 2.5.0
     .. deprecated:: 2.5.0
-        Dict-like interface (``obj['field']``) are deprecated. Please use attribute interface instead (``obj.field``)
+        Dict-like interface (``obj['field']``) are deprecated.
+        Please use attribute interface instead (``obj.field``)
     """
 
     def __getitem__(self, key: str) -> Any:
@@ -1243,10 +1244,10 @@ def get_magnetic_spacegroup_type(uni_number: int) -> MagneticSpaceGroupType | No
 
 
 def get_magnetic_spacegroup_type_from_symmetry(
-    rotations: NDArray[np.intc],
-    translations: NDArray[np.double],
-    time_reversals: NDArray[np.intc],
-    lattice: NDArray[np.double] | None = None,
+    rotations: ArrayLike[np.intc],
+    translations: ArrayLike[np.double],
+    time_reversals: ArrayLike[np.intc],
+    lattice: ArrayLike[np.double] | None = None,
     symprec: float = 1e-5,
 ) -> MagneticSpaceGroupType | None:
     """Return magnetic space-group type information from symmetry operations.
