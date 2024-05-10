@@ -88,6 +88,9 @@ void warning_print(char const* format, ...) {
     vfprintf(stderr, format, argptr);
     va_end(argptr);
 }
+void warning_memory(char const* what) {
+    warning_print("Spglib: Memory could not be allocated: %s\n", what);
+}
 #endif
 
 #ifdef SPGINFO

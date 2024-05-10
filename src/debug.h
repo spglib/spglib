@@ -20,6 +20,7 @@ static inline void debug_print(char const* format, ...) {}
 #endif
 #ifndef SPGWARNING
 static inline void warning_print(char const* format, ...) {}
+static inline void warning_memory(char const* what) {}
 #endif
 #ifndef SPGINFO
 static inline void info_print(char const* format, ...) {}
@@ -38,6 +39,4 @@ void debug_print_vectors_with_label(double const a[][3], int const b[],
                                     int size);
 
 // Common messages
-inline void warning_memory(char const* what) {
-    warning_print("Spglib: Memory could not be allocated: %s\n", what);
-}
+void warning_memory(char const* what);
