@@ -171,7 +171,11 @@ class SpaceGroupType(DictInterface):
 
 @dataclasses.dataclass(eq=True, frozen=True)
 class MagneticSpaceGroupType(DictInterface):
-    """Magnetic space group type information."""
+    """
+    Magnetic space group type information.
+    
+    .. versionadded:: 2.5.0
+    """
 
     uni_number: int
     """Serial number of UNI (or BNS) symbols"""
