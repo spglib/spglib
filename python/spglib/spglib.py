@@ -36,8 +36,9 @@
 from __future__ import annotations
 
 import dataclasses
+import sys
 import warnings
-from abc import ABC
+
 if sys.version_info < (3, 9):
     from typing import Mapping
 else:
@@ -110,6 +111,7 @@ class SpglibError:
 spglib_error = SpglibError()
 
 
+@dataclasses.dataclass(eq=True, frozen=True)
 class DictInterface(Mapping[str, "Any"]):
     """Base class for dataclass with dict interface.
 
@@ -139,9 +141,8 @@ class DictInterface(Mapping[str, "Any"]):
 
 @dataclasses.dataclass(eq=True, frozen=True)
 class SpaceGroupType(DictInterface):
-    """
-    Space group type information.
-    
+    """Space group type information.
+
     .. versionadded:: 2.5.0
     """
 
@@ -173,9 +174,8 @@ class SpaceGroupType(DictInterface):
 
 @dataclasses.dataclass(eq=True, frozen=True)
 class MagneticSpaceGroupType(DictInterface):
-    """
-    Magnetic space group type information.
-    
+    """Magnetic space group type information.
+
     .. versionadded:: 2.5.0
     """
 
