@@ -1226,7 +1226,6 @@ def get_magnetic_spacegroup_type(uni_number: int) -> MagneticSpaceGroupType | No
     Returns
     -------
     magnetic_spacegroup_type: MagneticSpaceGroupType
-        See :class:`MagneticSpaceGroupType` for the description of the keys.
 
     Notes
     -----
