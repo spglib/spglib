@@ -1172,7 +1172,6 @@ def get_spacegroup_type_from_symmetry(
     Returns
     -------
     spacegroup_type : SpaceGroupType or None
-        See :class:`SpaceGroupType` for the description of the keys.
 
     Notes
     -----
