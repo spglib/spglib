@@ -137,7 +137,11 @@ class DictInterface(Mapping[str, "Any"], ABC):
 
 @dataclasses.dataclass(eq=True, frozen=True)
 class SpaceGroupType(DictInterface):
-    """Space group type information."""
+    """
+    Space group type information.
+    
+    .. versionadded:: 2.5.0
+    """
 
     number: int
     """International space group number"""
