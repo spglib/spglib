@@ -1107,7 +1107,6 @@ def get_spacegroup_type(hall_number: int) -> SpaceGroupType | None:
     Returns
     -------
     spacegroup_type: SpaceGroupType or None
-        See :class:`SpaceGroupType` for the description of the keys.
 
     Notes
     -----
