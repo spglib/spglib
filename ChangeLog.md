@@ -11,9 +11,43 @@ GitHub release pages and in the git history.
 
 ## \[Unreleased\]
 
+### Main changes
+
+We now provide proper class types with type-hints (using `dataclasses.dataclass`) for the output data structure.
+See the Python API section for details for the list of new classes and affected functions.
+
+For backward compatibility, the `dict`-like interface is still available, but it is planned to be removed:
+
+```python
+spgtype: SpaceGroupType | None = get_spacegroup_type(cell)
+assert spgtype is not None
+print(spgtype['number'])
+print(list(spgtype.items()))
+```
+
+However, we recommend using the `dataclass` interface:
+
+```python
+spgtype: SpaceGroupType | None = get_spacegroup_type(cell)
+assert spgtype is not None
+print(spgtype.number)
+
+# If you really need dictionary, ...
+from dataclasses import asdict
+print(asdict(spgtype))
+```
+
 ### Fixes (magnetic space group)
 
 - Fix to check internal primitive symmetry search to avoid SEGV
+
+### Python API
+
+- Added classes: `SpaceGroupType` and `MagneticSpaceGroupType`
+- Added function: `get_magnetic_spacegroup_type_from_symmetry`
+- Changed functions: `get_spacegroup_type`, `get_spacegroup_type_from_symmetry`, `get_magnetic_spacegroup_type`,
+  and `get_magnetic_spacegroup_type_from_symmetry` now return the equivalent
+  `SpaceGroupType` or `MagneticSpaceGroupType` object
 
 ### C Interface
 

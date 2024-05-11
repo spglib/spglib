@@ -4,6 +4,7 @@ import unittest
 import numpy as np
 import yaml
 from spglib import (
+    MagneticSpaceGroupType,
     find_primitive,
     get_magnetic_spacegroup_type,
     get_magnetic_symmetry_from_database,
@@ -99,22 +100,22 @@ class TestSpglib(unittest.TestCase):
                 spg_type = get_spacegroup_type(dataset["hall_number"])
                 self.assertEqual(
                     dataset["international"],
-                    spg_type["international_short"],
+                    spg_type.international_short,
                     msg=("%s" % fname),
                 )
                 self.assertEqual(
                     dataset["hall"],
-                    spg_type["hall_symbol"],
+                    spg_type.hall_symbol,
                     msg=("%s" % fname),
                 )
                 self.assertEqual(
                     dataset["choice"],
-                    spg_type["choice"],
+                    spg_type.choice,
                     msg=("%s" % fname),
                 )
                 self.assertEqual(
                     dataset["pointgroup"],
-                    spg_type["pointgroup_international"],
+                    spg_type.pointgroup_international,
                     msg=("%s" % fname),
                 )
 
@@ -254,14 +255,14 @@ class TestSpglib(unittest.TestCase):
             primitive = find_primitive(cell, symprec=symprec)
 
             spg_type = get_spacegroup_type(dataset["hall_number"])
-            c = spg_type["international_short"][0]
+            c = spg_type.international_short[0]
             if c in ["A", "B", "C", "I"]:
                 multiplicity = 2
             elif c == "F":
                 multiplicity = 4
             elif c == "R":
-                self.assertEqual(spg_type["choice"], "H")
-                if spg_type["choice"] == "H":
+                self.assertEqual(spg_type.choice, "H")
+                if spg_type.choice == "H":
                     multiplicity = 3
                 else:  # spg_type['choice'] == 'R'
                     multiplicity = 1
@@ -276,38 +277,38 @@ class TestSpglib(unittest.TestCase):
     def test_magnetic_spacegroup_type(self):
         # P 3 -2"
         actual1 = get_magnetic_spacegroup_type(1279)
-        expect1 = {
-            "uni_number": 1279,
-            "litvin_number": 1279,
-            "bns_number": "156.49",
-            "og_number": "156.1.1279",
-            "number": 156,
-            "type": 1,
-        }
+        expect1 = MagneticSpaceGroupType(
+            uni_number=1279,
+            litvin_number=1279,
+            bns_number="156.49",
+            og_number="156.1.1279",
+            number=156,
+            type=1,
+        )
         assert actual1 == expect1
 
         # -P 2 2ab 1'
         actual2 = get_magnetic_spacegroup_type(452)
-        expect2 = {
-            "uni_number": 452,
-            "litvin_number": 442,
-            "bns_number": "55.354",
-            "og_number": "55.2.442",
-            "number": 55,
-            "type": 2,
-        }
+        expect2 = MagneticSpaceGroupType(
+            uni_number=452,
+            litvin_number=442,
+            bns_number="55.354",
+            og_number="55.2.442",
+            number=55,
+            type=2,
+        )
         assert actual2 == expect2
 
         # P 31 2 1c' (0 0 1)
         actual3 = get_magnetic_spacegroup_type(1262)
-        expect3 = {
-            "uni_number": 1262,
-            "litvin_number": 1270,
-            "bns_number": "151.32",
-            "og_number": "153.4.1270",
-            "number": 151,
-            "type": 4,
-        }
+        expect3 = MagneticSpaceGroupType(
+            uni_number=1262,
+            litvin_number=1270,
+            bns_number="151.32",
+            og_number="153.4.1270",
+            number=151,
+            type=4,
+        )
         assert actual3 == expect3
 
     def test_magnetic_symmetry_database(self):

@@ -35,7 +35,14 @@
 
 from __future__ import annotations
 
+import dataclasses
+import sys
 import warnings
+
+if sys.version_info < (3, 9):
+    from typing import Mapping
+else:
+    from collections.abc import Mapping
 from typing import TYPE_CHECKING
 
 import numpy as np
@@ -72,7 +79,10 @@ except ImportError:
 
 if TYPE_CHECKING:
     import sys
-    from collections.abc import Sequence
+    from collections.abc import Iterator, Sequence
+    from typing import Any
+
+    from numpy.typing import ArrayLike
 
     if sys.version_info < (3, 10):
         from typing_extensions import TypeAlias
@@ -87,6 +97,10 @@ if TYPE_CHECKING:
         tuple[Lattice, Positions, Numbers] | tuple[Lattice, Positions, Numbers, Magmoms]
     )
 
+warnings.filterwarnings(
+    "module", category=DeprecationWarning, message=r"dict interface.*"
+)
+
 
 class SpglibError:
     """Error message why spglib failed."""
@@ -95,6 +109,88 @@ class SpglibError:
 
 
 spglib_error = SpglibError()
+
+
+@dataclasses.dataclass(eq=True, frozen=True)
+class DictInterface(Mapping[str, "Any"]):
+    """Base class for dataclass with dict interface.
+
+    .. versionadded:: 2.5.0
+    .. deprecated:: 2.5.0
+        Dict-like interface (``obj['field']``) are deprecated.
+        Please use attribute interface instead (``obj.field``)
+    """
+
+    def __getitem__(self, key: str) -> Any:
+        """Return the value of the key."""
+        warnings.warn(
+            f"dict interface ({self.__class__.__name__}['{key}']) is deprecated."
+            "Use attribute interface ({self.__class__.__name__}.{key}) instead",
+            DeprecationWarning,
+        )
+        return dataclasses.asdict(self)[key]
+
+    def __len__(self) -> int:
+        """Return the number of fields."""
+        return len(dataclasses.fields(self))
+
+    def __iter__(self) -> Iterator[str]:
+        """Return an iterator over the keys."""
+        return iter(dataclasses.asdict(self))
+
+
+@dataclasses.dataclass(eq=True, frozen=True)
+class SpaceGroupType(DictInterface):
+    """Space group type information.
+
+    .. versionadded:: 2.5.0
+    """
+
+    number: int
+    """International space group number"""
+    international_short: str
+    """International short symbol"""
+    international_full: str
+    """International full symbol"""
+    international: str
+    """International symbol"""
+    schoenflies: str
+    """Schoenflies symbol"""
+    hall_number: int
+    """Hall symbol serial number"""
+    hall_symbol: str
+    """Hall symbol"""
+    choice: str
+    """Centring, origin, basis vector setting"""
+    pointgroup_international: str
+    """International symbol of crystallographic point group"""
+    pointgroup_schoenflies: str
+    """Schoenflies symbol of crystallographic point group"""
+    arithmetic_crystal_class_number: int
+    """Arithmetic crystal class number"""
+    arithmetic_crystal_class_symbol: str
+    """Arithmetic crystal class symbol"""
+
+
+@dataclasses.dataclass(eq=True, frozen=True)
+class MagneticSpaceGroupType(DictInterface):
+    """Magnetic space group type information.
+
+    .. versionadded:: 2.5.0
+    """
+
+    uni_number: int
+    """Serial number of UNI (or BNS) symbols"""
+    litvin_number: int
+    """Serial number in Litvin's [Magnetic group tables](https://www.iucr.org/publ/978-0-9553602-2-0)"""
+    bns_number: str
+    """BNS number e.g. '151.32'"""
+    og_number: str
+    """OG number e.g. '153.4.1270'"""
+    number: int
+    """ITA's serial number of space group for reference setting"""
+    type: int
+    """Type of MSG from 1 to 4"""
 
 
 def get_version():
@@ -282,6 +378,7 @@ def get_symmetry(
             angle_tolerance=angle_tolerance,
         )
         if dataset is None:
+            _set_error_message()
             return None
 
         return {
@@ -444,8 +541,8 @@ def get_magnetic_symmetry(
         mag_symprec,
     )
 
-    _set_error_message()
     if num_sym == 0:
+        _set_error_message()
         return None
     else:
         spin_flips = np.array(spin_flips[:num_sym], dtype="intc", order="C")
@@ -730,7 +827,6 @@ def get_symmetry_dataset(
         return None
 
     dataset = _build_dataset_dict(spg_ds)
-    _set_error_message()
     return dataset
 
 
@@ -753,7 +849,6 @@ def get_symmetry_layerdataset(cell: Cell, aperiodic_dir=2, symprec=1e-5):
 
     dataset = _build_dataset_dict(spg_ds)
 
-    _set_error_message()
     return dataset
 
 
@@ -945,7 +1040,6 @@ def get_magnetic_symmetry_dataset(
     if tensor_rank == 1:
         dataset["std_tensors"] = dataset["std_tensors"].reshape(-1, 3)
 
-    _set_error_message()
     return dataset
 
 
@@ -986,6 +1080,7 @@ def get_spacegroup(
     )
 
     if dataset is None:
+        _set_error_message()
         return None
 
     spg_type = get_spacegroup_type(dataset["hall_number"])
@@ -995,7 +1090,7 @@ def get_spacegroup(
         return "%s (%d)" % (spg_type["international_short"], dataset["number"])
 
 
-def get_spacegroup_type(hall_number) -> dict | None:
+def get_spacegroup_type(hall_number: int) -> SpaceGroupType | None:
     """Translate Hall number to space group type information. If it fails, return None.
 
     This function allows to directly access to the space-group-type database
@@ -1011,37 +1106,7 @@ def get_spacegroup_type(hall_number) -> dict | None:
 
     Returns
     -------
-    spacegroup_type: dict or None
-        Dictionary keys are as follows:
-
-        - number : int
-            International space group number
-        - international_short : str
-            International short symbol.
-            Equivalent to ``dataset['international']`` of :func:`get_symmetry_dataset`.
-        - international_full : str
-            International full symbol.
-        - international : str
-            International symbol.
-        - schoenflies : str
-            Schoenflies symbol.
-        - hall_number : int
-            Hall symbol ID number.
-        - hall_symbol : str
-            Hall symbol.
-            Equivalent to ``dataset['hall']`` of `get_symmetry_dataset`,
-        - choice : str
-            Centring, origin, basis vector setting.
-        - pointgroup_international :
-            International symbol of crystallographic point group.
-            Equivalent to ``dataset['pointgroup_symbol']`` of
-            :func:`get_symmetry_dataset`.
-        - pointgroup_schoenflies :
-            Schoenflies symbol of crystallographic point group.
-        - arithmetic_crystal_class_number : int
-            Arithmetic crystal class number
-        - arithmetic_crystal_class_symbol : str
-            Arithmetic crystal class symbol.
+    spacegroup_type: SpaceGroupType or None
 
     Notes
     -----
@@ -1053,30 +1118,26 @@ def get_spacegroup_type(hall_number) -> dict | None:
     """
     _set_no_error()
 
-    keys = (
-        "number",
-        "international_short",
-        "international_full",
-        "international",
-        "schoenflies",
-        "hall_number",
-        "hall_symbol",
-        "choice",
-        "pointgroup_international",
-        "pointgroup_schoenflies",
-        "arithmetic_crystal_class_number",
-        "arithmetic_crystal_class_symbol",
-    )
     spg_type_list = _spglib.spacegroup_type(hall_number)
-    _set_error_message()
 
     if spg_type_list is not None:
-        spg_type = dict(zip(keys, spg_type_list))
-        for key in spg_type:
-            if key not in ("number", "hall_number", "arithmetic_crystal_class_number"):
-                spg_type[key] = spg_type[key].strip()
+        spg_type = SpaceGroupType(
+            number=spg_type_list[0],
+            international_short=spg_type_list[1].strip(),
+            international_full=spg_type_list[2].strip(),
+            international=spg_type_list[3].strip(),
+            schoenflies=spg_type_list[4].strip(),
+            hall_number=spg_type_list[5],
+            hall_symbol=spg_type_list[6].strip(),
+            choice=spg_type_list[7].strip(),
+            pointgroup_international=spg_type_list[8].strip(),
+            pointgroup_schoenflies=spg_type_list[9].strip(),
+            arithmetic_crystal_class_number=spg_type_list[10],
+            arithmetic_crystal_class_symbol=spg_type_list[11].strip(),
+        )
         return spg_type
     else:
+        _set_error_message()
         return None
 
 
@@ -1085,10 +1146,8 @@ def get_spacegroup_type_from_symmetry(
     translations,
     lattice=None,
     symprec=1e-5,
-) -> dict | None:
+) -> SpaceGroupType | None:
     """Return space-group type information from symmetry operations.
-
-    See also :func:`get_spacegroup_type` for space-group type information.
 
     This is expected to work well for the set of symmetry operations whose
     distortion is small. The aim of making this feature is to find space-group-type
@@ -1113,34 +1172,7 @@ def get_spacegroup_type_from_symmetry(
 
     Returns
     -------
-    spacegroup_type : dict or None
-        If it fails, None is returned. Otherwise a dictionary is returned.
-        Dictionary keys are as follows:
-
-        - number : int
-            International space group number
-        - international_short : str
-            International short symbol.
-        - international_full : str
-            International full symbol.
-        - international : str
-            International symbol.
-        - schoenflies : str
-            Schoenflies symbol.
-        - hall_number : int
-            Hall symbol ID number.
-        - hall_symbol : str
-            Hall symbol.
-        - choice : str
-            Centring, origin, basis vector setting.
-        - pointgroup_international :
-            International symbol of crystallographic point group.
-        - pointgroup_schoenflies :
-            Schoenflies symbol of crystallographic point group.
-        - arithmetic_crystal_class_number : int
-            Arithmetic crystal class number
-        - arithmetic_crystal_class_symbol : str
-            Arithmetic crystal class symbol.
+    spacegroup_type : SpaceGroupType or None
 
     Notes
     -----
@@ -1158,35 +1190,29 @@ def get_spacegroup_type_from_symmetry(
 
     _set_no_error()
 
-    keys = (
-        "number",
-        "international_short",
-        "international_full",
-        "international",
-        "schoenflies",
-        "hall_number",
-        "hall_symbol",
-        "choice",
-        "pointgroup_international",
-        "pointgroup_schoenflies",
-        "arithmetic_crystal_class_number",
-        "arithmetic_crystal_class_symbol",
-    )
-
     spg_type_list = _spglib.spacegroup_type_from_symmetry(r, t, _lattice, symprec)
-    _set_error_message()
-
     if spg_type_list is not None:
-        spg_type = dict(zip(keys, spg_type_list))
-        for key in spg_type:
-            if key not in ("number", "hall_number", "arithmetic_crystal_class_number"):
-                spg_type[key] = spg_type[key].strip()
+        spg_type = SpaceGroupType(
+            number=spg_type_list[0],
+            international_short=spg_type_list[1].strip(),
+            international_full=spg_type_list[2].strip(),
+            international=spg_type_list[3].strip(),
+            schoenflies=spg_type_list[4].strip(),
+            hall_number=spg_type_list[5],
+            hall_symbol=spg_type_list[6].strip(),
+            choice=spg_type_list[7].strip(),
+            pointgroup_international=spg_type_list[8].strip(),
+            pointgroup_schoenflies=spg_type_list[9].strip(),
+            arithmetic_crystal_class_number=spg_type_list[10],
+            arithmetic_crystal_class_symbol=spg_type_list[11].strip(),
+        )
         return spg_type
     else:
+        _set_error_message()
         return None
 
 
-def get_magnetic_spacegroup_type(uni_number) -> dict | None:
+def get_magnetic_spacegroup_type(uni_number: int) -> MagneticSpaceGroupType | None:
     """Translate UNI number to magnetic space group type information.
 
     If fails, return None.
@@ -1198,15 +1224,7 @@ def get_magnetic_spacegroup_type(uni_number) -> dict | None:
 
     Returns
     -------
-    magnetic_spacegroup_type: dict
-        See :ref:`api_get_magnetic_spacegroup_type` for these descriptions.
-
-        - uni_number
-        - litvin_number
-        - bns_number
-        - og_number
-        - number
-        - type
+    magnetic_spacegroup_type: MagneticSpaceGroupType
 
     Notes
     -----
@@ -1215,28 +1233,75 @@ def get_magnetic_spacegroup_type(uni_number) -> dict | None:
     """
     _set_no_error()
 
-    keys = (
-        "uni_number",
-        "litvin_number",
-        "bns_number",
-        "og_number",
-        "number",
-        "type",
-    )
     msg_type_list = _spglib.magnetic_spacegroup_type(uni_number)
-    _set_error_message()
 
     if msg_type_list is not None:
-        msg_type = dict(zip(keys, msg_type_list))
-        for key in msg_type:
-            if key not in ["uni_number", "litvin_number", "number", "type"]:
-                msg_type[key] = msg_type[key].strip()
+        msg_type = MagneticSpaceGroupType(
+            uni_number=msg_type_list[0],
+            litvin_number=msg_type_list[1],
+            bns_number=msg_type_list[2].strip(),
+            og_number=msg_type_list[3].strip(),
+            number=msg_type_list[4],
+            type=msg_type_list[5],
+        )
         return msg_type
     else:
+        _set_error_message()
         return None
 
 
-def get_pointgroup(rotations):
+def get_magnetic_spacegroup_type_from_symmetry(
+    rotations: ArrayLike[np.intc],
+    translations: ArrayLike[np.double],
+    time_reversals: ArrayLike[np.intc],
+    lattice: ArrayLike[np.double] | None = None,
+    symprec: float = 1e-5,
+) -> MagneticSpaceGroupType | None:
+    """Return magnetic space-group type information from symmetry operations.
+
+    Parameters
+    ----------
+    rotations, translations, time_reversals:
+        See returns of :func:`get_magnetic_symmetry`.
+    lattice : (Optional) array_like (3, 3)
+        Basis vectors a, b, c given in row vectors. This is used as the measure of
+        distance. Default is None, which gives unit matrix.
+    symprec: float
+        See :func:`get_symmetry`.
+
+    Returns
+    -------
+    magnetic_spacegroup_type: MagneticSpaceGroupType
+    """
+    rots = np.array(rotations, dtype="intc", order="C")
+    trans = np.array(translations, dtype="double", order="C")
+    timerev = np.array(time_reversals, dtype="intc", order="C")
+    if lattice is None:
+        latt = np.eye(3, dtype="double", order="C")
+    else:
+        latt = np.array(lattice, dtype="double", order="C")
+
+    _set_no_error()
+    msg_type_list = _spglib.magnetic_spacegroup_type_from_symmetry(
+        rots, trans, timerev, latt, symprec
+    )
+
+    if msg_type_list is not None:
+        msg_type = MagneticSpaceGroupType(
+            uni_number=msg_type_list[0],
+            litvin_number=msg_type_list[1],
+            bns_number=msg_type_list[2].strip(),
+            og_number=msg_type_list[3].strip(),
+            number=msg_type_list[4],
+            type=msg_type_list[5],
+        )
+        return msg_type
+    else:
+        _set_error_message()
+        return None
+
+
+def get_pointgroup(rotations) -> tuple[str, int, np.ndarray]:
     """Return point group in international table symbol and number.
 
     The symbols are mapped to the numbers as follows:
@@ -1336,7 +1401,6 @@ def standardize_cell(
         symprec,
         angle_tolerance,
     )
-    _set_error_message()
 
     if num_atom_std > 0:
         return (
@@ -1345,6 +1409,7 @@ def standardize_cell(
             np.array(numbers[:num_atom_std], dtype="intc"),
         )
     else:
+        _set_error_message()
         return None
 
 
@@ -1379,7 +1444,6 @@ def refine_cell(cell: Cell, symprec=1e-5, angle_tolerance=-1.0):
         symprec,
         angle_tolerance,
     )
-    _set_error_message()
 
     if num_atom_std > 0:
         return (
@@ -1388,6 +1452,7 @@ def refine_cell(cell: Cell, symprec=1e-5, angle_tolerance=-1.0):
             np.array(numbers[:num_atom_std], dtype="intc"),
         )
     else:
+        _set_error_message()
         return None
 
 
@@ -1410,7 +1475,6 @@ def find_primitive(cell: Cell, symprec=1e-5, angle_tolerance=-1.0):
     num_atom_prim = _spglib.primitive(
         lattice, positions, numbers, symprec, angle_tolerance
     )
-    _set_error_message()
 
     if num_atom_prim > 0:
         return (
@@ -1419,6 +1483,7 @@ def find_primitive(cell: Cell, symprec=1e-5, angle_tolerance=-1.0):
             np.array(numbers[:num_atom_prim], dtype="intc"),
         )
     else:
+        _set_error_message()
         return None
 
 
@@ -1445,9 +1510,9 @@ def get_symmetry_from_database(hall_number) -> dict | None:
     rotations = np.zeros((192, 3, 3), dtype="intc")
     translations = np.zeros((192, 3), dtype="double")
     num_sym = _spglib.symmetry_from_database(rotations, translations, hall_number)
-    _set_error_message()
 
     if num_sym is None:
+        _set_error_message()
         return None
     else:
         return {
@@ -1494,9 +1559,9 @@ def get_magnetic_symmetry_from_database(uni_number, hall_number=0) -> dict | Non
         uni_number,
         hall_number,
     )
-    _set_error_message()
 
     if num_sym is None:
+        _set_error_message()
         return None
     else:
         return {
@@ -1594,6 +1659,7 @@ def get_ir_reciprocal_mesh(
     ):
         return grid_mapping_table, grid_address
     else:
+        _set_error_message()
         return None
 
 
@@ -1672,6 +1738,7 @@ def get_stabilized_reciprocal_mesh(
     ):
         return mapping_table, grid_address
     else:
+        _set_error_message()
         return None
 
 
@@ -1910,9 +1977,9 @@ def delaunay_reduce(lattice, eps=1e-5):
 
     delaunay_lattice = np.array(np.transpose(lattice), dtype="double", order="C")
     result = _spglib.delaunay_reduce(delaunay_lattice, float(eps))
-    _set_error_message()
 
     if result == 0:
+        _set_error_message()
         return None
     else:
         return np.array(np.transpose(delaunay_lattice), dtype="double", order="C")
@@ -1971,9 +2038,9 @@ def niggli_reduce(lattice, eps=1e-5):
 
     niggli_lattice = np.array(np.transpose(lattice), dtype="double", order="C")
     result = _spglib.niggli_reduce(niggli_lattice, float(eps))
-    _set_error_message()
 
     if result == 0:
+        _set_error_message()
         return None
     else:
         return np.array(np.transpose(niggli_lattice), dtype="double", order="C")

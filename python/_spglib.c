@@ -52,6 +52,8 @@ static PyObject *py_get_spacegroup_type_from_symmetry(PyObject *self,
                                                       PyObject *args);
 static PyObject *py_get_magnetic_spacegroup_type(PyObject *self,
                                                  PyObject *args);
+static PyObject *py_get_magnetic_spacegroup_type_from_symmetry(PyObject *self,
+                                                               PyObject *args);
 static PyObject *py_get_pointgroup(PyObject *self, PyObject *args);
 static PyObject *py_standardize_cell(PyObject *self, PyObject *args);
 static PyObject *py_refine_cell(PyObject *self, PyObject *args);
@@ -106,6 +108,9 @@ static PyMethodDef _spglib_methods[] = {
      METH_VARARGS, "Space-group type symbols from symmetry operations"},
     {"magnetic_spacegroup_type", py_get_magnetic_spacegroup_type, METH_VARARGS,
      "Magnetic space-group type symbols"},
+    {"magnetic_spacegroup_type_from_symmetry",
+     py_get_magnetic_spacegroup_type_from_symmetry, METH_VARARGS,
+     "Magnetic space-group type symbols from symmetry operations"},
     {"symmetry_from_database", py_get_symmetry_from_database, METH_VARARGS,
      "Get symmetry operations from database"},
     {"magnetic_symmetry_from_database", py_get_magnetic_symmetry_from_database,
@@ -853,6 +858,54 @@ static PyObject *py_get_magnetic_spacegroup_type(PyObject *self,
     }
 
     msg_type = spg_get_magnetic_spacegroup_type(uni_number);
+    if (msg_type.number == 0) {
+        Py_RETURN_NONE;
+    }
+
+    array = PyList_New(6);
+    n = 0;
+    PyList_SetItem(array, n++, PyLong_FromLong((long)msg_type.uni_number));
+    PyList_SetItem(array, n++, PyLong_FromLong((long)msg_type.litvin_number));
+    PyList_SetItem(array, n++, PyUnicode_FromString(msg_type.bns_number));
+    PyList_SetItem(array, n++, PyUnicode_FromString(msg_type.og_number));
+    PyList_SetItem(array, n++, PyLong_FromLong((long)msg_type.number));
+    PyList_SetItem(array, n++, PyLong_FromLong((long)msg_type.type));
+
+    return array;
+}
+
+static PyObject *py_get_magnetic_spacegroup_type_from_symmetry(PyObject *self,
+                                                               PyObject *args) {
+    PyArrayObject *py_rotations;
+    PyArrayObject *py_translations;
+    PyArrayObject *py_time_reversals;
+    PyArrayObject *py_lattice;
+    double symprec;
+
+    int(*rotations)[3][3];
+    double(*translations)[3];
+    int *time_reversals;
+    double(*lattice)[3];
+    int num_operations;
+
+    SpglibMagneticSpacegroupType msg_type;
+
+    int n;
+    PyObject *array;
+
+    if (!PyArg_ParseTuple(args, "OOOOd", &py_rotations, &py_translations,
+                          &py_time_reversals, &py_lattice, &symprec)) {
+        return NULL;
+    }
+    rotations = (int(*)[3][3])PyArray_DATA(py_rotations);
+    translations = (double(*)[3])PyArray_DATA(py_translations);
+    time_reversals = (int *)PyArray_DATA(py_time_reversals);
+    lattice = (double(*)[3])PyArray_DATA(py_lattice);
+    num_operations = PyArray_DIMS(py_rotations)[0];
+
+    msg_type = spg_get_magnetic_spacegroup_type_from_symmetry(
+        rotations, translations, time_reversals, num_operations, lattice,
+        symprec);
     if (msg_type.number == 0) {
         Py_RETURN_NONE;
     }
