@@ -180,7 +180,7 @@ class MagneticSpaceGroupType(DictInterface):
     uni_number: int
     """Serial number of UNI (or BNS) symbols"""
     litvin_number: int
-    """serial number in Litvin's [Magnetic group tables](https://www.iucr.org/publ/978-0-9553602-2-0)"""
+    """Serial number in Litvin's [Magnetic group tables](https://www.iucr.org/publ/978-0-9553602-2-0)"""
     bns_number: str
     """BNS number e.g. '151.32'"""
     og_number: str
