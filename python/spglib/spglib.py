@@ -38,7 +38,10 @@ from __future__ import annotations
 import dataclasses
 import warnings
 from abc import ABC
-from collections.abc import Mapping
+if sys.version_info < (3, 9):
+    from typing import Mapping
+else:
+    from collections.abc import Mapping
 from typing import TYPE_CHECKING
 
 import numpy as np
