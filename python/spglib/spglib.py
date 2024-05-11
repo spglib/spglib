@@ -107,8 +107,7 @@ class SpglibError:
 spglib_error = SpglibError()
 
 
-@dataclasses.dataclass(eq=True, frozen=True)
-class DictInterface(Mapping[str, "Any"], ABC):
+class DictInterface(Mapping[str, "Any"]):
     """Base class for dataclass with dict interface.
 
     .. versionadded:: 2.5.0
