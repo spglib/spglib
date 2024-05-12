@@ -82,7 +82,7 @@ if TYPE_CHECKING:
     from collections.abc import Iterator, Sequence
     from typing import Any
 
-    from numpy.typing import ArrayLike
+    from numpy.typing import ArrayLike, NDArray
 
     if sys.version_info < (3, 10):
         from typing_extensions import TypeAlias
@@ -139,10 +139,156 @@ class DictInterface(Mapping[str, "Any"]):
         return iter(dataclasses.asdict(self))
 
 
+@dataclasses.dataclass(eq=False, frozen=True)
+class SpglibDataset(DictInterface):
+    """Spglib dataset information.
+
+    .. versionadded:: 1.9.4
+        The member 'choice' is added.
+    .. versionadded:: 2.5.0
+    """
+
+    number: int
+    """International space group number"""
+    hall_number: int
+    """Hall number.
+
+    This number is used in
+        :func:`get_symmetry_from_database` and
+        :func:`get_spacegroup_type`.
+    """
+    international: str
+    """International symbol"""
+    hall: str
+    """Hall symbol"""
+    choice: str
+    """Centring, origin, basis vector setting"""
+    transformation_matrix: NDArray[np.double]
+    """Transformation matrix from input lattice to standardized lattice.
+
+    shape=(3, 3), order='C', dtype='double'
+
+    .. code-block::
+
+        L^original = L^standardized * Tmat.
+
+    See the detail at :ref:`dataset_origin_shift_and_transformation`.
+    """
+    origin_shift: NDArray[np.double]
+    """Origin shift from standardized to input origin.
+
+    shape=(3,), dtype='double'
+
+    See the detail at :ref:`dataset_origin_shift_and_transformation`.
+    """
+    rotations: NDArray[np.intc]
+    """Matrix (rotation) parts of space group operations.
+
+    shape=(n_operations, 3, 3), order='C', dtype='intc'
+
+    Space group operations are obtained by
+
+    .. code-block:: python
+
+        [(r,t) for r, t in zip(rotations, translations)]
+
+    See also :func:`get_symmetry`.
+    """
+    translations: NDArray[np.double]
+    """Vector (translation) parts of space group operations.
+
+    shape=(n_operations, 3), order='C', dtype='double'
+
+    Space group operations are obtained by
+
+    .. code-block:: python
+
+        [(r,t) for r, t in zip(rotations, translations)]
+
+    See also :func:`get_symmetry`.
+    """
+    wyckoffs: list[str]
+    """Wyckoff letters corresponding to the space group type."""
+    site_symmetry_symbols: list[str]
+    """Site symmetry symbols corresponding to the space group type."""
+    crystallographic_orbits: NDArray[np.intc]
+    """Symmetrically equivalent atoms, where 'symmetrically' means the space group
+    operations corresponding to the space group type.
+
+    This is very similar to ``equivalent_atoms``. See the difference explained in
+    ``equivalent_atoms``
+
+    shape=(n_atoms,), dtype='intc'
+    """
+    equivalent_atoms: NDArray[np.intc]
+    """Symmetrically equivalent atoms, where 'symmetrically' means found symmetry
+    operations.
+
+    shape=(n_atoms,), dtype='intc'
+
+    In spglib, symmetry operations are given for the input cell.
+    When a non-primitive cell is inputted and the lattice made by the non-primitive
+    basis vectors breaks its point group, the found symmetry operations may not
+    correspond to the crystallographic space group type.
+    """
+    # Primitive cell
+    primitive_lattice: NDArray[np.double]
+    """Basis vectors a, b, c of a primitive cell in row vectors.
+
+    shape=(3, 3), order='C', dtype='double'
+
+    This is the primitive cell found inside spglib before applying standardization.
+    Therefore, the values are distorted with respect to found space group type.
+    """
+    mapping_to_primitive: NDArray[np.intc]
+    """Atom index mapping from original cell to the primitive cell of
+    ``primitive_lattice``.
+
+    shape=(n_atoms), dtype='intc'
+    """
+    # Idealized standardized unit cell
+    std_lattice: NDArray[np.double]
+    """Basis vectors a, b, c of a standardized cell in row vectors.
+
+    shape=(3, 3), order='C', dtype='double'
+    """
+    std_positions: NDArray[np.double]
+    """Positions of atoms in the standardized cell in fractional coordinates.
+
+    shape=(n_atoms, 3), order='C', dtype='double'
+    """
+    std_types: NDArray[np.intc]
+    """Identity numbers of atoms in the standardized cell.
+
+    shape=(n_atoms,), dtype='intc'
+    """
+    std_rotation_matrix: NDArray[np.double]
+    """Rigid rotation matrix to rotate from standardized basis vectors to idealized
+    standardized orthonormal basis vectors.
+
+    shape=(3, 3), order='C', dtype='double'
+
+    .. code-block::
+
+        L^idealized = R * L^standardized.
+
+    See the detail at :ref:`dataset_idealized_cell`.
+    """
+    std_mapping_to_primitive: NDArray[np.intc]
+    """``std_positions`` index mapping to those of atoms of the primitive cell in the
+    standardized cell."""
+    pointgroup: str
+    """Pointgroup symbol in Hermann-Mauguin notation."""
+
+
 @dataclasses.dataclass(eq=True, frozen=True)
 class SpaceGroupType(DictInterface):
     """Space group type information.
 
+    More details are found at :ref:`spglib-dataset`.
+
+    .. versionchanged:: 2.0
+        ``hall_number`` member is added.
     .. versionadded:: 2.5.0
     """
 
@@ -382,9 +528,9 @@ def get_symmetry(
             return None
 
         return {
-            "rotations": dataset["rotations"],
-            "translations": dataset["translations"],
-            "equivalent_atoms": dataset["equivalent_atoms"],
+            "rotations": dataset.rotations,
+            "translations": dataset.translations,
+            "equivalent_atoms": dataset.equivalent_atoms,
         }
     else:
         warnings.warn(
@@ -561,90 +707,57 @@ def get_magnetic_symmetry(
         }
 
 
-def _build_dataset_dict(spg_ds):
-    keys = (
-        "number",
-        "hall_number",
-        "international",
-        "hall",
-        "choice",
-        "transformation_matrix",
-        "origin_shift",
-        "rotations",
-        "translations",
-        "wyckoffs",
-        "site_symmetry_symbols",
-        "crystallographic_orbits",
-        "equivalent_atoms",
-        "primitive_lattice",
-        "mapping_to_primitive",
-        "std_lattice",
-        "std_types",
-        "std_positions",
-        "std_rotation_matrix",
-        "std_mapping_to_primitive",
-        # 'pointgroup_number',
-        "pointgroup",
-    )
-    dataset = {}
-    for key, data in zip(keys, spg_ds):
-        dataset[key] = data
-
-    dataset["international"] = dataset["international"].strip()
-    dataset["hall"] = dataset["hall"].strip()
-    dataset["choice"] = dataset["choice"].strip()
-    dataset["transformation_matrix"] = np.array(
-        dataset["transformation_matrix"],
-        dtype="double",
-        order="C",
-    )
-    dataset["origin_shift"] = np.array(dataset["origin_shift"], dtype="double")
-    dataset["rotations"] = np.array(dataset["rotations"], dtype="intc", order="C")
-    dataset["translations"] = np.array(
-        dataset["translations"],
-        dtype="double",
-        order="C",
-    )
+def _build_dataset_dict(spg_ds: list) -> SpglibDataset:
     letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    dataset["wyckoffs"] = [letters[x] for x in dataset["wyckoffs"]]
-    dataset["site_symmetry_symbols"] = [
-        s.strip() for s in dataset["site_symmetry_symbols"]
-    ]
-    dataset["crystallographic_orbits"] = np.array(
-        dataset["crystallographic_orbits"],
-        dtype="intc",
+
+    dataset = SpglibDataset(
+        number=spg_ds[0],
+        hall_number=spg_ds[1],
+        international=spg_ds[2].strip(),
+        hall=spg_ds[3].strip(),
+        choice=spg_ds[4].strip(),
+        transformation_matrix=np.array(
+            spg_ds[5],
+            dtype="double",
+            order="C",
+        ),
+        origin_shift=np.array(spg_ds[6], dtype="double"),
+        rotations=np.array(spg_ds[7], dtype="intc", order="C"),
+        translations=np.array(spg_ds[8], dtype="double", order="C"),
+        wyckoffs=[letters[x] for x in spg_ds[9]],
+        site_symmetry_symbols=[s.strip() for s in spg_ds[10]],
+        crystallographic_orbits=np.array(
+            spg_ds[11],
+            dtype="intc",
+        ),
+        equivalent_atoms=np.array(spg_ds[12], dtype="intc"),
+        primitive_lattice=np.array(
+            np.transpose(spg_ds[13]),
+            dtype="double",
+            order="C",
+        ),
+        mapping_to_primitive=np.array(
+            spg_ds[14],
+            dtype="intc",
+        ),
+        std_lattice=np.array(
+            np.transpose(spg_ds[15]),
+            dtype="double",
+            order="C",
+        ),
+        std_types=np.array(spg_ds[16], dtype="intc"),
+        std_positions=np.array(spg_ds[17], dtype="double", order="C"),
+        std_rotation_matrix=np.array(
+            spg_ds[18],
+            dtype="double",
+            order="C",
+        ),
+        std_mapping_to_primitive=np.array(
+            spg_ds[19],
+            dtype="intc",
+        ),
+        pointgroup=spg_ds[20].strip(),
     )
-    dataset["equivalent_atoms"] = np.array(dataset["equivalent_atoms"], dtype="intc")
-    dataset["primitive_lattice"] = np.array(
-        np.transpose(dataset["primitive_lattice"]),
-        dtype="double",
-        order="C",
-    )
-    dataset["mapping_to_primitive"] = np.array(
-        dataset["mapping_to_primitive"],
-        dtype="intc",
-    )
-    dataset["std_lattice"] = np.array(
-        np.transpose(dataset["std_lattice"]),
-        dtype="double",
-        order="C",
-    )
-    dataset["std_types"] = np.array(dataset["std_types"], dtype="intc")
-    dataset["std_positions"] = np.array(
-        dataset["std_positions"],
-        dtype="double",
-        order="C",
-    )
-    dataset["std_rotation_matrix"] = np.array(
-        dataset["std_rotation_matrix"],
-        dtype="double",
-        order="C",
-    )
-    dataset["std_mapping_to_primitive"] = np.array(
-        dataset["std_mapping_to_primitive"],
-        dtype="intc",
-    )
-    dataset["pointgroup"] = dataset["pointgroup"].strip()
     return dataset
 
 
@@ -653,7 +766,7 @@ def get_symmetry_dataset(
     symprec=1e-5,
     angle_tolerance=-1.0,
     hall_number=0,
-) -> dict | None:
+) -> SpglibDataset | None:
     """Search symmetry dataset from an input cell.
 
     Parameters
@@ -684,131 +797,9 @@ def get_symmetry_dataset(
 
     Returns
     -------
-    dataset: dict
+    dataset: :class:`SpglibDataset` | None
         If it fails, None is returned. Otherwise a dictionary is returned.
         More details are found at :ref:`spglib-dataset`.
-
-        - number : int
-            International space group number.
-        - international : str
-            International symbol.
-        - hall : str
-            Hall symbol.
-        - choice : str
-            Centring, origin, basis vector setting.
-        - hall_number: int
-            Hall number. This number is used in
-            :func:`get_symmetry_from_database` and
-            :func:`get_spacegroup_type`.
-        - transformation_matrix : ndarray
-            shape=(3, 3), order='C', dtype='double'
-
-            Transformation matrix from input lattice to standardized lattice:
-
-                .. code-block::
-
-                    L^original = L^standardized * Tmat.
-
-            See the detail at :ref:`dataset_origin_shift_and_transformation`.
-
-        - origin shift : ndarray
-            shape=(3,), dtype='double'
-
-            Origin shift from standardized to input origin.
-            See the detail at :ref:`dataset_origin_shift_and_transformation`.
-        - rotations : ndarray
-            shape=(n_operations, 3, 3), order='C', dtype='intc'
-
-            Matrix (rotation) parts of space group operations. Space group
-            operations are obtained by
-
-            .. code-block:: python
-
-                [(r,t) for r, t in zip(rotations, translations)]
-
-            See also :func:`get_symmetry`.
-        - translations : ndarray
-            shape=(n_operations, 3), order='C', dtype='double'
-
-            Vector (translation) parts of space group operations. Space group
-            operations are obtained by
-
-            .. code-block:: python
-
-                [(r,t) for r, t in zip(rotations, translations)]
-
-            See also :func:`get_symmetry`.
-        - wyckoffs : list[str]
-            Wyckoff letters corresponding to the space group type.
-        - site_symmetry_symbols : list[str]
-            Site symmetry symbols corresponding to the space group type.
-        - equivalent_atoms : ndarray
-            shape=(n_atoms,), dtype='intc'
-
-            Symmetrically equivalent atoms, where 'symmetrically' means found
-            symmetry operations. In spglib, symmetry operations are given for
-            the input cell. When a non-primitive cell is inputted and the
-            lattice made by the non-primitive basis vectors breaks its point
-            group, the found symmetry operations may not correspond to the
-            crystallographic space group type.
-        - crystallographic_orbits : ndarray
-            shape=(n_atoms,), dtype='intc'
-
-            Symmetrically equivalent atoms, where 'symmetrically' means the
-            space group operations corresponding to the space group type. This
-            is very similar to ``equivalent_atoms``. See the difference
-            explained in ``equivalent_atoms``
-
-        - Primitive cell :
-            - primitive_lattice : ndarray
-                shape=(3, 3), order='C', dtype='double'
-
-                Basis vectors a, b, c of a primitive cell in row vectors. This
-                is the primitive cell found inside spglib before applying
-                standardization. Therefore, the values are distorted with
-                respect to found space group type.
-            - mapping_to_primitive : ndarray
-                shape=(n_atoms), dtype='intc'
-
-                Atom index mapping from original cell to the primitive cell of
-                ``primitive_lattice``.
-        - Idealized standardized unit cell :
-            - std_lattice : ndarray
-                shape=(3, 3), order='C', dtype='double'
-
-                Basis vectors a, b, c of a standardized cell in row vectors.
-            - std_positions : ndarray
-                shape=(n_atoms, 3), order='C', dtype='double'
-
-                Positions of atoms in the standardized cell in fractional
-                coordinates.
-            - std_types : ndarray
-                shape=(n_atoms,), dtype='intc'
-
-                Identity numbers of atoms in the standarzied cell.
-        - std_rotation_matrix : ndarray
-            shape=(3, 3), order='C', dtype='double'
-
-            Rigid rotation matrix to rotate from standardized basis vectors to
-            idealized standardized basis vectors. Orthonormalized.
-
-            .. code-block::
-
-                L^idealized = R * L^standardized.
-
-            See the detail at :ref:`dataset_idealized_cell`.
-        - std_mapping_to_primitive :
-            dtype='intc'
-
-            ``std_positions`` index mapping to those of atoms of the primitive
-            cell in the standardized cell.
-        - pointgroup : str
-            Pointgroup symbol in Hermann-Mauguin notation.
-
-    Notes
-    -----
-    .. versionadded:: 1.9.4
-        The member 'choice' is added.
     """
     _set_no_error()
 
@@ -830,7 +821,9 @@ def get_symmetry_dataset(
     return dataset
 
 
-def get_symmetry_layerdataset(cell: Cell, aperiodic_dir=2, symprec=1e-5):
+def get_symmetry_layerdataset(
+    cell: Cell, aperiodic_dir=2, symprec=1e-5
+) -> SpglibDataset | None:
     """TODO: Add comments."""
     _set_no_error()
 
@@ -1069,7 +1062,9 @@ def get_spacegroup(
 
     With ``symbol_type=1``, Schoenflies symbol is given instead of international symbol.
 
-    If it fails, None is returned.
+    :rtype: str | None
+    :return:
+        If it fails, None is returned.
     """
     _set_no_error()
 
@@ -1099,22 +1094,10 @@ def get_spacegroup_type(hall_number: int) -> SpaceGroupType | None:
     The definition of ``hall_number`` is found at
     :ref:`dataset_spg_get_dataset_spacegroup_type`.
 
-    Parameters
-    ----------
-    hall_number : int
-        Hall symbol ID.
+    :param hall_number: Serial number for Hall symbol
+    :return: :class:`SpaceGroupType` or None
 
-    Returns
-    -------
-    spacegroup_type: SpaceGroupType or None
-
-    Notes
-    -----
     .. versionadded:: 1.9.4
-
-    .. versionchanged:: 2.0
-        ``hall_number`` member is added.
-
     """
     _set_no_error()
 
@@ -1172,7 +1155,7 @@ def get_spacegroup_type_from_symmetry(
 
     Returns
     -------
-    spacegroup_type : SpaceGroupType or None
+    spacegroup_type : :class:`SpaceGroupType` or None
 
     Notes
     -----
@@ -1224,7 +1207,7 @@ def get_magnetic_spacegroup_type(uni_number: int) -> MagneticSpaceGroupType | No
 
     Returns
     -------
-    magnetic_spacegroup_type: MagneticSpaceGroupType
+    magnetic_spacegroup_type: :class:`MagneticSpaceGroupType` | None
 
     Notes
     -----
@@ -1271,7 +1254,7 @@ def get_magnetic_spacegroup_type_from_symmetry(
 
     Returns
     -------
-    magnetic_spacegroup_type: MagneticSpaceGroupType
+    magnetic_spacegroup_type: :class:`MagneticSpaceGroupType` | None
     """
     rots = np.array(rotations, dtype="intc", order="C")
     trans = np.array(translations, dtype="double", order="C")
@@ -1353,7 +1336,7 @@ def standardize_cell(
     no_idealize=False,
     symprec=1e-5,
     angle_tolerance=-1.0,
-):
+) -> Cell | None:
     """Return standardized cell. When the search failed, ``None`` is returned.
 
     Parameters
@@ -1413,7 +1396,7 @@ def standardize_cell(
         return None
 
 
-def refine_cell(cell: Cell, symprec=1e-5, angle_tolerance=-1.0):
+def refine_cell(cell: Cell, symprec=1e-5, angle_tolerance=-1.0) -> Cell | None:
     """Return refined cell. When the search failed, ``None`` is returned.
 
     The standardized unit cell is returned by a tuple of
@@ -1456,7 +1439,7 @@ def refine_cell(cell: Cell, symprec=1e-5, angle_tolerance=-1.0):
         return None
 
 
-def find_primitive(cell: Cell, symprec=1e-5, angle_tolerance=-1.0):
+def find_primitive(cell: Cell, symprec=1e-5, angle_tolerance=-1.0) -> Cell | None:
     """Primitive cell is searched in the input cell. If it fails, ``None`` is returned.
 
     The primitive cell is returned by a tuple of (lattice, positions, numbers).

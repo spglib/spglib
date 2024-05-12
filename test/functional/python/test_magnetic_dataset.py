@@ -671,15 +671,15 @@ def test_std_rotation():
         35,
     ] * len(positions)
     dataset_sg = get_symmetry_dataset((lattice, positions, numbers))
-    assert np.allclose(dataset_sg["std_lattice"], np.diag([a, b, c]))
-    assert np.allclose(dataset_sg["transformation_matrix"], np.eye(3))
-    assert np.allclose(dataset_sg["std_rotation_matrix"], rigid_rotation.T)
+    assert np.allclose(dataset_sg.std_lattice, np.diag([a, b, c]))
+    assert np.allclose(dataset_sg.transformation_matrix, np.eye(3))
+    assert np.allclose(dataset_sg.std_rotation_matrix, rigid_rotation.T)
 
     magmoms = [1.0] * len(positions)
     dataset_msg = get_symmetry_dataset((lattice, positions, numbers, magmoms))
-    assert np.allclose(dataset_msg["std_lattice"], np.diag([a, b, c]))
-    assert np.allclose(dataset_msg["transformation_matrix"], np.eye(3))
-    assert np.allclose(dataset_msg["std_rotation_matrix"], rigid_rotation.T)
+    assert np.allclose(dataset_msg.std_lattice, np.diag([a, b, c]))
+    assert np.allclose(dataset_msg.transformation_matrix, np.eye(3))
+    assert np.allclose(dataset_msg.std_rotation_matrix, rigid_rotation.T)
 
 
 def test_primitive_lattice():

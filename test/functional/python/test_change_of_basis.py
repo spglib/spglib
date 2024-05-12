@@ -2,7 +2,12 @@ import os
 import unittest
 
 import numpy as np
-from spglib import get_symmetry, get_symmetry_dataset, get_symmetry_from_database
+from spglib import (
+    SpglibDataset,
+    get_symmetry,
+    get_symmetry_dataset,
+    get_symmetry_from_database,
+)
 from vasp import read_vasp
 
 data_dir = os.path.dirname(os.path.abspath(__file__))
@@ -23,7 +28,7 @@ dirnames = (
 class TestChangeOfBasis(unittest.TestCase):
     def setUp(self):
         self._filenames = []
-        self._datasets = []
+        self._datasets: list[SpglibDataset] = []
         self._cells = []
         self._symprecs = []
         for d in dirnames:
@@ -51,10 +56,9 @@ class TestChangeOfBasis(unittest.TestCase):
             self._cells,
             self._symprecs,
         ):
-            # std_lat = dataset["std_lattice"]
-            std_pos = dataset["std_positions"]
-            tmat = dataset["transformation_matrix"]
-            orig_shift = dataset["origin_shift"]
+            std_pos = dataset.std_positions
+            tmat = dataset.transformation_matrix
+            orig_shift = dataset.origin_shift
             lat = np.dot(cell[0].T, np.linalg.inv(tmat))
             pos = np.dot(cell[1], tmat.T) + orig_shift
             for p in pos:
@@ -72,8 +76,8 @@ class TestChangeOfBasis(unittest.TestCase):
             self._cells,
             self._symprecs,
         ):
-            symmetry = get_symmetry_from_database(dataset["hall_number"])
-            std_pos = dataset["std_positions"]
+            symmetry = get_symmetry_from_database(dataset.hall_number)
+            std_pos = dataset.std_positions
 
             # for r, t in zip(symmetry['rotations'], symmetry['translations']):
             #     for rp in (np.dot(std_pos, r.T) + t):
@@ -101,10 +105,10 @@ class TestChangeOfBasis(unittest.TestCase):
             self._cells,
             self._symprecs,
         ):
-            std_lat = dataset["std_lattice"]
-            tmat = dataset["transformation_matrix"]
+            std_lat = dataset.std_lattice
+            tmat = dataset.transformation_matrix
             lat = np.dot(cell[0].T, np.linalg.inv(tmat))
-            lat_rot = np.dot(dataset["std_rotation_matrix"], lat)
+            lat_rot = np.dot(dataset.std_rotation_matrix, lat)
             np.testing.assert_allclose(
                 std_lat,
                 lat_rot.T,
@@ -129,12 +133,12 @@ class TestChangeOfBasis(unittest.TestCase):
             symmetry = get_symmetry(cell_spin, symprec=symprec)
 
             self.assertEqual(
-                len(dataset["rotations"]),
+                len(dataset.rotations),
                 len(symmetry["rotations"]),
                 msg=("%s" % fname),
             )
 
-            for r, t in zip(dataset["rotations"], dataset["translations"]):
+            for r, t in zip(dataset.rotations, dataset.translations):
                 found = False
                 for r_, t_ in zip(symmetry["rotations"], symmetry["translations"]):
                     if (r == r_).all():

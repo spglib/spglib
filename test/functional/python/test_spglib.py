@@ -91,35 +91,34 @@ class TestSpglib(unittest.TestCase):
             else:
                 symprec = 1e-5
             dataset = get_symmetry_dataset(cell, symprec=symprec)
-            self.assertEqual(dataset["number"], spgnum, msg=("%s" % fname))
+            self.assertEqual(dataset.number, spgnum, msg=("%s" % fname))
 
             for i in range(spg_to_hall[spgnum - 1], spg_to_hall[spgnum]):
                 dataset = get_symmetry_dataset(cell, hall_number=i, symprec=symprec)
-                self.assertEqual(type(dataset), dict, msg=("%s/%d" % (fname, i)))
-                self.assertEqual(dataset["hall_number"], i, msg=("%s" % fname))
-                spg_type = get_spacegroup_type(dataset["hall_number"])
+                self.assertEqual(dataset.hall_number, i, msg=("%s" % fname))
+                spg_type = get_spacegroup_type(dataset.hall_number)
                 self.assertEqual(
-                    dataset["international"],
+                    dataset.international,
                     spg_type.international_short,
                     msg=("%s" % fname),
                 )
                 self.assertEqual(
-                    dataset["hall"],
+                    dataset.hall,
                     spg_type.hall_symbol,
                     msg=("%s" % fname),
                 )
                 self.assertEqual(
-                    dataset["choice"],
+                    dataset.choice,
                     spg_type.choice,
                     msg=("%s" % fname),
                 )
                 self.assertEqual(
-                    dataset["pointgroup"],
+                    dataset.pointgroup,
                     spg_type.pointgroup_international,
                     msg=("%s" % fname),
                 )
 
-            wyckoffs = dataset["wyckoffs"]
+            wyckoffs = dataset.wyckoffs
             with open(reffname) as f:
                 wyckoffs_ref = yaml.load(f, Loader=yaml.FullLoader)["wyckoffs"]
             for w, w_ref in zip(wyckoffs, wyckoffs_ref):
@@ -147,11 +146,11 @@ class TestSpglib(unittest.TestCase):
                 symprec=symprec,
             )
             dataset = get_symmetry_dataset(std_cell, symprec=symprec)
-            self.assertEqual(dataset["number"], spgnum, msg=("%s" % fname))
+            self.assertEqual(dataset.number, spgnum, msg=("%s" % fname))
 
             # The test for point group has to be done after standardization.
-            ptg_symbol, _, _ = get_pointgroup(dataset["rotations"])
-            self.assertEqual(dataset["pointgroup"], ptg_symbol, msg=("%s" % fname))
+            ptg_symbol, _, _ = get_pointgroup(dataset.rotations)
+            self.assertEqual(dataset.pointgroup, ptg_symbol, msg=("%s" % fname))
 
     def test_standardize_cell_from_primitive(self):
         for fname, spgnum in zip(self._filenames, self._spgnum_ref):
@@ -174,7 +173,7 @@ class TestSpglib(unittest.TestCase):
                 symprec=symprec,
             )
             dataset = get_symmetry_dataset(std_cell, symprec=symprec)
-            self.assertEqual(dataset["number"], spgnum, msg=("%s" % fname))
+            self.assertEqual(dataset.number, spgnum, msg=("%s" % fname))
 
     def test_standardize_cell_to_primitive(self):
         for fname, spgnum in zip(self._filenames, self._spgnum_ref):
@@ -191,7 +190,7 @@ class TestSpglib(unittest.TestCase):
                 symprec=symprec,
             )
             dataset = get_symmetry_dataset(prim_cell, symprec=symprec)
-            self.assertEqual(dataset["number"], spgnum, msg=("%s" % fname))
+            self.assertEqual(dataset.number, spgnum, msg=("%s" % fname))
 
     def test_refine_cell(self):
         for fname, spgnum in zip(self._filenames, self._spgnum_ref):
@@ -201,13 +200,13 @@ class TestSpglib(unittest.TestCase):
             else:
                 dataset_0 = get_symmetry_dataset(cell, symprec=1e-5)
             ref_cell_0 = (
-                dataset_0["std_lattice"],
-                dataset_0["std_positions"],
-                dataset_0["std_types"],
+                dataset_0.std_lattice,
+                dataset_0.std_positions,
+                dataset_0.std_types,
             )
             dataset_1 = get_symmetry_dataset(ref_cell_0, symprec=1e-5)
             # Check the same space group type is found.
-            self.assertEqual(dataset_1["number"], spgnum, msg=("%s" % fname))
+            self.assertEqual(dataset_1.number, spgnum, msg=("%s" % fname))
 
             # Check if the same structure is obtained when applying
             # standardization again, i.e., examining non cycling behaviour.
@@ -223,23 +222,23 @@ class TestSpglib(unittest.TestCase):
                 or "distorted" in fname
             ):
                 ref_cell_1 = (
-                    dataset_1["std_lattice"],
-                    dataset_1["std_positions"],
-                    dataset_1["std_types"],
+                    dataset_1.std_lattice,
+                    dataset_1.std_positions,
+                    dataset_1.std_types,
                 )
                 dataset_2 = get_symmetry_dataset(ref_cell_1, symprec=1e-5)
                 np.testing.assert_equal(
-                    dataset_1["std_types"],
-                    dataset_2["std_types"],
+                    dataset_1.std_types,
+                    dataset_2.std_types,
                     err_msg="%s" % fname,
                 )
                 np.testing.assert_allclose(
-                    dataset_1["std_lattice"],
-                    dataset_2["std_lattice"],
+                    dataset_1.std_lattice,
+                    dataset_2.std_lattice,
                     atol=1e-5,
                     err_msg="%s" % fname,
                 )
-                diff = dataset_1["std_positions"] - dataset_2["std_positions"]
+                diff = dataset_1.std_positions - dataset_2.std_positions
                 diff -= np.rint(diff)
                 np.testing.assert_allclose(diff, 0, atol=1e-5, err_msg="%s" % fname)
 
@@ -254,7 +253,7 @@ class TestSpglib(unittest.TestCase):
             dataset = get_symmetry_dataset(cell, symprec=symprec)
             primitive = find_primitive(cell, symprec=symprec)
 
-            spg_type = get_spacegroup_type(dataset["hall_number"])
+            spg_type = get_spacegroup_type(dataset.hall_number)
             c = spg_type.international_short[0]
             if c in ["A", "B", "C", "I"]:
                 multiplicity = 2
@@ -269,7 +268,7 @@ class TestSpglib(unittest.TestCase):
             else:
                 multiplicity = 1
             self.assertEqual(
-                len(dataset["std_types"]),
+                len(dataset.std_types),
                 len(primitive[2]) * multiplicity,
                 msg=("multi: %d, %s" % (multiplicity, fname)),
             )

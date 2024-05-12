@@ -43,11 +43,12 @@ print(asdict(spgtype))
 
 ### Python API
 
-- Added classes: `SpaceGroupType` and `MagneticSpaceGroupType`
+- Added classes: `SpaceGroupType`, `MagneticSpaceGroupType`, and `SpglibDataset`
 - Added function: `get_magnetic_spacegroup_type_from_symmetry`
 - Changed functions: `get_spacegroup_type`, `get_spacegroup_type_from_symmetry`, `get_magnetic_spacegroup_type`,
   and `get_magnetic_spacegroup_type_from_symmetry` now return the equivalent
   `SpaceGroupType` or `MagneticSpaceGroupType` object
+- Changed functions: `get_symmetry_dataset` now returns the equivalent `SpglibDataset` object
 
 ### C Interface
 

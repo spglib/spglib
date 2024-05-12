@@ -151,31 +151,29 @@ def main():
     dataset = spglib.get_symmetry_dataset(rutile)
     print("[get_symmetry_dataset] ['international']")
     print(
-        "  Spacegroup of Rutile is %s (%d)."
-        % (dataset["international"], dataset["number"]),
+        "  Spacegroup of Rutile is %s (%d)." % (dataset.international, dataset.number),
     )
     print("")
     print("[get_symmetry_dataset] ['pointgroup']")
-    print("  Pointgroup of Rutile is %s." % (dataset["pointgroup"]))
+    print("  Pointgroup of Rutile is %s." % (dataset.pointgroup))
     print("")
     print("[get_symmetry_dataset] ['hall']")
     print(
-        "  Hall symbol of Rutile is %s (%d)."
-        % (dataset["hall"], dataset["hall_number"]),
+        "  Hall symbol of Rutile is %s (%d)." % (dataset.hall, dataset.hall_number),
     )
     print("")
     print("[get_symmetry_dataset] ['wyckoffs']")
-    print("  Wyckoff letters of Rutile are: ", dataset["wyckoffs"])
+    print("  Wyckoff letters of Rutile are: ", dataset.wyckoffs)
     print("")
     print("[get_symmetry_dataset] ['equivalent_atoms']")
     print("  Mapping to equivalent atoms of Rutile are: ")
-    for i, x in enumerate(dataset["equivalent_atoms"]):
+    for i, x in enumerate(dataset.equivalent_atoms):
         print("  %d -> %d" % (i + 1, x + 1))
     print("")
     print("[get_symmetry_dataset] ['rotations'], ['translations']")
     print("  Symmetry operations of Rutile unitcell are:")
     for i, (rot, trans) in enumerate(
-        zip(dataset["rotations"], dataset["translations"]),
+        zip(dataset.rotations, dataset.translations),
     ):
         print("  --------------- %4d ---------------" % (i + 1))
         print("  rotation:")

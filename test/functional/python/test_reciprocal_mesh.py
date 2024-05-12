@@ -635,7 +635,7 @@ class TestReciprocalMesh(unittest.TestCase):
         for i, (fname, mesh) in enumerate(file_and_mesh):
             self.meshes.append(mesh)
             self.cells.append(read_vasp(fname))
-            self.rotations.append(get_symmetry_dataset(self.cells[i])["rotations"])
+            self.rotations.append(get_symmetry_dataset(self.cells[i]).rotations)
             _, ga = get_stabilized_reciprocal_mesh(
                 mesh,
                 [
