@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 from spglib import (
+    SpglibMagneticDataset,
     get_magnetic_spacegroup_type_from_symmetry,
     get_magnetic_symmetry,
     get_magnetic_symmetry_dataset,
@@ -10,12 +11,12 @@ from spglib import (
 
 
 def _check_magnetic_spacegroup_type(
-    dataset: dict, lattice: np.ndarray, uni_number: int
+    dataset: SpglibMagneticDataset, lattice: np.ndarray, uni_number: int
 ):
     msg_type = get_magnetic_spacegroup_type_from_symmetry(
-        rotations=dataset["rotations"],
-        translations=dataset["translations"],
-        time_reversals=dataset["time_reversals"],
+        rotations=dataset.rotations,
+        translations=dataset.translations,
+        time_reversals=dataset.time_reversals,
         lattice=lattice,
     )
     assert msg_type.uni_number == uni_number
@@ -53,11 +54,11 @@ def test_type1():
 
     dataset = get_magnetic_symmetry_dataset((lattice, positions, numbers, magmoms))
     uni_number = 771  # BNS=92.111
-    assert dataset["hall_number"] == 369
-    assert dataset["msg_type"] == 1
-    assert dataset["uni_number"] == uni_number
+    assert dataset.hall_number == 369
+    assert dataset.msg_type == 1
+    assert dataset.uni_number == uni_number
     # all dataset['time_reversals'] should be False
-    assert not np.any(dataset["time_reversals"])
+    assert not np.any(dataset.time_reversals)
 
     _check_magnetic_spacegroup_type(dataset, lattice, uni_number)
 
@@ -102,9 +103,9 @@ def test_type3():
 
     dataset = get_magnetic_symmetry_dataset((lattice, positions, numbers, magmoms))
     uni_number = 544
-    assert dataset["hall_number"] == 292
-    assert dataset["msg_type"] == 3
-    assert dataset["uni_number"] == uni_number
+    assert dataset.hall_number == 292
+    assert dataset.msg_type == 3
+    assert dataset.uni_number == uni_number
 
     _check_magnetic_spacegroup_type(dataset, lattice, uni_number)
 
@@ -145,15 +146,15 @@ def test_monoclinic():
 
     dataset = get_magnetic_symmetry_dataset((lattice, positions, numbers, magmoms))
     uni_number = 82  # BNS: 14.75
-    assert dataset["msg_type"] == 1
-    assert dataset["uni_number"] == uni_number
+    assert dataset.msg_type == 1
+    assert dataset.uni_number == uni_number
     assert np.allclose(
-        dataset["transformation_matrix"],
+        dataset.transformation_matrix,
         np.array([[0, 1, 0], [0, 0, 1], [1, 0, 0]]),
     )
-    assert np.allclose(dataset["std_rotation_matrix"], np.eye(3))
+    assert np.allclose(dataset.std_rotation_matrix, np.eye(3))
     std_lattice_expect = np.array([[0, b, 0], [0, 0, c], [a, 0, 0]])  # unique-axis
-    assert np.allclose(dataset["std_lattice"], std_lattice_expect)
+    assert np.allclose(dataset.std_lattice, std_lattice_expect)
     std_positions_expect = np.array(
         [
             [0.00000000, 0.00000000, 0.00000000],
@@ -166,8 +167,8 @@ def test_monoclinic():
             [0.25000000, 0.50970000, 0.77940000],
         ],
     )
-    assert np.allclose(dataset["std_positions"], std_positions_expect)
-    assert np.allclose(dataset["std_tensors"], magmoms)
+    assert np.allclose(dataset.std_positions, std_positions_expect)
+    assert np.allclose(dataset.std_tensors, magmoms)
 
     _check_magnetic_spacegroup_type(dataset, lattice, uni_number)
 
@@ -225,7 +226,7 @@ def test_centered_monoclinic():
 
     dataset = get_magnetic_symmetry_dataset((lattice, positions, numbers, magmoms))
     uni_number = 67
-    assert dataset["uni_number"] == uni_number
+    assert dataset.uni_number == uni_number
 
     _check_magnetic_spacegroup_type(dataset, lattice, uni_number)
 
@@ -261,29 +262,29 @@ def test_trigonal():
 
     dataset = get_magnetic_symmetry_dataset((lattice, positions, numbers, magmoms))
     uni_number = 1331
-    assert dataset["uni_number"] == uni_number
-    assert dataset["hall_number"] == 458  # choose hexagonal axes in default
-    assert dataset["msg_type"] == 3
-    assert len(dataset["time_reversals"]) == 12
+    assert dataset.uni_number == uni_number
+    assert dataset.hall_number == 458  # choose hexagonal axes in default
+    assert dataset.msg_type == 3
+    assert len(dataset.time_reversals) == 12
     # Use hexagonal axes for standardized cell
-    assert np.around(1 / np.linalg.det(dataset["transformation_matrix"])) == 3
-    assert dataset["std_positions"].shape[0] == positions.shape[0] * 3
-    assert dataset["std_types"].shape[0] == numbers.shape[0] * 3
-    assert dataset["std_tensors"].shape[0] == magmoms.shape[0] * 3
+    assert np.around(1 / np.linalg.det(dataset.transformation_matrix)) == 3
+    assert dataset.std_positions.shape[0] == positions.shape[0] * 3
+    assert dataset.std_types.shape[0] == numbers.shape[0] * 3
+    assert dataset.std_tensors.shape[0] == magmoms.shape[0] * 3
 
     # Test hR with the standardized cell
     std_cell = (
-        dataset["std_lattice"],
-        dataset["std_positions"],
-        dataset["std_types"],
-        dataset["std_tensors"],
+        dataset.std_lattice,
+        dataset.std_positions,
+        dataset.std_types,
+        dataset.std_tensors,
     )
     dataset2 = get_magnetic_symmetry_dataset(std_cell)
-    assert dataset2["uni_number"] == 1331
-    assert dataset2["hall_number"] == 458
-    assert dataset2["n_operations"] == 12 * 3
+    assert dataset2.uni_number == 1331
+    assert dataset2.hall_number == 458
+    assert dataset2.n_operations == 12 * 3
     assert np.isclose(
-        np.linalg.det(dataset2["primitive_lattice"]),
+        np.linalg.det(dataset2.primitive_lattice),
         np.linalg.det(lattice),
     )
 
@@ -348,12 +349,12 @@ def test_conventional():
 
     dataset = get_magnetic_symmetry_dataset((lattice, positions, numbers, magmoms))
     uni_number = 94
-    assert dataset["uni_number"] == uni_number
-    assert dataset["hall_number"] == 90
-    assert dataset["rotations"].shape[0] == 12
+    assert dataset.uni_number == uni_number
+    assert dataset.hall_number == 90
+    assert dataset.rotations.shape[0] == 12
     # Original hP setting with 18 atoms are converted to mS
     # with 12 (= 18 / 3 * 2) atoms
-    assert dataset["n_std_atoms"] == 12
+    assert dataset.n_std_atoms == 12
 
     _check_magnetic_spacegroup_type(dataset, lattice, uni_number)
 
@@ -404,9 +405,9 @@ def test_type4():
 
     dataset = get_magnetic_symmetry_dataset((lattice, positions, numbers, magmoms))
     uni_number = 70
-    assert dataset["uni_number"] == uni_number
-    assert dataset["hall_number"] == 63
-    assert dataset["msg_type"] == 4
+    assert dataset.uni_number == uni_number
+    assert dataset.hall_number == 63
+    assert dataset.msg_type == 4
 
     _check_magnetic_spacegroup_type(dataset, lattice, uni_number)
 
@@ -453,8 +454,8 @@ def test_nonstandard_setting():
 
     dataset = get_magnetic_symmetry_dataset((lattice, positions, numbers, magmoms))
     uni_number = 496
-    assert dataset["uni_number"] == uni_number
-    assert dataset["msg_type"] == 3
+    assert dataset.uni_number == uni_number
+    assert dataset.msg_type == 3
 
     _check_magnetic_spacegroup_type(dataset, lattice, uni_number)
 
@@ -505,7 +506,7 @@ def test_nonstandard_setting2():
 
     dataset = get_magnetic_symmetry_dataset((lattice, positions, numbers, magmoms))
     uni_number = 125
-    assert dataset["uni_number"] == uni_number
+    assert dataset.uni_number == uni_number
 
     _check_magnetic_spacegroup_type(dataset, lattice, uni_number)
 
@@ -562,7 +563,7 @@ def test_nonstandard_setting3():
 
     dataset = get_magnetic_symmetry_dataset((lattice, positions, numbers, magmoms))
     uni_number = 533
-    assert dataset["uni_number"] == uni_number
+    assert dataset.uni_number == uni_number
 
     _check_magnetic_spacegroup_type(dataset, lattice, uni_number)
 
@@ -639,7 +640,7 @@ def test_nonstandard_type4():
 
     dataset = get_magnetic_symmetry_dataset((lattice, positions, numbers, magmoms))
     uni_number = 97
-    assert dataset["uni_number"] == uni_number
+    assert dataset.uni_number == uni_number
 
     _check_magnetic_spacegroup_type(dataset, lattice, uni_number)
 
@@ -710,7 +711,7 @@ def test_primitive_lattice():
     )
     primitive_lattice1 = get_magnetic_symmetry_dataset(
         (lattice, positions, numbers, magmoms),
-    )["primitive_lattice"]
+    ).primitive_lattice
     primitive_lattice2 = get_magnetic_symmetry(
         (lattice, positions, numbers, magmoms),
     )["primitive_lattice"]

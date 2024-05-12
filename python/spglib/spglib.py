@@ -281,6 +281,117 @@ class SpglibDataset(DictInterface):
     """Pointgroup symbol in Hermann-Mauguin notation."""
 
 
+@dataclasses.dataclass(eq=False, frozen=True)
+class SpglibMagneticDataset(DictInterface):
+    """Spglib magnetic dataset information.
+
+    See :ref:`magnetic_spglib_dataset` in detail.
+
+    .. versionadded:: 2.5.0
+    """
+
+    # Magnetic space-group type
+    uni_number: int
+    """UNI number between 1 to 1651"""
+    msg_type: int
+    """Magnetic space groups (MSG) is classified by its family space group (FSG) and
+    maximal space subgroup (XSG).
+
+    FSG is a non-magnetic space group obtained by ignoring time-reversal term in MSG.
+    XSG is a space group obtained by picking out non time-reversal operations in MSG.
+
+    - msg_type==1 (type-I):
+        MSG, XSG, FSG are all isomorphic.
+    - msg_type==2 (type-II):
+        XSG and FSG are isomorphic, and MSG is generated from XSG and pure time reversal
+        operations.
+    - msg_type==3 (type-III):
+        XSG is a proper subgroup of MSG with isomorphic translational subgroups.
+    - msg_type==4 (type-IV):
+        XSG is a proper subgroup of MSG with isomorphic point group.
+    """
+    hall_number: int
+    """For type-I, II, III, Hall number of FSG; for type-IV, that of XSG"""
+    tensor_rank: int
+    """Rank of magmoms."""
+
+    # Magnetic symmetry operations
+    n_operations: int
+    """Number of magnetic symmetry operations"""
+    rotations: NDArray[np.intc]
+    """Rotation (matrix) parts of symmetry operations
+
+    shape: (n_operations, 3, 3)
+    """
+    translations: NDArray[np.double]
+    """Translation (vector) parts of symmetry operations
+
+    shape: (n_operations, 3)
+    """
+    time_reversals: NDArray[np.intc]
+    """Time reversal part of magnetic symmetry operations.
+
+    True indicates time reversal operation, and False indicates an ordinary operation.
+
+    shape: (n_operations, )
+    """
+
+    # Equivalent atoms
+    n_atoms: int
+    """Number of atoms in the input cell"""
+    equivalent_atoms: NDArray[np.intc]
+    """Symmetrically equivalent atoms, where 'symmetrically' means found symmetry
+    operations.
+    """
+
+    # Transformation to standardized setting
+    transformation_matrix: NDArray[np.intc]
+    """Transformation matrix from input lattice to standardized
+
+    shape: (3, 3)
+    """
+    origin_shift: NDArray[np.double]
+    """Origin shift from standardized to input origin
+
+    shape: (3, )
+    """
+
+    # Standardized crystal structure
+    n_std_atoms: int
+    """Number of atoms in standardized unit cell"""
+    std_lattice: NDArray[np.double]
+    """Row-wise lattice vectors of the standardized unit cell
+
+    shape: (3, 3)
+    """
+    std_types: NDArray[np.intc]
+    """Identity numbers of atoms in the standardized unit cell
+
+    shape: (n_std_atoms, )
+    """
+    std_positions: NDArray[np.double]
+    """Fractional coordinates of atoms in the standardized unit cell
+
+    shape: (n_std_atoms, 3)
+    """
+    std_tensors: NDArray[np.double]
+    """
+    shape:
+        (n_std_atoms, ) for collinear magnetic moments.
+        (n_std_atoms, 3) for vector non-collinear magnetic moments.
+    """
+    std_rotation_matrix: NDArray[np.double]
+    """Rigid rotation matrix to rotate from standardized basis vectors to idealized
+    standardized basis vectors"""
+
+    # Intermediate data in symmetry search
+    primitive_lattice: NDArray[np.double]
+    """Basis vectors of primitive lattice.
+
+    shape: (3, 3)
+    """
+
+
 @dataclasses.dataclass(eq=True, frozen=True)
 class SpaceGroupType(DictInterface):
     """Space group type information.
@@ -640,6 +751,8 @@ def get_magnetic_symmetry(
             an ordinary operation.
         - 'equivalent_atoms' : ndarray
             shape=(num_atoms, ), dtype='intc'
+        - 'primitive_lattice': ndarray
+            shape=(3, 3), dtype='double'
 
     Notes
     -----
@@ -851,10 +964,8 @@ def get_magnetic_symmetry_dataset(
     symprec=1e-5,
     angle_tolerance=-1.0,
     mag_symprec=-1.0,
-) -> dict | None:
+) -> SpglibMagneticDataset | None:
     """Search magnetic symmetry dataset from an input cell. If it fails, return None.
-
-    The description of its keys is given at :ref:`magnetic_spglib_dataset`.
 
     Parameters
     ----------
@@ -863,70 +974,7 @@ def get_magnetic_symmetry_dataset(
 
     Returns
     -------
-    dataset : dict or None
-        Dictionary keys are as follows:
-
-        Magnetic space-group type
-            - uni_number: int
-                UNI number between 1 to 1651
-            - msg_type: int
-                Magnetic space groups (MSG) is classified by its family space
-                group (FSG) and maximal space subgroup (XSG). FSG is a non-magnetic
-                space group obtained by ignoring time-reversal term in MSG. XSG is
-                a space group obtained by picking out non time-reversal operations
-                in MSG.
-
-                - msg_type==1 (type-I):
-                    MSG, XSG, FSG are all isomorphic.
-                - msg_type==2 (type-II):
-                    XSG and FSG are isomorphic, and MSG is generated from XSG and pure time reversal operations.
-                - msg_type==3 (type-III):
-                    XSG is a proper subgroup of MSG with isomorphic translational subgroups.
-                - msg_type==4 (type-IV):
-                    XSG is a proper subgroup of MSG with isomorphic point group.
-
-            - hall_number: int
-                For type-I, II, III, Hall number of FSG; for type-IV, that of XSG
-            - tensor_rank: int
-
-        Magnetic symmetry operations
-            - n_operations: int
-            - rotations: array, (n_operations, 3, 3)
-                Rotation (matrix) parts of symmetry operations
-            - translations: array, (n_operations, 3)
-                Translation (vector) parts of symmetry operations
-            - time_reversals: array, (n_operations, )
-                Time reversal part of magnetic symmetry operations.
-                True indicates time reversal operation, and False indicates
-                an ordinary operation.
-
-        Equivalent atoms
-            - n_atoms: int
-            - equivalent_atoms: array
-                See the docstring of get_symmetry_dataset
-
-        Transformation to standardized setting
-            - transformation_matrix: array, (3, 3)
-                Transformation matrix from input lattice to standardized
-            - origin_shift: array, (3, )
-                Origin shift from standardized to input origin
-
-        Standardized crystal structure
-            - n_std_atoms: int
-                Number of atoms in standardized unit cell
-            - std_lattice: array, (3, 3)
-                Row-wise lattice vectors
-            - std_types: array, (n_std_atoms, )
-            - std_positions: array, (n_std_atoms, 3)
-            - std_tensors: array
-                (n_std_atoms, ) for collinear magnetic moments.
-                (n_std_atoms, 3) for vector non-collinear magnetic moments.
-            - std_rotation_matrix
-                Rigid rotation matrix to rotate from standardized basis
-                vectors to idealized standardized basis vectors
-
-        Intermediate data in symmetry search
-            - primitive_lattice: array, (3, 3)
+    dataset : :class:`SpglibMagneticDataset` or None
 
     Notes
     -----
@@ -961,82 +1009,43 @@ def get_magnetic_symmetry_dataset(
         _set_error_message()
         return None
 
-    keys = (
-        # Magnetic space-group type
-        "uni_number",
-        "msg_type",
-        "hall_number",
-        "tensor_rank",
-        # Magnetic symmetry operations
-        "n_operations",
-        "rotations",
-        "translations",
-        "time_reversals",
-        # Equivalent atoms
-        "n_atoms",
-        "equivalent_atoms",
-        # Transformation to standardized setting
-        "transformation_matrix",
-        "origin_shift",
-        # Standardized crystal structure
-        "n_std_atoms",
-        "std_lattice",
-        "std_types",
-        "std_positions",
-        "std_tensors",
-        "std_rotation_matrix",
-        # Intermediate datum in symmetry search
-        "primitive_lattice",
-    )
-    dataset = {}
-    for key, data in zip(keys, spg_ds):
-        dataset[key] = data
-    dataset["rotations"] = np.array(dataset["rotations"], dtype="intc", order="C")
-    dataset["translations"] = np.array(
-        dataset["translations"],
-        dtype="double",
-        order="C",
-    )
-    dataset["time_reversals"] = (
-        np.array(dataset["time_reversals"], dtype="intc", order="C") == 1
-    )
-    dataset["equivalent_atoms"] = np.array(dataset["equivalent_atoms"], dtype="intc")
-    dataset["transformation_matrix"] = np.array(
-        dataset["transformation_matrix"],
-        dtype="double",
-        order="C",
-    )
-    dataset["origin_shift"] = np.array(dataset["origin_shift"], dtype="double")
-    dataset["std_lattice"] = np.array(
-        np.transpose(dataset["std_lattice"]),
-        dtype="double",
-        order="C",
-    )
-    dataset["std_types"] = np.array(dataset["std_types"], dtype="intc")
-    dataset["std_positions"] = np.array(
-        dataset["std_positions"],
-        dtype="double",
-        order="C",
-    )
-    dataset["std_rotation_matrix"] = np.array(
-        dataset["std_rotation_matrix"],
-        dtype="double",
-        order="C",
-    )
-    dataset["primitive_lattice"] = np.array(
-        np.transpose(dataset["primitive_lattice"]),
-        dtype="double",
-        order="C",
-    )
-
-    dataset["std_tensors"] = np.array(dataset["std_tensors"], dtype="double", order="C")
+    tensor_rank = spg_ds[3]
+    std_tensors = np.array(spg_ds[16], dtype="double", order="C")
     if tensor_rank == 1:
-        dataset["std_tensors"] = dataset["std_tensors"].reshape(-1, 3)
+        std_tensors = std_tensors.reshape(-1, 3)
+
+    dataset = SpglibMagneticDataset(
+        # Magnetic space-group type
+        uni_number=spg_ds[0],
+        msg_type=spg_ds[1],
+        hall_number=spg_ds[2],
+        tensor_rank=tensor_rank,
+        # Magnetic symmetry operations
+        n_operations=spg_ds[4],
+        rotations=np.array(spg_ds[5], dtype="intc", order="C"),
+        translations=np.array(spg_ds[6], dtype="double", order="C"),
+        time_reversals=np.array(spg_ds[7], dtype="intc"),
+        # Equivalent atoms
+        n_atoms=spg_ds[8],
+        equivalent_atoms=np.array(spg_ds[9], dtype="intc"),
+        # Transformation to standardized setting
+        transformation_matrix=np.array(spg_ds[10], dtype="double", order="C"),
+        origin_shift=np.array(spg_ds[11], dtype="double"),
+        # Standardized crystal structure
+        n_std_atoms=spg_ds[12],
+        std_lattice=np.array(np.transpose(spg_ds[13]), dtype="double", order="C"),
+        std_types=np.array(spg_ds[14], dtype="intc"),
+        std_positions=np.array(spg_ds[15], dtype="double", order="C"),
+        std_tensors=std_tensors,
+        std_rotation_matrix=np.array(spg_ds[17], dtype="double", order="C"),
+        # Intermediate datum in symmetry search
+        primitive_lattice=np.array(np.transpose(spg_ds[18]), dtype="double", order="C"),
+    )
 
     return dataset
 
 
-def get_layergroup(cell: Cell, aperiodic_dir=2, symprec=1e-5):
+def get_layergroup(cell: Cell, aperiodic_dir=2, symprec=1e-5) -> SpglibDataset | None:
     """Return layer group in ....
 
     If it fails, None is returned.
