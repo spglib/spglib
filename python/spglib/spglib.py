@@ -186,11 +186,13 @@ class SpglibDataset(DictInterface):
 
     shape=(n_operations, 3, 3), order='C', dtype='intc'
 
-    Space group operations are obtained by
+    .. note::
 
-    .. code-block:: python
+        Space group operations are obtained by
 
-        [(r,t) for r, t in zip(rotations, translations)]
+        .. code-block:: python
+
+            [(r,t) for r, t in zip(rotations, translations)]
 
     See also :func:`get_symmetry`.
     """
@@ -199,11 +201,13 @@ class SpglibDataset(DictInterface):
 
     shape=(n_operations, 3), order='C', dtype='double'
 
-    Space group operations are obtained by
+    .. note::
 
-    .. code-block:: python
+        Space group operations are obtained by
 
-        [(r,t) for r, t in zip(rotations, translations)]
+        .. code-block:: python
+
+            [(r,t) for r, t in zip(rotations, translations)]
 
     See also :func:`get_symmetry`.
     """
