@@ -57,7 +57,7 @@ the author of spglib knows.
 
 ### `international_symbol`
 
-The (full) Hermann–Mauguin notation of space group type is given by .
+The (full) Hermann-Mauguin notation of space group type is given by .
 
 ### `hall_symbol`
 
@@ -244,7 +244,7 @@ is obtained.
 %    groups (Seto's web site)](http://pmsl.planet.sci.kobe-u.ac.jp/~seto/?page_id=37&lang=en).
 
 `pointgroup_symbol` is the symbol of the crystallographic point
-group in the Hermann–Mauguin notation. There are 32 crystallographic
+group in the Hermann-Mauguin notation. There are 32 crystallographic
 point groups
 
 ```

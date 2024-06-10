@@ -82,7 +82,7 @@ if TYPE_CHECKING:
     from collections.abc import Iterator, Sequence
     from typing import Any
 
-    from numpy.typing import ArrayLike
+    from numpy.typing import ArrayLike, NDArray
 
     if sys.version_info < (3, 10):
         from typing_extensions import TypeAlias
@@ -139,10 +139,271 @@ class DictInterface(Mapping[str, "Any"]):
         return iter(dataclasses.asdict(self))
 
 
+@dataclasses.dataclass(eq=False, frozen=True)
+class SpglibDataset(DictInterface):
+    """Spglib dataset information.
+
+    .. versionadded:: 1.9.4
+        The member 'choice' is added.
+    .. versionadded:: 2.5.0
+    """
+
+    number: int
+    """International space group number"""
+    hall_number: int
+    """Hall number.
+
+    This number is used in
+        :func:`get_symmetry_from_database` and
+        :func:`get_spacegroup_type`.
+    """
+    international: str
+    """International symbol"""
+    hall: str
+    """Hall symbol"""
+    choice: str
+    """Centring, origin, basis vector setting"""
+    transformation_matrix: NDArray[np.double]
+    """Transformation matrix from input lattice to standardized lattice.
+
+    shape=(3, 3), order='C', dtype='double'
+
+    .. code-block::
+
+        L^original = L^standardized * Tmat.
+
+    See the detail at :ref:`dataset_origin_shift_and_transformation`.
+    """
+    origin_shift: NDArray[np.double]
+    """Origin shift from standardized to input origin.
+
+    shape=(3,), dtype='double'
+
+    See the detail at :ref:`dataset_origin_shift_and_transformation`.
+    """
+    rotations: NDArray[np.intc]
+    """Matrix (rotation) parts of space group operations.
+
+    shape=(n_operations, 3, 3), order='C', dtype='intc'
+
+    .. note::
+
+        Space group operations are obtained by
+
+        .. code-block:: python
+
+            [(r,t) for r, t in zip(rotations, translations)]
+
+    See also :func:`get_symmetry`.
+    """
+    translations: NDArray[np.double]
+    """Vector (translation) parts of space group operations.
+
+    shape=(n_operations, 3), order='C', dtype='double'
+
+    .. note::
+
+        Space group operations are obtained by
+
+        .. code-block:: python
+
+            [(r,t) for r, t in zip(rotations, translations)]
+
+    See also :func:`get_symmetry`.
+    """
+    wyckoffs: list[str]
+    """Wyckoff letters corresponding to the space group type."""
+    site_symmetry_symbols: list[str]
+    """Site symmetry symbols corresponding to the space group type."""
+    crystallographic_orbits: NDArray[np.intc]
+    """Symmetrically equivalent atoms, where 'symmetrically' means the space group
+    operations corresponding to the space group type.
+
+    This is very similar to ``equivalent_atoms``. See the difference explained in
+    ``equivalent_atoms``
+
+    shape=(n_atoms,), dtype='intc'
+    """
+    equivalent_atoms: NDArray[np.intc]
+    """Symmetrically equivalent atoms, where 'symmetrically' means found symmetry
+    operations.
+
+    shape=(n_atoms,), dtype='intc'
+
+    In spglib, symmetry operations are given for the input cell.
+    When a non-primitive cell is inputted and the lattice made by the non-primitive
+    basis vectors breaks its point group, the found symmetry operations may not
+    correspond to the crystallographic space group type.
+    """
+    # Primitive cell
+    primitive_lattice: NDArray[np.double]
+    """Basis vectors a, b, c of a primitive cell in row vectors.
+
+    shape=(3, 3), order='C', dtype='double'
+
+    This is the primitive cell found inside spglib before applying standardization.
+    Therefore, the values are distorted with respect to found space group type.
+    """
+    mapping_to_primitive: NDArray[np.intc]
+    """Atom index mapping from original cell to the primitive cell of
+    ``primitive_lattice``.
+
+    shape=(n_atoms), dtype='intc'
+    """
+    # Idealized standardized unit cell
+    std_lattice: NDArray[np.double]
+    """Basis vectors a, b, c of a standardized cell in row vectors.
+
+    shape=(3, 3), order='C', dtype='double'
+    """
+    std_positions: NDArray[np.double]
+    """Positions of atoms in the standardized cell in fractional coordinates.
+
+    shape=(n_atoms, 3), order='C', dtype='double'
+    """
+    std_types: NDArray[np.intc]
+    """Identity numbers of atoms in the standardized cell.
+
+    shape=(n_atoms,), dtype='intc'
+    """
+    std_rotation_matrix: NDArray[np.double]
+    """Rigid rotation matrix to rotate from standardized basis vectors to idealized
+    standardized orthonormal basis vectors.
+
+    shape=(3, 3), order='C', dtype='double'
+
+    .. code-block::
+
+        L^idealized = R * L^standardized.
+
+    See the detail at :ref:`dataset_idealized_cell`.
+    """
+    std_mapping_to_primitive: NDArray[np.intc]
+    """``std_positions`` index mapping to those of atoms of the primitive cell in the
+    standardized cell."""
+    pointgroup: str
+    """Pointgroup symbol in Hermann-Mauguin notation."""
+
+
+@dataclasses.dataclass(eq=False, frozen=True)
+class SpglibMagneticDataset(DictInterface):
+    """Spglib magnetic dataset information.
+
+    See :ref:`magnetic_spglib_dataset` in detail.
+
+    .. versionadded:: 2.5.0
+    """
+
+    # Magnetic space-group type
+    uni_number: int
+    """UNI number between 1 to 1651"""
+    msg_type: int
+    """Magnetic space groups (MSG) is classified by its family space group (FSG) and
+    maximal space subgroup (XSG).
+
+    FSG is a non-magnetic space group obtained by ignoring time-reversal term in MSG.
+    XSG is a space group obtained by picking out non time-reversal operations in MSG.
+
+    - msg_type==1 (type-I):
+        MSG, XSG, FSG are all isomorphic.
+    - msg_type==2 (type-II):
+        XSG and FSG are isomorphic, and MSG is generated from XSG and pure time reversal
+        operations.
+    - msg_type==3 (type-III):
+        XSG is a proper subgroup of MSG with isomorphic translational subgroups.
+    - msg_type==4 (type-IV):
+        XSG is a proper subgroup of MSG with isomorphic point group.
+    """
+    hall_number: int
+    """For type-I, II, III, Hall number of FSG; for type-IV, that of XSG"""
+    tensor_rank: int
+    """Rank of magmoms."""
+
+    # Magnetic symmetry operations
+    n_operations: int
+    """Number of magnetic symmetry operations"""
+    rotations: NDArray[np.intc]
+    """Rotation (matrix) parts of symmetry operations
+
+    shape: (n_operations, 3, 3)
+    """
+    translations: NDArray[np.double]
+    """Translation (vector) parts of symmetry operations
+
+    shape: (n_operations, 3)
+    """
+    time_reversals: NDArray[np.intc]
+    """Time reversal part of magnetic symmetry operations.
+
+    True indicates time reversal operation, and False indicates an ordinary operation.
+
+    shape: (n_operations, )
+    """
+
+    # Equivalent atoms
+    n_atoms: int
+    """Number of atoms in the input cell"""
+    equivalent_atoms: NDArray[np.intc]
+    """Symmetrically equivalent atoms, where 'symmetrically' means found symmetry
+    operations.
+    """
+
+    # Transformation to standardized setting
+    transformation_matrix: NDArray[np.intc]
+    """Transformation matrix from input lattice to standardized
+
+    shape: (3, 3)
+    """
+    origin_shift: NDArray[np.double]
+    """Origin shift from standardized to input origin
+
+    shape: (3, )
+    """
+
+    # Standardized crystal structure
+    n_std_atoms: int
+    """Number of atoms in standardized unit cell"""
+    std_lattice: NDArray[np.double]
+    """Row-wise lattice vectors of the standardized unit cell
+
+    shape: (3, 3)
+    """
+    std_types: NDArray[np.intc]
+    """Identity numbers of atoms in the standardized unit cell
+
+    shape: (n_std_atoms, )
+    """
+    std_positions: NDArray[np.double]
+    """Fractional coordinates of atoms in the standardized unit cell
+
+    shape: (n_std_atoms, 3)
+    """
+    std_tensors: NDArray[np.double]
+    """
+    shape:
+        (n_std_atoms, ) for collinear magnetic moments.
+        (n_std_atoms, 3) for vector non-collinear magnetic moments.
+    """
+    std_rotation_matrix: NDArray[np.double]
+    """Rigid rotation matrix to rotate from standardized basis vectors to idealized
+    standardized basis vectors"""
+
+    # Intermediate data in symmetry search
+    primitive_lattice: NDArray[np.double]
+    """Basis vectors of primitive lattice.
+
+    shape: (3, 3)
+    """
+
+
 @dataclasses.dataclass(eq=True, frozen=True)
 class SpaceGroupType(DictInterface):
     """Space group type information.
 
+    More details are found at :ref:`spglib-dataset`.
+
+    .. versionchanged:: 2.0
+        ``hall_number`` member is added.
     .. versionadded:: 2.5.0
     """
 
@@ -382,9 +643,9 @@ def get_symmetry(
             return None
 
         return {
-            "rotations": dataset["rotations"],
-            "translations": dataset["translations"],
-            "equivalent_atoms": dataset["equivalent_atoms"],
+            "rotations": dataset.rotations,
+            "translations": dataset.translations,
+            "equivalent_atoms": dataset.equivalent_atoms,
         }
     else:
         warnings.warn(
@@ -494,6 +755,8 @@ def get_magnetic_symmetry(
             an ordinary operation.
         - 'equivalent_atoms' : ndarray
             shape=(num_atoms, ), dtype='intc'
+        - 'primitive_lattice': ndarray
+            shape=(3, 3), dtype='double'
 
     Notes
     -----
@@ -561,90 +824,57 @@ def get_magnetic_symmetry(
         }
 
 
-def _build_dataset_dict(spg_ds):
-    keys = (
-        "number",
-        "hall_number",
-        "international",
-        "hall",
-        "choice",
-        "transformation_matrix",
-        "origin_shift",
-        "rotations",
-        "translations",
-        "wyckoffs",
-        "site_symmetry_symbols",
-        "crystallographic_orbits",
-        "equivalent_atoms",
-        "primitive_lattice",
-        "mapping_to_primitive",
-        "std_lattice",
-        "std_types",
-        "std_positions",
-        "std_rotation_matrix",
-        "std_mapping_to_primitive",
-        # 'pointgroup_number',
-        "pointgroup",
-    )
-    dataset = {}
-    for key, data in zip(keys, spg_ds):
-        dataset[key] = data
-
-    dataset["international"] = dataset["international"].strip()
-    dataset["hall"] = dataset["hall"].strip()
-    dataset["choice"] = dataset["choice"].strip()
-    dataset["transformation_matrix"] = np.array(
-        dataset["transformation_matrix"],
-        dtype="double",
-        order="C",
-    )
-    dataset["origin_shift"] = np.array(dataset["origin_shift"], dtype="double")
-    dataset["rotations"] = np.array(dataset["rotations"], dtype="intc", order="C")
-    dataset["translations"] = np.array(
-        dataset["translations"],
-        dtype="double",
-        order="C",
-    )
+def _build_dataset_dict(spg_ds: list) -> SpglibDataset:
     letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    dataset["wyckoffs"] = [letters[x] for x in dataset["wyckoffs"]]
-    dataset["site_symmetry_symbols"] = [
-        s.strip() for s in dataset["site_symmetry_symbols"]
-    ]
-    dataset["crystallographic_orbits"] = np.array(
-        dataset["crystallographic_orbits"],
-        dtype="intc",
+
+    dataset = SpglibDataset(
+        number=spg_ds[0],
+        hall_number=spg_ds[1],
+        international=spg_ds[2].strip(),
+        hall=spg_ds[3].strip(),
+        choice=spg_ds[4].strip(),
+        transformation_matrix=np.array(
+            spg_ds[5],
+            dtype="double",
+            order="C",
+        ),
+        origin_shift=np.array(spg_ds[6], dtype="double"),
+        rotations=np.array(spg_ds[7], dtype="intc", order="C"),
+        translations=np.array(spg_ds[8], dtype="double", order="C"),
+        wyckoffs=[letters[x] for x in spg_ds[9]],
+        site_symmetry_symbols=[s.strip() for s in spg_ds[10]],
+        crystallographic_orbits=np.array(
+            spg_ds[11],
+            dtype="intc",
+        ),
+        equivalent_atoms=np.array(spg_ds[12], dtype="intc"),
+        primitive_lattice=np.array(
+            np.transpose(spg_ds[13]),
+            dtype="double",
+            order="C",
+        ),
+        mapping_to_primitive=np.array(
+            spg_ds[14],
+            dtype="intc",
+        ),
+        std_lattice=np.array(
+            np.transpose(spg_ds[15]),
+            dtype="double",
+            order="C",
+        ),
+        std_types=np.array(spg_ds[16], dtype="intc"),
+        std_positions=np.array(spg_ds[17], dtype="double", order="C"),
+        std_rotation_matrix=np.array(
+            spg_ds[18],
+            dtype="double",
+            order="C",
+        ),
+        std_mapping_to_primitive=np.array(
+            spg_ds[19],
+            dtype="intc",
+        ),
+        pointgroup=spg_ds[20].strip(),
     )
-    dataset["equivalent_atoms"] = np.array(dataset["equivalent_atoms"], dtype="intc")
-    dataset["primitive_lattice"] = np.array(
-        np.transpose(dataset["primitive_lattice"]),
-        dtype="double",
-        order="C",
-    )
-    dataset["mapping_to_primitive"] = np.array(
-        dataset["mapping_to_primitive"],
-        dtype="intc",
-    )
-    dataset["std_lattice"] = np.array(
-        np.transpose(dataset["std_lattice"]),
-        dtype="double",
-        order="C",
-    )
-    dataset["std_types"] = np.array(dataset["std_types"], dtype="intc")
-    dataset["std_positions"] = np.array(
-        dataset["std_positions"],
-        dtype="double",
-        order="C",
-    )
-    dataset["std_rotation_matrix"] = np.array(
-        dataset["std_rotation_matrix"],
-        dtype="double",
-        order="C",
-    )
-    dataset["std_mapping_to_primitive"] = np.array(
-        dataset["std_mapping_to_primitive"],
-        dtype="intc",
-    )
-    dataset["pointgroup"] = dataset["pointgroup"].strip()
     return dataset
 
 
@@ -653,7 +883,7 @@ def get_symmetry_dataset(
     symprec=1e-5,
     angle_tolerance=-1.0,
     hall_number=0,
-) -> dict | None:
+) -> SpglibDataset | None:
     """Search symmetry dataset from an input cell.
 
     Parameters
@@ -684,131 +914,9 @@ def get_symmetry_dataset(
 
     Returns
     -------
-    dataset: dict
+    dataset: :class:`SpglibDataset` | None
         If it fails, None is returned. Otherwise a dictionary is returned.
         More details are found at :ref:`spglib-dataset`.
-
-        - number : int
-            International space group number.
-        - international : str
-            International symbol.
-        - hall : str
-            Hall symbol.
-        - choice : str
-            Centring, origin, basis vector setting.
-        - hall_number: int
-            Hall number. This number is used in
-            :func:`get_symmetry_from_database` and
-            :func:`get_spacegroup_type`.
-        - transformation_matrix : ndarray
-            shape=(3, 3), order='C', dtype='double'
-
-            Transformation matrix from input lattice to standardized lattice:
-
-                .. code-block::
-
-                    L^original = L^standardized * Tmat.
-
-            See the detail at :ref:`dataset_origin_shift_and_transformation`.
-
-        - origin shift : ndarray
-            shape=(3,), dtype='double'
-
-            Origin shift from standardized to input origin.
-            See the detail at :ref:`dataset_origin_shift_and_transformation`.
-        - rotations : ndarray
-            shape=(n_operations, 3, 3), order='C', dtype='intc'
-
-            Matrix (rotation) parts of space group operations. Space group
-            operations are obtained by
-
-            .. code-block:: python
-
-                [(r,t) for r, t in zip(rotations, translations)]
-
-            See also :func:`get_symmetry`.
-        - translations : ndarray
-            shape=(n_operations, 3), order='C', dtype='double'
-
-            Vector (translation) parts of space group operations. Space group
-            operations are obtained by
-
-            .. code-block:: python
-
-                [(r,t) for r, t in zip(rotations, translations)]
-
-            See also :func:`get_symmetry`.
-        - wyckoffs : list[str]
-            Wyckoff letters corresponding to the space group type.
-        - site_symmetry_symbols : list[str]
-            Site symmetry symbols corresponding to the space group type.
-        - equivalent_atoms : ndarray
-            shape=(n_atoms,), dtype='intc'
-
-            Symmetrically equivalent atoms, where 'symmetrically' means found
-            symmetry operations. In spglib, symmetry operations are given for
-            the input cell. When a non-primitive cell is inputted and the
-            lattice made by the non-primitive basis vectors breaks its point
-            group, the found symmetry operations may not correspond to the
-            crystallographic space group type.
-        - crystallographic_orbits : ndarray
-            shape=(n_atoms,), dtype='intc'
-
-            Symmetrically equivalent atoms, where 'symmetrically' means the
-            space group operations corresponding to the space group type. This
-            is very similar to ``equivalent_atoms``. See the difference
-            explained in ``equivalent_atoms``
-
-        - Primitive cell :
-            - primitive_lattice : ndarray
-                shape=(3, 3), order='C', dtype='double'
-
-                Basis vectors a, b, c of a primitive cell in row vectors. This
-                is the primitive cell found inside spglib before applying
-                standardization. Therefore, the values are distorted with
-                respect to found space group type.
-            - mapping_to_primitive : ndarray
-                shape=(n_atoms), dtype='intc'
-
-                Atom index mapping from original cell to the primitive cell of
-                ``primitive_lattice``.
-        - Idealized standardized unit cell :
-            - std_lattice : ndarray
-                shape=(3, 3), order='C', dtype='double'
-
-                Basis vectors a, b, c of a standardized cell in row vectors.
-            - std_positions : ndarray
-                shape=(n_atoms, 3), order='C', dtype='double'
-
-                Positions of atoms in the standardized cell in fractional
-                coordinates.
-            - std_types : ndarray
-                shape=(n_atoms,), dtype='intc'
-
-                Identity numbers of atoms in the standarzied cell.
-        - std_rotation_matrix : ndarray
-            shape=(3, 3), order='C', dtype='double'
-
-            Rigid rotation matrix to rotate from standardized basis vectors to
-            idealized standardized basis vectors. Orthonormalized.
-
-            .. code-block::
-
-                L^idealized = R * L^standardized.
-
-            See the detail at :ref:`dataset_idealized_cell`.
-        - std_mapping_to_primitive :
-            dtype='intc'
-
-            ``std_positions`` index mapping to those of atoms of the primitive
-            cell in the standardized cell.
-        - pointgroup : str
-            Pointgroup symbol in Hermann-Mauguin notation.
-
-    Notes
-    -----
-    .. versionadded:: 1.9.4
-        The member 'choice' is added.
     """
     _set_no_error()
 
@@ -830,7 +938,9 @@ def get_symmetry_dataset(
     return dataset
 
 
-def get_symmetry_layerdataset(cell: Cell, aperiodic_dir=2, symprec=1e-5):
+def get_symmetry_layerdataset(
+    cell: Cell, aperiodic_dir=2, symprec=1e-5
+) -> SpglibDataset | None:
     """TODO: Add comments."""
     _set_no_error()
 
@@ -858,10 +968,8 @@ def get_magnetic_symmetry_dataset(
     symprec=1e-5,
     angle_tolerance=-1.0,
     mag_symprec=-1.0,
-) -> dict | None:
+) -> SpglibMagneticDataset | None:
     """Search magnetic symmetry dataset from an input cell. If it fails, return None.
-
-    The description of its keys is given at :ref:`magnetic_spglib_dataset`.
 
     Parameters
     ----------
@@ -870,70 +978,7 @@ def get_magnetic_symmetry_dataset(
 
     Returns
     -------
-    dataset : dict or None
-        Dictionary keys are as follows:
-
-        Magnetic space-group type
-            - uni_number: int
-                UNI number between 1 to 1651
-            - msg_type: int
-                Magnetic space groups (MSG) is classified by its family space
-                group (FSG) and maximal space subgroup (XSG). FSG is a non-magnetic
-                space group obtained by ignoring time-reversal term in MSG. XSG is
-                a space group obtained by picking out non time-reversal operations
-                in MSG.
-
-                - msg_type==1 (type-I):
-                    MSG, XSG, FSG are all isomorphic.
-                - msg_type==2 (type-II):
-                    XSG and FSG are isomorphic, and MSG is generated from XSG and pure time reversal operations.
-                - msg_type==3 (type-III):
-                    XSG is a proper subgroup of MSG with isomorphic translational subgroups.
-                - msg_type==4 (type-IV):
-                    XSG is a proper subgroup of MSG with isomorphic point group.
-
-            - hall_number: int
-                For type-I, II, III, Hall number of FSG; for type-IV, that of XSG
-            - tensor_rank: int
-
-        Magnetic symmetry operations
-            - n_operations: int
-            - rotations: array, (n_operations, 3, 3)
-                Rotation (matrix) parts of symmetry operations
-            - translations: array, (n_operations, 3)
-                Translation (vector) parts of symmetry operations
-            - time_reversals: array, (n_operations, )
-                Time reversal part of magnetic symmetry operations.
-                True indicates time reversal operation, and False indicates
-                an ordinary operation.
-
-        Equivalent atoms
-            - n_atoms: int
-            - equivalent_atoms: array
-                See the docstring of get_symmetry_dataset
-
-        Transformation to standardized setting
-            - transformation_matrix: array, (3, 3)
-                Transformation matrix from input lattice to standardized
-            - origin_shift: array, (3, )
-                Origin shift from standardized to input origin
-
-        Standardized crystal structure
-            - n_std_atoms: int
-                Number of atoms in standardized unit cell
-            - std_lattice: array, (3, 3)
-                Row-wise lattice vectors
-            - std_types: array, (n_std_atoms, )
-            - std_positions: array, (n_std_atoms, 3)
-            - std_tensors: array
-                (n_std_atoms, ) for collinear magnetic moments.
-                (n_std_atoms, 3) for vector non-collinear magnetic moments.
-            - std_rotation_matrix
-                Rigid rotation matrix to rotate from standardized basis
-                vectors to idealized standardized basis vectors
-
-        Intermediate data in symmetry search
-            - primitive_lattice: array, (3, 3)
+    dataset : :class:`SpglibMagneticDataset` or None
 
     Notes
     -----
@@ -968,82 +1013,43 @@ def get_magnetic_symmetry_dataset(
         _set_error_message()
         return None
 
-    keys = (
-        # Magnetic space-group type
-        "uni_number",
-        "msg_type",
-        "hall_number",
-        "tensor_rank",
-        # Magnetic symmetry operations
-        "n_operations",
-        "rotations",
-        "translations",
-        "time_reversals",
-        # Equivalent atoms
-        "n_atoms",
-        "equivalent_atoms",
-        # Transformation to standardized setting
-        "transformation_matrix",
-        "origin_shift",
-        # Standardized crystal structure
-        "n_std_atoms",
-        "std_lattice",
-        "std_types",
-        "std_positions",
-        "std_tensors",
-        "std_rotation_matrix",
-        # Intermediate datum in symmetry search
-        "primitive_lattice",
-    )
-    dataset = {}
-    for key, data in zip(keys, spg_ds):
-        dataset[key] = data
-    dataset["rotations"] = np.array(dataset["rotations"], dtype="intc", order="C")
-    dataset["translations"] = np.array(
-        dataset["translations"],
-        dtype="double",
-        order="C",
-    )
-    dataset["time_reversals"] = (
-        np.array(dataset["time_reversals"], dtype="intc", order="C") == 1
-    )
-    dataset["equivalent_atoms"] = np.array(dataset["equivalent_atoms"], dtype="intc")
-    dataset["transformation_matrix"] = np.array(
-        dataset["transformation_matrix"],
-        dtype="double",
-        order="C",
-    )
-    dataset["origin_shift"] = np.array(dataset["origin_shift"], dtype="double")
-    dataset["std_lattice"] = np.array(
-        np.transpose(dataset["std_lattice"]),
-        dtype="double",
-        order="C",
-    )
-    dataset["std_types"] = np.array(dataset["std_types"], dtype="intc")
-    dataset["std_positions"] = np.array(
-        dataset["std_positions"],
-        dtype="double",
-        order="C",
-    )
-    dataset["std_rotation_matrix"] = np.array(
-        dataset["std_rotation_matrix"],
-        dtype="double",
-        order="C",
-    )
-    dataset["primitive_lattice"] = np.array(
-        np.transpose(dataset["primitive_lattice"]),
-        dtype="double",
-        order="C",
-    )
-
-    dataset["std_tensors"] = np.array(dataset["std_tensors"], dtype="double", order="C")
+    tensor_rank = spg_ds[3]
+    std_tensors = np.array(spg_ds[16], dtype="double", order="C")
     if tensor_rank == 1:
-        dataset["std_tensors"] = dataset["std_tensors"].reshape(-1, 3)
+        std_tensors = std_tensors.reshape(-1, 3)
+
+    dataset = SpglibMagneticDataset(
+        # Magnetic space-group type
+        uni_number=spg_ds[0],
+        msg_type=spg_ds[1],
+        hall_number=spg_ds[2],
+        tensor_rank=tensor_rank,
+        # Magnetic symmetry operations
+        n_operations=spg_ds[4],
+        rotations=np.array(spg_ds[5], dtype="intc", order="C"),
+        translations=np.array(spg_ds[6], dtype="double", order="C"),
+        time_reversals=np.array(spg_ds[7], dtype="intc"),
+        # Equivalent atoms
+        n_atoms=spg_ds[8],
+        equivalent_atoms=np.array(spg_ds[9], dtype="intc"),
+        # Transformation to standardized setting
+        transformation_matrix=np.array(spg_ds[10], dtype="double", order="C"),
+        origin_shift=np.array(spg_ds[11], dtype="double"),
+        # Standardized crystal structure
+        n_std_atoms=spg_ds[12],
+        std_lattice=np.array(np.transpose(spg_ds[13]), dtype="double", order="C"),
+        std_types=np.array(spg_ds[14], dtype="intc"),
+        std_positions=np.array(spg_ds[15], dtype="double", order="C"),
+        std_tensors=std_tensors,
+        std_rotation_matrix=np.array(spg_ds[17], dtype="double", order="C"),
+        # Intermediate datum in symmetry search
+        primitive_lattice=np.array(np.transpose(spg_ds[18]), dtype="double", order="C"),
+    )
 
     return dataset
 
 
-def get_layergroup(cell: Cell, aperiodic_dir=2, symprec=1e-5):
+def get_layergroup(cell: Cell, aperiodic_dir=2, symprec=1e-5) -> SpglibDataset | None:
     """Return layer group in ....
 
     If it fails, None is returned.
@@ -1069,7 +1075,9 @@ def get_spacegroup(
 
     With ``symbol_type=1``, Schoenflies symbol is given instead of international symbol.
 
-    If it fails, None is returned.
+    :rtype: str | None
+    :return:
+        If it fails, None is returned.
     """
     _set_no_error()
 
@@ -1099,22 +1107,10 @@ def get_spacegroup_type(hall_number: int) -> SpaceGroupType | None:
     The definition of ``hall_number`` is found at
     :ref:`dataset_spg_get_dataset_spacegroup_type`.
 
-    Parameters
-    ----------
-    hall_number : int
-        Hall symbol ID.
+    :param hall_number: Serial number for Hall symbol
+    :return: :class:`SpaceGroupType` or None
 
-    Returns
-    -------
-    spacegroup_type: SpaceGroupType or None
-
-    Notes
-    -----
     .. versionadded:: 1.9.4
-
-    .. versionchanged:: 2.0
-        ``hall_number`` member is added.
-
     """
     _set_no_error()
 
@@ -1172,7 +1168,7 @@ def get_spacegroup_type_from_symmetry(
 
     Returns
     -------
-    spacegroup_type : SpaceGroupType or None
+    spacegroup_type : :class:`SpaceGroupType` or None
 
     Notes
     -----
@@ -1224,7 +1220,7 @@ def get_magnetic_spacegroup_type(uni_number: int) -> MagneticSpaceGroupType | No
 
     Returns
     -------
-    magnetic_spacegroup_type: MagneticSpaceGroupType
+    magnetic_spacegroup_type: :class:`MagneticSpaceGroupType` | None
 
     Notes
     -----
@@ -1271,7 +1267,7 @@ def get_magnetic_spacegroup_type_from_symmetry(
 
     Returns
     -------
-    magnetic_spacegroup_type: MagneticSpaceGroupType
+    magnetic_spacegroup_type: :class:`MagneticSpaceGroupType` | None
     """
     rots = np.array(rotations, dtype="intc", order="C")
     trans = np.array(translations, dtype="double", order="C")
@@ -1353,7 +1349,7 @@ def standardize_cell(
     no_idealize=False,
     symprec=1e-5,
     angle_tolerance=-1.0,
-):
+) -> Cell | None:
     """Return standardized cell. When the search failed, ``None`` is returned.
 
     Parameters
@@ -1413,7 +1409,7 @@ def standardize_cell(
         return None
 
 
-def refine_cell(cell: Cell, symprec=1e-5, angle_tolerance=-1.0):
+def refine_cell(cell: Cell, symprec=1e-5, angle_tolerance=-1.0) -> Cell | None:
     """Return refined cell. When the search failed, ``None`` is returned.
 
     The standardized unit cell is returned by a tuple of
@@ -1456,7 +1452,7 @@ def refine_cell(cell: Cell, symprec=1e-5, angle_tolerance=-1.0):
         return None
 
 
-def find_primitive(cell: Cell, symprec=1e-5, angle_tolerance=-1.0):
+def find_primitive(cell: Cell, symprec=1e-5, angle_tolerance=-1.0) -> Cell | None:
     """Primitive cell is searched in the input cell. If it fails, ``None`` is returned.
 
     The primitive cell is returned by a tuple of (lattice, positions, numbers).

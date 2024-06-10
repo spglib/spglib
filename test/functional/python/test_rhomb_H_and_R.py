@@ -37,15 +37,15 @@ class TestRhombSettingHR(unittest.TestCase):
             cell = read_vasp(fname)
             symprec = 1e-5
             dataset_H = get_symmetry_dataset(cell, symprec=symprec)
-            hall_number_R = dataset_H["hall_number"] + 1
+            hall_number_R = dataset_H.hall_number + 1
             dataset_R = get_symmetry_dataset(
                 cell,
                 hall_number=hall_number_R,
                 symprec=symprec,
             )
             plat, _, _ = find_primitive(cell)
-            plat_H = np.dot(dataset_H["std_lattice"].T, tmat).T
-            plat_R = dataset_R["std_lattice"]
+            plat_H = np.dot(dataset_H.std_lattice.T, tmat).T
+            plat_R = dataset_R.std_lattice
             np.testing.assert_allclose(plat, plat_H, atol=1e-5, err_msg="%s" % fname)
             np.testing.assert_allclose(plat_R, plat_H, atol=1e-5, err_msg="%s" % fname)
             np.testing.assert_allclose(plat_R, plat, atol=1e-5, err_msg="%s" % fname)
