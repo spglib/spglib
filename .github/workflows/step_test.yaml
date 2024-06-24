@@ -42,9 +42,10 @@ jobs:
           - os: windows-latest
             toolchain: windows
             python-version: "3.x"
-#          - python-version: "3.13"
-#            experimental: true
-#            pre: true
+          - python-version: "3.x"
+            toolchain: gcc
+            experimental: true
+            pre: true
     steps:
       - name: Enable msvc toolchain on windows
         uses: ilammy/msvc-dev-cmd@v1
