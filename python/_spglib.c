@@ -34,8 +34,7 @@
 
 #include <Python.h>
 #include <assert.h>
-// TODO: Switch to newer numpy api
-#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
+#define NPY_NO_DEPRECATED_API NPY_1_20_API_VERSION
 #include <numpy/arrayobject.h>
 #include <spglib.h>
 #include <stdio.h>
