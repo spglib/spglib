@@ -50,10 +50,9 @@ jobs:
       - name: Enable msvc toolchain on windows
         uses: ilammy/msvc-dev-cmd@v1
         if: contains(matrix.os, 'windows')
+      # Should be handled by defaults.shell: bash -l {0} and env.TOOLCHAIN: ${{ matrix.toolchain }}
+      # But that approach does not seem to work with run-cmake :/
       - name: Activate Intel compilers
-        # Not elegant, it will propagate all environment variable.
-        # Intel does not provide a way to output the environment variables to a file
-        # Note: PATH needs to be exported to GITHUB_PATH otherwise it can be overwritten
         run: |
           source /opt/intel/oneapi/setvars.sh
           printenv >> $GITHUB_ENV
@@ -62,19 +61,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      # workaround for https://github.com/actions/runner/issues/2033
-      - name: ownership workaround
-        run: git config --system --add safe.directory '*'
-      - name: Patch /etc/lsb-release for experimental python
-        # Mimic Ubuntu in order to be able to download experimental python
-        run: |
-          echo -en 'DISTRIB_ID=Ubuntu\nDISTRIB_RELEASE=22.04\nDISTRIB_CODENAME=jammy\nDISTRIB_DESCRIPTION="Ubuntu 22.04.3 LTS"' >> /etc/lsb-release
-        if: ${{ !matrix.os && matrix.pre }}
       - name: Setup python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-          allow-prereleases: ${{ matrix.pre || false }}
       - name: Install dependencies
         run: |
           python3 -m pip install pip-tools
@@ -82,7 +72,9 @@ jobs:
           python3 -m pip install -r requirements.txt
       - uses: lukka/get-cmake@latest
       - name: Run CMake configuration for ${{ matrix.toolchain }} toolchain
-        uses: lukka/run-cmake@v10.3
+        # Cannot update passed v10.5 on Windows:
+        # https://github.com/lukka/run-cmake/issues/142
+        uses: lukka/run-cmake@v10.5
         with:
           workflowPreset: "${{ matrix.toolchain }}-ci"
         continue-on-error: ${{ matrix.experimental && inputs.mask-experimental}}
@@ -112,7 +104,7 @@ jobs:
         with:
           cmakeVersion: ${{ matrix.cmake }}
       - name: Run CMake workflow
-        uses: lukka/run-cmake@v10.3
+        uses: lukka/run-cmake@v10
         with:
           workflowPreset: gcc-ci
         continue-on-error: ${{ matrix.experimental && inputs.mask-experimental}}
@@ -147,11 +139,9 @@ jobs:
     env:
       SPGLIB_SANITIZER: ${{ matrix.sanitizer }}
     steps:
-      # Temporary workaround for missing pip in container
-      - run: dnf install -y python3-pip python3-devel
       - uses: actions/checkout@v4
       - uses: lukka/get-cmake@latest
       - name: Run CMake configuration for ${{ matrix.toolchain }} toolchain
-        uses: lukka/run-cmake@v10.3
+        uses: lukka/run-cmake@v10
         with:
           workflowPreset: "${{ matrix.toolchain }}-ci-sanitizer"
