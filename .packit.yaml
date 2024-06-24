@@ -1,66 +1,49 @@
-# See the documentation for more information:
-# https://packit.dev/docs/configuration/
-
 specfile_path: .distro/spglib.spec
 
-# add or remove files that should be synced
 files_to_sync:
   - src: .distro/
     dest: ./
+    delete: true
     filters:
-      - "- plans/main.fmf.dist-git"
+      - "protect .git*"
+      - "protect sources"
+      - "protect changelog"
       - "- plans/rpminspect.fmf"
       - "- plans/rpmlint.fmf"
   - .packit.yaml
-  - src: .distro/plans/main.fmf.dist-git
-    dest: plans/main.fmf
+
 upstream_package_name: spglib
 downstream_package_name: spglib
-update_release: false
 upstream_tag_template: v{version}
 
+targets:
+  - fedora-all-x86_64
+  - fedora-all-aarch64
+
 jobs:
-  - job: copr_build
-    trigger: pull_request
-    owner: lecris
-    project: spglib
-    update_release: true
-    release_suffix: "{PACKIT_RPMSPEC_RELEASE}"
-    additional_repos:
-      - copr://@scikit-build/release
-    targets:
-      - fedora-all-x86_64
-      - fedora-all-aarch64
-  - job: tests
-    trigger: pull_request
-    targets:
-      - fedora-all-x86_64
-      - fedora-all-aarch64
-    fmf_path: .distro
-  - job: copr_build
-    trigger: commit
-    branch: develop
-    owner: lecris
-    project: nightly
-    additional_repos:
-      - copr://@scikit-build/release
-    targets:
-      - fedora-all-x86_64
-      - fedora-all-aarch64
-  - job: copr_build
+  - &copr_build
+    job: copr_build
     trigger: release
     owner: lecris
     project: release
-    targets:
-      - fedora-all-x86_64
-      - fedora-all-aarch64
-  - job: tests
+    update_release: false
+  - <<: *copr_build
+    trigger: commit
+    branch: develop
+    project: nightly
+    update_release: true
+  - &tests
+    job: tests
     trigger: commit
     branch: develop
     targets:
       - fedora-all-x86_64
       - fedora-all-aarch64
     fmf_path: .distro
+  - job: copr_build
+    trigger: pull_request
+  - <<: *tests
+    trigger: pull_request
   - job: propose_downstream
     trigger: release
     dist_git_branches:
