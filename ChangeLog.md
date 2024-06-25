@@ -13,7 +13,7 @@ GitHub release pages and in the git history.
 
 ### Main changes
 
-Minimum supported python distribution is now 3.9.
+Minimum supported python distribution is now 3.9. Numpy dependency now reflect the ABI compatibility of the wheels.
 
 We now provide proper class types with type-hints (using `dataclasses.dataclass`) for the output data structure.
 See the Python API section for details for the list of new classes and affected functions.
