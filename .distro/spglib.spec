@@ -14,7 +14,7 @@ BuildRequires:  cmake
 BuildRequires:  gcc
 BuildRequires:  gcc-c++
 BuildRequires:  gcc-fortran
-BuildRequires:  gtest-devel
+BuildRequires:  cmake(GTest)
 BuildRequires:  python3-devel
 
 %description
