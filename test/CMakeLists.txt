@@ -116,7 +116,7 @@ list(APPEND external_libs GTest)
 
 find_package(Threads REQUIRED)
 if (SPGLIB_WITH_Python)
-    find_package(Python 3.8 REQUIRED)
+    find_package(Python 3.9 REQUIRED)
 endif ()
 
 FetchContent_MakeAvailable(${external_libs})

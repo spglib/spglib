@@ -38,11 +38,7 @@ from __future__ import annotations
 import dataclasses
 import sys
 import warnings
-
-if sys.version_info < (3, 9):
-    from typing import Mapping
-else:
-    from collections.abc import Mapping
+from collections.abc import Mapping
 from typing import TYPE_CHECKING
 
 import numpy as np
@@ -50,8 +46,6 @@ import numpy as np
 try:
     from . import _spglib  # type: ignore[attr-defined]
 except ImportError:
-    import sys
-
     if sys.version_info < (3, 10):
         from importlib_resources import as_file, files
     else:
@@ -78,7 +72,6 @@ except ImportError:
 
 
 if TYPE_CHECKING:
-    import sys
     from collections.abc import Iterator, Sequence
     from typing import Any
 
