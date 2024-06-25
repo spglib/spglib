@@ -51,7 +51,7 @@ Crystallography (ITA).
 ### `hall_number`
 
 The serial number from 1 to 530 which are found at [list of space
-groups (Seto's web site)](https://yseto.net/?page_id=29%3E). Be
+groups (Seto's web site)](https://yseto.net/en/sg/sg1). Be
 sure that this is not a standard crystallographic definition as far as
 the author of spglib knows.
 

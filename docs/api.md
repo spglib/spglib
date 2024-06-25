@@ -136,7 +136,7 @@ SpglibDataset * spg_get_dataset_with_hall_number(const double lattice[3][3],
 
 where `hall_number` is used to specify the choice. The possible
 choices and those serial numbers are found at [list of space groups
-(Seto's web site)](https://yseto.net/?page_id=29&lang=en).
+(Seto's web site)](https://yseto.net/en/sg/sg1).
 The crystal structure has to possess the space-group type of the Hall
 symbol. If the symmetry search fails or the specified `hall_number`
 is not in the list of Hall symbols for the space group type of the
