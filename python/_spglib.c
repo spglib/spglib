@@ -35,9 +35,8 @@
 #include <Python.h>
 #include <assert.h>
 #define NPY_NO_DEPRECATED_API NPY_1_20_API_VERSION
-#include <numpy/arrayobject.h>
+#include <numpy/ndarrayobject.h>
 #include <spglib.h>
-#include <stdio.h>
 
 static PyObject *py_get_version_tuple(PyObject *self, PyObject *args);
 static PyObject *py_get_version_string(PyObject *self, PyObject *args);
@@ -176,12 +175,15 @@ static struct PyModuleDef moduledef = {PyModuleDef_HEAD_INIT,
 #endif
 
 EXPORT PyObject *PyInit__spglib(void) {
-    struct module_state *st;
+    // Basic numpy import check. ABI compatibility is performed there
+    // TODO: Switch to PyArray_ImportNumPyAPI when numpy 1.x support is dropped
+    import_array();
+
     PyObject *module = PyModule_Create(&moduledef);
 
     if (module == NULL) return NULL;
 
-    st = (struct module_state *)PyModule_GetState(module);
+    struct module_state *st = (struct module_state *)PyModule_GetState(module);
 
     st->error = PyErr_NewException("_spglib.Error", NULL, NULL);
     if (st->error == NULL) {
