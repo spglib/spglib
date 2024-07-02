@@ -72,12 +72,7 @@ include(FetchContent)
 
 # Get Spglib if it's run as stand-alone project
 if (NOT Spglib_SOURCE_DIR)
-    FetchContent_Declare(Spglib
-            GIT_REPOSITORY https://github.com/spglib/spglib
-            GIT_TAG develop
-            FIND_PACKAGE_ARGS CONFIG
-    )
-    list(APPEND external_libs Spglib)
+    find_package(Spglib REQUIRED CONFIG)
 endif ()
 FetchContent_MakeAvailable(${external_libs})
 
