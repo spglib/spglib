@@ -36,27 +36,19 @@
 from __future__ import annotations
 
 import dataclasses
-import sys
 import warnings
-
-if sys.version_info < (3, 9):
-    from typing import Mapping
-else:
-    from collections.abc import Mapping
 from typing import TYPE_CHECKING
 
 import numpy as np
 
+from ._compat.collections.abc import Mapping
+
 try:
     from . import _spglib  # type: ignore[attr-defined]
 except ImportError:
-    import sys
-
-    if sys.version_info < (3, 10):
-        from importlib_resources import as_file, files
-    else:
-        from importlib.resources import as_file, files
     from ctypes import cdll
+
+    from ._compat.importlib.resources import as_file, files
 
     root = files("spglib.lib")
     for file in root.iterdir():
@@ -78,16 +70,12 @@ except ImportError:
 
 
 if TYPE_CHECKING:
-    import sys
     from collections.abc import Iterator, Sequence
     from typing import Any
 
     from numpy.typing import ArrayLike, NDArray
 
-    if sys.version_info < (3, 10):
-        from typing_extensions import TypeAlias
-    else:
-        from typing import TypeAlias
+    from ._compat.typing import TypeAlias
 
     Lattice: TypeAlias = Sequence[Sequence[float]]
     Positions: TypeAlias = Sequence[Sequence[float]]
