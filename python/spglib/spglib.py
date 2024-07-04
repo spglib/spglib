@@ -36,27 +36,21 @@
 from __future__ import annotations
 
 import dataclasses
-import sys
+import functools
 import warnings
-
-if sys.version_info < (3, 9):
-    from typing import Mapping
-else:
-    from collections.abc import Mapping
 from typing import TYPE_CHECKING
 
 import numpy as np
 
+from ._compat.collections.abc import Mapping
+from ._compat.warnings import deprecated
+
 try:
     from . import _spglib  # type: ignore[attr-defined]
 except ImportError:
-    import sys
-
-    if sys.version_info < (3, 10):
-        from importlib_resources import as_file, files
-    else:
-        from importlib.resources import as_file, files
     from ctypes import cdll
+
+    from ._compat.importlib.resources import as_file, files
 
     root = files("spglib.lib")
     for file in root.iterdir():
@@ -78,16 +72,12 @@ except ImportError:
 
 
 if TYPE_CHECKING:
-    import sys
     from collections.abc import Iterator, Sequence
     from typing import Any
 
     from numpy.typing import ArrayLike, NDArray
 
-    if sys.version_info < (3, 10):
-        from typing_extensions import TypeAlias
-    else:
-        from typing import TypeAlias
+    from ._compat.typing import TypeAlias
 
     Lattice: TypeAlias = Sequence[Sequence[float]]
     Positions: TypeAlias = Sequence[Sequence[float]]
@@ -284,6 +274,84 @@ class SpglibDataset(DictInterface):
     pointgroup: str
     """Pointgroup symbol in Hermann-Mauguin notation."""
 
+    @functools.cached_property
+    def spacegroup(self) -> SpaceGroupType:
+        """Associated spacegroup."""
+        return get_spacegroup_type(self.hall_number)
+
+    def get_spacegroup(self, symbol_type: int = 0) -> str:
+        """Return space group in international table symbol and number as a string.
+
+        With ``symbol_type=1``, Schoenflies symbol is given instead of international
+        symbol.
+        """
+        if symbol_type == 1:
+            spacegroup = self.spacegroup.schoenflies
+        else:
+            spacegroup = self.spacegroup.international_short
+        return f"{spacegroup} ({self.number})"
+
+    @classmethod
+    def from_cell(
+        cls,
+        cell: Cell,
+        symprec: float = 1e-5,
+        angle_tolerance: float = -1.0,
+        hall_number: int = 0,
+    ) -> SpglibDataset | None:
+        """Search symmetry dataset from an input cell.
+
+        Parameters
+        ----------
+        cell, symprec, angle_tolerance:
+            See :func:`get_symmetry`.
+        hall_number : int
+            If a serial number of Hall symbol (>0) is given, the database
+            corresponding to the Hall symbol is made.
+
+            The mapping from Hall symbols to a space-group-type is the many-to-one
+            mapping. Without specifying this option (i.e., in the case of
+            ``hall_number=0``), always the first one (the smallest serial number
+            corresponding to the space-group-type in
+            [list of space groups (Seto's web site)](https://yseto.net/en/sg/sg1))
+            among possible choices and settings is chosen as default. This
+            argument is useful when the other choice (or setting) is expected to
+            be hooked.
+
+            This affects to the obtained values of `international`,
+            `hall`, `choice`, `transformation_matrix`,
+            `origin shift`, `wyckoffs`, `std_lattice`, `std_positions`,
+            `std_types` and `std_rotation_matrix`, but not to `rotations`
+            and `translations` since the later set is defined with respect to
+            the basis vectors of user's input (the `cell` argument).
+
+            See also :ref:`dataset_spg_get_dataset_spacegroup_type`.
+
+        Returns
+        -------
+        dataset: :class:`SpglibDataset` | None
+            If it fails, None is returned. Otherwise a dictionary is returned.
+            More details are found at :ref:`spglib-dataset`.
+        """
+        _set_no_error()
+
+        lattice, positions, numbers, _ = _expand_cell(cell)
+
+        spg_ds = _spglib.dataset(
+            lattice,
+            positions,
+            numbers,
+            hall_number,
+            symprec,
+            angle_tolerance,
+        )
+        if spg_ds is None:
+            _set_error_message()
+            return None
+
+        dataset = _build_dataset_dict(spg_ds)
+        return dataset
+
 
 @dataclasses.dataclass(eq=False, frozen=True)
 class SpglibMagneticDataset(DictInterface):
@@ -454,6 +522,7 @@ class MagneticSpaceGroupType(DictInterface):
     """Type of MSG from 1 to 4"""
 
 
+@deprecated("Use __version__ or spg_get_version instead")
 def get_version():
     """Return version number of spglib with tuple of three numbers.
 
@@ -461,11 +530,6 @@ def get_version():
     .. deprecated:: 2.3.0
         Use :py:func:`spg_get_version` and ``spglib.__version__`` instead
     """
-    warnings.warn(
-        "get_version() is deprecated. Use __version__ for the python binding"
-        "version and get_spg_version for the detected spglib library version.",
-        DeprecationWarning,
-    )
     _set_no_error()
     return _spglib.version_tuple()
 
@@ -633,7 +697,7 @@ def get_symmetry(
 
     if magmoms is None:
         # Get symmetry operations without on-site tensors (i.e. normal crystal)
-        dataset = get_symmetry_dataset(
+        dataset = SpglibDataset.from_cell(
             cell,
             symprec=symprec,
             angle_tolerance=angle_tolerance,
@@ -827,7 +891,7 @@ def get_magnetic_symmetry(
 def _build_dataset_dict(spg_ds: list) -> SpglibDataset:
     letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
-    dataset = SpglibDataset(
+    return SpglibDataset(
         number=spg_ds[0],
         hall_number=spg_ds[1],
         international=spg_ds[2].strip(),
@@ -875,9 +939,9 @@ def _build_dataset_dict(spg_ds: list) -> SpglibDataset:
         ),
         pointgroup=spg_ds[20].strip(),
     )
-    return dataset
 
 
+@deprecated("Use SpglibDataset.from_cell instead")
 def get_symmetry_dataset(
     cell: Cell,
     symprec=1e-5,
@@ -912,30 +976,16 @@ def get_symmetry_dataset(
 
         See also :ref:`dataset_spg_get_dataset_spacegroup_type`.
 
+    .. deprecated:: 2.6
+        Use :py:func:`SpglibDataset.from_cell` instead
+
     Returns
     -------
     dataset: :class:`SpglibDataset` | None
         If it fails, None is returned. Otherwise a dictionary is returned.
         More details are found at :ref:`spglib-dataset`.
     """
-    _set_no_error()
-
-    lattice, positions, numbers, _ = _expand_cell(cell)
-
-    spg_ds = _spglib.dataset(
-        lattice,
-        positions,
-        numbers,
-        hall_number,
-        symprec,
-        angle_tolerance,
-    )
-    if spg_ds is None:
-        _set_error_message()
-        return None
-
-    dataset = _build_dataset_dict(spg_ds)
-    return dataset
+    return SpglibDataset.from_cell(cell, symprec, angle_tolerance, hall_number)
 
 
 def get_symmetry_layerdataset(
@@ -1065,6 +1115,7 @@ def get_layergroup(cell: Cell, aperiodic_dir=2, symprec=1e-5) -> SpglibDataset |
     return dataset
 
 
+@deprecated("Use SpglibDataset.from_cell and SpglibDataset.get_spacegroup instead")
 def get_spacegroup(
     cell: Cell,
     symprec=1e-5,
@@ -1075,27 +1126,20 @@ def get_spacegroup(
 
     With ``symbol_type=1``, Schoenflies symbol is given instead of international symbol.
 
+    .. deprecated:: 2.6
+        Use :py:func:`SpglibDataset.from_cell` and
+        :py:func:`SpglibDataset.get_spacegroup` instead
+
     :rtype: str | None
     :return:
         If it fails, None is returned.
     """
-    _set_no_error()
-
-    dataset = get_symmetry_dataset(
+    dataset = SpglibDataset.from_cell(
         cell,
         symprec=symprec,
         angle_tolerance=angle_tolerance,
     )
-
-    if dataset is None:
-        _set_error_message()
-        return None
-
-    spg_type = get_spacegroup_type(dataset["hall_number"])
-    if symbol_type == 1:
-        return "%s (%d)" % (spg_type["schoenflies"], dataset["number"])
-    else:
-        return "%s (%d)" % (spg_type["international_short"], dataset["number"])
+    return dataset.get_spacegroup(symbol_type) if dataset else None
 
 
 def get_spacegroup_type(hall_number: int) -> SpaceGroupType | None:
@@ -1374,7 +1418,7 @@ def standardize_cell(
     Now :func:`refine_cell` and :func:`find_primitive` are shorthands of
     this method with combinations of these options.
     About the default choice of the setting, see the documentation of ``hall_number``
-    argument of :func:`get_symmetry_dataset`. More detailed explanation is
+    argument of :func:`SpglibDataset.from_cell`. More detailed explanation is
     shown in the spglib (C-API) document.
     """
     _set_no_error()
@@ -2107,6 +2151,7 @@ def _set_no_error():
     spglib_error.message = "no error"
 
 
+@deprecated("Use get_spacegroup_type_from_symmetry instead")
 def get_hall_number_from_symmetry(rotations, translations, symprec=1e-5) -> int | None:
     """Hall number is obtained from a set of symmetry operations. If fails, return None.
 
@@ -2130,12 +2175,6 @@ def get_hall_number_from_symmetry(rotations, translations, symprec=1e-5) -> int 
     different from usual one, but is given in the fractional
     coordinates and so it should be small like ``1e-5``.
     """
-    warnings.warn(
-        "get_hall_number_from_symmetry() is deprecated. "
-        "Use get_spacegroup_type_from_symmetry() instead.",
-        DeprecationWarning,
-    )
-
     r = np.array(rotations, dtype="intc", order="C")
     t = np.array(translations, dtype="double", order="C")
     hall_number = _spglib.hall_number_from_symmetry(r, t, symprec)
