@@ -36,6 +36,7 @@
 from __future__ import annotations
 
 import dataclasses
+import functools
 import warnings
 from typing import TYPE_CHECKING
 
@@ -272,6 +273,23 @@ class SpglibDataset(DictInterface):
     standardized cell."""
     pointgroup: str
     """Pointgroup symbol in Hermann-Mauguin notation."""
+
+    @functools.cached_property
+    def spacegroup(self) -> SpaceGroupType:
+        """Associated spacegroup."""
+        return get_spacegroup_type(self.hall_number)
+
+    def get_spacegroup(self, symbol_type: int = 0) -> str:
+        """Return space group in international table symbol and number as a string.
+
+        With ``symbol_type=1``, Schoenflies symbol is given instead of international
+        symbol.
+        """
+        if symbol_type == 1:
+            spacegroup = self.spacegroup.schoenflies
+        else:
+            spacegroup = self.spacegroup.international_short
+        return f"{spacegroup} ({self.number})"
 
 
 @dataclasses.dataclass(eq=False, frozen=True)
@@ -1050,6 +1068,7 @@ def get_layergroup(cell: Cell, aperiodic_dir=2, symprec=1e-5) -> SpglibDataset |
     return dataset
 
 
+@deprecated("Use get_symmetry_dataset and SpglibDataset.get_spacegroup instead")
 def get_spacegroup(
     cell: Cell,
     symprec=1e-5,
@@ -1060,27 +1079,20 @@ def get_spacegroup(
 
     With ``symbol_type=1``, Schoenflies symbol is given instead of international symbol.
 
+    .. deprecated:: 2.6
+        Use :py:func:`get_symmetry_dataset` and :py:func:`SpglibDataset.get_spacegroup`
+        instead
+
     :rtype: str | None
     :return:
         If it fails, None is returned.
     """
-    _set_no_error()
-
     dataset = get_symmetry_dataset(
         cell,
         symprec=symprec,
         angle_tolerance=angle_tolerance,
     )
-
-    if dataset is None:
-        _set_error_message()
-        return None
-
-    spg_type = get_spacegroup_type(dataset["hall_number"])
-    if symbol_type == 1:
-        return "%s (%d)" % (spg_type["schoenflies"], dataset["number"])
-    else:
-        return "%s (%d)" % (spg_type["international_short"], dataset["number"])
+    return dataset.get_spacegroup(symbol_type) if dataset else None
 
 
 def get_spacegroup_type(hall_number: int) -> SpaceGroupType | None:
