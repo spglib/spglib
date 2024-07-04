@@ -42,6 +42,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 
 from ._compat.collections.abc import Mapping
+from ._compat.warnings import deprecated
 
 try:
     from . import _spglib  # type: ignore[attr-defined]
@@ -442,6 +443,7 @@ class MagneticSpaceGroupType(DictInterface):
     """Type of MSG from 1 to 4"""
 
 
+@deprecated("Use __version__ or spg_get_version instead")
 def get_version():
     """Return version number of spglib with tuple of three numbers.
 
@@ -449,11 +451,6 @@ def get_version():
     .. deprecated:: 2.3.0
         Use :py:func:`spg_get_version` and ``spglib.__version__`` instead
     """
-    warnings.warn(
-        "get_version() is deprecated. Use __version__ for the python binding"
-        "version and get_spg_version for the detected spglib library version.",
-        DeprecationWarning,
-    )
     _set_no_error()
     return _spglib.version_tuple()
 
@@ -2095,6 +2092,7 @@ def _set_no_error():
     spglib_error.message = "no error"
 
 
+@deprecated("Use get_spacegroup_type_from_symmetry instead")
 def get_hall_number_from_symmetry(rotations, translations, symprec=1e-5) -> int | None:
     """Hall number is obtained from a set of symmetry operations. If fails, return None.
 
@@ -2118,12 +2116,6 @@ def get_hall_number_from_symmetry(rotations, translations, symprec=1e-5) -> int 
     different from usual one, but is given in the fractional
     coordinates and so it should be small like ``1e-5``.
     """
-    warnings.warn(
-        "get_hall_number_from_symmetry() is deprecated. "
-        "Use get_spacegroup_type_from_symmetry() instead.",
-        DeprecationWarning,
-    )
-
     r = np.array(rotations, dtype="intc", order="C")
     t = np.array(translations, dtype="double", order="C")
     hall_number = _spglib.hall_number_from_symmetry(r, t, symprec)
