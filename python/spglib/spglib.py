@@ -39,7 +39,7 @@ import dataclasses
 import sys
 import warnings
 from collections.abc import Iterator, Mapping, Sequence
-from typing import Any
+from typing import Any, Union
 
 import numpy as np
 from numpy.typing import ArrayLike, NDArray
@@ -80,10 +80,10 @@ warnings.filterwarnings(
 Lattice: TypeAlias = Sequence[Sequence[float]]
 Positions: TypeAlias = Sequence[Sequence[float]]
 Numbers: TypeAlias = Sequence[int]
-Magmoms: TypeAlias = Sequence[float] | Sequence[Sequence[float]]
-Cell: TypeAlias = (
-    tuple[Lattice, Positions, Numbers] | tuple[Lattice, Positions, Numbers, Magmoms]
-)
+Magmoms: TypeAlias = Union[Sequence[float], Sequence[Sequence[float]]]
+Cell: TypeAlias = Union[
+    tuple[Lattice, Positions, Numbers], tuple[Lattice, Positions, Numbers, Magmoms]
+]
 
 
 class SpglibError:
