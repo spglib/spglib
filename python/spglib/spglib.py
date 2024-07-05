@@ -38,18 +38,21 @@ from __future__ import annotations
 import dataclasses
 import sys
 import warnings
-from collections.abc import Mapping
-from typing import TYPE_CHECKING
+from collections.abc import Iterator, Mapping, Sequence
+from typing import Any
 
 import numpy as np
+from numpy.typing import ArrayLike, NDArray
 
 try:
     from . import _spglib  # type: ignore[attr-defined]
 except ImportError:
     if sys.version_info < (3, 10):
         from importlib_resources import as_file, files
+        from typing_extensions import TypeAlias
     else:
         from importlib.resources import as_file, files
+        from typing import TypeAlias
     from ctypes import cdll
 
     root = files("spglib.lib")
@@ -70,28 +73,16 @@ except ImportError:
             "Spglib C library is not installed and no bundled version was detected"
         )
 
-
-if TYPE_CHECKING:
-    from collections.abc import Iterator, Sequence
-    from typing import Any
-
-    from numpy.typing import ArrayLike, NDArray
-
-    if sys.version_info < (3, 10):
-        from typing_extensions import TypeAlias
-    else:
-        from typing import TypeAlias
-
-    Lattice: TypeAlias = Sequence[Sequence[float]]
-    Positions: TypeAlias = Sequence[Sequence[float]]
-    Numbers: TypeAlias = Sequence[int]
-    Magmoms: TypeAlias = Sequence[float] | Sequence[Sequence[float]]
-    Cell: TypeAlias = (
-        tuple[Lattice, Positions, Numbers] | tuple[Lattice, Positions, Numbers, Magmoms]
-    )
-
 warnings.filterwarnings(
     "module", category=DeprecationWarning, message=r"dict interface.*"
+)
+
+Lattice: TypeAlias = Sequence[Sequence[float]]
+Positions: TypeAlias = Sequence[Sequence[float]]
+Numbers: TypeAlias = Sequence[int]
+Magmoms: TypeAlias = Sequence[float] | Sequence[Sequence[float]]
+Cell: TypeAlias = (
+    tuple[Lattice, Positions, Numbers] | tuple[Lattice, Positions, Numbers, Magmoms]
 )
 
 
