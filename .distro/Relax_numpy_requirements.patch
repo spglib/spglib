@@ -1,0 +1,28 @@
+Subject: [PATCH] Relax numpy requirements
+---
+Index: pyproject.toml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/pyproject.toml b/pyproject.toml
+--- a/pyproject.toml	(revision 2629c906c8a25fd6c922a1f1da0fefce8ebb26a2)
++++ b/pyproject.toml	(date 1719316190703)
+@@ -1,7 +1,7 @@
+ [build-system]
+ # Numpy build and runtime dependencies are linked to ABI compatibility
+ # A new wheel rebuild is needed when changing these
+-requires = ["scikit-build-core", "numpy~=2.0"]
++requires = ["scikit-build-core", "numpy"]
+ build-backend = "scikit_build_core.build"
+
+ [project]
+@@ -13,7 +13,7 @@
+ readme = "python/README.rst"
+ dynamic = ["version"]
+ dependencies = [
+-    "numpy>=1.20,<3",
++    "numpy>=1.20",
+     "importlib-resources; python_version<'3.10'",
+ ]
+ authors = [

@@ -7,12 +7,14 @@ URL:            https://spglib.readthedocs.io/
 
 Source:         https://github.com/spglib/spglib/archive/refs/tags/v%{version}.tar.gz
 
+Patch:          Relax_numpy_requirements.patch
+
 BuildRequires:  ninja-build
 BuildRequires:  cmake
 BuildRequires:  gcc
 BuildRequires:  gcc-c++
 BuildRequires:  gcc-fortran
-BuildRequires:  gtest-devel
+BuildRequires:  cmake(GTest)
 BuildRequires:  python3-devel
 
 %description
@@ -54,7 +56,7 @@ develop applications with spglib Python3 bindings.
 
 
 %prep
-%autosetup -n spglib-%{version}
+%autosetup -p1 -n spglib-%{version}
 
 
 %generate_buildrequires

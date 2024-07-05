@@ -1,18 +1,19 @@
 [build-system]
-requires = ["scikit-build-core", "numpy"]
+# Numpy build and runtime dependencies are linked to ABI compatibility
+# A new wheel rebuild is needed when changing these
+requires = ["scikit-build-core", "numpy~=2.0"]
 build-backend = "scikit_build_core.build"
 
 [project]
 name = "spglib"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 description = "This is the spglib module."
 license = { text = "BSD-3-Clause" }
 license-files = { paths = ["COPYING"] }
 readme = "python/README.rst"
 dynamic = ["version"]
 dependencies = [
-    "numpy>=1.20",
-    "typing-extensions; python_version<'3.9'",
+    "numpy>=1.20,<3",
     "importlib-resources; python_version<'3.10'",
 ]
 authors = [
@@ -34,11 +35,11 @@ classifiers = [
     "Programming Language :: C",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Development Status :: 5 - Production/Stable",
 ]
 

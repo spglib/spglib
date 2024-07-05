@@ -12,12 +12,11 @@ permissions:
   contents: read
 
 jobs:
-  tests:
+  toolchain-tests:
     name: >
-      🖥️ ${{ matrix.os || 'Fedora' }} +
-      ${{ !matrix.os && format('🛠️ {0} +', matrix.toolchain) || '' }}
-      🐍 ${{ matrix.python-version }}
-      ${{ matrix.experimental && '[🧪 Experimental]' || '' }}
+      🖥️ ${{ matrix.os || 'Fedora' }}
+      ${{ !matrix.os && format('+ 🛠️ {0}', matrix.toolchain) || '' }}
+      ${{ matrix.experimental && ' [🧪 Experimental]' || '' }}
     runs-on: ${{ matrix.os || 'ubuntu-latest' }}
     container: ${{ !matrix.os && 'ghcr.io/lecrisut/dev-env:main' || '' }}
     continue-on-error: ${{ matrix.experimental || false }}
@@ -25,24 +24,15 @@ jobs:
       fail-fast: false
       matrix:
         toolchain: [ gcc, llvm, intel ]
-        python-version: [ "3.8", "3.x" ]
         include:
           - os: macos-13
             toolchain: macos
-            python-version: "3.x"
           - os: macos-latest
             toolchain: macos
-            python-version: "3.x"
           - os: windows-2019
             toolchain: windows
-            python-version: "3.x"
           - os: windows-latest
             toolchain: windows
-            python-version: "3.x"
-          - python-version: "3.x"
-            toolchain: gcc
-            experimental: true
-            pre: true
     steps:
       - name: Enable msvc toolchain on windows
         uses: ilammy/msvc-dev-cmd@v1
@@ -58,14 +48,13 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Setup python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: 3.x
       - name: Install dependencies
         run: |
           python3 -m pip install pip-tools
-          pip-compile --extra=test --strip-extras pyproject.toml ${{ matrix.pre && '--pre' }}
+          pip-compile --extra=test --strip-extras pyproject.toml
           python3 -m pip install -r requirements.txt
       - uses: lukka/get-cmake@latest
       - name: Run CMake configuration for ${{ matrix.toolchain }} toolchain
@@ -75,10 +64,52 @@ jobs:
         with:
           workflowPreset: "${{ matrix.toolchain }}-ci"
         continue-on-error: ${{ matrix.experimental && inputs.mask-experimental}}
+
+  python-tests:
+    name: >
+      🐍 ${{ matrix.python-version }}
+      ${{ matrix.numpy-runtime && format('+ numpy️{0} +', matrix.numpy-runtime) || '' }}
+      ${{ matrix.experimental && ' [🧪 Experimental]' || '' }}
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.experimental || false }}
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [ "3.9", "3.10", "3.x" ]
+        numpy-runtime: [ "" ]
+        pre: [ "" ]
+        include:
+          # Check latest pre-release packages
+          - python-version: "3.x"
+            experimental: true
+            pre: true
+          # Check 1.x numpy. Note 2.x should still be used at build-time
+          - python-version: "3.9"
+            numpy-runtime: "<2.0"
+          - python-version: "3.12"
+            numpy-runtime: "<2.0"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          allow-prereleases: ${{ matrix.pre || false }}
+      - uses: lukka/get-cmake@latest
+      - name: Install spglib and dependencies
+        run: |
+          pip install -e .[test] ${{ matrix.pre && '--pre' }}
+          # If numpy-runtime (${{ matrix.numpy-runtime }}) is undefined, the following has no effect
+          pip install "numpy${{ matrix.numpy-runtime }}"
+      - name: Test spglib
+        run: pytest
+
   cmake-version:
     name: >
       🔨 CMake ${{ matrix.cmake }}
-      ${{ matrix.experimental && '[🧪 Experimental]' || '' }}
+      ${{ matrix.experimental && ' [🧪 Experimental]' || '' }}
     runs-on: ubuntu-latest
     continue-on-error: ${{ matrix.experimental || false }}
     strategy:
@@ -121,6 +152,7 @@ jobs:
           ctest --test-dir ./build -j $(nproc) --output-on-failure
         continue-on-error: ${{ matrix.experimental && inputs.mask-experimental}}
         if: matrix.cmake == '3.20'
+
   sanitizer:
     name: >
       🧹 ${{ matrix.sanitizer }} +

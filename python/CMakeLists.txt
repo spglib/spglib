@@ -67,7 +67,7 @@ if (NOT Spglib_SOURCE_DIR)
         list(APPEND external_libs Spglib)
     endif ()
 endif ()
-find_package(Python 3.8 COMPONENTS REQUIRED Interpreter Development.Module NumPy)
+find_package(Python 3.9 COMPONENTS REQUIRED Interpreter Development.Module NumPy)
 FetchContent_MakeAvailable(${external_libs})
 
 #[=============================================================================[
