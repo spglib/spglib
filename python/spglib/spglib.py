@@ -1075,11 +1075,14 @@ def get_spacegroup(
         _set_error_message()
         return None
 
-    spg_type = get_spacegroup_type(dataset["hall_number"])
+    spg_type = get_spacegroup_type(dataset.hall_number)
+    if spg_type is None:
+        return None
+
     if symbol_type == 1:
-        return "%s (%d)" % (spg_type["schoenflies"], dataset["number"])
+        return "%s (%d)" % (spg_type.schoenflies, dataset.number)
     else:
-        return "%s (%d)" % (spg_type["international_short"], dataset["number"])
+        return "%s (%d)" % (spg_type.international_short, dataset.number)
 
 
 def get_spacegroup_type(hall_number: int) -> SpaceGroupType | None:
