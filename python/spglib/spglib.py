@@ -38,11 +38,10 @@ from __future__ import annotations
 import dataclasses
 import sys
 import warnings
-from collections.abc import Iterator, Mapping, Sequence
-from typing import Any, Union
+from collections.abc import Mapping, Sequence
+from typing import TYPE_CHECKING, Union
 
 import numpy as np
-from numpy.typing import ArrayLike, NDArray
 
 try:
     from . import _spglib  # type: ignore[attr-defined]
@@ -72,6 +71,12 @@ except ImportError:
         raise FileNotFoundError(
             "Spglib C library is not installed and no bundled version was detected"
         )
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
+    from typing import Any
+
+    from numpy.typing import ArrayLike, NDArray
 
 warnings.filterwarnings(
     "module", category=DeprecationWarning, message=r"dict interface.*"
