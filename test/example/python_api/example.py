@@ -14,15 +14,15 @@ symprec = 1e-5
 cell = (lattice, position, types)
 dataset = get_symmetry_dataset(cell, symprec=symprec)
 
-print(f'International symbol: {dataset["international"]} ({dataset["number"]})')
-print(f'Hall symbol: {dataset["hall"]}')
+print(f"International symbol: {dataset.international} ({dataset.number})")
+print(f"Hall symbol: {dataset.hall}")
 print("Wyckoff letters: ", end="")
-print(" ".join([f"{w}" for w in dataset["wyckoffs"]]))
+print(" ".join([f"{w}" for w in dataset.wyckoffs]))
 print("Equivalent atoms:")
-for i, equiv_atom in enumerate(dataset["equivalent_atoms"]):
+for i, equiv_atom in enumerate(dataset.equivalent_atoms):
     print(f"{i} -> {equiv_atom}")
 print("Space group operations:")
-for i, (r, t) in enumerate(zip(dataset["rotations"], dataset["translations"])):
+for i, (r, t) in enumerate(zip(dataset.rotations, dataset.translations)):
     print(f"--- {i + 1} ---")
     for vec in r:
         print(f"{vec[0]:2d} {vec[1]:2d} {vec[2]:2d}")

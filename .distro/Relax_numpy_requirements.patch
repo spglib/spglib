@@ -6,8 +6,8 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
 diff --git a/pyproject.toml b/pyproject.toml
---- a/pyproject.toml	(revision 2629c906c8a25fd6c922a1f1da0fefce8ebb26a2)
-+++ b/pyproject.toml	(date 1719316190703)
+--- a/pyproject.toml	(revision c4f576776c61725f90bd6becfb57b26a8c223883)
++++ b/pyproject.toml	(date 1720423830036)
 @@ -1,7 +1,7 @@
  [build-system]
  # Numpy build and runtime dependencies are linked to ABI compatibility
@@ -24,5 +24,5 @@ diff --git a/pyproject.toml b/pyproject.toml
 -    "numpy>=1.20,<3",
 +    "numpy>=1.20",
      "importlib-resources; python_version<'3.10'",
+     "typing-extensions; python_version<'3.10'",
  ]
- authors = [

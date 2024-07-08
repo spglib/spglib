@@ -20,10 +20,10 @@ endforeach ()
 
 if (SPGLIB_WITH_Python)
     add_test(NAME example-python
-            COMMAND ${Python_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/python_api/example.py
+            COMMAND ${Python_EXECUTABLE} -Werror ${CMAKE_CURRENT_SOURCE_DIR}/python_api/example.py
     )
     add_test(NAME example-python-full
-            COMMAND ${Python_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/python_api/example_full.py
+            COMMAND ${Python_EXECUTABLE} -Werror ${CMAKE_CURRENT_SOURCE_DIR}/python_api/example_full.py
     )
     set_property(TEST example-python example-python-full
             APPEND PROPERTY

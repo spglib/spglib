@@ -9,6 +9,7 @@ from spglib import (
     get_magnetic_spacegroup_type,
     get_magnetic_symmetry_from_database,
     get_pointgroup,
+    get_spacegroup,
     get_spacegroup_type,
     get_symmetry_dataset,
     standardize_cell,
@@ -241,6 +242,24 @@ class TestSpglib(unittest.TestCase):
                 diff = dataset_1.std_positions - dataset_2.std_positions
                 diff -= np.rint(diff)
                 np.testing.assert_allclose(diff, 0, atol=1e-5, err_msg="%s" % fname)
+
+    def test_get_spacegroup(self):
+        cell = (
+            [
+                [1.0, 0.0, 0.0],
+                [0.0, 1.0, 0.0],
+                [0.0, 0.0, 1.0],
+            ],
+            [
+                [0.0, 0.0, 0.0],
+                [0.0, 0.5, 0.5],
+                [0.5, 0.0, 0.5],
+                [0.5, 0.5, 0.0],
+            ],
+            [0, 0, 0, 0],
+        )
+        assert get_spacegroup(cell) == "Fm-3m (225)"
+        assert get_spacegroup(cell, symbol_type=1) == "Oh^5 (225)"
 
     def test_find_primitive(self):
         for fname in self._filenames:

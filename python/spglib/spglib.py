@@ -38,8 +38,8 @@ from __future__ import annotations
 import dataclasses
 import sys
 import warnings
-from collections.abc import Mapping
-from typing import TYPE_CHECKING
+from collections.abc import Mapping, Sequence
+from typing import TYPE_CHECKING, Union
 
 import numpy as np
 
@@ -48,8 +48,10 @@ try:
 except ImportError:
     if sys.version_info < (3, 10):
         from importlib_resources import as_file, files
+        from typing_extensions import TypeAlias
     else:
         from importlib.resources import as_file, files
+        from typing import TypeAlias
     from ctypes import cdll
 
     root = files("spglib.lib")
@@ -70,29 +72,23 @@ except ImportError:
             "Spglib C library is not installed and no bundled version was detected"
         )
 
-
 if TYPE_CHECKING:
-    from collections.abc import Iterator, Sequence
+    from collections.abc import Iterator
     from typing import Any
 
     from numpy.typing import ArrayLike, NDArray
 
-    if sys.version_info < (3, 10):
-        from typing_extensions import TypeAlias
-    else:
-        from typing import TypeAlias
-
-    Lattice: TypeAlias = Sequence[Sequence[float]]
-    Positions: TypeAlias = Sequence[Sequence[float]]
-    Numbers: TypeAlias = Sequence[int]
-    Magmoms: TypeAlias = Sequence[float] | Sequence[Sequence[float]]
-    Cell: TypeAlias = (
-        tuple[Lattice, Positions, Numbers] | tuple[Lattice, Positions, Numbers, Magmoms]
-    )
-
 warnings.filterwarnings(
     "module", category=DeprecationWarning, message=r"dict interface.*"
 )
+
+Lattice: TypeAlias = Sequence[Sequence[float]]
+Positions: TypeAlias = Sequence[Sequence[float]]
+Numbers: TypeAlias = Sequence[int]
+Magmoms: TypeAlias = Union[Sequence[float], Sequence[Sequence[float]]]
+Cell: TypeAlias = Union[
+    tuple[Lattice, Positions, Numbers], tuple[Lattice, Positions, Numbers, Magmoms]
+]
 
 
 class SpglibError:
@@ -1084,11 +1080,14 @@ def get_spacegroup(
         _set_error_message()
         return None
 
-    spg_type = get_spacegroup_type(dataset["hall_number"])
+    spg_type = get_spacegroup_type(dataset.hall_number)
+    if spg_type is None:
+        return None
+
     if symbol_type == 1:
-        return "%s (%d)" % (spg_type["schoenflies"], dataset["number"])
+        return "%s (%d)" % (spg_type.schoenflies, dataset.number)
     else:
-        return "%s (%d)" % (spg_type["international_short"], dataset["number"])
+        return "%s (%d)" % (spg_type.international_short, dataset.number)
 
 
 def get_spacegroup_type(hall_number: int) -> SpaceGroupType | None:
