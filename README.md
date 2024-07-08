@@ -14,6 +14,7 @@
 [![Fedora Status][fedora-badge]][fedora-link]
 [![Homebrew Status][homebrew-badge]][homebrew-link]
 [![Spack Status][spack-badge]][spack-link]
+[![Vcpkg Status][vcpkg-badge]][vcpkg-link]
 
 [![PyPI Downloads][pypi-downloads]][pypi-link]
 [![Conda Downloads][conda-downloads]][conda-link]
@@ -215,3 +216,5 @@ how to contribute to the documentation.
 [rtd-link]: https://spglib.readthedocs.io/en/latest/?badge=latest
 [spack-badge]: https://img.shields.io/spack/v/spglib
 [spack-link]: https://packages.spack.io/package.html?name=spglib
+[vcpkg-badge]: https://img.shields.io/vcpkg/v/spglib
+[vcpkg-link]: https://vcpkg.io/en/package/spglib
