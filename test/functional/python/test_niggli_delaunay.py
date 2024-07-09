@@ -1,4 +1,5 @@
 """Tests of delaunay_reduce and niggli_reduce."""
+
 from pathlib import Path
 
 import numpy as np

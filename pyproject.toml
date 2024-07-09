@@ -128,6 +128,11 @@ source = ['spglib']
 
 [tool.ruff]
 line-length = 88
+exclude = [
+    "database/*"
+]
+
+[tool.ruff.lint]
 extend-select = [
     "F",           # pyflakes
     # "W",           # pycodestyle-warnings
@@ -182,7 +187,7 @@ extend-ignore = [
     "D101",
     "D102",
     "D103",
-    "D203",  # Confilct with D211
+    "D203",  # Conflict with D211
     "D205",
     "D213",  # Conflict with D212
 ]
