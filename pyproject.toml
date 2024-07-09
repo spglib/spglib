@@ -18,12 +18,12 @@ dependencies = [
     "typing-extensions; python_version<'3.10'",
 ]
 authors = [
-    {name="Atsushi Togo", email="atz.togo@gmail.com"},
+    { name = "Atsushi Togo", email = "atz.togo@gmail.com" },
 ]
 maintainers = [
-    {name="Atsushi Togo", email="atz.togo@gmail.com"},
-    {name="Cristian Le", email="git@lecris.dev"},
-    {name="Kohei Shinohara", email="kshinohara0508@gmail.com"},
+    { name = "Atsushi Togo", email = "atz.togo@gmail.com" },
+    { name = "Cristian Le", email = "git@lecris.dev" },
+    { name = "Kohei Shinohara", email = "kshinohara0508@gmail.com" },
 ]
 classifiers = [
     "Topic :: Scientific/Engineering :: Physics",
@@ -122,20 +122,20 @@ markers = [
 
 [tool.coverage.run]
 command_line = '-m pytest'
-# TODO: Cannot report relative to project path because we cannot do editable installs yet
-#source = ['python/spglib']
-source = ['spglib']
+source = [
+    "python/spglib",
+]
 
 [tool.ruff]
 line-length = 88
 extend-select = [
-    "F",           # pyflakes
+    "F", # pyflakes
     # "W",           # pycodestyle-warnings
-    "E",           # pycodestyle-errors
+    "E", # pycodestyle-errors
     # "C90",         # mccabe
-    "I",           # isort
+    "I", # isort
     # "N",           # pep8-naming
-    "D",           # pydocstyle
+    "D", # pydocstyle
     # "UP",          # pyupgrade
     # "YTT",         # flake8-2020
     # "ANN",         # flake8-annotations
@@ -182,9 +182,9 @@ extend-ignore = [
     "D101",
     "D102",
     "D103",
-    "D203",  # Confilct with D211
+    "D203", # Confilct with D211
     "D205",
-    "D213",  # Conflict with D212
+    "D213", # Conflict with D212
 ]
 exclude = [
     "database",
@@ -207,3 +207,13 @@ skip = "docs/references.bib"
 
 [tool.check-wheel-contents]
 ignore = "W002"
+
+[tool.gcovr]
+cobertura = "coverage-gcovr.xml"
+exclude = [
+    "src/msg_database.c",
+    "src/spg_database.c",
+]
+gcov-ignore-errors = [
+    "source_not_found",
+]
