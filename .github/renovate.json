@@ -1,0 +1,21 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "packageRules": [
+    {
+      "groupName": "CI and devDependencies",
+      "matchManagers": ["github-actions", "pre-commit"]
+    },
+    {
+      "groupName": "Runtime",
+      "matchManagers": ["pep621"]
+    }
+  ],
+  "separateMajorMinor": false,
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard",
+    "schedule:weekly",
+    ":enablePreCommit",
+    ":semanticCommitTypeAll(chore)"
+  ]
+}
