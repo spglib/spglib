@@ -24,7 +24,7 @@ jobs:
           fetch-depth: 0
       - uses: lukka/get-cmake@latest
       - name: Get test coverage for ${{ matrix.coverage }}
-        uses: lukka/run-cmake@v10.3
+        uses: lukka/run-cmake@v10.7
         with:
           workflowPreset: "ci-coverage-${{ matrix.coverage }}"
       - name: Get lcov data
@@ -49,7 +49,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: 3.x
       - name: Setup spglib
