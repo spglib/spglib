@@ -11,6 +11,8 @@ GitHub release pages and in the git history.
 
 ## \[Unreleased\]
 
+## v2.5.0 (9 Jul. 2024)
+
 ### Main changes
 
 Minimum supported python distribution is now 3.9. Numpy dependency now reflect the ABI compatibility of the wheels.
@@ -41,7 +43,7 @@ print(asdict(spgtype))
 
 ### Fixes (magnetic space group)
 
-- Fix to check internal primitive symmetry search to avoid SEGV
+- [\[#479\]](https://github.com/spglib/spglib/pull/479) Fix to check internal primitive symmetry search to avoid SEGV
 
 ### Python API
 
