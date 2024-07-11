@@ -1,4 +1,5 @@
 """Example to use get_symmetry_dataset with Wurtzite structure input (P6_3mc)."""
+
 from spglib import get_symmetry_dataset
 
 lattice = [[3.111, 0, 0], [-1.5555, 2.6942050311733885, 0], [0, 0, 4.988]]

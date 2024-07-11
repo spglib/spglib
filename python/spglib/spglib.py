@@ -750,6 +750,7 @@ def get_magnetic_symmetry(
     Notes
     -----
     .. versionadded:: 2.0
+
     """
     _set_no_error()
 
@@ -906,6 +907,7 @@ def get_symmetry_dataset(
     dataset: :class:`SpglibDataset` | None
         If it fails, None is returned. Otherwise a dictionary is returned.
         More details are found at :ref:`spglib-dataset`.
+
     """
     _set_no_error()
 
@@ -1260,6 +1262,7 @@ def get_magnetic_spacegroup_type_from_symmetry(
     Returns
     -------
     magnetic_spacegroup_type: :class:`MagneticSpaceGroupType` | None
+
     """
     rots = np.array(rotations, dtype="intc", order="C")
     trans = np.array(translations, dtype="double", order="C")
@@ -1368,6 +1371,7 @@ def standardize_cell(
     About the default choice of the setting, see the documentation of ``hall_number``
     argument of :func:`get_symmetry_dataset`. More detailed explanation is
     shown in the spglib (C-API) document.
+
     """
     _set_no_error()
 
@@ -1413,6 +1417,7 @@ def refine_cell(cell: Cell, symprec=1e-5, angle_tolerance=-1.0) -> Cell | None:
 
     The detailed control of standardization of unit cell can be done using
     :func:`standardize_cell`.
+
     """
     _set_no_error()
 
@@ -1455,6 +1460,7 @@ def find_primitive(cell: Cell, symprec=1e-5, angle_tolerance=-1.0) -> Cell | Non
 
     The detailed control of standardization of unit cell can be done using
     :func:`standardize_cell`.
+
     """
     _set_no_error()
 
@@ -1492,6 +1498,7 @@ def get_symmetry_from_database(hall_number) -> dict | None:
             Rotation parts of symmetry operations corresponding to ``hall_number``.
         - translations
             Translation parts of symmetry operations corresponding to ``hall_number``.
+
     """
     _set_no_error()
 
@@ -1534,6 +1541,7 @@ def get_magnetic_symmetry_from_database(uni_number, hall_number=0) -> dict | Non
     Notes
     -----
     .. versionadded:: 2.0
+
     """
     _set_no_error()
 
@@ -1960,6 +1968,7 @@ def delaunay_reduce(lattice, eps=1e-5):
     Notes
     -----
     .. versionadded:: 1.9.4
+
     """  # noqa: E501
     _set_no_error()
 
@@ -2021,6 +2030,7 @@ def niggli_reduce(lattice, eps=1e-5):
     Notes
     -----
     .. versionadded:: 1.9.4
+
     """  # noqa: E501
     _set_no_error()
 
@@ -2044,6 +2054,7 @@ def get_error_message():
     Notes
     -----
     .. versionadded:: 1.9.5
+
     """
     return spglib_error.message
 

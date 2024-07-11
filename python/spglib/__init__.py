@@ -33,7 +33,6 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-
 from ._version import __version__, __version_tuple__  # noqa: F401
 
 # fmt: off

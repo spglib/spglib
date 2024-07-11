@@ -1,4 +1,5 @@
 """Test of get_hall_number_from_symmetry."""
+
 from __future__ import annotations
 
 import os

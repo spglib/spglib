@@ -1,4 +1,5 @@
 """Test of spacegroup_type_from_symmetry."""
+
 from __future__ import annotations
 
 import os
