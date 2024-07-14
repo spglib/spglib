@@ -114,7 +114,7 @@ class DictInterface(Mapping[str, "Any"]):
         """Return the value of the key."""
         warnings.warn(
             f"dict interface ({self.__class__.__name__}['{key}']) is deprecated."
-            "Use attribute interface ({self.__class__.__name__}.{key}) instead",
+            f"Use attribute interface ({self.__class__.__name__}.{key}) instead",
             DeprecationWarning,
         )
         return dataclasses.asdict(self)[key]
