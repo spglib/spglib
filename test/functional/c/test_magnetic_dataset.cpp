@@ -363,6 +363,9 @@ TEST(MagneticDataset, test_failure_with_slightly_distorted_positions) {
 }
 
 TEST(MagneticDataset, test_with_right_handed_magnetic_lattice) {
+    // In some cases, a detected magnetic lattice would be right-handed.
+    // Thus, we need to take absolute value of the determinant to get the size
+    // of the magnetic cell.
     double lattice[3][3] = {
         {-0.00000003, 5.55312336, -2.77656167},
         {6.41219485, -3.20609746, -1.60304871},
