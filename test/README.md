@@ -218,7 +218,7 @@ def print_cpp_cell(cell):
             contents.append(f"    {magmoms[i][0]:.8f}, {magmoms[i][1]:.8f}, {magmoms[i][2]:.8f},")
         contents.append("};")
 
-    contents.append(f"int num_atom = {len(positions)};")
+    contents.append(f"int num_atoms = {len(positions)};")
 
     print("\n".join(contents))
 ```

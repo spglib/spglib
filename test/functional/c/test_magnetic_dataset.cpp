@@ -362,4 +362,43 @@ TEST(MagneticDataset, test_failure_with_slightly_distorted_positions) {
     if (dataset) spg_free_magnetic_dataset(dataset);
 }
 
+TEST(MagneticDataset, test_with_right_handed_magnetic_lattice) {
+    double lattice[3][3] = {
+        {-0.00000003, 5.55312336, -2.77656167},
+        {6.41219485, -3.20609746, -1.60304871},
+        {4.53409959, 4.53409960, 2.26704980},
+    };
+    double positions[][3] = {
+        {0.00000001, 0.00000013, 0.99999984},
+        {0.24999988, 0.25000009, 0.00000017},
+        {0.25000002, 0.00000008, 0.49999990},
+        {0.00000007, 0.25000009, 0.49999962},
+        {0.99999989, 0.49999996, 0.00000008},
+        {0.24999994, 0.74999990, 0.00000034},
+        {0.24999999, 0.50000000, 0.49999993},
+        {0.99999997, 0.74999989, 0.50000032},
+        {0.49999999, 0.99999997, 0.00000011},
+        {0.74999993, 0.25000009, 0.99999994},
+        {0.74999993, 0.99999991, 0.50000025},
+        {0.50000002, 0.24999999, 0.49999999},
+        {0.50000013, 0.49999997, 0.99999990},
+        {0.75000014, 0.74999993, 0.99999988},
+        {0.75000004, 0.50000006, 0.49999988},
+        {0.50000006, 0.74999994, 0.49999986},
+    };
+    int types[] = {1, 4, 4, 4, 1, 4, 4, 4, 1, 4, 4, 4, 1, 4, 4, 4};
+    double tensors[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    int num_atoms = 16;
+
+    double symprec = 1e-5;
+
+    SpglibMagneticDataset *dataset;
+    dataset = spg_get_magnetic_dataset(lattice, positions, types, tensors,
+                                       0 /* tensor_rank */, num_atoms,
+                                       0 /* is_axial */, symprec);
+    EXPECT_EQ(spg_get_error_code(), SpglibError::SPGLIB_SUCCESS);
+
+    if (dataset) spg_free_magnetic_dataset(dataset);
+}
+
 // TODO: test get_magnetic_dataset with distorted positions

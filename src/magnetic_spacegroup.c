@@ -853,7 +853,7 @@ static VecDBL *get_changed_pure_translations(double const tmat[3][3],
     count = 0;
 
     det = mat_get_determinant_d3(tmat);
-    size = mat_Nint(pure_trans->size / det);
+    size = mat_Nint(pure_trans->size / fabs(det));
 
     if ((changed_pure_trans = mat_alloc_VecDBL(size)) == NULL) goto err;
 
