@@ -41,6 +41,11 @@ import warnings
 from collections.abc import Mapping, Sequence
 from typing import TYPE_CHECKING, Union
 
+if sys.version_info < (3, 10):
+    from typing_extensions import TypeAlias
+else:
+    from typing import TypeAlias
+
 import numpy as np
 
 try:
@@ -48,10 +53,8 @@ try:
 except ImportError:
     if sys.version_info < (3, 10):
         from importlib_resources import as_file, files
-        from typing_extensions import TypeAlias
     else:
         from importlib.resources import as_file, files
-        from typing import TypeAlias
     from ctypes import cdll
 
     root = files("spglib.lib")
