@@ -31,26 +31,37 @@ option(SPGLIB_SHARED_LIBS "Spglib: Build as a shared library" ${PROJECT_IS_TOP_L
 set(BUILD_SHARED_LIBS ${SPGLIB_SHARED_LIBS})
 
 #[=============================================================================[
+#                                Public targets                                #
+]=============================================================================]
+
+# Running `find_package(Python)` early to be able to define target with `Python_add_library`
+find_package(Python 3.9 COMPONENTS REQUIRED Interpreter Development.Module NumPy)
+Python_add_library(Spglib_python MODULE WITH_SOABI)
+add_library(Spglib::python ALIAS Spglib_python)
+
+#[=============================================================================[
 #                              External packages                              #
 ]=============================================================================]
 
-set(external_libs)
-include(FetchContent)
-
 # Get Spglib if it's run as stand-alone project
-if (NOT Spglib_SOURCE_DIR)
-    find_package(Spglib REQUIRED CONFIG)
+if (NOT TARGET Spglib::symspg)
+    find_package(Spglib CONFIG)
+    if (NOT Spglib_FOUND)
+        message(STATUS "Using bundled spglib sources")
+        add_subdirectory(${PROJECT_SOURCE_DIR}/.. _deps/spglib-build)
+    endif ()
 endif ()
-find_package(Python 3.9 COMPONENTS REQUIRED Interpreter Development.Module NumPy)
-FetchContent_MakeAvailable(${external_libs})
 
 #[=============================================================================[
 #                               Main definition                               #
 ]=============================================================================]
 
-Python_add_library(Spglib_python MODULE WITH_SOABI _spglib.c)
+# Define main target
 set_target_properties(Spglib_python PROPERTIES
         OUTPUT_NAME _spglib
+)
+target_sources(Spglib_python PRIVATE
+        _spglib.c
 )
 target_link_libraries(Spglib_python PRIVATE
         Spglib::symspg Python::NumPy

@@ -86,6 +86,13 @@ message(STATUS "Spglib:: Build type: ${CMAKE_BUILD_TYPE}")
 message(STATUS "Spglib:: Version ${PROJECT_VERSION_FULL}")
 
 #[=============================================================================[
+#                                Public targets                                #
+]=============================================================================]
+
+add_library(Spglib_symspg)
+add_library(Spglib::symspg ALIAS Spglib_symspg)
+
+#[=============================================================================[
 #                              External packages                              #
 ]=============================================================================]
 
@@ -100,22 +107,21 @@ endif ()
 ]=============================================================================]
 
 # Main project
-add_library(Spglib_symspg)
 set_target_properties(Spglib_symspg PROPERTIES
         VERSION ${PROJECT_VERSION}
         SOVERSION ${PROJECT_VERSION_MAJOR}
         EXPORT_NAME symspg
-        OUTPUT_NAME symspg)
-add_library(Spglib::symspg ALIAS Spglib_symspg)
+        OUTPUT_NAME symspg
+)
 # Main definitions inside src
 add_subdirectory(include)
 add_subdirectory(src)
 
 # Bindings
-if (SPGLIB_WITH_Fortran)
+if (NOT TARGET Spglib::fortran AND SPGLIB_WITH_Fortran)
     add_subdirectory(fortran)
 endif ()
-if (SPGLIB_WITH_Python)
+if (NOT TARGET Spglib::python AND SPGLIB_WITH_Python)
     add_subdirectory(python)
 endif ()
 

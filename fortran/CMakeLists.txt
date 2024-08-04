@@ -64,25 +64,30 @@ if (NOT CMAKE_Fortran_MODULE_DIRECTORY)
 endif ()
 
 #[=============================================================================[
+#                                Public targets                                #
+]=============================================================================]
+
+add_library(Spglib_fortran)
+add_library(Spglib::fortran ALIAS Spglib_fortran)
+
+#[=============================================================================[
 #                              External packages                              #
 ]=============================================================================]
 
-set(external_libs)
-include(FetchContent)
-
 # Get Spglib if it's run as stand-alone project
-if (NOT Spglib_SOURCE_DIR)
-    find_package(Spglib REQUIRED CONFIG)
+if (NOT TARGET Spglib::symspg)
+    find_package(Spglib CONFIG)
+    if (NOT Spglib_FOUND)
+        message(STATUS "Using bundled spglib sources")
+        add_subdirectory(${PROJECT_SOURCE_DIR}/.. _deps/spglib-build)
+    endif ()
 endif ()
-FetchContent_MakeAvailable(${external_libs})
 
 #[=============================================================================[
 #                               Main definition                               #
 ]=============================================================================]
 
-# Main fortran wrapper
-add_library(Spglib_fortran)
-add_library(Spglib::fortran ALIAS Spglib_fortran)
+# Define main target
 set_target_properties(Spglib_fortran PROPERTIES
         VERSION ${PROJECT_VERSION}
         SOVERSION ${PROJECT_VERSION_MAJOR}
