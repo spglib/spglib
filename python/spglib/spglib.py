@@ -43,34 +43,12 @@ from typing import TYPE_CHECKING, Union
 
 import numpy as np
 
-try:
-    from . import _spglib  # type: ignore[attr-defined]
-except ImportError:
-    if sys.version_info < (3, 10):
-        from importlib_resources import as_file, files
-        from typing_extensions import TypeAlias
-    else:
-        from importlib.resources import as_file, files
-        from typing import TypeAlias
-    from ctypes import cdll
+if sys.version_info < (3, 10):
+    from typing_extensions import TypeAlias
+else:
+    from typing import TypeAlias
 
-    root = files("spglib.lib")
-    for file in root.iterdir():
-        if "symspg." in file.name:
-            with as_file(file) as bundled_lib:
-                try:
-                    cdll.LoadLibrary(str(bundled_lib))
-                    from . import _spglib  # type: ignore[attr-defined]
-
-                    break
-                except ImportError as err:
-                    raise FileNotFoundError(
-                        "Could not load bundled Spglib C library"
-                    ) from err
-    else:
-        raise FileNotFoundError(
-            "Spglib C library is not installed and no bundled version was detected"
-        )
+from . import _spglib  # type: ignore[attr-defined]
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
