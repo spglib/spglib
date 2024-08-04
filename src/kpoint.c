@@ -34,6 +34,7 @@
 
 #include "kpoint.h"
 
+#include <math.h>
 #include <stddef.h>
 #include <stdlib.h>
 
@@ -405,9 +406,8 @@ static MatINT *get_point_group_reciprocal_with_q(MatINT const *rot_reciprocal,
                     diff[l] -= mat_Nint(diff[l]);
                 }
 
-                if (mat_Dabs(diff[0]) < symprec &&
-                    mat_Dabs(diff[1]) < symprec &&
-                    mat_Dabs(diff[2]) < symprec) {
+                if (fabs(diff[0]) < symprec && fabs(diff[1]) < symprec &&
+                    fabs(diff[2]) < symprec) {
                     is_all_ok = 1;
                     break;
                 }

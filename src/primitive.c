@@ -34,6 +34,7 @@
 
 #include "primitive.h"
 
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -484,7 +485,7 @@ static int find_primitive_lattice_vectors(double prim_lattice[3][3],
     debug_print("find_primitive_lattice_vectors:\n");
 
     size = vectors->size;
-    initial_volume = mat_Dabs(mat_get_determinant_d3(cell->lattice));
+    initial_volume = fabs(mat_get_determinant_d3(cell->lattice));
     aperiodic_axis = cell->aperiodic_axis;
 
     /* check volumes of all possible lattices, find smallest volume */
@@ -498,7 +499,7 @@ static int find_primitive_lattice_vectors(double prim_lattice[3][3],
                                                   vectors->vec[j]);
                     mat_multiply_matrix_vector_d3(tmp_lattice[2], cell->lattice,
                                                   vectors->vec[k]);
-                    volume = mat_Dabs(mat_get_determinant_d3(tmp_lattice));
+                    volume = fabs(mat_get_determinant_d3(tmp_lattice));
                     if (volume > symprec) {
                         if (mat_Nint(initial_volume / volume) == size - 2) {
                             mat_copy_vector_d3(min_vectors[0], vectors->vec[i]);
@@ -523,7 +524,7 @@ static int find_primitive_lattice_vectors(double prim_lattice[3][3],
                                                   vectors->vec[j]);
                     mat_multiply_matrix_vector_d3(tmp_lattice[2], cell->lattice,
                                                   vectors->vec[k]);
-                    volume = mat_Dabs(mat_get_determinant_d3(tmp_lattice));
+                    volume = fabs(mat_get_determinant_d3(tmp_lattice));
                     if (volume > symprec) {
                         if (mat_Nint(initial_volume / volume) == size - 2) {
                             mat_copy_vector_d3(min_vectors[0], vectors->vec[i]);

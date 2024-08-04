@@ -1040,7 +1040,7 @@ static int is_identity_metric(double const metric_rotated[3][3],
     for (i = 0; i < 3; i++) {
         length_orig[i] = sqrt(metric_orig[i][i]);
         length_rot[i] = sqrt(metric_rotated[i][i]);
-        if (mat_Dabs(length_orig[i] - length_rot[i]) > symprec) {
+        if (fabs(length_orig[i] - length_rot[i]) > symprec) {
             goto fail;
         }
     }
@@ -1049,8 +1049,8 @@ static int is_identity_metric(double const metric_rotated[3][3],
         j = elem_sets[i][0];
         k = elem_sets[i][1];
         if (angle_symprec > 0) {
-            if (mat_Dabs(get_angle(metric_orig, j, k) -
-                         get_angle(metric_rotated, j, k)) > angle_symprec) {
+            if (fabs(get_angle(metric_orig, j, k) -
+                     get_angle(metric_rotated, j, k)) > angle_symprec) {
                 goto fail;
             }
         } else {
@@ -1107,8 +1107,8 @@ static PointSymmetry transform_pointsymmetry(
 
         /* new_lattice may have lower point symmetry than original_lattice.*/
         /* The operations that have non-integer elements are not counted. */
-        if (mat_is_int_matrix(
-                drot, mat_Dabs(mat_get_determinant_d3(trans_mat)) / 10)) {
+        if (mat_is_int_matrix(drot,
+                              fabs(mat_get_determinant_d3(trans_mat)) / 10)) {
             mat_cast_matrix_3d_to_3i(lat_sym_new.rot[size], drot);
             if (abs(mat_get_determinant_i3(lat_sym_new.rot[size])) != 1) {
                 warning_print(

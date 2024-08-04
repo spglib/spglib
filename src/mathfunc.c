@@ -34,6 +34,7 @@
 
 #include "mathfunc.h"
 
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -103,15 +104,15 @@ int mat_check_identity_matrix_i3(int const a[3][3], int const b[3][3]) {
 
 int mat_check_identity_matrix_d3(double const a[3][3], double const b[3][3],
                                  double const symprec) {
-    if (mat_Dabs(a[0][0] - b[0][0]) > symprec ||
-        mat_Dabs(a[0][1] - b[0][1]) > symprec ||
-        mat_Dabs(a[0][2] - b[0][2]) > symprec ||
-        mat_Dabs(a[1][0] - b[1][0]) > symprec ||
-        mat_Dabs(a[1][1] - b[1][1]) > symprec ||
-        mat_Dabs(a[1][2] - b[1][2]) > symprec ||
-        mat_Dabs(a[2][0] - b[2][0]) > symprec ||
-        mat_Dabs(a[2][1] - b[2][1]) > symprec ||
-        mat_Dabs(a[2][2] - b[2][2]) > symprec) {
+    if (fabs(a[0][0] - b[0][0]) > symprec ||
+        fabs(a[0][1] - b[0][1]) > symprec ||
+        fabs(a[0][2] - b[0][2]) > symprec ||
+        fabs(a[1][0] - b[1][0]) > symprec ||
+        fabs(a[1][1] - b[1][1]) > symprec ||
+        fabs(a[1][2] - b[1][2]) > symprec ||
+        fabs(a[2][0] - b[2][0]) > symprec ||
+        fabs(a[2][1] - b[2][1]) > symprec ||
+        fabs(a[2][2] - b[2][2]) > symprec) {
         return 0;
     } else {
         return 1;
@@ -120,15 +121,15 @@ int mat_check_identity_matrix_d3(double const a[3][3], double const b[3][3],
 
 int mat_check_identity_matrix_id3(int const a[3][3], double const b[3][3],
                                   double const symprec) {
-    if (mat_Dabs(a[0][0] - b[0][0]) > symprec ||
-        mat_Dabs(a[0][1] - b[0][1]) > symprec ||
-        mat_Dabs(a[0][2] - b[0][2]) > symprec ||
-        mat_Dabs(a[1][0] - b[1][0]) > symprec ||
-        mat_Dabs(a[1][1] - b[1][1]) > symprec ||
-        mat_Dabs(a[1][2] - b[1][2]) > symprec ||
-        mat_Dabs(a[2][0] - b[2][0]) > symprec ||
-        mat_Dabs(a[2][1] - b[2][1]) > symprec ||
-        mat_Dabs(a[2][2] - b[2][2]) > symprec) {
+    if (fabs(a[0][0] - b[0][0]) > symprec ||
+        fabs(a[0][1] - b[0][1]) > symprec ||
+        fabs(a[0][2] - b[0][2]) > symprec ||
+        fabs(a[1][0] - b[1][0]) > symprec ||
+        fabs(a[1][1] - b[1][1]) > symprec ||
+        fabs(a[1][2] - b[1][2]) > symprec ||
+        fabs(a[2][0] - b[2][0]) > symprec ||
+        fabs(a[2][1] - b[2][1]) > symprec ||
+        fabs(a[2][2] - b[2][2]) > symprec) {
         return 0;
     } else {
         return 1;
@@ -265,7 +266,7 @@ int mat_inverse_matrix_d3(double m[3][3], double const a[3][3],
     double det;
     double c[3][3];
     det = mat_get_determinant_d3(a);
-    if (mat_Dabs(det) < precision) {
+    if (fabs(det) < precision) {
         debug_print("spglib: No inverse matrix (det=%f)\n", det);
         return 0;
     }
@@ -342,13 +343,6 @@ void mat_cross_product_d3(double v[3], double const a[3], double const b[3]) {
     v[0] = a[1] * b[2] - a[2] * b[1];
     v[1] = a[2] * b[0] - a[0] * b[2];
     v[2] = a[0] * b[1] - a[1] * b[0];
-}
-
-double mat_Dabs(double const a) {
-    if (a < 0.0)
-        return -a;
-    else
-        return a;
 }
 
 /* Round to a nearest integer */
@@ -440,7 +434,7 @@ int mat_is_int_matrix(double const mat[3][3], double const symprec) {
     int i, j;
     for (i = 0; i < 3; i++) {
         for (j = 0; j < 3; j++) {
-            if (mat_Dabs(mat_Nint(mat[i][j]) - mat[i][j]) > symprec) {
+            if (fabs(mat_Nint(mat[i][j]) - mat[i][j]) > symprec) {
                 return 0;
             }
         }

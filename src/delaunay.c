@@ -36,6 +36,7 @@
 
 #include <assert.h>
 #include <limits.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -146,7 +147,7 @@ static int delaunay_reduce(double red_lattice[3][3], double const lattice[3][3],
     }
 
     volume = mat_get_determinant_d3(red_lattice);
-    if (mat_Dabs(volume) < symprec) {
+    if (fabs(volume) < symprec) {
         info_print("spglib: Minimum lattice has no volume.\n");
         goto err;
     }
@@ -264,7 +265,7 @@ static void get_delaunay_shortest_vectors(double basis[4][3],
             tmpmat[j][1] = b[1][j];
             tmpmat[j][2] = b[i][j];
         }
-        if (mat_Dabs(mat_get_determinant_d3(tmpmat)) > symprec) {
+        if (fabs(mat_get_determinant_d3(tmpmat)) > symprec) {
             for (j = 0; j < 3; j++) {
                 basis[0][j] = b[0][j];
                 basis[1][j] = b[1][j];
@@ -428,7 +429,7 @@ int del_layer_delaunay_reduce_2D(double red_lattice[3][3],
     }
 
     volume = mat_get_determinant_d3(red_lattice);
-    if (mat_Dabs(volume) < symprec) {
+    if (fabs(volume) < symprec) {
         info_print("spglib: Minimum lattice has no volume.\n");
         goto err;
     }
@@ -524,7 +525,7 @@ static void get_delaunay_shortest_vectors_2D(double basis[3][3],
         for (j = 0; j < 3; j++) {
             tmpmat[j][2] = b[i][j];
         }
-        if (mat_Dabs(mat_get_determinant_d3(tmpmat)) > symprec) {
+        if (fabs(mat_get_determinant_d3(tmpmat)) > symprec) {
             for (j = 0; j < 3; j++) {
                 basis[0][j] = b[0][j];
                 basis[1][j] = b[i][j];

@@ -456,7 +456,7 @@ static void set_positions_and_tensors(Cell *trimmed_cell,
         for (l = 0; l < 3; l++) {
             /* boundary treatment */
             /* One is at right and one is at left or vice versa. */
-            if (mat_Dabs(position->vec[k][l] - position->vec[i][l]) > 0.5) {
+            if (fabs(position->vec[k][l] - position->vec[i][l]) > 0.5) {
                 if (position->vec[i][l] < position->vec[k][l]) {
                     trimmed_cell->position[j][l] += position->vec[i][l] + 1;
                 } else {

@@ -87,7 +87,6 @@ SPG_API_TEST void mat_get_metric(double metric[3][3],
 double mat_norm_squared_d3(double const a[3]);
 int mat_norm_squared_i3(int const a[3]);
 void mat_cross_product_d3(double v[3], double const a[3], double const b[3]);
-double mat_Dabs(double const a);
 int mat_Nint(double const a);
 double mat_Dmod1(double const a);
 double mat_rem1(double const a);

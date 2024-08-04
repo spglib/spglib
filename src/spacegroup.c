@@ -1234,7 +1234,7 @@ static int match_hall_symbol_db_monocli(
     for (i = 0; i < num_change_of_basis; i++) {
         if (is_found[i]) {
             norm_sum = sqrt(norms_squared[i][0]) + sqrt(norms_squared[i][1]);
-            if (mat_Dabs(norm_sum - shortest_norm_sum) < symprec) {
+            if (fabs(norm_sum - shortest_norm_sum) < symprec) {
                 if (is_found[i] == 2) {
                     i_shortest = i;
                     break;
@@ -1979,8 +1979,8 @@ static int is_equivalent_lattice(double tmat[3][3], int const mode,
     double inv_lat[3][3], tmat_abs[3][3], metric[3][3], orig_metric[3][3];
     int tmat_int[3][3];
 
-    if (mat_Dabs(mat_get_determinant_d3(lattice) -
-                 mat_get_determinant_d3(orig_lattice)) > symprec) {
+    if (fabs(mat_get_determinant_d3(lattice) -
+             mat_get_determinant_d3(orig_lattice)) > symprec) {
         goto fail;
     }
 
@@ -2001,7 +2001,7 @@ static int is_equivalent_lattice(double tmat[3][3], int const mode,
         case 1: /* Check identity of all elements allowing axes flips */
             for (i = 0; i < 3; i++) {
                 for (j = 0; j < 3; j++) {
-                    tmat_abs[i][j] = mat_Dabs(tmat[i][j]);
+                    tmat_abs[i][j] = fabs(tmat[i][j]);
                 }
             }
 
