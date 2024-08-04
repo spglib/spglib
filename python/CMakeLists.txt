@@ -28,6 +28,8 @@ option(SPGLIB_SHARED_LIBS "Spglib: Build as a shared library" ${PROJECT_IS_TOP_L
 #                            Project configuration                            #
 ]=============================================================================]
 
+include(GNUInstallDirs)
+
 set(BUILD_SHARED_LIBS ${SPGLIB_SHARED_LIBS})
 
 #[=============================================================================[
@@ -59,6 +61,7 @@ endif ()
 # Define main target
 set_target_properties(Spglib_python PROPERTIES
         OUTPUT_NAME _spglib
+        INSTALL_RPATH "$ORIGIN/${CMAKE_INSTALL_LIBDIR}"
 )
 target_sources(Spglib_python PRIVATE
         _spglib.c
@@ -94,34 +97,10 @@ endif ()
 #                              Install or Export                              #
 ]=============================================================================]
 
-if (NOT Python_INSTALL_DIR)
-    if (SKBUILD)
-        # If built with scikit-build-core, let it handle the installation
-        set(Python_INSTALL_DIR ".")
-    else ()
-        # Otherwise try to install in current python executable's setup
-        set(Python_INSTALL_DIR ${Python_SITEARCH})
-    endif ()
-endif ()
-if (SPGLIB_INSTALL)
-    if (TARGET Spglib_symspg)
-        # If Spglib is not already installed on the system, install it in ${Python_INSTALL_DIR}
-        # TODO: Cmake forces to install PUBLIC_HEADER when defined
-        # https://gitlab.kitware.com/cmake/cmake/-/issues/24326
-        install(TARGETS Spglib_symspg
-                LIBRARY DESTINATION ${Python_INSTALL_DIR}/spglib/lib COMPONENT Spglib_Runtime
-                NAMELINK_COMPONENT Spglib_Development
-                ARCHIVE DESTINATION ${Python_INSTALL_DIR}/spglib/lib COMPONENT Spglib_Development
-                PUBLIC_HEADER DESTINATION ${Python_INSTALL_DIR}/spglib/include COMPONENT Spglib_Development
-                RUNTIME DESTINATION ${Python_INSTALL_DIR}/spglib COMPONENT Spglib_Runtime
-        )
-    endif ()
+if (NOT SKBUILD AND SPGLIB_INSTALL)
+    message(WARNING "Installing the python bindings outside of scikit-build-core environment is not supported.")
+elseif (SPGLIB_INSTALL)
     install(TARGETS Spglib_python
-            LIBRARY DESTINATION ${Python_INSTALL_DIR}/spglib COMPONENT Spglib_Runtime
+            LIBRARY DESTINATION . COMPONENT Spglib_Runtime
     )
-
-    # Install spglib module to local python path
-    if (NOT SKBUILD)
-        install(DIRECTORY spglib/ DESTINATION ${Python_INSTALL_DIR}/spglib COMPONENT Spglib_Runtime)
-    endif ()
 endif ()

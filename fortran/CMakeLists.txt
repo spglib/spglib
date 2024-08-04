@@ -46,6 +46,7 @@ endif ()
 #                            Project configuration                            #
 ]=============================================================================]
 
+include(GNUInstallDirs)
 include(../cmake/PackageCompsHelper.cmake)
 
 # Define basic parameters
@@ -153,11 +154,10 @@ if (SPGLIB_INSTALL)
     endif ()
     install(TARGETS Spglib_fortran Spglib_fortran_include
             EXPORT SpglibTargets-fortran
-            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Spglib_Runtime
-            NAMELINK_COMPONENT Spglib_Development
-            ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Spglib_Development
-            PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT Spglib_Development
-            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Spglib_Runtime
+            LIBRARY COMPONENT Spglib_Runtime NAMELINK_COMPONENT Spglib_Development
+            ARCHIVE COMPONENT Spglib_Development
+            PUBLIC_HEADER COMPONENT Spglib_Development
+            RUNTIME COMPONENT Spglib_Runtime
     )
     export_components(
             PROJECT Spglib
