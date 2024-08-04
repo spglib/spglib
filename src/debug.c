@@ -108,18 +108,6 @@ void debug_print(char const* format, ...) {
     vfprintf(stdout, format, argptr);
     va_end(argptr);
 }
-#else
-void debug_print_matrix_d3(double const a[3][3]) {}
-
-void debug_print_matrix_i3(int const a[3][3]) {}
-
-void debug_print_vectors_d3(double const a[][3], int size) {}
-
-void debug_print_vector_d3(double const a[3]) {}
-
-void debug_print_vectors_with_label(double const a[][3], int const b[],
-                                    int size) {}
-void debug_print(char const* format, ...) {}
 #endif
 
 #ifdef SPGWARNING
@@ -130,8 +118,6 @@ void warning_print(char const* format, ...) {
     vfprintf(stderr, format, argptr);
     va_end(argptr);
 }
-#else
-void warning_print(char const* format, ...) {}
 #endif
 
 #ifdef SPGINFO
@@ -142,10 +128,4 @@ void info_print(char const* format, ...) {
     vfprintf(stderr, format, argptr);
     va_end(argptr);
 }
-#else
-void info_print(char const* format, ...) {}
 #endif
-
-void warning_memory(char const* what) {
-    warning_print("Spglib: Memory could not be allocated: %s\n", what);
-}
