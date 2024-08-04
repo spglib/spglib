@@ -101,22 +101,6 @@ write_to = "python/spglib/_version.py"
 skip = ["pp*", "*-win32", "*-manylinux_i686", "*-musllinux*"]
 test-extras = "test"
 test-command = "pytest {package}/test/functional/python"
-before-build = [
-    "cmake -B _build -DSPGLIB_WITH_TESTS=OFF -DCMAKE_BUILD_TYPE=Release",
-    "cmake --build _build --config Release",
-    "cmake --install _build --config Release --prefix {project}/_install",
-]
-
-[tool.cibuildwheel.linux]
-before-build = [
-    "cmake -B _build -DSPGLIB_WITH_TESTS=OFF -DCMAKE_BUILD_TYPE=Release",
-    "cmake --build _build",
-    "cmake --install _build",
-]
-repair-wheel-command = "auditwheel repair -w {dest_dir} {wheel}"
-
-[tool.cibuildwheel.macos]
-repair-wheel-command = "DYLD_LIBRARY_PATH=_install/lib delocate-wheel --require-archs {delocate_archs} -w {dest_dir} -v {wheel}"
 
 [tool.pytest.ini_options]
 addopts = "-Werror -m 'not benchmark'"
