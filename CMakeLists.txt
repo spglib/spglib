@@ -61,10 +61,8 @@ mark_as_advanced(
 # Include basic tools
 include(cmake/PackageCompsHelper.cmake)
 include(FetchContent)
-if (SPGLIB_INSTALL)
-    include(CMakePackageConfigHelpers)
-    include(GNUInstallDirs)
-endif ()
+include(CMakePackageConfigHelpers)
+include(GNUInstallDirs)
 
 # Define basic parameters
 set(BUILD_SHARED_LIBS ${SPGLIB_SHARED_LIBS})
@@ -139,11 +137,7 @@ endif ()
 
 # Copy PackageCompsHelper to make it available for build import
 configure_file(cmake/PackageCompsHelper.cmake PackageCompsHelper.cmake COPYONLY)
-
-# TODO: Temporarily disable installing cmake files when using scikit-build-core
-#  Check how bundled cmake searches CMAKE_MODULE_DIR and add accordingly
-#  (use SKBUILD_PLATLIB_DIR for install root)
-if (NOT SKBUILD AND SPGLIB_INSTALL)
+if (SPGLIB_INSTALL)
     # pkg-config files
     configure_file(cmake/spglib.pc.in spglib.pc @ONLY)
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/spglib.pc

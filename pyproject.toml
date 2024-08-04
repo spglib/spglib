@@ -84,7 +84,8 @@ testing = [
 ]
 
 [tool.scikit-build]
-wheel.packages = ["python/spglib"]
+cmake.source-dir = "python"
+wheel.install-dir = "spglib"
 metadata.version.provider = "scikit_build_core.metadata.setuptools_scm"
 sdist.include = ["python/spglib/_version.py"]
 
@@ -92,6 +93,11 @@ sdist.include = ["python/spglib/_version.py"]
 SPGLIB_WITH_Python = "ON"
 SPGLIB_WITH_TESTS = "OFF"
 SPGLIB_USE_OMP = "OFF"
+
+[[tool.scikit-build.overrides]]
+if.env.CIBUILDWHEEL = true
+# Make sure cibuildwheel builds with a bundled spglib
+cmake.define.CMAKE_DISABLE_FIND_PACKAGE_Spglib = "ON"
 
 [tool.setuptools_scm]
 write_to = "python/spglib/_version.py"
@@ -199,6 +205,3 @@ no_strict_optional = true
 [tool.codespell]
 ignore-words = "docs/codespell.txt"
 skip = "docs/references.bib"
-
-[tool.check-wheel-contents]
-ignore = "W002"
