@@ -403,7 +403,7 @@ static MatINT *get_point_group_reciprocal_with_q(MatINT const *rot_reciprocal,
             for (k = 0; k < num_q; k++) {
                 for (l = 0; l < 3; l++) {
                     diff[l] = q_rot[l] - qpoints[k][l];
-                    diff[l] -= mat_Nint(diff[l]);
+                    diff[l] -= (int)round(diff[l]);
                 }
 
                 if (fabs(diff[0]) < symprec && fabs(diff[1]) < symprec &&

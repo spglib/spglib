@@ -552,7 +552,7 @@ static int argsort_by_lattice_point_distance(
         /* Fractional vector to nearest lattice point. */
         for (k = 0; k < 3; k++) {
             x = positions[i][k];
-            diff[k] = x - mat_Nint(x);
+            diff[k] = x - (int)round(x);
         }
 
         /* Squared distance to lattice point. */

@@ -853,7 +853,7 @@ static VecDBL *get_changed_pure_translations(double const tmat[3][3],
     count = 0;
 
     det = mat_get_determinant_d3(tmat);
-    size = mat_Nint(pure_trans->size / det);
+    size = (int)round(pure_trans->size / det);
 
     if ((changed_pure_trans = mat_alloc_VecDBL(size)) == NULL) goto err;
 
@@ -873,7 +873,7 @@ static VecDBL *get_changed_pure_translations(double const tmat[3][3],
             for (s = 0; s < 3; s++) {
                 for (t = 0; t < 3; t++) {
                     if (fabs(tmat[s][t] * denominator -
-                             mat_Nint(tmat[s][t] * denominator)) > symprec) {
+                             (int)round(tmat[s][t] * denominator)) > symprec) {
                         ok = 0;
                         break;
                     }

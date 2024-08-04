@@ -1496,7 +1496,7 @@ int ref_find_similar_bravais_lattice(Spacegroup *spacegroup,
             mat_multiply_matrix_vector_d3(tmp_vec, tmp_mat, conv_sym->trans[i]);
             for (j = 0; j < lattice_rank; j++) {
                 p[j] -= tmp_vec[j];
-                p[j] -= mat_Nint(p[j]);
+                p[j] -= (int)round(p[j]);
             }
             for (j = lattice_rank; j < 3; j++) {
                 p[j] -= tmp_vec[j];

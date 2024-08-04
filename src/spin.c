@@ -255,7 +255,7 @@ Cell *spn_get_idealized_cell(int const *permutations, Cell const *cell,
                 /* `pos_tmp[s] - cell->position[i][s]` should be close to
                  * integer. */
                 pos_res[s] += pos_tmp[s] - cell->position[i][s] -
-                              mat_Nint(pos_tmp[s] - cell->position[i][s]);
+                              (int)round(pos_tmp[s] - cell->position[i][s]);
             }
 
             if (cell->tensor_rank == COLLINEAR) {
