@@ -19,6 +19,8 @@ upstream_tag_template: v{version}
 targets:
   - fedora-all-x86_64
   - fedora-all-aarch64
+  - epel-9-x86_64
+  - epel-9-aarch64
 
 jobs:
   - &copr_build
@@ -36,9 +38,6 @@ jobs:
     job: tests
     trigger: commit
     branch: develop
-    targets:
-      - fedora-all-x86_64
-      - fedora-all-aarch64
     fmf_path: .distro
   - job: copr_build
     trigger: pull_request
