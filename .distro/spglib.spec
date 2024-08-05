@@ -46,6 +46,24 @@ Requires:       spglib-devel = %{version}-%{release}
 This package contains Fortran module and header files for developing
 Fortran applications that use spglib.
 
+%package        cpp
+Summary:        Runtime files for spglib C++ bindings
+Requires:       spglib = %{version}-%{release}
+
+%description    cpp
+This package contains runtime files to run applications that were built
+using spglib's C++ bindings.
+
+%package        cpp-devel
+Summary:        Development files for spglib with C++ bindings
+Requires:       spglib-cpp%{?_isa} = %{version}-%{release}
+Requires:       spglib-devel = %{version}-%{release}
+Requires:       cmake
+
+%description    cpp-devel
+This package contains C++ header files for developing
+C++ applications that use spglib.
+
 %package -n     python3-spglib
 Summary:        Python3 library of spglib
 Requires:       spglib = %{version}
@@ -66,6 +84,7 @@ develop applications with spglib Python3 bindings.
 %build
 %cmake \
     -DSPGLIB_SHARED_LIBS=ON \
+    -DSPGLIB_WITH_CXX=ON \
     -DSPGLIB_WITH_Fortran=ON \
     -DSPGLIB_WITH_Python=OFF \
     -DSPGLIB_WITH_TESTS=ON \
@@ -102,11 +121,15 @@ LD_LIBRARY_PATH=%{buildroot}%{_libdir} %pytest -v
 %files fortran
 %{_libdir}/libspglib_f08.so.*
 
+%files cpp
+%{_libdir}/libspglib_cpp.so.*
+
 %files devel
 %{_libdir}/libsymspg.so
 %{_includedir}/spglib.h
 %{_libdir}/cmake/Spglib
 %exclude %{_libdir}/cmake/Spglib/SpglibTargets_fortran*
+%exclude %{_libdir}/cmake/Spglib/SpglibTargets_cxx*
 %{_libdir}/pkgconfig/spglib.pc
 
 %files fortran-devel
@@ -115,6 +138,11 @@ LD_LIBRARY_PATH=%{buildroot}%{_libdir} %pytest -v
 %{_fmoddir}/spglib_f08.mod
 %{_libdir}/pkgconfig/spglib_f08.pc
 %{_libdir}/cmake/Spglib/SpglibTargets_fortran*
+
+%files cpp-devel
+%{_libdir}/libspglib_cpp.so
+%{_includedir}/spglib.hpp
+%{_libdir}/cmake/Spglib/SpglibTargets_cxx*
 
 %files -n python3-%{name} -f %{pyproject_files}
 
