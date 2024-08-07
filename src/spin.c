@@ -34,6 +34,7 @@
 
 #include "spin.h"
 
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -254,7 +255,7 @@ Cell *spn_get_idealized_cell(int const *permutations, Cell const *cell,
                 /* `pos_tmp[s] - cell->position[i][s]` should be close to
                  * integer. */
                 pos_res[s] += pos_tmp[s] - cell->position[i][s] -
-                              mat_Nint(pos_tmp[s] - cell->position[i][s]);
+                              (int)round(pos_tmp[s] - cell->position[i][s]);
             }
 
             if (cell->tensor_rank == COLLINEAR) {
@@ -797,7 +798,7 @@ void set_rotations_in_cartesian(double (*rotations_cart)[3][3],
 }
 
 static int is_zero(double const a, double const mag_symprec) {
-    return mat_Dabs(a) < mag_symprec;
+    return fabs(a) < mag_symprec;
 }
 
 static int is_zero_d3(double const a[3], double const mag_symprec) {

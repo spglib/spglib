@@ -34,6 +34,7 @@
 
 #include "site_symmetry.h"
 
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -247,7 +248,7 @@ static void set_exact_location(double position[3], Symmetry const *conv_sym,
                     sum_rot[j][k] += conv_sym->rot[i][j][k];
                 }
                 sum_trans[j] +=
-                    conv_sym->trans[i][j] - mat_Nint(pos[j] - position[j]);
+                    conv_sym->trans[i][j] - (int)round(pos[j] - position[j]);
             }
             num_site_sym++;
         }
@@ -337,7 +338,7 @@ static void set_layer_exact_location(double position[3],
                     sum_rot[j][k] += conv_sym->rot[i][j][k];
                 }
                 sum_trans[j] +=
-                    conv_sym->trans[i][j] - mat_Nint(pos[j] - position[j]);
+                    conv_sym->trans[i][j] - (int)round(pos[j] - position[j]);
             }
             num_site_sym++;
         }

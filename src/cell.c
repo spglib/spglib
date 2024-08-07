@@ -146,7 +146,7 @@ void cel_set_cell(Cell *cell, double const lattice[3][3],
     mat_copy_matrix_d3(cell->lattice, lattice);
     for (i = 0; i < cell->size; i++) {
         for (j = 0; j < 3; j++) {
-            cell->position[i][j] = position[i][j] - mat_Nint(position[i][j]);
+            cell->position[i][j] = position[i][j] - (int)round(position[i][j]);
         }
         cell->types[i] = types[i];
     }
@@ -162,7 +162,7 @@ void cel_set_layer_cell(Cell *cell, double const lattice[3][3],
         for (j = 0; j < 3; j++) {
             if (j != aperiodic_axis) {
                 cell->position[i][j] =
-                    position[i][j] - mat_Nint(position[i][j]);
+                    position[i][j] - (int)round(position[i][j]);
             } else {
                 cell->position[i][j] = position[i][j];
             }
@@ -218,7 +218,7 @@ int cel_is_overlap(double const a[3], double const b[3],
 
     for (i = 0; i < 3; i++) {
         v_diff[i] = a[i] - b[i];
-        v_diff[i] -= mat_Nint(v_diff[i]);
+        v_diff[i] -= (int)round(v_diff[i]);
     }
 
     mat_multiply_matrix_vector_d3(v_diff, lattice, v_diff);
@@ -284,8 +284,8 @@ int cel_layer_is_overlap(double const a[3], double const b[3],
     v_diff[1] = a[1] - b[1];
     v_diff[2] = a[2] - b[2];
 
-    v_diff[periodic_axes[0]] -= mat_Nint(v_diff[periodic_axes[0]]);
-    v_diff[periodic_axes[1]] -= mat_Nint(v_diff[periodic_axes[1]]);
+    v_diff[periodic_axes[0]] -= (int)round(v_diff[periodic_axes[0]]);
+    v_diff[periodic_axes[1]] -= (int)round(v_diff[periodic_axes[1]]);
 
     mat_multiply_matrix_vector_d3(v_diff, lattice, v_diff);
     if (sqrt(mat_norm_squared_d3(v_diff)) < symprec) {
@@ -355,8 +355,8 @@ static Cell *trim_cell(int *mapping_table, double const trimmed_lattice[3][3],
     overlap_table = NULL;
     trimmed_cell = NULL;
 
-    ratio = abs(mat_Nint(mat_get_determinant_d3(cell->lattice) /
-                         mat_get_determinant_d3(trimmed_lattice)));
+    ratio = abs((int)round(mat_get_determinant_d3(cell->lattice) /
+                           mat_get_determinant_d3(trimmed_lattice)));
 
     mat_inverse_matrix_d3(tmp_mat, trimmed_lattice, symprec);
     mat_multiply_matrix_d3(tmp_mat, tmp_mat, cell->lattice);
@@ -456,7 +456,7 @@ static void set_positions_and_tensors(Cell *trimmed_cell,
         for (l = 0; l < 3; l++) {
             /* boundary treatment */
             /* One is at right and one is at left or vice versa. */
-            if (mat_Dabs(position->vec[k][l] - position->vec[i][l]) > 0.5) {
+            if (fabs(position->vec[k][l] - position->vec[i][l]) > 0.5) {
                 if (position->vec[i][l] < position->vec[k][l]) {
                     trimmed_cell->position[j][l] += position->vec[i][l] + 1;
                 } else {

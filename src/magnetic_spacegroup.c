@@ -554,9 +554,9 @@ static Symmetry *get_space_group_with_magnetic_symmetry(
     is_type2 = 0;
     for (i = 0; i < num_sym_msg; i++) {
         if (mat_check_identity_matrix_i3(identity, magnetic_symmetry->rot[i]) &&
-            mat_Dabs(magnetic_symmetry->trans[i][0]) < symprec &&
-            mat_Dabs(magnetic_symmetry->trans[i][1]) < symprec &&
-            mat_Dabs(magnetic_symmetry->trans[i][2]) < symprec &&
+            fabs(magnetic_symmetry->trans[i][0]) < symprec &&
+            fabs(magnetic_symmetry->trans[i][1]) < symprec &&
+            fabs(magnetic_symmetry->trans[i][2]) < symprec &&
             magnetic_symmetry->timerev[i]) {
             is_type2 = 1;
         }
@@ -853,11 +853,11 @@ static VecDBL *get_changed_pure_translations(double const tmat[3][3],
     count = 0;
 
     det = mat_get_determinant_d3(tmat);
-    size = mat_Nint(pure_trans->size / det);
+    size = (int)round(pure_trans->size / det);
 
     if ((changed_pure_trans = mat_alloc_VecDBL(size)) == NULL) goto err;
 
-    if (mat_Dabs(det - 1) <= symprec) {
+    if (fabs(det - 1) <= symprec) {
         for (i = 0; i < pure_trans->size; i++) {
             mat_multiply_matrix_vector_d3(trans_tmp, tmat, pure_trans->vec[i]);
             for (s = 0; s < 3; s++) {
@@ -872,9 +872,8 @@ static VecDBL *get_changed_pure_translations(double const tmat[3][3],
             ok = 1;
             for (s = 0; s < 3; s++) {
                 for (t = 0; t < 3; t++) {
-                    if (mat_Dabs(tmat[s][t] * denominator -
-                                 mat_Nint(tmat[s][t] * denominator)) >
-                        symprec) {
+                    if (fabs(tmat[s][t] * denominator -
+                             (int)round(tmat[s][t] * denominator)) > symprec) {
                         ok = 0;
                         break;
                     }
@@ -937,7 +936,7 @@ static int is_contained_vec(double const v[3], VecDBL const *trans,
     for (i = 0; i < size; i++) {
         equivalent = 1;
         for (s = 0; s < 3; s++) {
-            if (mat_Dabs(v[s] - trans->vec[i][s]) >= symprec) {
+            if (fabs(v[s] - trans->vec[i][s]) >= symprec) {
                 equivalent = 0;
                 break;
             }
