@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20...3.29)
+cmake_minimum_required(VERSION 3.25...3.29)
 
 #[=============================================================================[
 #                           Basic project definition                           #
@@ -16,18 +16,6 @@ project(Spglib
         LANGUAGES C)
 set(Spglib_VERSION_FULL ${PROJECT_VERSION_FULL})
 set(Spglib_COMMIT ${GIT_COMMIT})
-
-# Back-porting to PROJECT_IS_TOP_LEVEL to older cmake
-# TODO: Remove when requiring cmake >= 3.21
-if (NOT DEFINED Spglib_IS_TOP_LEVEL)
-    if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
-        set(PROJECT_IS_TOP_LEVEL ON)
-        set(Spglib_IS_TOP_LEVEL ON)
-    else ()
-        set(PROJECT_IS_TOP_LEVEL OFF)
-        set(Spglib_IS_TOP_LEVEL OFF)
-    endif ()
-endif ()
 
 set(CMAKE_C_VISIBILITY_PRESET hidden)
 set(CMAKE_C_STANDARD 11)
@@ -181,32 +169,17 @@ if (NOT PROJECT_IS_TOP_LEVEL)
     set(Spglib_Python ${SPGLIB_WITH_Python})
     set(Spglib_OMP ${SPGLIB_USE_OMP})
     # Propagate variables
-    if (CMAKE_VERSION VERSION_LESS 3.25)
-        # TODO: Remove when cmake 3.25 is commonly distributed
-        set(Spglib_VERSION ${Spglib_VERSION} PARENT_SCOPE)
-        set(Spglib_VERSION_MAJOR ${Spglib_VERSION_MAJOR} PARENT_SCOPE)
-        set(Spglib_VERSION_MINOR ${Spglib_VERSION_MINOR} PARENT_SCOPE)
-        set(Spglib_VERSION_PATCH ${Spglib_VERSION_PATCH} PARENT_SCOPE)
-        set(Spglib_VERSION_TWEAK ${Spglib_VERSION_TWEAK} PARENT_SCOPE)
-        set(Spglib_VERSION_FULL ${Spglib_VERSION_FULL} PARENT_SCOPE)
-        set(Spglib_COMMIT ${Spglib_COMMIT} PARENT_SCOPE)
-        set(Spglib_Fortran ${Spglib_Fortran} PARENT_SCOPE)
-        set(Spglib_Python ${Spglib_Python} PARENT_SCOPE)
-        set(Spglib_OMP ${Spglib_OMP} PARENT_SCOPE)
-        set(Spglib_LIB_TYPE ${Spglib_LIB_TYPE} PARENT_SCOPE)
-    else ()
-        return(PROPAGATE
-                Spglib_VERSION
-                Spglib_VERSION_MAJOR
-                Spglib_VERSION_MINOR
-                Spglib_VERSION_PATCH
-                Spglib_VERSION_TWEAK
-                Spglib_VERSION_FULL
-                Spglib_COMMIT
-                Spglib_Fortran
-                Spglib_Python
-                Spglib_OMP
-                Spglib_LIB_TYPE
-        )
-    endif ()
+    return(PROPAGATE
+            Spglib_VERSION
+            Spglib_VERSION_MAJOR
+            Spglib_VERSION_MINOR
+            Spglib_VERSION_PATCH
+            Spglib_VERSION_TWEAK
+            Spglib_VERSION_FULL
+            Spglib_COMMIT
+            Spglib_Fortran
+            Spglib_Python
+            Spglib_OMP
+            Spglib_LIB_TYPE
+    )
 endif ()

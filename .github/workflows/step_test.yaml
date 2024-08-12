@@ -115,7 +115,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        cmake: [ "3.20", "latest", "latestrc" ]
+        cmake: [ "3.25", "latest", "latestrc" ]
         include:
           - cmake: latestrc
             experimental: true
@@ -136,23 +136,6 @@ jobs:
         with:
           workflowPreset: gcc-ci
         continue-on-error: ${{ matrix.experimental && inputs.mask-experimental}}
-        if: matrix.cmake != '3.20'
-      - name: Run CMake manually
-        # Need CMake 3.25 to properly use the presets
-        run: |
-          cmake -B ./build -G Ninja \
-            -DSPGLIB_WITH_Fortran=ON \
-            -DSPGLIB_WITH_TESTS=ON \
-            -DSPGLIB_WITH_Python=ON \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_C_COMPILER=gcc \
-            -DCMAKE_C_COMPILER=g++ \
-            -DCMAKE_C_COMPILER=gfortran
-          cmake --build ./build
-          ctest --test-dir ./build -j $(nproc) --output-on-failure
-        continue-on-error: ${{ matrix.experimental && inputs.mask-experimental}}
-        if: matrix.cmake == '3.20'
-
   sanitizer:
     name: >
       🧹 ${{ matrix.sanitizer }} +
