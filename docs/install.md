@@ -2,7 +2,7 @@
 
 ## Download
 
-The source code is downloaded at <https://github.com/spglib/spglib/archive/develop.zip> or you can
+The source code is downloaded at <https://github.com/spglib/spglib/releases> or you can
 git-clone the spglib repository by
 
 ```
@@ -51,16 +51,14 @@ way is recommended
 % cmake --install . --config Release
 ```
 
-The detail of the windows installation process is discussed at
-https://github.com/spglib/spglib/issues/118.
+The detail of the windows installation process is discussed in {issue}`118`.
 
 ## Usage
 
 1. Include `spglib.h`
 2. Link `libsymspg.a` or `libsymspg.so`
-3. A compilation example is shown in
-   [example/README.md](https://github.com/spglib/spglib/blob/develop/example/README.md).
+3. A compilation example is shown in {path}`example/README.md`.
 
 ## Example
 
-A few examples are found in [example](https://github.com/spglib/spglib/tree/master/example) directory.
+A few examples are found in {path}`example` directory.

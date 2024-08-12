@@ -10,6 +10,7 @@ extensions = [
     "myst_parser",
     "autodoc2",
     "sphinx.ext.doctest",
+    "sphinx.ext.extlinks",
 ]
 
 exclude_patterns = [
@@ -109,7 +110,18 @@ linkcheck_allowed_redirects = {
     r"https://spglib.readthedocs.io/.*": r"https://spglib.readthedocs.io/.*",
     r"https://docs.rs/crate/spglib/": r"https://docs.rs/crate/spglib/.*",
     r"https://github.com/chrisjsewell/sphinx-autodoc2": r"https://github.com/sphinx-extensions2/sphinx-autodoc2",
+    r"https://github.com/spglib/spglib/tree/.*": r"https://github.com/spglib/spglib/blob/.*",
 }
 linkcheck_anchors_ignore_for_url = [
     r"https://github.com",
 ]
+
+# -----------------------------------------------------------------------------
+# extlinks
+# -----------------------------------------------------------------------------
+
+extlinks = {
+    "issue": ("https://github.com/spglib/spglib/issues/%s", "issue %s"),
+    "path": ("https://github.com/spglib/spglib/tree/develop/%s", "%s"),
+    "user": ("https://github.com/%s", "%s"),
+}

@@ -133,7 +133,7 @@ In version 1.8.3 or later, the version number is obtained by
 
 ## Example
 
-Examples are found in [examples](https://github.com/spglib/spglib/tree/master/python/examples) directory.
+Examples are found in {path}`example/python_api` directory.
 
 (py_variables)=
 
