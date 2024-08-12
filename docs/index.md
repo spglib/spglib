@@ -61,9 +61,9 @@ Spglib thrives from the contributions of the community, and we would like to tha
 
 The current main developers of Spglib are:
 
-- [Atsushi Togo] (National Institute for Materials Science)
-- [Kohei Shinohara]
-- [Cristian Le]
+- {user}`Atsushi Togo <atztogo>` (National Institute for Materials Science)
+- {user}`Kohei Shinohara <lan496>`
+- {user}`Cristian Le <LecrisUT>`
 
 ## Acknowledgments
 
@@ -76,9 +76,6 @@ Seto for the Crystallographic database, Jingheng Fu for layer group
 implementation, Juan Rodriguez-Carvajal for the Magnetic space-group database,
 Dimitar Pashov for the Fortran interface, and many other contributors.
 
-[atsushi togo]: https://github.com/atztogo
 [contributors]: https://github.com/spglib/spglib/graphs/contributors
-[cristian le]: https://github.com/LecrisUT
 [discussion]: https://github.com/spglib/spglib/discussions
 [issue]: https://github.com/spglib/spglib/issues
-[kohei shinohara]: https://github.com/lan496

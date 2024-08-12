@@ -123,4 +123,5 @@ linkcheck_anchors_ignore_for_url = [
 extlinks = {
     "issue": ("https://github.com/spglib/spglib/issues/%s", "issue %s"),
     "path": ("https://github.com/spglib/spglib/tree/develop/%s", "%s"),
+    "user": ("https://github.com/%s", "%s"),
 }
