@@ -191,6 +191,11 @@ exclude = [
     "database",
 ]
 
+[tool.ruff.lint.per-file-ignores]
+# In __init__ we define the public interface with __all__ and forward it with import *. Ruff considers it as an issue,
+# but this shouldn't be an issue for the top-level: https://github.com/astral-sh/ruff/issues/2407
+"__init__.py" = ["F403", "F405"]
+
 [tool.mypy]
 mypy_path = ["python"]
 files = ["python", "test/functional/python", "example/python_api"]

@@ -129,7 +129,7 @@ except ImportError:
 ## Version number
 
 In version 1.8.3 or later, the version number is obtained by
-`spglib.__version__` or {func}`spglib.get_version`.
+`spglib.__version__` or {func}`spglib.spg_get_version`.
 
 ## Example
 
@@ -202,7 +202,7 @@ details, see {ref}`variables_symprec`, {ref}`variables_angle_tolerance`, and
 ### Version
 
 ```{autodoc2-summary}
-  spglib.get_version
+  spglib.spg_get_version
 ```
 
 ### Error
