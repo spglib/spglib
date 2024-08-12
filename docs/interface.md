@@ -7,12 +7,9 @@ level, but not supported as well as the Python interface.
 
 ## Fortran interface
 
-Fortran interface [spglib.f90](https://github.com/spglib/spglib/blob/master/example/example.f90) is found
-in [example](https://github.com/spglib/spglib/tree/master/example) directory.
+Fortran interface is found in {path}`fortran/spglib_f08.F90`.
 This fortran interface is originally contributed by Dimitar Pashov and has been
 updated by some other people.
-[spglib_f.c](https://github.com/spglib/spglib/blob/master/src/spglib_f.c) is
-obsolete and is not recommended to use.
 
 ## Rust interface
 
@@ -45,5 +42,4 @@ Some more options are shown with `--help` option:
 % ruby symPoscar.rb --help
 ```
 
-The way to compile the ruby module is explained in
-[ruby/README](https://github.com/spglib/spglib/blob/develop/ruby/README.md).
+The way to compile the ruby module is explained in {path}`ruby/README.md`.
