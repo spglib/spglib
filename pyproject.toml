@@ -106,7 +106,15 @@ write_to = "python/spglib/_version.py"
 # pp, win32, i686, muslinux: Remove 32bit variants, PyPY interpreter and unnecessary musl variant
 skip = ["pp*", "*-win32", "*-manylinux_i686", "*-musllinux*"]
 test-extras = "test"
-test-command = "pytest {package}/test/functional/python"
+test-command = [
+    "cd {package}",
+    "pytest",
+]
+
+[[tool.cibuildwheel.overrides]]
+select = "*pyodide*"
+inherit.environment = "append"
+build-frontend = {name = "build", args = ["--exports", "whole_archive"]}
 
 [tool.pytest.ini_options]
 addopts = "-Werror -m 'not benchmark'"
@@ -114,6 +122,10 @@ testpaths = ["test/functional/python"]
 markers = [
     # Define benchmark marker to avoid warnings of marker not defined
     "benchmark: benchmarking tets",
+]
+filterwarnings = [
+    "error",
+    "default:could not create cache path:pytest.PytestCacheWarning",
 ]
 
 [tool.coverage.run]
