@@ -36,14 +36,7 @@ jobs:
           pattern: cibw-wheels-*
           path: dist
           merge-multiple: true
-      - name: Publish package to TestPyPI
-        if: ${{ contains(github.ref, 'rc') }}
-        # TODO: Maybe we can move this to main PyPI since it is marked rc
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          repository_url: https://test.pypi.org/legacy/
       - name: Publish package to PyPI
-        if: ${{ !contains(github.ref, 'rc') }}
         uses: pypa/gh-action-pypi-publish@release/v1
   release:
     needs: [ upload_pypi ]

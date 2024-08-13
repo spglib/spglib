@@ -25,13 +25,6 @@ To install it use the standard pip install commands:
 $ pip install spglib
 ```
 
-Release candidates can be found at the equivalent [PyPI testing project page](https://pypi.org/project/spglib/).
-You can test a specific release candidate locally using the following command:
-
-```console
-$ pip install -i https://test.pypi.org/simple/ spglib==2.1.0rc1
-```
-
 ### Using conda
 
 We also maintain a [conda package](https://anaconda.org/conda-forge/spglib) which you
