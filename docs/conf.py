@@ -125,3 +125,11 @@ extlinks = {
     "path": ("https://github.com/spglib/spglib/tree/develop/%s", "%s"),
     "user": ("https://github.com/%s", "%s"),
 }
+
+# -----------------------------------------------------------------------------
+# doctest
+# -----------------------------------------------------------------------------
+
+doctest_global_setup = """
+import spglib
+"""
