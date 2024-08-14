@@ -1,4 +1,4 @@
-from spglib import __version__ as version
+import importlib.metadata
 
 project = "Spglib"
 copyright = "2009, Atsushi Togo"
@@ -52,7 +52,7 @@ bibtex_default_style = "unsrt"
 # -----------------------------------------------------------------------------
 
 html_theme = "sphinx_book_theme"
-html_title = f"Spglib v{version}"
+html_title = f"Spglib v{importlib.metadata.version('spglib')}"
 html_theme_options = {
     # https://sphinx-book-theme.readthedocs.io/en/latest/reference.html
     "repository_url": "https://github.com/spglib/spglib",
@@ -125,3 +125,11 @@ extlinks = {
     "path": ("https://github.com/spglib/spglib/tree/develop/%s", "%s"),
     "user": ("https://github.com/%s", "%s"),
 }
+
+# -----------------------------------------------------------------------------
+# doctest
+# -----------------------------------------------------------------------------
+
+doctest_global_setup = """
+import spglib
+"""
