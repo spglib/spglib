@@ -46,6 +46,7 @@ endif ()
 #                            Project configuration                            #
 ]=============================================================================]
 
+include(GNUInstallDirs)
 include(../cmake/PackageCompsHelper.cmake)
 
 # Define basic parameters
@@ -64,25 +65,30 @@ if (NOT CMAKE_Fortran_MODULE_DIRECTORY)
 endif ()
 
 #[=============================================================================[
+#                                Public targets                                #
+]=============================================================================]
+
+add_library(Spglib_fortran)
+add_library(Spglib::fortran ALIAS Spglib_fortran)
+
+#[=============================================================================[
 #                              External packages                              #
 ]=============================================================================]
 
-set(external_libs)
-include(FetchContent)
-
 # Get Spglib if it's run as stand-alone project
-if (NOT Spglib_SOURCE_DIR)
-    find_package(Spglib REQUIRED CONFIG)
+if (NOT TARGET Spglib::symspg)
+    find_package(Spglib CONFIG)
+    if (NOT Spglib_FOUND)
+        message(STATUS "Using bundled spglib sources")
+        add_subdirectory(${PROJECT_SOURCE_DIR}/.. _deps/spglib-build)
+    endif ()
 endif ()
-FetchContent_MakeAvailable(${external_libs})
 
 #[=============================================================================[
 #                               Main definition                               #
 ]=============================================================================]
 
-# Main fortran wrapper
-add_library(Spglib_fortran)
-add_library(Spglib::fortran ALIAS Spglib_fortran)
+# Define main target
 set_target_properties(Spglib_fortran PROPERTIES
         VERSION ${PROJECT_VERSION}
         SOVERSION ${PROJECT_VERSION_MAJOR}
@@ -148,11 +154,10 @@ if (SPGLIB_INSTALL)
     endif ()
     install(TARGETS Spglib_fortran Spglib_fortran_include
             EXPORT SpglibTargets-fortran
-            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Spglib_Runtime
-            NAMELINK_COMPONENT Spglib_Development
-            ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Spglib_Development
-            PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT Spglib_Development
-            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Spglib_Runtime
+            LIBRARY COMPONENT Spglib_Runtime NAMELINK_COMPONENT Spglib_Development
+            ARCHIVE COMPONENT Spglib_Development
+            PUBLIC_HEADER COMPONENT Spglib_Development
+            RUNTIME COMPONENT Spglib_Runtime
     )
     export_components(
             PROJECT Spglib

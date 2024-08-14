@@ -61,10 +61,8 @@ mark_as_advanced(
 # Include basic tools
 include(cmake/PackageCompsHelper.cmake)
 include(FetchContent)
-if (SPGLIB_INSTALL)
-    include(CMakePackageConfigHelpers)
-    include(GNUInstallDirs)
-endif ()
+include(CMakePackageConfigHelpers)
+include(GNUInstallDirs)
 
 # Define basic parameters
 set(BUILD_SHARED_LIBS ${SPGLIB_SHARED_LIBS})
@@ -86,6 +84,13 @@ message(STATUS "Spglib:: Build type: ${CMAKE_BUILD_TYPE}")
 message(STATUS "Spglib:: Version ${PROJECT_VERSION_FULL}")
 
 #[=============================================================================[
+#                                Public targets                                #
+]=============================================================================]
+
+add_library(Spglib_symspg)
+add_library(Spglib::symspg ALIAS Spglib_symspg)
+
+#[=============================================================================[
 #                              External packages                              #
 ]=============================================================================]
 
@@ -100,22 +105,21 @@ endif ()
 ]=============================================================================]
 
 # Main project
-add_library(Spglib_symspg)
 set_target_properties(Spglib_symspg PROPERTIES
         VERSION ${PROJECT_VERSION}
         SOVERSION ${PROJECT_VERSION_MAJOR}
         EXPORT_NAME symspg
-        OUTPUT_NAME symspg)
-add_library(Spglib::symspg ALIAS Spglib_symspg)
+        OUTPUT_NAME symspg
+)
 # Main definitions inside src
 add_subdirectory(include)
 add_subdirectory(src)
 
 # Bindings
-if (SPGLIB_WITH_Fortran)
+if (NOT TARGET Spglib::fortran AND SPGLIB_WITH_Fortran)
     add_subdirectory(fortran)
 endif ()
-if (SPGLIB_WITH_Python)
+if (NOT TARGET Spglib::python AND SPGLIB_WITH_Python)
     add_subdirectory(python)
 endif ()
 
@@ -133,11 +137,7 @@ endif ()
 
 # Copy PackageCompsHelper to make it available for build import
 configure_file(cmake/PackageCompsHelper.cmake PackageCompsHelper.cmake COPYONLY)
-
-# TODO: Temporarily disable installing cmake files when using scikit-build-core
-#  Check how bundled cmake searches CMAKE_MODULE_DIR and add accordingly
-#  (use SKBUILD_PLATLIB_DIR for install root)
-if (NOT SKBUILD AND SPGLIB_INSTALL)
+if (SPGLIB_INSTALL)
     # pkg-config files
     configure_file(cmake/spglib.pc.in spglib.pc @ONLY)
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/spglib.pc

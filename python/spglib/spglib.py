@@ -43,40 +43,55 @@ from typing import TYPE_CHECKING, Union
 
 import numpy as np
 
-try:
-    from . import _spglib  # type: ignore[attr-defined]
-except ImportError:
-    if sys.version_info < (3, 10):
-        from importlib_resources import as_file, files
-        from typing_extensions import TypeAlias
-    else:
-        from importlib.resources import as_file, files
-        from typing import TypeAlias
-    from ctypes import cdll
+if sys.version_info < (3, 10):
+    from typing_extensions import TypeAlias
+else:
+    from typing import TypeAlias
 
-    root = files("spglib.lib")
-    for file in root.iterdir():
-        if "symspg." in file.name:
-            with as_file(file) as bundled_lib:
-                try:
-                    cdll.LoadLibrary(str(bundled_lib))
-                    from . import _spglib  # type: ignore[attr-defined]
-
-                    break
-                except ImportError as err:
-                    raise FileNotFoundError(
-                        "Could not load bundled Spglib C library"
-                    ) from err
-    else:
-        raise FileNotFoundError(
-            "Spglib C library is not installed and no bundled version was detected"
-        )
+from . import _spglib  # type: ignore[attr-defined]
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
     from typing import Any
 
     from numpy.typing import ArrayLike, NDArray
+
+__all__ = [
+    "MagneticSpaceGroupType",
+    "SpaceGroupType",
+    "SpglibDataset",
+    "SpglibMagneticDataset",
+    "delaunay_reduce",
+    "find_primitive",
+    "get_BZ_grid_points_by_rotations",
+    "get_error_message",
+    "get_grid_point_from_address",
+    "get_grid_points_by_rotations",
+    "get_hall_number_from_symmetry",
+    "get_ir_reciprocal_mesh",
+    "get_layergroup",
+    "get_magnetic_spacegroup_type",
+    "get_magnetic_spacegroup_type_from_symmetry",
+    "get_magnetic_symmetry",
+    "get_magnetic_symmetry_dataset",
+    "get_magnetic_symmetry_from_database",
+    "get_pointgroup",
+    "get_spacegroup",
+    "get_spacegroup_type",
+    "get_spacegroup_type_from_symmetry",
+    "get_stabilized_reciprocal_mesh",
+    "get_symmetry",
+    "get_symmetry_dataset",
+    "get_symmetry_from_database",
+    "get_version",
+    "niggli_reduce",
+    "refine_cell",
+    "relocate_BZ_grid_address",
+    "spg_get_commit",
+    "spg_get_version",
+    "spg_get_version_full",
+    "standardize_cell",
+]
 
 warnings.filterwarnings(
     "module", category=DeprecationWarning, message=r"dict interface.*"
