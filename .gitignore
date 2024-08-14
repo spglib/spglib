@@ -78,8 +78,6 @@ test-suite.log
 docs_build/
 CMakeUserPresets.json
 
-docs/api/python-api/
-
 /python/spglib/_version.py
 venv
 env

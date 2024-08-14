@@ -4,6 +4,6 @@
 ---
 maxdepth: 1
 ---
-Python API <python-api/index>
+Python API <python-api>
 Unreleased API <develop>
 ```

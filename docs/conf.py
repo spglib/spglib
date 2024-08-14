@@ -6,9 +6,10 @@ copyright = "2009, Atsushi Togo"
 extensions = [
     "sphinx.ext.mathjax",
     "sphinx.ext.viewcode",
+    "sphinx.ext.autodoc",
+    "sphinx_autodoc_typehints",
     "sphinxcontrib.bibtex",
     "myst_parser",
-    "autodoc2",
     "sphinx.ext.doctest",
     "sphinx.ext.extlinks",
 ]
@@ -63,34 +64,9 @@ html_theme_options = {
 }
 html_static_path = ["_static"]
 
-# -----------------------------------------------------------------------------
-# Autodoc2
-# -----------------------------------------------------------------------------
-autodoc2_output_dir = "api/python-api"
-autodoc2_render_plugin = "myst"
-autodoc2_docstring_parser_regexes = [
-    (r".*", "rst"),
-]
-autodoc2_annotations = False
-autodoc2_packages = [
-    {
-        "path": "../python/spglib/spglib.py",
-        "module": "spglib",
-    },
-]
-autodoc2_hidden_objects = ["dunder", "private", "inherited"]
-autodoc2_hidden_regexes = [
-    "spglib.get_pointgroup",
-    # Layer group
-    "spglib.get_layergroup",
-    "spglib.get_symmetry_layerdataset",
-    # Kpoints
-    "spglib.get_grid_point_from_address",
-    "spglib.get_stabilized_reciprocal_mesh",
-    "spglib.get_grid_points_by_rotations",
-    "spglib.get_BZ_grid_points_by_rotations",
-    "spglib.relocate_BZ_grid_address",
-]
+autodoc_type_aliases = {
+    "Cell": "spglib.spglib.Cell",
+}
 
 # -----------------------------------------------------------------------------
 # linkcheck
