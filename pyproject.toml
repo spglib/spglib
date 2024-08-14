@@ -84,7 +84,8 @@ testing = [
 ]
 
 [tool.scikit-build]
-wheel.packages = ["python/spglib"]
+cmake.source-dir = "python"
+wheel.install-dir = "spglib"
 metadata.version.provider = "scikit_build_core.metadata.setuptools_scm"
 sdist.include = ["python/spglib/_version.py"]
 
@@ -93,6 +94,11 @@ SPGLIB_WITH_Python = "ON"
 SPGLIB_WITH_TESTS = "OFF"
 SPGLIB_USE_OMP = "OFF"
 
+[[tool.scikit-build.overrides]]
+if.env.CIBUILDWHEEL = true
+# Make sure cibuildwheel builds with a bundled spglib
+cmake.define.CMAKE_DISABLE_FIND_PACKAGE_Spglib = "ON"
+
 [tool.setuptools_scm]
 write_to = "python/spglib/_version.py"
 
@@ -100,23 +106,15 @@ write_to = "python/spglib/_version.py"
 # pp, win32, i686, muslinux: Remove 32bit variants, PyPY interpreter and unnecessary musl variant
 skip = ["pp*", "*-win32", "*-manylinux_i686", "*-musllinux*"]
 test-extras = "test"
-test-command = "pytest {package}/test/functional/python"
-before-build = [
-    "cmake -B _build -DSPGLIB_WITH_TESTS=OFF -DCMAKE_BUILD_TYPE=Release",
-    "cmake --build _build --config Release",
-    "cmake --install _build --config Release --prefix {project}/_install",
+test-command = [
+    "cd {package}",
+    "pytest",
 ]
 
-[tool.cibuildwheel.linux]
-before-build = [
-    "cmake -B _build -DSPGLIB_WITH_TESTS=OFF -DCMAKE_BUILD_TYPE=Release",
-    "cmake --build _build",
-    "cmake --install _build",
-]
-repair-wheel-command = "auditwheel repair -w {dest_dir} {wheel}"
-
-[tool.cibuildwheel.macos]
-repair-wheel-command = "DYLD_LIBRARY_PATH=_install/lib delocate-wheel --require-archs {delocate_archs} -w {dest_dir} -v {wheel}"
+[[tool.cibuildwheel.overrides]]
+select = "*pyodide*"
+inherit.environment = "append"
+build-frontend = {name = "build", args = ["--exports", "whole_archive"]}
 
 [tool.pytest.ini_options]
 addopts = "-Werror -m 'not benchmark'"
@@ -124,6 +122,10 @@ testpaths = ["test/functional/python"]
 markers = [
     # Define benchmark marker to avoid warnings of marker not defined
     "benchmark: benchmarking tets",
+]
+filterwarnings = [
+    "error",
+    "default:could not create cache path:pytest.PytestCacheWarning",
 ]
 
 [tool.coverage.run]
@@ -201,6 +203,11 @@ exclude = [
     "database",
 ]
 
+[tool.ruff.lint.per-file-ignores]
+# In __init__ we define the public interface with __all__ and forward it with import *. Ruff considers it as an issue,
+# but this shouldn't be an issue for the top-level: https://github.com/astral-sh/ruff/issues/2407
+"__init__.py" = ["F403", "F405"]
+
 [tool.mypy]
 mypy_path = ["python"]
 files = ["python", "test/functional/python", "example/python_api"]
@@ -215,6 +222,3 @@ no_strict_optional = true
 [tool.codespell]
 ignore-words = "docs/codespell.txt"
 skip = "docs/references.bib"
-
-[tool.check-wheel-contents]
-ignore = "W002"

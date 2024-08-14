@@ -23,15 +23,15 @@ set(CMAKE_C_EXTENSIONS OFF)
 include(CMakeDependentOption)
 include(FeatureSummary)
 
-cmake_dependent_option(SPGLIB_TEST_COVERAGE "Spglib: Test with coverage" OFF "Spglib_IS_TOP_LEVEL" OFF)
-add_feature_info(Coverage SPGLIB_TEST_COVERAGE "Compile with test coverage")
-mark_as_advanced(SPGLIB_TEST_COVERAGE)
-if (Spglib_IS_TOP_LEVEL)
-    set(SPGLIB_USE_SANITIZER "" CACHE STRING "Spglib: Sanitizer used in compilation")
-endif ()
-mark_as_advanced(SPGLIB_USE_SANITIZER)
+option(SPGLIB_TEST_COVERAGE "Spglib: Test with coverage" OFF)
+set(SPGLIB_USE_SANITIZER "" CACHE STRING "Spglib: Sanitizer used in compilation")
 option(SPGLIB_WITH_Fortran "Spglib: Build Fortran interface" OFF)
 option(SPGLIB_WITH_Python "Spglib: Build Python interface" OFF)
+add_feature_info(Coverage SPGLIB_TEST_COVERAGE "Compile with test coverage")
+mark_as_advanced(
+        SPGLIB_TEST_COVERAGE
+        SPGLIB_USE_SANITIZER
+)
 
 #[=============================================================================[
 #                            Project configuration                            #
@@ -74,8 +74,14 @@ set(external_libs)
 include(FetchContent)
 
 # Get Spglib if it's run as stand-alone project
-if (NOT Spglib_SOURCE_DIR)
-    find_package(Spglib REQUIRED CONFIG)
+if (NOT TARGET Spglib::symspg)
+    set(spglib_find_package_args)
+    if (SPGLIB_WITH_Fortran)
+        list(APPEND
+                COMPONENTS Fortran
+        )
+    endif ()
+    find_package(Spglib REQUIRED CONFIG ${spglib_find_package_args})
 endif ()
 
 set(BUILD_GMOCK OFF)
@@ -86,14 +92,13 @@ FetchContent_Declare(GTest
         GIT_TAG v1.13.0
         FIND_PACKAGE_ARGS CONFIG
 )
-list(APPEND external_libs GTest)
 
 find_package(Threads REQUIRED)
 if (SPGLIB_WITH_Python)
     find_package(Python 3.9 REQUIRED)
 endif ()
 
-FetchContent_MakeAvailable(${external_libs})
+FetchContent_MakeAvailable(GTest)
 include(GoogleTest)
 
 #[=============================================================================[

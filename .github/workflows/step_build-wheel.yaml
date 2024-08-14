@@ -14,12 +14,18 @@ on:
 
 jobs:
   build_wheels:
-    name: 🖥️ ${{ matrix.os }}
+    name: 🖥️ ${{ matrix.platform || matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ ubuntu-latest, windows-latest, macOS-13, macOS-14 ]
+        # Default do not specify platform and use the current runner's platform instead
+        platform: [ "" ]
+        include:
+          - os: ubuntu-latest
+            platform: pyodide
+
 
     steps:
       - uses: actions/checkout@v4
@@ -37,6 +43,7 @@ jobs:
         env:
           CIBW_BUILD: ${{ inputs.cibw_build }}
           CIBW_ARCHS_LINUX: auto aarch64
+          CIBW_PLATFORM: ${{ matrix.platform }}
       - uses: actions/upload-artifact@v4
         with:
           name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}

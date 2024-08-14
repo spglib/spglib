@@ -1,4 +1,4 @@
-from spglib import __version__ as version
+import importlib.metadata
 
 project = "Spglib"
 copyright = "2009, Atsushi Togo"
@@ -52,7 +52,7 @@ bibtex_default_style = "unsrt"
 # -----------------------------------------------------------------------------
 
 html_theme = "sphinx_book_theme"
-html_title = f"Spglib v{version}"
+html_title = f"Spglib v{importlib.metadata.version('spglib')}"
 html_theme_options = {
     # https://sphinx-book-theme.readthedocs.io/en/latest/reference.html
     "repository_url": "https://github.com/spglib/spglib",
@@ -74,22 +74,22 @@ autodoc2_docstring_parser_regexes = [
 autodoc2_annotations = False
 autodoc2_packages = [
     {
-        "path": "../python/spglib/spglib.py",
+        "path": "../python/spglib",
         "module": "spglib",
     },
 ]
 autodoc2_hidden_objects = ["dunder", "private", "inherited"]
 autodoc2_hidden_regexes = [
-    "spglib.get_pointgroup",
+    "spglib.spglib.get_pointgroup",
     # Layer group
-    "spglib.get_layergroup",
-    "spglib.get_symmetry_layerdataset",
+    "spglib.spglib.get_layergroup",
+    "spglib.spglib.get_symmetry_layerdataset",
     # Kpoints
-    "spglib.get_grid_point_from_address",
-    "spglib.get_stabilized_reciprocal_mesh",
-    "spglib.get_grid_points_by_rotations",
-    "spglib.get_BZ_grid_points_by_rotations",
-    "spglib.relocate_BZ_grid_address",
+    "spglib.spglib.get_grid_point_from_address",
+    "spglib.spglib.get_stabilized_reciprocal_mesh",
+    "spglib.spglib.get_grid_points_by_rotations",
+    "spglib.spglib.get_BZ_grid_points_by_rotations",
+    "spglib.spglib.relocate_BZ_grid_address",
 ]
 
 # -----------------------------------------------------------------------------
