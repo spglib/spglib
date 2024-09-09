@@ -9,12 +9,10 @@ Name:           spglib
 Summary:        C library for finding and handling crystal symmetries
 Version:        0.0.0
 Release:        %autorelease
-License:        BSD
+License:        BSD-3-Clause
 URL:            https://spglib.readthedocs.io/
 
 Source:         https://github.com/spglib/spglib/archive/refs/tags/v%{version}.tar.gz
-
-Patch:          Relax_numpy_requirements.patch
 
 BuildRequires:  ninja-build
 BuildRequires:  cmake
@@ -24,6 +22,7 @@ BuildRequires:  gcc-fortran
 BuildRequires:  cmake(GTest)
 %if %{with python}
 BuildRequires:  python3-devel
+BuildRequires:  tomcli
 %endif
 
 %description
@@ -58,7 +57,7 @@ Fortran applications that use spglib.
 %if %{with python}
 %package -n     python3-spglib
 Summary:        Python3 library of spglib
-Requires:       spglib = %{version}
+Requires:       spglib = %{version}-%{release}
 
 %description -n python3-spglib
 This package contains the libraries to
@@ -68,6 +67,10 @@ develop applications with spglib Python3 bindings.
 
 %prep
 %autosetup -p1 -n spglib-%{version}
+# Relax numpy restriction
+%if %{with python}
+tomcli set pyproject.toml lists replace -t regex "build-system.requires" "numpy.*" "numpy"
+%endif
 
 
 %generate_buildrequires
