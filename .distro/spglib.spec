@@ -57,7 +57,7 @@ Fortran applications that use spglib.
 %if %{with python}
 %package -n     python3-spglib
 Summary:        Python3 library of spglib
-Requires:       spglib = %{version}
+Requires:       spglib = %{version}-%{release}
 
 %description -n python3-spglib
 This package contains the libraries to
