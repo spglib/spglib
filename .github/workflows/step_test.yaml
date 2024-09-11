@@ -88,6 +88,14 @@ jobs:
             numpy-runtime: "<2.0"
           - python-version: "3.12"
             numpy-runtime: "<2.0"
+    env:
+      # This is a comma-separated list, add filters as needed with relevant documentation
+      #   error: Treat all python warnings as error (always use)
+      #   pip._internal.metadata.importlib._dists: https://github.com/pypa/pip/issues/11684
+      PYTHONWARNINGS: "\
+        error,\
+        ignore::DeprecationWarning:pip._internal.metadata.importlib._dists,\
+        "
     steps:
       - uses: actions/checkout@v4
         with:
@@ -100,9 +108,10 @@ jobs:
       - uses: lukka/get-cmake@latest
       - name: Install spglib and dependencies
         run: |
-          pip install -e .[test] ${{ matrix.pre && '--pre' }}
+          python3 -W ignore -m pip install --upgrade pip
+          python3 -m pip install -e .[test] ${{ matrix.pre && '--pre' }}
           # If numpy-runtime (${{ matrix.numpy-runtime }}) is undefined, the following has no effect
-          pip install "numpy${{ matrix.numpy-runtime }}"
+          python3 -m pip install "numpy${{ matrix.numpy-runtime }}"
       - name: Test spglib
         run: pytest
 
