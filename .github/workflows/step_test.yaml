@@ -88,6 +88,12 @@ jobs:
             numpy-runtime: "<2.0"
           - python-version: "3.12"
             numpy-runtime: "<2.0"
+    env:
+      # This is a comma-separated list, add filters as needed with relevant documentation
+      #   error: Treat all python warnings as error (always use)
+      PYTHONWARNINGS: "\
+        error,\
+        "
     steps:
       - uses: actions/checkout@v4
         with:
