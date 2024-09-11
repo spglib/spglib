@@ -106,9 +106,10 @@ jobs:
       - uses: lukka/get-cmake@latest
       - name: Install spglib and dependencies
         run: |
-          pip install -e .[test] ${{ matrix.pre && '--pre' }}
+          python3 -W ignore -m pip install --upgrade pip
+          python3 -m pip install -e .[test] ${{ matrix.pre && '--pre' }}
           # If numpy-runtime (${{ matrix.numpy-runtime }}) is undefined, the following has no effect
-          pip install "numpy${{ matrix.numpy-runtime }}"
+          python3 -m pip install "numpy${{ matrix.numpy-runtime }}"
       - name: Test spglib
         run: pytest
 
