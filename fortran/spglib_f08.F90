@@ -23,6 +23,7 @@ module spglib_f08
             & spg_get_stabilized_reciprocal_mesh, &
             & spg_get_error_code, spg_get_error_message, &
             & spg_get_spacegroup_type, &
+            & spg_get_symmetry_from_database, &
             & spg_get_magnetic_spacegroup_type, &
             & version, version_full, commit, &
             & spg_get_version, spg_get_version_full, spg_get_commit
@@ -199,6 +200,15 @@ module spglib_f08
             real(c_double), intent(in), value :: symprec
             integer(c_int) :: retval
         end function spg_get_symmetry
+
+        function spg_get_symmetry_from_database(rotation, translation, &
+            & hall_number) bind(c) result(retval)
+            import c_int, c_double
+            integer(c_int), intent(out) :: rotation(3, 3, *)
+            real(c_double), intent(out) :: translation(3, *)
+            integer(c_int), intent(in), value :: hall_number
+            integer(c_int) :: retval
+        end function spg_get_symmetry_from_database
 
         function spgat_get_symmetry(rotation, translation, max_size, lattice, &
              & position, types, num_atom, symprec, angle_tolerance) bind(c) &
