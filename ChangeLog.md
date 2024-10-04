@@ -11,6 +11,12 @@ GitHub release pages and in the git history.
 
 ## \[Unreleased\]
 
+### Fortran API
+
+- Expose `spg_get_symmetry_from_database`.
+
+Users can now access the rotation and translation operations from the database, provided the Hall number.
+
 ## v2.5.0 (9 Jul. 2024)
 
 ### Main changes
