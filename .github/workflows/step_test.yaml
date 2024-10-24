@@ -60,7 +60,7 @@ jobs:
       - name: Run CMake configuration for ${{ matrix.toolchain }} toolchain
         # Cannot update passed v10.5 on Windows:
         # https://github.com/lukka/run-cmake/issues/142
-        uses: lukka/run-cmake@v10.5
+        uses: lukka/run-cmake@v10.8
         with:
           workflowPreset: "${{ matrix.toolchain }}-ci"
         continue-on-error: ${{ matrix.experimental && inputs.mask-experimental}}

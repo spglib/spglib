@@ -24,7 +24,7 @@ jobs:
           fetch-depth: 0
       - uses: lukka/get-cmake@latest
       - name: Get test coverage for ${{ matrix.coverage }}
-        uses: lukka/run-cmake@v10.7
+        uses: lukka/run-cmake@v10.8
         with:
           workflowPreset: "ci-coverage-${{ matrix.coverage }}"
       - name: Get lcov data

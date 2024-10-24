@@ -23,27 +23,27 @@ repos:
           - '-DSPGLIB_WITH_TESTS=ON'
         stages: [ manual ]
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0
+    rev: v5.0.0
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: check-yaml
       - id: check-added-large-files
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.5.6
+    rev: v0.7.0
     hooks:
       - id: ruff
         args: [ "--fix", "--show-fixes" ]
       - id: ruff-format
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.11.1
+    rev: v1.13.0
     hooks:
     - id: mypy
       pass_filenames: false
       additional_dependencies:
         - types-PyYAML
   - repo: https://github.com/executablebooks/mdformat
-    rev: 0.7.17
+    rev: 0.7.18
     hooks:
       - id: mdformat
         additional_dependencies:
@@ -53,14 +53,14 @@ repos:
     # TODO: Temporarily separate docs formatiing
     # https://github.com/executablebooks/mdformat/issues/234
   - repo: https://github.com/executablebooks/mdformat
-    rev: 0.7.17
+    rev: 0.7.18
     hooks:
       - id: mdformat
         additional_dependencies:
           - mdformat-myst
         files: docs\/(?!README).*\.md$
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.29.1
+    rev: 0.29.4
     hooks:
       - id: check-github-workflows
       - id: check-readthedocs
