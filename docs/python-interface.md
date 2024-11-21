@@ -100,7 +100,7 @@ $ pytest
 
 For versions 1.9.x or later:
 
-```{testsetup}
+```python
 import spglib
 ```
 
