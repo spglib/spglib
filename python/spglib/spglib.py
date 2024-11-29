@@ -116,6 +116,7 @@ class DictInterface(Mapping[str, "Any"]):
             f"dict interface ({self.__class__.__name__}['{key}']) is deprecated."
             f"Use attribute interface ({self.__class__.__name__}.{key}) instead",
             DeprecationWarning,
+            stacklevel=2,
         )
         return dataclasses.asdict(self)[key]
 
@@ -454,6 +455,7 @@ def get_version():
         "get_version() is deprecated. Use __version__ for the python binding"
         "version and get_spg_version for the detected spglib library version.",
         DeprecationWarning,
+        stacklevel=2,
     )
     _set_no_error()
     return _spglib.version_tuple()
@@ -640,6 +642,7 @@ def get_symmetry(
         warnings.warn(
             "Use get_magnetic_symmetry() for cell with magnetic moments.",
             DeprecationWarning,
+            stacklevel=2,
         )
         return get_magnetic_symmetry(
             cell,
@@ -2137,6 +2140,7 @@ def get_hall_number_from_symmetry(rotations, translations, symprec=1e-5) -> int 
         "get_hall_number_from_symmetry() is deprecated. "
         "Use get_spacegroup_type_from_symmetry() instead.",
         DeprecationWarning,
+        stacklevel=2,
     )
 
     r = np.array(rotations, dtype="intc", order="C")
