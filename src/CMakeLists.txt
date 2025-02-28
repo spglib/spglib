@@ -85,6 +85,7 @@ endif ()
 if (SPGLIB_INSTALL)
     # Normal installation target to system. When using scikit-build this is installed again in python path
     install(TARGETS Spglib_symspg
-            EXPORT SpglibTargets
+        EXPORT SpglibTargets
+        FILE_SET HEADERS
     )
 endif ()
