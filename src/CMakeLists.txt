@@ -86,9 +86,5 @@ if (SPGLIB_INSTALL)
     # Normal installation target to system. When using scikit-build this is installed again in python path
     install(TARGETS Spglib_symspg
             EXPORT SpglibTargets
-            LIBRARY COMPONENT Spglib_Runtime NAMELINK_COMPONENT Spglib_Development
-            ARCHIVE COMPONENT Spglib_Development
-            PUBLIC_HEADER COMPONENT Spglib_Development
-            RUNTIME COMPONENT Spglib_Runtime
     )
 endif ()

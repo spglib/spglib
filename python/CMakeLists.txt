@@ -111,10 +111,10 @@ elseif (SPGLIB_INSTALL)
     if (TARGET Spglib_symspg)
         # For windows systems we need to also install a copy of the dll files
         install(TARGETS Spglib_symspg
-                RUNTIME DESTINATION . COMPONENT Spglib_Runtime
+                RUNTIME DESTINATION .
         )
     endif ()
     install(TARGETS Spglib_python
-            LIBRARY DESTINATION . COMPONENT Spglib_Runtime
+            LIBRARY DESTINATION .
     )
 endif ()

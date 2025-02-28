@@ -142,7 +142,7 @@ if (SPGLIB_INSTALL)
     configure_file(cmake/spglib.pc.in spglib.pc @ONLY)
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/spglib.pc
             DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
-            COMPONENT Spglib_Development)
+    )
 
     # cmake export files
     write_basic_package_version_file(
@@ -157,7 +157,7 @@ if (SPGLIB_INSTALL)
             ${CMAKE_CURRENT_BINARY_DIR}/SpglibConfig.cmake
             cmake/PackageCompsHelper.cmake
             DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Spglib
-            COMPONENT Spglib_Development)
+    )
     export_components(LIB_TYPE ${Spglib_LIB_TYPE})
 endif ()
 

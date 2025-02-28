@@ -154,10 +154,6 @@ if (SPGLIB_INSTALL)
     endif ()
     install(TARGETS Spglib_fortran Spglib_fortran_include
             EXPORT SpglibTargets-fortran
-            LIBRARY COMPONENT Spglib_Runtime NAMELINK_COMPONENT Spglib_Development
-            ARCHIVE COMPONENT Spglib_Development
-            PUBLIC_HEADER COMPONENT Spglib_Development
-            RUNTIME COMPONENT Spglib_Runtime
     )
     export_components(
             PROJECT Spglib
@@ -166,16 +162,13 @@ if (SPGLIB_INSTALL)
     )
     install(FILES try_compile.f90
             DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Spglib
-            COMPONENT Spglib_Development
     )
     install(FILES ${CMAKE_Fortran_MODULE_DIRECTORY}/spglib_f08.mod
             DESTINATION ${CMAKE_INSTALL_MODULEDIR}
-            COMPONENT Spglib_Development
     )
     configure_file(spglib_f08.pc.in spglib_f08.pc @ONLY)
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/spglib_f08.pc
             DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
-            COMPONENT Spglib_Development
     )
 endif ()
 
