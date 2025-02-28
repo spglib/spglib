@@ -22,7 +22,7 @@
         },
         "SPGLIB_WITH_Python": {
           "type": "BOOL",
-          "value": true
+          "value": false
         },
         "CMAKE_BUILD_TYPE": {
           "type": "STRING",
