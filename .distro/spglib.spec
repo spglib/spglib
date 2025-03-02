@@ -97,7 +97,7 @@ tomcli set pyproject.toml arrays replace "build-system.requires" "numpy.*" "nump
 
 %if %{with python}
 %pyproject_install
-%pyproject_save_files spglib
+%pyproject_save_files -l spglib
 %endif
 
 
