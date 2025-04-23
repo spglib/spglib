@@ -10,17 +10,10 @@ repos:
     rev: v1.9.6
     hooks:
       - id: clang-format
-        additional_dependencies: [ clang-format >= 16 ]
+        additional_dependencies: [ clang-format >= 20 ]
         args:
-          - '-B_build-pre-commit'
-          - '-DSPGLIB_WITH_Fortran=ON'
-          - '-DSPGLIB_WITH_TESTS=ON'
           - '-i'
       - id: clang-tidy
-        args:
-          - '-B_build-pre-commit'
-          - '-DSPGLIB_WITH_Fortran=ON'
-          - '-DSPGLIB_WITH_TESTS=ON'
         stages: [ manual ]
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0

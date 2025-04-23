@@ -216,3 +216,9 @@ disallow_incomplete_defs = true
 [tool.codespell]
 ignore-words = "docs/codespell.txt"
 skip = "docs/references.bib"
+
+[tool.cmake_pc_hooks]
+defines = [
+    "SPLGIB_WITH_Fortran=ON",
+    "SPLGIB_WITH_TESTS=ON",
+]
