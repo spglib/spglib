@@ -1409,13 +1409,13 @@ static int set_dataset(SpglibDataset *dataset, Cell const *cell,
 
     dataset->n_operations = exstr->symmetry->size;
 
-    if ((dataset->rotations = (int(*)[3][3])malloc(
+    if ((dataset->rotations = (int (*)[3][3])malloc(
              sizeof(int[3][3]) * dataset->n_operations)) == NULL) {
         warning_memory("dataset->rotations");
         goto err;
     }
 
-    if ((dataset->translations = (double(*)[3])malloc(
+    if ((dataset->translations = (double (*)[3])malloc(
              sizeof(double[3]) * dataset->n_operations)) == NULL) {
         warning_memory("dataset->translations");
         goto err;
@@ -1434,7 +1434,7 @@ static int set_dataset(SpglibDataset *dataset, Cell const *cell,
     }
 
     if ((dataset->site_symmetry_symbols =
-             (char(*)[7])malloc(sizeof(char[7]) * dataset->n_atoms)) == NULL) {
+             (char (*)[7])malloc(sizeof(char[7]) * dataset->n_atoms)) == NULL) {
         warning_memory("dataset->site_symmetry_symbols");
         goto err;
     }
@@ -1484,7 +1484,7 @@ static int set_dataset(SpglibDataset *dataset, Cell const *cell,
     dataset->n_std_atoms = exstr->bravais->size;
     mat_copy_matrix_d3(dataset->std_lattice, exstr->bravais->lattice);
 
-    if ((dataset->std_positions = (double(*)[3])malloc(
+    if ((dataset->std_positions = (double (*)[3])malloc(
              sizeof(double[3]) * dataset->n_std_atoms)) == NULL) {
         warning_memory("dataset->std_positions");
         goto err;
@@ -1575,12 +1575,12 @@ static int set_magnetic_dataset(SpglibMagneticDataset *dataset,
 
     /* Magnetic symmetry operations */
     dataset->n_operations = magnetic_symmetry->size;
-    if ((dataset->rotations = (int(*)[3][3])malloc(
+    if ((dataset->rotations = (int (*)[3][3])malloc(
              sizeof(int[3][3]) * dataset->n_operations)) == NULL) {
         warning_memory("dataset->rotations");
         goto err;
     }
-    if ((dataset->translations = (double(*)[3])malloc(
+    if ((dataset->translations = (double (*)[3])malloc(
              sizeof(double[3]) * dataset->n_operations)) == NULL) {
         warning_memory("dataset->translations");
         goto err;
@@ -1620,7 +1620,7 @@ static int set_magnetic_dataset(SpglibMagneticDataset *dataset,
     if ((dataset->std_types =
              (int *)malloc(sizeof(int) * dataset->n_std_atoms)) == NULL)
         goto err;
-    if ((dataset->std_positions = (double(*)[3])malloc(
+    if ((dataset->std_positions = (double (*)[3])malloc(
              sizeof(double[3]) * dataset->n_std_atoms)) == NULL)
         goto err;
     if ((dataset->std_tensors = spn_alloc_site_tensors(

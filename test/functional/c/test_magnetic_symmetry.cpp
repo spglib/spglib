@@ -31,12 +31,12 @@ TEST(MagneticSymmetry, test_spg_get_symmetry_with_collinear_spin) {
     int num_atom = 2;
     int size, max_size;
 
-    int(*rotation)[3][3];
-    double(*translation)[3];
+    int (*rotation)[3][3];
+    double (*translation)[3];
 
     max_size = num_atom * 48;
-    rotation = (int(*)[3][3])malloc(sizeof(int[3][3]) * max_size);
-    translation = (double(*)[3])malloc(sizeof(double[3]) * max_size);
+    rotation = (int (*)[3][3])malloc(sizeof(int[3][3]) * max_size);
+    translation = (double (*)[3])malloc(sizeof(double[3]) * max_size);
 
     printf("*** spg_get_symmetry_with_spin (BCC ferro) ***:\n");
     {
@@ -136,15 +136,15 @@ TEST(MagneticSymmetry, test_spg_get_symmetry_with_site_tensors) {
 
     int equivalent_atoms[20];
     double primitive_lattice[3][3];
-    int(*rotation)[3][3];
-    double(*translation)[3];
+    int (*rotation)[3][3];
+    double (*translation)[3];
     int *spin_flips;
 
     // 96  = 48 * 2
     // = (max number of order of point group) * (spin degrees of freedom)
     max_size = num_atom * 96;
-    rotation = (int(*)[3][3])malloc(sizeof(int[3][3]) * max_size);
-    translation = (double(*)[3])malloc(sizeof(double[3]) * max_size);
+    rotation = (int (*)[3][3])malloc(sizeof(int[3][3]) * max_size);
+    translation = (double (*)[3])malloc(sizeof(double[3]) * max_size);
     spin_flips = (int *)malloc(sizeof(int *) * max_size);
 
     /* Find equivalent_atoms, primitive_lattice, spin_flips */
@@ -211,13 +211,13 @@ TEST(MagneticSymmetry, test_spg_get_symmetry_with_tensors_rough_symprec) {
     int i, size;
     int equivalent_atoms[3];
     double primitive_lattice[3][3];
-    int(*rotations)[3][3];
-    double(*translations)[3];
+    int (*rotations)[3][3];
+    double (*translations)[3];
     int *spin_flips;
     int *time_reversals;
 
-    rotations = (int(*)[3][3])malloc(sizeof(int[3][3]) * max_size);
-    translations = (double(*)[3])malloc(sizeof(double[3]) * max_size);
+    rotations = (int (*)[3][3])malloc(sizeof(int[3][3]) * max_size);
+    translations = (double (*)[3])malloc(sizeof(double[3]) * max_size);
     spin_flips = (int *)malloc(sizeof(int *) * max_size);
     time_reversals = (int *)malloc(sizeof(int *) * max_size);
 
@@ -260,13 +260,13 @@ TEST(MagneticSymmetry, test_spg_get_symmetry_with_site_tensors_non_collinear) {
     int size;
     int equivalent_atoms[1];
     double primitive_lattice[3][3];
-    int(*rotations)[3][3];
-    double(*translations)[3];
+    int (*rotations)[3][3];
+    double (*translations)[3];
     int *spin_flips;
     int *time_reversals;
 
-    rotations = (int(*)[3][3])malloc(sizeof(int[3][3]) * max_size);
-    translations = (double(*)[3])malloc(sizeof(double[3]) * max_size);
+    rotations = (int (*)[3][3])malloc(sizeof(int[3][3]) * max_size);
+    translations = (double (*)[3])malloc(sizeof(double[3]) * max_size);
     spin_flips = (int *)malloc(sizeof(int *) * max_size);
     time_reversals = (int *)malloc(sizeof(int *) * max_size);
 

@@ -104,14 +104,14 @@ Symmetry *sym_alloc_symmetry(int const size) {
     symmetry->rot = NULL;
     symmetry->trans = NULL;
 
-    if ((symmetry->rot = (int(*)[3][3])malloc(sizeof(int[3][3]) * size)) ==
+    if ((symmetry->rot = (int (*)[3][3])malloc(sizeof(int[3][3]) * size)) ==
         NULL) {
         warning_memory("symmetry->rot");
         free(symmetry);
         symmetry = NULL;
         return NULL;
     }
-    if ((symmetry->trans = (double(*)[3])malloc(sizeof(double[3]) * size)) ==
+    if ((symmetry->trans = (double (*)[3])malloc(sizeof(double[3]) * size)) ==
         NULL) {
         warning_memory("symmetry->trans");
         free(symmetry->rot);
@@ -155,14 +155,14 @@ MagneticSymmetry *sym_alloc_magnetic_symmetry(int const size) {
     symmetry->trans = NULL;
     symmetry->timerev = NULL;
 
-    if ((symmetry->rot = (int(*)[3][3])malloc(sizeof(int[3][3]) * size)) ==
+    if ((symmetry->rot = (int (*)[3][3])malloc(sizeof(int[3][3]) * size)) ==
         NULL) {
         warning_memory("symmetry->rot");
         free(symmetry);
         symmetry = NULL;
         return NULL;
     }
-    if ((symmetry->trans = (double(*)[3])malloc(sizeof(double[3]) * size)) ==
+    if ((symmetry->trans = (double (*)[3])malloc(sizeof(double[3]) * size)) ==
         NULL) {
         warning_memory("symmetry->trans");
         free(symmetry->rot);

@@ -686,7 +686,7 @@ static void sub_spg_standardize_cell(double lattice[3][3], double position[][3],
     double lat[3][3], (*pos)[3];
     int *typ;
 
-    pos = (double(*)[3])malloc(sizeof(double[3]) * 4 * num_atom);
+    pos = (double (*)[3])malloc(sizeof(double[3]) * 4 * num_atom);
     typ = (int *)malloc(sizeof(int) * 4 * num_atom);
 
     for (int i = 0; i < 3; i++) {

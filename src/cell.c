@@ -46,7 +46,8 @@ Cell *cel_alloc_cell(int const size, SiteTensorType const tensor_rank) {
         goto fail;
     }
 
-    if ((cell->lattice = (double(*)[3])malloc(sizeof(double[3]) * 3)) == NULL) {
+    if ((cell->lattice = (double (*)[3])malloc(sizeof(double[3]) * 3)) ==
+        NULL) {
         goto fail;
     }
 
@@ -57,7 +58,7 @@ Cell *cel_alloc_cell(int const size, SiteTensorType const tensor_rank) {
     if ((cell->types = (int *)malloc(sizeof(int) * size)) == NULL) {
         goto fail;
     }
-    if ((cell->position = (double(*)[3])malloc(sizeof(double[3]) * size)) ==
+    if ((cell->position = (double (*)[3])malloc(sizeof(double[3]) * size)) ==
         NULL) {
         goto fail;
     }

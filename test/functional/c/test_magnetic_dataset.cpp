@@ -178,13 +178,13 @@ TEST(MagneticDataset, test_spgms_get_magnetic_dataset_high_mag_symprec) {
     int size;
     int equivalent_atoms[6];
     double primitive_lattice[3][3];
-    int(*rotations)[3][3];
-    double(*translations)[3];
+    int (*rotations)[3][3];
+    double (*translations)[3];
     int *spin_flips;
     int *time_reversals;
 
-    rotations = (int(*)[3][3])malloc(sizeof(int[3][3]) * max_size);
-    translations = (double(*)[3])malloc(sizeof(double[3]) * max_size);
+    rotations = (int (*)[3][3])malloc(sizeof(int[3][3]) * max_size);
+    translations = (double (*)[3])malloc(sizeof(double[3]) * max_size);
     spin_flips = (int *)malloc(sizeof(int *) * max_size);
     time_reversals = (int *)malloc(sizeof(int *) * max_size);
 
@@ -258,13 +258,13 @@ TEST(MagneticDataset, test_with_broken_symmetry) {
     int i, size;
     int equivalent_atoms[4];
     double primitive_lattice[3][3];
-    int(*rotations)[3][3];
-    double(*translations)[3];
+    int (*rotations)[3][3];
+    double (*translations)[3];
     int *spin_flips;
     int *time_reversals;
 
-    rotations = (int(*)[3][3])malloc(sizeof(int[3][3]) * max_size);
-    translations = (double(*)[3])malloc(sizeof(double[3]) * max_size);
+    rotations = (int (*)[3][3])malloc(sizeof(int[3][3]) * max_size);
+    translations = (double (*)[3])malloc(sizeof(double[3]) * max_size);
     spin_flips = (int *)malloc(sizeof(int *) * max_size);
     time_reversals = (int *)malloc(sizeof(int *) * max_size);
 

@@ -140,10 +140,10 @@ int sub_spg_standardize_cell(double lattice[3][3], double position[][3],
                              int const no_idealize) {
     int i, num_primitive_atom, retval;
     double lat[3][3];
-    double(*pos)[3];
+    double (*pos)[3];
     int *typ;
 
-    pos = (double(*)[3])malloc(sizeof(double[3]) * num_atom);
+    pos = (double (*)[3])malloc(sizeof(double[3]) * num_atom);
     typ = (int *)malloc(sizeof(int) * num_atom);
 
     for (i = 0; i < 3; i++) {

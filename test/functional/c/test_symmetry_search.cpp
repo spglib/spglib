@@ -16,12 +16,12 @@ TEST(SymmetrySearch, test_spg_get_symmetry) {
     int i, j, size, max_size;
     double origin_shift[3] = {0.1, 0.1, 0};
 
-    int(*rotation)[3][3];
-    double(*translation)[3];
+    int (*rotation)[3][3];
+    double (*translation)[3];
 
     max_size = num_atom * 48;
-    rotation = (int(*)[3][3])malloc(sizeof(int[3][3]) * max_size);
-    translation = (double(*)[3])malloc(sizeof(double[3]) * max_size);
+    rotation = (int (*)[3][3])malloc(sizeof(int[3][3]) * max_size);
+    translation = (double (*)[3])malloc(sizeof(double[3]) * max_size);
 
     for (i = 0; i < num_atom; i++) {
         for (j = 0; j < 3; j++) {

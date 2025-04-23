@@ -166,7 +166,7 @@ Cell *spn_get_idealized_cell(int const *permutations, Cell const *cell,
     Cell *exact_cell;
     double scalar_tmp, scalar_res;
     double pos_tmp[3], pos_res[3], vector_tmp[3], vector_res[3];
-    double(*rotations_cart)[3][3];
+    double (*rotations_cart)[3][3];
     int *inv_perm;
 
     scalar_res = 0;
@@ -185,7 +185,7 @@ Cell *spn_get_idealized_cell(int const *permutations, Cell const *cell,
     exact_cell->aperiodic_axis = cell->aperiodic_axis;
     exact_cell->size = cell->size;
 
-    if ((rotations_cart = (double(*)[3][3])malloc(
+    if ((rotations_cart = (double (*)[3][3])malloc(
              sizeof(double[3][3]) * magnetic_symmetry->size)) == NULL) {
         return NULL;
     }
@@ -310,14 +310,14 @@ static MagneticSymmetry *get_operations(
     MatINT *rotations;
     VecDBL *trans;
     int *spin_flips;
-    double(*rotations_cart)[3][3];
+    double (*rotations_cart)[3][3];
     double inv_lat[3][3];
 
     rotations_cart = NULL;
 
     /* Site tensors in cartesian */
-    if ((rotations_cart = (double(*)[3][3])malloc(sizeof(double[3][3]) *
-                                                  sym_nonspin->size)) == NULL) {
+    if ((rotations_cart = (double (*)[3][3])malloc(
+             sizeof(double[3][3]) * sym_nonspin->size)) == NULL) {
         goto err;
     }
     mat_inverse_matrix_d3(inv_lat, cell->lattice, 0);
@@ -532,7 +532,7 @@ static int *get_symmetry_permutations(MagneticSymmetry const *magnetic_symmetry,
     int *permutations;
     double scalar;
     double pos[3], vector[3], diff[3];
-    double(*rotations_cart)[3][3];
+    double (*rotations_cart)[3][3];
 
     rotations_cart = NULL;
     permutations = NULL;
@@ -543,7 +543,7 @@ static int *get_symmetry_permutations(MagneticSymmetry const *magnetic_symmetry,
     }
 
     /* Site tensors in cartesian */
-    if ((rotations_cart = (double(*)[3][3])malloc(
+    if ((rotations_cart = (double (*)[3][3])malloc(
              sizeof(double[3][3]) * magnetic_symmetry->size)) == NULL) {
         free(permutations);
         permutations = NULL;

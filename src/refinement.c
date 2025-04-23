@@ -114,7 +114,7 @@ ExactStructure *ref_get_exact_structure_and_symmetry(Spacegroup *spacegroup,
     Cell *bravais;
     Symmetry *symmetry;
     ExactStructure *exact_structure;
-    char(*site_symmetry_symbols)[7];
+    char (*site_symmetry_symbols)[7];
 
     std_mapping_to_primitive = NULL;
     wyckoffs = NULL;
@@ -140,7 +140,7 @@ ExactStructure *ref_get_exact_structure_and_symmetry(Spacegroup *spacegroup,
     }
 
     if ((site_symmetry_symbols =
-             (char(*)[7])malloc(sizeof(char[7]) * cell->size)) == NULL) {
+             (char (*)[7])malloc(sizeof(char[7]) * cell->size)) == NULL) {
         warning_memory("site_symmetry_symbols");
         goto err;
     }
@@ -265,7 +265,7 @@ static Cell *get_Wyckoff_positions(
     int i, j, num_prim_sym;
     int *wyckoffs_bravais, *equiv_atoms_bravais;
     int operation_index[2];
-    char(*site_symmetry_symbols_bravais)[7];
+    char (*site_symmetry_symbols_bravais)[7];
 
     debug_print("get_Wyckoff_positions\n");
 
@@ -280,7 +280,7 @@ static Cell *get_Wyckoff_positions(
         return NULL;
     }
 
-    if ((site_symmetry_symbols_bravais = (char(*)[7])malloc(
+    if ((site_symmetry_symbols_bravais = (char (*)[7])malloc(
              sizeof(char[7]) * primitive->size * 4)) == NULL) {
         warning_memory("site_symmetry_symbols_bravais");
         free(wyckoffs_bravais);
@@ -365,7 +365,7 @@ static Cell *get_bravais_exact_positions_and_lattice(
     Cell const *primitive, double const symprec) {
     int i, j, num_pure_trans;
     int *wyckoffs_prim, *equiv_atoms_prim;
-    char(*site_symmetry_symbols_prim)[7];
+    char (*site_symmetry_symbols_prim)[7];
     Symmetry *conv_sym;
     Cell *bravais, *conv_prim;
     VecDBL *exact_positions;
@@ -388,7 +388,7 @@ static Cell *get_bravais_exact_positions_and_lattice(
     }
 
     if ((site_symmetry_symbols_prim =
-             (char(*)[7])malloc(sizeof(char[7]) * primitive->size)) == NULL) {
+             (char (*)[7])malloc(sizeof(char[7]) * primitive->size)) == NULL) {
         warning_memory("site_symmetry_symbols_prim");
         free(wyckoffs_prim);
         wyckoffs_prim = NULL;

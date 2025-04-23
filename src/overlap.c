@@ -497,12 +497,12 @@ static OverlapChecker *overlap_checker_alloc(int size) {
     /* The C spec doesn't allow arithmetic directly on 'void *', */
     /* so a 'char *' is used. */
     chr_blob = (char *)checker->blob;
-    checker->pos_temp_1 = (double(*)[3])(chr_blob + offset_pos_temp_1);
-    checker->pos_temp_2 = (double(*)[3])(chr_blob + offset_pos_temp_2);
+    checker->pos_temp_1 = (double (*)[3])(chr_blob + offset_pos_temp_1);
+    checker->pos_temp_2 = (double (*)[3])(chr_blob + offset_pos_temp_2);
     checker->distance_temp = (double *)(chr_blob + offset_distance_temp);
     checker->perm_temp = (int *)(chr_blob + offset_perm_temp);
-    checker->lattice = (double(*)[3])(chr_blob + offset_lattice);
-    checker->pos_sorted = (double(*)[3])(chr_blob + offset_pos_sorted);
+    checker->lattice = (double (*)[3])(chr_blob + offset_lattice);
+    checker->pos_sorted = (double (*)[3])(chr_blob + offset_pos_sorted);
     checker->types_sorted = (int *)(chr_blob + offset_types_sorted);
     checker->periodic_axes = (int *)(chr_blob + offset_periodic_axes);
 

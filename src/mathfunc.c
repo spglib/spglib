@@ -356,7 +356,7 @@ MatINT *mat_alloc_MatINT(int const size) {
 
     matint->size = size;
     if (size > 0) {
-        if ((matint->mat = (int(*)[3][3])malloc(sizeof(int[3][3]) * size)) ==
+        if ((matint->mat = (int (*)[3][3])malloc(sizeof(int[3][3]) * size)) ==
             NULL) {
             warning_memory("matint->mat");
             free(matint);
@@ -387,7 +387,7 @@ VecDBL *mat_alloc_VecDBL(int const size) {
 
     vecdbl->size = size;
     if (size > 0) {
-        if ((vecdbl->vec = (double(*)[3])malloc(sizeof(double[3]) * size)) ==
+        if ((vecdbl->vec = (double (*)[3])malloc(sizeof(double[3]) * size)) ==
             NULL) {
             warning_memory("vecdbl->vec");
             free(vecdbl);
