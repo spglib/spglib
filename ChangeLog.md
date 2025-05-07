@@ -11,6 +11,10 @@ GitHub release pages and in the git history.
 
 ## [Unreleased]
 
+### Python API
+
+- Switched to using pybind11 for generating the python bindings
+
 ### Fortran API
 
 - Expose `spg_get_spacegroup_type_from_symmetry`.

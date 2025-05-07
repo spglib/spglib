@@ -58,7 +58,7 @@ def magnetic_spacegroup_type_from_symmetry(
 def symmetry_from_database(
     rotations: np.ndarray,
     translations: np.ndarray,
-    hall_number: float,
+    hall_number: int,
 ) -> int | None: ...
 def magnetic_symmetry_from_database(
     rotations: np.ndarray,
@@ -95,12 +95,14 @@ def symmetry(
     symprec: float,
     angle_tolerance: float,
 ) -> int | None: ...
+@deprecated("Not used")
 def symmetry_with_collinear_spin(
     rotations: np.ndarray,
     translations: np.ndarray,
     equiv_atoms: np.ndarray,
     lattice: np.ndarray,
     positions: np.ndarray,
+    atom_types: np.ndarray,
     magmoms: np.ndarray,
     symprec: float,
     angle_tolerance: float,
