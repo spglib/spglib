@@ -37,9 +37,13 @@ set(BUILD_SHARED_LIBS ${SPGLIB_SHARED_LIBS})
 ]=============================================================================]
 
 # Running `find_package(Python)` early to be able to define target with `Python_add_library`
-find_package(Python 3.9 COMPONENTS REQUIRED Development.Module NumPy)
+find_package(Python 3.9 COMPONENTS REQUIRED Development.Module NumPy ${SKBUILD_SABI_COMPONENT})
 find_package(pybind11 CONFIG REQUIRED)
-pybind11_add_module(Spglib_python MODULE WITH_SOABI)
+set(python_extra_args)
+if(SKBUILD_SABI_VERSION)
+    list(APPEND python_extra_args USE_SABI ${SKBUILD_SABI_VERSION})
+endif()
+pybind11_add_module(Spglib_python MODULE WITH_SOABI ${python_extra_args})
 add_library(Spglib::python ALIAS Spglib_python)
 
 #[=============================================================================[

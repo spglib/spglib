@@ -5,11 +5,6 @@ run-name: >
 
 on:
   workflow_dispatch:
-    inputs:
-      cibw_build:
-        required: false
-        type: string
-        description: Overwrite build targets
   pull_request:
     branches: [ develop ]
   push:
@@ -45,8 +40,6 @@ jobs:
     name: build-wheel
     uses: ./.github/workflows/step_build-wheel.yaml
     needs: [ tests ]
-    with:
-      cibw_build: ${{ inputs.cibw_build || 'cp311-*' }}
 
   test-docs:
     name: 📘 test-docs

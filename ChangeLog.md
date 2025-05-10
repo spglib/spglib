@@ -14,6 +14,8 @@ GitHub release pages and in the git history.
 ### Python API
 
 - Switched to using pybind11 for generating the python bindings
+- Started providing ABI compatible python package. The wheel should be compatible with
+  any future python version.
 
 ### Fortran API
 
