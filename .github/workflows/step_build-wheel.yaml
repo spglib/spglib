@@ -6,11 +6,6 @@ permissions:
 on:
   # Make it able to be used in other workflows
   workflow_call:
-    inputs:
-      cibw_build:
-        required: false
-        type: string
-        description: Overwrite build targets
 
 jobs:
   build_wheels:
@@ -27,8 +22,6 @@ jobs:
           fetch-depth: 0
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.23
-        env:
-          CIBW_BUILD: ${{ inputs.cibw_build }}
       - uses: actions/upload-artifact@v4
         with:
           name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
