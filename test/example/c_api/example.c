@@ -2,8 +2,8 @@
 
 #include "spglib.h"
 
-int main(int argc, char* argv[]) {
-    SpglibDataset* dataset;
+int main(int argc, char *argv[]) {
+    SpglibDataset *dataset;
     int i, j;
     char const wl[26] = "abcdefghijklmnopqrstuvwxyz";
 

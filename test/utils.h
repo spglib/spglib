@@ -28,4 +28,4 @@ int show_spg_dataset(double lattice[3][3], double const origin_shift[3],
 int setenv(char const *name, char const *value, int overwrite);
 #endif
 
-#endif  // __test_utils_H__
+#endif // __test_utils_H__

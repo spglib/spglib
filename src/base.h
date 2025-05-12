@@ -9,4 +9,4 @@
     #define SPG_API_TEST
 #endif
 
-#endif  // SPGLIB_BASE_H
+#endif // SPGLIB_BASE_H

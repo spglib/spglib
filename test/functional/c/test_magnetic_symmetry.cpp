@@ -205,8 +205,8 @@ TEST(MagneticSymmetry, test_spg_get_symmetry_with_tensors_rough_symprec) {
     // 96  = 48 * 2
     // = (max number of order of point group) * (spin degrees of freedom)
     int max_size = num_atoms * 96;
-    double symprec = 1e-2;         // with high symprec
-    double mag_symprec = symprec;  // with high mag_symprec
+    double symprec = 1e-2;        // with high symprec
+    double mag_symprec = symprec; // with high mag_symprec
 
     int i, size;
     int equivalent_atoms[3];

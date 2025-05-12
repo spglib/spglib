@@ -27,12 +27,13 @@ static Cell *get_bravais_exact_positions_and_lattice(
     int *wyckoffs, char (*site_symmetry_symbols)[7], int *equiv_atoms,
     int *std_mapping_to_primitive, Spacegroup const *spacegroup,
     Cell const *primitive, double const symprec);
-static Cell *expand_positions_in_bravais(
-    int *wyckoffs, char (*site_symmetry_symbols)[7], int *equiv_atoms,
-    int *std_mapping_to_primitive, Cell const *conv_prim,
-    Symmetry const *conv_sym, int const num_pure_trans,
-    int const *wyckoffs_prim, char const (*site_symmetry_symbols_prim)[7],
-    int const *equiv_atoms_prim);
+static Cell *
+expand_positions_in_bravais(int *wyckoffs, char (*site_symmetry_symbols)[7],
+                            int *equiv_atoms, int *std_mapping_to_primitive,
+                            Cell const *conv_prim, Symmetry const *conv_sym,
+                            int const num_pure_trans, int const *wyckoffs_prim,
+                            char const (*site_symmetry_symbols_prim)[7],
+                            int const *equiv_atoms_prim);
 static Cell *get_conventional_primitive(Spacegroup const *spacegroup,
                                         Cell const *primitive);
 static int get_number_of_pure_translation(Symmetry const *conv_sym);
@@ -477,12 +478,13 @@ err:
 }
 
 /* Return NULL if failed */
-static Cell *expand_positions_in_bravais(
-    int *wyckoffs, char (*site_symmetry_symbols)[7], int *equiv_atoms,
-    int *std_mapping_to_primitive, Cell const *conv_prim,
-    Symmetry const *conv_sym, int const num_pure_trans,
-    int const *wyckoffs_prim, char const (*site_symmetry_symbols_prim)[7],
-    int const *equiv_atoms_prim) {
+static Cell *
+expand_positions_in_bravais(int *wyckoffs, char (*site_symmetry_symbols)[7],
+                            int *equiv_atoms, int *std_mapping_to_primitive,
+                            Cell const *conv_prim, Symmetry const *conv_sym,
+                            int const num_pure_trans, int const *wyckoffs_prim,
+                            char const (*site_symmetry_symbols_prim)[7],
+                            int const *equiv_atoms_prim) {
     int i, j, k, lattice_rank;
     int num_atom;
     Cell *bravais;
@@ -602,37 +604,37 @@ void ref_get_conventional_lattice(double lattice[3][3],
     debug_print("%s\n", spacegroup->choice);
 
     switch (pointgroup.holohedry) {
-        case TRICLI:
-            set_tricli(lattice, metric);
-            break;
-        case MONOCLI:
-            if (spacegroup->hall_number > 0) { /* b-axis is the unique axis. */
-                set_monocli(lattice, metric, spacegroup->choice);
-            } else {
-                set_layer_monocli(lattice, metric, spacegroup->choice);
-            }
-            break;
-        case ORTHO:
-            set_ortho(lattice, metric);
-            break;
-        case TETRA:
-            set_tetra(lattice, metric);
-            break;
-        case TRIGO:
-            if (spacegroup->choice[0] == 'R') {
-                set_rhomb(lattice, metric);
-            } else {
-                set_trigo(lattice, metric);
-            }
-            break;
-        case HEXA:
+    case TRICLI:
+        set_tricli(lattice, metric);
+        break;
+    case MONOCLI:
+        if (spacegroup->hall_number > 0) { /* b-axis is the unique axis. */
+            set_monocli(lattice, metric, spacegroup->choice);
+        } else {
+            set_layer_monocli(lattice, metric, spacegroup->choice);
+        }
+        break;
+    case ORTHO:
+        set_ortho(lattice, metric);
+        break;
+    case TETRA:
+        set_tetra(lattice, metric);
+        break;
+    case TRIGO:
+        if (spacegroup->choice[0] == 'R') {
+            set_rhomb(lattice, metric);
+        } else {
             set_trigo(lattice, metric);
-            break;
-        case CUBIC:
-            set_cubic(lattice, metric);
-            break;
-        case HOLOHEDRY_NONE:
-            break;
+        }
+        break;
+    case HEXA:
+        set_trigo(lattice, metric);
+        break;
+    case CUBIC:
+        set_cubic(lattice, metric);
+        break;
+    case HOLOHEDRY_NONE:
+        break;
     }
 }
 
@@ -681,30 +683,29 @@ static void set_monocli(double lattice[3][3], double const metric[3][3],
     c = sqrt(metric[2][2]);
 
     switch (choice[pos_char]) {
-        case 'a':
-            angle = acos(metric[1][2] / b / c);
-            lattice[0][2] = c;
-            lattice[1][0] = a;
-            lattice[0][1] = b * cos(angle);
-            lattice[2][1] = b * sin(angle);
-            break;
-        case 'b':
-            angle = acos(metric[0][2] / a / c);
-            lattice[0][0] = a;
-            lattice[1][1] = b;
-            lattice[0][2] = c * cos(angle);
-            lattice[2][2] = c * sin(angle);
-            break;
-        case 'c':
-            angle = acos(metric[0][1] / a / b);
-            lattice[0][1] = b;
-            lattice[1][2] = c;
-            lattice[0][0] = a * cos(angle);
-            lattice[2][0] = a * sin(angle);
-            break;
-        default:
-            warning_print(
-                "spglib: Monoclinic unique axis could not be found.\n");
+    case 'a':
+        angle = acos(metric[1][2] / b / c);
+        lattice[0][2] = c;
+        lattice[1][0] = a;
+        lattice[0][1] = b * cos(angle);
+        lattice[2][1] = b * sin(angle);
+        break;
+    case 'b':
+        angle = acos(metric[0][2] / a / c);
+        lattice[0][0] = a;
+        lattice[1][1] = b;
+        lattice[0][2] = c * cos(angle);
+        lattice[2][2] = c * sin(angle);
+        break;
+    case 'c':
+        angle = acos(metric[0][1] / a / b);
+        lattice[0][1] = b;
+        lattice[1][2] = c;
+        lattice[0][0] = a * cos(angle);
+        lattice[2][0] = a * sin(angle);
+        break;
+    default:
+        warning_print("spglib: Monoclinic unique axis could not be found.\n");
     }
 }
 
@@ -722,30 +723,29 @@ static void set_layer_monocli(double lattice[3][3], double const metric[3][3],
     c = sqrt(metric[2][2]);
 
     switch (choice[0]) {
-        case 'a':
-            angle = acos(metric[1][2] / b / c);
-            lattice[0][0] = a;
-            lattice[1][1] = b;
-            lattice[1][2] = c * cos(angle);
-            lattice[2][2] = c * sin(angle);
-            break;
-        case 'b': /* This should not happen */
-            angle = acos(metric[0][2] / a / c);
-            lattice[0][0] = b;
-            lattice[1][1] = a;
-            lattice[0][2] = c * cos(angle);
-            lattice[2][2] = c * sin(angle);
-            break;
-        case 'c':
-            angle = acos(metric[0][1] / a / b);
-            lattice[0][0] = a;
-            lattice[0][1] = b * cos(angle);
-            lattice[1][1] = b * sin(angle);
-            lattice[2][2] = c;
-            break;
-        default:
-            warning_print(
-                "spglib: Monoclinic unique axis could not be found.\n");
+    case 'a':
+        angle = acos(metric[1][2] / b / c);
+        lattice[0][0] = a;
+        lattice[1][1] = b;
+        lattice[1][2] = c * cos(angle);
+        lattice[2][2] = c * sin(angle);
+        break;
+    case 'b': /* This should not happen */
+        angle = acos(metric[0][2] / a / c);
+        lattice[0][0] = b;
+        lattice[1][1] = a;
+        lattice[0][2] = c * cos(angle);
+        lattice[2][2] = c * sin(angle);
+        break;
+    case 'c':
+        angle = acos(metric[0][1] / a / b);
+        lattice[0][0] = a;
+        lattice[0][1] = b * cos(angle);
+        lattice[1][1] = b * sin(angle);
+        lattice[2][2] = c;
+        break;
+    default:
+        warning_print("spglib: Monoclinic unique axis could not be found.\n");
     }
 }
 

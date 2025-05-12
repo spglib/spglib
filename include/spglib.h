@@ -209,14 +209,16 @@ SPG_API SpglibDataset *spg_get_dataset(double const lattice[3][3],
                                        double const symprec);
 
 SPG_DEPRECATED("Experimental interface. May be removed in next major release.")
-SPG_API SpglibDataset *spg_get_layer_dataset(
-    double const lattice[3][3], double const position[][3], int const types[],
-    int const num_atom, int const aperiodic_axis, double const symprec);
+SPG_API SpglibDataset *
+spg_get_layer_dataset(double const lattice[3][3], double const position[][3],
+                      int const types[], int const num_atom,
+                      int const aperiodic_axis, double const symprec);
 
-SPG_API SpglibMagneticDataset *spg_get_magnetic_dataset(
-    double const lattice[3][3], double const position[][3], int const types[],
-    double const *tensors, int const tensor_rank, int const num_atom,
-    int const is_axial, double const symprec);
+SPG_API SpglibMagneticDataset *
+spg_get_magnetic_dataset(double const lattice[3][3], double const position[][3],
+                         int const types[], double const *tensors,
+                         int const tensor_rank, int const num_atom,
+                         int const is_axial, double const symprec);
 
 SPG_API SpglibMagneticDataset *spgms_get_magnetic_dataset(
     double const lattice[3][3], double const position[][3], int const types[],
@@ -362,32 +364,28 @@ SPG_API int spgat_get_multiplicity(double const lattice[3][3],
                                    double const symprec,
                                    double const angle_tolerance);
 
-SPG_DEPRECATED(
-    "Use the variables from SpglibDataset (spacegroup_number, "
-    "international_symbol)")
+SPG_DEPRECATED("Use the variables from SpglibDataset (spacegroup_number, "
+               "international_symbol)")
 SPG_API int spg_get_international(char symbol[11], double const lattice[3][3],
                                   double const position[][3], int const types[],
                                   int const num_atom, double const symprec);
 
-SPG_DEPRECATED(
-    "Use the variables from SpglibDataset (spacegroup_number, "
-    "international_symbol)")
+SPG_DEPRECATED("Use the variables from SpglibDataset (spacegroup_number, "
+               "international_symbol)")
 SPG_API int spgat_get_international(char symbol[11], double const lattice[3][3],
                                     double const position[][3],
                                     int const types[], int const num_atom,
                                     double const symprec,
                                     double const angle_tolerance);
 
-SPG_DEPRECATED(
-    "Use the variables from SpglibDataset (spacegroup_number, "
-    "international_symbol)")
+SPG_DEPRECATED("Use the variables from SpglibDataset (spacegroup_number, "
+               "international_symbol)")
 SPG_API int spg_get_schoenflies(char symbol[7], double const lattice[3][3],
                                 double const position[][3], int const types[],
                                 int const num_atom, double const symprec);
 
-SPG_DEPRECATED(
-    "Use the variables from SpglibDataset and SpglibSpacegroupType "
-    "(spacegroup_number, schoenflies)")
+SPG_DEPRECATED("Use the variables from SpglibDataset and SpglibSpacegroupType "
+               "(spacegroup_number, schoenflies)")
 SPG_API int spgat_get_schoenflies(char symbol[7], double const lattice[3][3],
                                   double const position[][3], int const types[],
                                   int const num_atom, double const symprec,

@@ -53,9 +53,10 @@ static int search_pure_translations(int atoms_found[], Cell const *cell,
 static int is_overlap_all_atoms(double const test_trans[3], int const rot[3][3],
                                 Cell const *cell, double const symprec,
                                 int const is_identity);
-static PointSymmetry transform_pointsymmetry(
-    PointSymmetry const *point_sym_prim, double const new_lattice[3][3],
-    double const original_lattice[3][3]);
+static PointSymmetry
+transform_pointsymmetry(PointSymmetry const *point_sym_prim,
+                        double const new_lattice[3][3],
+                        double const original_lattice[3][3]);
 static Symmetry *get_space_group_operations(PointSymmetry const *lattice_sym,
                                             Cell const *primitive,
                                             double const symprec);
@@ -926,32 +927,32 @@ static PointSymmetry get_lattice_symmetry(Cell const *cell,
                      * Please note that for inclined aperiodic axis, some
                      * operations will not be found */
                     switch (aperiodic_axis) {
-                        case 2:
-                            /*    {{W_11, W_12,      0}, *
-                             * W = {W_21, W_22,      0}, *
-                             *     {   0,    0, (+/-)1}} */
-                            if (axes[0][2] || axes[1][2] || axes[2][0] ||
-                                axes[2][1])
-                                continue;
-                            break;
-                        case 0:
-                            /*    {{(+/-)1,    0,    0}, *
-                             * W = {     0, W_22, W_23}, *
-                             *     {     0, W_32, W_33}} */
-                            if (axes[0][1] || axes[0][2] || axes[1][0] ||
-                                axes[2][0])
-                                continue;
-                            break;
-                        case 1:
-                            /*    {{W_11,      0, W_13}, *
-                             * W = {   0, (+/-)1,    0}, *
-                             *     {W_31,      0, W_33}} */
-                            if (axes[0][1] || axes[1][0] || axes[1][2] ||
-                                axes[2][1])
-                                continue;
-                            break;
-                        default:
-                            break;
+                    case 2:
+                        /*    {{W_11, W_12,      0}, *
+                         * W = {W_21, W_22,      0}, *
+                         *     {   0,    0, (+/-)1}} */
+                        if (axes[0][2] || axes[1][2] || axes[2][0] ||
+                            axes[2][1])
+                            continue;
+                        break;
+                    case 0:
+                        /*    {{(+/-)1,    0,    0}, *
+                         * W = {     0, W_22, W_23}, *
+                         *     {     0, W_32, W_33}} */
+                        if (axes[0][1] || axes[0][2] || axes[1][0] ||
+                            axes[2][0])
+                            continue;
+                        break;
+                    case 1:
+                        /*    {{W_11,      0, W_13}, *
+                         * W = {   0, (+/-)1,    0}, *
+                         *     {W_31,      0, W_33}} */
+                        if (axes[0][1] || axes[1][0] || axes[1][2] ||
+                            axes[2][1])
+                            continue;
+                        break;
+                    default:
+                        break;
                     }
                     if (!((mat_get_determinant_i3(axes) == 1) ||
                           (mat_get_determinant_i3(axes) == -1))) {
@@ -1058,9 +1059,10 @@ static double get_angle(double const metric[3][3], int const i, int const j) {
     return acos(metric[i][j] / length_i / length_j) / PI * 180;
 }
 
-static PointSymmetry transform_pointsymmetry(
-    PointSymmetry const *lat_sym_orig, double const new_lattice[3][3],
-    double const original_lattice[3][3]) {
+static PointSymmetry
+transform_pointsymmetry(PointSymmetry const *lat_sym_orig,
+                        double const new_lattice[3][3],
+                        double const original_lattice[3][3]) {
     int i, size;
     double trans_mat[3][3], inv_mat[3][3], drot[3][3];
     PointSymmetry lat_sym_new;

@@ -360,11 +360,12 @@ static Spacegroup *search_spacegroup_with_symmetry(
 static Spacegroup *get_spacegroup(int const hall_number,
                                   double const origin_shift[3],
                                   double const conv_lattice[3][3]);
-static int iterative_search_hall_number(
-    double origin_shift[3], double conv_lattice[3][3], int const candidates[],
-    int const num_candidates, Primitive const *primitive,
-    Symmetry const *symmetry, double const symprec,
-    double const angle_tolerance);
+static int
+iterative_search_hall_number(double origin_shift[3], double conv_lattice[3][3],
+                             int const candidates[], int const num_candidates,
+                             Primitive const *primitive,
+                             Symmetry const *symmetry, double const symprec,
+                             double const angle_tolerance);
 static int change_basis_tricli(int tmat_int[3][3],
                                double const conv_lattice[3][3],
                                double const primitive_lattice[3][3],
@@ -381,11 +382,12 @@ static int search_hall_number(double origin_shift[3], double conv_lattice[3][3],
                               int const candidates[], int const num_candidates,
                               Primitive const *primitive,
                               Symmetry const *symmetry, double const symprec);
-static int match_hall_symbol_db(
-    double origin_shift[3], double conv_lattice[3][3],
-    double const (*orig_lattice)[3], int const hall_number,
-    int const pointgroup_number, Holohedry const holohedry,
-    Centering const centering, Symmetry const *symmetry, double const symprec);
+static int
+match_hall_symbol_db(double origin_shift[3], double conv_lattice[3][3],
+                     double const (*orig_lattice)[3], int const hall_number,
+                     int const pointgroup_number, Holohedry const holohedry,
+                     Centering const centering, Symmetry const *symmetry,
+                     double const symprec);
 static int match_hall_symbol_db_monocli(
     double origin_shift[3], double conv_lattice[3][3],
     double const (*orig_lattice)[3], int const hall_number,
@@ -396,23 +398,22 @@ static int match_hall_symbol_db_monocli_in_loop(
     int const change_of_basis_index, double const (*orig_lattice)[3],
     int const check_norms, int const hall_number, Centering const centering,
     Symmetry const *conv_symmetry, double const symprec);
-static int match_hall_symbol_db_ortho(
-    double origin_shift[3], double conv_lattice[3][3],
-    double const (*orig_lattice)[3], int const hall_number,
-    Centering const centering, Symmetry const *symmetry,
-    int const num_free_axes, double const symprec);
+static int
+match_hall_symbol_db_ortho(double origin_shift[3], double conv_lattice[3][3],
+                           double const (*orig_lattice)[3],
+                           int const hall_number, Centering const centering,
+                           Symmetry const *symmetry, int const num_free_axes,
+                           double const symprec);
 static int match_hall_symbol_db_ortho_in_loop(
     double origin_shift[3], double lattice[3][3],
     double const (*orig_lattice)[3], int const axis_choice_index,
     int const hall_number, Centering const centering, Symmetry const *symmetry,
     int const num_free_axes, double const symprec);
-static int match_hall_symbol_db_cubic(double origin_shift[3],
-                                      double conv_lattice[3][3],
-                                      double const (*orig_lattice)[3],
-                                      int const hall_number,
-                                      Centering const centering,
-                                      Symmetry const *conv_symmetry,
-                                      double const symprec);
+static int
+match_hall_symbol_db_cubic(double origin_shift[3], double conv_lattice[3][3],
+                           double const (*orig_lattice)[3],
+                           int const hall_number, Centering const centering,
+                           Symmetry const *conv_symmetry, double const symprec);
 static int match_hall_symbol_db_cubic_in_loop(
     double origin_shift[3], double conv_lattice[3][3],
     double const (*orig_lattice)[3], int const i, int const hall_number,
@@ -532,26 +533,26 @@ Cell *spa_transform_to_primitive(int *mapping_table, Cell const *cell,
     }
 
     switch (centering) {
-        case PRIMITIVE:
-            mat_copy_matrix_d3(tmat, tmat_inv);
-            break;
-        case A_FACE:
-            mat_multiply_matrix_d3(tmat, tmat_inv, A_mat);
-            break;
-        case C_FACE:
-            mat_multiply_matrix_d3(tmat, tmat_inv, C_mat);
-            break;
-        case FACE:
-            mat_multiply_matrix_d3(tmat, tmat_inv, F_mat);
-            break;
-        case BODY:
-            mat_multiply_matrix_d3(tmat, tmat_inv, I_mat);
-            break;
-        case R_CENTER:
-            mat_multiply_matrix_d3(tmat, tmat_inv, R_mat);
-            break;
-        default:
-            goto err;
+    case PRIMITIVE:
+        mat_copy_matrix_d3(tmat, tmat_inv);
+        break;
+    case A_FACE:
+        mat_multiply_matrix_d3(tmat, tmat_inv, A_mat);
+        break;
+    case C_FACE:
+        mat_multiply_matrix_d3(tmat, tmat_inv, C_mat);
+        break;
+    case FACE:
+        mat_multiply_matrix_d3(tmat, tmat_inv, F_mat);
+        break;
+    case BODY:
+        mat_multiply_matrix_d3(tmat, tmat_inv, I_mat);
+        break;
+    case R_CENTER:
+        mat_multiply_matrix_d3(tmat, tmat_inv, R_mat);
+        break;
+    default:
+        goto err;
     }
 
     mat_multiply_matrix_d3(prim_lat, cell->lattice, tmat);
@@ -580,30 +581,30 @@ Cell *spa_transform_from_primitive(Cell const *primitive,
     std_cell = NULL;
 
     switch (centering) {
-        case PRIMITIVE:
-            break;
-        case A_FACE:
-            mat_copy_matrix_d3(tmat, A_mat);
-            mat_inverse_matrix_d3(inv_tmat, A_mat, 0);
-            break;
-        case C_FACE:
-            mat_copy_matrix_d3(tmat, C_mat);
-            mat_inverse_matrix_d3(inv_tmat, C_mat, 0);
-            break;
-        case FACE:
-            mat_copy_matrix_d3(tmat, F_mat);
-            mat_inverse_matrix_d3(inv_tmat, F_mat, 0);
-            break;
-        case BODY:
-            mat_copy_matrix_d3(tmat, I_mat);
-            mat_inverse_matrix_d3(inv_tmat, I_mat, 0);
-            break;
-        case R_CENTER:
-            mat_copy_matrix_d3(tmat, R_mat);
-            mat_inverse_matrix_d3(inv_tmat, R_mat, 0);
-            break;
-        default:
-            goto ret;
+    case PRIMITIVE:
+        break;
+    case A_FACE:
+        mat_copy_matrix_d3(tmat, A_mat);
+        mat_inverse_matrix_d3(inv_tmat, A_mat, 0);
+        break;
+    case C_FACE:
+        mat_copy_matrix_d3(tmat, C_mat);
+        mat_inverse_matrix_d3(inv_tmat, C_mat, 0);
+        break;
+    case FACE:
+        mat_copy_matrix_d3(tmat, F_mat);
+        mat_inverse_matrix_d3(inv_tmat, F_mat, 0);
+        break;
+    case BODY:
+        mat_copy_matrix_d3(tmat, I_mat);
+        mat_inverse_matrix_d3(inv_tmat, I_mat, 0);
+        break;
+    case R_CENTER:
+        mat_copy_matrix_d3(tmat, R_mat);
+        mat_inverse_matrix_d3(inv_tmat, R_mat, 0);
+        break;
+    default:
+        goto ret;
     }
 
     multi = get_centering_shifts(shift, centering);
@@ -739,11 +740,12 @@ static Spacegroup *get_spacegroup(int const hall_number,
 }
 
 /* Return 0 if failed */
-static int iterative_search_hall_number(
-    double origin_shift[3], double conv_lattice[3][3], int const candidates[],
-    int const num_candidates, Primitive const *primitive,
-    Symmetry const *symmetry, double const symprec,
-    double const angle_tolerance) {
+static int
+iterative_search_hall_number(double origin_shift[3], double conv_lattice[3][3],
+                             int const candidates[], int const num_candidates,
+                             Primitive const *primitive,
+                             Symmetry const *symmetry, double const symprec,
+                             double const angle_tolerance) {
     int attempt, hall_number;
     double tolerance;
     Symmetry *sym_reduced;
@@ -988,11 +990,12 @@ static Symmetry *get_initial_conventional_symmetry(Centering const centering,
 }
 
 /* Return 0 if failed */
-static int match_hall_symbol_db(
-    double origin_shift[3], double conv_lattice[3][3],
-    double const (*orig_lattice)[3], int const hall_number,
-    int const pointgroup_number, Holohedry const holohedry,
-    Centering const centering, Symmetry const *symmetry, double const symprec) {
+static int
+match_hall_symbol_db(double origin_shift[3], double conv_lattice[3][3],
+                     double const (*orig_lattice)[3], int const hall_number,
+                     int const pointgroup_number, Holohedry const holohedry,
+                     Centering const centering, Symmetry const *symmetry,
+                     double const symprec) {
     int is_found, num_free_axes;
     SpacegroupType spacegroup_type;
     Symmetry *changed_symmetry;
@@ -1007,100 +1010,97 @@ static int match_hall_symbol_db(
     }
 
     switch (holohedry) {
-        case MONOCLI:
-            if (match_hall_symbol_db_monocli(
-                    origin_shift, conv_lattice, orig_lattice, hall_number,
-                    spacegroup_type.number, centering, symmetry, symprec)) {
-                return 1;
-            }
-            break;
+    case MONOCLI:
+        if (match_hall_symbol_db_monocli(
+                origin_shift, conv_lattice, orig_lattice, hall_number,
+                spacegroup_type.number, centering, symmetry, symprec)) {
+            return 1;
+        }
+        break;
 
-        case ORTHO:
-            if (hall_number > 0) {
-                num_free_axes =
-                    num_axis_choices_ortho[spacegroup_type.number - 16];
-            } else if (hall_number < 0) {
-                num_free_axes =
-                    layer_num_axis_choices_ortho[spacegroup_type.number - 19];
-            }
-            assert(num_free_axes > 0);
+    case ORTHO:
+        if (hall_number > 0) {
+            num_free_axes = num_axis_choices_ortho[spacegroup_type.number - 16];
+        } else if (hall_number < 0) {
+            num_free_axes =
+                layer_num_axis_choices_ortho[spacegroup_type.number - 19];
+        }
+        assert(num_free_axes > 0);
 
-            /* Switching two axes */
-            /* Two steps: */
-            /*   1. Finding principal axis for the representative hall symbol */
-            /*      of the specified hall symbol without checking basis vector
-             */
-            /*      lengths preference. */
-            /*   2. Finding transformation matrix and origin shift for the */
-            /*      specified hall symbol. */
-            if (hall_number > 0 && num_free_axes == 2) {
-                mat_copy_matrix_d3(changed_lattice, conv_lattice);
-                if (!match_hall_symbol_db_ortho(
-                        origin_shift, changed_lattice, orig_lattice,
-                        spacegroup_to_hall_number[spacegroup_type.number - 1],
-                        centering, symmetry, 0, symprec)) {
-                    break;
-                }
-                mat_inverse_matrix_d3(inv_lattice, conv_lattice, 0);
-                mat_multiply_matrix_d3(tmat, inv_lattice, changed_lattice);
-
-                if ((changed_symmetry = get_conventional_symmetry(
-                         tmat, PRIMITIVE, symmetry)) == NULL) {
-                    goto err;
-                }
-
-                is_found = match_hall_symbol_db_ortho(
-                    origin_shift, changed_lattice, orig_lattice, hall_number,
-                    centering, changed_symmetry, 2, symprec);
-                sym_free_symmetry(changed_symmetry);
-                changed_symmetry = NULL;
-                if (is_found) {
-                    mat_copy_matrix_d3(conv_lattice, changed_lattice);
-                    return 1;
-                }
+        /* Switching two axes */
+        /* Two steps: */
+        /*   1. Finding principal axis for the representative hall symbol */
+        /*      of the specified hall symbol without checking basis vector
+         */
+        /*      lengths preference. */
+        /*   2. Finding transformation matrix and origin shift for the */
+        /*      specified hall symbol. */
+        if (hall_number > 0 && num_free_axes == 2) {
+            mat_copy_matrix_d3(changed_lattice, conv_lattice);
+            if (!match_hall_symbol_db_ortho(
+                    origin_shift, changed_lattice, orig_lattice,
+                    spacegroup_to_hall_number[spacegroup_type.number - 1],
+                    centering, symmetry, 0, symprec)) {
                 break;
             }
+            mat_inverse_matrix_d3(inv_lattice, conv_lattice, 0);
+            mat_multiply_matrix_d3(tmat, inv_lattice, changed_lattice);
 
-            if (match_hall_symbol_db_ortho(origin_shift, conv_lattice,
-                                           orig_lattice, hall_number, centering,
-                                           symmetry, num_free_axes, symprec)) {
+            if ((changed_symmetry = get_conventional_symmetry(
+                     tmat, PRIMITIVE, symmetry)) == NULL) {
+                goto err;
+            }
+
+            is_found = match_hall_symbol_db_ortho(
+                origin_shift, changed_lattice, orig_lattice, hall_number,
+                centering, changed_symmetry, 2, symprec);
+            sym_free_symmetry(changed_symmetry);
+            changed_symmetry = NULL;
+            if (is_found) {
+                mat_copy_matrix_d3(conv_lattice, changed_lattice);
                 return 1;
             }
             break;
+        }
 
-        case CUBIC:
-            if (match_hall_symbol_db_cubic(origin_shift, conv_lattice,
-                                           orig_lattice, hall_number, centering,
-                                           symmetry, symprec)) {
+        if (match_hall_symbol_db_ortho(origin_shift, conv_lattice, orig_lattice,
+                                       hall_number, centering, symmetry,
+                                       num_free_axes, symprec)) {
+            return 1;
+        }
+        break;
+
+    case CUBIC:
+        if (match_hall_symbol_db_cubic(origin_shift, conv_lattice, orig_lattice,
+                                       hall_number, centering, symmetry,
+                                       symprec)) {
+            return 1;
+        }
+        break;
+
+    case TRIGO:
+        if ((centering == R_CENTER) &&
+            (hall_number == 433 || hall_number == 434 || hall_number == 436 ||
+             hall_number == 437 || hall_number == 444 || hall_number == 445 ||
+             hall_number == 450 || hall_number == 451 || hall_number == 452 ||
+             hall_number == 453 || hall_number == 458 || hall_number == 459 ||
+             hall_number == 460 || hall_number == 461)) {
+            /* Rhombohedral. symmetry is for a=b=c basis. */
+            if (match_hall_symbol_db_rhombo(origin_shift, conv_lattice,
+                                            orig_lattice, hall_number, symmetry,
+                                            symprec)) {
                 return 1;
             }
             break;
-
-        case TRIGO:
-            if ((centering == R_CENTER) &&
-                (hall_number == 433 || hall_number == 434 ||
-                 hall_number == 436 || hall_number == 437 ||
-                 hall_number == 444 || hall_number == 445 ||
-                 hall_number == 450 || hall_number == 451 ||
-                 hall_number == 452 || hall_number == 453 ||
-                 hall_number == 458 || hall_number == 459 ||
-                 hall_number == 460 || hall_number == 461)) {
-                /* Rhombohedral. symmetry is for a=b=c basis. */
-                if (match_hall_symbol_db_rhombo(origin_shift, conv_lattice,
-                                                orig_lattice, hall_number,
-                                                symmetry, symprec)) {
-                    return 1;
-                }
-                break;
-            }
-            /* Do not break for other trigonal cases */
-        default: /* HEXA, TETRA, TRICLI and rest of TRIGO */
-            if (match_hall_symbol_db_others(
-                    origin_shift, conv_lattice, orig_lattice, hall_number,
-                    centering, holohedry, symmetry, symprec)) {
-                return 1;
-            }
-            break;
+        }
+        /* Do not break for other trigonal cases */
+    default: /* HEXA, TETRA, TRICLI and rest of TRIGO */
+        if (match_hall_symbol_db_others(origin_shift, conv_lattice,
+                                        orig_lattice, hall_number, centering,
+                                        holohedry, symmetry, symprec)) {
+            return 1;
+        }
+        break;
     }
 
 err:
@@ -1320,11 +1320,12 @@ cont:
 }
 
 /* Return 0 if failed */
-static int match_hall_symbol_db_ortho(
-    double origin_shift[3], double conv_lattice[3][3],
-    double const (*orig_lattice)[3], int const hall_number,
-    Centering const centering, Symmetry const *conv_symmetry,
-    int const num_free_axes, double const symprec) {
+static int
+match_hall_symbol_db_ortho(double origin_shift[3], double conv_lattice[3][3],
+                           double const (*orig_lattice)[3],
+                           int const hall_number, Centering const centering,
+                           Symmetry const *conv_symmetry,
+                           int const num_free_axes, double const symprec) {
     int i, j;
 
     // For layer, try axis choices abc and ba-c, which preserve the aperiodic
@@ -1693,29 +1694,29 @@ static Symmetry *get_conventional_symmetry(double const tmat[3][3],
     size = primitive_sym->size;
 
     switch (centering) {
-        case FACE:
-            if ((symmetry = sym_alloc_symmetry(size * 4)) == NULL) {
-                return NULL;
-            }
-            break;
-        case R_CENTER:
-            if ((symmetry = sym_alloc_symmetry(size * 3)) == NULL) {
-                return NULL;
-            }
-            break;
-        case BODY:
-        case A_FACE:
-        case B_FACE:
-        case C_FACE:
-            if ((symmetry = sym_alloc_symmetry(size * 2)) == NULL) {
-                return NULL;
-            }
-            break;
-        default:
-            if ((symmetry = sym_alloc_symmetry(size)) == NULL) {
-                return NULL;
-            }
-            break;
+    case FACE:
+        if ((symmetry = sym_alloc_symmetry(size * 4)) == NULL) {
+            return NULL;
+        }
+        break;
+    case R_CENTER:
+        if ((symmetry = sym_alloc_symmetry(size * 3)) == NULL) {
+            return NULL;
+        }
+        break;
+    case BODY:
+    case A_FACE:
+    case B_FACE:
+    case C_FACE:
+        if ((symmetry = sym_alloc_symmetry(size * 2)) == NULL) {
+            return NULL;
+        }
+        break;
+    default:
+        if ((symmetry = sym_alloc_symmetry(size)) == NULL) {
+            return NULL;
+        }
+        break;
     }
 
     for (i = 0; i < size; i++) {
@@ -1775,56 +1776,56 @@ static Centering get_centering(double correction_mat[3][3],
     debug_print("multiplicity: %d\n", det);
 
     switch (det) {
-        case 1:
-            centering = PRIMITIVE;
-            break;
+    case 1:
+        centering = PRIMITIVE;
+        break;
 
-        case 2:
-            centering = get_base_center(tmat);
-            if (centering == A_FACE) {
-                if (laue == LAUE2M) {
-                    debug_print("Monocli A to C\n");
-                    mat_copy_matrix_d3(correction_mat, monocli_a2c);
-                } else {
-                    mat_copy_matrix_d3(correction_mat, a2c);
-                }
-                centering = C_FACE;
+    case 2:
+        centering = get_base_center(tmat);
+        if (centering == A_FACE) {
+            if (laue == LAUE2M) {
+                debug_print("Monocli A to C\n");
+                mat_copy_matrix_d3(correction_mat, monocli_a2c);
+            } else {
+                mat_copy_matrix_d3(correction_mat, a2c);
             }
-            if (centering == B_FACE) {
-                mat_copy_matrix_d3(correction_mat, b2c);
-                centering = C_FACE;
-            }
-            if (laue == LAUE2M && centering == BODY) {
-                debug_print("Monocli I to C\n");
-                mat_copy_matrix_d3(correction_mat, monocli_i2c);
-                centering = C_FACE;
-            }
-            break;
+            centering = C_FACE;
+        }
+        if (centering == B_FACE) {
+            mat_copy_matrix_d3(correction_mat, b2c);
+            centering = C_FACE;
+        }
+        if (laue == LAUE2M && centering == BODY) {
+            debug_print("Monocli I to C\n");
+            mat_copy_matrix_d3(correction_mat, monocli_i2c);
+            centering = C_FACE;
+        }
+        break;
 
-        case 3:
-            /* hP (a=b) but not hR (a=b=c) */
-            centering = R_CENTER;
-            mat_multiply_matrix_id3(trans_corr_mat, tmat, rhombo_obverse);
-            if (mat_is_int_matrix(trans_corr_mat, INT_PREC)) {
-                mat_copy_matrix_d3(correction_mat, rhombo_obverse);
-                debug_print("R-center observe setting\n");
-                debug_print_matrix_d3(trans_corr_mat);
-            }
-            mat_multiply_matrix_id3(trans_corr_mat, tmat, rhomb_reverse);
-            if (mat_is_int_matrix(trans_corr_mat, INT_PREC)) {
-                mat_copy_matrix_d3(correction_mat, rhomb_reverse);
-                debug_print("R-center reverse setting\n");
-                debug_print_matrix_d3(trans_corr_mat);
-            }
-            break;
+    case 3:
+        /* hP (a=b) but not hR (a=b=c) */
+        centering = R_CENTER;
+        mat_multiply_matrix_id3(trans_corr_mat, tmat, rhombo_obverse);
+        if (mat_is_int_matrix(trans_corr_mat, INT_PREC)) {
+            mat_copy_matrix_d3(correction_mat, rhombo_obverse);
+            debug_print("R-center observe setting\n");
+            debug_print_matrix_d3(trans_corr_mat);
+        }
+        mat_multiply_matrix_id3(trans_corr_mat, tmat, rhomb_reverse);
+        if (mat_is_int_matrix(trans_corr_mat, INT_PREC)) {
+            mat_copy_matrix_d3(correction_mat, rhomb_reverse);
+            debug_print("R-center reverse setting\n");
+            debug_print_matrix_d3(trans_corr_mat);
+        }
+        break;
 
-        case 4:
-            centering = FACE;
-            break;
+    case 4:
+        centering = FACE;
+        break;
 
-        default:
-            centering = CENTERING_ERROR;
-            break;
+    default:
+        centering = CENTERING_ERROR;
+        break;
     }
 
     return centering;
@@ -1962,38 +1963,38 @@ static int is_equivalent_lattice(double tmat[3][3], int const mode,
     mat_multiply_matrix_d3(tmat, inv_lat, orig_lattice);
 
     switch (mode) {
-        case 0: /* Check identity of all elements */
-            if (mat_check_identity_matrix_d3(identity, tmat, symprec)) {
-                return 1;
-            }
-            break;
+    case 0: /* Check identity of all elements */
+        if (mat_check_identity_matrix_d3(identity, tmat, symprec)) {
+            return 1;
+        }
+        break;
 
-        case 1: /* Check identity of all elements allowing axes flips */
-            for (i = 0; i < 3; i++) {
-                for (j = 0; j < 3; j++) {
-                    tmat_abs[i][j] = mat_Dabs(tmat[i][j]);
-                }
+    case 1: /* Check identity of all elements allowing axes flips */
+        for (i = 0; i < 3; i++) {
+            for (j = 0; j < 3; j++) {
+                tmat_abs[i][j] = mat_Dabs(tmat[i][j]);
             }
+        }
 
-            if (mat_check_identity_matrix_d3(identity, tmat_abs, symprec)) {
-                return 1;
-            }
-            break;
+        if (mat_check_identity_matrix_d3(identity, tmat_abs, symprec)) {
+            return 1;
+        }
+        break;
 
-        case 2: /* Check metric tensors */
-            mat_cast_matrix_3d_to_3i(tmat_int, tmat);
-            if (!mat_check_identity_matrix_id3(tmat_int, tmat, symprec)) {
-                break;
-            }
-            if (mat_get_determinant_i3(tmat_int) != 1) {
-                break;
-            }
-            mat_get_metric(orig_metric, orig_lattice);
-            mat_get_metric(metric, lattice);
-            if (mat_check_identity_matrix_d3(orig_metric, metric, symprec)) {
-                return 1;
-            }
+    case 2: /* Check metric tensors */
+        mat_cast_matrix_3d_to_3i(tmat_int, tmat);
+        if (!mat_check_identity_matrix_id3(tmat_int, tmat, symprec)) {
             break;
+        }
+        if (mat_get_determinant_i3(tmat_int) != 1) {
+            break;
+        }
+        mat_get_metric(orig_metric, orig_lattice);
+        mat_get_metric(metric, lattice);
+        if (mat_check_identity_matrix_d3(orig_metric, metric, symprec)) {
+            return 1;
+        }
+        break;
     }
 
 fail:

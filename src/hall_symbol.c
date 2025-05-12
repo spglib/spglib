@@ -8569,35 +8569,29 @@ static int find_hall_symbol(double origin_shift[3],
     double primitive_lattice[3][3];
 
     switch (centering) {
-        case PRIMITIVE:
-            mat_copy_matrix_d3(primitive_lattice, bravais_lattice);
-            break;
-        case BODY:
-            mat_multiply_matrix_d3(primitive_lattice, bravais_lattice,
-                                   M_bcc_inv);
-            break;
-        case FACE:
-            mat_multiply_matrix_d3(primitive_lattice, bravais_lattice,
-                                   M_fcc_inv);
-            break;
-        case A_FACE:
-            mat_multiply_matrix_d3(primitive_lattice, bravais_lattice,
-                                   M_ac_inv);
-            break;
-        case B_FACE:
-            mat_multiply_matrix_d3(primitive_lattice, bravais_lattice,
-                                   M_bc_inv);
-            break;
-        case C_FACE:
-            mat_multiply_matrix_d3(primitive_lattice, bravais_lattice,
-                                   M_cc_inv);
-            break;
-        case R_CENTER:
-            mat_multiply_matrix_d3(primitive_lattice, bravais_lattice,
-                                   M_rc_inv);
-            break;
-        default:
-            break;
+    case PRIMITIVE:
+        mat_copy_matrix_d3(primitive_lattice, bravais_lattice);
+        break;
+    case BODY:
+        mat_multiply_matrix_d3(primitive_lattice, bravais_lattice, M_bcc_inv);
+        break;
+    case FACE:
+        mat_multiply_matrix_d3(primitive_lattice, bravais_lattice, M_fcc_inv);
+        break;
+    case A_FACE:
+        mat_multiply_matrix_d3(primitive_lattice, bravais_lattice, M_ac_inv);
+        break;
+    case B_FACE:
+        mat_multiply_matrix_d3(primitive_lattice, bravais_lattice, M_bc_inv);
+        break;
+    case C_FACE:
+        mat_multiply_matrix_d3(primitive_lattice, bravais_lattice, M_cc_inv);
+        break;
+    case R_CENTER:
+        mat_multiply_matrix_d3(primitive_lattice, bravais_lattice, M_rc_inv);
+        break;
+    default:
+        break;
     }
 
     /* CUBIC IT: 195-230, Hall: 489-530 */
@@ -8683,30 +8677,28 @@ static int find_hall_symbol(double origin_shift[3],
 
 found:
     switch (centering) {
-        case PRIMITIVE:
-            break;
-        case BODY:
-            mat_multiply_matrix_vector_d3(origin_shift, M_bcc_inv,
-                                          origin_shift);
-            break;
-        case FACE:
-            mat_multiply_matrix_vector_d3(origin_shift, M_fcc_inv,
-                                          origin_shift);
-            break;
-        case A_FACE:
-            mat_multiply_matrix_vector_d3(origin_shift, M_ac_inv, origin_shift);
-            break;
-        case B_FACE:
-            mat_multiply_matrix_vector_d3(origin_shift, M_bc_inv, origin_shift);
-            break;
-        case C_FACE:
-            mat_multiply_matrix_vector_d3(origin_shift, M_cc_inv, origin_shift);
-            break;
-        case R_CENTER:
-            mat_multiply_matrix_vector_d3(origin_shift, M_rc_inv, origin_shift);
-            break;
-        default:
-            break;
+    case PRIMITIVE:
+        break;
+    case BODY:
+        mat_multiply_matrix_vector_d3(origin_shift, M_bcc_inv, origin_shift);
+        break;
+    case FACE:
+        mat_multiply_matrix_vector_d3(origin_shift, M_fcc_inv, origin_shift);
+        break;
+    case A_FACE:
+        mat_multiply_matrix_vector_d3(origin_shift, M_ac_inv, origin_shift);
+        break;
+    case B_FACE:
+        mat_multiply_matrix_vector_d3(origin_shift, M_bc_inv, origin_shift);
+        break;
+    case C_FACE:
+        mat_multiply_matrix_vector_d3(origin_shift, M_cc_inv, origin_shift);
+        break;
+    case R_CENTER:
+        mat_multiply_matrix_vector_d3(origin_shift, M_rc_inv, origin_shift);
+        break;
+    default:
+        break;
     }
     return 1;
 }
@@ -9074,29 +9066,29 @@ static void transform_translation(double trans_reduced[3],
     */
 
     switch (centering) {
-        case PRIMITIVE:
-            mat_copy_vector_d3(trans_reduced, trans);
-            break;
-        case BODY:
-            mat_multiply_matrix_vector_id3(trans_reduced, M_bcc, trans);
-            break;
-        case FACE:
-            mat_multiply_matrix_vector_id3(trans_reduced, M_fcc, trans);
-            break;
-        case A_FACE:
-            mat_multiply_matrix_vector_id3(trans_reduced, M_ac, trans);
-            break;
-        case B_FACE:
-            mat_multiply_matrix_vector_id3(trans_reduced, M_bc, trans);
-            break;
-        case C_FACE:
-            mat_multiply_matrix_vector_id3(trans_reduced, M_cc, trans);
-            break;
-        case R_CENTER:
-            mat_multiply_matrix_vector_id3(trans_reduced, M_rc, trans);
-            break;
-        default:
-            break;
+    case PRIMITIVE:
+        mat_copy_vector_d3(trans_reduced, trans);
+        break;
+    case BODY:
+        mat_multiply_matrix_vector_id3(trans_reduced, M_bcc, trans);
+        break;
+    case FACE:
+        mat_multiply_matrix_vector_id3(trans_reduced, M_fcc, trans);
+        break;
+    case A_FACE:
+        mat_multiply_matrix_vector_id3(trans_reduced, M_ac, trans);
+        break;
+    case B_FACE:
+        mat_multiply_matrix_vector_id3(trans_reduced, M_bc, trans);
+        break;
+    case C_FACE:
+        mat_multiply_matrix_vector_id3(trans_reduced, M_cc, trans);
+        break;
+    case R_CENTER:
+        mat_multiply_matrix_vector_id3(trans_reduced, M_rc, trans);
+        break;
+    default:
+        break;
     }
 
     /* This is done in get_origin_shift
@@ -9111,32 +9103,26 @@ static void transform_rotation(double rot_reduced[3][3],
     mat_cast_matrix_3i_to_3d(rot_reduced, rot);
     if (centering != PRIMITIVE) {
         switch (centering) {
-            case BODY:
-                mat_get_similar_matrix_d3(rot_reduced, rot_reduced, M_bcc_inv,
-                                          0);
-                break;
-            case FACE:
-                mat_get_similar_matrix_d3(rot_reduced, rot_reduced, M_fcc_inv,
-                                          0);
-                break;
-            case A_FACE:
-                mat_get_similar_matrix_d3(rot_reduced, rot_reduced, M_ac_inv,
-                                          0);
-                break;
-            case B_FACE:
-                mat_get_similar_matrix_d3(rot_reduced, rot_reduced, M_bc_inv,
-                                          0);
-                break;
-            case C_FACE:
-                mat_get_similar_matrix_d3(rot_reduced, rot_reduced, M_cc_inv,
-                                          0);
-                break;
-            case R_CENTER:
-                mat_get_similar_matrix_d3(rot_reduced, rot_reduced, M_rc_inv,
-                                          0);
-                break;
-            default:
-                break;
+        case BODY:
+            mat_get_similar_matrix_d3(rot_reduced, rot_reduced, M_bcc_inv, 0);
+            break;
+        case FACE:
+            mat_get_similar_matrix_d3(rot_reduced, rot_reduced, M_fcc_inv, 0);
+            break;
+        case A_FACE:
+            mat_get_similar_matrix_d3(rot_reduced, rot_reduced, M_ac_inv, 0);
+            break;
+        case B_FACE:
+            mat_get_similar_matrix_d3(rot_reduced, rot_reduced, M_bc_inv, 0);
+            break;
+        case C_FACE:
+            mat_get_similar_matrix_d3(rot_reduced, rot_reduced, M_cc_inv, 0);
+            break;
+        case R_CENTER:
+            mat_get_similar_matrix_d3(rot_reduced, rot_reduced, M_rc_inv, 0);
+            break;
+        default:
+            break;
         }
     }
 }

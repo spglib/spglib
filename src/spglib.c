@@ -76,15 +76,17 @@ static SpglibDataset *get_dataset(double const lattice[3][3],
                                   int const num_atom, int const hall_number,
                                   double const symprec,
                                   double const angle_tolerance);
-static SpglibDataset *get_layer_dataset(
-    double const lattice[3][3], double const position[][3], int const types[],
-    int const num_atom, int const aperiodic_axis, int const hall_number,
-    double const symprec, double const angle_tolerance);
-static SpglibMagneticDataset *get_magnetic_dataset(
-    double const lattice[3][3], double const position[][3], int const types[],
-    double const *tensors, int const tensor_rank, int const num_atom,
-    int const is_axial, double const symprec, double const angle_tolerance,
-    double const mag_symprec);
+static SpglibDataset *
+get_layer_dataset(double const lattice[3][3], double const position[][3],
+                  int const types[], int const num_atom,
+                  int const aperiodic_axis, int const hall_number,
+                  double const symprec, double const angle_tolerance);
+static SpglibMagneticDataset *
+get_magnetic_dataset(double const lattice[3][3], double const position[][3],
+                     int const types[], double const *tensors,
+                     int const tensor_rank, int const num_atom,
+                     int const is_axial, double const symprec,
+                     double const angle_tolerance, double const mag_symprec);
 static SpglibDataset *init_dataset(void);
 static SpglibMagneticDataset *init_magnetic_dataset(void);
 static int set_dataset(SpglibDataset *dataset, Cell const *cell,
@@ -246,10 +248,11 @@ SpglibDataset *spg_get_layer_dataset(double const lattice[3][3],
                              0, symprec, -1.0);
 }
 
-SpglibMagneticDataset *spg_get_magnetic_dataset(
-    double const lattice[3][3], double const position[][3], int const types[],
-    double const *tensors, int const tensor_rank, int const num_atom,
-    int const is_axial, double const symprec) {
+SpglibMagneticDataset *
+spg_get_magnetic_dataset(double const lattice[3][3], double const position[][3],
+                         int const types[], double const *tensors,
+                         int const tensor_rank, int const num_atom,
+                         int const is_axial, double const symprec) {
     return get_magnetic_dataset(lattice, position, types, tensors, tensor_rank,
                                 num_atom, is_axial, symprec, -1.0, -1.0);
 }
@@ -760,8 +763,8 @@ SpglibSpacegroupType spg_get_spacegroup_type(int const hall_number) {
     return spglibtype;
 }
 
-SpglibMagneticSpacegroupType spg_get_magnetic_spacegroup_type(
-    int const uni_number) {
+SpglibMagneticSpacegroupType
+spg_get_magnetic_spacegroup_type(int const uni_number) {
     SpglibMagneticSpacegroupType spglibtype;
     MagneticSpacegroupType msgtype;
 
@@ -1080,10 +1083,11 @@ found:
 }
 
 /* Return NULL if failed */
-static SpglibDataset *get_layer_dataset(
-    double const lattice[3][3], double const position[][3], int const types[],
-    int const num_atom, int const aperiodic_axis, int const hall_number,
-    double const symprec, double const angle_tolerance) {
+static SpglibDataset *
+get_layer_dataset(double const lattice[3][3], double const position[][3],
+                  int const types[], int const num_atom,
+                  int const aperiodic_axis, int const hall_number,
+                  double const symprec, double const angle_tolerance) {
     SpglibDataset *dataset;
     Cell *cell;
     DataContainer *container;
@@ -1165,11 +1169,12 @@ found:
 }
 
 /* Return NULL if failed */
-static SpglibMagneticDataset *get_magnetic_dataset(
-    double const lattice[3][3], double const position[][3], int const types[],
-    double const *tensors, int const tensor_rank, int const num_atom,
-    int const is_axial, double const symprec, double const angle_tolerance,
-    double const mag_symprec) {
+static SpglibMagneticDataset *
+get_magnetic_dataset(double const lattice[3][3], double const position[][3],
+                     int const types[], double const *tensors,
+                     int const tensor_rank, int const num_atom,
+                     int const is_axial, double const symprec,
+                     double const angle_tolerance, double const mag_symprec) {
     Cell *cell, *exact_cell, *exact_cell_std;
     Spacegroup *fsg, *xsg;
     MagneticSymmetry *magnetic_symmetry, *representatives;
@@ -1298,7 +1303,8 @@ finalize:
     if (spglib_error_code == SPGLIB_SUCCESS) {
         return dataset;
     } else {
-        if (dataset != NULL) spg_free_magnetic_dataset(dataset);
+        if (dataset != NULL)
+            spg_free_magnetic_dataset(dataset);
         return NULL;
     }
 }
