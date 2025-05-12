@@ -245,11 +245,11 @@ std::optional<py::list> spglib::dataset(
     spg_free_dataset(dataset);
     return array;
 }
-std::optional<py::list> spglib::layerdataset(array_double lattice,
-                                             array_double positions,
-                                             array_int atom_types,
-                                             py::int_ aperiodic_dir,
-                                             py::float_ symprec) {
+std::optional<py::list> spglib::layer_dataset(array_double lattice,
+                                              array_double positions,
+                                              array_int atom_types,
+                                              py::int_ aperiodic_dir,
+                                              py::float_ symprec) {
     SpglibDataset* dataset;
     if ((dataset = spg_get_layer_dataset(
              (double (*)[3])lattice.data(), (double (*)[3])positions.data(),

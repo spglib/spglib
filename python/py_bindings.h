@@ -25,11 +25,11 @@ py::str commit();
 std::optional<py::list> dataset(array_double lattice, array_double positions,
                                 array_int atom_types, py::int_ hall_number,
                                 py::float_ symprec, py::float_ angle_tolerance);
-std::optional<py::list> layerdataset(array_double lattice,
-                                     array_double positions,
-                                     array_int atom_types,
-                                     py::int_ aperiodic_dir,
-                                     py::float_ symprec);
+std::optional<py::list> layer_dataset(array_double lattice,
+                                      array_double positions,
+                                      array_int atom_types,
+                                      py::int_ aperiodic_dir,
+                                      py::float_ symprec);
 std::optional<py::list> magnetic_dataset(
     array_double lattice, array_double positions, array_int atom_types,
     array_double magmoms, py::int_ tensor_rank, py::bool_ is_axial,

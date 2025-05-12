@@ -25,7 +25,7 @@ def dataset(
     symprec: float,
     angle_tolerance: float,
 ) -> _data_list | None: ...
-def layerdataset(
+def layer_dataset(
     lattice: np.ndarray,
     positions: np.ndarray,
     atom_types: np.ndarray,

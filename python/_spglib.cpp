@@ -14,7 +14,7 @@ PYBIND11_MODULE(_spglib, module) {
     module.def("version_full", spglib::version_full, "");
     module.def("commit", spglib::commit, "");
     module.def("dataset", spglib::dataset, "");
-    module.def("layerdataset", spglib::layerdataset, "");
+    module.def("layer_dataset", spglib::layer_dataset, "");
     module.def("magnetic_dataset", spglib::magnetic_dataset, "");
     module.def("spacegroup_type", spglib::spacegroup_type, "");
     module.def("spacegroup_type_from_symmetry",

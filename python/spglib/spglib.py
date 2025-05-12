@@ -914,7 +914,7 @@ def get_symmetry_layerdataset(
 
     lattice, positions, numbers, _ = _expand_cell(cell)
 
-    spg_ds = _spglib.layerdataset(
+    spg_ds = _spglib.layer_dataset(
         lattice,
         positions,
         numbers,
