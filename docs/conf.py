@@ -76,8 +76,11 @@ linkcheck_ignore = [
     r"https://www.jstor.org/.*",
     # Cannot check for 403 error only
     r"https://doi.org/10.1002/qua.20747",
-    r"https://github.com/spglib/spglib/pull/.*",
     r"https://doi.org/10.1080/27660400.2024.2384822",
+    # Getting 403 error (maybe because cloudflare)
+    r"https://.*\.iucr.org/",
+    # No need to check these
+    r"https://github.com/spglib/spglib/pull/.*",
 ]
 linkcheck_allowed_redirects = {
     r"https://doi.org/.*": r".*",
