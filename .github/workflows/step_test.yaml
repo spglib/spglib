@@ -29,8 +29,6 @@ jobs:
             toolchain: macos
           - os: macos-latest
             toolchain: macos
-          - os: windows-2019
-            toolchain: windows
           - os: windows-latest
             toolchain: windows
     steps:
