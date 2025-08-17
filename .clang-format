@@ -1,4 +1,4 @@
-BasedOnStyle: Google
+BasedOnStyle: LLVM
 IndentWidth: 4
 IncludeBlocks: Preserve
 QualifierAlignment: Right

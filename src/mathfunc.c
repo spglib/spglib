@@ -159,7 +159,8 @@ void mat_multiply_matrix_vector_i3(int v[3], int const a[3][3],
     int c[3];
     for (i = 0; i < 3; i++)
         c[i] = a[i][0] * b[0] + a[i][1] * b[1] + a[i][2] * b[2];
-    for (i = 0; i < 3; i++) v[i] = c[i];
+    for (i = 0; i < 3; i++)
+        v[i] = c[i];
 }
 
 /* v[3] <- a[3][3] * b[3] */
@@ -169,7 +170,8 @@ void mat_multiply_matrix_vector_d3(double v[3], double const a[3][3],
     double c[3];
     for (i = 0; i < 3; i++)
         c[i] = a[i][0] * b[0] + a[i][1] * b[1] + a[i][2] * b[2];
-    for (i = 0; i < 3; i++) v[i] = c[i];
+    for (i = 0; i < 3; i++)
+        v[i] = c[i];
 }
 
 void mat_multiply_matrix_vector_id3(double v[3], int const a[3][3],
@@ -178,7 +180,8 @@ void mat_multiply_matrix_vector_id3(double v[3], int const a[3][3],
     double c[3];
     for (i = 0; i < 3; i++)
         c[i] = a[i][0] * b[0] + a[i][1] * b[1] + a[i][2] * b[2];
-    for (i = 0; i < 3; i++) v[i] = c[i];
+    for (i = 0; i < 3; i++)
+        v[i] = c[i];
 }
 
 void mat_multiply_matrix_vector_di3(double v[3], double const a[3][3],
@@ -187,7 +190,8 @@ void mat_multiply_matrix_vector_di3(double v[3], double const a[3][3],
     double c[3];
     for (i = 0; i < 3; i++)
         c[i] = a[i][0] * b[0] + a[i][1] * b[1] + a[i][2] * b[2];
-    for (i = 0; i < 3; i++) v[i] = c[i];
+    for (i = 0; i < 3; i++)
+        v[i] = c[i];
 }
 
 void mat_add_matrix_i3(int m[3][3], int const a[3][3], int const b[3][3]) {

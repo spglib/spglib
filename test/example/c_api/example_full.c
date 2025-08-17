@@ -71,9 +71,8 @@ static void example_spg_find_primitive_BCC(void) {
     double symprec = 1e-5;
 
     /* lattice, position, and types are overwritten. */
-    printf(
-        "*** Example of spg_find_primitive (BCC unitcell --> primitive) "
-        "***:\n");
+    printf("*** Example of spg_find_primitive (BCC unitcell --> primitive) "
+           "***:\n");
     int num_primitive_atom =
         spg_find_primitive(lattice, position, types, num_atom, symprec);
     if (num_primitive_atom == 0) {

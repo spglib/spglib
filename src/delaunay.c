@@ -134,9 +134,8 @@ static int delaunay_reduce(double red_lattice[3][3], double const lattice[3][3],
     mat_multiply_matrix_d3(tmp_mat, tmp_mat, orig_lattice);
     mat_cast_matrix_3d_to_3i(tmp_mat_int, tmp_mat);
     if (abs(mat_get_determinant_i3(tmp_mat_int)) != 1) {
-        info_print(
-            "spglib: Determinant of Delaunay change of basis matrix "
-            "has to be 1 or -1.\n");
+        info_print("spglib: Determinant of Delaunay change of basis matrix "
+                   "has to be 1 or -1.\n");
         goto err;
     }
 

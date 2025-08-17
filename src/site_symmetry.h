@@ -9,9 +9,9 @@
 #include "mathfunc.h"
 #include "symmetry.h"
 
-VecDBL* ssm_get_exact_positions(int* wyckoffs, int* equiv_atoms,
+VecDBL *ssm_get_exact_positions(int *wyckoffs, int *equiv_atoms,
                                 char (*site_symmetry_symbols)[7],
-                                Cell const* bravais, Symmetry const* conv_sym,
+                                Cell const *bravais, Symmetry const *conv_sym,
                                 int const num_pure_trans, int const hall_number,
                                 double const symprec);
 

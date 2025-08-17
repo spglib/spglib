@@ -23,9 +23,9 @@
     #define OVL_INLINE __forceinline
 #elif defined(__clang__)
     #define OVL_INLINE __inline__ __attribute__((__always_inline__))
-#elif defined(__GNUC__) &&                                   \
-    (defined(__GNUC_STDC_INLINE__) ||                        \
-     (defined(__STDC__) && (__STDC_VERSION__ >= 199901L)) || \
+#elif defined(__GNUC__) &&                                                     \
+    (defined(__GNUC_STDC_INLINE__) ||                                          \
+     (defined(__STDC__) && (__STDC_VERSION__ >= 199901L)) ||                   \
      (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 2)))
     #define OVL_INLINE __inline__ __attribute__((__always_inline__))
 #else
@@ -55,10 +55,11 @@ static int check_possible_overlap(OverlapChecker *checker,
                                   double const test_trans[3],
                                   int const rot[3][3], double const symprec);
 
-static int argsort_by_lattice_point_distance(
-    int *perm, double const lattice[3][3], double const (*positions)[3],
-    int const *types, double *distance_temp, void *argsort_work,
-    int const size);
+static int
+argsort_by_lattice_point_distance(int *perm, double const lattice[3][3],
+                                  double const (*positions)[3],
+                                  int const *types, double *distance_temp,
+                                  void *argsort_work, int const size);
 
 static OverlapChecker *overlap_checker_alloc(int size);
 
@@ -119,9 +120,10 @@ static OVL_INLINE int has_overlap(double const a[3], double const b[3],
     }
 }
 
-static OVL_INLINE int has_overlap_with_same_type(
-    double const a[3], double const b[3], int const type_a, int const type_b,
-    double const lattice[3][3], double const symprec) {
+static OVL_INLINE int
+has_overlap_with_same_type(double const a[3], double const b[3],
+                           int const type_a, int const type_b,
+                           double const lattice[3][3], double const symprec) {
     if (type_a == type_b) {
         return has_overlap(a, b, lattice, symprec);
     } else {
@@ -509,10 +511,11 @@ static OverlapChecker *overlap_checker_alloc(int size) {
     return checker;
 }
 
-static int argsort_by_lattice_point_distance(
-    int *perm, double const lattice[3][3], double const (*positions)[3],
-    int const *types, double *distance_temp, void *argsort_work,
-    int const size) {
+static int
+argsort_by_lattice_point_distance(int *perm, double const lattice[3][3],
+                                  double const (*positions)[3],
+                                  int const *types, double *distance_temp,
+                                  void *argsort_work, int const size) {
     double diff[3];
     int i, k;
     double x;

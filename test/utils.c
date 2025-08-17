@@ -274,7 +274,8 @@ int setenv(char const *name, char const *value, int overwrite) {
     if (!overwrite) {
         size_t envsize = 0;
         errcode = getenv_s(&envsize, NULL, 0, name);
-        if (errcode || envsize) return errcode;
+        if (errcode || envsize)
+            return errcode;
     }
     return _putenv_s(name, value);
 }

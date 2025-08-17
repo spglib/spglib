@@ -23,7 +23,7 @@ typedef struct {
 void spgdb_decode_symmetry(int rot[3][3], double trans[3], int const encoded);
 int spgdb_get_operation(int rot[3][3], double trans[3], int const hall_number);
 void spgdb_get_operation_index(int indices[2], int const hall_number);
-Symmetry* spgdb_get_spacegroup_operations(int const hall_number);
+Symmetry *spgdb_get_spacegroup_operations(int const hall_number);
 SpacegroupType spgdb_get_spacegroup_type(int const hall_number);
 int spgdb_remove_space(char symbol[], int const num_char);
 

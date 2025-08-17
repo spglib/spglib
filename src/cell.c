@@ -333,9 +333,8 @@ static Cell *trim_cell(int *mapping_table, double const trimmed_lattice[3][3],
     mat_multiply_matrix_d3(tmp_mat, tmp_mat, cell->lattice);
     mat_cast_matrix_3d_to_3i(tmp_mat_int, tmp_mat);
     if (abs(mat_get_determinant_i3(tmp_mat_int)) != ratio) {
-        info_print(
-            "spglib: Determinant of change of basis matrix "
-            "has to be same as volume ratio.\n");
+        info_print("spglib: Determinant of change of basis matrix "
+                   "has to be same as volume ratio.\n");
         goto err;
     }
 

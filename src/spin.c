@@ -13,9 +13,10 @@
 #include "primitive.h"
 #include "symmetry.h"
 
-static MagneticSymmetry *get_operations(
-    Symmetry const *sym_nonspin, Cell const *cell, int const with_time_reversal,
-    int const is_axial, double const symprec, double const mag_symprec);
+static MagneticSymmetry *
+get_operations(Symmetry const *sym_nonspin, Cell const *cell,
+               int const with_time_reversal, int const is_axial,
+               double const symprec, double const mag_symprec);
 static int *get_symmetry_permutations(MagneticSymmetry const *magnetic_symmetry,
                                       Cell const *cell,
                                       int const with_time_reversal,
@@ -102,7 +103,8 @@ MagneticSymmetry *spn_get_operations_with_site_tensors(
 
     /* By definition, change of number of pure translations would */
     /* not be allowed. */
-    if (multi != pure_trans->size) goto err;
+    if (multi != pure_trans->size)
+        goto err;
 
     mat_free_VecDBL(pure_trans);
     pure_trans = NULL;
@@ -127,7 +129,8 @@ VecDBL *spn_collect_pure_translations_from_magnetic_symmetry(
     pure_trans = NULL;
     ret_pure_trans = NULL;
 
-    if ((pure_trans = mat_alloc_VecDBL(sym_msg->size)) == NULL) return NULL;
+    if ((pure_trans = mat_alloc_VecDBL(sym_msg->size)) == NULL)
+        return NULL;
 
     for (i = 0; i < sym_msg->size; i++) {
         /* Take translation with rot=identity and timerev=false */
@@ -301,9 +304,10 @@ double *spn_alloc_site_tensors(int const num_atoms, int const tensor_rank) {
 /* returned MagneticSymmetry.timerev is NULL if with_time_reversal==false. */
 /* is_axial: If true, tensors with tensor_rank==1 do not change by */
 /*           spatial inversion */
-static MagneticSymmetry *get_operations(
-    Symmetry const *sym_nonspin, Cell const *cell, int const with_time_reversal,
-    int const is_axial, double const symprec, double const mag_symprec) {
+static MagneticSymmetry *
+get_operations(Symmetry const *sym_nonspin, Cell const *cell,
+               int const with_time_reversal, int const is_axial,
+               double const symprec, double const mag_symprec) {
     MagneticSymmetry *magnetic_symmetry;
     int i, j, k, sign, num_sym, found, determined, max_size;
     double pos[3];

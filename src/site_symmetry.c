@@ -50,10 +50,11 @@ static int get_Wyckoff_notation(char site_sym_symbol[7],
                                 int const ref_multiplicity,
                                 double const bravais_lattice[3][3],
                                 int const hall_number, double const symprec);
-static int get_layer_Wyckoff_notation(
-    char site_sym_symbol[7], double const position[3], Symmetry const *conv_sym,
-    int const ref_multiplicity, double const bravais_lattice[3][3],
-    int const hall_number, double const symprec);
+static int
+get_layer_Wyckoff_notation(char site_sym_symbol[7], double const position[3],
+                           Symmetry const *conv_sym, int const ref_multiplicity,
+                           double const bravais_lattice[3][3],
+                           int const hall_number, double const symprec);
 
 /* Return NULL if failed */
 VecDBL *ssm_get_exact_positions(int *wyckoffs, int *equiv_atoms,
@@ -484,10 +485,11 @@ end:
 }
 
 /* Return -1 if failed */
-static int get_layer_Wyckoff_notation(
-    char site_sym_symbol[7], double const position[3], Symmetry const *conv_sym,
-    int const ref_multiplicity, double const bravais_lattice[3][3],
-    int const hall_number, double const symprec) {
+static int
+get_layer_Wyckoff_notation(char site_sym_symbol[7], double const position[3],
+                           Symmetry const *conv_sym, int const ref_multiplicity,
+                           double const bravais_lattice[3][3],
+                           int const hall_number, double const symprec) {
     int i, j, k, l, num_sitesym, multiplicity, wyckoff_letter;
     int indices_wyc[2];
     int rot[3][3];

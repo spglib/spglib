@@ -173,7 +173,7 @@ TEST(MagneticDataset, test_spgms_get_magnetic_dataset_high_mag_symprec) {
     // = (max number of order of point group) * (spin degrees of freedom)
     int max_size = num_atoms * 96;
     double symprec = 1e-5;
-    double mag_symprec = 1e-1;  // with high mag_symprec
+    double mag_symprec = 1e-1; // with high mag_symprec
 
     int size;
     int equivalent_atoms[6];
@@ -226,7 +226,8 @@ TEST(MagneticDataset, test_spg_get_magnetic_dataset_non_collinear) {
     EXPECT_NE(dataset, nullptr);
     EXPECT_EQ(dataset->n_operations, 16);
     EXPECT_EQ(spg_get_error_code(), SpglibError::SPGLIB_SUCCESS);
-    if (HasFailure()) show_spg_magnetic_dataset(dataset);
+    if (HasFailure())
+        show_spg_magnetic_dataset(dataset);
     spg_free_magnetic_dataset(dataset);
 }
 
@@ -252,7 +253,7 @@ TEST(MagneticDataset, test_with_broken_symmetry) {
     // = (max number of order of point group) * (spin degrees of freedom)
     int max_size = num_atoms * 96;
 
-    double symprec = 0.1;  // with very high symprec
+    double symprec = 0.1; // with very high symprec
     double mag_symprec = symprec;
 
     int i, size;
@@ -324,7 +325,7 @@ TEST(MagneticDataset, test_with_slightly_distorted_positions) {
                                        0 /* tensor_rank */, num_atoms,
                                        0 /* is_axial */, symprec);
     EXPECT_EQ(dataset->uni_number,
-              1332);  // should be the same as no distortion case
+              1332); // should be the same as no distortion case
     EXPECT_EQ(spg_get_error_code(), SpglibError::SPGLIB_SUCCESS);
 
     spg_free_magnetic_dataset(dataset);
@@ -359,7 +360,8 @@ TEST(MagneticDataset, test_failure_with_slightly_distorted_positions) {
     EXPECT_EQ(spg_get_error_code(),
               SpglibError::SPGERR_SPACEGROUP_SEARCH_FAILED);
 
-    if (dataset) spg_free_magnetic_dataset(dataset);
+    if (dataset)
+        spg_free_magnetic_dataset(dataset);
 }
 
 TEST(MagneticDataset, test_with_right_handed_magnetic_lattice) {
@@ -401,7 +403,8 @@ TEST(MagneticDataset, test_with_right_handed_magnetic_lattice) {
                                        0 /* is_axial */, symprec);
     EXPECT_EQ(spg_get_error_code(), SpglibError::SPGLIB_SUCCESS);
 
-    if (dataset) spg_free_magnetic_dataset(dataset);
+    if (dataset)
+        spg_free_magnetic_dataset(dataset);
 }
 
 // TODO: test get_magnetic_dataset with distorted positions
