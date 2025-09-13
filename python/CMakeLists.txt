@@ -84,10 +84,15 @@ endif ()
 file(COPY spglib
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
 # Link the built library to the package in the binary directory
+if (WIN32)
+    set(_cmake_link_mode copy)  # require admin to create symlink on Win
+else ()
+    set(_cmake_link_mode create_symlink)
+endif ()
 add_custom_command(TARGET Spglib_python POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E create_symlink
-        $<TARGET_FILE:Spglib_python>
-        ${CMAKE_CURRENT_BINARY_DIR}/spglib/$<TARGET_FILE_NAME:Spglib_python>
+    COMMAND ${CMAKE_COMMAND} -E ${_cmake_link_mode}
+    $<TARGET_FILE:Spglib_python>
+    ${CMAKE_CURRENT_BINARY_DIR}/spglib/$<TARGET_FILE_NAME:Spglib_python>
 )
 # On Windows make sure the dll files are in the build directory
 # https://stackoverflow.com/a/73550650
