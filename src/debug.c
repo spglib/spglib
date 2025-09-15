@@ -11,7 +11,7 @@
 #include "debug.h"
 
 bool debug_enabled(void) {
-    char const* debug_env = getenv("SPGLIB_DEBUG");
+    char const *debug_env = getenv("SPGLIB_DEBUG");
     // If SPGLIB_DEBUG is not defined, do not output any debug info
     if (debug_env == NULL) return false;
     // Here we are not checking if SPGLIB_DEBUG is true/1/etc. we only check if
@@ -19,7 +19,7 @@ bool debug_enabled(void) {
     return true;
 }
 bool warning_enabled(void) {
-    char const* warning_env = getenv("SPGLIB_WARNING");
+    char const *warning_env = getenv("SPGLIB_WARNING");
     // If SPGLIB_WARNING is not defined assume warning is on
     if (warning_env == NULL) return true;
     // Check if SPGLIB_WARNING is disabled. Not performing case-insensitive
@@ -29,7 +29,7 @@ bool warning_enabled(void) {
     return true;
 }
 bool info_enabled(void) {
-    char const* info_env = getenv("SPGLIB_INFO");
+    char const *info_env = getenv("SPGLIB_INFO");
     // If SPGLIB_INFO is not defined, do not output any info messages
     if (info_env == NULL) return false;
     // Here we are not checking if SPGLIB_INFO is true/1/etc. we only check if
@@ -71,7 +71,7 @@ void debug_print_vectors_with_label(double const a[][3], int const b[],
         fprintf(stdout, "%d: %f %f %f\n", b[i], a[i][0], a[i][1], a[i][2]);
     }
 }
-void debug_print(char const* format, ...) {
+void debug_print(char const *format, ...) {
     if (!debug_enabled()) return;
     va_list argptr;
     va_start(argptr, format);
@@ -81,20 +81,20 @@ void debug_print(char const* format, ...) {
 #endif
 
 #ifdef SPGWARNING
-void warning_print(char const* format, ...) {
+void warning_print(char const *format, ...) {
     if (!warning_enabled()) return;
     va_list argptr;
     va_start(argptr, format);
     vfprintf(stderr, format, argptr);
     va_end(argptr);
 }
-void warning_memory(char const* what) {
+void warning_memory(char const *what) {
     warning_print("Spglib: Memory could not be allocated: %s\n", what);
 }
 #endif
 
 #ifdef SPGINFO
-void info_print(char const* format, ...) {
+void info_print(char const *format, ...) {
     if (!info_enabled()) return;
     va_list argptr;
     va_start(argptr, format);

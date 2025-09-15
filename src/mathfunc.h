@@ -61,10 +61,10 @@ double mat_Dabs(double const a);
 int mat_Nint(double const a);
 double mat_Dmod1(double const a);
 double mat_rem1(double const a);
-MatINT* mat_alloc_MatINT(int const size);
-void mat_free_MatINT(MatINT* matint);
-VecDBL* mat_alloc_VecDBL(int const size);
-void mat_free_VecDBL(VecDBL* vecdbl);
+MatINT *mat_alloc_MatINT(int const size);
+void mat_free_MatINT(MatINT *matint);
+VecDBL *mat_alloc_VecDBL(int const size);
+void mat_free_VecDBL(VecDBL *vecdbl);
 int mat_is_int_matrix(double const mat[3][3], double const symprec);
 
 #endif

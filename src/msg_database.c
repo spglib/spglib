@@ -82229,7 +82229,7 @@ static const int magnetic_symmetry_operations[] = {
 /* clang-format on */
 
 static void msgdb_get_magnetic_operation(int rot[3][3], double trans[3],
-                                         int *timerev, const int op_number) {
+                                         int *timerev, int const op_number) {
     int enc;
     enc = magnetic_symmetry_operations[op_number];
 
@@ -82239,8 +82239,8 @@ static void msgdb_get_magnetic_operation(int rot[3][3], double trans[3],
     spgdb_decode_symmetry(rot, trans, enc % 34012224);
 }
 
-static void msgdb_get_operation_index(int indices[2], const int uni_number,
-                                      const int hall_number_offset) {
+static void msgdb_get_operation_index(int indices[2], int const uni_number,
+                                      int const hall_number_offset) {
     /* hall_number_offset: offset from the first Hall number to a given one */
     indices[0] =
         magnetic_spacegroup_operation_index[uni_number][hall_number_offset][0];
@@ -82248,8 +82248,8 @@ static void msgdb_get_operation_index(int indices[2], const int uni_number,
         magnetic_spacegroup_operation_index[uni_number][hall_number_offset][1];
 }
 
-MagneticSymmetry *msgdb_get_spacegroup_operations(const int uni_number,
-                                                  const int hall_number) {
+MagneticSymmetry *msgdb_get_spacegroup_operations(int const uni_number,
+                                                  int const hall_number) {
     int hall_number_offset;
     int operation_index[2];
     MagneticSymmetry *symmetry;
@@ -82286,7 +82286,7 @@ MagneticSymmetry *msgdb_get_spacegroup_operations(const int uni_number,
     return symmetry;
 }
 
-static const int alternative_transformations[][18][7] = {
+static int const alternative_transformations[][18][7] = {
     {{0}}, /* dummy */
     {
         {0}, /* UNI=1, Hall=1 */
@@ -90072,8 +90072,8 @@ static const int alternative_transformations[][18][7] = {
 };
 
 /* Return NULL if failed. */
-Symmetry *msgdb_get_std_transformations(const int uni_number,
-                                        const int hall_number) {
+Symmetry *msgdb_get_std_transformations(int const uni_number,
+                                        int const hall_number) {
     int hall_number_offset, enc, i, s;
     Symmetry *transformations;
     int identity[3][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
@@ -90111,7 +90111,7 @@ Symmetry *msgdb_get_std_transformations(const int uni_number,
 }
 
 /* Return -1 if failed. */
-static int get_hall_number_offset(const int uni_number, const int hall_number) {
+static int get_hall_number_offset(int const uni_number, int const hall_number) {
     int num_halls, first_hall_number;
     int hall_number_offset;
 

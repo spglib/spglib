@@ -4,3 +4,4 @@ IncludeBlocks: Preserve
 QualifierAlignment: Right
 IndentPPDirectives: BeforeHash
 BreakAfterAttributes: Always
+PointerAlignment: Right

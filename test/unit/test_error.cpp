@@ -18,5 +18,5 @@ TEST(Error, thread_safety) {
     std::list<std::thread> thread_jobs{};
     thread_jobs.emplace_back(thread_func, SPGLIB_SUCCESS);
     thread_jobs.emplace_back(thread_func, SPGERR_NONE);
-    for (auto& job : thread_jobs) job.join();
+    for (auto &job : thread_jobs) job.join();
 }

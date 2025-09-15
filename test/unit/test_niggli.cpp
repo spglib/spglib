@@ -25,7 +25,7 @@ TEST(Niggli, Niggli_reduce) {
     auto setenv_result = setenv("SPGLIB_NUM_ATTEMPTS", "100", 1);
     ASSERT_EQ(setenv_result, 0);
 
-    int succeeded = niggli_reduce((double*)min_lattice, symprec, -1);
+    int succeeded = niggli_reduce((double *)min_lattice, symprec, -1);
     // Default get_num_attempts() == 1000 --> succeeded == 1.
     // With get_num_attempts() == 100 --> succeeded == 0.
     EXPECT_EQ(succeeded, 0);
@@ -33,7 +33,7 @@ TEST(Niggli, Niggli_reduce) {
     setenv_result = setenv("SPGLIB_NUM_ATTEMPTS", "1000", 1);
     ASSERT_EQ(setenv_result, 0);
 
-    succeeded = niggli_reduce((double*)min_lattice, symprec, -1);
+    succeeded = niggli_reduce((double *)min_lattice, symprec, -1);
     EXPECT_EQ(succeeded, 1);
 
     mat_inverse_matrix_d3(inv_lat, lattice, symprec);
