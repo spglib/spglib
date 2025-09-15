@@ -82,6 +82,10 @@ if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/spglib/_version.py)
     configure_file(_version.py.in spglib/_version.py)
 endif ()
 
+# Copy all python packages to the build directory
+file(COPY spglib
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
+
 # On Windows make sure the dll files are in the build directory
 # https://stackoverflow.com/a/73550650
 if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.26)
