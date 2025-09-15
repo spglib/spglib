@@ -63,6 +63,7 @@ endif ()
 set_target_properties(Spglib_python PROPERTIES
         OUTPUT_NAME _spglib
         LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/spglib
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/spglib
         INSTALL_RPATH "$<IF:$<BOOL:${APPLE}>,@loader_path,$ORIGIN>/${CMAKE_INSTALL_LIBDIR}"
 )
 target_sources(Spglib_python PRIVATE
