@@ -145,6 +145,10 @@ if (SPGLIB_INSTALL)
     )
 
     # cmake export files
+    if(NOT PROJECT_VERSION)
+            # Fallback if setuptools_scm / DynamicVersion.cmake failed
+            set(PROJECT_VERSION "0.0.0")
+    endif()
     write_basic_package_version_file(
             ${CMAKE_CURRENT_BINARY_DIR}/SpglibConfigVersion.cmake
             VERSION ${PROJECT_VERSION}
