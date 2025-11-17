@@ -25,6 +25,11 @@ if typing.TYPE_CHECKING:
     from typing import Any
 
 __all__ = [
+    "Lattice",
+    "Positions",
+    "Numbers",
+    "Magmoms",
+    "Cell",
     "get_version",
     "spg_get_version",
     "spg_get_version_full",
