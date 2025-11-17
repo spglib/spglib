@@ -55,10 +55,9 @@ test = [
     "pyyaml",
 ]
 docs = [
-    "Sphinx >= 7.0",
+    "Sphinx >= 9.0",
     "sphinxcontrib-bibtex >= 2.5",
     "sphinx-book-theme",
-    "sphinx-autodoc-typehints",
     "myst-parser >= 2.0",
     "linkify-it-py",
     "sphinx-tippy",
