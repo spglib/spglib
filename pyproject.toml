@@ -99,6 +99,12 @@ if.env.CIBUILDWHEEL = true
 # Make sure cibuildwheel builds with a bundled spglib
 cmake.define.CMAKE_DISABLE_FIND_PACKAGE_Spglib = "ON"
 
+# Do not build spglib C library on documentation builders
+[[tool.scikit-build.overrides]]
+if.any.env.READTHEDOCS = true
+if.any.env.BUILD_DOCS = true
+wheel.cmake = false
+
 [tool.setuptools_scm]
 write_to = "python/spglib/_version.py"
 

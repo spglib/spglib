@@ -13,7 +13,20 @@ from typing import TYPE_CHECKING, Union, cast
 
 import numpy as np
 
-from . import _spglib
+try:
+    from . import _spglib
+except ImportError:
+    import os
+
+    # If we are only building the documentation create a stub _spglib
+    if (
+        os.getenv("READTHEDOCS", "False").lower() == "true"
+        or os.getenv("BUILD_DOCS", "False").lower() == "true"
+    ):
+        _spglib = object  # type: ignore[assignment]
+    else:
+        # Otherwise re-raise the error
+        raise
 from ._compat.typing import TypeAlias
 from ._compat.warnings import deprecated
 from .error import SpglibError

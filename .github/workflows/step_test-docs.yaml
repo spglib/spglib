@@ -19,6 +19,9 @@ jobs:
           # Run default html builder with warnings as error
           - builder: html
             args: -W
+    env:
+      # Defined and used in pyproject.toml
+      BUILD_DOCS: ${{ ( matrix.builder != 'doctest' )  }}
     steps:
       - uses: actions/checkout@v4
         with:
