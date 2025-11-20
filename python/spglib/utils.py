@@ -42,13 +42,17 @@ warnings.filterwarnings(
 
 
 Lattice: TypeAlias = Sequence[Sequence[float]]
+"""Basis vectors in ``(3, 3)`` shape."""
 Positions: TypeAlias = Sequence[Sequence[float]]
+"""Point coordinates of atoms in ``(N, 3)`` shape."""
 Numbers: TypeAlias = Sequence[int]
+"""Integer numbers for identifying atoms in ``(N,)`` shape."""
 Magmoms: TypeAlias = Union[Sequence[float], Sequence[Sequence[float]]]
+"""Magnetic moments of atoms in either ``(N,)`` or ``(N, 3)`` shape."""
 
 # Compatibility alias for some deprecated interfaces
 Cell: TypeAlias = Union["spglib.spg.SpgCell", "spglib.msg.MsgCell"]
-"""Either SpgCell or MsgCell."""
+"""Either :py:type:`spglib.spg.SpgCell` or :py:type:`spglib.msg.MsgCell`."""
 
 
 @dataclasses.dataclass(eq=True, frozen=True)

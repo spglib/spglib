@@ -35,7 +35,10 @@ __all__ = [
 
 
 SpgCell: TypeAlias = tuple[Lattice, Positions, Numbers]
-"""Crystal structure represented by a tuple of (lattice, positions, numbers)."""
+"""
+Crystal structure represented by a tuple of (:py:type:`spglib.utils.Lattice`,
+:py:type:`spglib.utils.Positions`, :py:type:`spglib.utils.Numbers`).
+"""
 
 
 @dataclasses.dataclass(eq=False, frozen=True)

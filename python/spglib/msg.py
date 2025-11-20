@@ -28,8 +28,11 @@ __all__ = [
 ]
 
 MsgCell: TypeAlias = tuple[Lattice, Positions, Numbers, Magmoms]
-"""Magnetic crystal structure represented by a tuple of
-(lattice, positions, numbers, magmoms)."""
+"""
+Magnetic crystal structure represented by a tuple of
+(:py:type:`spglib.utils.Lattice`, :py:type:`spglib.utils.Positions`,
+:py:type:`spglib.utils.Numbers`, :py:type:`spglib.utils.Magmoms`).
+"""
 
 
 @dataclasses.dataclass(eq=False, frozen=True)
