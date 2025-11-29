@@ -26,12 +26,12 @@ jobs:
       id-token: write
     steps:
       - name: Get sdist
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: Packages
           path: dist
       - name: Get wheels
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           pattern: cibw-wheels-*
           path: dist
@@ -43,7 +43,7 @@ jobs:
     name: Create release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: softprops/action-gh-release@v2
         with:
           name: Spglib ${{ github.ref_name }}

@@ -16,7 +16,7 @@ repos:
       - id: clang-tidy
         stages: [ manual ]
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
@@ -25,24 +25,24 @@ repos:
       - id: check-yaml
       - id: check-added-large-files
   - repo: https://github.com/editorconfig-checker/editorconfig-checker
-    rev: v3.3.0
+    rev: v3.6.0
     hooks:
       - id: editorconfig-checker
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.9.9
+    rev: v0.14.7
     hooks:
       - id: ruff
         args: [ "--fix", "--show-fixes" ]
       - id: ruff-format
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.15.0
+    rev: v1.19.0
     hooks:
     - id: mypy
       pass_filenames: false
       additional_dependencies:
         - types-PyYAML
   - repo: https://github.com/executablebooks/mdformat
-    rev: 0.7.22
+    rev: 1.0.0
     hooks:
       - id: mdformat
         additional_dependencies:
@@ -52,14 +52,14 @@ repos:
     # TODO: Temporarily separate docs formatiing
     # https://github.com/executablebooks/mdformat/issues/234
   - repo: https://github.com/executablebooks/mdformat
-    rev: 0.7.22
+    rev: 1.0.0
     hooks:
       - id: mdformat
         additional_dependencies:
           - mdformat-myst
         files: docs\/(?!README).*\.md$
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.31.2
+    rev: 0.35.0
     hooks:
       - id: check-github-workflows
       - id: check-readthedocs
