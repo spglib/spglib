@@ -47,17 +47,7 @@ repos:
       - id: mdformat
         additional_dependencies:
           - mdformat-gfm
-          - mdformat-tables
-        exclude: docs\/(?!README\.md).*
-    # TODO: Temporarily separate docs formatiing
-    # https://github.com/executablebooks/mdformat/issues/234
-  - repo: https://github.com/executablebooks/mdformat
-    rev: 1.0.0
-    hooks:
-      - id: mdformat
-        additional_dependencies:
           - mdformat-myst
-        files: docs\/(?!README).*\.md$
   - repo: https://github.com/python-jsonschema/check-jsonschema
     rev: 0.35.0
     hooks:

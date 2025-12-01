@@ -1,4 +1,4 @@
 number = true
 extensions = [
-    "gfm",
+    "myst",
 ]
