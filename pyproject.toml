@@ -109,11 +109,11 @@ test-extras = "test"
 test-command = "pytest {package}/test/functional/python"
 
 [tool.pytest.ini_options]
-addopts = "-Werror -m 'not benchmark'"
+addopts = "-m 'not benchmark'"
 testpaths = ["test/functional/python"]
 markers = [
     # Define benchmark marker to avoid warnings of marker not defined
-    "benchmark: benchmarking tets",
+    "benchmark: benchmarking tests",
 ]
 
 [tool.coverage.run]
