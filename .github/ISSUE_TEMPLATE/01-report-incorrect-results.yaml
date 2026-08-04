@@ -1,0 +1,70 @@
+name: Report incorrect results
+description: Found a bug resulting in incorrect symmetries
+labels: [ bug ]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        In order to reliably replicate the issue, please format the input in the following
+        format.
+  - type: textarea
+    id: input
+    attributes:
+      label: Physical input
+      placeholder: |
+        lattice:
+          - [ 1.0, 0.0, 0.0 ]  # a_x, b_x, c_x
+          - [ 0.0, 1.0, 0.0 ]  # a_y, b_y, c_y
+          - [ 0.0, 0.0, 1.0 ]  # a_z, b_z, c_z
+        points:  # all atoms
+          - number: 1
+            coordinates: [ 0.0, 0.0, 0.0 ]  # x, y, z
+        # Symmetry tolerance. Can keep it as `null` if you are using the default
+        symprec: null
+        angle_tolerance: null
+        mag_symprec: null
+      render: yaml
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: |
+        Use the input above in `spglib-get-symmetry` python script, and report the results.
+
+        (make sure you have the `[cli]` optional dependencies from the `spglib` python package)
+  - type: textarea
+    id: actual-output
+    attributes:
+      label: Actual output
+      placeholder: |
+        ...
+      render: yaml
+    validations:
+      required: true
+  - type: textarea
+    id: expected-results
+    attributes:
+      label: Expected results
+      placeholder: |
+        ...
+      render: yaml
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Additional information
+      description: |
+        More information about the system that is relevant to the issue
+
+        (No need to fill this in if it is not relevant)
+      placeholder: |
+        Language bindings: (C|Python|Fortran)
+        Spglib version: ...
+        Additional code:
+        ```python
+        import spglib
+
+        spglib.get_symmetry_dataset(...)
+        ```
+      render: markdown
