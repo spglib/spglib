@@ -38,7 +38,7 @@ The detailed algorithm of spglib is described the following text:
 ## Requirements
 
 - C standard: As of version 2.1.0, Spglib explicitly enforces a minimum standard of
-  [C11](https://en.cppreference.com/w/c/11.html)
+  [C11](https://en.cppreference.com/c/11)
 
 ## Features
 

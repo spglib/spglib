@@ -79,6 +79,10 @@ linkcheck_ignore = [
     r"https://doi.org/10.1080/27660400.2024.2384822",
     # Getting 403 error (maybe because cloudflare)
     r"https://.*\.iucr.org/",
+    # cppreference blocks requests from CI with HTTP 403.
+    r"https://en\.cppreference\.com/c/11$",
+    # Internet Archive rate-limits requests for these Bilbao snapshots (HTTP 429).
+    r"https://web\.archive\.org/web/20250505150336/https://www\.cryst\.ehu\.es/",
     # No need to check these
     r"https://github.com/spglib/spglib/pull/.*",
 ]
@@ -112,6 +116,9 @@ intersphinx_mapping = {
     "cmake": ("https://cmake.org/cmake/help/latest", None),
     "scikit": ("https://scikit-build-core.readthedocs.io/en/latest/", None),
 }
+
+# Keep HTML builds independent of the external DOI metadata service.
+tippy_enable_doitips = False
 
 tippy_rtd_urls = [
     # Only works with RTD hosted intersphinx
