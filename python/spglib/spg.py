@@ -414,7 +414,7 @@ def get_symmetry_dataset(
         Without specifying this
         option (i.e., in the case of ``hall_number=0``), always the first one
         (the smallest serial number corresponding to the space-group-type in
-        [list of space groups (Seto's web site)](https://yseto.net/en/sg/sg1))
+        [list of space groups (Seto's web site)](https://yseto.net/sg/sg1))
         among possible choices and settings is chosen as default. This
         argument is useful when the other choice (or setting) is expected to
         be hooked.
