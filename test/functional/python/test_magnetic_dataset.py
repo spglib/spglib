@@ -1,13 +1,105 @@
 from __future__ import annotations
 
+from itertools import product
+
 import numpy as np
+import pytest
 from spglib import (
     SpglibMagneticDataset,
     get_magnetic_spacegroup_type_from_symmetry,
     get_magnetic_symmetry,
     get_magnetic_symmetry_dataset,
+    get_magnetic_symmetry_from_database,
     get_symmetry_dataset,
 )
+
+
+@pytest.fixture(
+    params=[
+        (uni_number, anti_translation, hall_number, axes)
+        for uni_number, anti_translation in [
+            (282, (0, 0, 0.5)),
+            (283, (0.5, 0, 0)),
+            (284, (0, 0.5, 0.5)),
+        ]
+        for hall_number, axes in [
+            (182, (0, 1, 2)),  # Ccc2, abc
+            (183, (2, 0, 1)),  # A2aa, cab
+            (184, (1, 2, 0)),  # Bb2b, bca
+        ]
+    ],
+    ids=lambda param: f"uni-{param[0]}-hall-{param[2]}",
+)
+def ccc2_type4_operations(request):
+    """Construct BNS 37.184-37.186 independently of the operation database."""
+    uni_number, anti_translation, hall_number, axes = request.param
+    rotations, translations, time_reversals = [], [], []
+    # Unprimed generators: 2z, a c-glide normal to x, and C centering.
+    # Only the additional anti-translation carries time reversal.
+    for twofold, glide, centering, time_reversal in product(range(2), repeat=4):
+        rotation = np.diag([(-1) ** (twofold + glide), (-1) ** twofold, 1])
+        translation = np.array([centering / 2, centering / 2, glide / 2])
+        translation += time_reversal * np.array(anti_translation)
+        rotations.append(rotation[np.ix_(axes, axes)])
+        translations.append(translation[list(axes)] % 1)
+        time_reversals.append(time_reversal)
+    return (
+        uni_number,
+        hall_number,
+        np.array(rotations),
+        np.array(translations),
+        np.array(time_reversals),
+    )
+
+
+def test_ccc2_type4_database(ccc2_type4_operations):
+    """Check every affected setting and its magnetic type round trip (#633)."""
+    uni_number, hall_number, rotations, translations, time_reversals = (
+        ccc2_type4_operations
+    )
+    symmetry = get_magnetic_symmetry_from_database(uni_number, hall_number)
+    assert len(symmetry["rotations"]) == 16
+
+    def operation_set(rotations, translations, time_reversals):
+        return {
+            (tuple(rotation.ravel()), tuple(translation % 1), int(time_reversal))
+            for rotation, translation, time_reversal in zip(
+                rotations, translations, time_reversals
+            )
+        }
+
+    assert operation_set(**symmetry) == operation_set(
+        rotations, translations, time_reversals
+    )
+    msg_type = get_magnetic_spacegroup_type_from_symmetry(**symmetry)
+    assert msg_type.uni_number == uni_number
+
+
+def test_ccc2_type4_dataset(ccc2_type4_operations):
+    """Identify structures generated from the corrected Ccc2 operations (#633)."""
+    uni_number, _, rotations, translations, time_reversals = ccc2_type4_operations
+    positions, numbers, magmoms = [], [], []
+    # Two generic orbits avoid accidental additional symmetries.
+    for species, position, moment in [
+        (1, [0.137, 0.219, 0.317], [0.41, 0.53, 0.67]),
+        (2, [0.271, 0.113, 0.419], [0.37, -0.61, 0.43]),
+    ]:
+        for rotation, translation, time_reversal in zip(
+            rotations, translations, time_reversals
+        ):
+            positions.append((rotation @ position + translation) % 1)
+            numbers.append(species)
+            magmoms.append(
+                (-1) ** time_reversal * np.linalg.det(rotation) * (rotation @ moment)
+            )
+    # Exercise a nonstandard origin as well as the three axis settings.
+    positions = (np.array(positions) + [0.173, 0.287, 0.391]) % 1
+    lattice = np.diag([4.0, 5.0, 6.0])
+    dataset = get_magnetic_symmetry_dataset((lattice, positions, numbers, magmoms))
+    assert dataset.uni_number == uni_number
+    assert dataset.msg_type == 4
+    assert dataset.n_operations == 16
+    _check_magnetic_spacegroup_type(dataset, lattice, uni_number)
 
 
 def _check_magnetic_spacegroup_type(
