@@ -34,20 +34,21 @@ standard changes.
 ## Releasing a new Spglib version
 
 1. Update [`ChangeLog.md`](ChangeLog.md)
-2. Push a corresponding tag, or notify the contributors of the request
+2. Before tagging, test the full release wheel matrix by manually running the `CI` workflow on the release
+   branch with `cibw_build` set to `*`, for example:
+   ```console
+   gh workflow run ci.yaml --ref <release-branch> -f 'cibw_build=*'
+   ```
+   - This uses the same test and wheel-building workflows as a release, generates package artifacts, and checks
+     their metadata without uploading to PyPI or creating a GitHub release.
+   - Ordinary pull-request CI only builds `cp311-*` wheels, so it does not cover the full release matrix.
+   - Link the completed GitHub Actions run in the release PR and check that all build and package checks pass.
+3. Push a corresponding tag, or notify the contributors of the request
    - For official release, push a tag with the appropriate version, e.g. `v2.1.0`.
      - This will update the release package on PyPI.
    - For pre-releases, include a `-rcX` suffix to the tag, e.g. `v2.1.0-rc1`.
-     - This will update the package on TestPyPI automatically
-   - For testing, you can push a tag with suffix `-test` to your personal fork, or create a PR to `test-PyPi-action`
-     branch
-     - This will perform the wheel building tests that we use for release. Note that these builds are very
-       time-consuming, so we encourage you to use the tag approach to trigger these tests.
-     - Link in the PR the most recent Github Action run
-     - If you are using the PR approach to `test-PyPi-action` approach, make sure to change the target branch at the
-       end
-     - This will not attempt to upload to PyPI, but the artifacts will still be generated.
-3. Notify the packaging contributors
+     - This will publish a pre-release to PyPI, so it is not a dry run.
+4. Notify the packaging contributors
 
 Note that scikit-build-core does not yet support dynamic variables for the
 updating `pyproject.toml` (follow progress at the upstream issues
