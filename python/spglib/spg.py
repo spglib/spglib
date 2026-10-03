@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import dataclasses
 import warnings
-from typing import Any, cast
+from typing import Any, TypeAlias, cast
 
 import numpy as np
 from numpy.typing import ArrayLike, NDArray
@@ -15,7 +15,6 @@ from numpy.typing import ArrayLike, NDArray
 import spglib
 
 from . import _spglib
-from ._compat.typing import TypeAlias
 from ._compat.warnings import deprecated
 from .error import _set_no_error, _set_or_throw_error
 from .utils import Cell, DictInterface, Lattice, Numbers, Positions, _expand_cell
