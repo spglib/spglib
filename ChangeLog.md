@@ -11,7 +11,13 @@ GitHub release pages and in the git history.
 
 ## [Unreleased]
 
-## v2.7.1 (3 Oct. 2026)
+## v2.8.0 (3 Oct. 2026)
+
+### Python support
+
+- Require Python >= 3.11, dropping support for end-of-life Python 3.9 and 3.10.
+  Release wheels are built only for Python 3.11 and newer, avoiding unsupported
+  NumPy source builds on Windows ARM64.
 
 ### Fixes
 
