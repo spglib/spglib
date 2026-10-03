@@ -104,7 +104,8 @@ write_to = "python/spglib/_version.py"
 
 [tool.cibuildwheel]
 # pp, win32, i686, muslinux: Remove 32bit variants, PyPY interpreter and unnecessary musl variant
-skip = ["pp*", "*-win32", "*-manylinux_i686", "*-musllinux*"]
+# NumPy provides Windows ARM64 wheels only for Python >= 3.11.
+skip = ["pp*", "*-win32", "*-manylinux_i686", "*-musllinux*", "cp39-win_arm64", "cp310-win_arm64"]
 test-extras = "test"
 test-command = "pytest {package}/test/functional/python"
 
