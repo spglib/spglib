@@ -75,6 +75,8 @@ jobs:
           - python-version: "3.x"
             experimental: true
             pre: true
+          - python-version: "3.15t"
+            pre: true
           # Check 1.x numpy. Note 2.x should still be used at build-time
           - python-version: "3.11"
             numpy-runtime: "<2.0"
