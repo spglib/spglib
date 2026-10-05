@@ -4,7 +4,7 @@ This directory contains python-sphinx documentation source.
 
 ## How to compile
 
-Python>=3.9 is required.
+Python>=3.11 is required.
 
 ```shell
 $ pip install -e ".[docs]"

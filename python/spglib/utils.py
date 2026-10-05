@@ -9,14 +9,13 @@ import dataclasses
 import typing
 import warnings
 from collections.abc import Mapping, Sequence
-from typing import Union
+from typing import TypeAlias, Union
 
 import numpy as np
 
 import spglib
 
 from . import _spglib
-from ._compat.typing import TypeAlias
 from ._compat.warnings import deprecated
 from .error import SpglibError, _set_no_error
 

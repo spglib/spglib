@@ -11,6 +11,7 @@ GitHub release pages and in the git history.
 
 ## [Unreleased]
 
+- Require Python >= 3.11, dropping support for end-of-life Python 3.9 and 3.10.
 - Correct time-reversal flags for magnetic space groups BNS 37.184-37.186
   (UNI 282-284) in all three Hall settings, fixing identification from symmetry
   operations and magnetic structures.

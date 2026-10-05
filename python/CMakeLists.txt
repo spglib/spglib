@@ -37,7 +37,7 @@ set(BUILD_SHARED_LIBS ${SPGLIB_SHARED_LIBS})
 ]=============================================================================]
 
 # Running `find_package(Python)` early to be able to define target with `Python_add_library`
-find_package(Python 3.9 COMPONENTS REQUIRED Development.Module NumPy)
+find_package(Python 3.11 COMPONENTS REQUIRED Development.Module NumPy)
 find_package(pybind11 CONFIG REQUIRED)
 pybind11_add_module(Spglib_python MODULE WITH_SOABI)
 add_library(Spglib::python ALIAS Spglib_python)
