@@ -6,13 +6,12 @@
 from __future__ import annotations
 
 import dataclasses
-from typing import Any
+from typing import Any, TypeAlias
 
 import numpy as np
 from numpy.typing import ArrayLike, NDArray
 
 from . import _spglib
-from ._compat.typing import TypeAlias
 from .error import _set_no_error, _set_or_throw_error
 from .utils import DictInterface, Lattice, Magmoms, Numbers, Positions, _expand_cell
 

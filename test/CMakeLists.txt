@@ -95,7 +95,7 @@ FetchContent_Declare(GTest
 
 find_package(Threads REQUIRED)
 if (SPGLIB_WITH_Python)
-    find_package(Python 3.9 REQUIRED)
+    find_package(Python 3.11 REQUIRED)
 endif ()
 
 FetchContent_MakeAvailable(GTest)

@@ -16,8 +16,7 @@ GitHub release pages and in the git history.
 ### Python support
 
 - Require Python >= 3.11, dropping support for end-of-life Python 3.9 and 3.10.
-  Release wheels are built only for Python 3.11 and newer, avoiding unsupported
-  NumPy source builds on Windows ARM64.
+- Add Python 3.15 support, including free-threaded Python 3.15.
 
 ### Fixes
 
@@ -27,12 +26,6 @@ GitHub release pages and in the git history.
 - Correct time-reversal flags for magnetic space groups BNS 37.184-37.186
   (UNI 282-284) in all three Hall settings, fixing identification from symmetry
   operations and magnetic structures.
-
-### Documentation
-
-- Disable DOI tooltip metadata fetching to avoid documentation build failures
-  caused by external services, update moved links, and exempt blocked reference
-  pages from link checking.
 
 ## v2.7.0 (27 Dec. 2025)
 

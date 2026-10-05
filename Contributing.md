@@ -34,11 +34,11 @@ standard changes.
 ## Releasing a new Spglib version
 
 1. Update [`ChangeLog.md`](ChangeLog.md)
-2. Before tagging, test the full release wheel matrix by manually running the `CI` workflow on the release
-   branch with `cibw_build` set to `*`, for example:
-   ```console
-   gh workflow run ci.yaml --ref <release-branch> -f 'cibw_build=*'
-   ```
+2. Before tagging, test the full release wheel matrix from GitHub's web interface:
+   - Open the repository's **Actions** tab and select the [**CI** workflow](https://github.com/spglib/spglib/actions/workflows/ci.yaml)
+     in the left sidebar.
+   - Click **Run workflow**, select the release branch from the **Branch** dropdown, enter `*` in
+     **Overwrite build targets**, and click **Run workflow** to start the run.
    - This uses the same test and wheel-building workflows as a release, generates package artifacts, and checks
      their metadata without uploading to PyPI or creating a GitHub release.
    - Ordinary pull-request CI only builds `cp311-*` wheels, so it does not cover the full release matrix.
