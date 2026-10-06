@@ -16,7 +16,6 @@ GitHub release pages and in the git history.
 ### Python support
 
 - Require Python >= 3.11, dropping support for end-of-life Python 3.9 and 3.10.
-- Add Python 3.15 support, including free-threaded Python 3.15.
 
 ### Fixes
 
