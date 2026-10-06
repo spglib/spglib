@@ -113,7 +113,6 @@ extlinks = {
 # -----------------------------------------------------------------------------
 
 intersphinx_mapping = {
-    "cmake": ("https://cmake.org/cmake/help/latest", None),
     "scikit": ("https://scikit-build-core.readthedocs.io/en/latest/", None),
 }
 
