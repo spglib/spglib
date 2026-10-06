@@ -107,6 +107,10 @@ skip = ["pp*", "*-win32", "*-manylinux_i686", "*-musllinux*"]
 test-extras = "test"
 test-command = "pytest {package}/test/functional/python"
 
+[tool.cibuildwheel.windows]
+# CMake already bundles symspg.dll beside the Python extension.
+repair-wheel-command = "delvewheel repair --ignore-existing -w {dest_dir} -v {wheel}"
+
 [tool.pytest.ini_options]
 addopts = "-Werror -m 'not benchmark'"
 testpaths = ["test/functional/python"]
