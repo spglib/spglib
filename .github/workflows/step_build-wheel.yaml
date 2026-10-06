@@ -22,14 +22,14 @@ jobs:
         os: [ ubuntu-latest, ubuntu-24.04-arm, windows-latest, windows-11-arm, macos-latest ]
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Build wheels
         uses: pypa/cibuildwheel@v4.3
         env:
           CIBW_BUILD: ${{ inputs.cibw_build }}
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v7
         with:
           name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
           path: ./wheelhouse/*.whl
@@ -38,10 +38,10 @@ jobs:
     name: 🐍 sdist
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - uses: hynek/build-and-inspect-python-package@v2
+      - uses: hynek/build-and-inspect-python-package@v3.0.1
         with:
           skip-wheel: true
 
@@ -53,12 +53,12 @@ jobs:
       - name: Get sdist
         # Technically sdist check is already done in `build_sdist`,
         # but doing it here again for redundancy
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v8
         with:
           name: Packages
           path: dist
       - name: Get wheels
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v8
         with:
           pattern: cibw-wheels-*
           path: dist

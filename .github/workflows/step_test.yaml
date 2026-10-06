@@ -43,12 +43,12 @@ jobs:
           printenv >> $GITHUB_ENV
           echo $PATH >> $GITHUB_PATH
         if: matrix.toolchain == 'intel'
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - uses: lukka/get-cmake@latest
       - name: Run CMake configuration for ${{ matrix.toolchain }} toolchain
-        uses: lukka/run-cmake@v10
+        uses: lukka/run-cmake@v10.9
         with:
           workflowPreset: "${{ matrix.toolchain }}-ci"
         # Remove VCPKG_ROOT because we do not have it setup, but the action does not fail-safe
@@ -83,11 +83,11 @@ jobs:
           - python-version: "3.12"
             numpy-runtime: "<2.0"
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Setup python ${{ matrix.python-version }}
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python-version }}
           allow-prereleases: ${{ matrix.pre || false }}
@@ -114,14 +114,14 @@ jobs:
           - cmake: latestrc
             experimental: true
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - uses: lukka/get-cmake@latest
         with:
           cmakeVersion: ${{ matrix.cmake }}
       - name: Run CMake workflow
-        uses: lukka/run-cmake@v10
+        uses: lukka/run-cmake@v10.9
         with:
           workflowPreset: gcc-ci
         continue-on-error: ${{ matrix.experimental && inputs.mask-experimental}}
@@ -140,9 +140,9 @@ jobs:
     env:
       SPGLIB_SANITIZER: ${{ matrix.sanitizer }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: lukka/get-cmake@latest
       - name: Run CMake configuration for ${{ matrix.toolchain }} toolchain
-        uses: lukka/run-cmake@v10
+        uses: lukka/run-cmake@v10.9
         with:
           workflowPreset: "${{ matrix.toolchain }}-ci-sanitizer"
