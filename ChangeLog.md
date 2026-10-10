@@ -11,7 +11,17 @@ GitHub release pages and in the git history.
 
 ## [Unreleased]
 
+## v2.8.0 (3 Oct. 2026)
+
+### Python support
+
 - Require Python >= 3.11, dropping support for end-of-life Python 3.9 and 3.10.
+
+### Fixes
+
+- Correct arithmetic crystal class numbers for space groups 187-190: groups
+  187-188 belong to class 56 (`-6m2P`), and groups 189-190 belong to class 57
+  (`-62mP`).
 - Correct time-reversal flags for magnetic space groups BNS 37.184-37.186
   (UNI 282-284) in all three Hall settings, fixing identification from symmetry
   operations and magnetic structures.
