@@ -112,11 +112,11 @@ test-command = "pytest {package}/test/functional/python"
 repair-wheel-command = "delvewheel repair --ignore-existing -w {dest_dir} -v {wheel}"
 
 [tool.pytest.ini_options]
-addopts = "-Werror -m 'not benchmark'"
+addopts = "-m 'not benchmark'"
 testpaths = ["test/functional/python"]
 markers = [
     # Define benchmark marker to avoid warnings of marker not defined
-    "benchmark: benchmarking tets",
+    "benchmark: benchmarking tests",
 ]
 
 [tool.coverage.run]

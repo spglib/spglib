@@ -33,7 +33,13 @@
           "value": true
         }
       },
+      "warnings": {
+        "dev": true,
+        "deprecated": true,
+        "uninitialized": true
+      },
       "errors": {
+        "dev": true,
         "deprecated": true
       }
     },
