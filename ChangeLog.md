@@ -92,7 +92,7 @@ For backward compatibility, the `dict`-like interface is still available, but it
 ```python
 spgtype: SpaceGroupType | None = get_spacegroup_type(cell)
 assert spgtype is not None
-print(spgtype['number'])
+print(spgtype["number"])
 print(list(spgtype.items()))
 ```
 
@@ -105,6 +105,7 @@ print(spgtype.number)
 
 # If you really need dictionary, ...
 from dataclasses import asdict
+
 print(asdict(spgtype))
 ```
 

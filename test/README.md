@@ -157,7 +157,9 @@ def print_python_cell(cell):
     # lattice
     contents.append("lattice = np.array([")
     for i in range(3):
-        contents.append(f"    [{lattice[i][0]:.8f}, {lattice[i][1]:.8f}, {lattice[i][2]:.8f}],")
+        contents.append(
+            f"    [{lattice[i][0]:.8f}, {lattice[i][1]:.8f}, {lattice[i][2]:.8f}],"
+        )
     contents.append("])")
 
     # positions
@@ -175,7 +177,9 @@ def print_python_cell(cell):
     if magmoms:
         contents.append("magmoms = np.array([")
         for i in range(len(positions)):
-            contents.append(f"    [{magmoms[i][0]:.8f}, {magmoms[i][1]:.8f}, {magmoms[i][2]:.8f}],")
+            contents.append(
+                f"    [{magmoms[i][0]:.8f}, {magmoms[i][1]:.8f}, {magmoms[i][2]:.8f}],"
+            )
         contents.append("])")
 
     print("\n".join(contents))
@@ -215,7 +219,9 @@ def print_cpp_cell(cell):
     if magmoms:
         contents.append("double spins[] = {")
         for i in range(len(positions)):
-            contents.append(f"    {magmoms[i][0]:.8f}, {magmoms[i][1]:.8f}, {magmoms[i][2]:.8f},")
+            contents.append(
+                f"    {magmoms[i][0]:.8f}, {magmoms[i][1]:.8f}, {magmoms[i][2]:.8f},"
+            )
         contents.append("};")
 
     contents.append(f"int num_atoms = {len(positions)};")

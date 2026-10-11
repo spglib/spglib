@@ -132,7 +132,8 @@ exclude = [
 ]
 
 [tool.ruff.lint]
-extend-select = [
+# Keep the project's rule set independent of changes to Ruff's defaults.
+select = [
     "F",           # pyflakes
     # "W",           # pycodestyle-warnings
     "E",           # pycodestyle-errors
