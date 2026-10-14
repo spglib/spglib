@@ -1,0 +1,50 @@
+name: Code issue
+description: Found a bug in the code (segmentation fault, performance issue, etc.)
+labels: [ bug ]
+
+body:
+  - type: textarea
+    id: input
+    attributes:
+      label: Physical input
+      description: |
+        If the bug is related to a specific physical input, use the standard format
+      placeholder: |
+        lattice:
+          - [ 1.0, 0.0, 0.0 ]  # a_x, b_x, c_x
+          - [ 0.0, 1.0, 0.0 ]  # a_y, b_y, c_y
+          - [ 0.0, 0.0, 1.0 ]  # a_z, b_z, c_z
+        points:  # all atoms
+          - number: 1
+            coordinates: [ 0.0, 0.0, 0.0 ]  # x, y, z
+        # Symmetry tolerance. Can keep it as `null` if you are using the default
+        symprec: null
+        angle_tolerance: null
+        mag_symprec: null
+      render: yaml
+    validations:
+      required: false
+  - type: markdown
+    attributes:
+      value: |
+        Use the input above in `spglib-get-symmetry` python script, and report the results.
+
+        (make sure you have the `[cli]` optional dependencies from the `spglib` python package)
+  - type: textarea
+    id: actual-output
+    attributes:
+      label: Issue
+      description: |
+        Describe how the library has failed. Please include a minimal code snippet which would
+        replicate the issue.
+
+        If you are using a physical system, make sure you include it in the section above as well.
+      placeholder: |
+        ```python
+        import spglib
+
+        spglib.get_symmetry_dataset(...)
+        ```
+      render: markdown
+    validations:
+      required: true
