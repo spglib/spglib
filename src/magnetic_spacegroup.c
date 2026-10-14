@@ -1023,7 +1023,7 @@ void get_rigid_rotation(double rigid_rot[3][3], double const lattice[3][3],
     /* Refine lattice with metric tensor */
     ref_get_conventional_lattice(ideal_latt, ref_sg);
     mat_inverse_matrix_d3(inv_ideal_latt, ideal_latt, 0);
-    mat_multiply_matrix_d3(tmat_bravais, lattice, inv_ideal_latt);
+    mat_multiply_matrix_d3(tmat_bravais, inv_ideal_latt, lattice);
 
     /* Now, x_std = (tmat, -shift) x */
     /*      (a_std, b_std, c_std) = (a, b, c) @ tmat^-1 */
@@ -1037,7 +1037,7 @@ void get_rigid_rotation(double rigid_rot[3][3], double const lattice[3][3],
     /* => (a, b, c) @ tmat_bravais^-1 = rigid_rot @ (a, b, c) @ tmat^-1 */
     /* => rigid_rot = (a, b, c) @ tmat_bravais^-1 @ tmat @ (a, b, c)^-1 */
     mat_inverse_matrix_d3(inv_latt, lattice, 0);
-    mat_inverse_matrix_d3(inv_tmat_bravais, tmat, 0);
+    mat_inverse_matrix_d3(inv_tmat_bravais, tmat_bravais, 0);
     mat_multiply_matrix_d3(rigid_rot, lattice, inv_tmat_bravais);
     mat_multiply_matrix_d3(rigid_rot, rigid_rot, tmat);
     mat_multiply_matrix_d3(rigid_rot, rigid_rot, inv_latt);
