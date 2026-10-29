@@ -4,6 +4,8 @@ import pathlib
 from typing import TYPE_CHECKING
 
 import numpy as np
+import pytest
+import spglib
 from spglib import (
     MagneticSpaceGroupType,
     find_primitive,
@@ -73,6 +75,22 @@ def test_get_symmetry_dataset(crystal_data: CrystalData):
 
     wyckoffs = dataset.wyckoffs
     assert wyckoffs == crystal_data.ref["wyckoffs"]
+
+
+def test_nonfinite_cell_values_are_rejected():
+    lattice = np.eye(3)
+    positions = np.array([[0.0, 0.0, 0.0]])
+    numbers = np.array([1])
+    for value in (np.nan, np.inf, -np.inf):
+        bad_lattice = lattice.copy()
+        bad_lattice[0, 0] = value
+        with pytest.raises(spglib.SpglibError, match="non-finite"):
+            get_symmetry_dataset((bad_lattice, positions, numbers))
+
+    bad_positions = positions.copy()
+    bad_positions[0, 0] = np.nan
+    with pytest.raises(spglib.SpglibError, match="non-finite"):
+        get_symmetry_dataset((lattice, bad_positions, numbers))
 
 
 def test_standardize_cell_and_pointgroup(crystal_data: CrystalData):
