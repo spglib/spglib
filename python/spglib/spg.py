@@ -17,7 +17,15 @@ import spglib
 from . import _spglib
 from ._compat.warnings import deprecated
 from .error import _set_no_error, _set_or_throw_error
-from .utils import Cell, DictInterface, Lattice, Numbers, Positions, _expand_cell
+from .utils import (
+    Cell,
+    DictInterface,
+    Lattice,
+    Numbers,
+    Positions,
+    _expand_cell,
+    _validate_symprec,
+)
 
 __all__ = [
     "SpgCell",
@@ -31,13 +39,6 @@ __all__ = [
     "get_symmetry_from_database",
     "get_hall_number_from_symmetry",
 ]
-
-
-def _validate_symprec(symprec: float) -> float:
-    value = float(symprec)
-    if not np.isfinite(value) or value <= 0:
-        raise ValueError("symprec must be a finite positive number")
-    return value
 
 
 SpgCell: TypeAlias = tuple[Lattice, Positions, Numbers]
@@ -283,7 +284,8 @@ def get_symmetry(
                 vectors are included in the symmetry search in a way of
                 non-collinear magnetic moments.
     symprec : float
-        Symmetry search tolerance in the unit of length.
+        Symmetry search tolerance in the unit of length. Must be finite and
+        positive; otherwise, a ``ValueError`` is raised.
     angle_tolerance : float
         Symmetry search tolerance in the unit of angle deg.
         Normally it is not recommended to use this argument.
@@ -358,6 +360,7 @@ def get_symmetry(
 
     """
     _set_no_error()
+    _validate_symprec(symprec)
 
     _, _, _, magmoms = _expand_cell(cell)
 
@@ -442,7 +445,7 @@ def get_symmetry_dataset(
 
     """
     _set_no_error(_throw)
-    symprec = _validate_symprec(symprec)
+    _validate_symprec(symprec)
 
     lattice, positions, numbers, _ = _expand_cell(cell)
 
@@ -477,6 +480,7 @@ def get_spacegroup(
         If it fails, None is returned.
     """
     _set_no_error()
+    _validate_symprec(symprec)
 
     try:
         dataset = get_symmetry_dataset(
@@ -570,6 +574,7 @@ def get_spacegroup_type_from_symmetry(
     This is the replacement of :func:`get_hall_number_from_symmetry`.
 
     """
+    _validate_symprec(symprec)
     r = np.array(rotations, dtype="intc", order="C")
     t = np.array(translations, dtype="double", order="C")
     if lattice is None:
@@ -654,6 +659,7 @@ def get_hall_number_from_symmetry(
     coordinates and so it should be small like ``1e-5``.
     """
     _set_no_error()
+    _validate_symprec(symprec)
 
     r = np.array(rotations, dtype="intc", order="C")
     t = np.array(translations, dtype="double", order="C")

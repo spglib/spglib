@@ -11,6 +11,12 @@ GitHub release pages and in the git history.
 
 ## [Unreleased]
 
+### Python API
+
+- Reject non-positive or non-finite `symprec` values before native dispatch
+  across symmetry, magnetic symmetry, cell-standardization, reciprocal-mesh,
+  and internal layer-group entry points. Invalid values raise `ValueError`.
+
 ## v2.8.0 (3 Oct. 2026)
 
 ### Python support

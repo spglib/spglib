@@ -123,6 +123,11 @@ def spg_get_commit() -> str:
     return _spglib.commit()
 
 
+def _validate_symprec(symprec: float) -> None:
+    if not np.isfinite(symprec) or symprec <= 0:
+        raise ValueError("symprec must be a finite positive number")
+
+
 def _expand_cell(
     cell: Cell,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray | None]:

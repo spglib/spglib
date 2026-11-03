@@ -10,7 +10,7 @@ import numpy as np
 from . import _spglib
 from .error import _set_no_error, _set_or_throw_error
 from .spg import SpgCell
-from .utils import _expand_cell
+from .utils import _expand_cell, _validate_symprec
 
 __all__ = [
     "standardize_cell",
@@ -55,6 +55,7 @@ def standardize_cell(
 
     """
     _set_no_error()
+    _validate_symprec(symprec)
 
     lattice, _positions, _numbers, _ = _expand_cell(cell)
 
@@ -104,6 +105,7 @@ def refine_cell(
 
     """
     _set_no_error()
+    _validate_symprec(symprec)
 
     lattice, _positions, _numbers, _ = _expand_cell(cell)
 
@@ -150,6 +152,7 @@ def find_primitive(
 
     """
     _set_no_error()
+    _validate_symprec(symprec)
 
     lattice, positions, numbers, _ = _expand_cell(cell)
 
