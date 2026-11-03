@@ -15,6 +15,8 @@ GitHub release pages and in the git history.
 
 - Reject `numbers` inputs that are not one-dimensional array-likes of integers,
   including integer-valued floating-point arrays, before conversion to C integers.
+- Include NumPy array types in the `Lattice`, `Positions`, `Numbers`, and `Magmoms`
+  input annotations.
 
 ## v2.8.0 (3 Oct. 2026)
 

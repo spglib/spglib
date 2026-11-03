@@ -41,13 +41,19 @@ warnings.filterwarnings(
 )
 
 
-Lattice: TypeAlias = Sequence[Sequence[float]]
+Lattice: TypeAlias = Union[
+    Sequence[Sequence[float]], NDArray[Union[np.floating, np.integer]]
+]
 """Basis vectors in ``(3, 3)`` shape."""
-Positions: TypeAlias = Sequence[Sequence[float]]
+Positions: TypeAlias = Union[
+    Sequence[Sequence[float]], NDArray[Union[np.floating, np.integer]]
+]
 """Point coordinates of atoms in ``(N, 3)`` shape."""
 Numbers: TypeAlias = Union[Sequence[int], NDArray[np.integer]]
 """Integer numbers for identifying atoms in ``(N,)`` shape."""
-Magmoms: TypeAlias = Union[Sequence[float], Sequence[Sequence[float]]]
+Magmoms: TypeAlias = Union[
+    Sequence[float], Sequence[Sequence[float]], NDArray[Union[np.floating, np.integer]]
+]
 """Magnetic moments of atoms in either ``(N,)`` or ``(N, 3)`` shape."""
 
 # Compatibility alias for some deprecated interfaces
