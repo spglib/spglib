@@ -12,6 +12,7 @@ from collections.abc import Mapping, Sequence
 from typing import TypeAlias, Union
 
 import numpy as np
+from numpy.typing import NDArray
 
 import spglib
 
@@ -44,7 +45,7 @@ Lattice: TypeAlias = Sequence[Sequence[float]]
 """Basis vectors in ``(3, 3)`` shape."""
 Positions: TypeAlias = Sequence[Sequence[float]]
 """Point coordinates of atoms in ``(N, 3)`` shape."""
-Numbers: TypeAlias = Sequence[int]
+Numbers: TypeAlias = Union[Sequence[int], NDArray[np.integer]]
 """Integer numbers for identifying atoms in ``(N,)`` shape."""
 Magmoms: TypeAlias = Union[Sequence[float], Sequence[Sequence[float]]]
 """Magnetic moments of atoms in either ``(N,)`` or ``(N, 3)`` shape."""
@@ -132,8 +133,6 @@ def _expand_cell(
         lattice = np.array(np.transpose(cell[0]), dtype="double", order="C")
         positions = np.array(cell[1], dtype="double", order="C")
         raw_numbers = np.asarray(cell[2])
-        if raw_numbers.ndim != 1:
-            raise TypeError("numbers has to be a (num_atoms,) array.")
         if not np.issubdtype(raw_numbers.dtype, np.integer):
             raise TypeError("numbers has to be an array-like of integers.")
         numbers = np.array(raw_numbers, dtype="intc")
