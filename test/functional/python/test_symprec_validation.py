@@ -1,3 +1,6 @@
+import os
+import subprocess
+import sys
 from functools import partial
 
 import numpy as np
@@ -72,3 +75,26 @@ def test_accepts_valid_symprec(symmetry_api):
 
 def test_simple_cubic_spacegroup(cell):
     assert spglib.get_symmetry_dataset(cell, symprec=1e-5).number == 221
+
+
+def test_invalid_symprec_raises_by_default():
+    """Test the installed default without conftest's error-mode override."""
+    environment = os.environ.copy()
+    environment.pop("SPGLIB_OLD_ERROR_HANDLING", None)
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-Werror",
+            "-c",
+            "import numpy as np; import spglib; "
+            "spglib.get_symmetry_dataset((np.eye(3), [[0, 0, 0]], [1]), symprec=0)",
+        ],
+        env=environment,
+        capture_output=True,
+        text=True,
+        timeout=30,
+    )
+    assert result.returncode == 1
+    assert result.stderr.endswith(
+        "ValueError: symprec must be a finite positive number\n"
+    )

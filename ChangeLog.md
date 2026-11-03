@@ -13,6 +13,9 @@ GitHub release pages and in the git history.
 
 ### Python API
 
+- Enable exception raising by default (`OLD_ERROR_HANDLING = False`). Explicit
+  legacy overrides remain supported during the deprecation period.
+
 - Reject non-positive or non-finite `symprec` values before native dispatch
   across symmetry, magnetic symmetry, cell-standardization, reciprocal-mesh,
   and internal layer-group entry points. Invalid values raise `ValueError`.
