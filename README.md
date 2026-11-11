@@ -22,9 +22,8 @@
 C library for finding and handling crystal symmetries
 
 Spglib is in maintenance mode. [moyo](https://github.com/spglib/moyo) is an actively
-developed crystal symmetry finder maintained by Kohei Shinohara, one of spglib's
-developers. It is written in Rust, with Python, C, Fortran, and JavaScript
-interfaces. See the
+developed crystal symmetry finder maintained by one of spglib's developers. It is
+written in Rust, with Python, C, Fortran, and JavaScript interfaces. See the
 [moyo documentation](https://spglib.github.io/moyo/) for installation and usage.
 
 <!-- TOC -->
