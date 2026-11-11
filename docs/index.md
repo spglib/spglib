@@ -25,8 +25,9 @@ written in C. There are the [python](python-interface.md),
 {ref}`fortran, rust, and ruby <interfaces>` interfaces.
 
 Spglib is in maintenance mode. [moyo](https://github.com/spglib/moyo) is an actively
-developed and maintained project for crystal symmetry finding. It is written in
-Rust, with Python, C, Fortran, and JavaScript interfaces. See the
+developed crystal symmetry finder maintained by Kohei Shinohara, one of spglib's
+developers. It is written in Rust, with Python, C, Fortran, and JavaScript
+interfaces. See the
 [moyo documentation](https://spglib.github.io/moyo/) for installation and usage.
 
 The detailed algorithm of spglib is described the following text:
