@@ -12,5 +12,7 @@ build:
   jobs:
     post_checkout:
       - git fetch --unshallow || true
+    pre_install:
+      - python3 ./docs/workaround-pep695.py
 sphinx:
   configuration: docs/conf.py
