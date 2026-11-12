@@ -169,9 +169,6 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
         shift[s] += shift_cor[s];
     }
 
-    mat_multiply_matrix_d3(ref_sg->bravais_lattice, lattice,
-                           ref_sg->bravais_lattice);
-
     /* Rigid rotation to standardized lattice */
     get_rigid_rotation(rigid_rot, lattice, tmat, ref_sg);
 
@@ -1017,30 +1014,21 @@ static int is_equal(MagneticSymmetry const *sym1, MagneticSymmetry const *sym2,
 
 void get_rigid_rotation(double rigid_rot[3][3], double const lattice[3][3],
                         double const tmat[3][3], Spacegroup const *ref_sg) {
-    double ideal_latt[3][3], inv_ideal_latt[3][3], inv_latt[3][3];
-    double tmat_bravais[3][3], inv_tmat_bravais[3][3];
+    Spacegroup std_sg;
+    double ideal_latt[3][3], inv_tmat[3][3];
 
-    /* Refine lattice with metric tensor */
-    ref_get_conventional_lattice(ideal_latt, ref_sg);
-    mat_inverse_matrix_d3(inv_ideal_latt, ideal_latt, 0);
-    mat_multiply_matrix_d3(tmat_bravais, lattice, inv_ideal_latt);
-
-    /* Now, x_std = (tmat, -shift) x */
-    /*      (a_std, b_std, c_std) = (a, b, c) @ tmat^-1 */
-    /*      x_std' = (tmat_bravais, -shift) x */
-    /*      (a_std', b_std', c_std') = (a, b, c) @ tmat_bravais^-1 */
-    debug_print("Transformation (ref)\n");
-    debug_print_matrix_d3(tmat_bravais);
-    debug_print("det = %f\n", mat_get_determinant_d3(tmat_bravais));
+    /* x_std = (tmat, shift) x */
+    /* => (a_std, b_std, c_std) = (a, b, c) @ tmat^-1 */
+    /* tmat already includes the correction to the UNI setting, so refine */
+    /* the lattice with metric tensor in that same setting. */
+    std_sg = *ref_sg;
+    mat_inverse_matrix_d3(inv_tmat, tmat, 0);
+    mat_multiply_matrix_d3(std_sg.bravais_lattice, lattice, inv_tmat);
+    ref_get_conventional_lattice(ideal_latt, &std_sg);
 
     /* (a_std', b_std', c_std') = rigid_rot @ (a_std, b_std, c_std) */
-    /* => (a, b, c) @ tmat_bravais^-1 = rigid_rot @ (a, b, c) @ tmat^-1 */
-    /* => rigid_rot = (a, b, c) @ tmat_bravais^-1 @ tmat @ (a, b, c)^-1 */
-    mat_inverse_matrix_d3(inv_latt, lattice, 0);
-    mat_inverse_matrix_d3(inv_tmat_bravais, tmat, 0);
-    mat_multiply_matrix_d3(rigid_rot, lattice, inv_tmat_bravais);
-    mat_multiply_matrix_d3(rigid_rot, rigid_rot, tmat);
-    mat_multiply_matrix_d3(rigid_rot, rigid_rot, inv_latt);
+    /* rigid_rot only aligns the axes and keeps lengths and angles. */
+    ref_measure_rigid_rotation(rigid_rot, std_sg.bravais_lattice, ideal_latt);
 
     debug_print("Rigid rotation\n");
     debug_print_matrix_d3(rigid_rot);
