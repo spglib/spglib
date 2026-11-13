@@ -10,7 +10,7 @@ from numpy.typing import ArrayLike
 
 from . import _spglib
 from .error import _set_no_error, _set_or_throw_error
-from .utils import Cell, _expand_cell
+from .utils import Cell, _expand_cell, _validate_symprec
 
 __all__ = [
     "get_ir_reciprocal_mesh",
@@ -59,6 +59,7 @@ def get_ir_reciprocal_mesh(
 
     """
     _set_no_error()
+    _validate_symprec(symprec)
 
     lattice, positions, numbers, _ = _expand_cell(cell)
     if lattice is None:

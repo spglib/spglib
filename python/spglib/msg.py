@@ -13,7 +13,15 @@ from numpy.typing import ArrayLike, NDArray
 
 from . import _spglib
 from .error import _set_no_error, _set_or_throw_error
-from .utils import DictInterface, Lattice, Magmoms, Numbers, Positions, _expand_cell
+from .utils import (
+    DictInterface,
+    Lattice,
+    Magmoms,
+    Numbers,
+    Positions,
+    _expand_cell,
+    _validate_symprec,
+)
 
 __all__ = [
     "MsgCell",
@@ -269,6 +277,7 @@ def get_magnetic_symmetry(
 
     """
     _set_no_error(_throw)
+    _validate_symprec(symprec)
 
     lattice, positions, numbers, magmoms = _expand_cell(cell)
     if magmoms is None:
@@ -353,6 +362,7 @@ def get_magnetic_symmetry_dataset(
 
     """  # noqa: E501
     _set_no_error()
+    _validate_symprec(symprec)
 
     lattice, positions, numbers, magmoms = _expand_cell(cell)
 
@@ -436,6 +446,7 @@ def get_magnetic_spacegroup_type_from_symmetry(
     magnetic_spacegroup_type: :class:`MagneticSpaceGroupType` | None
 
     """
+    _validate_symprec(symprec)
     rots = np.array(rotations, dtype="intc", order="C")
     trans = np.array(translations, dtype="double", order="C")
     timerev = np.array(time_reversals, dtype="intc", order="C")
