@@ -11,7 +11,7 @@ from numpy._typing import ArrayLike
 from . import _spglib
 from .error import _set_no_error, _set_or_throw_error
 from .spg import SpgCell, SpglibDataset
-from .utils import _expand_cell
+from .utils import _expand_cell, _validate_symprec
 
 __all__ = [
     "get_pointgroup",
@@ -81,6 +81,7 @@ def get_symmetry_layerdataset(
 ) -> SpglibDataset | None:
     """TODO: Add comments."""
     _set_no_error(_throw)
+    _validate_symprec(symprec)
 
     lattice, positions, numbers, _ = _expand_cell(cell)
 
@@ -109,6 +110,7 @@ def get_layergroup(
 
     """
     _set_no_error()
+    _validate_symprec(symprec)
 
     try:
         return get_symmetry_layerdataset(

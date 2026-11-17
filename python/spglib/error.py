@@ -6,12 +6,12 @@
    that are not caught by :py:exc:`SpglibError`.
 
 .. deprecated:: 2.7.0
-   Currently the exception raising is opt-in, requiring to set
-   :py:attr:`spglib.error.OLD_ERROR_HANDLING` to ``False``, otherwise
-   all exceptions are redirected to :py:func:`spglib.error.get_error_message`.
+   Exception raising is now the default. To retain the deprecated error
+   handling temporarily, set :py:attr:`spglib.error.OLD_ERROR_HANDLING` to
+   ``True`` or set ``SPGLIB_OLD_ERROR_HANDLING`` to ``1``.
 
-   For example you could use the following snippet to opt-in this new
-   interface.
+   For compatibility with older releases, the following snippet explicitly
+   enables exception raising.
 
    .. code-block:: python
 
@@ -23,15 +23,13 @@
    or alternatively you can enable it by setting the environment variable
    ``SPGLIB_OLD_ERROR_HANDLING`` to either ``0`` or ``False``.
 
-   Starting from version 2.8.0 the default option will be flipped to always
-   throw these exceptions, and the old error handling will be removed in
-   version 3.0. Please test out the functionality and provide feedback on the
-   GitHub issues.
+   The old error handling will be removed in version 3.0. Please test out
+   exception raising and provide feedback on the GitHub issues.
 
    Note that :py:attr:`spglib.error.OLD_ERROR_HANDLING` will be removed in a
    future version, so the snippet above is not advised to be used for long-term
    support. Use it only for experimentations and preparing the code base to
-   ``try ... except`` the spglib api calls and wait for the 2.8.0 release.
+   ``try ... except`` the spglib api calls.
 
 .. versionadded:: 2.7.0
 """
@@ -89,7 +87,7 @@ class SpglibError(Exception):
 
 
 # Old deprecated error functions
-OLD_ERROR_HANDLING: bool = True
+OLD_ERROR_HANDLING: bool = False
 """
 Use the old error handling.
 
