@@ -12,6 +12,7 @@ from collections.abc import Mapping, Sequence
 from typing import TypeAlias, Union
 
 import numpy as np
+from numpy.typing import NDArray
 
 import spglib
 
@@ -40,13 +41,19 @@ warnings.filterwarnings(
 )
 
 
-Lattice: TypeAlias = Sequence[Sequence[float]]
+Lattice: TypeAlias = Union[
+    Sequence[Sequence[float]], NDArray[Union[np.floating, np.integer]]
+]
 """Basis vectors in ``(3, 3)`` shape."""
-Positions: TypeAlias = Sequence[Sequence[float]]
+Positions: TypeAlias = Union[
+    Sequence[Sequence[float]], NDArray[Union[np.floating, np.integer]]
+]
 """Point coordinates of atoms in ``(N, 3)`` shape."""
-Numbers: TypeAlias = Sequence[int]
+Numbers: TypeAlias = Union[Sequence[int], NDArray[np.integer]]
 """Integer numbers for identifying atoms in ``(N,)`` shape."""
-Magmoms: TypeAlias = Union[Sequence[float], Sequence[Sequence[float]]]
+Magmoms: TypeAlias = Union[
+    Sequence[float], Sequence[Sequence[float]], NDArray[Union[np.floating, np.integer]]
+]
 """Magnetic moments of atoms in either ``(N,)`` or ``(N, 3)`` shape."""
 
 # Compatibility alias for some deprecated interfaces
@@ -127,15 +134,18 @@ def _expand_cell(
     cell: Cell,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray | None]:
     try:
+        if len(cell) not in (3, 4):
+            raise TypeError("cell has to be a tuple of 3 or 4 elements.")
         lattice = np.array(np.transpose(cell[0]), dtype="double", order="C")
         positions = np.array(cell[1], dtype="double", order="C")
-        numbers = np.array(cell[2], dtype="intc")
+        raw_numbers = np.asarray(cell[2])
+        if not np.issubdtype(raw_numbers.dtype, np.integer):
+            raise TypeError("numbers has to be an array-like of integers.")
+        numbers = np.array(raw_numbers, dtype="intc")
         if len(cell) == 4:
             magmoms = np.array(cell[3], order="C", dtype="double")
-        elif len(cell) == 3:
-            magmoms = None
         else:
-            raise TypeError("cell has to be a tuple of 3 or 4 elements.")
+            magmoms = None
 
         # Sanity check
         if lattice.shape != (3, 3):
