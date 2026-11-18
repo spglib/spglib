@@ -969,3 +969,63 @@ def test_better_choice_of_orientation():
 #     print()
 #     for n, pos, mom in zip(types, positions, magmoms):
 #         print(f"{n}: {pos[0]:12.8f} {pos[1]:12.8f} {pos[2]:12.8f} {mom:12.8f}")
+
+
+@pytest.mark.parametrize("rotated", [False, True])
+def test_magnetic_dataset_oblique_primitive_ni(rotated):
+    """Changing the primitive basis does not change ferromagnetic Ni's MSG."""
+    lattice = np.array([[0.0, 2, 2], [2, 0, 2], [2, 2, 0]])
+    basis_change = np.array([[1, 0, 2], [0, 1, 0], [0, 0, 1]])
+    rigid_rotation = np.array([[1, 0, 0], [0, 3 / 5, -4 / 5], [0, 4 / 5, 3 / 5]])
+    if not rotated:
+        rigid_rotation = np.eye(3)
+    lattice = basis_change @ lattice @ rigid_rotation.T
+    magmoms = np.array([[0.0, 0, 1]]) @ rigid_rotation.T
+    cell = (lattice, [[0, 0, 0]], [28], magmoms)
+    symmetry = get_magnetic_symmetry(cell)
+    assert len(symmetry["rotations"]) == 16
+
+    dataset = get_magnetic_symmetry_dataset(cell)
+    assert dataset.uni_number == 1197  # I4/mm'm', BNS 139.537
+    assert dataset.msg_type == 3
+    assert dataset.n_operations == 16
+    _check_magnetic_spacegroup_type(dataset, lattice, 1197)
+    rotation = dataset.std_rotation_matrix
+    np.testing.assert_allclose(rotation @ rotation.T, np.eye(3), atol=1e-12)
+    np.testing.assert_allclose(np.linalg.det(rotation), 1, atol=1e-12)
+    np.testing.assert_allclose(
+        dataset.std_lattice,
+        (rotation @ lattice.T @ np.linalg.inv(dataset.transformation_matrix)).T,
+        atol=1e-12,
+    )
+    np.testing.assert_allclose(
+        dataset.std_tensors,
+        np.tile(magmoms @ rotation.T, (dataset.n_std_atoms, 1)),
+        atol=1e-12,
+    )
+
+
+@pytest.mark.parametrize("collinear, uni_number", [(False, 69), (True, 65)])
+def test_magnetic_dataset_ase_ni311_surface(collinear, uni_number):
+    """Identify the oblique cell produced by ASE's general surface builder."""
+    # surface(bulk("Ni", "fcc", a=3.52), (3, 1, 1), 3,
+    #         vacuum=10, periodic=True), with moments along the surface normal.
+    lattice = np.array(
+        [
+            [6.585317000722137, 0, 0],
+            [1.4111393572976008, 2.0503379512377258, 0],
+            [0, 0, 21.615086766448755],
+        ]
+    )
+    positions = np.array(
+        [
+            [0, 0, 0.4626398268973013],
+            [0.631578947368421, 0.05263157894736842, 0.5],
+            [0.26315789473684215, 0.10526315789473684, 0.5373601731026987],
+        ]
+    )
+    magmoms = np.ones(3) if collinear else np.tile([0.0, 0, 1], (3, 1))
+    dataset = get_magnetic_symmetry_dataset((lattice, positions, [28] * 3, magmoms))
+    assert dataset.uni_number == uni_number
+    assert dataset.n_operations == 4
+    _check_magnetic_spacegroup_type(dataset, lattice, uni_number)
