@@ -194,6 +194,20 @@ module spglib_f08
             integer(c_int), intent(in) :: uni_number
             type(SpglibMagneticSpacegroupType) :: magspgtype
         end function spg_get_magnetic_spacegroup_type
+        module function spg_get_stabilized_reciprocal_mesh(grid_point, map, mesh, is_shift, &
+             & is_time_reversal, lattice, num_rot, rotations, num_q, qpoints) result(retval)
+            !   Beware the map refers to positions starting at 0
+            integer(c_int), intent(out) :: grid_point(3, *), map(*)
+            integer(c_int), intent(in) :: mesh(3)
+            integer(c_int), intent(in) :: is_shift(3)
+            integer(c_int), intent(in), value :: is_time_reversal
+            real(c_double), intent(in) :: lattice(3, 3)
+            integer(c_int), intent(in), value :: num_rot
+            integer(c_int), intent(in) :: rotations(3, 3, *)
+            integer(c_int), intent(in), value :: num_q
+            real(c_double), intent(in) :: qpoints(3, *)
+            integer(c_int) :: retval
+        end function spg_get_stabilized_reciprocal_mesh
     end interface
 
     ! Exposed C interface
@@ -473,22 +487,6 @@ module spglib_f08
             integer(c_int) :: retval ! the number of points in the reduced mesh
         end function spg_get_ir_reciprocal_mesh
 
-        function spg_get_stabilized_reciprocal_mesh(grid_point, map, mesh, is_shift, &
-             & is_time_reversal, lattice, num_rot, rotations, num_q, qpoints) bind(c) result(retval)
-            import c_int, c_double
-            !   Beware the map refers to positions starting at 0
-            integer(c_int), intent(out) :: grid_point(3, *), map(*)
-            integer(c_int), intent(in) :: mesh(3)
-            integer(c_int), intent(in) :: is_shift(3)
-            integer(c_int), intent(in), value :: is_time_reversal
-            real(c_double), intent(in) :: lattice(3, 3)
-            integer(c_int), intent(in), value :: num_rot
-            integer(c_int), intent(in) :: rotations(3, 3, *)
-            integer(c_int), intent(in), value :: num_q
-            real(c_double), intent(in) :: qpoints(3, *)
-            integer(c_int) :: retval
-        end function spg_get_stabilized_reciprocal_mesh
-
         function spg_get_error_code() bind(c) result(error_code)
             import SPGLIB_SUCCESS
             integer(kind(SPGLIB_SUCCESS)) :: error_code
@@ -618,6 +616,22 @@ submodule(spglib_f08) impl
 
             type(SpglibSpacegroupType_c) :: spgtype_c
         end function spg_get_spacegroup_type_from_symmetry_c
+
+        function spg_get_stabilized_reciprocal_mesh_c(grid_point, map, mesh, is_shift, &
+             & is_time_reversal, num_rot, rotations, num_q, qpoints) &
+            bind(c, name="spg_get_stabilized_reciprocal_mesh") result(retval)
+            import c_int, c_double
+            !   Beware the map refers to positions starting at 0
+            integer(c_int), intent(out) :: grid_point(3, *), map(*)
+            integer(c_int), intent(in) :: mesh(3)
+            integer(c_int), intent(in) :: is_shift(3)
+            integer(c_int), intent(in), value :: is_time_reversal
+            integer(c_int), intent(in), value :: num_rot
+            integer(c_int), intent(in) :: rotations(3, 3, *)
+            integer(c_int), intent(in), value :: num_q
+            real(c_double), intent(in) :: qpoints(3, *)
+            integer(c_int) :: retval
+        end function spg_get_stabilized_reciprocal_mesh_c
 
         function spg_get_dataset_c(lattice_c, position_c, types_c, num_atom_c, symprec_c) &
                 & bind(c, name='spg_get_dataset') result(retval)
@@ -991,5 +1005,24 @@ contains
         end if
 
     end function spg_get_magnetic_dataset
+
+    module function spg_get_stabilized_reciprocal_mesh(grid_point, map, mesh, is_shift, &
+         & is_time_reversal, lattice, num_rot, rotations, num_q, qpoints) result(retval)
+        !   Beware the map refers to positions starting at 0
+        integer(c_int), intent(out) :: grid_point(3, *), map(*)
+        integer(c_int), intent(in) :: mesh(3)
+        integer(c_int), intent(in) :: is_shift(3)
+        integer(c_int), intent(in), value :: is_time_reversal
+        real(c_double), intent(in) :: lattice(3, 3)
+        integer(c_int), intent(in), value :: num_rot
+        integer(c_int), intent(in) :: rotations(3, 3, *)
+        integer(c_int), intent(in), value :: num_q
+        real(c_double), intent(in) :: qpoints(3, *)
+        integer(c_int) :: retval
+        ! Keep the existing Fortran lattice argument for source compatibility.
+        ! The C routine determines the mesh from rotations and q-points.
+        retval = spg_get_stabilized_reciprocal_mesh_c(grid_point, map, mesh, is_shift, &
+                                                      is_time_reversal, num_rot, rotations, num_q, qpoints)
+    end function spg_get_stabilized_reciprocal_mesh
 
 end submodule impl
