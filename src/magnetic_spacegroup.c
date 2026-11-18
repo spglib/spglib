@@ -10,26 +10,32 @@
 
 #include "debug.h"
 #include "msg_database.h"
+#include "niggli.h"
 #include "refinement.h"
 #include "spin.h"
 
 #define MAX_DENOMINATOR 100
 
+static MagneticDataset *identify_magnetic_space_group_type(
+    double const lattice[3][3], MagneticSymmetry const *magnetic_symmetry,
+    double const symprec, int const reduce_lattice);
 static int get_reference_space_group(Spacegroup **ref_sg,
                                      MagneticSymmetry **changed_symmetry,
                                      double tmat[3][3], double shift[3],
                                      double const lattice[3][3],
                                      MagneticSymmetry const *magnetic_symmetry,
-                                     double const symprec);
+                                     double const symprec,
+                                     int const reduce_lattice);
 static Symmetry *get_family_space_group_with_magnetic_symmetry(
     Spacegroup **fsg, MagneticSymmetry const *magnetic_symmetry,
-    double const symprec);
+    double const lattice[3][3], double const symprec, int const reduce_lattice);
 static Symmetry *get_maximal_subspace_group_with_magnetic_symmetry(
     Spacegroup **xsg, MagneticSymmetry const *magnetic_symmetry,
-    double const symprec);
+    double const lattice[3][3], double const symprec, int const reduce_lattice);
 static Symmetry *get_space_group_with_magnetic_symmetry(
     Spacegroup **spacegroup, MagneticSymmetry const *magnetic_symmetry,
-    int const ignore_time_reversal, double const symprec);
+    int const ignore_time_reversal, double const lattice[3][3],
+    double const symprec, int const reduce_lattice);
 static int get_magnetic_space_group_type(
     MagneticSymmetry **representative,
     MagneticSymmetry const *magnetic_symmetry, int const num_sym_fsg,
@@ -62,6 +68,19 @@ void get_rigid_rotation(double rigid_rot[3][3], double const lattice[3][3],
 MagneticDataset *msg_identify_magnetic_space_group_type(
     double const lattice[3][3], MagneticSymmetry const *magnetic_symmetry,
     double const symprec) {
+    MagneticDataset *dataset;
+
+    /* Preserve established settings when the original matching succeeds. */
+    dataset = identify_magnetic_space_group_type(lattice, magnetic_symmetry,
+                                                 symprec, 0);
+    if (dataset != NULL) return dataset;
+    return identify_magnetic_space_group_type(lattice, magnetic_symmetry,
+                                              symprec, 1);
+}
+
+static MagneticDataset *identify_magnetic_space_group_type(
+    double const lattice[3][3], MagneticSymmetry const *magnetic_symmetry,
+    double const symprec, int const reduce_lattice) {
     int i, j, s, hall_number, uni_number, type, same;
     Spacegroup *ref_sg;
     Symmetry *transformations;
@@ -83,7 +102,8 @@ MagneticDataset *msg_identify_magnetic_space_group_type(
     /* TODO(shinohara): add option to specify hall_number in searching
      * space-group type */
     type = get_reference_space_group(&ref_sg, &changed_symmetry, tmat, shift,
-                                     lattice, magnetic_symmetry, symprec);
+                                     lattice, magnetic_symmetry, symprec,
+                                     reduce_lattice);
     if (type == 0) goto err;
     hall_number = ref_sg->hall_number;
 
@@ -385,7 +405,8 @@ static int get_reference_space_group(Spacegroup **ref_sg,
                                      double tmat[3][3], double shift[3],
                                      double const lattice[3][3],
                                      MagneticSymmetry const *magnetic_symmetry,
-                                     double const symprec) {
+                                     double const symprec,
+                                     int const reduce_lattice) {
     int type;
     Symmetry *sym_fsg, *sym_xsg;
     Spacegroup *fsg, *xsg;
@@ -400,12 +421,14 @@ static int get_reference_space_group(Spacegroup **ref_sg,
 
     /* Identify family space group (FSG) and maximal space group (XSG) */
     if ((sym_fsg = get_family_space_group_with_magnetic_symmetry(
-             &fsg, magnetic_symmetry, symprec)) == NULL)
+             &fsg, magnetic_symmetry, lattice, symprec, reduce_lattice)) ==
+        NULL)
         goto err;
     debug_print("FSG: hall_number=%d, international=%s, order=%d\n",
                 fsg->hall_number, fsg->international_short, sym_fsg->size);
     if ((sym_xsg = get_maximal_subspace_group_with_magnetic_symmetry(
-             &xsg, magnetic_symmetry, symprec)) == NULL)
+             &xsg, magnetic_symmetry, lattice, symprec, reduce_lattice)) ==
+        NULL)
         goto err;
     debug_print("XSG: hall_number=%d, international=%s, order=%d\n",
                 xsg->hall_number, xsg->international_short, sym_xsg->size);
@@ -488,9 +511,10 @@ err:
 /* If failed, return NULL. */
 static Symmetry *get_family_space_group_with_magnetic_symmetry(
     Spacegroup **fsg, MagneticSymmetry const *magnetic_symmetry,
-    double const symprec) {
-    return get_space_group_with_magnetic_symmetry(fsg, magnetic_symmetry, 1,
-                                                  symprec);
+    double const lattice[3][3], double const symprec,
+    int const reduce_lattice) {
+    return get_space_group_with_magnetic_symmetry(
+        fsg, magnetic_symmetry, 1, lattice, symprec, reduce_lattice);
 }
 
 /* Get maximal subspace group (XSG) and return its order. */
@@ -498,9 +522,10 @@ static Symmetry *get_family_space_group_with_magnetic_symmetry(
 /* If failed, return NULL. */
 static Symmetry *get_maximal_subspace_group_with_magnetic_symmetry(
     Spacegroup **xsg, MagneticSymmetry const *magnetic_symmetry,
-    double const symprec) {
-    return get_space_group_with_magnetic_symmetry(xsg, magnetic_symmetry, 0,
-                                                  symprec);
+    double const lattice[3][3], double const symprec,
+    int const reduce_lattice) {
+    return get_space_group_with_magnetic_symmetry(
+        xsg, magnetic_symmetry, 0, lattice, symprec, reduce_lattice);
 }
 
 /* ignore_time_reversal=true  -> FSG */
@@ -512,15 +537,18 @@ static Symmetry *get_maximal_subspace_group_with_magnetic_symmetry(
 /* where P := spacegroup->bravais_lattice, p := spacegroup->origin_shift. */
 static Symmetry *get_space_group_with_magnetic_symmetry(
     Spacegroup **spacegroup, MagneticSymmetry const *magnetic_symmetry,
-    int const ignore_time_reversal, double const symprec) {
+    int const ignore_time_reversal, double const lattice[3][3],
+    double const symprec, int const reduce_lattice) {
     int i, num_sym_msg, num_sym, is_type2;
-    Symmetry *sym, *prim_sym;
+    Symmetry *sym, *prim_sym, *red_sym;
     int identity[3][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+    double tmat[3][3], inv_tmat[3][3], prim_lat[3][3], red_lat[3][3];
+    double inv_red_lat[3][3], inv_lattice[3][3], red_tmat[3][3];
     double unit_lat[3][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
-    double tmat[3][3], inv_tmat[3][3];
 
     sym = NULL;
     prim_sym = NULL;
+    red_sym = NULL;
     num_sym_msg = magnetic_symmetry->size;
 
     if ((sym = sym_alloc_symmetry(num_sym_msg)) == NULL) {
@@ -567,33 +595,49 @@ static Symmetry *get_space_group_with_magnetic_symmetry(
         return NULL;
     }
 
-    *spacegroup =
-        spa_search_spacegroup_with_symmetry(prim_sym, unit_lat, symprec);
-    /* refine bravais_lattice and origin_shift */
-    ref_find_similar_bravais_lattice(*spacegroup, symprec);
-    /* At this point, let P = spacegroup->bravais_lattice, p =
-     * spacegroup->origin_shift: */
-    /*     x_std = (P^-1, p) x_prim */
-    /*     (a_std, b_std, c_std) = (a_prim, b_prim, c_prim) @ P */
+    if (reduce_lattice) {
+        /* As in get_hall_number_from_symmetry, reduce the primitive lattice
+         * before matching rotations in an oblique basis. */
+        if (!mat_inverse_matrix_d3(inv_tmat, tmat, symprec)) goto err;
+        mat_multiply_matrix_d3(prim_lat, lattice, inv_tmat);
+        mat_copy_matrix_d3(red_lat, prim_lat);
+        if (!niggli_reduce(red_lat[0], symprec, -1)) goto err;
+        if (!mat_inverse_matrix_d3(inv_red_lat, red_lat, symprec)) goto err;
+        mat_multiply_matrix_d3(red_tmat, inv_red_lat, prim_lat);
+        if ((red_sym = ref_get_primitive_symmetry(red_tmat, prim_sym)) == NULL)
+            goto err;
+        *spacegroup =
+            spa_search_spacegroup_with_symmetry(red_sym, red_lat, symprec);
+        if (*spacegroup == NULL) goto err;
 
-    /* Change basis from primitive to original */
-    /* x = (tmat, 0)^-1 x_prim */
-    /* => x_std = (P^-1, p) (tmat, 0) x */
-    /*          = ( P^-1 @ tmat, p) x */
-    /*          = ( (tmat^-1 @ P)^-1, p) x */
-    /*    (a_std, b_std, c_std) = (a, b, c) @ tmat^-1 @ P */
-    mat_inverse_matrix_d3(inv_tmat, tmat, 0);
-    mat_multiply_matrix_d3((*spacegroup)->bravais_lattice, inv_tmat,
-                           (*spacegroup)->bravais_lattice);
-
-    sym_free_symmetry(prim_sym);
-    prim_sym = NULL;
-
-    if (spacegroup == NULL) {
-        return NULL;
+        /* Express the Cartesian Bravais vectors in the original fractional
+         * basis. Basis changes leave the origin unchanged. */
+        if (!mat_inverse_matrix_d3(inv_lattice, lattice, symprec)) goto err;
+        mat_multiply_matrix_d3((*spacegroup)->bravais_lattice, inv_lattice,
+                               (*spacegroup)->bravais_lattice);
+    } else {
+        *spacegroup =
+            spa_search_spacegroup_with_symmetry(prim_sym, unit_lat, symprec);
+        if (*spacegroup == NULL) goto err;
+        ref_find_similar_bravais_lattice(*spacegroup, symprec);
+        mat_inverse_matrix_d3(inv_tmat, tmat, 0);
+        mat_multiply_matrix_d3((*spacegroup)->bravais_lattice, inv_tmat,
+                               (*spacegroup)->bravais_lattice);
     }
+    if (red_sym != NULL) sym_free_symmetry(red_sym);
+    sym_free_symmetry(prim_sym);
 
     return sym;
+
+err:
+    if (red_sym != NULL) sym_free_symmetry(red_sym);
+    if (prim_sym != NULL) sym_free_symmetry(prim_sym);
+    if (sym != NULL) sym_free_symmetry(sym);
+    if (*spacegroup != NULL) {
+        free(*spacegroup);
+        *spacegroup = NULL;
+    }
+    return NULL;
 }
 
 /* Return type of MSG. If failed, return 0. */
