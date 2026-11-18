@@ -13,6 +13,8 @@ GitHub release pages and in the git history.
 
 ### Fixes
 
+- Correct forwarding of the Fortran stabilized reciprocal mesh arguments
+  while preserving the existing Fortran call signature.
 - Apply the Cartesian standardization rotation in magnetic datasets.
   `std_rotation_matrix` is now a proper rotation in the standardized setting, and
   `std_lattice` and `std_tensors` follow the documented idealized orientation.
