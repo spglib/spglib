@@ -13,6 +13,8 @@ GitHub release pages and in the git history.
 
 ### Fixes
 
+- Avoid requiring a target Python interpreter when cross-compiling the Python
+  bindings for free-threaded CPython.
 - Apply the Cartesian standardization rotation in magnetic datasets.
   `std_rotation_matrix` is now a proper rotation in the standardized setting, and
   `std_lattice` and `std_tensors` follow the documented idealized orientation.

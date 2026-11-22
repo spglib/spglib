@@ -37,7 +37,11 @@ set(BUILD_SHARED_LIBS ${SPGLIB_SHARED_LIBS})
 ]=============================================================================]
 
 # Running `find_package(Python)` early to be able to define target with `Python_add_library`
-find_package(Python 3.11 COMPONENTS REQUIRED Development.Module NumPy)
+if (CMAKE_CROSSCOMPILING)
+    find_package(Python 3.11 REQUIRED COMPONENTS Development.Module)
+else ()
+    find_package(Python 3.11 REQUIRED COMPONENTS Interpreter Development.Module)
+endif ()
 find_package(pybind11 CONFIG REQUIRED)
 pybind11_add_module(Spglib_python MODULE WITH_SOABI)
 add_library(Spglib::python ALIAS Spglib_python)
@@ -71,7 +75,7 @@ target_sources(Spglib_python PRIVATE
         py_bindings.cpp
 )
 target_link_libraries(Spglib_python PRIVATE
-        Spglib::symspg Python::NumPy
+        Spglib::symspg
 )
 target_include_directories(Spglib_python PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}
