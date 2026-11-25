@@ -46,6 +46,7 @@ create_test_sourcelist(FortranTests_Files
         test_fortran_spg_get_magnetic_dataset.F90
         test_fortran_spg_get_symmetry_with_site_tensors.F90
         test_fortran_spg_get_symmetry.F90
+        test_fortran_stabilized_reciprocal_mesh.F90
         test_fortran_spg_refine_cell.F90
         test_fortran_version.F90
 )
