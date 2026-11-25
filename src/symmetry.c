@@ -890,8 +890,9 @@ static PointSymmetry get_lattice_symmetry(Cell const *cell,
                                           double const angle_symprec) {
     int i, j, k, attempt, num_sym, aperiodic_axis;
     double angle_tol;
-    int axes[3][3];
+    int axes[3][3], length_matches[3][26];
     double lattice[3][3], min_lattice[3][3];
+    double axis_length[26], length_orig[3];
     double metric[3][3], metric_orig[3][3];
     PointSymmetry lattice_sym;
 
@@ -913,13 +914,34 @@ static PointSymmetry get_lattice_symmetry(Cell const *cell,
     }
 
     mat_get_metric(metric_orig, min_lattice);
+
+    /* A column of the transformed lattice depends on only one relative axis.
+     * Apply the length test from is_identity_metric before enumerating triples.
+     * Use the same matrix operations to retain its floating-point arithmetic.
+     */
+    for (i = 0; i < 26; i++) {
+        set_axes(axes, i, i, i);
+        mat_multiply_matrix_di3(lattice, min_lattice, axes);
+        mat_get_metric(metric, lattice);
+        axis_length[i] = sqrt(metric[0][0]);
+    }
+    for (i = 0; i < 3; i++) {
+        length_orig[i] = sqrt(metric_orig[i][i]);
+        for (j = 0; j < 26; j++) {
+            length_matches[i][j] =
+                !(mat_Dabs(length_orig[i] - axis_length[j]) > symprec);
+        }
+    }
     angle_tol = angle_symprec;
 
     for (attempt = 0; attempt < NUM_ATTEMPT; attempt++) {
         num_sym = 0;
         for (i = 0; i < 26; i++) {
+            if (!length_matches[0][i]) continue;
             for (j = 0; j < 26; j++) {
+                if (!length_matches[1][j]) continue;
                 for (k = 0; k < 26; k++) {
+                    if (!length_matches[2][k]) continue;
                     set_axes(axes, i, j, k);
                     /* For layer groups, the off-diagonal elements for the
                      * aperiodic axis are set to be zero.

@@ -244,8 +244,9 @@ def test_monoclinic():
         dataset.transformation_matrix,
         np.array([[0, 1, 0], [0, 0, 1], [1, 0, 0]]),
     )
-    assert np.allclose(dataset.std_rotation_matrix, np.eye(3))
-    std_lattice_expect = np.array([[0, b, 0], [0, 0, c], [a, 0, 0]])  # unique-axis
+    std_rotation_expect = np.array([[0, 1, 0], [0, 0, 1], [1, 0, 0]])
+    assert np.allclose(dataset.std_rotation_matrix, std_rotation_expect)
+    std_lattice_expect = np.diag([b, c, a])
     assert np.allclose(dataset.std_lattice, std_lattice_expect)
     std_positions_expect = np.array(
         [
@@ -260,7 +261,7 @@ def test_monoclinic():
         ],
     )
     assert np.allclose(dataset.std_positions, std_positions_expect)
-    assert np.allclose(dataset.std_tensors, magmoms)
+    assert np.allclose(dataset.std_tensors, magmoms[:, [1, 2, 0]])
 
     _check_magnetic_spacegroup_type(dataset, lattice, uni_number)
 
@@ -773,6 +774,100 @@ def test_std_rotation():
     assert np.allclose(dataset_msg.std_lattice, np.diag([a, b, c]))
     assert np.allclose(dataset_msg.transformation_matrix, np.eye(3))
     assert np.allclose(dataset_msg.std_rotation_matrix, rigid_rotation.T)
+
+
+def _check_std_rotation(dataset, lattice, magmoms):
+    """std_rotation_matrix is a proper rotation applied to lattice and tensors."""
+    rotation = dataset.std_rotation_matrix
+    np.testing.assert_allclose(rotation @ rotation.T, np.eye(3), atol=1e-12)
+    np.testing.assert_allclose(np.linalg.det(rotation), 1, atol=1e-12)
+    std_lattice = (
+        rotation @ np.transpose(lattice) @ np.linalg.inv(dataset.transformation_matrix)
+    ).T
+    np.testing.assert_allclose(dataset.std_lattice, std_lattice, atol=1e-12)
+    np.testing.assert_allclose(
+        np.linalg.norm(dataset.std_tensors, axis=1),
+        np.linalg.norm(magmoms, axis=1),
+        atol=1e-12,
+    )
+
+
+def test_magnetic_std_rotation():
+    """Standardize the Cartesian frame of a rotated Pmmm 1a cell (#641)."""
+    rigid_rotation = np.array([[1, 0, 0], [0, 3 / 5, -4 / 5], [0, 4 / 5, 3 / 5]])
+    std_lattice = np.diag([3.0, 4.0, 5.0])
+    lattice = std_lattice @ rigid_rotation.T
+    magmoms = np.array([[0.0, 0.0, 1.0]]) @ rigid_rotation.T
+    dataset = get_magnetic_symmetry_dataset((lattice, [[0, 0, 0]], [1], magmoms))
+
+    assert dataset.hall_number == 227
+    assert dataset.msg_type == 3
+    assert dataset.n_operations == 8
+    assert dataset.n_std_atoms == 1
+    np.testing.assert_allclose(dataset.transformation_matrix, np.eye(3), atol=1e-12)
+    np.testing.assert_allclose(dataset.origin_shift, [0, 0, 0], atol=1e-12)
+    np.testing.assert_allclose(dataset.std_lattice, std_lattice, atol=1e-12, rtol=0)
+    np.testing.assert_allclose(
+        dataset.std_rotation_matrix, rigid_rotation.T, atol=1e-12, rtol=0
+    )
+    np.testing.assert_allclose(dataset.std_tensors, [[0, 0, 1]], atol=1e-12, rtol=0)
+    _check_std_rotation(dataset, lattice, magmoms)
+
+
+def test_magnetic_std_rotation_with_basis_change():
+    """Rotation stays orthogonal when the UNI setting permutes the axes."""
+    lattice = np.diag([3.0, 4.0, 5.0])
+    magmoms = np.array([[1.0, 0.0, 0.0]])
+    dataset = get_magnetic_symmetry_dataset((lattice, [[0, 0, 0]], [1], magmoms))
+
+    assert dataset.hall_number == 227
+    assert dataset.msg_type == 3
+    assert not np.allclose(dataset.transformation_matrix, np.eye(3))
+    # a_std, b_std, c_std are the input b, c, a up to sign
+    np.testing.assert_allclose(
+        np.abs(dataset.transformation_matrix),
+        [[0, 1, 0], [0, 0, 1], [1, 0, 0]],
+        atol=1e-12,
+    )
+    np.testing.assert_allclose(
+        dataset.std_lattice, np.diag([4.0, 5.0, 3.0]), atol=1e-12
+    )
+    np.testing.assert_allclose(dataset.std_tensors, [[0, 0, 1]], atol=1e-12)
+    _check_std_rotation(dataset, lattice, magmoms)
+
+
+@pytest.mark.parametrize("distortion", [0, 1e-4])
+@pytest.mark.parametrize("axis", [0, 1, 2])
+@pytest.mark.parametrize("rotated", [False, True])
+def test_magnetic_std_rotation_orientation(rotated, axis, distortion):
+    """Idealization aligns axes without scaling or shearing the rotation."""
+    rigid_rotation = np.array([[1, 0, 0], [0, 3 / 5, -4 / 5], [0, 4 / 5, 3 / 5]])
+    if not rotated:
+        rigid_rotation = np.eye(3)
+    std_lattice = np.diag([3.0, 4.0, 5.0])
+    strain = distortion * np.array([[1, 2, -1], [2, -1, 1], [-1, 1, 2]])
+    lattice = std_lattice @ (np.eye(3) + strain) @ rigid_rotation.T
+    magmom = np.eye(3)[axis]
+    magmoms = np.array([magmom]) @ rigid_rotation.T
+    dataset = get_magnetic_symmetry_dataset(
+        (lattice, [[0, 0, 0]], [1], magmoms), symprec=1e-2
+    )
+
+    assert dataset.hall_number == 227
+    assert dataset.msg_type == 3
+    _check_std_rotation(dataset, lattice, magmoms)
+
+    # The UNI setting is a signed permutation of the input axes, so the
+    # standardized axes and moment follow it.
+    tmat = dataset.transformation_matrix
+    atol = 1e-12 if distortion == 0 else 10 * distortion
+    np.testing.assert_allclose(
+        dataset.std_rotation_matrix, tmat @ rigid_rotation.T, atol=atol
+    )
+    np.testing.assert_allclose(
+        dataset.std_lattice, tmat @ std_lattice @ tmat.T, atol=atol * 5
+    )
+    np.testing.assert_allclose(dataset.std_tensors, [tmat @ magmom], atol=atol)
 
 
 def test_primitive_lattice():

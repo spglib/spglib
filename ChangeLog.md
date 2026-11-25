@@ -11,6 +11,14 @@ GitHub release pages and in the git history.
 
 ## [Unreleased]
 
+### Fixes
+
+- Reject incompatible axis lengths before enumerating lattice symmetry
+  candidates, preserving the returned operations and their order.
+- Apply the Cartesian standardization rotation in magnetic datasets.
+  `std_rotation_matrix` is now a proper rotation in the standardized setting, and
+  `std_lattice` and `std_tensors` follow the documented idealized orientation.
+
 ## v2.8.0 (3 Oct. 2026)
 
 ### Python support

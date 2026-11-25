@@ -32,5 +32,8 @@ int ref_find_similar_bravais_lattice(Spacegroup *spacegroup,
                                      double const symprec);
 void ref_get_conventional_lattice(double lattice[3][3],
                                   Spacegroup const *spacegroup);
+void ref_measure_rigid_rotation(double rotation[3][3],
+                                double const bravais_lattice[3][3],
+                                double const std_lattice[3][3]);
 
 #endif
