@@ -442,7 +442,7 @@ def get_magnetic_spacegroup_type_from_symmetry(
     if lattice is None:
         latt = np.eye(3, dtype="double", order="C")
     else:
-        latt = np.array(lattice, dtype="double", order="C")
+        latt = np.array(np.transpose(lattice), dtype="double", order="C")
 
     _set_no_error()
     try:

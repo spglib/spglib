@@ -30,6 +30,12 @@ GitHub release pages and in the git history.
 - Apply the Cartesian standardization rotation in magnetic datasets.
   `std_rotation_matrix` is now a proper rotation in the standardized setting, and
   `std_lattice` and `std_tensors` follow the documented idealized orientation.
+- Identify magnetic space groups of cells given in oblique bases. When the
+  space-group search in the primitive basis disagrees with the search in a basis
+  reduced for a metric invariant under the rotations, the latter is used, so
+  results that were already obtained do not change.
+- Pass the lattice to the C library in its basis convention in
+  `get_magnetic_spacegroup_type_from_symmetry`.
 
 ## v2.8.0 (3 Oct. 2026)
 
