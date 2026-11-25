@@ -111,6 +111,7 @@ def _check_OLD_ERROR_HANDLING() -> bool:
 
 
 def _set_or_throw_error(exc: Exception, _throw: bool = False) -> None:
+    global _spglib_error
     if _throw or not _check_OLD_ERROR_HANDLING():
         if isinstance(exc, SpglibError):
             # Our native errors we pass transparently
@@ -126,6 +127,7 @@ def _set_or_throw_error(exc: Exception, _throw: bool = False) -> None:
 
 
 def _set_no_error(_throw: bool = False) -> None:
+    global _spglib_error
     if _throw or not _check_OLD_ERROR_HANDLING():
         return
     warnings.warn(

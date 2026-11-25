@@ -154,13 +154,8 @@ The magnetic moments `magmoms` can be specified with `get_magnetic_symmetry`.
 `magmoms` is a list of N floating-point values for collinear cases and a list of Nx3 in **cartesian coordinates** for non-collinear cases.
 
 ```python
-lattice = [[a_x, a_y, a_z],
-            [b_x, b_y, b_z],
-            [c_x, c_y, c_z]]
-positions = [[a_1, b_1, c_1],
-               [a_2, b_2, c_2],
-               [a_3, b_3, c_3],
-               ...]
+lattice = [[a_x, a_y, a_z], [b_x, b_y, b_z], [c_x, c_y, c_z]]
+positions = [[a_1, b_1, c_1], [a_2, b_2, c_2], [a_3, b_3, c_3], ...]
 numbers = [n_1, n_2, n_3, ...]
 magmoms = [m_1, m_2, m_3, ...]  # Works with get_magnetic_symmetry for a collinear case
 # magmoms = [[m_1x, m_1y, m_1z], ...]  # For a non-collinear case
@@ -169,14 +164,14 @@ magmoms = [m_1, m_2, m_3, ...]  # Works with get_magnetic_symmetry for a colline
 For example, the crystal structure (`cell`) of L1$_{2}$-type AlNi$_{3}$ is:
 
 ```python
-lattice = [[1.0, 0.0, 0.0],
-            [0.0, 1.0, 0.0],
-            [0.0, 0.0, 1.0]]
-positions = [[0.0, 0.0, 0.0], # Al
-            [0.5, 0.5, 0.0], # Ni
-            [0.0, 0.5, 0.5], # Ni
-            [0.5, 0.0, 0.5]] # Ni
-numbers = [1, 2, 2, 2]        # Al, Ni, Ni, Ni
+lattice = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+positions = [
+    [0.0, 0.0, 0.0],  # Al
+    [0.5, 0.5, 0.0],  # Ni
+    [0.0, 0.5, 0.5],  # Ni
+    [0.5, 0.0, 0.5],
+]  # Ni
+numbers = [1, 2, 2, 2]  # Al, Ni, Ni, Ni
 ```
 
 ```{note}
@@ -269,12 +264,11 @@ An example is shown below:
 import numpy as np
 import spglib
 
-lattice = np.array([[0.0, 0.5, 0.5],
-                    [0.5, 0.0, 0.5],
-                    [0.5, 0.5, 0.0]]) * 5.4
-positions = [[0.875, 0.875, 0.875],
-            [0.125, 0.125, 0.125]]
-numbers= [1,] * 2
+lattice = np.array([[0.0, 0.5, 0.5], [0.5, 0.0, 0.5], [0.5, 0.5, 0.0]]) * 5.4
+positions = [[0.875, 0.875, 0.875], [0.125, 0.125, 0.125]]
+numbers = [
+    1,
+] * 2
 cell = (lattice, positions, numbers)
 print(spglib.get_spacegroup(cell, symprec=1e-5))
 mesh = [8, 8, 8]
