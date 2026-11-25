@@ -10,10 +10,15 @@
 
 #include "debug.h"
 #include "msg_database.h"
+#include "niggli.h"
 #include "refinement.h"
 #include "spin.h"
 
 #define MAX_DENOMINATOR 100
+
+static Spacegroup *search_spacegroup_in_invariant_basis(
+    Symmetry const *prim_sym, double const symprec);
+static int get_invariant_lattice(double lattice[3][3], Symmetry const *sym);
 
 static int get_reference_space_group(Spacegroup **ref_sg,
                                      MagneticSymmetry **changed_symmetry,
@@ -515,6 +520,7 @@ static Symmetry *get_space_group_with_magnetic_symmetry(
     int const ignore_time_reversal, double const symprec) {
     int i, num_sym_msg, num_sym, is_type2;
     Symmetry *sym, *prim_sym;
+    Spacegroup *unit_sg, *red_sg;
     int identity[3][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
     double unit_lat[3][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
     double tmat[3][3], inv_tmat[3][3];
@@ -567,10 +573,27 @@ static Symmetry *get_space_group_with_magnetic_symmetry(
         return NULL;
     }
 
-    *spacegroup =
-        spa_search_spacegroup_with_symmetry(prim_sym, unit_lat, symprec);
+    unit_sg = spa_search_spacegroup_with_symmetry(prim_sym, unit_lat, symprec);
     /* refine bravais_lattice and origin_shift */
-    ref_find_similar_bravais_lattice(*spacegroup, symprec);
+    if (unit_sg != NULL) ref_find_similar_bravais_lattice(unit_sg, symprec);
+    /* The primitive basis is reduced only for the unit metric above, so the */
+    /* search can fail in an oblique basis. Keep its result when the */
+    /* space-group type agrees with the search in a basis reduced for a */
+    /* metric invariant under the rotations. */
+    red_sg = search_spacegroup_in_invariant_basis(prim_sym, symprec);
+    if (unit_sg != NULL &&
+        (red_sg == NULL || unit_sg->number == red_sg->number)) {
+        *spacegroup = unit_sg;
+        if (red_sg != NULL) free(red_sg);
+    } else {
+        if (unit_sg != NULL) free(unit_sg);
+        *spacegroup = red_sg;
+    }
+    if (*spacegroup == NULL) {
+        sym_free_symmetry(prim_sym);
+        sym_free_symmetry(sym);
+        return NULL;
+    }
     /* At this point, let P = spacegroup->bravais_lattice, p =
      * spacegroup->origin_shift: */
     /*     x_std = (P^-1, p) x_prim */
@@ -589,11 +612,94 @@ static Symmetry *get_space_group_with_magnetic_symmetry(
     sym_free_symmetry(prim_sym);
     prim_sym = NULL;
 
-    if (spacegroup == NULL) {
-        return NULL;
-    }
-
     return sym;
+}
+
+/* Search space group in the Niggli-reduced basis of a lattice whose metric */
+/* is invariant under the rotations of prim_sym. bravais_lattice is returned */
+/* in the basis of prim_sym as for the unit lattice. If failed, return NULL. */
+static Spacegroup *search_spacegroup_in_invariant_basis(
+    Symmetry const *prim_sym, double const symprec) {
+    int i, j;
+    Symmetry *red_sym;
+    Spacegroup *spacegroup;
+    double metric_lat[3][3], red_lat[3][3], inv_red_lat[3][3];
+    double red_tmat[3][3], inv_metric_lat[3][3];
+    double niggli_lat[9];
+
+    if (!get_invariant_lattice(metric_lat, prim_sym)) return NULL;
+    for (i = 0; i < 3; i++) {
+        for (j = 0; j < 3; j++) {
+            niggli_lat[i * 3 + j] = metric_lat[i][j];
+        }
+    }
+    if (!niggli_reduce(niggli_lat, symprec, -1 /* aperiodic_axis */))
+        return NULL;
+    for (i = 0; i < 3; i++) {
+        for (j = 0; j < 3; j++) {
+            red_lat[i][j] = niggli_lat[i * 3 + j];
+        }
+    }
+    if (!mat_inverse_matrix_d3(inv_red_lat, red_lat, 0)) return NULL;
+    /* (a, b, c) = (a_red, b_red, c_red) @ red_tmat, x_red = red_tmat x */
+    mat_multiply_matrix_d3(red_tmat, inv_red_lat, metric_lat);
+    for (i = 0; i < 3; i++) {
+        for (j = 0; j < 3; j++) {
+            red_tmat[i][j] = mat_Nint(red_tmat[i][j]);
+        }
+    }
+    if ((red_sym = ref_get_primitive_symmetry(red_tmat, prim_sym)) == NULL)
+        return NULL;
+    spacegroup = spa_search_spacegroup_with_symmetry(red_sym, red_lat, symprec);
+    sym_free_symmetry(red_sym);
+    if (spacegroup == NULL) return NULL;
+
+    /* Cartesian to the basis of prim_sym; the matrix is integral. */
+    mat_inverse_matrix_d3(inv_metric_lat, metric_lat, 0);
+    mat_multiply_matrix_d3(spacegroup->bravais_lattice, inv_metric_lat,
+                           spacegroup->bravais_lattice);
+    for (i = 0; i < 3; i++) {
+        for (j = 0; j < 3; j++) {
+            spacegroup->bravais_lattice[i][j] =
+                mat_Nint(spacegroup->bravais_lattice[i][j]);
+        }
+    }
+    return spacegroup;
+}
+
+/* Return lattice L (basis vectors as columns) with L^T L = sum_R R^T R, */
+/* which is invariant under the rotations R, by the Cholesky decomposition. */
+static int get_invariant_lattice(double lattice[3][3], Symmetry const *sym) {
+    int i, j, k, s;
+    double metric[3][3], sum;
+
+    for (i = 0; i < 3; i++) {
+        for (j = 0; j < 3; j++) {
+            metric[i][j] = 0;
+            lattice[i][j] = 0;
+        }
+    }
+    for (s = 0; s < sym->size; s++) {
+        for (i = 0; i < 3; i++) {
+            for (j = 0; j < 3; j++) {
+                for (k = 0; k < 3; k++) {
+                    metric[i][j] += sym->rot[s][k][i] * sym->rot[s][k][j];
+                }
+            }
+        }
+    }
+    for (j = 0; j < 3; j++) {
+        sum = metric[j][j];
+        for (k = 0; k < j; k++) sum -= lattice[k][j] * lattice[k][j];
+        if (sum <= 0) return 0;
+        lattice[j][j] = sqrt(sum);
+        for (i = j + 1; i < 3; i++) {
+            sum = metric[j][i];
+            for (k = 0; k < j; k++) sum -= lattice[k][j] * lattice[k][i];
+            lattice[j][i] = sum / lattice[j][j];
+        }
+    }
+    return 1;
 }
 
 /* Return type of MSG. If failed, return 0. */
