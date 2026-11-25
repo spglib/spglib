@@ -9,8 +9,8 @@
 #include <string.h>
 
 #include "debug.h"
+#include "delaunay.h"
 #include "msg_database.h"
-#include "niggli.h"
 #include "refinement.h"
 #include "spin.h"
 
@@ -615,9 +615,10 @@ static Symmetry *get_space_group_with_magnetic_symmetry(
     return sym;
 }
 
-/* Search space group in the Niggli-reduced basis of a lattice whose metric */
-/* is invariant under the rotations of prim_sym. bravais_lattice is returned */
-/* in the basis of prim_sym as for the unit lattice. If failed, return NULL. */
+/* Search space group in the Delaunay-reduced basis of a lattice whose metric */
+/* is invariant under the rotations of prim_sym, as the ordinary search does */
+/* with the Delaunay-reduced primitive cell. bravais_lattice is returned in */
+/* the basis of prim_sym as for the unit lattice. If failed, return NULL. */
 static Spacegroup *search_spacegroup_in_invariant_basis(
     Symmetry const *prim_sym, double const symprec) {
     int i, j;
@@ -625,21 +626,9 @@ static Spacegroup *search_spacegroup_in_invariant_basis(
     Spacegroup *spacegroup;
     double metric_lat[3][3], red_lat[3][3], inv_red_lat[3][3];
     double red_tmat[3][3], inv_metric_lat[3][3];
-    double niggli_lat[9];
 
     if (!get_invariant_lattice(metric_lat, prim_sym)) return NULL;
-    for (i = 0; i < 3; i++) {
-        for (j = 0; j < 3; j++) {
-            niggli_lat[i * 3 + j] = metric_lat[i][j];
-        }
-    }
-    if (!niggli_reduce(niggli_lat, symprec, -1 /* aperiodic_axis */))
-        return NULL;
-    for (i = 0; i < 3; i++) {
-        for (j = 0; j < 3; j++) {
-            red_lat[i][j] = niggli_lat[i * 3 + j];
-        }
-    }
+    if (!del_delaunay_reduce(red_lat, metric_lat, symprec)) return NULL;
     if (!mat_inverse_matrix_d3(inv_red_lat, red_lat, 0)) return NULL;
     /* (a, b, c) = (a_red, b_red, c_red) @ red_tmat, x_red = red_tmat x */
     mat_multiply_matrix_d3(red_tmat, inv_red_lat, metric_lat);
