@@ -3,6 +3,8 @@
 
 #include <spglib.h>
 
+#include <cmath>
+
 #include "py_bindings.h"
 
 using namespace spglib;
@@ -31,6 +33,10 @@ Lattice::Lattice(array_double &&_array)
     if (array.ndim() != 2) throw SpglibError("Lattice ndim is not 2");
     if (array.shape(0) != 3 || array.shape(1) != 3)
         throw SpglibError("Lattice is not a 3x3 matrix");
+    for (auto i = 0; i < array.size(); ++i) {
+        if (!std::isfinite(array.data()[i]))
+            throw SpglibError("Lattice contains non-finite values");
+    }
 }
 double (*Lattice::data())[3] {
     return reinterpret_cast<double (*)[3]>(array.mutable_data());
@@ -76,6 +82,10 @@ Positions::Positions(array_double &&_array)
       n_atoms(static_cast<int>(array.shape(0))) {
     if (array.ndim() != 2) throw SpglibError("Rotations ndim is not 2");
     if (array.shape(1) != 3) throw SpglibError("Lattice is not a nx3 matrix");
+    for (auto i = 0; i < array.size(); ++i) {
+        if (!std::isfinite(array.data()[i]))
+            throw SpglibError("Positions contain non-finite values");
+    }
 }
 double (*Positions::data())[3] {
     return reinterpret_cast<double (*)[3]>(array.mutable_data());
